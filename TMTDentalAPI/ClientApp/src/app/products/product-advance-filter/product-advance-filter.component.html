@@ -1,0 +1,73 @@
+<div class="accordion search-section">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                href="#" onclick="javascript:void(0);">{{searchCategTitle || 'Theo nhóm sản phẩm'}}</a>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+            <div class="card-body">
+                <kendo-combobox [data]="filteredCategs" [textField]="'completeName'" [filterable]="true" #categCbx
+                    [(ngModel)]="searchCateg" [valueField]="'id'" (valueChange)="onFilterChange($event)">
+                </kendo-combobox>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="card">
+        <div class="card-header" id="heading2">
+            <a data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2" href="#"
+                onclick="javascript:void(0);">Hình thức</a>
+        </div>
+
+        <div id="collapse2" class="collapse show" aria-labelledby="heading2">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="saleOKFilter" id="defaultCheck1"
+                        (change)="loadDataFromApi()">
+                    <label class="form-check-label" for="defaultCheck1">
+                        Có thể bán
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" [(ngModel)]="purchaseOKFilter" type="checkbox" value=""
+                        (change)="loadDataFromApi()" id="defaultCheck2">
+                    <label class="form-check-label" for="defaultCheck2">
+                        Có thể mua
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" [(ngModel)]="keToaOKFilter" type="checkbox" value=""
+                        (change)="loadDataFromApi()" id="defaultCheck3">
+                    <label class="form-check-label" for="defaultCheck3">
+                        Là thuốc
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="heading3">
+            <a data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapse3" href="#"
+                onclick="javascript:void(0);">Loại</a>
+        </div>
+
+        <div id="collapse3" class="collapse show" aria-labelledby="heading3">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="productConsuTypeFilter"
+                        id="defaultCheck4" (change)="loadDataFromApi()">
+                    <label class="form-check-label" for="defaultCheck4">
+                        Hàng hóa
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" [(ngModel)]="serviceTypeFilter" type="checkbox"
+                        (change)="loadDataFromApi()" id="defaultCheck5">
+                    <label class="form-check-label" for="defaultCheck5">
+                        Dịch vụ
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</div>

@@ -1,0 +1,384 @@
+<kendo-tabstrip>
+    <kendo-tabstrip-tab [title]="'Thông tin'" [selected]="true">
+        <ng-template kendoTabContent>
+            <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+                <input type="hidden" formControlName="customer" />
+                <input type="hidden" formControlName="supplier" />
+
+                <div class="o_form_sheet_bg">
+                    <div class="o_form_sheet">
+                        <div class="oe_title">
+                            <label *ngIf="queryCustomer" class="o_form_label oe_edit_only">Tên khách hàng</label>
+                            <label *ngIf="!queryCustomer" class="o_form_label oe_edit_only">Tên NCC</label>
+                            <h1>
+                                <input class="form-control" formControlName="name">
+                            </h1>
+                        </div>
+                        <div class="o_notebook">
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel"
+                                    aria-labelledby="home-tab">
+                                    <!-- CUSTOMER -->
+                                    <div class="o_group" *ngIf="queryCustomer">
+                                        <table class="o_group o_inner_group o_group_col_6">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Mã </label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="ref" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Giới tính</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input type="radio" class="radio-gender-male" value="Male"
+                                                            id="male" formControlName="gender" />
+                                                        <label for="male">Nam</label>
+                                                        <input type="radio" class="radio-gender-female" value="Female"
+                                                            id="female" formControlName="gender" />
+                                                        <label for="female">Nữ</label>
+                                                        <input type="radio" class="radio-gender-other" value="Other"
+                                                            id="other" formControlName="gender" />
+                                                        <label for="other">Khác</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số điện thoại</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" (input)="onlyGetNumbers('phone')"
+                                                            maxlength="12" formControlName="phone" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Ngày sinh</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <div class="form-group">
+                                                            <div class="d-flex">
+                                                                <kendo-combobox class="kd-dropdown-dob-d"
+                                                                    [data]="dayList" formControlName="birthDay"
+                                                                    placeholder="Ngày">
+                                                                </kendo-combobox>
+                                                                <kendo-combobox class="kd-dropdown-dob-m"
+                                                                    [data]="monthList" formControlName="birthMonth"
+                                                                    placeholder="Tháng">
+                                                                </kendo-combobox>
+                                                                <kendo-combobox class="kd-dropdown-dob-y"
+                                                                    [data]="yearList" formControlName="birthYear"
+                                                                    placeholder="Năm">
+                                                                </kendo-combobox>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table class="o_group o_inner_group o_group_col_6">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Mã vạch</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="barcode" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số nhà</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="street" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Tỉnh/Thành phố</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <kendo-combobox class="kd-dropdown-area"
+                                                            [data]="provincesFilter" formControlName="city"
+                                                            [valueField]="'code'" [textField]="'name'"
+                                                            (valueChange)="changeProvince()" [filterable]="true"
+                                                            (filterChange)="filterProvince($event)">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Quận/Huyện</label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <kendo-combobox class="kd-dropdown-area"
+                                                            [data]="districtsFilter" formControlName="district"
+                                                            [valueField]="'code'" [textField]="'name'"
+                                                            (valueChange)="changeDistrict()" [filterable]="true"
+                                                            (filterChange)="filterDistrict($event)">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Phường/Xã</label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <kendo-combobox class="kd-dropdown-area" [data]="wardsFilter"
+                                                            formControlName="ward" [valueField]="'code'"
+                                                            [textField]="'name'" [filterable]="true"
+                                                            (filterChange)="filterWard($event)">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Tiểu sử bệnh</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="medicalHistory" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- SUPPLIER -->
+                                    <div class="o_group" *ngIf="!queryCustomer">
+                                        <table class="o_group o_inner_group o_group_col_6">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Mã </label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="ref" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số điện thoại</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" (input)="onlyGetNumbers('phone')"
+                                                            maxlength="11" formControlName="phone" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số Fax</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" (input)="onlyGetNumbers('fax')"
+                                                            maxlength="10" formControlName="fax" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Email</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="email" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
+                                                            chú</label></td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="comment" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table class="o_group o_inner_group o_group_col_6">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số nhà</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <input class="form-control" formControlName="street" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Tỉnh/Thành phố</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <kendo-combobox class="kd-dropdown-area"
+                                                            [data]="provincesFilter" formControlName="city"
+                                                            [valueField]="'code'" [textField]="'name'"
+                                                            (valueChange)="changeProvince()" [filterable]="true"
+                                                            (filterChange)="filterProvince($event)">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Quận/Huyện</label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <kendo-combobox class="kd-dropdown-area"
+                                                            [data]="districtsFilter" formControlName="district"
+                                                            [valueField]="'code'" [textField]="'name'"
+                                                            (valueChange)="changeDistrict()" [filterable]="true"
+                                                            (filterChange)="filterDistrict($event)">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Phường/Xã</label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <kendo-combobox class="kd-dropdown-area" [data]="wardsFilter"
+                                                            formControlName="ward" [valueField]="'code'"
+                                                            [textField]="'name'" [filterable]="true"
+                                                            (filterChange)="filterWard($event)">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <kendo-panelbar *ngIf="queryCustomer">
+                    <kendo-panelbar-item [title]="'Thông tin mở rộng'">
+                        <ng-template kendoPanelBarContent>
+                            <div class="o_notebook">
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="home" role="tabpanel"
+                                        aria-labelledby="home-tab">
+                                        <div class="o_group">
+                                            <table class="o_group o_inner_group o_group_col_6">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">Nghề nghiệp</label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <input class="form-control" formControlName="jobTitle" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">Email</label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <input class="form-control" formControlName="email" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="o_group o_inner_group o_group_col_6">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">Nhóm</label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <kendo-multiselect class="form-control"
+                                                                [data]="fullCategoriesList" [textField]="'name'"
+                                                                [valueField]="'id'" formControlName="categories">
+                                                            </kendo-multiselect>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label"><label
+                                                                class="o_form_label">Ghi
+                                                                chú</label></td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <input class="form-control" formControlName="comment" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </ng-template>
+                    </kendo-panelbar-item>
+                    <kendo-panelbar-item [title]="'Bạn biết đến phòng khám thông qua ?'">
+                        <ng-template kendoPanelBarContent>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div>
+                                            <input type="radio" value="ads" formControlName="source" id="ads" /><label
+                                                for="ads">Quảng cáo</label></div>
+                                        <div>
+                                            <input type="radio" value="friend" formControlName="source"
+                                                id="friend" /><label for="friend">Bạn bè</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" value="employee" formControlName="source"
+                                                id="employee" /><label for="employee">Nhân
+                                                viên</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" value="other" formControlName="source"
+                                                id="others" /><label for="others">Khác</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <div *ngIf="formCreate.get('source').value=='other'">
+                                            <input type="text" formControlName="note" placeholder="Chi tiết" />
+                                        </div>
+                                        <div *ngIf="formCreate.get('source').value=='employee'">
+                                            <kendo-combobox formControlName="employees" [filterable]="true"
+                                                [data]="employeeSimpleFilter" #employeeCbx [valueField]="'id'"
+                                                [textField]="'name'">
+                                            </kendo-combobox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </kendo-panelbar-item>
+                </kendo-panelbar>
+            </form>
+        </ng-template>
+    </kendo-tabstrip-tab>
+    <!-- <kendo-tabstrip-tab [title]="'Hình ảnh'">
+        <ng-template kendoTabContent>
+
+
+            <div>
+                <kendo-upload [autoUpload]="false" [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl"
+                    [restrictions]="uploadRestrictions" (select)="selectEventHandler($event)"
+                    (clear)="clearEventHandler($event)" (remove)="removeEventHandler($event)"
+                    (complete)="completeEventHandler($event)" (success)=" successEventHandler($event)">
+                </kendo-upload>
+    <div *ngIf="imagePreviews.length" class="img-preview example-config">
+        <h3>Preview selected images</h3>
+        <img *ngFor="let image of imagePreviews" [src]="image.src" alt="image preview"
+            style="width:100%; margin: 10px;" />
+    </div>
+    </div>
+    </ng-template>
+    </kendo-tabstrip-tab> -->
+
+
+</kendo-tabstrip>
+<div>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
+            class="fas fa-window-close"></i>&nbsp;Đóng</button>
+    <button type="button" hidden class="btn btn-primary btn-sm mr-2" *ngIf="cusId==null" (click)="createNewAndMore()"><i
+            class="fas fa-plus-circle"></i>&nbsp;Lưu và Thêm mới</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
+        (click)="createNewCustomer()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+</div>

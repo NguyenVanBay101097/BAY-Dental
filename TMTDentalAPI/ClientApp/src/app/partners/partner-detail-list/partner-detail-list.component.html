@@ -1,0 +1,29 @@
+<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+    [loading]="gridLoading" [selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)">
+    <kendo-grid-column field="number" title="Hóa đơn" width="140px"></kendo-grid-column>
+    <kendo-grid-column field="dateOrder" title="Ngày tạo">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.dateOrder | date : 'shortDate' }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Nợ">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.residual | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{stateGet(dataItem.state)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-command-column title="Thao tác" width="250">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <kendo-dropdownbutton [data]="btnDropdown" [primary]="true"
+                (itemClick)="btnDropdownItemClick($event, dataItem.id)"><i class="fas fa-caret-down"
+                    title="Thao tác"></i>
+            </kendo-dropdownbutton>
+        </ng-template>
+    </kendo-grid-command-column>
+    <kendo-grid-messages pagerItems="dòng" noRecords="Không có hóa đơn nào" pagerOf="/">
+    </kendo-grid-messages>
+</kendo-grid>

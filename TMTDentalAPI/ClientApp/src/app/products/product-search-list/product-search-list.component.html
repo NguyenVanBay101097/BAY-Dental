@@ -1,0 +1,17 @@
+<div>
+    <input type="text" accesskey="q" class="form-control" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm (alt + q)..."
+        [(ngModel)]="search" (keydown)="onKeydown($event)" (ngModelChange)="this.searchUpdate.next($event)" />
+    <div>
+        <kendo-grid class="grid-small grid-clickable" #grid [data]="gridData" [pageSize]="limit"
+            (cellClick)="onCellClick($event)" [skip]="skip" [rowClass]="rowCallback" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="name" title="Tên sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="qtyAvailable" class="text-right" title="Tồn" width="80">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

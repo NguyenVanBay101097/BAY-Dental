@@ -1,0 +1,87 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li><a routerLink="/picking-type-overview">Tất cả hoạt động</a></li>
+        <li class="active" *ngIf="pickingType">{{pickingType.name}}</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, đối tác..." type="text"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" type="button" id="dropdownMenuButton">
+                Hoạt động
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <!-- <a class="dropdown-item" href="#">Xóa</a> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="name" title="Mã">
+    </kendo-grid-column>
+    <kendo-grid-column field="partner" title="Đối tác">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.partner ? dataItem.partner.name : ''}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="state" title="Trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{getState(dataItem)}}
+        </ng-template>
+    </kendo-grid-column>
+
+    <!-- <kendo-grid-column field="number" title="Số HĐ">
+    </kendo-grid-column>
+    <kendo-grid-column field="user" title="Nhân viên">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.user ? dataItem.user.name : ''}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amountTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="residual" title="Còn nợ" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.residual | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="state" title="Trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{stateGet(dataItem.state)}}
+        </ng-template>
+    </kendo-grid-column> -->
+    <kendo-grid-column field="id">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+            Thao tác
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
+                <span class="fa fa-edit"></span> Sửa</button>
+            <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
+                <span class="fa fa-trash"></span> Xóa</button>
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

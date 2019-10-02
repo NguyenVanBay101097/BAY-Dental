@@ -1,0 +1,34 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Tất cả hoạt động</li>
+    </ol>
+    <div class="o_cp_searchview">
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+
+<div>
+    <div class="d-flex">
+        <div *ngFor="let pickingType of pickingTypes" class="card mr-3" style="width: 18rem;">
+            <div class="card-header">
+                <h5 class="mb-0">{{pickingType.name}}</h5>
+            </div>
+            <div class="card-body">
+                <a [routerLink]="['/pickings']" [queryParams]="{picking_type_id: pickingType.id}"
+                    class="btn btn-primary btn-sm mr-2">Danh sách</a>
+                <a [routerLink]="['/pickings/create']" [queryParams]="{picking_type_id: pickingType.id}"
+                    class="btn btn-secondary btn-sm">Thêm mới</a>
+            </div>
+        </div>
+    </div>
+</div>

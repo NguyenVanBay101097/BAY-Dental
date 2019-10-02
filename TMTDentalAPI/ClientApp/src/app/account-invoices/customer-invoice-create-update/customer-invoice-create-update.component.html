@@ -1,0 +1,456 @@
+<div class="loading" *ngIf="loading">
+    <div class="loader"></div>
+</div>
+
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li>
+            <a routerLink="/customer-invoices">Hóa đơn điều trị</a>
+        </li>
+        <li class="active">
+            <span *ngIf="getInvState == 'draft'">Mới</span>
+            <span *ngIf="getInvState != 'draft'">{{getInvNumber}}</span>
+        </li>
+    </ol>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && !id"
+                    (click)="onSave()">
+                    Lưu</button>
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && id"
+                    (click)="onUpdate()">
+                    Lưu</button>
+                <button type="button" class="btn btn-light btn-sm" (click)="createNew()" *ngIf="id">
+                    Thêm mới</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" type="button" id="dropdownMenuButton">
+                Thao tác
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a *ngIf="id" class="dropdown-item" (click)="printInvoice()">In phiếu</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form class="o_form_view" [formGroup]="orderForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && !id"
+                    (click)="onSaveConfirm()">
+                    Xác nhận
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && id"
+                    (click)="onConfirm()">
+                    Xác nhận
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="actionCreateDotKham()">
+                    Tạo đợt khám
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'open'"
+                    (click)="actionInvoicePayment()">
+                    Thanh toán
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" *ngIf="['open'].indexOf(getInvState) != -1"
+                    (click)="actionCancel()">
+                    Hủy hóa đơn
+                </button>
+                <button type="button" class="btn btn-sm btn-primary" *ngIf="['cancel'].indexOf(getInvState) != -1"
+                    (click)="actionCancelDraft()">
+                    Chuyển thành nháp
+                </button>
+            </div>
+            <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                <button [disabled]="getInvState !== 'paid'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': getInvState === 'paid', 'btn-secondary': getInvState !== 'paid'}"
+                    type="button">
+                    Đã thanh toán
+                </button>
+                <button [disabled]="getInvState !== 'open'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': getInvState === 'open', 'btn-secondary': getInvState !== 'open'}"
+                    type="button">
+                    Đã xác nhận
+                </button>
+                <button [disabled]="getInvState !== 'draft'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': getInvState === 'draft', 'btn-secondary': getInvState !== 'draft'}"
+                    type="button">
+                    Nháp
+                </button>
+                <button *ngIf="getInvState === 'cancel'" [disabled]="getInvState !== 'cancel'"
+                    class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': getInvState === 'cancel', 'btn-secondary': getInvState !== 'cancel'}"
+                    type="button">
+                    Đã hủy
+                </button>
+            </div>
+        </div>
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <h1>
+                    <span *ngIf="getInvState == 'draft'">Mới</span>
+                    <span *ngIf="getInvState != 'draft'">{{getInvNumber}}</span>
+                </h1>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Khách hàng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                    #partnerCbx formControlName="partner" [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=" 1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Nhân viên
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
+                                    formControlName="user" [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày điều trị
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker formControlName="dateOrderObj" format="dd/MM/yyyy HH:mm">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="comment" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="o_notebook">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Chi tiết điều trị</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                            aria-controls="profile" aria-selected="false">Đợt khám</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-secondary btn-sm" accesskey="a"
+                                *ngIf="getInvState == 'draft'" aria-keyshortcuts="alt+a" (click)="showAddLineModal()">
+                                Thêm</button>
+                        </div>
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Dịch vụ</th>
+                                        <th>Răng</th>
+                                        <th>Chuẩn đoán</th>
+                                        <th class="text-right">Đơn giá</th>
+                                        <th class="text-right">Số lượng</th>
+                                        <th class="text-right">Thành tiền</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="invoiceLines">
+                                    <ng-container *ngFor="let line of invoiceLines.controls; let i=index">
+                                        <tr [formGroupName]="i">
+                                            <td>{{ lineProduct(line) }}</td>
+                                            <td>{{lineTeeth(line)}}</td>
+                                            <td>{{line.get('diagnostic').value}}</td>
+                                            <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
+                                            <td class="text-right">{{ line.get('quantity').value | number }}</td>
+                                            <td class="text-right">{{ line.get('priceSubTotal').value | number }}</td>
+                                            <td>
+                                                <button type="button" *ngIf="getInvState == 'draft'"
+                                                    class="btn btn-icon btn-sm btn-light mr-1" (click)="editLine(line)">
+                                                    <span class="k-icon k-i-edit"></span>
+                                                </button>
+                                                <button type="button" *ngIf="getInvState == 'draft'"
+                                                    class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
+                                                    <span class="k-icon k-i-delete"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    <span *ngIf="discountType == 'percentage'">Giảm %</span>
+                                                    <span *ngIf="discountType == 'fixed'">Giảm tiền</span>
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio"
+                                                            formControlName="discountType" name="discountType"
+                                                            (change)="onChangeDiscountType($event)" id="inlineRadio2"
+                                                            value="fixed">
+                                                        <label class="form-check-label" for="inlineRadio2">Giảm
+                                                            tiền</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="discountType"
+                                                            (change)="onChangeDiscountType($event)" id="inlineRadio1"
+                                                            formControlName="discountType" value="percentage">
+                                                        <label class="form-check-label" for="inlineRadio1">Giảm
+                                                            %</label>
+                                                    </div>
+                                                </div>
+                                                <kendo-numerictextbox *ngIf="discountType == 'percentage'" [min]="0"
+                                                    [disabled]="getInvState != 'draft'"
+                                                    (valueChange)="computeAmountTotal()" [format]="'n0'" [max]="100"
+                                                    formControlName="discountPercent">
+                                                </kendo-numerictextbox>
+                                                <kendo-numerictextbox *ngIf="discountType == 'fixed'" [min]="0"
+                                                    [disabled]="getInvState != 'draft'"
+                                                    (valueChange)="computeAmountTotal()" [format]="'n0'"
+                                                    formControlName="discountFixed">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="o_group o_inner_group o_group_col_6">
+                                    <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label" style="width: 50%;">
+                                                    <label class="o_form_label oe_subtotal_footer_separator">
+                                                        Tổng tiền
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 50%;">
+                                                    <span
+                                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getInvAmountTotal | number}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="payments.length">
+                                                <td colspan="2" style="width: 100%;">
+                                                    <div class="o_form_field">
+                                                        <div>
+                                                            <table style="width:100%;">
+                                                                <tbody>
+                                                                    <tr *ngFor="let payment of payments">
+                                                                        <td>
+                                                                            <a
+                                                                                class="js_payment_info fa fa-info-circle"></a>
+                                                                        </td>
+                                                                        <td>
+                                                                            <i
+                                                                                class="oe_form_field text-right oe_payment_label">Trả
+                                                                                lúc
+                                                                                {{ intlService.formatDate(intlService.parseDate(payment.date)) }}</i>
+                                                                        </td>
+                                                                        <td style="text-align:right;">
+                                                                            <span
+                                                                                class="oe_form_field oe_form_field_float oe_form_field_monetary o_field_widget"
+                                                                                style="margin-left: -10px;">
+                                                                                {{payment.amount | number}}
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="getInvState != 'draft'">
+                                                <td colspan="1" class="o_td_label">
+                                                    <label
+                                                        class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                                        Còn nợ
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" class="text-right">
+                                                    <span
+                                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getInvResidual | number}}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Mã tiến trình</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Nhân viên</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let dk of dotKhams">
+                                    <td>
+                                        <a [routerLink]="['/dot-khams/edit/', dk.id]">{{dk.name}}</a>
+                                    </td>
+                                    <td>{{ dk.date | date : 'short' }}</td>
+                                    <td>{{ dk.user ? dk.user.name : '' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="k-overlay" *ngIf="opened"></div>
+<div kendoWindowContainer></div>
+
+<div id="printInvoiceDiv" *ngIf="invoicePrint" style="display: none;">
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">{{invoicePrint.companyName}}</h5>
+            <div>Địa chỉ: {{invoicePrint.companyAddress}}</div>
+            <div>ĐT: {{invoicePrint.companyPhone}} - Email: {{invoicePrint.companyEmail}}</div>
+        </div>
+        <div class="text-center">
+            <h1>Hóa đơn điều trị</h1>
+            <span>Số phiếu: {{invoicePrint.number}} - Ngày: {{invoicePrint.dateInvoice | date: 'shortDate'}}</span>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{invoicePrint.partnerName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{invoicePrint.partnerAddress}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{invoicePrint.partnerPhone}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Dịch vụ</th>
+                        <th class="text-right">Số lượng</th>
+                        <th class="text-right">Đơn giá</th>
+                        <th class="text-right">CK (%)</th>
+                        <th class="text-right">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let line of invoicePrint.invoiceLines; let i=index">
+                        <td>{{ line.productName }}</td>
+                        <td class="text-right">{{ line.quantity | number }}</td>
+                        <td class="text-right">{{ line.priceUnit | number }}</td>
+                        <td class="text-right">{{ line.discount | number }}</td>
+                        <td class="text-right">{{ line.priceSubtotal | number }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label" style="width: 50%;">
+                            <label class="o_form_label oe_subtotal_footer_separator">
+                                Tổng tiền
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 50%;">
+                            <span
+                                class="oe_subtotal_footer_separator o_form_field o_form_field_number">{{invoicePrint.amountTotal | number}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="clearfix"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Khách hàng
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Người lập
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

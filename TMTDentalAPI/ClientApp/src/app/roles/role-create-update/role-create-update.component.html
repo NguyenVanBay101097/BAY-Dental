@@ -1,0 +1,71 @@
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li class="active">
+            <a routerLink="/roles">Quyền truy cập</a>
+        </li>
+    </ol>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+                    Lưu</button>
+                <button type="button" class="btn btn-secondary btn-sm" *ngIf="id" (click)="onNew()">
+                    Thêm mới</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+
+<form class="o_form_view" [formGroup]="roleForm" #form="ngForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <label class="o_form_label">Tên quyền</label>
+                <h1>
+                    <input type="text" class="form-control" placeholder="Tên" formControlName="name" #nameInput>
+                </h1>
+            </div>
+            <div>
+                <h4>Nhân viên</h4>
+                <div class="mb-3">
+                    <kendo-combobox style="width: 100%;" [data]="filteredUsers" [textField]="'name'" [filterable]="true"
+                        #userCbx [placeholder]="'Tìm nhân viên rồi nhấn enter để thêm'" [value]="selectUser"
+                        (valueChange)="onChangeUser($event)" [valueField]="'id'">
+                    </kendo-combobox>
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Tên</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody formArrayName="users">
+                        <ng-container *ngFor="let line of users.controls; let i=index">
+                            <tr [formGroupName]="i">
+                                <td>{{ line.get('name').value }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
+                                        <span class="k-icon k-i-delete"></span></button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Phân quyền</h4>
+                <kendo-treeview [nodes]="permissionData" [children]="children" [hasChildren]="hasChildren"
+                    textField="Text" checkBy="Id" [kendoTreeViewCheckable]="checkableSettings"
+                    [(checkedKeys)]="checkedKeys">
+                </kendo-treeview>
+            </div>
+
+        </div>
+    </div>
+</form>

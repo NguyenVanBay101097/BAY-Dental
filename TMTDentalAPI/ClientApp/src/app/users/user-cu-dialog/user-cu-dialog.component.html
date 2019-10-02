@@ -1,0 +1,58 @@
+<form class="o_form_view" [formGroup]="userForm" #form="ngForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <label class="o_form_label">Tên</label>
+                <h1>
+                    <input type="text" class="form-control" placeholder="Tên" formControlName="name" #nameInput>
+                </h1>
+            </div>
+
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Tài khoản
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="userName" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Mật khẩu
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="password" class="form-control" formControlName="passWord" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Email
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="email" class="form-control" formControlName="email" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+            </div>
+        </div>
+    </div>
+</form>

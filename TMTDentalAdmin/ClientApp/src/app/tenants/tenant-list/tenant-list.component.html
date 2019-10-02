@@ -1,0 +1,32 @@
+<div class="o_control_panel">
+  <ol class="breadcrumb">
+    <li class="active">Tenant</li>
+  </ol>
+  <div class="o_cp_searchview">
+  </div>
+  <div class="o_cp_left">
+    <div class="o_cp_buttons">
+      <div class="o_form_buttons_view">
+        <a class="btn btn-primary btn-sm" routerLink="/tenants/register">Register</a>
+      </div>
+    </div>
+    <div class="o_cp_sidebar">
+    </div>
+  </div>
+  <div class="o_cp_right">
+  </div>
+</div>
+
+<div class="d-flex">
+  <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="name" title="Khách hàng">
+    </kendo-grid-column>
+    <kendo-grid-column field="phone" title="Điện thoại">
+    </kendo-grid-column>
+    <kendo-grid-column field="companyName" title="Tên công ty">
+    </kendo-grid-column>
+    <kendo-grid-column field="hostname" title="host name">
+    </kendo-grid-column>
+  </kendo-grid>
+</div>

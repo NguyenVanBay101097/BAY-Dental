@@ -1,0 +1,126 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Hóa đơn điều trị</li>
+    </ol>
+    <div class="o_cp_searchview">
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
+                    mới</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+<div class="d-flex">
+    <div class="accordion search-section" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+                    Tìm kiếm
+                </a>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Theo số hóa đơn"
+                            [(ngModel)]="searchInvoiceNumber" (ngModelChange)="this.searchUpdate.next($event)" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" [(ngModel)]="searchPartnerNamePhone"
+                            placeholder="Theo tên, điện thoại KH" (ngModelChange)="this.searchUpdate.next($event)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="false" aria-controls="collapseTwo">
+                    Ngày điều trị
+                </a>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Từ ngày</label>
+                        <div>
+                            <kendo-datepicker [(value)]="dateOrderFrom" (valueChange)="onChangeDateOrder($event)">
+                            </kendo-datepicker>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Đến ngày</label>
+                        <div>
+                            <kendo-datepicker (valueChange)="onChangeDateOrder($event)" [(value)]="dateOrderTo">
+                            </kendo-datepicker>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="partner" title="Khách hàng">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.partner ? dataItem.partner.name : ''}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="dateOrder" title="Ngày điều trị">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.dateOrder | date : 'short'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="number" title="Số hóa đơn">
+            </kendo-grid-column>
+            <kendo-grid-column field="user" title="Nhân viên">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.user ? dataItem.user.name : ''}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amountTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="residual" title="Còn nợ" class="text-right">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.residual | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="comment" title="Ghi chú">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.comment}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{stateGet(dataItem.state)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="id">
+                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                    Thao tác
+                </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
+                        <span class="fa fa-edit"></span> Sửa</button>
+                    <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
+                        <span class="fa fa-trash"></span> Xóa</button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
+
+<div kendoDialogContainer></div>

@@ -1,0 +1,39 @@
+<form class="o_form_view o_form_editable" [formGroup]="formCreate">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Tên nhóm
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input class="form-control" formControlName="name">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Loại
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox formControlName="type" [data]="typeList" [valueField]="'id'"
+                                    [textField]="'type'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createEmpCategory()">Lưu</button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)">Đóng</button>
+            </div>
+        </div>
+    </div>
+</form>

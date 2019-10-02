@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <!--
+    Resource: product.uom.categ
+    -->
+    <record id="product_category_all" model="product.category">
+      <field name="name">Tất cả</field>
+    </record>
+    <record id="product_category_1" model="product.category">
+      <field name="parent_id" ref="product_category_all"/>
+      <field name="name">Có thể bán</field>
+    </record>
+
+    <record id="product_uom_categ_unit" model="product.uom.categ">
+      <field name="name">Đơn vị</field>
+      <field name="measure_type">unit</field>
+    </record>
+    <record id="product_uom_categ_kgm" model="product.uom.categ">
+      <field name="name">Khối lượng</field>
+      <field name="measure_type">weight</field>
+    </record>
+    <record id="uom_categ_length" model="product.uom.categ">
+      <field name="name">Độ dài / Khoảng cách</field>
+      <field name="measure_type">length</field>
+    </record>
+    <record id="product_uom_categ_vol" model="product.uom.categ">
+      <field name="name">Thể tích</field>
+      <field name="measure_type">volume</field>
+    </record>
+
+    <!--
+            Resource: product.uom
+        -->
+    <record id="product_uom_unit" model="product.uom">
+      <field name="category_id" ref="product_uom_categ_unit"/>
+      <field name="name">Cái</field>
+      <field name="factor" eval="1.0"/>
+      <field name="rounding" eval="0.001"/>
+    </record>
+    <record id="product_uom_dozen" model="product.uom">
+      <field name="category_id" ref="product_uom_categ_unit"/>
+      <field name="name">Tá</field>
+      <field name="factor_inv" eval="12"/>
+      <field name="uom_type">bigger</field>
+    </record>
+    <record id="product_uom_kgm" model="product.uom">
+      <field name="category_id" ref="product_uom_categ_kgm"/>
+      <field name="name">kg</field>
+      <field name="factor" eval="1"/>
+      <field name="rounding" eval="0.001"/>
+    </record>
+    <record id="product_uom_gram" model="product.uom">
+      <field name="category_id" ref="product_uom_categ_kgm"/>
+      <field name="name">g</field>
+      <field name="factor" eval="1000"/>
+      <field name="uom_type">smaller</field>
+    </record>
+    <record id="product_uom_ton" model="product.uom">
+      <field name="category_id" ref="product_uom_categ_kgm"/>
+      <!-- 'tonne' is the most common spelling in english-speaking countries,
+                 the alternative is 'metric ton' in the US, abbreviated as 'mt' -->
+      <field name="name">Tấn</field>
+      <field name="factor_inv" eval="1000"/>
+      <field name="uom_type">bigger</field>
+    </record>
+    <record id="product_uom_meter" model="product.uom">
+      <field name="category_id" ref="uom_categ_length"/>
+      <field name="name">m</field>
+      <field name="factor" eval="1.0"/>
+    </record>
+    <record id="product_uom_km" model="product.uom">
+      <field name="category_id" ref="uom_categ_length"/>
+      <field name="name">km</field>
+      <field name="factor_inv" eval="1000"/>
+      <field name="uom_type">bigger</field>
+    </record>
+    <record id="product_uom_cm" model="product.uom">
+      <field name="category_id" ref="uom_categ_length"/>
+      <field name="name">cm</field>
+      <field name="factor" eval="100"/>
+      <field name="uom_type">smaller</field>
+    </record>
+    <record id="product_uom_litre" model="product.uom">
+      <field name="name">Lít</field>
+      <field name="category_id" ref="product_uom_categ_vol"/>
+      <field name="factor" eval="1.0"/>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,489 @@
+<div *ngIf="!dialog" kendoWindowContainer></div>
+<div kendoDialogContainer></div>
+
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li>
+            <a routerLink="/dot-khams">Đợt khám</a>
+        </li>
+        <li class="active">
+            <span>{{getName}}</span>
+        </li>
+    </ol>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-light btn-sm" (click)="actionCreateDotKham()" *ngIf="!dialog">
+                    Mở đợt khám mới</button>
+                <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    (click)="onSave()" *ngIf="!id">
+                    Lưu</button>
+                <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    (click)="onUpdate()" *ngIf="id  && getState === 'draft'">
+                    Lưu thay đổi</button>
+                <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    (click)="onConfirm()" *ngIf="id && getState === 'draft'">
+                    Xác nhận</button>
+                <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    (click)="actionCreateToaThuoc()">
+                    <i class="fas fa-pills"></i> Kê toa </button>
+                <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    (click)="actionCreateLabo()">
+                    <i class="fas fa-tooth"></i> Tạo labo</button>
+                <button *ngIf="id" title="Lịch hẹn" [disabled]="invoiceState=='cancel'" type="button"
+                    class="btn btn-light btn-sm" [style.background-color]="getAppointState ? getAppointState.color : ''"
+                    [style.color]="getAppointState ? 'white' : ''" (click)="appointmentCreate()">
+                    <i class="far fa-calendar-alt"></i>&nbsp;
+                    <span *ngIf="getAppointment">{{getAppointState ? getAppointState.text : ''}} :
+                        {{getAppointment.date | date : 'short'}}</span>
+                    <span *ngIf="!getAppointment">Lịch hẹn</span>
+                </button>
+
+                <!-- <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    (click)="actionCreateAppointment()">
+                    <i class="fas fa-calendar-alt"></i> Hẹn tái khám</button> -->
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+
+<form class="o_form_view" [formGroup]="dotKhamForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <h1>
+                    <span>{{getName}}</span>
+                </h1>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Khách hàng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <span *ngIf="getPartner && id">{{getPartner.name}}</span>
+                                <div [hidden]="id">
+                                    <div class="d-flex">
+                                        <kendo-combobox formControlName="partner" [allowCustom]="false"
+                                            [filterable]="true" [data]="customerSimpleFilter" #partnerCbx
+                                            [valueField]="'id'" [textField]="'name'">
+                                        </kendo-combobox>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Phiếu điều trị
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <a *ngIf="getInvoice  && id"
+                                    [routerLink]="['/customer-invoices/edit/', getInvoice.id]">{{getInvoice.number}}</a>
+                                <div [hidden]="id">
+                                    <kendo-combobox formControlName="invoice" [allowCustom]="false" [filterable]="true"
+                                        [data]="customerInvoicesList" #invoiceCbx [valueField]="'id'"
+                                        [textField]="'number'">
+                                    </kendo-combobox>
+                                </div>
+                            </td>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ngày tạo
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <!-- <kendo-dateinput formControlName="dateObj" [format]="'dd-MM-yyyy HH:mm'">
+                                                                </kendo-dateinput> -->
+                                {{dotKhamForm.get('date').value | date : 'shortDate'}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Bác sĩ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <!-- <span *ngIf="getDoctor && id">{{getDoctor.name}}</span> -->
+                                <div>
+                                    <div class="d-flex">
+                                        <kendo-combobox formControlName="doctor" [filterable]="true"
+                                            [data]="doctorSimpleFilter" #doctorCbx [valueField]="'id'"
+                                            [textField]="'name'">
+                                        </kendo-combobox>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Phụ tá
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <!-- <span *ngIf="getAssistant && id">{{getAssistant.name}}</span> -->
+                                <div>
+                                    <div class="d-flex">
+                                        <kendo-combobox formControlName="assistant" [filterable]="true"
+                                            [data]="assistantSimpleFilter" #assistantCbx [valueField]="'id'"
+                                            [textField]="'name'">
+                                        </kendo-combobox>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Người tạo
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                {{dotKhamForm.get('user').value ? dotKhamForm.get('user').value.name : ''}}
+                                <!-- <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
+                                    [valueNormalizer]="valueNormalizer" [allowCustom]="true" formControlName="user"
+                                    [valueField]="'id'">
+                                </kendo-combobox> -->
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="note" />
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- <div>
+                <input type="text" formControlName="step" />
+                <kendo-combobox formControlName="assistant" [filterable]="true" [data]="assistantSimpleFilter"
+                    #assistantCbx [valueField]="'id'" [textField]="'name'">
+                </kendo-combobox>
+                <button class="btn btn-info btn-sm mr-2">Thêm</button>
+            </div> -->
+
+
+            <div class="o_notebook">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Điều trị</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                            aria-controls="profile" aria-selected="false">Toa thuốc</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo" role="tab" aria-controls="labo"
+                            aria-selected="false">Labo</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" id="appointment-tab" data-toggle="tab" href="#appointment" role="tab"
+                            aria-controls="appointment" aria-selected="false">Danh sách hẹn</a>
+                    </li> -->
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div>
+                            <div style="width: 15%">
+                                <select formControlName="filter" (change)="loadDotKhamSteps()" class="form-control">
+                                    <option value="dotkham">Đợt khám</option>
+                                    <option value="all">Tất cả</option>
+                                </select>
+                            </div>
+                            <table class="o_group o_inner_group o_group_col_6" *ngIf="getState=='confirmed'">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Công đoạn
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <div>
+                                                <input class="form-control" type="text" formControlName="step" />
+                                            </div>
+                                        </td>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Dịch vụ
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <kendo-combobox formControlName="product" [filterable]="true"
+                                                [data]="productSimpleFilteredList"
+                                                (filterChange)="filterProductSimple($event)" [valueField]="'id'"
+                                                [textField]="'name'">
+                                            </kendo-combobox>
+                                        </td>
+                                        <td><button [disabled]="invoiceState=='cancel'" (click)="createDKSteps()"
+                                                class="btn btn-info btn-sm mr-2">Thêm</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-sm">
+                                <tr class="row">
+                                    <!-- <th>#</th> -->
+                                    <th class="col">Dịch vụ</th>
+                                    <th class="col">Công đoạn</th>
+                                    <th class="col">Đợt khám</th>
+                                    <th class="col">Trạng thái</th>
+                                    <th class="col">Thao tác</th>
+                                </tr>
+                                <span>
+                                    <div *ngFor="let stepList of dotKhamStepsList" cdkDropList
+                                        [cdkDropListData]="stepList" (cdkDropListDropped)="drop($event)">
+                                        <tr class="row" *ngFor="let step of stepList" cdkDrag>
+                                            <!-- <td>
+                                                <ng-container *ngIf="step.id==stepList[0].id">
+                                                    <span *ngIf="doneList.indexOf(stepList)>-1"><i
+                                                            class="fas fa-check"></i></span>
+                                                    <span *ngIf="!(doneList.indexOf(stepList)>-1)"><i
+                                                            class="fas fa-hourglass-half"></i></span>
+                                                </ng-container>
+                                            </td> -->
+                                            <td class="col">
+                                                <span>
+                                                    <b *ngIf="step.id==stepList[0].id">
+                                                        {{stepList[0].product ? stepList[0].product.name : ''}}
+                                                    </b>
+                                                </span>
+                                            </td>
+                                            <td class="col">
+                                                {{step.name}}
+                                            </td>
+                                            <td class="col">
+                                                {{step.dotKham ? step.dotKham.name : ''}}
+                                            </td>
+                                            <td class="col">
+                                                <button [disabled]="invoiceState=='cancel'"
+                                                    (click)="checkState(step.id,step.state)" class="btn btn-sm mr-2"
+                                                    [class.btn-light]="step.state=='draft'"
+                                                    [class.btn-primary]="step.state=='progress'"
+                                                    [class.btn-success]="step.state=='done'">
+                                                    {{getStateLine(step.state)}}
+                                                </button>
+                                            </td>
+                                            <td class="col">
+                                                <button [disabled]="invoiceState=='cancel'"
+                                                    (click)="deleteSteps(step.id)" class="btn btn-light btn-sm mr-2">
+                                                    <i title="Xóa" class="fas fa-trash"></i>&nbsp;Xóa</button>
+                                            </td>
+                                        </tr>
+                                    </div>
+                                </span>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Ngày</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let line of toaThuocs">
+                                        <td><button [disabled]="invoiceState=='cancel'"
+                                                class="text-primary btn btn-link"
+                                                (click)="editToaThuoc(line)">{{line.name}}</button></td>
+                                        <td>{{ line.date | date : 'short' }}</td>
+                                        <td>
+                                            <button [disabled]="invoiceState=='cancel'" type="button"
+                                                class="btn btn-icon btn-sm btn-light mr-1" title="In toa thuốc"
+                                                (click)="printToaThuoc(line)">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="labo" role="tabpanel" aria-labelledby="labo-tab">
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Tên labo</th>
+                                        <th>Số lượng</th>
+                                        <th>Ngày gửi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let line of laboOrderLines">
+                                        <td><a class="text-primary" style="cursor: pointer;"
+                                                (click)="editLaboLine(line)">{{line.name}}</a></td>
+                                        <td>{{ line.product ? line.product.name : '' }}</td>
+                                        <td>{{ line.quantity | number }}</td>
+                                        <td>{{ line.sentDate | date : 'shortDate' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- <div class="tab-pane" id="appointment" role="tabpanel" aria-labelledby="appointment-tab">
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Ngày hẹn</th>
+                                        <th>Bác sĩ</th>
+                                        <th>Người hẹn</th>
+                                        <th>Ghi chú</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of appointments">
+                                        <td><a class="text-primary" style="cursor: pointer;"
+                                                (click)="editAppointment(item)">{{item.name}}</a></td>
+                                        <td>{{ item.date | date : 'short' }}</td>
+                                        <td>{{ item.doctor ? item.doctor.name : '' }}</td>
+                                        <td>{{ item.user ? item.user.name : '' }}</td>
+                                        <td>{{ item.note }}</td>
+                                        <td>{{ getAppointState(item.state) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div *ngIf="dialog">
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow()"><i
+            class="fas fa-window-close"></i>&nbsp;Đóng</button>
+    <a style="color: white" class="btn btn-primary btn-sm"
+        [routerLink]="id ? ['/dot-khams/edit/'+id] : ['/dot-khams/create/']" target="_blank">
+        <i class="fas fa-external-link-alt"></i>&nbsp;Mở trong tab</a>
+</div>
+
+<div id="printToaThuocDiv" *ngIf="toaThuocPrint" style="display: none;">
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">{{toaThuocPrint.companyName}}</h5>
+            <div>Địa chỉ: {{toaThuocPrint.companyAddress}}</div>
+            <div>ĐT: {{toaThuocPrint.companyPhone}} - Email: {{toaThuocPrint.companyEmail}}</div>
+        </div>
+        <div class="text-center">
+            <h1>Đơn thuốc</h1>
+            <span>Số: {{toaThuocPrint.name}} - Ngày: {{toaThuocPrint.date | date: 'shortDate'}}</span>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerAddress}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Phái
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerGender}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tuổi
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerAge}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Thuốc</th>
+                        <th class="text-right">Số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let line of toaThuocPrint.lines; let i=index">
+                        <td>
+                            <span class="font-weight-bold">{{ line.productName }}</span> <br />
+                            <span class="font-italic">{{ line.name }}</span>
+                        </td>
+                        <td class="text-right">{{ line.quantity | number }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Bác sĩ
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="k-overlay" *ngIf="opened"></div>

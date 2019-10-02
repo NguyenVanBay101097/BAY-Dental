@@ -1,0 +1,205 @@
+<div kendoWindowContainer></div>
+<div kendoDialogContainer></div>
+
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Lịch hẹn</li>
+    </ol>
+    <div class="o_cp_searchview">
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button class="btn btn-primary btn-sm" (click)="openWindow(null,null)">
+                    <i class="fas fa-calendar-plus"></i>&nbsp;Đặt lịch hẹn</button>
+                <button class="btn btn-sm" [class.activeButton]="schedulerShow" (click)="showSchedulerDefault()">
+                    <i class="fas fa-calendar-alt"></i>&nbsp;Xem lịch</button>
+                <button class="btn btn-sm" [class.activeButton]="!schedulerShow" (click)="showGridView()">
+                    <i class="fas fa-list"></i>&nbsp;Xem danh sách</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+<div class="mainLeft">
+    <div class="accordion" id="accordionExample">
+        <div [formGroup]="formFilter">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                            aria-expanded="false" aria-controls="collapseOne">
+                            Tìm kiếm
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" [(ngModel)]="searchCustomer"
+                                (ngModelChange)="this.searchCustomerUpdate.next($event)"
+                                formControlName="searchCustomer" placeholder="Theo mã, tên hoặc SĐT khách hàng" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" formControlName="searchDoctor"
+                                [(ngModel)]="searchDoctor" (ngModelChange)="this.searchDoctorUpdate.next($event)"
+                                placeholder="Theo bác sĩ" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" [(ngModel)]="searchAppoint"
+                                (ngModelChange)="this.searchAppointUpdate.next($event)" formControlName="searchAppoint"
+                                placeholder="Theo mã lịch hẹn" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            Trạng thái
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" formControlName="confirmed" id="confirmed"
+                                            (change)="checkState()" /> Đang hẹn</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label><input type="checkbox" formControlName="done" id="done"
+                                            (change)="checkState()" /> Kết thúc</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label><input type="checkbox" formControlName="cancel" id="cancel"
+                                            (change)="checkState()" /> Đã hủy</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label><input type="checkbox" formControlName="expired" id="expired"
+                                            (change)="checkState()" /> Quá hạn</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label><input type="checkbox" formControlName="waiting" id="waiting"
+                                            (change)="checkState()" /> Đang chờ</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="schedulerShow==false" class="card">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree"
+                            aria-expanded="false" aria-controls="collapseThree">
+                            Ngày hẹn
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Từ ngày</label>
+                            <div>
+                                <kendo-datepicker formControlName="frDate" [format]="'yyyy-MM-dd'"
+                                    (valueChange)="changeDateRangeFilter()" [max]="toDateValue">
+                                </kendo-datepicker>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Đến ngày</label>
+                            <div>
+                                <kendo-datepicker formControlName="toDate" [format]="'yyyy-MM-dd'"
+                                    (valueChange)="changeDateRangeFilter()" [min]="fromDateValue">
+                                </kendo-datepicker>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="mainRight">
+    <kendo-grid [hidden]='schedulerShow' [data]="this.gridView" [height]="800" [pageable]='true'
+        (pageChange)="pageChange($event)" [loading]="loading" [pageSize]="limit">
+        <kendo-grid-column field="name" title="Mã" width="250"></kendo-grid-column>
+        <kendo-grid-column field="partner.name" title="Khách hàng" width="250"></kendo-grid-column>
+        <kendo-grid-column field="user.name" title="Bác sĩ" width="250"></kendo-grid-column>
+        <kendo-grid-column field="date" title="Thời gian" width="250">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.date | date : 'short'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getState(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-command-column title="Thao tác">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <button (click)="openWindow(dataItem.id,null)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
+                        class="fas fa-edit"></i>&nbsp;Sửa</button>
+                <button (click)="deleteAppointment(dataItem.id)" class="btn btn-danger btn-sm mr-2"><i title="Xóa"
+                        class="fas fa-times"></i>&nbsp;Xóa</button>
+                <button (click)="openCustomerInfo(dataItem.partnerId)" class="btn btn-info btn-sm mr-2"><i
+                        class="fas fa-user"></i>&nbsp;Thông tin KH</button>
+            </ng-template>
+        </kendo-grid-command-column>
+        <kendo-grid-messages pagerItems="dòng" noRecords="Không có lịch hẹn nào" pagerOf="/"></kendo-grid-messages>
+    </kendo-grid>
+    <kendo-scheduler [hidden]='!schedulerShow' [kendoSchedulerBinding]="events" [resources]="resources"
+        [selectedDate]="schedulerConfig.selectedDate" [selectedViewIndex]="schedulerConfig.indexViewNum"
+        [startTime]="schedulerConfig.startDisplay" [endTime]="schedulerConfig.endDisplay"
+        [workDayStart]="schedulerConfig.workDayStart" [workDayEnd]="schedulerConfig.workDayEnd"
+        [workWeekStart]="schedulerConfig.workWeekStart" [workWeekEnd]="schedulerConfig.workWeekEnd" [editable]="true"
+        style="height: 800px;" [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
+        [slotDuration]="schedulerConfig.slotDuration" (eventDblClick)="eventDblClick($event)"
+        (slotDblClick)="slotDblClick($event)" (remove)="cancelOrRemoveEvent($event)" (dragEnd)="dragEvent($event)"
+        (dateChange)="changeDateRangeScheduler($event)">
+
+        <ng-template kendoSchedulerEventTemplate let-event="event" let-resources="resources">
+            <b>{{ event.title }}</b>
+            <div style="float: right">
+                <ng-container *ngFor="let resource of resources">
+                    <span *ngIf="!resource.length">
+                        <span [style.background]="resource.color" style="padding: 4px; margin: 4px;">
+                            {{ resource.text }}
+                        </span>
+                    </span>
+                </ng-container>
+            </div>
+            <div>{{ event.description }}</div>
+        </ng-template>
+
+        <kendo-scheduler-day-view>
+        </kendo-scheduler-day-view>
+
+        <kendo-scheduler-week-view>
+        </kendo-scheduler-week-view>
+
+        <kendo-scheduler-month-view>
+        </kendo-scheduler-month-view>
+
+        <kendo-scheduler-multi-day-view [numberOfDays]="schedulerConfig.numberOfDays">
+        </kendo-scheduler-multi-day-view>
+
+        <kendo-scheduler-messages today="Hôm nay" allDay="Tất cả" dayViewTitle="Ngày" weekViewTitle="Tuần"
+            monthViewTitle="Tháng" [multiDayViewTitle]="schedulerConfig.numberOfDays +' ngày kế'"
+            showWorkDay="Hiện giờ làm việc" showFullDay="Hiện cả ngày">
+        </kendo-scheduler-messages>
+    </kendo-scheduler>
+</div>
+<div class="k-overlay" *ngIf="this.windowOpened"></div>

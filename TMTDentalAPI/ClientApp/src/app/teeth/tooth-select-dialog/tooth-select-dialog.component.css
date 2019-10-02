@@ -1,0 +1,9 @@
+.tooth-item {
+    padding: 15px;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+.tooth-item.selected {
+    background-color: #ccc;
+}

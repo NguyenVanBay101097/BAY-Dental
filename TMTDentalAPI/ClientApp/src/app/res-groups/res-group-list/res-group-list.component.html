@@ -1,0 +1,52 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Nhóm quyền</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+        <!-- <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" type="button" id="dropdownMenuButton">
+                Thao tác
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item">Xóa</a>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<div kendoDialogContainer></div>
+
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Tên">
+        </kendo-grid-column>
+        <kendo-grid-column field="id">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
+                    <span class="fa fa-edit"></span> Sửa</button>
+                <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
+                    <span class="fa fa-trash"></span> Xóa</button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

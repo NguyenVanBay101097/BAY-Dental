@@ -1,0 +1,137 @@
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li><a routerLink="/picking-type-overview">Tất cả hoạt động</a></li>
+        <li *ngIf="pickingType">
+            <a [routerLink]="['/pickings']" [queryParams]="{picking_type_id: pickingType.id}">{{pickingType.name}}</a>
+        </li>
+        <li class="active">{{pickingName === '/' ? 'Mới' : pickingName}}</li>
+    </ol>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="pickingState === 'draft'"
+                    (click)="onSaveOrUpdate()">Lưu</button>
+                <button type="button" *ngIf="pickingState === 'draft'" class="btn btn-danger btn-sm"
+                    (click)="actionDone()">Xác
+                    nhận</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+            <a [routerLink]="['/pickings/create']" [queryParams]="{picking_type_id: pickingType.id}"
+                *ngIf="pickingType && id" class="btn btn-secondary btn-sm">Thêm mới</a>
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+<div class="o_form_view" [formGroup]="pickingForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <h1 class="hidden-xs"><span class="o_form_field">{{pickingName}}</span>
+            </h1>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Đối tác
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                    #partnerCbx formControlName="partner" [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ngày
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker formControlName="dateObj"></kendo-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="note" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="o_notebook">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Chi tiết</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="picking-lines">
+                            <div class="search-product">
+                                <app-product-search-list [paged]="productPaged" (selected)="onProductSelected($event)">
+                                </app-product-search-list>
+                            </div>
+                            <div class="move-list">
+                                <table class="table table-sm" id="table_details">
+                                    <thead>
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th class="text-right">Số lượng</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="moveLines">
+                                        <ng-container *ngFor="let line of moveLines.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td>{{ line.get('product').value.name}}</td>
+                                                <td class="text-right">
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                        formControlName="productUOMQty">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td>
+                                                    <!-- <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                                    *ngIf="pickingState === 'draft'" (click)="editLine(line)">
+                                                                    <span class="k-icon k-i-edit"></span>
+                                                                </button> -->
+                                                    <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                        tabindex="-1" *ngIf="pickingState === 'draft'"
+                                                        (click)="deleteLine(i)">
+                                                        <span class="k-icon k-i-delete"></span></button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="k-overlay" *ngIf="opened"></div>
+<div kendoWindowContainer></div>

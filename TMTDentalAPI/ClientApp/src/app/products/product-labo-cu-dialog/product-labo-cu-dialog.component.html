@@ -1,0 +1,10 @@
+<app-product-labo-form [formGroup]="formGroup" [filteredCategories]="filteredCategories"
+    (btnCreateCategClick)="onBtnCreateCategClick()" (filterChangeCateg)="onFilterChangeCateg($event)" #productForm>
+</app-product-labo-form>
+<div>
+    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s"
+        [disabled]="!formGroup.valid">
+        <i class="far fa-save"></i> Lưu</button>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">
+        <i class="fas fa-times"></i> Đóng</button>
+</div>

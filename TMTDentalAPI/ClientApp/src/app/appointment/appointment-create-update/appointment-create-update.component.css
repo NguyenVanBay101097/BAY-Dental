@@ -1,0 +1,7 @@
+.k-datepicker {
+    width: 100%;
+}
+
+kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header{
+    background-color: red;
+}

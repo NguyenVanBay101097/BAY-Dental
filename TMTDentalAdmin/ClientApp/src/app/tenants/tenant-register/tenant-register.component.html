@@ -1,0 +1,107 @@
+<div class="o_control_panel o_breadcrumb_full">
+  <ol class="breadcrumb">
+    <li>
+      <a routerLink="/tenants">Tenants</a>
+    </li>
+    <li class="active">
+      Register
+    </li>
+  </ol>
+  <div class="o_cp_left">
+    <div class="o_cp_buttons">
+      <div class="o_form_buttons_view">
+        <button type="button" class="btn btn-primary btn-sm" [disabled]="loading" (click)="onSubmit()">
+          Lưu</button>
+      </div>
+    </div>
+    <div class="o_cp_sidebar">
+    </div>
+  </div>
+  <div class="o_cp_right">
+  </div>
+</div>
+
+<form class="o_form_view" [formGroup]="registerForm">
+  <div class="o_form_sheet_bg">
+    <div class="o_form_sheet">
+      <div class="o_group">
+        <table class="o_group o_inner_group o_group_col_6">
+          <tbody>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label">
+                  Họ tên
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="text" class="form-control" formControlName="name" />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label o_form_label_help">
+                  Điện thoại
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="text" class="form-control" formControlName="phone" />
+            </tr>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label">
+                  Email
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="text" class="form-control" formControlName="email" />
+            </tr>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label">
+                  Tên công ty
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="text" class="form-control" formControlName="companyName" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="o_group o_inner_group o_group_col_6">
+          <tbody>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label">
+                  Host name
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="text" class="form-control" formControlName="hostName" />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label">
+                  Tên đăng nhập
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="text" class="form-control" formControlName="username" />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="1" class="o_td_label">
+                <label class="o_form_label">
+                  Mật khẩu
+                </label>
+              </td>
+              <td colspan="1" style="width: 100%;">
+                <input type="password" class="form-control" formControlName="password" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</form>

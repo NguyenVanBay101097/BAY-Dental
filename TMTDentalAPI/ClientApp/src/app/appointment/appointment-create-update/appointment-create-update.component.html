@@ -1,0 +1,86 @@
+<div *ngIf="appointId" style="float: right">{{getState(state)}}</div>
+<form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+    <input formControlName="state" hidden />
+    <input formControlName="companyId" hidden />
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div *ngIf="appointId">
+                <button *ngIf="!(appointState=='done')" class="btn btn-light btn-sm mr-2"
+                    (click)="doneAppointment()">Hoàn tất</button>
+                <button *ngIf="!(appointState=='waiting')" class="btn btn-primary btn-sm mr-2"
+                    (click)="waitingAppointment()">Đang chờ</button>
+                <button *ngIf="!(appointState=='cancel')" class="btn btn-danger btn-sm mr-2"
+                    (click)="cancelAppointment()">Hủy hẹn</button>
+            </div>
+            <div class="oe_title">
+                <h1>
+                    <span>{{formCreate.get('name').value}}</span>
+                </h1>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Khách hàng</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="d-flex">
+                                    <kendo-combobox formControlName="partner" [allowCustom]="false" [filterable]="true"
+                                        [data]="customerSimpleFilter" #partnerCbx [valueField]="'id'"
+                                        [textField]="'name'" [readonly]="partnerAvailble()">
+                                    </kendo-combobox>
+                                    <a *ngIf="!dotKhamId && state=='confirmed'" class="btn btn-sm btn-light"
+                                        (click)="quickCreateCustomer()">
+                                        <span class="k-icon k-i-plus"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Bác sĩ</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox formControlName="doctor" [filterable]="true" [data]="doctorSimpleFilter"
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [readonly]="doctorAvailble()">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Ngày</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"
+                                    [format]="'yyyy-MM-dd HH:mm'" formControlName="dateObj" [readonly]="timeAvailble()">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi chú</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input class="form-control" formControlName="note" />
+                            </td>
+                        </tr>
+                        <tr>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-right">
+        <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
+                class="fas fa-window-close"></i>&nbsp;Đóng</button>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createNewAppointment()"><i
+                class="fas fa-save"></i>&nbsp;Lưu</button>
+    </div>
+</form>

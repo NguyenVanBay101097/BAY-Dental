@@ -1,0 +1,69 @@
+<div kendoWindowContainer></div>
+<div kendoDialogContainer></div>
+
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Khách hàng</li>
+    </ol>
+    <div class="o_cp_searchview">
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">
+                    <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+<div class="d-flex">
+    <div class="accordion search-section" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                    href="#" onclick="javascript:void(0);">
+                    Tìm kiếm
+                </a>
+            </div>
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Theo mã hoặc tên"
+                            [(ngModel)]="searchNameRef" (ngModelChange)="this.searchUpdate.next($event)" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" [(ngModel)]="searchPhone"
+                            (ngModelChange)="this.searchUpdate.next($event)" placeholder="Theo số điện thoại" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip"
+            (pageChange)="pageChange($event)" [loading]="loading">
+            <kendo-grid-column field="ref" title="Mã" width="120"></kendo-grid-column>
+            <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
+            <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
+            <kendo-grid-column field="email" title="Email" width="250"></kendo-grid-column>
+            <kendo-grid-command-column title="Thao tác" width="250">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
+                            class="fas fa-edit"></i>&nbsp;Sửa</button>
+                    <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i
+                            title="Vô hiệu hóa" class="fas fa-times"></i>&nbsp;Xóa</button>
+                </ng-template>
+            </kendo-grid-command-column>
+            <!-- <div *kendoGridDetailTemplate="let dataItem">
+                <app-partner-customer-list-detail [item]="dataItem"></app-partner-customer-list-detail>
+            </div> -->
+        </kendo-grid>
+    </div>
+</div>
+
+<div class="k-overlay" *ngIf="opened"></div>

@@ -1,0 +1,160 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Sản phẩm</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false" type="button" id="dropdownMenuButton2">
+                    Thêm
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                    <button type="button" class="dropdown-item" (click)="createService()">Dịch vụ</button>
+                    <button type="button" class="dropdown-item" (click)="createMedicine()">Thuốc</button>
+                    <button type="button" class="dropdown-item" (click)="createLabo()">Labo</button>
+                    <button type="button" class="dropdown-item" (click)="createProduct()">Vật tư</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" type="button" id="dropdownMenuButton">
+                Thao tác
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <!-- <a class="dropdown-item" (click)="importFromExcel()">Thêm sản phẩm từ excel</a> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="k-overlay" *ngIf="opened"></div>
+<div kendoWindowContainer></div>
+<div kendoDialogContainer></div>
+
+<div class="d-flex">
+    <div class="accordion search-section" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                    href="#" onclick="javascript:void(0);">Theo nhóm sản phẩm</a>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                <div class="card-body">
+                    <kendo-combobox [data]="filteredCategs" [textField]="'completeName'" [filterable]="true" #categCbx
+                        [(ngModel)]="searchCateg" [valueField]="'id'" (valueChange)="loadDataFromApi()">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="card">
+            <div class="card-header" id="heading2">
+                <a data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2"
+                    href="#" onclick="javascript:void(0);">Hình thức</a>
+            </div>
+
+            <div id="collapse2" class="collapse show" aria-labelledby="heading2">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="saleOKFilter" id="defaultCheck1"
+                            (change)="loadDataFromApi()">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Có thể bán
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" [(ngModel)]="purchaseOKFilter" type="checkbox" value=""
+                            (change)="loadDataFromApi()" id="defaultCheck2">
+                        <label class="form-check-label" for="defaultCheck2">
+                            Có thể mua
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" [(ngModel)]="keToaOKFilter" type="checkbox" value=""
+                            (change)="loadDataFromApi()" id="defaultCheck3">
+                        <label class="form-check-label" for="defaultCheck3">
+                            Là thuốc
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" [(ngModel)]="isLaboFilter" type="checkbox" value=""
+                            (change)="loadDataFromApi()" id="defaultCheck6">
+                        <label class="form-check-label" for="defaultCheck6">
+                            Là labo
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div class="card">
+            <div class="card-header" id="heading3">
+                <a data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapse3"
+                    href="#" onclick="javascript:void(0);">Loại</a>
+            </div>
+
+            <div id="collapse3" class="collapse show" aria-labelledby="heading3">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="productConsuTypeFilter"
+                            id="defaultCheck4" (change)="loadDataFromApi()">
+                        <label class="form-check-label" for="defaultCheck4">
+                            Hàng hóa
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" [(ngModel)]="serviceTypeFilter" type="checkbox"
+                            (change)="loadDataFromApi()" id="defaultCheck5">
+                        <label class="form-check-label" for="defaultCheck5">
+                            Dịch vụ
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="name" title="Tên sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="defaultCode" title="Mã sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="categName" title="Nhóm sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="listPrice" class="text-right" title="Giá bán">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.listPrice | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="qtyAvailable" class="text-right" title="Tồn kho">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="id">
+                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                    Thao tác
+                </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
+                        <span class="fa fa-edit"></span> Sửa</button>
+                    <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
+                        <span class="fa fa-trash"></span> Xóa</button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+
+</div>

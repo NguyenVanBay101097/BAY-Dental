@@ -1,0 +1,66 @@
+<div class="row container" *ngIf="partner">
+    <div class="col">
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Mã</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext ">{{partner.ref}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Tên</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext ">{{partner.name}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Giới tính</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext ">{{partner.gender}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Ngày sinh</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext ">{{partner.dateOfBirth}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Điện thoại</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext ">{{partner.phone}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Email</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext ">{{partner.email}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Nghề nghiệp</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext">{{partner.jobTitle}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Địa chỉ</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext">{{partner.address}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Nhóm</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext">{{partner.categories}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-sm-3 col-form-label font-weight-600">Tiền sử bệnh</label>
+            <div class="col-sm-9">
+                <p class="form-control-plaintext">{{partner.medicalHistory}}</p>
+            </div>
+        </div>
+    </div>
+</div>

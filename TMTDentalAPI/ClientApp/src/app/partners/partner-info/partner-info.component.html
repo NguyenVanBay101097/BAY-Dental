@@ -1,0 +1,24 @@
+<table>
+    <tr>
+        <td class="label">Tên Khách hàng</td>
+        <td class="content">{{partner.name}}</td>
+        <td class="label">Mã Khách hàng</td>
+        <td class="content">{{partner.ref}}</td>
+    </tr>
+    <tr>
+        <td class="label">Giới tính</td>
+        <td class="content">{{partner.gender}}</td>
+        <td class="label">Số điện thoại</td>
+        <td class="content">{{partner.phone}}</td>
+    </tr>
+    <tr>
+        <td class="label">Tiền căn</td>
+        <td class="content">{{partner.medicalHistory}}<span *ngIf="partner.gender==null">Không</span></td>
+        <td class="label">Email</td>
+        <td class="content"></td>
+    </tr>
+    <tr>
+        <td class="label">Địa chỉ</td>
+        <td class="content" colspan="3">{{address}}</td>
+    </tr>
+</table>

@@ -1,0 +1,32 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Mô tả">
+    </kendo-grid-column>
+    <kendo-grid-column field="moveName" title="Bút toán">
+    </kendo-grid-column>
+    <kendo-grid-column field="begin" class="text-right" title="Nợ đầu kỳ">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.begin | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="debit" class="text-right" title="Phát sinh">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.debit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="credit" class="text-right" title="Thanh toán">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.credit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.end | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

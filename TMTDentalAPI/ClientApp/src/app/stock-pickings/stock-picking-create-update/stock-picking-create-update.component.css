@@ -1,0 +1,14 @@
+.picking-lines {
+    display: flex;
+}
+
+.picking-lines .search-product {
+    flex: 1 1 auto;
+    width: 500px;
+    margin-right: 15px;
+}
+
+.picking-lines .move-list {
+    flex: 1  auto;
+    width: 698px;
+}

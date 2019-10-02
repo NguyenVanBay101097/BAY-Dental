@@ -1,0 +1,120 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Báo cáo xuất nhập tồn</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <!-- <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div> -->
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <!-- <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
+            </div> -->
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+        <!-- <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" type="button" id="dropdownMenuButton">
+                Thao tác
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">Xóa</a>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<div class="d-flex">
+    <div class="accordion search-section" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">Theo sản phẩm</a>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                <div class="card-body">
+                    <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true" #productCbx
+                        [(ngModel)]="searchProduct" [valueField]="'id'" (valueChange)="loadDataFromApi()">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading3">
+                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapse3"
+                    aria-expanded="true" aria-controls="collapse3">Theo nhóm sản phẩm</a>
+            </div>
+
+            <div id="collapse3" class="collapse show" aria-labelledby="heading3">
+                <div class="card-body">
+                    <kendo-combobox [data]="filteredCategs" [textField]="'name'" [filterable]="true" #categCbx
+                        [(ngModel)]="searchCateg" [valueField]="'id'" (valueChange)="loadDataFromApi()">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="false" aria-controls="collapseTwo">Theo ngày</a>
+            </div>
+            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Từ ngày</label>
+                        <div>
+                            <kendo-datepicker [(value)]="dateFrom" (valueChange)="onChangeDate($event)">
+                            </kendo-datepicker>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Đến ngày</label>
+                        <div>
+                            <kendo-datepicker (valueChange)="onChangeDate($event)" [(value)]="dateTo">
+                            </kendo-datepicker>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="productName" title="Tên sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="productCode" title="Mã sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="begin" class="text-right" title="Tồn đầu kỳ">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.begin | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="import" class="text-right" title="Nhập trong kỳ">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.import | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="export" class="text-right" title="Xuất trong kỳ">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.export | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="end" class="text-right" title="Tồn cuối kỳ">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.end | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <div *kendoGridDetailTemplate="let dataItem">
+                <app-stock-report-xuat-nhap-ton-detail [item]="dataItem"></app-stock-report-xuat-nhap-ton-detail>
+            </div>
+        </kendo-grid>
+    </div>
+</div>

@@ -1,0 +1,227 @@
+<div class="o_form_sheet_bg">
+    <div class="o_form_sheet">
+        <div class="oe_title">
+            <h1>
+                <!-- <span>{{toaThuocForm.get('name').value}}</span>  CÁI NÀY TỪ TỪ SỬA LẠI -->
+            </h1>
+        </div>
+        <div class="o_group">
+            <!-- <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ngày
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker formControlName="dateObj" [format]="'dd-MM-yyyy HH:mm'">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="note" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> -->
+            <form class="o_form_view" [formGroup]="lineForm">
+                <div class="o_form_sheet_bg">
+                    <div class="o_form_sheet">
+                        <div class="o_group">
+                            <table class="o_group o_inner_group o_group_col_6" style="width: 100%">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Thuốc
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                                [filterable]="true" #productCbx formControlName="product"
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="o_group">
+                            <table class="o_group o_inner_group o_group_col_6">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Số lần/ngày
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                formControlName="numberOfTimes" (valueChange)="onChange($event)">
+                                            </kendo-numerictextbox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Liều lượng
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-numerictextbox [min]="0" [format]="'n1'"
+                                                formControlName="amountOfTimes" (valueChange)="onChange($event)">
+                                            </kendo-numerictextbox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Số ngày
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'" [max]="100"
+                                                (valueChange)="onChange($event)" formControlName="numberOfDays">
+                                            </kendo-numerictextbox>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="o_group o_inner_group o_group_col_6">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Uống
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <select class="form-control" formControlName="useAt">
+                                                <option value="after_meal">Sau khi ăn</option>
+                                                <option value="before_meal">Trước khi ăn</option>
+                                                <option value="in_meal">Trong khi ăn</option>
+                                                <option value="after_wakeup">Sau khi thức dậy</option>
+                                                <option value="before_sleep">Trước khi đi ngủ</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Số lượng
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="quantity"
+                                                [disabled]='true'>
+                                            </kendo-numerictextbox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Ghi chú
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="note" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <button kendo-button type="button" class="btn btn-sm btn-primary mb-2"
+                                (click)="onSaveLines(false)">Thêm
+                                mới</button>
+                            <button style="margin-left: 5px" type="button" [disabled]="lineId == null"
+                                class="btn btn-sm btn-success mb-2" (click)="onSaveLines(true)">Cập nhật</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="o_notebook">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="myTab2" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home2-tab" data-toggle="tab" href="#home2" role="tab"
+                        aria-controls="home2" aria-selected="true">Danh sách thuốc</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="home2" role="tabpanel" aria-labelledby="home2-tab">
+                    <div>
+                        <!-- <button type="button" class="btn btn-sm btn-secondary mb-2" accesskey="a"
+                            (click)="showLineAddModal()">Thêm</button> -->
+                    </div>
+                    <div [formGroup]="toaThuocForm">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Tên thuốc</th>
+                                    <th>Số lượng</th>
+                                    <th>Hướng dẫn sử dụng</th>
+                                    <th>Ghi chú</th>
+                                    <th>#</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="lines">
+                                <ng-container *ngFor="let line of lines.controls; let i=index">
+                                    <tr [formGroupName]="i"
+                                        [style.background-color]="lineId==i ? '#cce6ff' : '#ffffff'">
+                                        <td>{{ line.get('product').value.name}}</td>
+                                        <td>
+                                            {{ line.get('quantity').value | number}}
+                                        </td>
+                                        <td>
+                                            {{ line.get('name').value}}
+                                        </td>
+                                        <td>
+                                            {{ line.get('note').value}}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                (click)="editLine(i)">
+                                                <span class="k-icon k-i-edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSaveToaThuoc()" accesskey="s"
+                *ngIf="!id">Lưu</button>
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onUpdateToaThuoc()" *ngIf="id"
+                accesskey="s">Lưu</button>
+            <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- <div class="k-overlay" *ngIf="opened"></div> -->

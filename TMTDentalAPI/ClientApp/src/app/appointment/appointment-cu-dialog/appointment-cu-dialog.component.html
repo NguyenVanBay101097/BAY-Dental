@@ -1,0 +1,67 @@
+<form class="o_form_view" [formGroup]="appointmentForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <h1>
+                    <span>{{appointmentForm.get('name').value}}</span>
+                </h1>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Khách hàng</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="d-flex">
+                                    <kendo-combobox formControlName="partner" [filterable]="true"
+                                        [data]="filteredPartners" #partnerCbx [valueField]="'id'" [textField]="'name'">
+                                    </kendo-combobox>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Người hẹn</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox formControlName="user" [filterable]="true" [data]="filteredUsers"
+                                    [valueField]="'id'" #userCbx [textField]="'name'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Ngày hẹn</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker [format]="'yyyy-MM-dd HH:mm'" formControlName="dateObj">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Ghi chú</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input class="form-control" formControlName="note" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()"><i class="fas fa-save"></i>
+                    Lưu</button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()"><i
+                        class="fas fa-window-close"></i>
+                    Đóng</button>
+            </div>
+        </div>
+    </div>
+</form>

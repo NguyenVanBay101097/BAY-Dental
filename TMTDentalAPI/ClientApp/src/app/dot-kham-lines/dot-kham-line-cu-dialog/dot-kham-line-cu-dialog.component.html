@@ -1,0 +1,141 @@
+<form class="o_form_view" [formGroup]="dklForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+                <button type="button" class="btn btn-primary btn-sm" (click)="changeRouting()">
+                    Đổi quy trình</button>
+            </div>
+        </div>
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <h1>
+                    <span>{{dklForm.get('name').value}}</span>
+                </h1>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Dịch vụ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox *ngIf="!dklForm.get('hasOps').value" [data]="filteredProducts"
+                                    [textField]="'name'" [filterable]="true" #productCbx formControlName="product"
+                                    [valueField]="'id'">
+                                </kendo-combobox>
+                                <span *ngIf="dklForm.get('hasOps').value">{{dklForm.get('product').value.name}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Quy trình
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox *ngIf="!dklForm.get('hasOps').value" [data]="filteredRoutings"
+                                    [textField]="'name'" [filterable]="true" #routingCbx formControlName="routing"
+                                    [valueField]="'id'">
+                                </kendo-combobox>
+                                <span
+                                    *ngIf="dklForm.get('hasOps').value">{{dklForm.get('routing').value ? dklForm.get('routing').value.name : ''}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Bác sĩ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
+                                    formControlName="user" [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Trạng thái
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                {{ showLineState(dklForm.get('state').value) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="o_notebook">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab2" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home2-tab" data-toggle="tab" href="#home2" role="tab"
+                            aria-controls="home2" aria-selected="true">Công đoạn</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home2" role="tabpanel" aria-labelledby="home2-tab">
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Tên</th>
+                                        <th>Bắt đầu</th>
+                                        <th>Kết thúc</th>
+                                        <th>Trạng thái</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="operations">
+                                    <ng-container *ngFor="let line of operations.controls; let i=index">
+                                        <tr [formGroupName]="i">
+                                            <td>{{ line.get('product').value.name}}</td>
+                                            <td>{{ line.get('dateStart').value | date: 'short'}}</td>
+                                            <td>{{ line.get('dateFinished').value | date: 'short'}}</td>
+                                            <td>
+                                                {{ showOperationState(line.get('state').value) }}
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                    *ngIf="line.get('state').value == 'draft'" title="Bắt đầu tiến hành"
+                                                    (click)="startOperation(line)">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                    *ngIf="line.get('state').value == 'progress'" title="Gán đã xong"
+                                                    (click)="markDone(line)">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s"
+                    *ngIf="!id">Lưu</button>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onUpdate()" *ngIf="id"
+                    accesskey="s">Lưu</button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="k-overlay" *ngIf="opened"></div>

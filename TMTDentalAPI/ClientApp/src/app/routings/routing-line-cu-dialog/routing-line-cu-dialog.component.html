@@ -1,0 +1,48 @@
+<form class="o_form_view o_form_editable" [formGroup]="routingLineForm" #form="ngForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Công đoạn
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="d-flex">
+                                    <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
+                                        #productCbx formControlName="product" [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <a class="btn btn-sm btn-light" (click)="quickCreateProduct()">
+                                        <span class="k-icon k-i-plus"></span>
+                                    </a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="note" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="k-overlay" *ngIf="opened"></div>

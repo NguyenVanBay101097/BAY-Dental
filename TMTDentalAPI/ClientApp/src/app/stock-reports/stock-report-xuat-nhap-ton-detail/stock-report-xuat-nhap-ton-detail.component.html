@@ -1,0 +1,35 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="movePickingId" title="Phiếu nhập/xuất">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <a class="text-primary" *ngIf="dataItem.movePickingId" target="_blank"
+                [routerLink]="['/pickings/edit/', dataItem.movePickingId]"
+                [queryParams]="{picking_type_id: dataItem.movePickingTypeId}">{{dataItem.movePickingName}}</a>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="begin" class="text-right" title="Tồn đầu">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.begin | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="import" class="text-right" title="Nhập">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.import | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="export" class="text-right" title="Xuất">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.export | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="end" class="text-right" title="Tồn cuối">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.end | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

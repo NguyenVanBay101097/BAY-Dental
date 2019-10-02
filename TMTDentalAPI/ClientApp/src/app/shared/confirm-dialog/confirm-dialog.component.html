@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<mat-dialog-content class="mat-typography">
+    {{body}}
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="onConfirm()">Đồng ý</button>
+    <button mat-raised-button (click)="onCancel()" cdkFocusInitial>Hủy bỏ</button>
+</mat-dialog-actions>

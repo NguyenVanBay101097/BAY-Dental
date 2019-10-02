@@ -1,0 +1,21 @@
+.btnView{
+    width: 160px;
+    text-align: left;
+}
+
+.k-scheduler.k-slotfill{
+    cursor: pointer;
+}
+
+.k-scheduler .k-event, .k-event {
+    cursor: pointer;
+}
+
+/* Kendo UI example application styles */
+.activeButton{
+    background-color: #c4cbd4;
+}
+
+.checkbox label{
+    cursor: pointer;
+}

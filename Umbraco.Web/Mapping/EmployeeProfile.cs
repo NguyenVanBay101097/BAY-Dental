@@ -1,0 +1,26 @@
+﻿using ApplicationCore.Entities;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace Umbraco.Web.Mapping
+{
+    public class EmployeeProfile : Profile
+    {
+        public EmployeeProfile()
+        {
+            CreateMap<Employee, EmployeeSimple>();
+            CreateMap<Employee, EmployeeBasic>();
+
+            CreateMap<EmployeeDisplay, Employee>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Category, x => x.Ignore());
+            CreateMap<EmployeeSimple, Employee>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Category, x => x.Ignore());
+            CreateMap<Employee, EmployeeDisplay>();
+        }
+    }
+}

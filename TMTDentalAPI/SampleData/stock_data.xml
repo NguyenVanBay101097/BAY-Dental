@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!--
+    Resource: stock.location
+    -->
+    <record id="stock_location_locations" model="stock.location">
+      <field name="name">Địa điểm vật lý</field>
+      <field name="usage">view</field>
+      <field name="company_id"></field>
+    </record>
+    <record id="stock_location_locations_partner" model="stock.location">
+      <field name="name">Địa điểm đối tác</field>
+      <field name="usage">view</field>
+      <field name="posz">1</field>
+      <field name="company_id"></field>
+    </record>
+    <record id="stock_location_locations_virtual" model="stock.location">
+      <field name="name">Địa điểm ảo</field>
+      <field name="usage">view</field>
+      <field name="posz">1</field>
+      <field name="company_id"></field>
+    </record>
+    <record id="stock_location_scrapped" model="stock.location">
+      <field name="name">Phế phẩm</field>
+      <field name="location_id" ref="stock_location_locations_virtual"/>
+      <field name="scrap_location">True</field>
+      <field name="usage">inventory</field>
+      <field name="company_id"></field>
+    </record>
+
+    <record id="location_inventory" model="stock.location">
+      <field name="name">Điều chỉnh tồn kho</field>
+      <field name="location_id" ref="stock_location_locations_virtual"/>
+      <field name="usage">inventory</field>
+      <field name="company_id"></field>
+    </record>
+    <record id="stock_location_suppliers" model="stock.location">
+      <field name="name">Nhà cung cấp</field>
+      <field name="location_id" ref="stock_location_locations_partner"/>
+      <field name="usage">supplier</field>
+      <field name="company_id"></field>
+    </record>
+    <record id="stock_location_customers" model="stock.location">
+      <field name="name">Khách hàng</field>
+      <field name="location_id" ref="stock_location_locations_partner"/>
+      <field name="usage">customer</field>
+      <field name="company_id"></field>
+    </record>
+  </data>
+  <data noupdate="1">
+    <!--
+    Properties
+    -->
+    <record forcecreate="True" id="property_stock_supplier" model="ir.property">
+      <field name="name">property_stock_supplier</field>
+      <field name="fields_id" ref="base.field_res_partner_property_stock_supplier"/>
+      <field name="value" ref="stock.stock_location_suppliers" relation="stock.location"/>
+    </record>
+    
+    <record forcecreate="True" id="property_stock_customer" model="ir.property">
+      <field name="name">property_stock_customer</field>
+      <field name="fields_id" ref="base.field_res_partner_property_stock_customer"/>
+      <field name="value" ref="stock.stock_location_customers" relation="stock.location"/>
+    </record>
+    <record forcecreate="True" id="property_stock_inventory" model="ir.property">
+      <field name="name">property_stock_inventory</field>
+      <field name="fields_id" ref="base.field_product_template_property_stock_inventory"/>
+      <field name="value" ref="stock.location_inventory" relation="stock.location"/>
+    </record>
+
+    <record id="warehouse0" model="stock.warehouse">
+      <field name="partner_id" ref="base.main_partner"/>
+      <field name="code">WH</field>
+    </record>
+
+    <record id="sequence_stock_scrap" model="ir.sequence">
+      <field name="name">Scrap</field>
+      <field name="code">stock.scrap</field>
+      <field name="prefix">SP/</field>
+      <field name="padding">5</field>
+      <field name="number_next">1</field>
+      <field name="number_increment">1</field>
+    </record>
+  </data>
+</odoo>

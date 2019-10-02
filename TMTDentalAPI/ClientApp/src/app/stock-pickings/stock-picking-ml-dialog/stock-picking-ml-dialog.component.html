@@ -1,0 +1,44 @@
+<form class="o_form_view" [formGroup]="lineForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Sản phẩm
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
+                                    (valueChange)="onChangeProduct($event)" #productCbx formControlName="product"
+                                    [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Số lượng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="productUOMQty">
+                                </kendo-numerictextbox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+            </div>
+        </div>
+    </div>
+</form>
