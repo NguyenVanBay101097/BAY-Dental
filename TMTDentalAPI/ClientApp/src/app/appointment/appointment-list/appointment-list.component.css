@@ -19,3 +19,17 @@
 .checkbox label{
     cursor: pointer;
 }
+
+.k-scheduler-dayview .k-scheduler-table td,
+.k-scheduler-weekview .k-scheduler-table td,
+.k-scheduler-table td{
+    height: 5em !important;
+}
+
+.k-event{
+    height: auto !important;
+}
+
+.k-scheduler-weekview .k-event{
+    height: 100px !important;
+}

@@ -51,9 +51,9 @@ export class PagedResult2<T>{
 export class AppointmentPaged {
     offset: number;
     limit: number;
-    searchCustomer: string;//by appointment name
-    searchDoctor: string;
-    searchAppointment: string;
+    search: string;//by appointment name
+    // searchDoctor: string;
+    // searchAppointment: string;
     dateTimeFrom: string;
     dateTimeTo: string;
     state: string;
@@ -74,6 +74,7 @@ export class SchedulerConfig {
     slotDivisions: number;
     slotDuration: number;
     indexViewNum: number;
+    scrollTime: string;
 }
 
 export class AppointmentDefaultGet {

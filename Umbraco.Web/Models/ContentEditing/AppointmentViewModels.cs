@@ -106,11 +106,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int Limit { get; set; }
 
-        public string SearchByCustomer { get; set; }
+        public string Search { get; set; }
 
-        public string SearchByDoctor { get; set; }
+        //public string SearchByDoctor { get; set; }
 
-        public string SearchByAppointment { get; set; }
+        //public string SearchByAppointment { get; set; }
 
         public DateTime? DateTimeFrom { get; set; }
 

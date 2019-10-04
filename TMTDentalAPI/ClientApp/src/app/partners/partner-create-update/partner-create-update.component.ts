@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { PartnerService } from '../partner.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
+import { WindowRef, WindowService } from '@progress/kendo-angular-dialog';
 import { PartnerDisplay, PartnerCategorySimple, District, AshipRequest, City, Ward, AshipData } from '../partner-simple';
 import { ActivatedRoute } from '@angular/router';
 import { FileRestrictions, SelectEvent, RemoveEvent, UploadEvent, SuccessEvent, FileInfo } from '@progress/kendo-angular-upload';
@@ -9,6 +9,7 @@ import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -21,7 +22,7 @@ import * as _ from 'lodash';
 
 export class PartnerCreateUpdateComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: PartnerService, public window: WindowRef, private activeRoute: ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private service: PartnerService, private activeRoute: ActivatedRoute, public activeModal: NgbActiveModal) { }
 
   // @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
@@ -29,9 +30,13 @@ export class PartnerCreateUpdateComponent implements OnInit {
   isChange: boolean = false;
   cusId: string;
 
-  dayList: number[] = new Array();
-  monthList: number[] = new Array();
-  yearList: number[] = new Array();
+  dayList: number[] = [];
+  monthList: number[] = [];
+  yearList: number[] = [];
+  daySource: number[] = [];
+  monthSource: number[] = [];
+  yearSource: number[] = [];
+
   categoriesList: PartnerCategorySimple[] = [];
   fullCategoriesList: PartnerCategorySimple[] = [];
 
@@ -45,6 +50,7 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
   queryCustomer: boolean = false;
   querySupplier: boolean = false;
+  header = ''
 
   formCreate: FormGroup;
   formImage: FormGroup;
@@ -55,7 +61,7 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
     this.formCreate = this.fb.group({
       name: [null, Validators.required],
-      phone: [null, Validators.compose([Validators.minLength(9), Validators.required])],
+      phone: [null, Validators.minLength(9)],
       email: [null, Validators.email],
       barcode: null,
       ref: null,
@@ -91,9 +97,7 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
     this.getEmployeesList();
     this.getCustomerInfo();
-    this.dayList = this.birthInit(1, 31);
-    this.monthList = this.birthInit(1, 12);
-    this.yearList = this.birthInit(new Date().getFullYear(), 1900);
+    this.dobPrepare();
     this.getPartnerCategories();
     this.routingChange();
     this.formCreate.get('customer').setValue(this.queryCustomer ? true : false);
@@ -140,6 +144,26 @@ export class PartnerCreateUpdateComponent implements OnInit {
     return a;
   }
 
+  dobPrepare() {
+    this.daySource = this.birthInit(1, 31);
+    this.dayList = this.daySource;
+    this.monthSource = this.birthInit(1, 12);
+    this.monthList = this.monthSource;
+    this.yearSource = this.birthInit(new Date().getFullYear(), 1900);
+    this.yearList = this.yearSource;
+  }
+
+  //Filter dữ liệu ngày tháng năm sinh
+  handleFilterDay(value) {
+    this.dayList = this.daySource.filter((s) => s.toString().toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+  handleFilterMonth(value) {
+    this.monthList = this.monthSource.filter((s) => s.toString().toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+  handleFilterYear(value) {
+    this.yearList = this.yearSource.filter((s) => s.toString().toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
   //Tạo hoặc cập nhật KH
   createNewCustomer() {
     //this.assignValue();
@@ -154,11 +178,12 @@ export class PartnerCreateUpdateComponent implements OnInit {
     if (value.source != 'other') {
       value.note = '';
     }
+    console.log(value);
 
     this.isChange = true;
     this.service.createUpdateCustomer(value, this.cusId).subscribe(
       rs => {
-        this.closeWindow(rs);
+        this.closeModal();
       },
       er => {
         console.log(er);
@@ -166,22 +191,32 @@ export class PartnerCreateUpdateComponent implements OnInit {
     );
   }
 
+
+
   //Cho phép field phone chỉ nhập số
   onlyGetNumbers(formControlName) {
     this.formCreate.controls[formControlName].setValue(this.formCreate.get(formControlName).value.replace(/[^0-9.]/g, ''));
   }
 
   //Đóng dialog
-  closeWindow(result: any) {
+  // closeWindow(result: any) {
+  //   if (this.isChange) {
+  //     if (result == null) {
+  //       this.window.close(true);
+  //     }
+  //     else {
+  //       this.window.close(result);
+  //     }
+  //   } else {
+  //     this.window.close(false);
+  //   }
+  // }
+  closeModal() {
     if (this.isChange) {
-      if (result == null) {
-        this.window.close(true);
-      }
-      else {
-        this.window.close(result);
-      }
-    } else {
-      this.window.close(false);
+      this.activeModal.close(true);
+    }
+    else {
+      this.activeModal.dismiss();
     }
   }
 
@@ -355,5 +390,17 @@ export class PartnerCreateUpdateComponent implements OnInit {
       empPaged.search = search.toLowerCase();
     }
     return this.service.getEmployeeSimpleList(empPaged);
+  }
+
+  windowTitle() {
+    if (!this.cusId && this.queryCustomer) {
+      return 'Thêm mới khách hàng';
+    } else if (this.cusId && this.queryCustomer) {
+      return 'Cập nhật thông tin khách hàng';
+    } else if (!this.cusId && this.querySupplier) {
+      return 'Thêm mới nhà cung cấp';
+    } else if (this.cusId && this.querySupplier) {
+      return 'Cập nhật thông tin nhà cung cấp';
+    }
   }
 }

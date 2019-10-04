@@ -190,7 +190,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.customer = true;
-    val.searchNameRef = filter;
+    val.searchNamePhoneRef = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
 

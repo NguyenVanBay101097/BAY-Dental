@@ -1,4 +1,4 @@
-<div kendoWindowContainer></div>
+<!-- <div kendoWindowContainer></div> -->
 <div kendoDialogContainer></div>
 <!-- <div class="d-flex o_control_panel o_breadcrumb_full">
   <div class="d-flex flex-fill justify-content-between">
@@ -25,21 +25,23 @@
     <li class="active" *ngIf="!this.queryCustomer"> Nhà cung cấp</li>
   </ol>
   <div class="o_cp_searchview">
+    <div class="o_searchview">
+      <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
+        [(ngModel)]="searchNamePhoneRef" (ngModelChange)="this.searchNamePhoneRefUpdate.next($event)" />
+    </div>
   </div>
   <div class="o_cp_left">
     <div class="o_cp_buttons">
       <div class="o_form_buttons_view">
-        <button type="button" class="btn btn-primary btn-sm" (click)="openWindow(null)">
+        <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
           <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
       </div>
     </div>
     <div class="o_cp_sidebar">
     </div>
   </div>
-  <div class="o_cp_right">
-  </div>
 </div>
-
+<!-- 
 <div class="">
   <div class="accordion" id="accordionExample">
     <div [formGroup]="formFilter">
@@ -55,42 +57,40 @@
         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
           <div class="card-body">
             <div class="form-group">
-              <input type="text" class="form-control" formControlName="searchNameRef" placeholder="Theo mã hoặc tên"
-                [(ngModel)]="searchNameRef" (ngModelChange)="this.searchNameRefUpdate.next($event)" />
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" formControlName="searchPhone" [(ngModel)]="searchPhone"
-                (ngModelChange)="this.searchPhoneUpdate.next($event)" placeholder="Theo số điện thoại" />
+              
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 <div class="">
   <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="loading">
     <kendo-grid-column field="ref" title="Mã" width="100"></kendo-grid-column>
     <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
     <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
-    <kendo-grid-column title="Giới tính" width="70">
+    <kendo-grid-column *ngIf="queryCustomer" title="Giới tính" width="70">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.gender ? getGender(dataItem.gender) : ''}}
       </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Tuổi" width="70">
+    <kendo-grid-column title="Tuổi" width="70" *ngIf="queryCustomer">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.birthYear ? getAge(dataItem.birthYear) : ''}}
       </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="address" title="Địa chỉ" width="250"></kendo-grid-column>
-    <div *kendoGridDetailTemplate="let dataItem">
-      <app-partner-detail-list [id]="dataItem.id"></app-partner-detail-list>
+    <div *ngIf="queryCustomer">
+      <div *kendoGridDetailTemplate="let dataItem">
+        <app-partner-detail-list [id]="dataItem.id"></app-partner-detail-list>
+      </div>
     </div>
+
     <kendo-grid-command-column title="Thao tác" width="250">
       <ng-template kendoGridCellTemplate let-dataItem>
-        <button kendoButton (click)="openWindow(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
+        <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
             class="fas fa-edit"></i>&nbsp;Sửa</button>
         <button kendoButton (click)="deleteCustomer(dataItem.id)" class="btn btn-danger btn-sm"><i title="Vô hiệu hóa"
             class="fas fa-times"></i>&nbsp;Xóa</button>
@@ -104,4 +104,3 @@
   </kendo-grid>
 </div>
 <div class="k-overlay" *ngIf="this.windowOpened"></div>
-<hr />

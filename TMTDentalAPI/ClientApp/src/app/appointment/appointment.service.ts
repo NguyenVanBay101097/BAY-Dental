@@ -23,15 +23,15 @@ export class AppointmentService {
     var param = new HttpParams()
       .set('offset', appointmentPaged.offset.toString())
       .set('limit', appointmentPaged.limit.toString());
-    if (appointmentPaged.searchAppointment) {
-      param = param.set('searchByAppointment', appointmentPaged.searchAppointment.toString());
+    if (appointmentPaged.search) {
+      param = param.set('search', appointmentPaged.search.toString());
     };
-    if (appointmentPaged.searchCustomer) {
-      param = param.set('searchByCustomer', appointmentPaged.searchCustomer.toString());
-    };
-    if (appointmentPaged.searchDoctor) {
-      param = param.set('searchByDoctor', appointmentPaged.searchDoctor.toString());
-    };
+    // if (appointmentPaged.searchCustomer) {
+    //   param = param.set('searchByCustomer', appointmentPaged.searchCustomer.toString());
+    // };
+    // if (appointmentPaged.searchDoctor) {
+    //   param = param.set('searchByDoctor', appointmentPaged.searchDoctor.toString());
+    // };
     if (appointmentPaged.dateTimeFrom) {
       param = param.set('dateTimeFrom', formatDate(appointmentPaged.dateTimeFrom.toString(), 'yyyy-MM-dd HH:mm:ss', 'vi-VN'));
     };

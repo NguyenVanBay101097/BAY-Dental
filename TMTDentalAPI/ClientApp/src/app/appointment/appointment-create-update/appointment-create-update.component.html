@@ -21,27 +21,27 @@
                 <table class="o_group o_inner_group o_group_col_6">
                     <tbody>
                         <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">Khách hàng</label>
+                            <td colspan="1" class="o_td_label o_td_label_left">
+                                <label class="o_form_label required-label">Khách hàng</label>
                             </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="d-flex">
+                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                <div class=" d-flex">
                                     <kendo-combobox formControlName="partner" [allowCustom]="false" [filterable]="true"
                                         [data]="customerSimpleFilter" #partnerCbx [valueField]="'id'"
                                         [textField]="'name'" [readonly]="partnerAvailble()">
                                     </kendo-combobox>
-                                    <a *ngIf="!dotKhamId && state=='confirmed'" class="btn btn-sm btn-light"
-                                        (click)="quickCreateCustomer()">
+                                    <a *ngIf="(!dotKhamId && state=='confirmed') || !appointId"
+                                        class="btn btn-sm btn-light" (click)="quickCreateCustomer()">
                                         <span class="k-icon k-i-plus"></span>
                                     </a>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" class="o_td_label">
+                            <td colspan="1" class="o_td_label o_td_label_left">
                                 <label class="o_form_label">Bác sĩ</label>
                             </td>
-                            <td colspan="1" style="width: 100%;">
+                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="doctorSimpleFilter"
                                     #doctorCbx [valueField]="'id'" [textField]="'name'" [readonly]="doctorAvailble()">
                                 </kendo-combobox>
@@ -52,19 +52,20 @@
                 <table class="o_group o_inner_group o_group_col_6">
                     <tbody>
                         <tr>
-                            <td colspan="1" class="o_td_label">
+                            <td colspan="1" class="o_td_label o_td_label_right">
                                 <label class="o_form_label">Ngày</label>
                             </td>
-                            <td colspan="1" style="width: 100%;">
+                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
                                 <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"
                                     [format]="'yyyy-MM-dd HH:mm'" formControlName="dateObj" [readonly]="timeAvailble()">
                                 </kendo-datepicker>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi chú</label>
+                            <td colspan="1" class="o_td_label o_td_label_right"><label class="o_form_label">Ghi
+                                    chú</label>
                             </td>
-                            <td colspan="1" style="width: 100%;">
+                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
                                 <input class="form-control" formControlName="note" />
                             </td>
                         </tr>
@@ -80,7 +81,7 @@
     <div class="text-right">
         <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
                 class="fas fa-window-close"></i>&nbsp;Đóng</button>
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createNewAppointment()"><i
-                class="fas fa-save"></i>&nbsp;Lưu</button>
+        <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
+            (click)="createNewAppointment()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
     </div>
 </form>

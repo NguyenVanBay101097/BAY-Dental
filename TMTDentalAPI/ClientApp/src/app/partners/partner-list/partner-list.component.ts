@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -28,10 +29,8 @@ export class PartnerListComponent implements OnInit {
   queryCustomer: boolean = false;
   querySupplier: boolean = false;
 
-  searchPhone: string;
-  searchNameRef: string;
-  searchNameRefUpdate = new Subject<string>();
-  searchPhoneUpdate = new Subject<string>();
+  searchNamePhoneRef: string;
+  searchNamePhoneRefUpdate = new Subject<string>();
 
 
   sort: SortDescriptor[] = [{
@@ -39,16 +38,16 @@ export class PartnerListComponent implements OnInit {
     dir: 'asc'
   }];
 
-  formFilter = new FormGroup({
-    searchNameRef: new FormControl(),
-    searchPhone: new FormControl(),
-    customer: new FormControl(),
-    employee: new FormControl()
-  })
+  // formFilter = new FormGroup({
+  //   searchNamePhoneRef: new FormControl(),
+  //   customer: new FormControl(),
+  //   employee: new FormControl()
+  // })
+  closeResult: string;
 
   constructor(
     private service: PartnerService, private windowService: WindowService,
-    private activeRoute: ActivatedRoute, private dialogService: DialogService) { }
+    private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.windowOpened = false;
@@ -81,8 +80,7 @@ export class PartnerListComponent implements OnInit {
     var pnPaged = new PartnerPaged();
     pnPaged.limit = this.pageSize;
     pnPaged.offset = this.skip;
-    pnPaged.searchNameRef = this.formFilter.get('searchNameRef').value || '';
-    pnPaged.searchPhone = this.formFilter.get('searchPhone').value || '';
+    pnPaged.searchNamePhoneRef = this.searchNamePhoneRef || '';
     pnPaged.customer = this.queryCustomer;
     pnPaged.supplier = this.querySupplier;
     this.service.getPartnerPaged(pnPaged).pipe(
@@ -93,7 +91,6 @@ export class PartnerListComponent implements OnInit {
     ).subscribe(rs2 => {
       this.gridView = rs2;
       this.loading = false;
-      console.log(rs2);
     }, er => {
       this.loading = true;
       console.log(er);
@@ -102,15 +99,7 @@ export class PartnerListComponent implements OnInit {
   }
 
   searchChange() {
-    this.searchPhoneUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.getPartnersList();
-      });
-
-
-    this.searchNameRefUpdate.pipe(
+    this.searchNamePhoneRefUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
@@ -156,9 +145,10 @@ export class PartnerListComponent implements OnInit {
   openWindow(id) {
     const windowRef: WindowRef = this.windowService.open(
       {
-        title: this.queryCustomer == true ? 'Thông tin khách hàng' : 'Thông tin nhà cung cấp',
+        title: this.windowTitle(id),
         content: PartnerCreateUpdateComponent,
         minWidth: 250,
+        resizable: false
         // width: 920
       });
     this.windowOpened = true;
@@ -174,6 +164,49 @@ export class PartnerListComponent implements OnInit {
         }
       }
     )
+  }
+
+  openModal(id) {
+    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl' });
+    modalRef.componentInstance.cusId = id;
+    modalRef.result.then(
+      rs => {
+        this.getPartnersList();
+      },
+      er => { }
+    )
+    // const windowRef: WindowRef = this.windowService.open(
+    //   {
+    //     title: this.windowTitle(id),
+    //     content: PartnerCreateUpdateComponent,
+    //     minWidth: 250,
+    //     // width: 920
+    //   });
+    // this.windowOpened = true;
+    // const instance = windowRef.content.instance;
+    // instance.cusId = id;
+
+    // windowRef.result.subscribe(
+    //   (result) => {
+    //     this.windowOpened = false;
+    //     console.log(result);
+    //     if (!(result instanceof WindowCloseResult)) {
+    //       this.getPartnersList();
+    //     }
+    //   }
+    // )
+  }
+
+  windowTitle(id) {
+    if (!id && this.queryCustomer) {
+      return 'Thêm mới khách hàng';
+    } else if (id && this.queryCustomer) {
+      return 'Cập nhật thông tin khách hàng';
+    } else if (!id && this.querySupplier) {
+      return 'Thêm mới nhà cung cấp';
+    } else if (id && this.querySupplier) {
+      return 'Cập nhật thông tin nhà cung cấp';
+    }
   }
 
   deleteCustomer(id) {

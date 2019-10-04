@@ -32,6 +32,7 @@ export class AppointmentListComponent implements OnInit {
   skip = 0;
   stopTypingTimer: any;
   schedulerConfig: SchedulerConfig;
+  scrollTime: string = '08:00';
 
   schedulerShow: boolean;
 
@@ -40,12 +41,12 @@ export class AppointmentListComponent implements OnInit {
   fromDateScheduler: Date;
   toDateScheduler: Date;
 
-  searchCustomer: string;
-  searchDoctor: string;
-  searchAppoint: string;
-  searchCustomerUpdate = new Subject<string>();
-  searchDoctorUpdate = new Subject<string>();
-  searchAppointUpdate = new Subject<string>();
+  search: string;
+  // searchDoctor: string;
+  // searchAppoint: string;
+  searchUpdate = new Subject<string>();
+  // searchDoctorUpdate = new Subject<string>();
+  // searchAppointUpdate = new Subject<string>();
 
   confirmed: boolean;
   cancel: boolean;
@@ -54,9 +55,9 @@ export class AppointmentListComponent implements OnInit {
   waiting: boolean;
 
   formFilter = new FormGroup({
-    searchCustomer: new FormControl(),
-    searchDoctor: new FormControl(),
-    searchAppoint: new FormControl(),
+    search: new FormControl(),
+    // searchDoctor: new FormControl(),
+    // searchAppoint: new FormControl(),
     frDate: new FormControl(),
     toDate: new FormControl(),
     confirmed: new FormControl(),
@@ -92,26 +93,26 @@ export class AppointmentListComponent implements OnInit {
   }
 
   searchChange() {
-    this.searchCustomerUpdate.pipe(
+    this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
         this.loadByView();
       });
 
-    this.searchDoctorUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadByView();
-      });
+    // this.searchDoctorUpdate.pipe(
+    //   debounceTime(400),
+    //   distinctUntilChanged())
+    //   .subscribe(value => {
+    //     this.loadByView();
+    //   });
 
-    this.searchAppointUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadByView();
-      });
+    // this.searchAppointUpdate.pipe(
+    //   debounceTime(400),
+    //   distinctUntilChanged())
+    //   .subscribe(value => {
+    //     this.loadByView();
+    //   });
   }
 
   changeDateRangeFilter() {
@@ -159,6 +160,9 @@ export class AppointmentListComponent implements OnInit {
   changeDateRangeScheduler(e) {
     this.fromDateScheduler = new Date(e.dateRange.start);
     this.toDateScheduler = new Date(e.dateRange.end);
+    if ((e.dateRange.start.getFullYear() == e.dateRange.end.getFullYear()) && (e.dateRange.start.getMonth() == e.dateRange.end.getMonth())) {
+      this.fontSize();
+    }
     this.loadDataToScheduler();
   }
 
@@ -166,9 +170,9 @@ export class AppointmentListComponent implements OnInit {
     this.loading = true;
     var apnPaged = this.getFilterValue();
     apnPaged.limit = 20;
-    apnPaged.searchDoctor = this.searchDoctor;
-    apnPaged.searchAppointment = this.searchAppoint;
-    apnPaged.searchCustomer = this.searchCustomer;
+    apnPaged.search = this.search;
+    // apnPaged.searchAppointment = this.searchAppoint;
+    // apnPaged.searchCustomer = this.searchCustomer;
     this.service.loadAppointmentList(apnPaged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -187,19 +191,20 @@ export class AppointmentListComponent implements OnInit {
     var appointmentBasicList = new Array<AppointmentBasic>();
     var apnPaged = this.getFilterValue();
     apnPaged.limit = 0;
-    apnPaged.searchDoctor = this.searchDoctor;
-    apnPaged.searchAppointment = this.searchAppoint;
-    apnPaged.searchCustomer = this.searchCustomer;
+    apnPaged.search = this.search;
+    // apnPaged.searchAppointment = this.searchAppoint;
+    // apnPaged.searchCustomer = this.searchCustomer;
     this.service.loadAppointmentList(apnPaged).subscribe(
       rs => {
         appointmentBasicList = rs['items'] as AppointmentBasic[];
+        this.setScrollTime(appointmentBasicList);
         this.events = appointmentBasicList.map(rs1 => (<SchedulerEvent>{
           id: rs1.id,
           isAllDay: false,
           start: new Date(rs1.date),
           end: new Date(rs1.date),
-          title: rs1.name,
-          description: 'KH: ' + rs1.partner.name + ' - BS: ' + rs1.user.name,
+          title: rs1.partner.name,
+          description: rs1.doctor ? 'BS. ' + rs1.doctor.name : '',
           state: rs1.state,
           partnerId: rs1.partnerId
         })
@@ -276,6 +281,14 @@ export class AppointmentListComponent implements OnInit {
     var today = new Date();
     if (e.start >= today) {
       this.openWindow(null, e.start);
+    } else {
+      this.notificationService.show({
+        content: 'Không thể tạo lịch hẹn trong thời gian này',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
     }
   }
 
@@ -380,13 +393,21 @@ export class AppointmentListComponent implements OnInit {
         )
       } else if (e.end < today) {
         this.notificationService.show({
-          content: 'Không thể dời lịch hẹn về thời gian này',
+          content: 'Không thể di chuyển lịch hẹn đến thời gian này',
           hideAfter: 3000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },
           type: { style: 'error', icon: true }
         });
       }
+    } else {
+      this.notificationService.show({
+        content: 'Không thể di chuyển lịch hẹn này',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
     }
   }
 
@@ -452,28 +473,43 @@ export class AppointmentListComponent implements OnInit {
     instance.partnerId = cusId;
   }
 
+  setScrollTime(list: AppointmentBasic[]) {
+    var time = new Date(list.sort((x, y) => parseInt(y.date) - parseInt(x.date))[0].date);
+    this.scrollTime = time.getHours() + ':' + time.getMinutes();
+    console.log(this.scrollTime);
+  }
+
+  fontSize() {
+    if (this.fromDateScheduler.getDate() + 1 != this.toDateScheduler.getDate()) {
+      return "0.7";
+    } else {
+      return "1";
+    }
+  }
+
   //Setting thời gian cho scheduler
   configScheduler() {
     this.schedulerConfig = new SchedulerConfig();
-    this.schedulerConfig.startDisplay = '06:00';
-    this.schedulerConfig.endDisplay = '22:00';
+    this.schedulerConfig.startDisplay = '07:30';
+    this.schedulerConfig.endDisplay = '21:00';
     this.schedulerConfig.selectedDate = new Date();
-    this.schedulerConfig.indexViewNum = 1;
+    //0:Ngày - 1:Tuần - 2:Tháng
+    this.schedulerConfig.indexViewNum = 0;
 
     this.schedulerConfig.slotFillDay = 0.3;
     this.schedulerConfig.slotFillWeek = 1;
     this.schedulerConfig.slotDivisions = 2;
     this.schedulerConfig.slotDuration = 30;
-
+    this.schedulerConfig.scrollTime = this.scrollTime;
 
     this.schedulerConfig.numberOfDays = 10;
 
     //Thời gian làm việc
     //8h-17h30
     this.schedulerConfig.workDayStart = '08:00';
-    this.schedulerConfig.workDayEnd = '17:30';
+    this.schedulerConfig.workDayEnd = '20:30';
 
-    ////thứ 2-thứ 7
+    //thứ 2-thứ 7
     this.schedulerConfig.workWeekStart = 1;
     this.schedulerConfig.workWeekEnd = 6;
   }
