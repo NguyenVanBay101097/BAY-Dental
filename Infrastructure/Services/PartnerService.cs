@@ -236,10 +236,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Employee == val.Employee);
             if (val.Supplier.HasValue)
                 query = query.Where(x => x.Supplier == val.Supplier);
-            if (!string.IsNullOrEmpty(val.SearchNameRef))
-                query = query.Where(x => x.Name.Contains(val.SearchNameRef) || x.NameNoSign.Contains(val.SearchNameRef) || x.Ref.Contains(val.SearchNameRef));
-            if (!string.IsNullOrEmpty(val.SearchPhone))
-                query = query.Where(x => x.Phone.Contains(val.SearchPhone));
+            if (!string.IsNullOrEmpty(val.SearchNamePhoneRef))
+                query = query.Where(x => x.Name.Contains(val.SearchNamePhoneRef) || x.NameNoSign.Contains(val.SearchNamePhoneRef) 
+                || x.Ref.Contains(val.SearchNamePhoneRef) || x.Phone.Contains(val.SearchNamePhoneRef));
 
             //query = query.Skip(val.Offset).Take(val.Limit);
             query = query.OrderByDescending(s => s.DateCreated);

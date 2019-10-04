@@ -43,8 +43,7 @@ export class PartnerCategorySimple {
 export class PartnerPaged {
     offset: number;
     limit: number;
-    searchNameRef: string;
-    searchPhone: string;
+    searchNamePhoneRef: string;
     customer: boolean;
     employee: boolean;
     supplier: boolean;

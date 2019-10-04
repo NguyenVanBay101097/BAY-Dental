@@ -1,10 +1,8 @@
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay } from '../appointment/appointment';
-import { UploadEvent } from '@progress/kendo-angular-upload';
-import { Image } from '@progress/kendo-drawing';
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
 import { EmployeeSimple } from '../employees/employee';
@@ -88,11 +86,8 @@ export class PartnerService {
             .set('limit', partnerPaged.limit.toString())
             .set('customer', partnerPaged.customer.toString())
             .set('supplier', partnerPaged.supplier.toString());
-        if (partnerPaged.searchNameRef) {
-            params = params.set('searchNameRef', partnerPaged.searchNameRef);
-        };
-        if (partnerPaged.searchPhone) {
-            params = params.set('searchPhone', partnerPaged.searchPhone);
+        if (partnerPaged.searchNamePhoneRef) {
+            params = params.set('searchNamePhoneRef', partnerPaged.searchNamePhoneRef);
         };
         return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl + "?" + params);
     }

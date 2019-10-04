@@ -1,34 +1,41 @@
 <div kendoWindowContainer></div>
 <div kendoDialogContainer></div>
-
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Lịch hẹn</li>
-    </ol>
-    <div class="o_cp_searchview">
-    </div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button class="btn btn-primary btn-sm" (click)="openWindow(null,null)">
-                    <i class="fas fa-calendar-plus"></i>&nbsp;Đặt lịch hẹn</button>
-                <button class="btn btn-sm" [class.activeButton]="schedulerShow" (click)="showSchedulerDefault()">
-                    <i class="fas fa-calendar-alt"></i>&nbsp;Xem lịch</button>
-                <button class="btn btn-sm" [class.activeButton]="!schedulerShow" (click)="showGridView()">
-                    <i class="fas fa-list"></i>&nbsp;Xem danh sách</button>
+<div [formGroup]="formFilter">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Lịch hẹn</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" formControlName="search" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)"
+                    placeholder="Theo tên, số điện thoại khách hàng hoặc tên bác sĩ" />
             </div>
         </div>
-        <div class="o_cp_sidebar">
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button class="btn btn-primary btn-sm" (click)="openWindow(null,null)">
+                        <i class="fas fa-calendar-plus"></i>&nbsp;Đặt lịch hẹn</button>
+                    <button *ngIf="!schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="schedulerShow"
+                        (click)="showSchedulerDefault()">
+                        <i class="fas fa-calendar-alt"></i>&nbsp;Xem lịch</button>
+                    <button *ngIf="schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="!schedulerShow"
+                        (click)="showGridView()">
+                        <i class="fas fa-list"></i>&nbsp;Xem danh sách</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
         </div>
     </div>
-    <div class="o_cp_right">
-    </div>
-</div>
 
-<div class="mainLeft">
-    <div class="accordion" id="accordionExample">
-        <div [formGroup]="formFilter">
-            <div class="card">
+    <div class="mainLeft">
+        <div class="accordion" id="accordionExample">
+
+            <!-- <div class="card">
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
                         <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
@@ -56,7 +63,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="card">
                 <div class="card-header" id="headingTwo">
@@ -96,9 +103,8 @@
                     </div>
                 </div>
             </div>
-
-            <div *ngIf="schedulerShow==false" class="card">
-                <div class="card-header" id="headingThree">
+            <div class="card">
+                <div *ngIf="!schedulerShow" class="card-header" id="headingThree">
                     <h2 class="mb-0">
                         <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree"
                             aria-expanded="false" aria-controls="collapseThree">
@@ -106,7 +112,7 @@
                         </button>
                     </h2>
                 </div>
-                <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
+                <div *ngIf="!schedulerShow" id="collapseThree" class="collapse show" aria-labelledby="headingThree">
                     <div class="card-body">
                         <div class="form-group">
                             <label>Từ ngày</label>
@@ -127,18 +133,16 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
 <div class="mainRight">
-    <kendo-grid [hidden]='schedulerShow' [data]="this.gridView" [height]="800" [pageable]='true'
+    <kendo-grid [hidden]='schedulerShow' [data]="this.gridView" [height]="600" [pageable]='true'
         (pageChange)="pageChange($event)" [loading]="loading" [pageSize]="limit">
-        <kendo-grid-column field="name" title="Mã" width="250"></kendo-grid-column>
-        <kendo-grid-column field="partner.name" title="Khách hàng" width="250"></kendo-grid-column>
-        <kendo-grid-column field="user.name" title="Bác sĩ" width="250"></kendo-grid-column>
-        <kendo-grid-column field="date" title="Thời gian" width="250">
+        <kendo-grid-column field="name" title="Mã"></kendo-grid-column>
+        <kendo-grid-column field="partner.name" title="Khách hàng"></kendo-grid-column>
+        <kendo-grid-column field="doctor.name" title="Bác sĩ"></kendo-grid-column>
+        <kendo-grid-column field="date" title="Thời gian">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date : 'short'}}
             </ng-template>
@@ -154,8 +158,8 @@
                         class="fas fa-edit"></i>&nbsp;Sửa</button>
                 <button (click)="deleteAppointment(dataItem.id)" class="btn btn-danger btn-sm mr-2"><i title="Xóa"
                         class="fas fa-times"></i>&nbsp;Xóa</button>
-                <button (click)="openCustomerInfo(dataItem.partnerId)" class="btn btn-info btn-sm mr-2"><i
-                        class="fas fa-user"></i>&nbsp;Thông tin KH</button>
+                <!-- <button (click)="openCustomerInfo(dataItem.partnerId)" class="btn btn-info btn-sm mr-2"><i
+                        class="fas fa-user"></i>&nbsp;Thông tin KH</button> -->
             </ng-template>
         </kendo-grid-command-column>
         <kendo-grid-messages pagerItems="dòng" noRecords="Không có lịch hẹn nào" pagerOf="/"></kendo-grid-messages>
@@ -165,23 +169,23 @@
         [startTime]="schedulerConfig.startDisplay" [endTime]="schedulerConfig.endDisplay"
         [workDayStart]="schedulerConfig.workDayStart" [workDayEnd]="schedulerConfig.workDayEnd"
         [workWeekStart]="schedulerConfig.workWeekStart" [workWeekEnd]="schedulerConfig.workWeekEnd" [editable]="true"
-        style="height: 800px;" [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
+        style="height: 600px;" [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
         [slotDuration]="schedulerConfig.slotDuration" (eventDblClick)="eventDblClick($event)"
         (slotDblClick)="slotDblClick($event)" (remove)="cancelOrRemoveEvent($event)" (dragEnd)="dragEvent($event)"
-        (dateChange)="changeDateRangeScheduler($event)">
+        (dateChange)="changeDateRangeScheduler($event)" scrollTime="scrollTime">
 
         <ng-template kendoSchedulerEventTemplate let-event="event" let-resources="resources">
-            <b>{{ event.title }}</b>
+            <span [style.font-size.em]="fontSize()"><b>{{ event.title }}</b></span>
             <div style="float: right">
                 <ng-container *ngFor="let resource of resources">
                     <span *ngIf="!resource.length">
-                        <span [style.background]="resource.color" style="padding: 4px; margin: 4px;">
-                            {{ resource.text }}
+                        <span [style.background]="resource.color">
+                            <!-- {{ resource.text }} -->
                         </span>
                     </span>
                 </ng-container>
             </div>
-            <div>{{ event.description }}</div>
+            <div [style.font-size.em]="fontSize()" style="float:right;font-style: italic">{{ event.description }}</div>
         </ng-template>
 
         <kendo-scheduler-day-view>
@@ -193,8 +197,8 @@
         <kendo-scheduler-month-view>
         </kendo-scheduler-month-view>
 
-        <kendo-scheduler-multi-day-view [numberOfDays]="schedulerConfig.numberOfDays">
-        </kendo-scheduler-multi-day-view>
+        <!-- <kendo-scheduler-multi-day-view [numberOfDays]="schedulerConfig.numberOfDays">
+        </kendo-scheduler-multi-day-view> -->
 
         <kendo-scheduler-messages today="Hôm nay" allDay="Tất cả" dayViewTitle="Ngày" weekViewTitle="Tuần"
             monthViewTitle="Tháng" [multiDayViewTitle]="schedulerConfig.numberOfDays +' ngày kế'"
@@ -202,4 +206,5 @@
         </kendo-scheduler-messages>
     </kendo-scheduler>
 </div>
+
 <div class="k-overlay" *ngIf="this.windowOpened"></div>

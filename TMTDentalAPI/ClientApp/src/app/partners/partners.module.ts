@@ -18,6 +18,7 @@ import { PartnerDetailListComponent } from './partner-detail-list/partner-detail
 import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
+import { MatStepperModule } from '@angular/material/stepper';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
@@ -29,7 +30,8 @@ import { PartnerSupplierListComponent } from './partner-supplier-list/partner-su
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MatStepperModule
   ],
   entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent],
   providers: [

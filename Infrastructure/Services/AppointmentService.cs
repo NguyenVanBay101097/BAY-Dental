@@ -74,12 +74,14 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<AppointmentBasic>> GetPagedResultAsync(AppointmentPaged val)
         {
             var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.SearchByAppointment))
-                query = query.Where(x => x.Name.Contains(val.SearchByAppointment));
-            if (!string.IsNullOrEmpty(val.SearchByCustomer))
-                query = query.Where(x => x.Partner.Name.Contains(val.SearchByCustomer) || x.Partner.Phone.Contains(val.SearchByCustomer) || x.Partner.Ref.Contains(val.SearchByCustomer));
-            if (!string.IsNullOrEmpty(val.SearchByDoctor))
-                query = query.Where(x => x.User.Name.Contains(val.SearchByDoctor));
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search) 
+                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search) 
+                || x.Partner.Ref.Contains(val.Search));
+            //if (!string.IsNullOrEmpty(val.SearchByCustomer))
+            //    query = query.Where(x => x.Partner.Name.Contains(val.SearchByCustomer) || x.Partner.Phone.Contains(val.SearchByCustomer) || x.Partner.Ref.Contains(val.SearchByCustomer));
+            //if (!string.IsNullOrEmpty(val.SearchByDoctor))
+            //    query = query.Where(x => x.User.Name.Contains(val.SearchByDoctor));
 
             if (val.DateTimeFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateTimeFrom);

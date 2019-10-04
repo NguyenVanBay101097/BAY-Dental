@@ -57,10 +57,8 @@ import { LayoutModule } from '@progress/kendo-angular-layout';
 import { EmployeesModule } from './employees/employees.module';
 import { EmployeeCategoriesModule } from './employee-categories/employee-categories.module';
 import { InputsModule } from '@progress/kendo-angular-inputs';
-
-
-
-
+import { MatStepperModule } from '@angular/material/stepper';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 export function tokenGetter() {
@@ -125,6 +123,8 @@ registerLocaleData(localeVi, 'vi');
     UploadModule,
     LayoutModule,
     InputsModule,
+    MatStepperModule,
+    NgbModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

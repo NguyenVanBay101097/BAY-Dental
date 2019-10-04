@@ -38,12 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Search mã hoặc tên
         /// </summary>
-        public string SearchNameRef { get; set; }
-
-        /// <summary>
-        /// Search điện thoại
-        /// </summary>
-        public string SearchPhone { get; set; }
+        public string SearchNamePhoneRef { get; set; }
 
         public bool? Customer { get; set; }
 

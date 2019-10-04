@@ -154,14 +154,14 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
 
   searchCustomers(search?: string) {
     var val = new PartnerPaged();
-    val.searchNameRef = search;
+    val.searchNamePhoneRef = search;
     val.customer = true;
     return this.partnerService.getAutocompleteSimple(val);
   }
 
   searchSuppliers(search?: string) {
     var val = new PartnerPaged();
-    val.searchNameRef = search;
+    val.searchNamePhoneRef = search;
     val.supplier = true;
     return this.partnerService.getAutocompleteSimple(val);
   }

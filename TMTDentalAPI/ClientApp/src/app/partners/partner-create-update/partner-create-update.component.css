@@ -10,3 +10,30 @@ table{
 .radio-gender-other{
     margin-left: 10px;
 }
+.k-window-content{
+    color:  red;
+    max-height: 500px;
+    overflow: scroll;
+}
+
+.kd-dropdown-dob-d{
+    width: 92px;    
+}
+.kd-dropdown-dob-m{
+    width: 92px;
+    margin: 0 0 0 5px;
+}
+.kd-dropdown-dob-y{
+    width: 94px;
+    margin: 0 0 0 5px;
+}
+.panel-expand{
+    padding: 0 20px;
+}
+.panel-source{
+    padding: 0 80px;
+}
+.panel-source-detail{
+    padding: 60px 0 0 0;
+    width: 250px;
+}
