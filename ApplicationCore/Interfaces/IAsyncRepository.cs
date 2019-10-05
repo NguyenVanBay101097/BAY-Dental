@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,11 @@ namespace ApplicationCore.Interfaces
         Task<T> GetByIdAsync(object id);
         Task<IReadOnlyList<T>> ListAllAsync();
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
+        Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+            string includes = "",
+            int offset = 0, int limit = int.MaxValue, bool isPagingEnabled = true);
+        Task<T> FirstOrDefaultAsync(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+            string includes = "");
         Task<T> InsertAsync(T entity);
         Task<IEnumerable<T>> InsertAsync(IEnumerable<T> entities);
 

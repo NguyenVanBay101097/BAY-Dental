@@ -17,7 +17,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css']
+  styleUrls: ['./product-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class ProductListComponent implements OnInit {
   gridData: GridDataResult;

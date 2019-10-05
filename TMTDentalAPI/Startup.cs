@@ -9,6 +9,7 @@ using ApplicationCore.Interfaces;
 using AutoMapper;
 using IdentityServer4.Services;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
@@ -161,6 +162,8 @@ namespace TMTDentalAPI
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IProductStepService, ProductStepService>();
             services.AddScoped<IDotKhamStepService, DotKhamStepService>();
+            services.AddScoped<IIrAttachmentRepository, IrAttachmentRepository>();
+            services.AddScoped<IIrAttachmentService, IrAttachmentService>();
             services.AddSingleton<IMailSender, SendGridSender>();
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();

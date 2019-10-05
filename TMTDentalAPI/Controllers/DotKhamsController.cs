@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -26,13 +27,15 @@ namespace TMTDentalAPI.Controllers
         private readonly ILaboOrderLineService _laboOrderLineService;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IDotKhamStepService _dotKhamStepService;
+        private readonly IIrAttachmentService _attachmentService;
 
         public DotKhamsController(IDotKhamService dotKhamService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IToaThuocService toaThuocService,
             IDotKhamLineService dotKhamLineService,
             ILaboOrderLineService laboOrderLineService,
             IIRModelAccessService modelAccessService,
-            IDotKhamStepService dotKhamStepService)
+            IDotKhamStepService dotKhamStepService,
+            IIrAttachmentService attachmentService)
         {
             _dotKhamService = dotKhamService;
             _mapper = mapper;
@@ -42,6 +45,7 @@ namespace TMTDentalAPI.Controllers
             _laboOrderLineService = laboOrderLineService;
             _modelAccessService = modelAccessService;
             _dotKhamStepService = dotKhamStepService;
+            _attachmentService = attachmentService;
         }
 
         [HttpGet]
@@ -214,6 +218,32 @@ namespace TMTDentalAPI.Controllers
 
             entity = _mapper.Map(entityMap, entity);
             await _dotKhamService.UpdateAsync(entity);
+
+            return NoContent();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> BinaryUploadAttachment(Guid id, IList<IFormFile> files)
+        {
+            if (files == null || files.Count == 0)
+                return BadRequest();
+
+            foreach (var file in files)
+            {
+                var attachment = new IrAttachment
+                {
+                    Name = file.FileName,
+                    DatasFname = file.FileName,
+                };
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    attachment.DbDatas = memoryStream.ToArray();
+                }
+
+                await _attachmentService.CreateAsync(attachment);
+            }
 
             return NoContent();
         }

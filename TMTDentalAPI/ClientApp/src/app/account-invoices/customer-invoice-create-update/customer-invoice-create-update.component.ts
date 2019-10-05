@@ -27,7 +27,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-customer-invoice-create-update',
   templateUrl: './customer-invoice-create-update.component.html',
-  styleUrls: ['./customer-invoice-create-update.component.css']
+  styleUrls: ['./customer-invoice-create-update.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   orderForm: FormGroup;

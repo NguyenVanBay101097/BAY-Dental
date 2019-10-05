@@ -43,5 +43,9 @@ namespace ApplicationCore.Interfaces
         IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters);
 
         EntityEntry<T> GetEntry(T entity);
+
+        IQueryable<T> SearchQuery(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+          string includes = "",
+          int offset = 0, int limit = int.MaxValue, bool isPagingEnabled = false);
     }
 }

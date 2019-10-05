@@ -11,11 +11,7 @@ export function getBaseUrl() {
 }
 
 export function getBaseApi() {
-  if (document.getElementsByTagName('server').length > 0) {
-    return document.getElementsByTagName('server')[0].attributes['href'].value;
-  } else {
-    return '';
-  }
+  return environment.apiDomain;
 }
 
 const providers = [

@@ -27,3 +27,70 @@
     padding: 0px 15px 15px 0px;
     min-width: 150px;
 }
+
+html,
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.o_web_client {
+    direction: ltr;
+    position: relative;
+    background-color: #f9f9f9;
+}
+
+html .o_web_client {
+    height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+}
+
+html .o_web_client .o_action_manager {
+    direction: ltr;
+    flex: 1 1 100%;
+    min-height: 1px;
+}
+
+html .o_web_client .o_action_manager>.o_action {
+    height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+}
+
+html .o_web_client .o_action_manager>.o_action>.o_cp_controller {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+html .o_web_client .o_action_manager>.o_action>.o_content {
+    flex: 1 1 100%;
+    position: relative;
+}
+
+html .o_web_client>.o_action_manager>.o_action .o_cp_controller {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+html .o_web_client>.o_action_manager>.o_action .o_content {
+    flex: 1 1 100%;
+    position: relative;
+    min-height: 1px;
+}
+
+@media (min-width: 768px) {
+    html .o_web_client>.o_action_manager>.o_action .o_content {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}

@@ -35,14 +35,25 @@ namespace Infrastructure.Data
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
+        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+            string includes = "",
+            int offset = 0, int limit = int.MaxValue, bool isPagingEnabled = false)
         {
-            return await ApplySpecification(spec).ToListAsync();
+            var query = GetQuery(spec, sort: sort, includes: includes, offset: offset, limit: limit, isPagingEnabled: isPagingEnabled);
+            return await query.ToListAsync();
+        }
+
+        public IQueryable<T> SearchQuery(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+          string includes = "",
+          int offset = 0, int limit = int.MaxValue, bool isPagingEnabled = false)
+        {
+            return GetQuery(spec, sort: sort, includes: includes, offset: offset, limit: limit, isPagingEnabled: isPagingEnabled);
         }
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec).CountAsync();
+            var query = GetQuery(spec);
+            return await query.CountAsync();
         }
 
         public EntityEntry<T> GetEntry(T entity)
@@ -53,22 +64,18 @@ namespace Infrastructure.Data
 
         public async Task<T> InsertAsync(T entity)
         {
-            _dbContext.Set<T>().Add(entity);
-            await _dbContext.SaveChangesAsync();
-
+            await InsertAsync(new List<T>() { entity });
             return entity;
         }
 
         public async Task UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            await UpdateAsync(new List<T>() { entity });
         }
 
         public async Task DeleteAsync(T entity)
         {
-            _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            await DeleteAsync(new List<T>() { entity });
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
@@ -120,7 +127,7 @@ namespace Infrastructure.Data
             return query;
         }
 
-        public async Task<IEnumerable<T>> InsertAsync(IEnumerable<T> entities)
+        public virtual async Task<IEnumerable<T>> InsertAsync(IEnumerable<T> entities)
         {
             await _dbContext.Set<T>().AddRangeAsync(entities);
             await _dbContext.SaveChangesAsync();
@@ -149,6 +156,53 @@ namespace Infrastructure.Data
         {
             _dbContext.Set<T>().RemoveRange(entities);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<T> FirstOrDefaultAsync(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+          string includes = "")
+        {
+            var query = GetQuery(spec, sort: sort, includes: includes);
+            return await query.FirstOrDefaultAsync();
+        }
+
+        private IQueryable<T> GetQuery(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
+            string includes = "",
+            int offset = 0, int limit = int.MaxValue, bool isPagingEnabled = false)
+        {
+            var query = _dbContext.Set<T>().AsQueryable();
+
+            if (spec.AsExpression() != null)
+            {
+                query = query.Where(spec.AsExpression());
+            }
+
+            if (!string.IsNullOrEmpty(includes))
+            {
+                var includeStrings = includes.Split(",");
+                // Include any string-based include statements
+                query = includeStrings.Aggregate(query,
+                                        (current, include) => current.Include(include));
+            }
+
+            if (sort != null)
+            {
+                query = sort(query);
+            }
+
+            // Apply paging if enabled
+            if (isPagingEnabled)
+            {
+                query = query.Skip(offset)
+                             .Take(limit);
+            }
+
+            return query;
+        }
+
+        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
+        {
+            var query = GetQuery(spec);
+            return await query.ToListAsync();
         }
     }
 }

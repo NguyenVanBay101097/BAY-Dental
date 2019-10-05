@@ -86,6 +86,7 @@ namespace Infrastructure.Data
         public DbSet<EmployeeCategory> EmployeeCategories { get; set; }
         public DbSet<ProductStep> ProductSteps { get; set; }
         public DbSet<DotKhamStep> DotKhamSteps { get; set; }
+        public DbSet<IrAttachment> IrAttachments { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -153,6 +154,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ModelAccessReportConfiguration());
             builder.ApplyConfiguration(new ProductStepConfiguration());
             builder.ApplyConfiguration(new DotKhamStepConfiguration());
+            builder.ApplyConfiguration(new IrAttachmentConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
