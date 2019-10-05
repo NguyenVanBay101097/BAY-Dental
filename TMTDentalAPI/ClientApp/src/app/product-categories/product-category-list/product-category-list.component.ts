@@ -7,6 +7,7 @@ import { ProductCategory } from '../product-category';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-category-list',
@@ -26,8 +27,7 @@ export class ProductCategoryListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private productCategoryService: ProductCategoryService,
-    private route: ActivatedRoute,
-    private windowService: WindowService, private dialogService: DialogService) {
+    private modalService: NgbModal, private dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -69,40 +69,22 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: "Thêm nhóm sản phẩm",
-      content: ProductCategoryDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Thêm nhóm sản phẩm';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(result => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: ProductCategory) {
-    const windowRef = this.windowService.open({
-      title: "Sửa nhóm sản phẩm",
-      content: ProductCategoryDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Sửa nhóm sản phẩm';
+    modalRef.componentInstance.id = item.id;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 

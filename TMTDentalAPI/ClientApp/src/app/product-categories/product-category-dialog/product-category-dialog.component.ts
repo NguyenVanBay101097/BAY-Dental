@@ -7,6 +7,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable } from 'rxjs';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-category-dialog',
@@ -26,7 +27,7 @@ export class ProductCategoryDialogComponent implements OnInit {
   @Input() public id: string;
 
   constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService,
-    public window: WindowRef) {
+    public activeModal: NgbActiveModal) {
   }
 
   ngOnInit() {
@@ -75,9 +76,9 @@ export class ProductCategoryDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(result => {
       if (result) {
-        this.window.close(result);
+        this.activeModal.close(result);
       } else {
-        this.window.close(true);
+        this.activeModal.close(true);
       }
     }, err => {
       console.log(err);
@@ -95,7 +96,7 @@ export class ProductCategoryDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.window.close();
+    this.activeModal.dismiss();
   }
 }
 

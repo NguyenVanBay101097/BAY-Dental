@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 import { ProductStepDisplay } from '../product-step';
 import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-dialog',
@@ -51,7 +51,7 @@ export class ProductDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private windowService: WindowService) {
+    private modalService: NgbModal) {
   }
 
   formStepEdit = this.fb.group({
@@ -153,22 +153,13 @@ export class ProductDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm nhóm sản phẩm',
-      content: ProductCategoryDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm nhóm sản phẩm';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        console.log(result);
-        this.filterdCategories.push(result as ProductCategoryBasic);
-        this.productForm.patchValue({ categ: result });
-      }
+    modalRef.result.then(result => {
+      this.filterdCategories.push(result as ProductCategoryBasic);
+      this.productForm.patchValue({ categ: result });
+    }, () => {
     });
   }
 

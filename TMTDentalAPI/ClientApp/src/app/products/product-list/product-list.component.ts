@@ -162,119 +162,72 @@ export class ProductListComponent implements OnInit {
   }
 
   createMedicine() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm thuốc',
-      content: ProductDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm thuốc';
 
-    const instance = windowRef.content.instance;
     var productDefaultVal = new Product();
     productDefaultVal.type = 'consu';
     productDefaultVal.saleOK = false;
     productDefaultVal.purchaseOK = false;
     productDefaultVal.keToaOK = true;
-    instance.productDefaultVal = productDefaultVal;
+    modalRef.componentInstance.productDefaultVal = productDefaultVal;
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   createLabo() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm labo',
-      content: ProductDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm labo';
 
-    const instance = windowRef.content.instance;
     var productDefaultVal = new Product();
     productDefaultVal.type = 'consu';
     productDefaultVal.saleOK = false;
-    productDefaultVal.purchaseOK = true;
     productDefaultVal.isLabo = true;
-    instance.productDefaultVal = productDefaultVal;
+    modalRef.componentInstance.productDefaultVal = productDefaultVal;
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   createProduct() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm vật tư',
-      content: ProductDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm vật tư';
 
-    const instance = windowRef.content.instance;
     var productDefaultVal = new Product();
     productDefaultVal.type = 'product';
     productDefaultVal.saleOK = false;
     productDefaultVal.purchaseOK = false;
-    productDefaultVal.keToaOK = false;
-    instance.productDefaultVal = productDefaultVal;
+    modalRef.componentInstance.productDefaultVal = productDefaultVal;
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm sản phẩm',
-      content: ProductDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Thêm sản phẩm';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: Product) {
-    const windowRef = this.windowService.open({
-      title: `Sửa sản phẩm`,
-      content: ProductDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa sản phẩm';
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
