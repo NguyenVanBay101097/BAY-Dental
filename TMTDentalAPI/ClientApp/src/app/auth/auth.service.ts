@@ -46,6 +46,10 @@ export class AuthService {
         return this.authResource.resetPassword(val);
     }
 
+    changePassword(val) {
+        return this.authResource.changePassword(val);
+    }
+
     logout(): void {
         localStorage.removeItem('access_token');
         localStorage.removeItem('user_info');

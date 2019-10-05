@@ -14,11 +14,6 @@ export class AppComponent {
 
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['login']);
-  }
-
   onPrintInvoice() {
     const invoiceIds = ['101', '102'];
     this.printService

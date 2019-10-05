@@ -8,6 +8,9 @@ import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TopMenuComponent } from './top-menu/top-menu.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { RouterModule } from '@angular/router';
+import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +18,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     HeaderMenuComponent,
     HeaderBarComponent,
     TopMenuComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ChangePasswordDialogComponent
   ],
   exports: [
     HeaderComponent,
@@ -28,8 +32,10 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     CommonModule,
     BrowserAnimationsModule,
     MyOwnCustomMaterialModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    RouterModule,
+    ReactiveFormsModule
   ],
-  entryComponents: [ConfirmDialogComponent],
+  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent],
 })
 export class SharedModule { }

@@ -66,6 +66,10 @@ export class AuthResource {
         return this.http.post(this.baseApi + 'api/Account/ResetPassword', val);
     }
 
+    changePassword(val) {
+        return this.http.post(this.baseApi + 'api/Account/ChangePassword', val);
+    }
+
     logout(): void {
         this.isLoggedIn = false;
     }

@@ -190,6 +190,7 @@ namespace TMTDentalAPI.Controllers
 
             ClaimsIdentity identity = new ClaimsIdentity(new Claim[] {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName),
                     new Claim("company_id", user.CompanyId.ToString()),
                     new Claim("user_root", user.IsUserRoot.ToString())
                }
