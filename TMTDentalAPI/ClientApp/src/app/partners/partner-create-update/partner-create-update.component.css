@@ -16,17 +16,6 @@ table{
     overflow: scroll;
 }
 
-.kd-dropdown-dob-d{
-    width: 92px;    
-}
-.kd-dropdown-dob-m{
-    width: 92px;
-    margin: 0 0 0 5px;
-}
-.kd-dropdown-dob-y{
-    width: 94px;
-    margin: 0 0 0 5px;
-}
 .panel-expand{
     padding: 0 20px;
 }

@@ -1,214 +1,220 @@
-<form class="o_form_view" [formGroup]="productForm" #form="ngForm">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="oe_title">
-                <label class="o_form_label oe_edit_only">Tên sản phẩm</label>
-                <h1>
-                    <input type="text" name="name" class="form-control" placeholder="Tên sản phẩm"
-                        formControlName="name" #nameInput>
-                </h1>
-                <!-- <div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" formControlName="saleOK" id="saleOK">
-                        <label class="form-check-label" for="saleOK">
-                            Có thể bán
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" formControlName="purchaseOK" id="purchaseOK">
-                        <label class="form-check-label" for="purchaseOK">
-                            Có thể mua
-                        </label>
-                    </div>
-                </div> -->
-            </div>
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="productForm" #form="ngForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên sản phẩm</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" placeholder="Tên sản phẩm"
+                            formControlName="name" #nameInput>
+                    </h1>
+                    <!-- <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="saleOK" id="saleOK">
+                            <label class="form-check-label" for="saleOK">
+                                Có thể bán
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="purchaseOK" id="purchaseOK">
+                            <label class="form-check-label" for="purchaseOK">
+                                Có thể mua
+                            </label>
+                        </div>
+                    </div> -->
+                </div>
 
 
-            <div class="o_notebook">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
-                            aria-controls="home" aria-selected="true">Thông tin</a>
-                    </li>
-                    <li class="nav-item" *ngIf="productForm.get('type').value == 'service'">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab"
-                            aria-controls="profile" aria-selected="false">Công đoạn</a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="info" role="tabpanel" aria-labelledby="info-tab">
-                        <div class="o_group">
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
+                                aria-controls="home" aria-selected="true">Thông tin</a>
+                        </li>
+                        <li class="nav-item" *ngIf="productForm.get('type').value == 'service'">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab"
+                                aria-controls="profile" aria-selected="false">Công đoạn</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <!-- <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Loại sản phẩm
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <select class="form-control" formControlName="type" (change)="changeType()">
+                                                    <option value="product">Có quản lý tồn kho</option>
+                                                    <option value="consu">Không quản lý tồn kho</option>
+                                                    <option value="service">Dịch vụ</option>
+                                                </select>
+                                            </td>
+                                        </tr> -->
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Nhóm sản phẩm
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filterdCategories"
+                                                        [textField]="'completeName'" [filterable]="true" #categCbx
+                                                        formControlName="categ" [valueField]="'id'"
+                                                        (filterChange)="categCbxFilterChange2($event)"
+                                                        [loading]="categCbxLoading">
+                                                    </kendo-combobox>
+                                                    <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
+                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã sản phẩm
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="defaultCode" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá bán
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="listPrice">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                        <!-- <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Là thuốc
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        formControlName="keToaOK" id="keToaOK">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Là labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        formControlName="isLabo">
+                                                </div>
+                                            </td>
+                                        </tr> -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="step" role="tabpanel" aria-labelledby="step-tab">
                             <table class="o_group o_inner_group o_group_col_6">
                                 <tbody>
-                                    <!-- <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Loại sản phẩm
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <select class="form-control" formControlName="type" (change)="changeType()">
-                                                <option value="product">Có quản lý tồn kho</option>
-                                                <option value="consu">Không quản lý tồn kho</option>
-                                                <option value="service">Dịch vụ</option>
-                                            </select>
-                                        </td>
-                                    </tr> -->
                                     <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">
-                                                Nhóm sản phẩm
+                                                Tên công đoạn
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <div class="d-flex">
-                                                <kendo-combobox [data]="filterdCategories" [textField]="'completeName'"
-                                                    [filterable]="true" #categCbx formControlName="categ"
-                                                    [valueField]="'id'" (filterChange)="categCbxFilterChange2($event)"
-                                                    [loading]="categCbxLoading">
-                                                </kendo-combobox>
-                                                <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
-                                                    <span class="k-icon k-i-plus"></span>
-                                                </a>
+                                            <div>
+                                                <input type="text" class="form-control" formControlName="stepName"
+                                                    placeholder="Gõ tên công đoạn sau đó enter"
+                                                    (keydown)="onKeyDownStepName($event)" />
                                             </div>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Mã sản phẩm
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="defaultCode" />
-                                        </td>
+                                        <td><button type="button" class="btn btn-primary btn-sm mr-2"
+                                                (click)="createTempProductStepList()">Thêm</button></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <table class="o_group o_inner_group o_group_col_6">
-                                <tbody>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Giá bán
-                                            </label>
+                            <table *ngIf="stepList.length>0" class="o_group o_inner_group o_group_col_6">
+                                <tr class="row">
+                                    <th class="col">Thứ tự</th>
+                                    <th class="col">Công đoạn</th>
+                                    <th class="col">Mặc định</th>
+                                    <th class="col">Thao tác</th>
+                                </tr>
+                                <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                                    <tr *ngFor="let i of stepList" class="row" class="example-box" cdkDrag>
+                                        <td colspan="1" class="col">
+                                            {{i.order}}
                                         </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="listPrice">
-                                            </kendo-numerictextbox>
+                                        <td colspan="1" style="width: 100%;" class="col" #stepName>
+                                            <span *ngIf="showInput(i.order)">{{i.name}}</span>
+                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit"
+                                                (ngSubmit)="submitStepName(i.order)">
+                                                <input type="text" formControlName="name" />
+                                            </form>
+                                        </td>
+                                        <td colspan="1" class="col">
+                                            <input type="checkbox" formControlName="default" [checked]="i.default"
+                                                (change)="changeCheckbox(i.order)" />
+                                        </td>
+                                        <td colspan="1" class="col">
+                                            <button type="button" class="btn btn-light btn-sm mr-2"
+                                                (click)="removeStepListItem(i.order)"
+                                                [disabled]=" disableButton(i.order,false)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <!-- <button [disabled]="i.order==1 || disableButton(i.order,false)" type="button"
+                                                class="btn btn-light btn-sm mr-2" (click)="moveUp(i.order)">
+                                                <i class="fas fa-caret-up"></i>
+                                            </button>
+                                            <button [disabled]="i.order==stepList.length  || disableButton(i.order,false)"
+                                                type="button" class="btn btn-light btn-sm mr-2" (click)="moveDown(i.order)">
+                                                <i class="fas fa-caret-down"></i>
+                                            </button> -->
+                                            <button type="button" [disabled]=" disableButton(i.order,true)"
+                                                class="btn btn-light btn-sm mr-2"
+                                                (click)="editStepOrCancel(i.order, i.name)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
                                         </td>
                                     </tr>
-                                    <!-- <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Là thuốc
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    formControlName="keToaOK" id="keToaOK">
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Là labo
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    formControlName="isLabo">
-                                            </div>
-                                        </td>
-                                    </tr> -->
-                                </tbody>
+                                </div>
                             </table>
                         </div>
                     </div>
-
-                    <div class="tab-pane" id="step" role="tabpanel" aria-labelledby="step-tab">
-                        <table class="o_group o_inner_group o_group_col_6">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Tên công đoạn
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div>
-                                            <input type="text" class="form-control" formControlName="stepName"
-                                                placeholder="Gõ tên công đoạn sau đó enter"
-                                                (keydown)="onKeyDownStepName($event)" />
-                                        </div>
-                                    </td>
-                                    <td><button type="button" class="btn btn-primary btn-sm mr-2"
-                                            (click)="createTempProductStepList()">Thêm</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table *ngIf="stepList.length>0" class="o_group o_inner_group o_group_col_6">
-                            <tr class="row">
-                                <th class="col">Thứ tự</th>
-                                <th class="col">Công đoạn</th>
-                                <th class="col">Mặc định</th>
-                                <th class="col">Thao tác</th>
-                            </tr>
-                            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-                                <tr *ngFor="let i of stepList" class="row" class="example-box" cdkDrag>
-                                    <td colspan="1" class="col">
-                                        {{i.order}}
-                                    </td>
-                                    <td colspan="1" style="width: 100%;" class="col" #stepName>
-                                        <span *ngIf="showInput(i.order)">{{i.name}}</span>
-                                        <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit"
-                                            (ngSubmit)="submitStepName(i.order)">
-                                            <input type="text" formControlName="name" />
-                                        </form>
-                                    </td>
-                                    <td colspan="1" class="col">
-                                        <input type="checkbox" formControlName="default" [checked]="i.default"
-                                            (change)="changeCheckbox(i.order)" />
-                                    </td>
-                                    <td colspan="1" class="col">
-                                        <button type="button" class="btn btn-light btn-sm mr-2"
-                                            (click)="removeStepListItem(i.order)"
-                                            [disabled]=" disableButton(i.order,false)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        <!-- <button [disabled]="i.order==1 || disableButton(i.order,false)" type="button"
-                                            class="btn btn-light btn-sm mr-2" (click)="moveUp(i.order)">
-                                            <i class="fas fa-caret-up"></i>
-                                        </button>
-                                        <button [disabled]="i.order==stepList.length  || disableButton(i.order,false)"
-                                            type="button" class="btn btn-light btn-sm mr-2" (click)="moveDown(i.order)">
-                                            <i class="fas fa-caret-down"></i>
-                                        </button> -->
-                                        <button type="button" [disabled]=" disableButton(i.order,true)"
-                                            class="btn btn-light btn-sm mr-2"
-                                            (click)="editStepOrCancel(i.order, i.name)">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </div>
-                        </table>
-                    </div>
                 </div>
             </div>
-
-            <div>
-                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
-                <!-- <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSaveAndNew()" accesskey="c"
-                    *ngIf="!id">Lưu và thêm
-                    mới</button> -->
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
-            </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
-<div class="k-overlay" *ngIf="opened"></div>
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

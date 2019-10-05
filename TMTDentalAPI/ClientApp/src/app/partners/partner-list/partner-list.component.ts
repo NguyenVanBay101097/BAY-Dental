@@ -167,7 +167,7 @@ export class PartnerListComponent implements OnInit {
   }
 
   openModal(id) {
-    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl' });
+    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.cusId = id;
     modalRef.result.then(
       rs => {

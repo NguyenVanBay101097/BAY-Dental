@@ -12,6 +12,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 import { ValueAxisLabelsComponent } from '@progress/kendo-angular-charts';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-list',
@@ -40,7 +41,7 @@ export class ProductListComponent implements OnInit {
 
   constructor(private productService: ProductService, private windowService: WindowService,
     private dialogService: DialogService, public intl: IntlService, private productCategoryService: ProductCategoryService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -145,27 +146,18 @@ export class ProductListComponent implements OnInit {
   }
 
   createService() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm dịch vụ',
-      content: ProductDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm dịch vụ';
 
-    const instance = windowRef.content.instance;
     var productDefaultVal = new Product();
     productDefaultVal.type = 'service';
     productDefaultVal.saleOK = true;
     productDefaultVal.purchaseOK = false;
-    instance.productDefaultVal = productDefaultVal;
+    modalRef.componentInstance.productDefaultVal = productDefaultVal;
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 

@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 import { ProductStepDisplay } from '../product-step';
 import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-dialog',
@@ -49,7 +50,7 @@ export class ProductDialogComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private productService: ProductService,
-    private productCategoryService: ProductCategoryService, public window: WindowRef,
+    private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
     private windowService: WindowService) {
   }
 
@@ -178,9 +179,9 @@ export class ProductDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(result => {
       if (result) {
-        this.window.close(result);
+        this.activeModal.close(result);
       } else {
-        this.window.close(true);
+        this.activeModal.close(true);
       }
     }, err => {
       console.log(err);
@@ -224,9 +225,9 @@ export class ProductDialogComponent implements OnInit {
 
   onCancel() {
     if (this.inserted) {
-      this.window.close(true);
+      this.activeModal.close(true);
     } else {
-      this.window.close();
+      this.activeModal.dismiss();
     }
   }
 

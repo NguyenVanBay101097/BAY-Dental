@@ -1,0 +1,29 @@
+
+@media (min-width: 992px) {
+    .modal-lg,
+    .modal-xl {
+        max-width: 980px;
+    }
+}
+
+.modal .modal-dialog .o_form_view .o_form_sheet_bg {
+    padding: 0;
+    width: 100%;
+}
+
+.modal .modal-dialog .o_form_view .o_form_sheet_bg>.o_form_sheet {
+    box-shadow: none;
+    width: 100%;
+    margin: 0 auto;
+    max-width: none;
+}
+
+.modal.o_technical_modal .modal-content .modal-body.o_act_window {
+    padding: 0;
+}
+
+.o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
+    width: 0%;
+    padding: 0px 15px 15px 0px;
+    min-width: 150px;
+}
