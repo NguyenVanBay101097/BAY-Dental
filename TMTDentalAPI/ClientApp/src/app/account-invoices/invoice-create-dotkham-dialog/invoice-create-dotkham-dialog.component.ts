@@ -8,6 +8,7 @@ import { WindowRef } from '@progress/kendo-angular-dialog';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { DotKhamDefaultGet } from 'src/app/dot-khams/dot-khams';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-invoice-create-dotkham-dialog',
@@ -23,7 +24,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
-    private employeeService: EmployeeService, private windowRef: WindowRef) { }
+    private employeeService: EmployeeService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
@@ -47,7 +48,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
     this.doctorCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.doctorCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value, "doctor"))
+      switchMap(value => this.searchDoctors(value))
     ).subscribe(result => {
       this.filteredDoctors = result;
       this.doctorCbx.loading = false;
@@ -56,7 +57,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
     this.assistantCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.assistantCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value, "assistant"))
+      switchMap(value => this.searchAssistants(value))
     ).subscribe(result => {
       this.filteredAssistants = result;
       this.assistantCbx.loading = false;
@@ -83,6 +84,20 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
+  searchDoctors(q?: string) {
+    var val = new EmployeePaged();
+    val.search = q;
+    val.isDoctor = true;
+    return this.employeeService.getEmployeeSimpleList(val);
+  }
+
+  searchAssistants(q?: string) {
+    var val = new EmployeePaged();
+    val.search = q;
+    val.isAssistant = true;
+    return this.employeeService.getEmployeeSimpleList(val);
+  }
+
   onSave() {
     if (!this.dotKhamForm.valid) {
       return;
@@ -93,7 +108,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
     val.assistantId = val.assistant ? val.assistant.id : null;
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
-        this.windowRef.close({
+        this.activeModal.close({
           view: false
         });
       });
@@ -110,7 +125,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
     val.assistantId = val.assistant ? val.assistant.id : null;
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
-        this.windowRef.close({
+        this.activeModal.close({
           view: true,
           result
         });
@@ -119,22 +134,18 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.windowRef.close();
+    this.activeModal.dismiss();
   }
 
   getDoctorList() {
-    var empPn = new EmployeePaged;
-    empPn.position = "doctor";
-    this.employeeService.getEmployeeSimpleList(empPn).subscribe(
+    this.searchDoctors().subscribe(
       rs => {
         this.filteredDoctors = rs;
       });
   }
 
   getAssistantList() {
-    var empPn = new EmployeePaged;
-    empPn.position = "assistant";
-    this.employeeService.getEmployeeSimpleList(empPn).subscribe(
+    this.searchAssistants().subscribe(
       rs => {
         this.filteredAssistants = rs;
       });

@@ -1,0 +1,115 @@
+<div [formGroup]="lineForm">
+    <div class="o_group">
+        <table class="o_group o_inner_group" style="width: 100%">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Thuốc
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true" #productCbx
+                            formControlName="product" [valueField]="'id'">
+                        </kendo-combobox>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="o_group">
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Ngày uống
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <div class="d-flex align-items-center">
+                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="numberOfTimes"
+                                (valueChange)="onChange($event)">
+                            </kendo-numerictextbox>
+                            <span class="ml-2">Lần</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Mỗi lần
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <div class="d-flex align-items-center">
+                            <kendo-numerictextbox [min]="0" [format]="'n1'" formControlName="amountOfTimes"
+                                (valueChange)="onChange($event)">
+                            </kendo-numerictextbox>
+                            <span class="ml-2">Viên</span>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Số ngày
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <kendo-numerictextbox [min]="0" [format]="'n0'" [max]="100" (valueChange)="onChange($event)"
+                            formControlName="numberOfDays">
+                        </kendo-numerictextbox>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Hướng dẫn
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <select class="form-control" formControlName="useAt">
+                            <option value="after_meal">Sau khi ăn</option>
+                            <option value="before_meal">Trước khi ăn</option>
+                            <option value="in_meal">Trong khi ăn</option>
+                            <option value="after_wakeup">Sau khi thức dậy</option>
+                            <option value="before_sleep">Trước khi đi ngủ</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Số lượng
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="quantity">
+                        </kendo-numerictextbox>
+                    </td>
+                </tr>
+                <!-- <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Ghi chú
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <input type="text" class="form-control" formControlName="note" />
+                    </td>
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2">
+        <button type="button" class="btn btn-primary btn-sm" *ngIf="!line" (click)="onSave()">Thêm thuốc</button>
+        <button type="button" class="btn btn-primary btn-sm mr-2" *ngIf="line" (click)="onUpdate()">Cập nhật</button>
+        <button type="button" class="btn btn-primary btn-sm" *ngIf="line" (click)="onCancel()">Hủy</button>
+    </div>
+</div>

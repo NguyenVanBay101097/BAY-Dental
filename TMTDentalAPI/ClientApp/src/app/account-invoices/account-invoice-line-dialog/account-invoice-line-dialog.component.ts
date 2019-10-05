@@ -15,6 +15,7 @@ import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { ToothService, ToothFilter, ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ToothCategoryService, ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
 import * as _ from 'lodash';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-account-invoice-line-dialog',
@@ -37,7 +38,7 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private productService: ProductService,
-    private userService: UserService, public window: WindowRef, private invLineService: AccountInvoiceLineService,
+    private userService: UserService, public activeModal: NgbActiveModal, private invLineService: AccountInvoiceLineService,
     private partnerService: PartnerService, private toothService: ToothService, private toothCategoryService: ToothCategoryService) { }
 
   ngOnInit() {
@@ -137,10 +138,10 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);
-      this.invLineForm.get('quantity').setValue(this.getQuantity() - 1);
+      // this.invLineForm.get('quantity').setValue(this.getQuantity() - 1);
     } else {
       this.teethSelected.push(tooth);
-      this.invLineForm.get('quantity').setValue(this.getQuantity() + 1);
+      // this.invLineForm.get('quantity').setValue(this.getQuantity() + 1);
     }
   }
 
@@ -225,7 +226,7 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
   onChangeToothCategory(value: any) {
     if (value.id) {
       this.teethSelected = [];
-      this.invLineForm.get('quantity').setValue(0);
+      // this.invLineForm.get('quantity').setValue(0);
       this.loadTeethMap(value);
     }
   }
@@ -240,14 +241,15 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
     val.employeeId = val.employee ? val.employee.id : null;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
-    if (this.getUnitType == 'single') {
-      val.teeth = this.teethSelected.sort(this.compareTeeth);
-    }
-    else {
-      val.teeth = [];
-    }
+    val.teeth = this.teethSelected;
+    // if (this.getUnitType == 'single') {
+    //   val.teeth = this.teethSelected.sort(this.compareTeeth);
+    // }
+    // else {
+    //   val.teeth = [];
+    // }
 
-    this.window.close(val);
+    this.activeModal.close(val);
   }
 
   compareTeeth(r1: ToothDisplay, r2: ToothDisplay) {
@@ -261,7 +263,7 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.window.close();
+    this.activeModal.dismiss();
   }
 
   get getUnitType() {

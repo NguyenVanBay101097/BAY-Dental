@@ -1,68 +1,73 @@
-<form class="o_form_view o_form_editable" [formGroup]="paymentForm">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Phương thức
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
-                                    #journalCbx formControlName="journal" [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Số tiền
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-numerictextbox [min]="0" formControlName="amount" [format]="'n0'">
-                                </kendo-numerictextbox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label for="o_field_input_46" class="o_form_label">
-                                    Ngày thanh toán
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Ghi chú
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <input type="text" formControlName="communication" class="form-control" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
 
-            <div>
-                <button type="button" class="btn btn-sm btn-primary" (click)="save()" [disabled]="loading">
-                    Thanh toán
-                </button>
-                <button type="button" class="btn btn-sm btn-light" (click)="cancel()" accesskey="q">
-                    Đóng
-                </button>
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="paymentForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredJournals" ngbAutofocus [textField]="'name'"
+                                        [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" formControlName="amount" [format]="'n0'">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Ngày thanh toán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" formControlName="communication" class="form-control" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
+        toán</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
+</footer>

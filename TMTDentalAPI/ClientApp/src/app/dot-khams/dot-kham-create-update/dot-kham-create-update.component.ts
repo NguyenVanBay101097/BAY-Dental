@@ -33,6 +33,7 @@ import { AppointmentCreateUpdateComponent } from 'src/app/appointment/appointmen
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch } from '../dot-khams';
 import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-dot-kham-create-update',
@@ -89,7 +90,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     // private dotKhamLineService: DotKhamLineService, private dotKhamLineOperationService: DotKhamLineOperationService,
     private windowService: WindowService, private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
     private toaThuocService: ToaThuocService, private appointmentService: AppointmentService, private productService: ProductService,
-    private employeeService: EmployeeService, private injector: Injector) { }
+    private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
@@ -310,24 +311,18 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   actionCreateLabo() {
-    const windowRef = this.windowService.open({
-      title: 'Tạo labo',
-      content: LaboOrderLineCuDialogComponent,
-      resizable: false,
-    });
-    const instance = windowRef.content.instance;
-    instance.dotKhamId = this.id;
+    if (this.id) {
+      let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      modalRef.componentInstance.title = 'Tạo labo';
+      modalRef.componentInstance.dotKhamId = this.id;
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
+      modalRef.result.then(() => {
         this.loadLaboOrderLines();
-      }
-    });
+      }, () => {
+      });
+    }
   }
+
 
   printToaThuoc(item: ToaThuocBasic) {
     this.toaThuocService.getPrint(item.id).subscribe(result => {
@@ -377,25 +372,13 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
 
   editToaThuoc(item: ToaThuocBasic) {
-    const windowRef = this.windowService.open({
-      title: 'Sửa toa thuốc',
-      content: ToaThuocCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.title = 'Sửa toa thuốc';
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.dotKhamId = this.id;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        this.loadToaThuocs();
-      }
+    modalRef.result.then(() => {
+      this.loadToaThuocs();
+    }, () => {
     });
   }
 
@@ -422,24 +405,13 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   // }
 
   editLaboLine(item: LaboOrderLineBasic) {
-    const windowRef = this.windowService.open({
-      title: 'Sửa labo',
-      content: LaboOrderLineCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.title = 'Sửa labo';
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        this.loadLaboOrderLines();
-      }
+    modalRef.result.then(() => {
+      this.loadLaboOrderLines();
+    }, () => {
     });
   }
 
@@ -479,25 +451,36 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   // }
 
   actionCreateToaThuoc() {
-    const windowRef = this.windowService.open({
-      title: 'Tạo toa thuốc',
-      content: ToaThuocCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    if (this.id) {
+      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      modalRef.componentInstance.title = 'Kê toa thuốc';
+      modalRef.componentInstance.dotKhamId = this.id;
 
-    const instance = windowRef.content.instance;
-    instance.dotKhamId = this.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
+      modalRef.result.then(() => {
         this.loadToaThuocs();
-      }
-    });
+      }, () => {
+      });
+    }
+
+    // const windowRef = this.windowService.open({
+    //   title: 'Tạo toa thuốc',
+    //   content: ToaThuocCuDialogComponent,
+    //   resizable: false,
+    //   autoFocusedElement: '[name="name"]',
+    // });
+
+    // const instance = windowRef.content.instance;
+    // instance.dotKhamId = this.id;
+
+    // this.opened = true;
+
+    // windowRef.result.subscribe((result) => {
+    //   this.opened = false;
+    //   if (result instanceof WindowCloseResult) {
+    //   } else {
+    //     this.loadToaThuocs();
+    //   }
+    // });
   }
 
   // actionCreateAppointment() {

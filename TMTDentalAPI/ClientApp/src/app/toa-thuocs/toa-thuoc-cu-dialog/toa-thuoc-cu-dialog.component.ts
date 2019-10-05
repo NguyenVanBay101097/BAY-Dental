@@ -10,6 +10,7 @@ import { ProductService, ProductFilter } from 'src/app/products/product.service'
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { ToaThuocLineDialogComponent } from '../toa-thuoc-line-dialog/toa-thuoc-line-dialog.component';
 import { update } from 'lodash';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog',
@@ -20,66 +21,58 @@ export class ToaThuocCuDialogComponent implements OnInit {
   toaThuocForm: FormGroup;
   lineForm: FormGroup;
   editingLine: FormGroup;//line đang được chỉnh sửa
-  id: string;//dot kham Id
+  id: string;
   lineId: number;//toa thuoc line Id
   dotKhamId: string;
   filteredProducts: ProductSimple[];
+  lineSelected: ToaThuocLineDisplay;
+  lines: ToaThuocLineDisplay[] = [];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   // opened = false;
 
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, private intlService: IntlService,
-    private productService: ProductService, private windowRef: WindowRef, private windowService: WindowService) { }
+    private productService: ProductService, public activeModal: NgbActiveModal, private windowService: WindowService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
       name: null,
-      partner: null,
       dateObj: null,
-      dotKham: null,
-      dotKhamId: null,
-      partnerId: null,
-      user: null,
-      userId: null,
-      companyId: null,
       lines: this.fb.array([]),
-      note: null,//Đang ẩn
-      date: null//Đang ẩn
+      note: null,
+      companyId: null,
+      dotKhamId: null,
+      userId: null,
+      partnerId: null
     });
 
-    this.lineForm = this.fb.group({
-      product: [null, Validators.required],
-      numberOfTimes: 1,
-      numberOfDays: 1,
-      amountOfTimes: 1,
-      quantity: 1,
-      useAt: 'after_meal',
-      note: null,
-    });
+    // this.lineForm = this.fb.group({
+    //   product: [null, Validators.required],
+    //   numberOfTimes: 1,
+    //   numberOfDays: 1,
+    //   amountOfTimes: 1,
+    //   quantity: 1,
+    //   useAt: 'after_meal',
+    //   note: null,
+    // });
 
     if (this.id) {
-      console.log(this.id);
       this.loadRecord();
     } else {
       this.loadDefault();
     }
 
+    // this.searchProducts(null).subscribe(result => {
+    //   this.filteredProducts = result;
+    // });
 
-    this.searchProducts(null).subscribe(result => {
-      this.filteredProducts = result;
-    });
-
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
-  }
-
-  get lines() {
-    return this.toaThuocForm.get('lines') as FormArray;
+    // this.productCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.productCbx.loading = true)),
+    //   switchMap(value => this.searchProducts(value))
+    // ).subscribe(result => {
+    //   this.filteredProducts = result;
+    //   this.productCbx.loading = false;
+    // });
   }
 
   productChange(value: any) {
@@ -94,6 +87,14 @@ export class ToaThuocCuDialogComponent implements OnInit {
         this.productCbx.reset();
       });
     }
+  }
+
+  onSelectLine(line: ToaThuocLineDisplay) {
+    this.lineSelected = line;
+  }
+
+  onLineUpdated() {
+    this.lineSelected = null;
   }
 
   // showLineAddModal() {
@@ -117,14 +118,16 @@ export class ToaThuocCuDialogComponent implements OnInit {
   //   });
   // }
 
-
+  onLineCreated(line: ToaThuocLineDisplay) {
+    this.lines.push(line);
+  }
 
   deleteLine(index: number) {
     if (this.lineId == index) {
       this.lineId = null;
       this.resetLineForm(this.lineForm);
     }
-    this.lines.removeAt(index);
+    this.lines.splice(index, 1);
   }
 
   searchProducts(search?: string) {
@@ -138,14 +141,9 @@ export class ToaThuocCuDialogComponent implements OnInit {
     var val = new ToaThuocDefaultGet();
     val.dotKhamId = this.dotKhamId;
     this.toaThuocService.defaultGet(val).subscribe(result => {
-      console.log(result);
       this.toaThuocForm.patchValue(result);
       let date = this.intlService.parseDate(result.date);
       this.toaThuocForm.get('dateObj').patchValue(date);
-
-      result.lines.forEach(line => {
-        this.lines.push(this.fb.group(line));
-      });
     });
   }
 
@@ -156,10 +154,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
         this.toaThuocForm.patchValue(result);
         let date = this.intlService.parseDate(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
-
-        result.lines.forEach(line => {
-          this.lines.push(this.fb.group(line));
-        });
+        this.lines = result.lines;
       });
     }
   }
@@ -168,17 +163,24 @@ export class ToaThuocCuDialogComponent implements OnInit {
     return this.toaThuocForm.get('dotKham').value;
   }
 
-  onSaveToaThuoc() {
+  onSave() {
     if (!this.toaThuocForm.valid) {
       return;
     }
 
     var val = this.toaThuocForm.value;
     val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+    val.lines = this.lines;
     console.log(val);
-    this.toaThuocService.create(val).subscribe(result => {
-      this.windowRef.close(result);
-    });
+    if (this.id) {
+      this.toaThuocService.update(this.id, val).subscribe(() => {
+        this.activeModal.close(true);
+      });
+    } else {
+      this.toaThuocService.create(val).subscribe(result => {
+        this.activeModal.close(result);
+      });
+    }
   }
 
   editLine(id: number) {
@@ -219,13 +221,13 @@ export class ToaThuocCuDialogComponent implements OnInit {
       val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
       console.log(val);
       this.toaThuocService.update(this.id, val).subscribe(() => {
-        this.windowRef.close(true);
+        this.activeModal.close(true);
       });
     }
   }
 
   onCancel() {
-    this.windowRef.close();
+    this.activeModal.dismiss();
   }
 
   public onChange(value: number) {

@@ -81,8 +81,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         //group filter IsDoctor và IsAssistant
-        //public bool? IsDoctor { get; set; }
-        //public bool? IsAssistant { get; set; }
+        public bool? IsDoctor { get; set; }
+        public bool? IsAssistant { get; set; }
         //public bool? IsOther { get; set; }
         public string Position { get; set; }
     }

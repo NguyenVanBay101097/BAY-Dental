@@ -3,6 +3,7 @@
     border: 1px solid #ccc;
     display: inline-block;
     margin-right: 4px;
+    cursor: pointer;
 }
 
 .tooth-item.selected {

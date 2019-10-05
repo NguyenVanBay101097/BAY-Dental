@@ -7,9 +7,10 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
+import { ProductService, ProductFilter, ProductPaged } from 'src/app/products/product.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { WindowRef } from '@progress/kendo-angular-dialog';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-labo-order-line-cu-dialog',
@@ -30,7 +31,7 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private laboOrderLineService: LaboOrderLineService, private intlService: IntlService,
-    private partnerService: PartnerService, private productService: ProductService, private windowRef: WindowRef) { }
+    private partnerService: PartnerService, private productService: ProductService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.lineForm = this.fb.group({
@@ -167,8 +168,8 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
   }
 
   searchProducts(search?: string) {
-    var val = new ProductFilter();
-    val.purchaseOK = true;
+    var val = new ProductPaged();
+    val.isLabo = true;
     val.search = search;
     return this.productService.autocomplete2(val);
   }
@@ -198,7 +199,7 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
     this.lineForm.get('priceSubtotal').patchValue(quantity * priceUnit);
   }
 
-  onSaveOrUpdate() {
+  onSave() {
     if (!this.lineForm.valid) {
       return;
     }
@@ -213,16 +214,16 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
 
     if (this.id) {
       this.laboOrderLineService.update(this.id, val).subscribe(result => {
-        this.windowRef.close(true);
+        this.activeModal.close(true);
       });
     } else {
       this.laboOrderLineService.create(val).subscribe(result => {
-        this.windowRef.close(result);
+        this.activeModal.close(result);
       });
     }
   }
 
   onCancel() {
-    this.windowRef.close();
+    this.activeModal.dismiss();
   }
 }

@@ -16,8 +16,8 @@
             <div class="o_form_buttons_view">
                 <!-- <button type="button" class="btn btn-primary btn-sm" (click)="openWindow(null)">
                     <i class="fas fa-plus"></i>&nbsp;Thêm mới</button> -->
-                <a class="btn btn-primary btn-sm" [routerLink]="['/dot-khams/create']"><i title="Mở đợt khám"
-                        class="fas fa-plus"></i>&nbsp;Tạo đợt khám</a>
+                <!-- <a class="btn btn-primary btn-sm" [routerLink]="['/dot-khams/create']"><i title="Mở đợt khám"
+                        class="fas fa-plus"></i>&nbsp;Tạo đợt khám</a> -->
             </div>
         </div>
         <div class="o_cp_sidebar">
@@ -44,17 +44,12 @@
             {{dataItem.invoice ? dataItem.invoice.number : ''}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="note" title="Ghi chú">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.note}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="date" title="Ngày tạo">
+    <kendo-grid-column field="date" title="Ngày khám">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.date | date : 'short'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="user" title="Nhân viên">
+    <kendo-grid-column field="user" title="Người tạo">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.user ? dataItem.user.name : ''}}
         </ng-template>

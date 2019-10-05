@@ -38,6 +38,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => positionList.Contains(x.Category.Type));
             }
 
+            if (val.IsDoctor.HasValue)
+                query = query.Where(x => x.IsDoctor == val.IsDoctor);
+
+            if (val.IsAssistant.HasValue)
+                query = query.Where(x => x.IsAssistant == val.IsAssistant);
+
             query = query.OrderBy(s => s.Name);
             return query;
         }

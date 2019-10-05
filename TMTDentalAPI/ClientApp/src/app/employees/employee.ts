@@ -5,6 +5,8 @@ export class EmployeePaged {
     limit: number;
     search: string;
     position: string;
+    isDoctor: boolean;
+    isAssistant: boolean;
 }
 
 export class EmployeeBasic {

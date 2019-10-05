@@ -21,7 +21,7 @@
                 <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && id"
                     (click)="onUpdate()">
                     Lưu</button>
-                <button type="button" class="btn btn-light btn-sm" (click)="createNew()" *ngIf="id">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createNew()" *ngIf="id">
                     Thêm mới</button>
             </div>
         </div>
@@ -53,7 +53,8 @@
                     (click)="onConfirm()">
                     Xác nhận
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="actionCreateDotKham()">
+                <button type="button" class="btn btn-primary btn-sm"
+                    *ngIf="['draft', 'cancel'].indexOf(getInvState) === -1" (click)="actionCreateDotKham()">
                     Tạo đợt khám
                 </button>
                 <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'open'"
@@ -149,7 +150,7 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                <input type="text" class="form-control" formControlName="comment" />
+                                <textarea type="text" class="form-control" formControlName="comment"></textarea>
                             </td>
                         </tr>
                     </tbody>
@@ -178,7 +179,7 @@
                                 Thêm</button>
                         </div>
                         <div>
-                            <table class="table table-sm">
+                            <table class="table table-sm mb-0">
                                 <thead>
                                     <tr>
                                         <th>Dịch vụ</th>
@@ -260,7 +261,7 @@
                                     <table class="o_group o_inner_group oe_subtotal_footer oe_right">
                                         <tbody>
                                             <tr>
-                                                <td colspan="1" class="o_td_label" style="width: 50%;">
+                                                <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
                                                     <label class="o_form_label oe_subtotal_footer_separator">
                                                         Tổng tiền
                                                     </label>
@@ -302,7 +303,7 @@
                                                 </td>
                                             </tr>
                                             <tr *ngIf="getInvState != 'draft'">
-                                                <td colspan="1" class="o_td_label">
+                                                <td colspan="1" class="o_td_label pb-0">
                                                     <label
                                                         class="o_form_label o_form_label_help oe_subtotal_footer_separator">
                                                         Còn nợ
@@ -326,9 +327,9 @@
                         <table class="table table-sm">
                             <thead>
                                 <tr>
-                                    <th>Mã tiến trình</th>
-                                    <th>Ngày tạo</th>
-                                    <th>Nhân viên</th>
+                                    <th>Mã đợt khám</th>
+                                    <th>Ngày khám</th>
+                                    <th>Người tạo</th>
                                 </tr>
                             </thead>
                             <tbody>

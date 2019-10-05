@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalService, AccountJournalSimple, AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-account-invoice-register-payment-dialog',
@@ -21,7 +22,7 @@ export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
   loading = false;
 
   constructor(private registerPaymentService: AccountRegisterPaymentService, private fb: FormBuilder, private intlService: IntlService,
-    public windowRef: WindowRef, private notificationService: NotificationService, private accountJournalService: AccountJournalService) { }
+    public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
@@ -68,7 +69,7 @@ export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
     val.search = search;
     this.accountJournalService.autocomplete(val).subscribe(result => {
       this.filteredJournals = result;
-      this.paymentForm.get('journal').setValue(result.filter(x => x.name == 'Tiền mặt')[0]);
+      // this.paymentForm.get('journal').setValue(result.filter(x => x.name == 'Tiền mặt')[0]);
     });
 
   }
@@ -81,7 +82,7 @@ export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
     this.loading = true;
     this.create().subscribe(result => {
       this.createPayment(result.id).subscribe(() => {
-        this.windowRef.close(true);
+        this.activeModal.close(true);
         this.loading = false;
       }, () => {
         this.loading = false;
@@ -105,7 +106,7 @@ export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
   }
 
   cancel() {
-    this.windowRef.close();
+    this.activeModal.dismiss();
   }
 
 }

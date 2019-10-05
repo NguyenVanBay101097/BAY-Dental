@@ -7,9 +7,10 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToaThuocService } from './toa-thuoc.service';
 import { ToaThuocLineDialogComponent } from './toa-thuoc-line-dialog/toa-thuoc-line-dialog.component';
+import { ToaThuocLineCuFormComponent } from './toa-thuoc-line-cu-form/toa-thuoc-line-cu-form.component';
 
 @NgModule({
-  declarations: [ToaThuocCuDialogComponent, ToaThuocLineDialogComponent],
+  declarations: [ToaThuocCuDialogComponent, ToaThuocLineDialogComponent, ToaThuocLineCuFormComponent],
   imports: [
     CommonModule,
     ToaThuocsRoutingModule,

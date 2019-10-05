@@ -22,6 +22,7 @@ import { LaboOrderLineCuDialogComponent } from 'src/app/labo-order-lines/labo-or
 import { PrintService } from 'src/app/print.service';
 import { DotKhamLineService } from 'src/app/dot-khams/dot-kham-line.service';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-customer-invoice-create-update',
@@ -47,7 +48,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute,
     public intlService: IntlService, private windowService: WindowService, private accountInvoiceService: AccountInvoiceService,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService, private modalService: NgbModal,
     private router: Router, private printService: PrintService, private dotkhamLinesService: DotKhamLineService) { }
 
   ngOnInit() {
@@ -256,55 +257,33 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   }
 
   showAddLineModal() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm dịch vụ điều trị',
-      content: AccountInvoiceLineDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
+    modalRef.componentInstance.invoiceType = this.type;
 
-    const instance = windowRef.content.instance;
-    instance.invoiceType = this.type;
+    modalRef.result.then(result => {
+      let line = result as any;
+      line.teeth = this.fb.array(line.teeth);
+      this.invoiceLines.push(this.fb.group(line));
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        let line = result as any;
-        line.teeth = this.fb.array(line.teeth);
-        this.invoiceLines.push(this.fb.group(line));
-
-        this.computeAmountTotal();
-      }
+      this.computeAmountTotal();
+    }, () => {
     });
   }
 
   editLine(line: FormGroup) {
-    const windowRef = this.windowService.open({
-      title: 'Sửa dịch vụ điều trị',
-      content: AccountInvoiceLineDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
+    modalRef.componentInstance.invoiceType = this.type;
+    modalRef.componentInstance.line = line.value;
 
-    const instance = windowRef.content.instance;
-    instance.invoiceType = this.type;
-    instance.line = line.value;
+    modalRef.result.then(result => {
+      var a = result as any;
+      line.patchValue(result);
+      line.setControl('teeth', this.fb.array(a.teeth || []));
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        var a = result as any;
-        line.patchValue(result);
-        line.setControl('teeth', this.fb.array(a.teeth || []));
-
-        this.computeAmountTotal();
-      }
+      this.computeAmountTotal();
+    }, () => {
     });
   }
 
@@ -451,24 +430,13 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   }
 
   actionInvoicePayment() {
-    const windowRef = this.windowService.open({
-      title: 'Thanh toán',
-      content: AccountInvoiceRegisterPaymentDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thanh toán';
+    modalRef.componentInstance.invoiceId = this.id;
 
-    const instance = windowRef.content.instance;
-    instance.invoiceId = this.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        this.reloadData();
-      }
+    modalRef.result.then(() => {
+      this.reloadData();
+    }, () => {
     });
   }
 
@@ -518,29 +486,17 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   }
 
   actionCreateDotKham() {
-    const windowRef = this.windowService.open({
-      title: 'Tạo đợt khám',
-      content: InvoiceCreateDotkhamDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(InvoiceCreateDotkhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Tạo đợt khám';
+    modalRef.componentInstance.invoiceId = this.id;
 
-    const instance = windowRef.content.instance;
-    instance.invoiceId = this.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
+    modalRef.result.then(result => {
+      if (result.view) {
+        this.router.navigate(['/dot-khams/edit/', result.result.id]);
       } else {
-        var val = result as any;
-        if (val.view) {
-          this.router.navigate(['/dot-khams/edit/', val.result.id]);
-        } else {
-          this.loadDotKhamList();
-        }
+        this.loadDotKhamList();
       }
+    }, () => {
     });
   }
 

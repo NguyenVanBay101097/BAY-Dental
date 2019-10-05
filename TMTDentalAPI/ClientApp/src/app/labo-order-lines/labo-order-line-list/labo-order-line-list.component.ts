@@ -6,6 +6,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { LaboOrderLineCuDialogComponent } from '../labo-order-line-cu-dialog/labo-order-line-cu-dialog.component';
 import { Subject } from 'rxjs';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-labo-order-line-list',
@@ -28,7 +29,8 @@ export class LaboOrderLineListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private laboOrderLineService: LaboOrderLineService,
-    private windowService: WindowService, private dialogService: DialogService, private intlService: IntlService) {
+    private windowService: WindowService, private dialogService: DialogService, private intlService: IntlService,
+    private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -81,41 +83,23 @@ export class LaboOrderLineListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm labo',
-      content: LaboOrderLineCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.title = 'Tạo labo';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: LaboOrderLineDisplay) {
-    const windowRef = this.windowService.open({
-      title: `Sửa labo`,
-      content: LaboOrderLineCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.title = 'Sửa labo';
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 

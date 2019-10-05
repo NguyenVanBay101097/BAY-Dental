@@ -124,7 +124,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete(string filter = "")
         {
-            return await SearchQuery(domain: x => (string.IsNullOrEmpty(filter) || x.Name.Contains(filter)), orderBy: x => x.OrderBy(s => s.Name), limit: 10).Select(x => new ProductSimple
+            return await SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(filter) || x.Name.Contains(filter)), orderBy: x => x.OrderBy(s => s.Name), limit: 10).Select(x => new ProductSimple
             {
                 Id = x.Id,
                 Name = x.Name
@@ -133,10 +133,12 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)
         {
-           var query = SearchQuery(domain: x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
+           var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
             x.NameNoSign.Contains(val.Search)));
             if (val.KeToaOK.HasValue)
                 query = query.Where(x => x.KeToaOK == val.KeToaOK);
+            if (val.IsLabo.HasValue)
+                query = query.Where(x => x.IsLabo == val.IsLabo);
             if (val.PurchaseOK.HasValue)
                 query = query.Where(x => x.PurchaseOK == val.PurchaseOK);
             if (val.SaleOK.HasValue)

@@ -1,209 +1,220 @@
-<form class="o_form_view" [formGroup]="lineForm">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="oe_title">
-                <h1>
-                    <span>{{lineForm.get('name').value}}</span>
-                </h1>
-            </div>
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Nhà cung cấp
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredSuppliers" [textField]="'name'" [filterable]="true"
-                                    #supplierCbx formControlName="supplier" [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Khách hàng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredCustomers" [textField]="'name'" [filterable]="true"
-                                    formControlName="customer" #customerCbx [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Ngày gửi
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-datepicker formControlName="sentDateObj">
-                                </kendo-datepicker>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Ngày nhận
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-datepicker formControlName="receivedDateObj">
-                                </kendo-datepicker>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
 
-            <div class="o_notebook">
-                <div>
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab-2" data-toggle="tab" href="#home-2" role="tab"
-                                aria-controls="home" aria-selected="true">Chi tiết</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="profile-tab-2" data-toggle="tab" href="#profile-2" role="tab"
-                                aria-controls="profile" aria-selected="false">Bảo hành</a>
-                        </li>
-                    </ul>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="lineForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span>{{lineForm.get('name').value}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhà cung cấp
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredSuppliers" ngbAutoFocus [textField]="'name'"
+                                        [filterable]="true" #supplierCbx formControlName="supplier" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredCustomers" [textField]="'name'" [filterable]="true"
+                                        formControlName="customer" #customerCbx [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày gửi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="sentDateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày nhận
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="receivedDateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="home-2" role="tabpanel" aria-labelledby="home-tab-2">
-                            <div class="o_group mt-0 mb-0">
-                                <table class="o_group o_inner_group o_group_col_6">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Tên labo
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox [data]="filteredProducts" [textField]="'name'"
-                                                    (valueChange)="onChangeProduct($event)" [filterable]="true"
-                                                    formControlName="product" #productCbx [valueField]="'id'">
-                                                </kendo-combobox>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Màu sắc
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="color" />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Ghi chú
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="note" />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class="o_group o_inner_group o_group_col_6">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Số lượng
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    (valueChange)="onChangeQuantity($event)" formControlName="quantity">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Đơn giá
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    (valueChange)="onChangePriceUnit($event)"
-                                                    formControlName="priceUnit">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Thành tiền
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'" [disabled]="true"
-                                                    formControlName="priceSubtotal">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                <div class="o_notebook">
+                    <div>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="home-tab-2" data-toggle="tab" href="#home-2" role="tab"
+                                    aria-controls="home" aria-selected="true">Chi tiết</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="profile-tab-2" data-toggle="tab" href="#profile-2" role="tab"
+                                    aria-controls="profile" aria-selected="false">Bảo hành</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="home-2" role="tabpanel" aria-labelledby="home-tab-2">
+                                <div class="o_group mt-0 mb-0">
+                                    <table class="o_group o_inner_group o_group_col_6">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Tên labo
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                                        (valueChange)="onChangeProduct($event)" [filterable]="true"
+                                                        formControlName="product" #productCbx [valueField]="'id'">
+                                                    </kendo-combobox>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Màu sắc
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <input type="text" class="form-control" formControlName="color" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Số lượng
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                        (valueChange)="onChangeQuantity($event)"
+                                                        formControlName="quantity">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Đơn giá
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                        (valueChange)="onChangePriceUnit($event)"
+                                                        formControlName="priceUnit">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <table class="o_group o_inner_group o_group_col_6">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Thành tiền
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'" [disabled]="true"
+                                                        formControlName="priceSubtotal">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Ghi chú
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <textarea type="text" class="form-control"
+                                                        formControlName="note"></textarea>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                        <div class="tab-pane" id="profile-2" role="tabpanel" aria-labelledby="profile-tab-2">
-                            <div class="o_group">
-                                <table class="o_group o_inner_group o_group_col_6">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Hạn bảo hành
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-datepicker formControlName="warrantyPeriodObj">
-                                                </kendo-datepicker>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class="o_group o_inner_group o_group_col_6">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Mã bảo hành
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control"
-                                                    formControlName="warrantyCode" />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="tab-pane" id="profile-2" role="tabpanel" aria-labelledby="profile-tab-2">
+                                <div class="o_group">
+                                    <table class="o_group o_inner_group o_group_col_6">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Hạn bảo hành
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <kendo-datepicker formControlName="warrantyPeriodObj">
+                                                    </kendo-datepicker>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="o_group o_inner_group o_group_col_6">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Mã bảo hành
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <input type="text" class="form-control"
+                                                        formControlName="warrantyCode" />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div>
-                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSaveOrUpdate()"
-                    accesskey="s">Lưu</button>
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
-            </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>
