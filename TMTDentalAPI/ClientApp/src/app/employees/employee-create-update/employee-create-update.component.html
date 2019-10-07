@@ -1,28 +1,35 @@
-<form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="oe_title">
-                <label class="o_form_label oe_edit_only">Tên nhân viên</label>
-                <h1>
-                    <input class="form-control" formControlName="name">
-                </h1>
-            </div>
-            <div class="o_notebook">
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <!-- CUSTOMER -->
-                        <div class="o_group">
-                            <table class="o_group o_inner_group o_group_col_6">
-                                <tbody>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Mã </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input class="form-control" formControlName="ref" />
-                                        </td>
-                                    </tr>
-                                    <!-- <tr>
+<header class="modal-header">
+    <h4 class="modal-title">{{empId ? 'Cập nhật nhân viên' : 'Tạo nhân viên'}}<span
+            class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên nhân viên</label>
+                    <h1>
+                        <input class="form-control" formControlName="name">
+                    </h1>
+                </div>
+                <div class="o_notebook">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <!-- CUSTOMER -->
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_left">
+                                                <label class="o_form_label">Mã </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                                <input class="form-control" formControlName="ref" />
+                                            </td>
+                                        </tr>
+                                        <!-- <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Giới tính</label>
                                         </td>
@@ -35,44 +42,45 @@
                                                 formControlName="gender" /> Khác
                                         </td>
                                     </tr> -->
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Số điện thoại</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="11"
-                                                formControlName="phone" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Ngày sinh</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input class="form-control" formControlName="birthDay" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table class="o_group o_inner_group o_group_col_6">
-                                <tbody>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Địa chỉ</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input class="form-control" formControlName="address" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">CMND</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input class="form-control" formControlName="identityCard" />
-                                        </td>
-                                    </tr>
-                                    <!-- <tr hidden>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_left">
+                                                <label class="o_form_label">Số điện thoại</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                                <input class="form-control" (input)="onlyGetNumbers('phone')"
+                                                    maxlength="11" formControlName="phone" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_left">
+                                                <label class="o_form_label">Ngày sinh</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                                <kendo-datepicker formControlName="birthDayObj" [format]="'dd/MM/yyyy'">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                                <label class="o_form_label">Địa chỉ</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                                <input class="form-control" formControlName="address" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                                <label class="o_form_label">CMND</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                                <input class="form-control" formControlName="identityCard" />
+                                            </td>
+                                        </tr>
+                                        <!-- <tr hidden>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Bác sĩ/Phụ tá</label>
                                         </td>
@@ -88,44 +96,46 @@
                                             </div>
                                         </td>
                                     </tr> -->
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Nhóm</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <div class="d-flex">
-                                                <kendo-combobox formControlName="category" [data]="categoriesList"
-                                                    [filterable]="true" (filterChange)="loadAutocompleteTypes($event)"
-                                                    [textField]="'name'" [valueField]="'id'">
-                                                </kendo-combobox>
-                                                <a class="btn btn-sm btn-light" (click)="quickCreateCategory()">
-                                                    <span class="k-icon k-i-plus"></span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Email</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input class="form-control" formControlName="email" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                                <label class="o_form_label">Nhóm</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                                <div class="d-flex">
+                                                    <kendo-combobox formControlName="category" [data]="categoriesList"
+                                                        [filterable]="true"
+                                                        (filterChange)="loadAutocompleteTypes($event)"
+                                                        [textField]="'name'" [valueField]="'id'">
+                                                    </kendo-combobox>
+                                                    <a class="btn btn-sm btn-light" (click)="quickCreateCategory()">
+                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                                <label class="o_form_label">Email</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                                <input class="form-control" formControlName="email" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
-<div>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button>
-    <button type="button" hidden class="btn btn-primary btn-sm mr-2" *ngIf="empId==null" (click)="createNewAndMore()"><i
-            class="fas fa-plus-circle"></i>&nbsp;Lưu và Thêm mới</button>
+    <!-- <button type="button" hidden class="btn btn-primary btn-sm mr-2" *ngIf="empId==null" (click)="createNewAndMore()"><i
+            class="fas fa-plus-circle"></i>&nbsp;Lưu và Thêm mới</button> -->
     <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
         (click)="createUpdateEmployee()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
 </div>

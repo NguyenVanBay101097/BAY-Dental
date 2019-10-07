@@ -1,24 +1,49 @@
-<table>
+<table style="width:100%" *ngIf="partner">
     <tr>
-        <td class="label">Tên Khách hàng</td>
+        <td class="label">Tên</td>
         <td class="content">{{partner.name}}</td>
-        <td class="label">Mã Khách hàng</td>
+        <td rowspan="6"><img
+                src="https://cdn.tuoitre.vn/thumb_w/640/2018/4/19/hoang-yen-chi-bi-15241082709871866097611.jpg"
+                height="220px" /></td>
+    </tr>
+    <tr>
+        <td class="label">Mã</td>
         <td class="content">{{partner.ref}}</td>
     </tr>
     <tr>
         <td class="label">Giới tính</td>
-        <td class="content">{{partner.gender}}</td>
+        <td class="content">{{getGender(partner.gender)}}</td>
+    </tr>
+    <tr>
+        <td class="label">Tuổi</td>
+        <td class="content">{{partner.birthYear ? getAge(partner.birthYear) : ''}}</td>
+    </tr>
+    <tr>
         <td class="label">Số điện thoại</td>
         <td class="content">{{partner.phone}}</td>
     </tr>
     <tr>
-        <td class="label">Tiền căn</td>
-        <td class="content">{{partner.medicalHistory}}<span *ngIf="partner.gender==null">Không</span></td>
         <td class="label">Email</td>
         <td class="content"></td>
     </tr>
     <tr>
         <td class="label">Địa chỉ</td>
         <td class="content" colspan="3">{{address}}</td>
+    </tr>
+    <tr>
+        <td class="label">Tiền căn</td>
+        <td class="content" colspan="3">{{partner.medicalHistory}}</td>
+    </tr>
+    <tr>
+        <td class="label">Nghề nghiệp</td>
+        <td class="content">{{partner.jobTitle}}</td>
+    </tr>
+    <tr>
+        <td class="label">Người giới thiệu</td>
+        <td class="content">{{partner.employees ? partner.employees.name : ''}}</td>
+    </tr>
+    <tr>
+        <td class="label">Ghi chú</td>
+        <td class="content">{{partner.note}}</td>
     </tr>
 </table>

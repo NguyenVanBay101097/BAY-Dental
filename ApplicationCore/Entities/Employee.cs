@@ -12,6 +12,8 @@ namespace ApplicationCore.Entities
         public Employee()
         {
             Active = true;
+            IsDoctor = false;
+            IsAssistant = false;
         }
 
         public string Name { get; set; }

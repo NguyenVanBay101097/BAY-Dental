@@ -7,10 +7,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { EmployeeCreateUpdateComponent } from './employee-create-update/employee-create-update.component';
 import { EmployeeService } from './employee.service';
-import { EmpCategoriesCreateUpdateComponent } from './emp-categories-create-update/emp-categories-create-update.component';
+import { EmployeeInfoComponent } from './employee-info/employee-info.component';
 
 @NgModule({
-  declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmpCategoriesCreateUpdateComponent],
+  declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent],
   imports: [
     CommonModule,
     MyCustomKendoModule,

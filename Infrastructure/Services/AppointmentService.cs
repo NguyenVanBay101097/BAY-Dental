@@ -145,7 +145,7 @@ namespace Infrastructure.Services
 
             return res;
         }
-
+        //Đếm số cuộc hẹn trong ngày (trang Tổng quan)
         public async Task<IEnumerable<AppointmentStateCount>> CountAppointment(DateFromTo val)
         {
             var today = DateTime.Today;

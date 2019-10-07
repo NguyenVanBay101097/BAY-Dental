@@ -35,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get([FromQuery]AppointmentPaged appointmentPaged)
         {
             var result = await _appointmentService.GetPagedResultAsync(appointmentPaged);
+            /*await PatchMulti(result)*/;
             return Ok(result);
         }
 
@@ -72,12 +73,11 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        ///Cập nhật trạng thái lịch hẹn đã quá hạn
         [HttpPatch("PatchMulti")]
-        public async Task<IActionResult> PatchMulti()
+        public async Task<IActionResult> PatchMulti(PagedResult2<AppointmentBasic> result)
         {
-            var dateFrom = DateTime.Today.AddDays(-3);
-            var query = await _appointmentService.SearchQuery(x => x.Date >= dateFrom && x.Date < DateTime.Now && x.State.ToLower() == "confirmed").ToListAsync();
-            var list = _mapper.Map<IEnumerable<AppointmentPatch>>(query);
+            var list = _mapper.Map<IEnumerable<AppointmentPatch>>(result);
             foreach (var item in list)
             {
                 var entity = await _appointmentService.GetByIdAsync(item.Id);

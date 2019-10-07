@@ -11,6 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public PartnerProfile()
         {
+            CreateMap<Partner, PartnerSimpleContact>();
             CreateMap<Partner, PartnerBasic>().ReverseMap();
 
             CreateMap<Partner, PartnerDisplay>()

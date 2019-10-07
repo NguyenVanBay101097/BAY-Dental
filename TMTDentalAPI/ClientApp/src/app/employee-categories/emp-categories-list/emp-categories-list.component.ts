@@ -7,6 +7,7 @@ import { DialogRef, DialogCloseResult, WindowService, DialogService, WindowRef, 
 import { EmployeeCategoryPaged } from '../emp-category';
 import { EmpCategoryService } from '../emp-category.service';
 import { EmpCategoriesCreateUpdateComponent } from '../emp-categories-create-update/emp-categories-create-update.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-emp-categories-list',
@@ -15,7 +16,7 @@ import { EmpCategoriesCreateUpdateComponent } from '../emp-categories-create-upd
 })
 export class EmpCategoriesListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: EmpCategoryService, private windowService: WindowService, private dialogService: DialogService) { }
+  constructor(private fb: FormBuilder, private service: EmpCategoryService, private modalService: NgbModal, private dialogService: DialogService) { }
 
   loading = false;
   gridView: GridDataResult;
@@ -73,24 +74,36 @@ export class EmpCategoriesListComponent implements OnInit {
     this.getCategEmployeesList();
   }
 
-  openWindow(id) {
-    const windowRef: WindowRef = this.windowService.open(
-      {
-        title: 'Nhóm nhân viên',
-        content: EmpCategoriesCreateUpdateComponent,
-        minWidth: 250,
-      });
-    this.windowOpened = true;
-    const instance = windowRef.content.instance;
-    instance.empCategId = id;
+  // openWindow(id) {
+  //   const windowRef: WindowRef = this.windowService.open(
+  //     {
+  //       title: 'Nhóm nhân viên',
+  //       content: EmpCategoriesCreateUpdateComponent,
+  //       minWidth: 250,
+  //     });
+  //   this.windowOpened = true;
+  //   const instance = windowRef.content.instance;
+  //   instance.empCategId = id;
 
-    windowRef.result.subscribe(
-      (result) => {
-        this.windowOpened = false;
-        if (!(result instanceof WindowCloseResult)) {
-          this.getCategEmployeesList();
-        }
-      }
+  //   windowRef.result.subscribe(
+  //     (result) => {
+  //       this.windowOpened = false;
+  //       if (!(result instanceof WindowCloseResult)) {
+  //         this.getCategEmployeesList();
+  //       }
+  //     }
+  //   )
+  // }
+  openModal(id) {
+    const modalRef = this.modalService.open(EmpCategoriesCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    if (id) {
+      modalRef.componentInstance.empCategId = id;
+    }
+    modalRef.result.then(
+      rs => {
+        this.getCategEmployeesList();
+      },
+      er => { }
     )
   }
 

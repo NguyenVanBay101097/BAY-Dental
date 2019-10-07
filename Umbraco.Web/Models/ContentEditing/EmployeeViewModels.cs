@@ -11,6 +11,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
     }
 
+    public class EmployeeSimpleContact
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+        public string Phone { get; set; }
+    }
+
 
     public class EmployeeBasic
     {
@@ -27,6 +35,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
 
         public string Email { get; set; }
+        public Guid? CategoryId { get; set; }
+        public EmployeeCategoryBasic Category { get; set; }
     }
 
     public class EmployeeDisplay

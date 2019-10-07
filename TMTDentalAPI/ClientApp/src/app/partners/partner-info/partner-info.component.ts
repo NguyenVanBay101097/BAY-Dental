@@ -12,21 +12,21 @@ export class PartnerInfoComponent implements OnInit {
   constructor(private service: PartnerService) { }
 
   partnerId: string;
-  partner: PartnerDisplay
+  partner = new PartnerDisplay();
 
   address: string;
 
   ngOnInit() {
-    this.getPartnerInfo();
+    if (this.partnerId) {
+      this.getPartnerInfo();
+    }
   }
 
   getPartnerInfo() {
-    this.partner = new PartnerDisplay();
     var addArray = new Array<string>();
     this.service.getPartner(this.partnerId).subscribe(
       rs => {
         this.partner = rs as PartnerDisplay;
-        debugger;
         if (rs.street !== null) {
           addArray.push(rs.street);
         }
@@ -43,6 +43,25 @@ export class PartnerInfoComponent implements OnInit {
         this.address = addArray.join(', ');
       });
   }
+
+  getGender(g: string) {
+    if (g) {
+      switch (g.toLowerCase()) {
+        case 'female':
+          return 'Nữ';
+        case 'male':
+          return 'Nam';
+        default:
+          return 'Khác';
+      }
+    }
+  }
+
+  getAge(y: number) {
+    var today = new Date();
+    return today.getFullYear() - y;
+  }
+
 
 
 }

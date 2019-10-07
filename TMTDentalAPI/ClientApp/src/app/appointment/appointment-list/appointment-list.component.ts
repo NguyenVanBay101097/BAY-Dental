@@ -12,6 +12,8 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { EmployeeInfoComponent } from 'src/app/employees/employee-info/employee-info.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-appointment-list',
@@ -20,8 +22,8 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 })
 export class AppointmentListComponent implements OnInit {
 
-  constructor(private service: AppointmentService, private windowService: WindowService,
-    private dialogService: DialogService, private intlService: IntlService, private notificationService: NotificationService) { }
+  constructor(private service: AppointmentService, private dialogService: DialogService, private intlService: IntlService,
+    private notificationService: NotificationService, private modalService: NgbModal) { }
 
   gridView: GridDataResult;
   windowOpened: boolean;
@@ -32,7 +34,7 @@ export class AppointmentListComponent implements OnInit {
   skip = 0;
   stopTypingTimer: any;
   schedulerConfig: SchedulerConfig;
-  scrollTime: string = '08:00';
+  scrollTime: string;
 
   schedulerShow: boolean;
 
@@ -74,7 +76,7 @@ export class AppointmentListComponent implements OnInit {
     data: [
       { text: 'Đang hẹn', value: 'confirmed', color: '#04c835' },
       { text: 'Đã hủy', value: 'cancel', color: '#cc0000' },
-      { text: 'Kết thúc', value: 'done', color: '#666666' },
+      { text: 'Hoàn tất', value: 'done', color: '#666666' },
       { text: 'Đang chờ', value: 'waiting', color: '#0080ff' },
       { text: 'Quá hạn', value: 'expired', color: '#ffbf00' }
     ],
@@ -86,8 +88,8 @@ export class AppointmentListComponent implements OnInit {
 
 
   ngOnInit() {
-    this.updateExpiredAppointment();
-    this.showSchedulerDefault();
+    // this.updateExpiredAppointment();
+    this.showGridView();
     this.searchChange();
     // this.updateTime();
   }
@@ -123,7 +125,7 @@ export class AppointmentListComponent implements OnInit {
     var d1 = new Date(frDate);
     var d2 = new Date(toDate);
     var diff = (d2.getTime() - d1.getTime()) / (3600 * 24000);
-    this.schedulerConfig.numberOfDays = diff;
+    // this.schedulerConfig.numberOfDays = diff;
 
     clearTimeout(this.stopTypingTimer);
     this.stopTypingTimer = setTimeout(() => {
@@ -145,7 +147,7 @@ export class AppointmentListComponent implements OnInit {
   getState(state: string) {
     switch (state) {
       case 'done':
-        return 'Kết thúc';
+        return 'Hoàn tất';
       case 'cancel':
         return 'Đã hủy';
       case 'waiting':
@@ -197,7 +199,7 @@ export class AppointmentListComponent implements OnInit {
     this.service.loadAppointmentList(apnPaged).subscribe(
       rs => {
         appointmentBasicList = rs['items'] as AppointmentBasic[];
-        this.setScrollTime(appointmentBasicList);
+        // this.setScrollTime(appointmentBasicList);
         this.events = appointmentBasicList.map(rs1 => (<SchedulerEvent>{
           id: rs1.id,
           isAllDay: false,
@@ -259,6 +261,16 @@ export class AppointmentListComponent implements OnInit {
     this.formFilter.get('toDate').setValue(this.toDateList);
   }
 
+  loadToday() {
+    var today = new Date();
+    this.fromDateList = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    this.toDateList = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+    this.formFilter.get('frDate').setValue(this.fromDateList);
+    this.formFilter.get('toDate').setValue(this.toDateList);
+    console.log(this.fromDateList);
+    console.log(this.toDateList);
+  }
+
   showSchedulerDefault() {
     this.loadDataToScheduler();
     this.configScheduler();
@@ -266,21 +278,21 @@ export class AppointmentListComponent implements OnInit {
   }
 
   showGridView() {
-    this.loadAppointmentList();
+    this.loadToday();
+    // this.loadAppointmentList();
     this.schedulerShow = false;
-    this.loadFullWeek();
   }
 
   eventDblClick(e) {
     if (e.event.dataItem.state == 'confirmed' || 'waiting') {
-      this.openWindow(e.event.id, null);
+      this.openModal(e.event.id, null);
     }
   }
 
   slotDblClick(e) {
     var today = new Date();
     if (e.start >= today) {
-      this.openWindow(null, e.start);
+      this.openModal(null, e.start);
     } else {
       this.notificationService.show({
         content: 'Không thể tạo lịch hẹn trong thời gian này',
@@ -312,29 +324,41 @@ export class AppointmentListComponent implements OnInit {
     this.deleteAppointment(e.event.id, e.event.state);
   }
 
-  openWindow(id: string, time: Date) {
-    const windowRef: WindowRef = this.windowService.open(
-      {
-        title: 'Lịch hẹn',
-        content: AppointmentCreateUpdateComponent,
-        resizable: false,
-        width: 930
-      });
-    this.windowOpened = true;
+  // openWindow(id: string, time: Date) {
+  //   const windowRef: WindowRef = this.windowService.open(
+  //     {
+  //       title: 'Lịch hẹn',
+  //       content: AppointmentCreateUpdateComponent,
+  //       resizable: false,
+  //       width: 930
+  //     });
+  //   this.windowOpened = true;
 
-    const instance = windowRef.content.instance;
-    instance.appointId = id;
-    instance.timeConfig = time;
+  //   const instance = windowRef.content.instance;
+  //   instance.appointId = id;
+  //   instance.timeConfig = time;
 
-    windowRef.result.subscribe(
-      (result) => {
-        this.windowOpened = false;
-        console.log(result);
-        console.log(result instanceof WindowCloseResult);
-        if (!(result instanceof WindowCloseResult)) {
-          this.loadByView();
-        }
-      }
+  //   windowRef.result.subscribe(
+  //     (result) => {
+  //       this.windowOpened = false;
+  //       console.log(result);
+  //       console.log(result instanceof WindowCloseResult);
+  //       if (!(result instanceof WindowCloseResult)) {
+  //         this.loadByView();
+  //       }
+  //     }
+  //   )
+  // }
+
+  openModal(id: string, time: Date) {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.appointId = id;
+    modalRef.componentInstance.timeConfig = time;
+    modalRef.result.then(
+      rs => {
+        this.loadByView();
+      },
+      er => { }
     )
   }
 
@@ -460,11 +484,10 @@ export class AppointmentListComponent implements OnInit {
       title: 'Thông tin Khách hàng',
       content: PartnerInfoComponent,
       width: 700,
-      height: 500,
-      minWidth: 250,
+      height: 620,
       actions: [
         { text: 'Đóng', value: false },
-        { text: 'Tạo lịch hẹn', primary: true, value: true }
+        // { text: 'Tạo lịch hẹn', primary: true, value: true }
       ]
     });
 
@@ -473,11 +496,29 @@ export class AppointmentListComponent implements OnInit {
     instance.partnerId = cusId;
   }
 
-  setScrollTime(list: AppointmentBasic[]) {
-    var time = new Date(list.sort((x, y) => parseInt(y.date) - parseInt(x.date))[0].date);
-    this.scrollTime = time.getHours() + ':' + time.getMinutes();
-    console.log(this.scrollTime);
+  openEmployeeInfo(empId: string) {
+    const dialogRef: DialogRef = this.dialogService.open({
+      title: 'Thông tin Nhân viên',
+      content: EmployeeInfoComponent,
+      width: 700,
+      height: 600,
+      minWidth: 250,
+      actions: [
+        { text: 'Đóng', value: false },
+        // { text: 'Tạo lịch hẹn', primary: true, value: true }
+      ]
+    });
+
+    this.customerInfoOpened = true;
+    const instance = dialogRef.content.instance;
+    instance.id = empId;
   }
+
+  // setScrollTime(list: AppointmentBasic[]) {
+  //   var time = new Date(list.sort((x, y) => parseInt(y.date) - parseInt(x.date))[0].date);
+  //   this.scrollTime = time.getHours() + ':' + time.getMinutes();
+  //   console.log(this.scrollTime);
+  // }
 
   fontSize() {
     if (this.fromDateScheduler.getDate() + 1 != this.toDateScheduler.getDate()) {
@@ -490,6 +531,7 @@ export class AppointmentListComponent implements OnInit {
   //Setting thời gian cho scheduler
   configScheduler() {
     this.schedulerConfig = new SchedulerConfig();
+    //Khoảng thời gian hiển thị
     this.schedulerConfig.startDisplay = '07:30';
     this.schedulerConfig.endDisplay = '21:00';
     this.schedulerConfig.selectedDate = new Date();
@@ -501,8 +543,7 @@ export class AppointmentListComponent implements OnInit {
     this.schedulerConfig.slotDivisions = 2;
     this.schedulerConfig.slotDuration = 30;
     this.schedulerConfig.scrollTime = this.scrollTime;
-
-    this.schedulerConfig.numberOfDays = 10;
+    // this.schedulerConfig.numberOfDays = 10;
 
     //Thời gian làm việc
     //8h-17h30
@@ -521,13 +562,11 @@ export class AppointmentListComponent implements OnInit {
   }
 
   //Cập nhật trạng thái của các lịch hẹn quá hạn
-  updateExpiredAppointment() {
-    this.service.patchMulti().subscribe(
-      rs => {
-        this.loadByView();
-      }
-    );
-  }
+  // updateExpiredAppointment() {
+  //   this.service.patchMulti(2).subscribe(
+  //     rs => { }
+  //   );
+  // }
 
 
 

@@ -1,87 +1,120 @@
-<div *ngIf="appointId" style="float: right">{{getState(state)}}</div>
-<form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
-    <input formControlName="state" hidden />
-    <input formControlName="companyId" hidden />
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div *ngIf="appointId">
-                <button *ngIf="!(appointState=='done')" class="btn btn-light btn-sm mr-2"
-                    (click)="doneAppointment()">Hoàn tất</button>
-                <button *ngIf="!(appointState=='waiting')" class="btn btn-primary btn-sm mr-2"
+<!-- <div *ngIf="appointId" style="float: right">{{getState(state)}}</div> -->
+<header class="modal-header">
+    <h4 class="modal-title">{{appointId ? 'Cập nhật lịch hẹn':'Tạo lịch hẹn' }}<span
+            class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+        <input formControlName="companyId" hidden />
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <!-- <div *ngIf="appointId">
+                <button *ngIf="!(state=='done')" class="btn btn-light btn-sm mr-2" (click)="doneAppointment()">Hoàn
+                    tất</button>
+                <button *ngIf="!(state=='waiting')" class="btn btn-primary btn-sm mr-2"
                     (click)="waitingAppointment()">Đang chờ</button>
-                <button *ngIf="!(appointState=='cancel')" class="btn btn-danger btn-sm mr-2"
-                    (click)="cancelAppointment()">Hủy hẹn</button>
-            </div>
-            <div class="oe_title">
-                <h1>
-                    <span>{{formCreate.get('name').value}}</span>
-                </h1>
-            </div>
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label o_td_label_left">
-                                <label class="o_form_label required-label">Khách hàng</label>
-                            </td>
-                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
-                                <div class=" d-flex">
-                                    <kendo-combobox formControlName="partner" [allowCustom]="false" [filterable]="true"
-                                        [data]="customerSimpleFilter" #partnerCbx [valueField]="'id'"
-                                        [textField]="'name'" [readonly]="partnerAvailble()">
+                <button *ngIf="!(state=='cancel')" class="btn btn-danger btn-sm mr-2" (click)="cancelAppointment()">Hủy
+                    hẹn</button>
+            </div> -->
+                <div class="oe_title">
+                    <h1>
+                        <span>{{formCreate.get('name').value}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label required-label">Khách hàng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                    <div class=" d-flex">
+                                        <kendo-combobox formControlName="partner" [allowCustom]="false"
+                                            [filterable]="true" [data]="customerSimpleFilter" #partnerCbx
+                                            [valueField]="'id'" [textField]="'name'" [readonly]="partnerAvailble()">
+                                        </kendo-combobox>
+                                        <button [disabled]="appointId" class="btn btn-sm btn-light"
+                                            (click)="quickCreateCustomerModal()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">Bác sĩ</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                    <kendo-combobox formControlName="doctor" [filterable]="true"
+                                        [data]="doctorSimpleFilter" #doctorCbx [valueField]="'id'" [textField]="'name'"
+                                        [readonly]="doctorAvailble()">
                                     </kendo-combobox>
-                                    <a *ngIf="(!dotKhamId && state=='confirmed') || !appointId"
-                                        class="btn btn-sm btn-light" (click)="quickCreateCustomer()">
-                                        <span class="k-icon k-i-plus"></span>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label o_td_label_left">
-                                <label class="o_form_label">Bác sĩ</label>
-                            </td>
-                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
-                                <kendo-combobox formControlName="doctor" [filterable]="true" [data]="doctorSimpleFilter"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [readonly]="doctorAvailble()">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label o_td_label_right">
-                                <label class="o_form_label">Ngày</label>
-                            </td>
-                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"
-                                    [format]="'yyyy-MM-dd HH:mm'" formControlName="dateObj" [readonly]="timeAvailble()">
-                                </kendo-datepicker>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label o_td_label_right"><label class="o_form_label">Ghi
-                                    chú</label>
-                            </td>
-                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                <input class="form-control" formControlName="note" />
-                            </td>
-                        </tr>
-                        <tr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">Trạng thái</label>
+                                </td>
+                                <td>
+                                    <kendo-combobox formControlName="stateObj" [data]="stateFilter"
+                                        [valueField]="'value'" [textField]="'text'" (valueChange)="changeState($event)"
+                                        [itemDisabled]="itemDisabled">
+                                    </kendo-combobox>
+                                    <!-- <select class="form-control" formControlName="state">
+                                    <option value="confirmed">Đang hẹn</option>
+                                    <option value="waiting">Đang chờ</option>
+                                    <option value="done">Hoàn tất</option>
+                                    <option value="expired">Quá hạn</option>
+                                    <option value="cancel">Đã hủy</option>
+                                </select> -->
+                                    <!-- <label><input type="radio" formControlName="state" value="confirmed" /></label>
+        <label><input type="radio" formControlName="state" value="waiting" /></label>
+        <label><input type="radio" formControlName="state" value="done" /></label>
+        <label><input type="radio" formControlName="state" value="expired" /></label>
+        <label><input type="radio" formControlName="state" value="cancel" /></label> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_right">
+                                    <label class="o_form_label required-label">Ngày</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                    <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"
+                                        [format]="'yyyy-MM-dd HH:mm'" formControlName="dateObj"
+                                        [readonly]="timeAvailble()">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_right"><label class="o_form_label">Ghi
+                                        chú</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                    <input class="form-control" formControlName="note" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_12">
+                        <tbody>
 
-                        </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="text-right">
-        <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
-                class="fas fa-window-close"></i>&nbsp;Đóng</button>
-        <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
-            (click)="createNewAppointment()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
-    </div>
-</form>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
+            class="fas fa-window-close"></i>&nbsp;Đóng</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid && !timeAvailble()"
+        (click)="createNewAppointment()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+</div>

@@ -1,0 +1,43 @@
+<table style="width:100%" *ngIf="employee">
+    <tr>
+        <td class="label">Tên</td>
+        <td class="content">{{employee.name}}</td>
+        <td rowspan="5"><img
+                src="https://cdn.tuoitre.vn/thumb_w/640/2018/4/19/hoang-yen-chi-bi-15241082709871866097611.jpg"
+                height="200px" style="margin: 3px auto; padding: 2px auto" /></td>
+    </tr>
+    <tr>
+        <td class="label">Mã</td>
+        <td class="content">{{employee.ref}}</td>
+    </tr>
+    <tr>
+        <td class="label">Vị trí</td>
+        <td class="content">{{employee.category ? employee.category.name : ''}}</td>
+    </tr>
+    <tr>
+        <td class="label">Giới tính</td>
+        <td class="content"></td>
+    </tr>
+    <tr>
+        <td class="label">Số điện thoại</td>
+        <td class="content">{{employee.phone}}</td>
+    </tr>
+    <tr>
+        <td class="label">Căn cước/CMND</td>
+        <td class="content">{{employee.identityCard}}</td>
+    </tr>
+    <tr>
+        <td class="label">Email</td>
+        <td class="content">{{employee.email}}</td>
+    </tr>
+    <tr>
+        <td class="label">Địa chỉ</td>
+        <td class="content" colspan="3">{{employee.address}}</td>
+    </tr>
+    <tr>
+        <td class="label">Chi nhánh</td>
+        <td class="content">
+            <!-- {{employee.company.name}} -->
+        </td>
+    </tr>
+</table>

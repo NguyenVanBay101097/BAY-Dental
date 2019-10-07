@@ -178,20 +178,27 @@ export class PartnerCreateUpdateComponent implements OnInit {
     if (value.source != 'other') {
       value.note = '';
     }
+    if (value.birthDay == 'null') {
+      value.birthDay = '';
+    }
+    if (value.birthMonth == 'null') {
+      value.birthMonth = '';
+    }
+    if (value.birthYear == 'null') {
+      value.birthYear = '';
+    }
     console.log(value);
 
     this.isChange = true;
     this.service.createUpdateCustomer(value, this.cusId).subscribe(
       rs => {
-        this.closeModal();
+        this.closeModal(rs);
       },
       er => {
         console.log(er);
       }
     );
   }
-
-
 
   //Cho phép field phone chỉ nhập số
   onlyGetNumbers(formControlName) {
@@ -211,9 +218,13 @@ export class PartnerCreateUpdateComponent implements OnInit {
   //     this.window.close(false);
   //   }
   // }
-  closeModal() {
+  closeModal(rs) {
     if (this.isChange) {
-      this.activeModal.close(true);
+      if (rs) {
+        this.activeModal.close(rs);
+      } else {
+        this.activeModal.close(true);
+      }
     }
     else {
       this.activeModal.dismiss();
@@ -353,10 +364,6 @@ export class PartnerCreateUpdateComponent implements OnInit {
   getProDisWrd() {
     this.getProvinceList();
   }
-
-
-
-
 
   getEmployeesList() {
     var empPn = new EmployeePaged;

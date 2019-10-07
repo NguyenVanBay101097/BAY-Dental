@@ -1,4 +1,4 @@
-<div kendoWindowContainer></div>
+<!-- <div kendoWindowContainer></div> -->
 <div kendoDialogContainer></div>
 <div [formGroup]="formFilter">
     <div class="o_control_panel">
@@ -15,7 +15,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm" (click)="openWindow(null,null)">
+                    <button class="btn btn-primary btn-sm" (click)="openModal(null,null)">
                         <i class="fas fa-calendar-plus"></i>&nbsp;Đặt lịch hẹn</button>
                     <button *ngIf="!schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="schedulerShow"
                         (click)="showSchedulerDefault()">
@@ -78,26 +78,48 @@
                     <div class="card-body">
                         <div class="container">
                             <div class="form-group">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" formControlName="confirmed" id="confirmed"
-                                            (change)="checkState()" /> Đang hẹn</label>
-                                </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" formControlName="done" id="done"
-                                            (change)="checkState()" /> Kết thúc</label>
-                                </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" formControlName="cancel" id="cancel"
-                                            (change)="checkState()" /> Đã hủy</label>
-                                </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" formControlName="expired" id="expired"
-                                            (change)="checkState()" /> Quá hạn</label>
-                                </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" formControlName="waiting" id="waiting"
-                                            (change)="checkState()" /> Đang chờ</label>
-                                </div>
+                                <table>
+                                    <tr>
+                                        <td style="color:#04c835">
+                                            <i class="fas fa-circle"></i>
+                                        </td>
+                                        <td>Đang hẹn</td>
+                                        <td><input type="checkbox" formControlName="confirmed" id="confirmed"
+                                                (change)="checkState()" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#0080ff">
+                                            <i class="fas fa-circle"></i>
+                                        </td>
+                                        <td>Đang chờ</td>
+                                        <td><input type="checkbox" formControlName="waiting" id="waiting"
+                                                (change)="checkState()" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#666666">
+                                            <i class="fas fa-circle"></i>
+                                        </td>
+                                        <td>Hoàn tất</td>
+                                        <td><input type="checkbox" formControlName="done" id="done"
+                                                (change)="checkState()" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#cc0000">
+                                            <i class="fas fa-circle"></i>
+                                        </td>
+                                        <td>Đã hủy</td>
+                                        <td><input type="checkbox" formControlName="cancel" id="cancel"
+                                                (change)="checkState()" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#ffbf00">
+                                            <i class="fas fa-circle"></i>
+                                        </td>
+                                        <td>Quá hạn</td>
+                                        <td><input type="checkbox" formControlName="expired" id="expired"
+                                                (change)="checkState()" /></td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -137,11 +159,29 @@
     </div>
 </div>
 <div class="mainRight">
-    <kendo-grid [hidden]='schedulerShow' [data]="this.gridView" [height]="600" [pageable]='true'
+    <kendo-grid *ngIf='!schedulerShow' [data]="this.gridView" [height]="600" [pageable]='true'
         (pageChange)="pageChange($event)" [loading]="loading" [pageSize]="limit">
         <kendo-grid-column field="name" title="Mã"></kendo-grid-column>
-        <kendo-grid-column field="partner.name" title="Khách hàng"></kendo-grid-column>
-        <kendo-grid-column field="doctor.name" title="Bác sĩ"></kendo-grid-column>
+        <kendo-grid-column field="partner.name" title="Khách hàng" width='200px;'>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-link mr-2"
+                    (click)="openCustomerInfo(dataItem.partnerId)">{{dataItem.partner ? dataItem.partner.name : ''}}</button>
+                <div *ngIf="dataItem.partner && dataItem.partner.phone">
+                    <i class="fas fa-mobile-alt" style="padding-left : 12px;"></i>
+                    {{dataItem.partner ? dataItem.partner.phone : ''}}
+                </div>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="doctor.name" title="Bác sĩ">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-link mr-2"
+                    (click)="openEmployeeInfo(dataItem.doctorId)">{{dataItem.doctor ? dataItem.doctor.name : ''}}</button>
+                <div *ngIf="dataItem.doctor && dataItem.doctor.phone">
+                    <i class="fas fa-mobile-alt" style="padding-left : 12px;"></i>
+                    {{dataItem.doctor ? dataItem.doctor.phone : ''}}
+                </div>
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="date" title="Thời gian">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date : 'short'}}
@@ -154,7 +194,7 @@
         </kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button (click)="openWindow(dataItem.id,null)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
+                <button (click)="openModal(dataItem.id,null)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
                         class="fas fa-edit"></i>&nbsp;Sửa</button>
                 <button (click)="deleteAppointment(dataItem.id)" class="btn btn-danger btn-sm mr-2"><i title="Xóa"
                         class="fas fa-times"></i>&nbsp;Xóa</button>
@@ -164,7 +204,7 @@
         </kendo-grid-command-column>
         <kendo-grid-messages pagerItems="dòng" noRecords="Không có lịch hẹn nào" pagerOf="/"></kendo-grid-messages>
     </kendo-grid>
-    <kendo-scheduler [hidden]='!schedulerShow' [kendoSchedulerBinding]="events" [resources]="resources"
+    <kendo-scheduler *ngIf='schedulerShow' [kendoSchedulerBinding]="events" [resources]="resources"
         [selectedDate]="schedulerConfig.selectedDate" [selectedViewIndex]="schedulerConfig.indexViewNum"
         [startTime]="schedulerConfig.startDisplay" [endTime]="schedulerConfig.endDisplay"
         [workDayStart]="schedulerConfig.workDayStart" [workDayEnd]="schedulerConfig.workDayEnd"
@@ -172,10 +212,10 @@
         style="height: 600px;" [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
         [slotDuration]="schedulerConfig.slotDuration" (eventDblClick)="eventDblClick($event)"
         (slotDblClick)="slotDblClick($event)" (remove)="cancelOrRemoveEvent($event)" (dragEnd)="dragEvent($event)"
-        (dateChange)="changeDateRangeScheduler($event)" scrollTime="scrollTime">
+        (dateChange)="changeDateRangeScheduler($event)">
 
         <ng-template kendoSchedulerEventTemplate let-event="event" let-resources="resources">
-            <span [style.font-size.em]="fontSize()"><b>{{ event.title }}</b></span>
+            <div [style.font-size.em]="fontSize()" style="padding-left:5px "><b>{{ event.title }}</b></div>
             <div style="float: right">
                 <ng-container *ngFor="let resource of resources">
                     <span *ngIf="!resource.length">
@@ -185,7 +225,8 @@
                     </span>
                 </ng-container>
             </div>
-            <div [style.font-size.em]="fontSize()" style="float:right;font-style: italic">{{ event.description }}</div>
+            <div [style.font-size.em]="fontSize()" style="float:right;font-style: italic">
+                {{ event.description }}</div>
         </ng-template>
 
         <kendo-scheduler-day-view>
@@ -206,5 +247,4 @@
         </kendo-scheduler-messages>
     </kendo-scheduler>
 </div>
-
-<div class="k-overlay" *ngIf="this.windowOpened"></div>
+<div class="k-overlay" *ngIf="windowOpened"></div>

@@ -86,8 +86,8 @@ export class AppointmentService {
   }
 
   //cập nhật các cuộc hẹn quá hạn
-  patchMulti() {
-    return this.http.patch(this.baseApi + "api/Appointments/patchMulti", null);
-  }
+  // patchMulti(val) {
+  //   return this.http.patch(this.baseApi + "api/Appointments/patchMulti", val);
+  // }
 
 }

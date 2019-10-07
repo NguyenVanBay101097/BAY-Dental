@@ -1,20 +1,27 @@
-<form class="o_form_view o_form_editable" [formGroup]="formCreate">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6" style="width:100%">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Tên nhóm
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <input class="form-control" formControlName="name">
-                            </td>
-                        </tr>
-                        <tr>
+<header class="modal-header">
+    <h4 class="modal-title">{{empId ? 'Cập nhật nhóm nhân viên' : 'Tạo nhóm nhân viên'}}<span
+            class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="formCreate">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tên nhóm
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name">
+                                </td>
+                            </tr>
+                            <!-- <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">
                                     Loại
@@ -25,17 +32,19 @@
                                     [textField]="'type'">
                                 </kendo-dropdownlist>
                             </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </tr> -->
+                        </tbody>
+                    </table>
+                </div>
 
-            <div>
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
-                        class="fas fa-window-close"></i>&nbsp;Đóng</button>
-                <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
-                    (click)="createUpdateEmployee()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
+            class="fas fa-window-close"></i>&nbsp;Đóng</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
+        (click)="createUpdateEmployee()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+</div>
