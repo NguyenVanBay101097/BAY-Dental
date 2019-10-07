@@ -29,7 +29,7 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Ref.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
 
             string[] positionList = null;
             if (!string.IsNullOrEmpty(val.Position))
@@ -86,67 +86,44 @@ namespace Infrastructure.Services
             if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
             {
                 var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-                if (category.Type == "doctor")
+
+                entity.IsAssistant = false;
+                entity.IsDoctor = false;
+                entity.Ref = await sequenceService.NextByCode("employee");
+                if (string.IsNullOrEmpty(entity.Ref))
                 {
-                    entity.IsDoctor = true;
-                    entity.IsAssistant = false;
-                    entity.Ref = await sequenceService.NextByCode("doctor");
-                    if (string.IsNullOrEmpty(entity.Ref))
-                    {
-                        await InsertDoctorSequence();
-                        entity.Ref = await sequenceService.NextByCode("doctor");
-                    }
-                }
-                else if (category.Type == "assistant")
-                {
-                    entity.IsAssistant = true;
-                    entity.IsDoctor = false;
-                    entity.Ref = await sequenceService.NextByCode("assistant");
-                    if (string.IsNullOrEmpty(entity.Ref))
-                    {
-                        await InsertAssistantSequence();
-                        entity.Ref = await sequenceService.NextByCode("assistant");
-                    }
-                }
-                else
-                {
-                    entity.IsAssistant = false;
-                    entity.IsDoctor = false;
+                    await InsertEmployeeSequence();
                     entity.Ref = await sequenceService.NextByCode("employee");
-                    if (string.IsNullOrEmpty(entity.Ref))
-                    {
-                        await InsertEmployeeSequence();
-                        entity.Ref = await sequenceService.NextByCode("employee");
-                    }
                 }
+
             }
 
             return await base.CreateAsync(entity);
         }
 
-        private async Task InsertDoctorSequence()
-        {
-            var seqObj = GetService<IIRSequenceService>();
-            await seqObj.CreateAsync(new IRSequence
-            {
-                Code = "doctor",
-                Name = "Mã bác sĩ",
-                Prefix = "BS",
-                Padding = 5,
-            });
-        }
+        //private async Task InsertDoctorSequence()
+        //{
+        //    var seqObj = GetService<IIRSequenceService>();
+        //    await seqObj.CreateAsync(new IRSequence
+        //    {
+        //        Code = "doctor",
+        //        Name = "Mã bác sĩ",
+        //        Prefix = "BS",
+        //        Padding = 5,
+        //    });
+        //}
 
-        private async Task InsertAssistantSequence()
-        {
-            var seqObj = GetService<IIRSequenceService>();
-            await seqObj.CreateAsync(new IRSequence
-            {
-                Code = "assistant",
-                Name = "Mã phụ tá",
-                Prefix = "PT",
-                Padding = 5,
-            });
-        }
+        //private async Task InsertAssistantSequence()
+        //{
+        //    var seqObj = GetService<IIRSequenceService>();
+        //    await seqObj.CreateAsync(new IRSequence
+        //    {
+        //        Code = "assistant",
+        //        Name = "Mã phụ tá",
+        //        Prefix = "PT",
+        //        Padding = 5,
+        //    });
+        //}
 
         private async Task InsertEmployeeSequence()
         {

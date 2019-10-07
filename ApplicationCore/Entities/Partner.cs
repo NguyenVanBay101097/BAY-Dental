@@ -145,6 +145,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Source { get; set; }
 
+        /// <summary>
+        /// Nhân viên giới thiệu
+        /// </summary>
         public Guid? EmployeeId { get; set; }
         public Employee Employees { get; set; }
 

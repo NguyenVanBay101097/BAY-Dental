@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public EmployeeProfile()
         {
             CreateMap<Employee, EmployeeSimple>();
+            CreateMap<Employee, EmployeeSimpleContact>();
             CreateMap<Employee, EmployeeBasic>();
 
             CreateMap<EmployeeDisplay, Employee>()

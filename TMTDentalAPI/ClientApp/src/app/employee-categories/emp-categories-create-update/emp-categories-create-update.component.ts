@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { EmpCategoryService } from '../emp-category.service';
 import { EmployeeCategoryDisplay } from '../emp-category';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-emp-categories-create-update',
@@ -11,15 +12,16 @@ import { EmployeeCategoryDisplay } from '../emp-category';
 })
 export class EmpCategoriesCreateUpdateComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, public window: WindowRef, private service: EmpCategoryService) { }
+  constructor(private fb: FormBuilder, private service: EmpCategoryService, public activeModal: NgbActiveModal) { }
   formCreate: FormGroup;
   empCategId: string;
+  isChange = false;
 
   typeList = new Array<{ type: string; id: string }>();
   ngOnInit() {
     this.formCreate = this.fb.group({
       name: [null, Validators.required],
-      typeObj: [null, Validators.required],
+      typeObj: null,
     });
 
     this.getEmployeeCategoryInfo();
@@ -31,11 +33,23 @@ export class EmpCategoriesCreateUpdateComponent implements OnInit {
 
   }
 
-  closeWindow(result: any) {
-    if (result) {
-      this.window.close(result);
-    } else {
-      this.window.close();
+  // closeWindow(result: any) {
+  //   if (result) {
+  //     this.window.close(result);
+  //   } else {
+  //     this.window.close();
+  //   }
+  // }
+  closeModal(rs) {
+    if (this.isChange) {
+      if (rs) {
+        this.activeModal.close(rs);
+      } else {
+        this.activeModal.close(true);
+      }
+    }
+    else {
+      this.activeModal.dismiss();
     }
   }
 
@@ -58,11 +72,12 @@ export class EmpCategoriesCreateUpdateComponent implements OnInit {
   createUpdateEmployee() {
     var value = new EmployeeCategoryDisplay;
     value = this.formCreate.value;
-    console.log(this.formCreate.get('typeObj').value.type);
+    // console.log(this.formCreate.get('typeObj').value.type);
     value.type = this.getEmployeeType(this.formCreate.get('typeObj').value.type);
     this.service.createUpdateEmployeeCategory(value, this.empCategId).subscribe(
       rs => {
-        this.closeWindow(rs);
+        this.isChange = true;
+        this.closeModal(rs);
       },
       er => {
         console.log(er);

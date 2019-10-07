@@ -26,6 +26,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.User, x => x.Ignore())
                 .ForMember(x => x.Partner, x => x.Ignore())
                 .ForMember(x => x.Doctor, x => x.Ignore());
+            CreateMap<AppointmentPatch, AppointmentBasic>();
         }
     }
 }

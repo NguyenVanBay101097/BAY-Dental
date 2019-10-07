@@ -7,6 +7,7 @@ import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { DialogRef, DialogCloseResult, WindowService, DialogService, WindowRef, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-employee-list',
@@ -15,7 +16,8 @@ import { EmployeeCreateUpdateComponent } from '../employee-create-update/employe
 })
 export class EmployeeListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: EmployeeService, private windowService: WindowService, private dialogService: DialogService) { }
+  constructor(private fb: FormBuilder, private service: EmployeeService,
+    private dialogService: DialogService, private modalService: NgbModal) { }
 
   loading = false;
   gridView: GridDataResult;
@@ -101,24 +103,39 @@ export class EmployeeListComponent implements OnInit {
     this.getEmployeesList();
   }
 
-  openWindow(id) {
-    const windowRef: WindowRef = this.windowService.open(
-      {
-        title: 'Thông tin nhân viên',
-        content: EmployeeCreateUpdateComponent,
-        minWidth: 250,
-      });
-    this.windowOpened = true;
-    const instance = windowRef.content.instance;
-    instance.empId = id;
+  // openWindow(id) {
+  //   const windowRef: WindowRef = this.windowService.open(
+  //     {
+  //       title: id ? 'Cập nhật nhân viên' : 'Tạo nhân viên',
+  //       content: EmployeeCreateUpdateComponent,
+  //       minWidth: 250,
+  //     });
+  //   this.windowOpened = true;
+  //   const instance = windowRef.content.instance;
+  //   if (id) {
+  //     instance.empId = id;
+  //   }
 
-    windowRef.result.subscribe(
-      (result) => {
-        this.windowOpened = false;
-        if (!(result instanceof WindowCloseResult)) {
-          this.getEmployeesList();
-        }
-      }
+  //   windowRef.result.subscribe(
+  //     (result) => {
+  //       this.windowOpened = false;
+  //       if (!(result instanceof WindowCloseResult)) {
+  //         this.getEmployeesList();
+  //       }
+  //     }
+  //   )
+  // }
+
+  openModal(id) {
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    if (id) {
+      modalRef.componentInstance.empId = id;
+    }
+    modalRef.result.then(
+      rs => {
+        this.getEmployeesList();
+      },
+      er => { }
     )
   }
 

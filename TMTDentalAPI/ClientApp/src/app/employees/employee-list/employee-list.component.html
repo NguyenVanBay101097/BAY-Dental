@@ -2,12 +2,14 @@
     <ol class="breadcrumb">
         <li class="active"> Nhân viên</li>
     </ol>
-    <div class="o_cp_searchview">
+    <div class="o_cp_searchview" [formGroup]="formFilter">
+        <input type="text" class="form-control" formControlName="search" [(ngModel)]="search"
+            (ngModelChange)="searchUpdate.next($event)" placeholder="Theo mã, tên hoặc số điện thoại nhân viên" />
     </div>
     <div class="o_cp_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" (click)="openWindow(null)">
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
                     <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
             </div>
         </div>
@@ -17,10 +19,10 @@
     <div class="o_cp_right">
     </div>
 </div>
-<div kendoWindowContainer></div>
+<!-- <div kendoWindowContainer></div> -->
 <div kendoDialogContainer></div>
 
-<div class="mainLeft">
+<!-- <div class="mainLeft">
     <div class="accordion" id="accordionExample">
         <div [formGroup]="formFilter">
             <div class="card">
@@ -55,21 +57,21 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                </div> 
 </div>
-<div class="mainRight">
+</div>
+</div>
+</div>-->
+<div class="">
     <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="ref" title="Mã" width="120"></kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
-        <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
-        <kendo-grid-column field="category.name" title="Chức vụ" width="250"></kendo-grid-column>
-        <kendo-grid-command-column title="Thao tác" width="250">
+        <kendo-grid-column field="ref" title="Mã"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
+        <kendo-grid-column field="phone" title="Số điện thoại"></kendo-grid-column>
+        <kendo-grid-column field="category.name" title="Nhóm"></kendo-grid-column>
+        <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button kendoButton (click)="openWindow(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
+                <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
                         class="fas fa-edit"></i>&nbsp;Sửa</button>
                 <button kendoButton (click)="deleteEmployee(dataItem.id)" class="btn btn-danger btn-sm"><i
                         title="Vô hiệu hóa" class="fas fa-times"></i>&nbsp;Xóa</button>
@@ -80,4 +82,3 @@
     </kendo-grid>
 </div>
 <div class="k-overlay" *ngIf="this.windowOpened"></div>
-<hr />

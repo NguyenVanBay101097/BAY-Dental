@@ -7,8 +7,12 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Nhóm nhân viên
     /// </summary>
-    public class EmployeeCategory: BaseEntity
+    public class EmployeeCategory : BaseEntity
     {
+        public EmployeeCategory()
+        {
+            Type = "other";
+        }
         public string Name { get; set; }
 
         /// <summary>

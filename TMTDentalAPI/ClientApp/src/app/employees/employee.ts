@@ -22,7 +22,7 @@ export class EmployeeBasic {
 export class EmployeeDisplay extends EmployeeBasic {
     address: string;
     identityCard: string;
-    birthDay: Date;
+    birthDay: string;
     isDoctor: boolean;
     isAssistant: boolean;
 }
@@ -37,4 +37,10 @@ export class PagedResult2<T>{
 export class EmployeeSimple {
     id: string;
     name: string;
+}
+
+export class EmployeeSimpleContact {
+    id: string;
+    name: string;
+    phone: string;
 }

@@ -33,18 +33,18 @@
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Mã </label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" formControlName="ref" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Giới tính</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input type="radio" class="radio-gender-male" value="Male" id="male"
                                         formControlName="gender" />
                                     <label for="male">Nam</label>
@@ -57,36 +57,36 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Số điện
                                         thoại</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="12"
                                         formControlName="phone" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Ngày sinh</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <div class="form-group">
                                         <div class="d-flex">
                                             <select class="form-control kd-dropdown-dob-d mr-1"
                                                 formControlName="birthDay">
-                                                <option>Ngày</option>
+                                                <option value="null">Ngày</option>
                                                 <option *ngFor="let i of dayList">
                                                     {{i}}</option>
                                             </select>
                                             <select class="form-control kd-dropdown-dob-m mr-1"
                                                 formControlName="birthMonth">
-                                                <option>Tháng</option>
+                                                <option value="null">Tháng</option>
                                                 <option *ngFor="let i of monthList">
                                                     {{i}}</option>
                                             </select>
                                             <select class="form-control kd-dropdown-dob-y" formControlName="birthYear">
-                                                <option>Năm</option>
+                                                <option value="null">Năm</option>
                                                 <option *ngFor="let i of yearList">
                                                     {{i}}</option>
                                             </select>
@@ -95,10 +95,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Tiểu sử bệnh</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <textarea class="form-control" formControlName="medicalHistory"></textarea>
                                 </td>
                             </tr>
@@ -107,26 +107,26 @@
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Mã vạch</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <input class="form-control" formControlName="barcode" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Số nhà</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <input class="form-control" formControlName="street" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Tỉnh/Thành</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <kendo-combobox class="kd-dropdown-area" [data]="provincesFilter"
                                         formControlName="city" [valueField]="'code'" [textField]="'name'"
                                         (valueChange)="changeProvince()" [filterable]="true"
@@ -135,10 +135,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Quận/Huyện</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <kendo-combobox class="kd-dropdown-area" [data]="districtsFilter"
                                         formControlName="district" [valueField]="'code'" [textField]="'name'"
                                         (valueChange)="changeDistrict()" [filterable]="true"
@@ -147,10 +147,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Phường/Xã</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <kendo-combobox class="kd-dropdown-area" [data]="wardsFilter" formControlName="ward"
                                         [valueField]="'code'" [textField]="'name'" [filterable]="true"
                                         (filterChange)="filterWard($event)">
@@ -167,43 +167,43 @@
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Mã </label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" formControlName="ref" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Số điện thoại</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="11"
                                         formControlName="phone" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Số Fax</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" (input)="onlyGetNumbers('fax')" maxlength="10"
                                         formControlName="fax" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Email</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" formControlName="email" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Ghi chú</label></td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <textarea class="form-control" formControlName="comment"></textarea>
                                 </td>
                             </tr>
@@ -212,18 +212,18 @@
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Số nhà</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <input class="form-control" formControlName="street" />
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Tỉnh/Thành</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <kendo-combobox class="kd-dropdown-area" [data]="provincesFilter"
                                         formControlName="city" [valueField]="'code'" [textField]="'name'"
                                         (valueChange)="changeProvince()" [filterable]="true"
@@ -232,10 +232,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Quận/Huyện</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <kendo-combobox class="kd-dropdown-area" [data]="districtsFilter"
                                         formControlName="district" [valueField]="'code'" [textField]="'name'"
                                         (valueChange)="changeDistrict()" [filterable]="true"
@@ -244,10 +244,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Phường/Xã</label>
                                 </td>
-                                <td colspan="1" style="width:100%">
+                                <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <kendo-combobox class="kd-dropdown-area" [data]="wardsFilter" formControlName="ward"
                                         [valueField]="'code'" [textField]="'name'" [filterable]="true"
                                         (filterChange)="filterWard($event)">
@@ -270,19 +270,21 @@
                                                 <table class="o_group o_inner_group o_group_col_6">
                                                     <tbody>
                                                         <tr>
-                                                            <td colspan="1" class="o_td_label">
+                                                            <td colspan="1" class="o_td_label o_td_label_left">
                                                                 <label class="o_form_label">Nghề nghiệp</label>
                                                             </td>
-                                                            <td colspan="1">
+                                                            <td colspan="1" style="width: 100%"
+                                                                class="o_td_control_right">
                                                                 <input class="form-control"
                                                                     formControlName="jobTitle" />
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="1" class="o_td_label">
+                                                            <td colspan="1" class="o_td_label o_td_label_left">
                                                                 <label class="o_form_label">Nhóm</label>
                                                             </td>
-                                                            <td colspan="1">
+                                                            <td colspan="1" style="width: 100%"
+                                                                class="o_td_control_right">
                                                                 <kendo-multiselect class="form-control"
                                                                     [data]="fullCategoriesList" [textField]="'name'"
                                                                     [valueField]="'id'" formControlName="categories">
@@ -294,18 +296,20 @@
                                                 <table class="o_group o_inner_group o_group_col_6">
                                                     <tbody>
                                                         <tr>
-                                                            <td colspan="1" class="o_td_label">
+                                                            <td colspan="1" class="o_td_label o_td_label_right">
                                                                 <label class="o_form_label">Email</label>
                                                             </td>
-                                                            <td colspan="1">
+                                                            <td colspan="1" style="width: 100%"
+                                                                class="o_td_control_right">
                                                                 <input class="form-control" formControlName="email" />
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="1" class="o_td_label">
+                                                            <td colspan="1" class="o_td_label o_td_label_right">
                                                                 <label class="o_form_label">Ghi
                                                                     chú</label></td>
-                                                            <td colspan="1">
+                                                            <td colspan="1" style="width: 100%"
+                                                                class="o_td_control_right">
                                                                 <textarea class="form-control"
                                                                     formControlName="comment"></textarea>
                                                             </td>
@@ -397,7 +401,7 @@
         (click)="createNewCustomer()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
     <!-- <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button> -->
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal()"><i
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button>
 
     <button type="button" hidden class="btn btn-primary btn-sm mr-2" *ngIf="cusId==null" (click)="createNewAndMore()"><i

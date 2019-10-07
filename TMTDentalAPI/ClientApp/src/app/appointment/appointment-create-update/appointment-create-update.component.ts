@@ -13,6 +13,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 class DatePickerLimit {
   min: Date;
@@ -32,6 +33,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
   doctorSimpleFilter: EmployeeSimple[] = [];
+  stateFilter = [{ text: 'Đang hẹn', value: 'confirmed', disabled: false }, { text: 'Đang chờ', value: 'waiting', disabled: false }, { text: 'Hoàn tất', value: 'done', disabled: false },
+  { text: 'Quá hạn', value: 'expired', disabled: true }, { text: 'Đã hủy', value: 'cancel', disabled: false }];
 
   appointId: string;
   dotKhamId: string;
@@ -52,9 +55,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   // companyIdDefault: string;
 
-  constructor(private fb: FormBuilder, private window: WindowRef, private service: AppointmentService, private employeeService: EmployeeService,
-    private partnerService: PartnerService, private windowService: WindowService,
-    private intlService: IntlService, private notificationService: NotificationService) { }
+  constructor(private fb: FormBuilder, private service: AppointmentService, private employeeService: EmployeeService,
+    private partnerService: PartnerService, private intlService: IntlService,
+    private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal) { }
 
   formCreate: FormGroup;
 
@@ -71,7 +74,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       // dotKhamId: this.dotKhamId,
       doctor: null,
       doctorId: null,
-      state: null
+      stateObj: null
     })
     if (this.appointId) {
       this.loadAppointmentToForm();
@@ -94,6 +97,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.dateLimit.max = new Date(this.dateLimit.min.getFullYear() + 1, this.dateLimit.min.getMonth(), this.dateLimit.min.getDate());
   }
 
+  //Create + Update
   createNewAppointment() {
     var appoint = this.formCreate.value;
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
@@ -102,21 +106,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.date = this.intlService.formatDate(appoint.dateObj, 'g', 'en-US');
     var today = new Date();
     if (appoint.dateObj as Date >= today) {
-      console.log(10);
       appoint.state = "confirmed";
+    } else {
+      appoint.state = this.formCreate.get('stateObj').value.value;
     }
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
       rs => {
         console.log(rs);
         this.isChange = true;
-        this.closeWindow(rs);
+        this.closeModal(rs);
       },
       er => {
         console.log(er);
       },
     )
   }
-
 
   getCustomerList() {
     var partnerPaged = new PartnerPaged();
@@ -131,7 +135,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
     )
   }
-
 
 
   filterChangeCombobox() {
@@ -209,7 +212,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.service.getAppointmentInfo(this.appointId).subscribe(
         rs => {
           this.formCreate.patchValue(rs);
-          this.appointState = rs.state;
+          this.formCreate.get('stateObj').setValue(this.stateFilter.filter(x => x.value == rs.state)[0]);
+          this.state = rs.state;
           let date = this.intlService.parseDate(rs.date);
           this.formCreate.get('dateObj').patchValue(date);
           if (rs.partner) {
@@ -221,7 +225,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           // if (!this.dotKhamId && this.formCreate.get('dotKhamId').value) {
           //   this.dotKhamId = this.formCreate.get('dotKhamId').value;
           // }
-          this.state = this.formCreate.get('state').value;
+          // this.state = this.formCreate.get('state').value;
           // this.availableEdit(rs.state.toString());
           console.log(rs.state);
         },
@@ -279,47 +283,80 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     console.log(ar);
     this.service.patch(id, ar).subscribe(
       rs => {
-        this.window.close(true);
+        this.activeModal.close(true);
       }
     )
   }
 
-  closeWindow(rs) {
+  closeModal(rs) {
     if (this.isChange) {
       if (rs) {
-        this.window.close(rs);
+        this.activeModal.close(rs);
       } else {
-        this.window.close(true);
+        this.activeModal.close(true);
       }
-    } else {
-      this.window.close();
+    }
+    else {
+      this.activeModal.dismiss();
     }
   }
 
-  quickCreateCustomer() {
-    const windowRef: WindowRef = this.windowService.open(
-      {
-        title: 'Thông tin khách hàng',
-        content: PartnerCreateUpdateComponent,
-        minWidth: 250,
-        width: 920
-      });
-    this.windowOpened = true;
-    const instance = windowRef.content.instance;
-    instance.queryCustomer = true;
+  // closeWindow(rs) {
+  //   if (this.isChange) {
+  //     if (rs) {
+  //       this.window.close(rs);
+  //     } else {
+  //       this.window.close(true);
+  //     }
+  //   } else {
+  //     this.window.close();
+  //   }
+  // }
 
-    windowRef.result.subscribe(
-      (result) => {
+  // quickCreateCustomer() {
+  //   const windowRef: WindowRef = this.windowService.open(
+  //     {
+  //       title: 'Thông tin khách hàng',
+  //       content: PartnerCreateUpdateComponent,
+  //       minWidth: 250,
+  //       width: 920
+  //     });
+  //   this.windowOpened = true;
+  //   const instance = windowRef.content.instance;
+  //   instance.queryCustomer = true;
+
+  //   windowRef.result.subscribe(
+  //     (result) => {
+  //       this.windowOpened = false;
+  //       console.log(result instanceof WindowCloseResult);
+  //       if (!(result instanceof WindowCloseResult)) {
+  //         var newPartner = new PartnerSimple();
+  //         newPartner.id = result['id'];
+  //         newPartner.name = result['name'];
+  //         this.customerSimpleFilter.push(newPartner);
+  //         this.formCreate.get('partner').setValue(newPartner);
+  //       }
+  //     }
+  //   )
+  // }
+
+  quickCreateCustomerModal() {
+    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.queryCustomer = true;
+    modalRef.result.then(
+      result => {
         this.windowOpened = false;
-        console.log(result instanceof WindowCloseResult);
-        if (!(result instanceof WindowCloseResult)) {
+
+        if (result && result.id) {
+          console.log(result);
           var newPartner = new PartnerSimple();
-          newPartner.id = result['id'];
-          newPartner.name = result['name'];
+          newPartner.id = result.id;
+          newPartner.name = result.name;
           this.customerSimpleFilter.push(newPartner);
           this.formCreate.get('partner').setValue(newPartner);
         }
-      }
+      },
+      er => { }
     )
   }
 
@@ -342,6 +379,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         }
       )
     }
+  }
+
+  changeState(e) {
+    this.state = e.value;
+  }
+
+  itemDisabled(itemArgs: { dataItem: any, index: number }) {
+    return itemArgs.dataItem.disabled;
   }
 
   timeAvailble() {
@@ -396,7 +441,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   getState(state: string) {
     switch (state) {
       case 'done':
-        return 'Kết thúc';
+        return 'Hoàn tất';
       case 'cancel':
         return 'Đã hủy';
       case 'waiting':

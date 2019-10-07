@@ -4,6 +4,12 @@ export class PartnerSimple {
     id: string;
     name: string;
 }
+
+export class PartnerSimpleContact {
+    id: string;
+    name: string;
+    phone: string;
+}
 export class PartnerBasic {
     id: string;
     name: string;

@@ -9,6 +9,7 @@ import { AppointmentCreateUpdateComponent } from './appointment-create-update/ap
 import { ReactiveFormsModule } from '@angular/forms';
 import { PartnerInfoComponent } from '../partners/partner-info/partner-info.component';
 import { AppointmentCuDialogComponent } from './appointment-cu-dialog/appointment-cu-dialog.component';
+import { EmployeeInfoComponent } from '../employees/employee-info/employee-info.component';
 
 @NgModule({
   declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent],
@@ -18,7 +19,7 @@ import { AppointmentCuDialogComponent } from './appointment-cu-dialog/appointmen
     MyCustomKendoModule,
     ReactiveFormsModule
   ],
-  entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, AppointmentCuDialogComponent],
+  entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent],
   providers: [
     AppointmentService
   ]

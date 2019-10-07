@@ -29,7 +29,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Bác sĩ
         /// </summary>
         public Guid? DoctorId { get; set; }
-        public EmployeeSimple Doctor { get; set; }
+        public EmployeeSimpleContact Doctor { get; set; }
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
@@ -39,7 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
-        public PartnerSimple Partner { get; set; }
+        public PartnerSimpleContact Partner { get; set; }
     }
 
     public class AppointmentDisplay
