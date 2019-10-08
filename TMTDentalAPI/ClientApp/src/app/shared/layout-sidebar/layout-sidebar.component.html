@@ -1,0 +1,54 @@
+<div class="main-nav-wrapper" [class.collapsed]="sidebarService.collapsed">
+    <nav class="main-nav">
+        <ul class="nav flex-column">
+            <li class="nav-item" *ngFor="let item of menuItems;let i = index" [class.active]="i === activeIndex">
+                <a class="nav-link" *ngIf="item.children.length == 0">
+                    <i class="fas fa-home menu-icon"></i>
+                    <span class="menu-name">{{item.name}}</span>
+                </a>
+                <a class="nav-link auto" *ngIf="item.children.length" (click)="activeIndex = i">
+                    <i class="fas fa-home menu-icon"></i>
+                    <span class="menu-name">{{item.name}}</span>
+                    <span class="float-right text-muted">
+                        <i class="fas fa-angle-right text"></i>
+                        <i class="fas fa-angle-down text-active"></i>
+                    </span>
+                </a>
+                <ul class="nav flex-column nav-sub dk" *ngIf="item.children.length">
+                    <li *ngFor="let child of item.children">
+                        <a class="nav-link" href="#">{{child.name}}</a>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Điều trị</span>
+                </a>
+            </li>
+            <li class="nav-item" [class.active]="">
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Danh mục</span>
+                </a>
+                <ul class="collapse sub-menu list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a class="nav-link" href="#">Page 1</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">Page 2</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">Page 3</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Điều trị</span>
+                </a>
+            </li> -->
+        </ul>
+    </nav>
+</div>

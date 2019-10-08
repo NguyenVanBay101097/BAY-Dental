@@ -1,3 +1,6 @@
+a {
+    cursor: pointer;
+}
 
 @media (min-width: 992px) {
     .modal-lg,
@@ -54,9 +57,17 @@ html .o_web_client .o_action_manager {
     direction: ltr;
     flex: 1 1 100%;
     min-height: 1px;
+    display: flex;
 }
 
-html .o_web_client .o_action_manager>.o_action {
+@media (min-width: 768px) {
+    html .o_web_client > .o_action_manager {
+        overflow: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+html .o_web_client .o_action_manager .o_action {
     height: 100%;
     display: -webkit-box;
     display: -webkit-flex;
@@ -65,31 +76,31 @@ html .o_web_client .o_action_manager>.o_action {
     flex-flow: column nowrap;
 }
 
-html .o_web_client .o_action_manager>.o_action>.o_cp_controller {
+html .o_web_client .o_action_manager .o_action>.o_cp_controller {
     -webkit-box-flex: 0;
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
 }
 
-html .o_web_client .o_action_manager>.o_action>.o_content {
+html .o_web_client .o_action_manager .o_action>.o_content {
     flex: 1 1 100%;
     position: relative;
 }
 
-html .o_web_client>.o_action_manager>.o_action .o_cp_controller {
+html .o_web_client>.o_action_manager .o_action .o_cp_controller {
     -webkit-box-flex: 0;
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
 }
 
-html .o_web_client>.o_action_manager>.o_action .o_content {
+html .o_web_client>.o_action_manager .o_action .o_content {
     flex: 1 1 100%;
     position: relative;
     min-height: 1px;
 }
 
 @media (min-width: 768px) {
-    html .o_web_client>.o_action_manager>.o_action .o_content {
+    html .o_web_client>.o_action_manager .o_action .o_content {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
     }

@@ -11,6 +11,9 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.component';
+import { LayoutHeaderComponent } from './layout-header/layout-header.component';
+import { NavSidebarService } from './nav-sidebar.service';
 
 @NgModule({
   declarations: [
@@ -19,14 +22,18 @@ import { ReactiveFormsModule } from '@angular/forms';
     HeaderBarComponent,
     TopMenuComponent,
     ConfirmDialogComponent,
-    ChangePasswordDialogComponent
+    ChangePasswordDialogComponent,
+    LayoutSidebarComponent,
+    LayoutHeaderComponent
   ],
   exports: [
     HeaderComponent,
     HeaderMenuComponent,
     HeaderBarComponent,
     TopMenuComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    LayoutSidebarComponent,
+    LayoutHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -36,6 +43,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     RouterModule,
     ReactiveFormsModule
   ],
+  providers: [NavSidebarService],
   entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent],
 })
 export class SharedModule { }

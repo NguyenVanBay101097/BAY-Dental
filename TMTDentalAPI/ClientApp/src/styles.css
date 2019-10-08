@@ -120,8 +120,8 @@
   padding-right: 16px;
   padding-bottom: 10px;
   padding-left: 16px;
-  background-color: white;
-  border-bottom: 1px solid #cccccc;
+  background-color: #f0eeee;
+  border-bottom: 1px solid #a8a8a8;
 }
 
 .o_control_panel {
@@ -148,6 +148,13 @@
   list-style: none;
   background-color: white;
   border-radius: 0;
+}
+
+.o_control_panel .breadcrumb {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  background-color: #f0eeee;
 }
 
 .o_control_panel .breadcrumb {
