@@ -105,11 +105,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     appoint.date = this.intlService.formatDate(appoint.dateObj, 'g', 'en-US');
     var today = new Date();
-    if (appoint.dateObj as Date >= today) {
-      appoint.state = "confirmed";
-    } else {
-      appoint.state = this.formCreate.get('stateObj').value.value;
-    }
+    appoint.state = this.formCreate.get('stateObj').value.value;
+
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
       rs => {
         console.log(rs);

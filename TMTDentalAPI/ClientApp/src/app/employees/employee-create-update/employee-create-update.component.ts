@@ -55,6 +55,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       this.service.getEmployee(this.empId).subscribe(
         rs => {
           this.formCreate.patchValue(rs);
+          this.isDoctor = rs.isDoctor;
+          this.isAssistant = rs.isAssistant;
           let birthDay = this.intlService.parseDate(rs.birthDay);
           this.formCreate.get('birthDayObj').patchValue(birthDay);
         },
@@ -168,6 +170,19 @@ export class EmployeeCreateUpdateComponent implements OnInit {
         console.log(er);
       }
     )
+  }
+
+  getPosition() {
+    if (this.isDoctor && !this.isAssistant) {
+      console.log(this.isDoctor + ' ' + this.isAssistant);
+      return 'Bác sĩ';
+    } else if (!this.isDoctor && this.isAssistant) {
+      console.log(this.isDoctor + ' ' + this.isAssistant);
+      return 'Phụ tá';
+    } else if (!this.isDoctor && !this.isAssistant) {
+      console.log(this.isDoctor + ' ' + this.isAssistant);
+      return 'Nhân viên';
+    }
   }
 
 }

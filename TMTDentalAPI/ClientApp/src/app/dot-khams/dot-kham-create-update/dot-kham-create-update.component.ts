@@ -88,7 +88,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     private partnerService: PartnerService, private accountInvoiceService: AccountInvoiceService,
     private userService: UserService, private notificationService: NotificationService,
     // private dotKhamLineService: DotKhamLineService, private dotKhamLineOperationService: DotKhamLineOperationService,
-    private windowService: WindowService, private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
+    // private windowService: WindowService,
+    private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
     private toaThuocService: ToaThuocService, private appointmentService: AppointmentService, private productService: ProductService,
     private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal) { }
 
@@ -424,7 +425,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   searchUsers(search?: string) {
     return this.userService.autocomplete(search);
   }
-
 
   get getName() {
     return this.dotKhamForm.get('name').value;
@@ -836,30 +836,68 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   //   return this.dotKhamForm.get('appointmentId').value;
   // }
 
-  appointmentCreate() {
-    const windowRef = this.windowService.open({
-      title: 'Lịch hẹn',
-      content: AppointmentCreateUpdateComponent,
-      resizable: false,
-    });
-    const instance = windowRef.content.instance;
-    // instance.dotKhamId = this.id;
+  // appointmentCreate() {
+  //   const windowRef = this.windowService.open({
+  //     title: 'Lịch hẹn',
+  //     content: AppointmentCreateUpdateComponent,
+  //     resizable: false,
+  //   });
+  //   const instance = windowRef.content.instance;
+  //   this.opened = true;
+  //   if (this.getAppointment) {
+  //     instance.appointId = this.getAppointment.id;
+  //   }
+  //   instance.dotKhamId = this.id
 
-    this.opened = true;
+  //   windowRef.result.subscribe((result) => {
+  //     this.opened = false;
+  //     if (result instanceof WindowCloseResult) {
+  //       console.log(1);
+  //     } else {
+  //       if (result['id']) {
+  //         var dkpatch = new DotKhamPatch;
+  //         dkpatch.appointmentId = result['id'];
+  //         console.log(result);
+  //         dkpatch.dotKhamId = this.id;
+  //         var ar = [];
+  //         for (var p in dkpatch) {
+  //           var o = { op: 'replace', path: '/' + p, value: dkpatch[p] };
+  //           ar.push(o);
+  //         }
+
+  //         this.dotKhamService.patch(this.id, ar).subscribe(
+  //           rs => {
+  //             this.getActiveRoute();
+  //           }
+  //         )
+  //       } else {
+  //         console.log(3);
+  //         this.getActiveRoute();
+  //       }
+  //       this.notificationService.show({
+  //         content: 'Cập nhật thành công',
+  //         hideAfter: 3000,
+  //         position: { horizontal: 'center', vertical: 'top' },
+  //         animation: { type: 'fade', duration: 400 },
+  //         type: { style: 'success', icon: true }
+  //       });
+  //     }
+  //   });
+  // }
+
+  appointmentCreateModal() {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (this.getAppointment) {
-      instance.appointId = this.getAppointment.id;
+      modalRef.componentInstance.appointId = this.getAppointment.id;
     }
-    instance.dotKhamId = this.id
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-        console.log(1);
-      } else {
-        if (result['id']) {
+    modalRef.componentInstance.dotKhamId = this.id;
+    modalRef.result.then(
+      rs => {
+        this.opened = false;
+        if (rs.id) {
           var dkpatch = new DotKhamPatch;
-          dkpatch.appointmentId = result['id'];
-          console.log(result);
+          dkpatch.appointmentId = rs['id'];
+          console.log(rs);
           dkpatch.dotKhamId = this.id;
           var ar = [];
           for (var p in dkpatch) {
@@ -873,7 +911,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
             }
           )
         } else {
-          console.log(3);
           this.getActiveRoute();
         }
         this.notificationService.show({
@@ -883,8 +920,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-      }
-    });
+
+      },
+      er => { }
+    )
   }
 
   get getAppointState() {

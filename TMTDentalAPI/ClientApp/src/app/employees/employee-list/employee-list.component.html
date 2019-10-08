@@ -11,6 +11,10 @@
             <div class="o_form_buttons_view">
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
                     <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
+                <!-- <kendo-dropdownbutton class="btn btn-primary" [data]="btnDropdown" [primary]="true"
+                    (itemClick)="btnDropdownItemClick($event)">Thêm mới
+                    <i class="fas fa-caret-down" title="Thêm mới"></i>
+                </kendo-dropdownbutton> -->
             </div>
         </div>
         <div class="o_cp_sidebar">
@@ -71,8 +75,8 @@
         <kendo-grid-column field="category.name" title="Nhóm"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
-                        class="fas fa-edit"></i>&nbsp;Sửa</button>
+                <button kendoButton (click)="openModal(dataItem.id,null,null)" class="btn btn-success btn-sm"><i
+                        title="Sửa" class="fas fa-edit"></i>&nbsp;Sửa</button>
                 <button kendoButton (click)="deleteEmployee(dataItem.id)" class="btn btn-danger btn-sm"><i
                         title="Vô hiệu hóa" class="fas fa-times"></i>&nbsp;Xóa</button>
             </ng-template>

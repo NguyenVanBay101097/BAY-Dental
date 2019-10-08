@@ -34,7 +34,8 @@
                                     <div class=" d-flex">
                                         <kendo-combobox formControlName="partner" [allowCustom]="false"
                                             [filterable]="true" [data]="customerSimpleFilter" #partnerCbx
-                                            [valueField]="'id'" [textField]="'name'" [readonly]="partnerAvailble()">
+                                            [valueField]="'id'" [textField]="'name'"
+                                            [readonly]="partnerAvailble() || dotKhamId">
                                         </kendo-combobox>
                                         <button [disabled]="appointId" class="btn btn-sm btn-light"
                                             (click)="quickCreateCustomerModal()">

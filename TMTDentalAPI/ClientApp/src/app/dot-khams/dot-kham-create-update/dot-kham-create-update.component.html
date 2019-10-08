@@ -13,8 +13,8 @@
     <div class="o_cp_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-light btn-sm" (click)="actionCreateDotKham()" *ngIf="!dialog">
-                    Mở đợt khám mới</button>
+                <!-- <button type="button" class="btn btn-light btn-sm" (click)="actionCreateDotKham()" *ngIf="!dialog">
+                    Mở đợt khám mới</button> -->
                 <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
                     (click)="onSave()" *ngIf="!id">
                     Lưu</button>
@@ -32,7 +32,7 @@
                     <i class="fas fa-tooth"></i> Tạo labo</button>
                 <button *ngIf="id" title="Lịch hẹn" [disabled]="invoiceState=='cancel'" type="button"
                     class="btn btn-light btn-sm" [style.background-color]="getAppointState ? getAppointState.color : ''"
-                    [style.color]="getAppointState ? 'white' : ''" (click)="appointmentCreate()">
+                    [style.color]="getAppointState ? 'white' : ''" (click)="appointmentCreateModal()">
                     <i class="far fa-calendar-alt"></i>&nbsp;
                     <span *ngIf="getAppointment">{{getAppointState ? getAppointState.text : ''}} :
                         {{getAppointment.date | date : 'short'}}</span>

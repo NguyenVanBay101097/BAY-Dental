@@ -140,21 +140,21 @@ namespace Infrastructure.Services
         public override async Task UpdateAsync(Employee entity)
         {
             var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
-            if (category.Type == "doctor")
-            {
-                entity.IsDoctor = true;
-                entity.IsAssistant = false;
-            }
-            else if (category.Type == "assistant")
-            {
-                entity.IsAssistant = true;
-                entity.IsDoctor = false;
-            }
-            else
-            {
-                entity.IsAssistant = false;
-                entity.IsDoctor = false;
-            }
+            //if (category.Type == "doctor")
+            //{
+            //    entity.IsDoctor = true;
+            //    entity.IsAssistant = false;
+            //}
+            //else if (category.Type == "assistant")
+            //{
+            //    entity.IsAssistant = true;
+            //    entity.IsDoctor = false;
+            //}
+            //else
+            //{
+            //    entity.IsAssistant = false;
+            //    entity.IsDoctor = false;
+            //}
             await base.UpdateAsync(entity);
         }
     }

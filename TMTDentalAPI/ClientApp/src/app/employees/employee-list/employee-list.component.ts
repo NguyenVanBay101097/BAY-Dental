@@ -33,6 +33,8 @@ export class EmployeeListComponent implements OnInit {
   isAssistant: boolean;
   isOther: boolean;
 
+  btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
+
   ngOnInit() {
     this.formFilter = this.fb.group({
       search: null,
@@ -126,11 +128,13 @@ export class EmployeeListComponent implements OnInit {
   //   )
   // }
 
-  openModal(id) {
+  openModal(id, isDoctor, isAssistant) {
     const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (id) {
       modalRef.componentInstance.empId = id;
     }
+    modalRef.componentInstance.isDoctor = isDoctor;
+    modalRef.componentInstance.isAssistant = isAssistant;
     modalRef.result.then(
       rs => {
         this.getEmployeesList();
@@ -162,6 +166,24 @@ export class EmployeeListComponent implements OnInit {
         }
       }
     )
+  }
+
+  btnDropdownItemClick(e) {
+    console.log(e);
+    switch (e.text.toString()) {
+      case "Bác sĩ":
+        console.log(1);
+        this.openModal(null, true, false);
+        break;
+      case "Phụ tá":
+        console.log(2);
+        this.openModal(null, false, true);
+        break;
+      case "Nhân viên khác":
+        console.log(3);
+        this.openModal(null, false, false);
+        break;
+    }
   }
 
 }
