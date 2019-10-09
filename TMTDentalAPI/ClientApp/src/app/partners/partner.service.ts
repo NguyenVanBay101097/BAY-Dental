@@ -6,6 +6,7 @@ import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay } f
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
 import { EmployeeSimple } from '../employees/employee';
+import { HistoryPaged, HistorySimple } from '../history/history';
 
 export class PartnerFilter {
     search: string;
@@ -189,5 +190,9 @@ export class PartnerService {
 
     getEmployeeSimpleList(val): Observable<EmployeeSimple[]> {
         return this.http.post<EmployeeSimple[]>(this.baseApi + "api/Employees/Autocomplete", val);
+    }
+
+    getHistories(): Observable<HistorySimple[]> {
+        return this.http.get<HistorySimple[]>(this.baseApi + 'api/histories/GetHistoriesCheckbox');
     }
 }

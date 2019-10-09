@@ -164,6 +164,7 @@ namespace TMTDentalAPI
             services.AddScoped<IDotKhamStepService, DotKhamStepService>();
             services.AddScoped<IIrAttachmentRepository, IrAttachmentRepository>();
             services.AddScoped<IIrAttachmentService, IrAttachmentService>();
+            services.AddScoped<IHistoryService, HistoryService>();
             services.AddSingleton<IMailSender, SendGridSender>();
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
@@ -209,6 +210,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new EmployeeProfile());
                 mc.AddProfile(new ProductStepProfile());
                 mc.AddProfile(new DotKhamStepProfile());
+                mc.AddProfile(new HistoriesProfile());
+                mc.AddProfile(new PartnerHistoryRelProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

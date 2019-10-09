@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PartnerService } from '../partner.service';
 import { WindowRef, WindowService } from '@progress/kendo-angular-dialog';
 import { PartnerDisplay, PartnerCategorySimple, District, AshipRequest, City, Ward, AshipData } from '../partner-simple';
@@ -10,6 +10,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { HistorySimple } from 'src/app/history/history';
 
 
 
@@ -39,6 +40,8 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
   categoriesList: PartnerCategorySimple[] = [];
   fullCategoriesList: PartnerCategorySimple[] = [];
+  historiesList: HistorySimple[] = [];
+  checkedHistoriesList: HistorySimple[] = [];
 
   districtsList: District[] = [];
   provincesList: City[] = [];
@@ -72,7 +75,8 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
       street: null,
       comment: null,
-      gender: 'Other',
+      gender: 'Male',
+      histories: this.fb.array([]),
       medicalHistory: null,
 
       city: null,
@@ -103,7 +107,7 @@ export class PartnerCreateUpdateComponent implements OnInit {
     this.formCreate.get('customer').setValue(this.queryCustomer ? true : false);
     this.formCreate.get('supplier').setValue(this.querySupplier ? true : false);
     this.getProDisWrd();
-
+    this.getHistories();
 
     // this.filterChangeCombobox();
 
@@ -187,7 +191,6 @@ export class PartnerCreateUpdateComponent implements OnInit {
     if (value.birthYear == 'null') {
       value.birthYear = '';
     }
-    console.log(value);
 
     this.isChange = true;
     this.service.createUpdateCustomer(value, this.cusId).subscribe(
@@ -237,6 +240,10 @@ export class PartnerCreateUpdateComponent implements OnInit {
       this.service.getPartner(this.cusId).subscribe(
         rs => {
           this.formCreate.patchValue(rs);
+          this.checkedHistoriesList = rs.histories;
+          rs.histories.forEach(e => {
+            (this.formCreate.get('histories') as FormArray).push(new FormControl(e));
+          });
           if (rs.city && rs.city.code) {
             this.formCreate.get('city').setValue(rs.city);
             this.getDistrictList(rs.city.code);
@@ -256,6 +263,7 @@ export class PartnerCreateUpdateComponent implements OnInit {
             this.formCreate.get('ward').setValue(rs.ward);
           }
           this.employeeSimpleFilter = _.unionBy(this.employeeSimpleFilter, [rs.employees], 'id');
+
         },
         er => {
           console.log(er);
@@ -263,7 +271,34 @@ export class PartnerCreateUpdateComponent implements OnInit {
       )
     }
   }
+  ////=====================Lấy ds bệnh==========================
+  getHistories() {
+    this.service.getHistories().subscribe(
+      rs => {
+        this.historiesList = rs;
+      },
+      er => console.log(er)
+    )
+  }
 
+  checkboxChange(hist: HistorySimple, isCheck: boolean) {
+    const histFormArr = <FormArray>this.formCreate.get('histories');
+
+    if (isCheck) {
+      histFormArr.push(new FormControl(hist));
+    } else {
+      let index = histFormArr.controls.findIndex(x => x.value.id == hist.id);
+      histFormArr.removeAt(index);
+    }
+  }
+
+  checked(item: HistorySimple) {
+    if (this.checkedHistoriesList.findIndex(x => x.id == item.id) >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   ////=====================Lấy nhóm KH==========================
   getPartnerCategories() {
     this.service.getPartnerCategories().subscribe(

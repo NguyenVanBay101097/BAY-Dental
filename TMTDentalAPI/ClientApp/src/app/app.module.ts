@@ -58,6 +58,7 @@ import { EmployeesModule } from './employees/employees.module';
 import { EmployeeCategoriesModule } from './employee-categories/employee-categories.module';
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { MatStepperModule } from '@angular/material/stepper';
+import { HistoryModule } from './history/history.module';
 import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCustomParserFormatter } from './core/ngb-date-custom-parser-formatter';
 
@@ -125,7 +126,8 @@ registerLocaleData(localeVi, 'vi');
     LayoutModule,
     InputsModule,
     MatStepperModule,
-    NgbModule
+    NgbModule,
+    HistoryModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
