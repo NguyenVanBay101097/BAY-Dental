@@ -59,6 +59,7 @@ import { EmployeeCategoriesModule } from './employee-categories/employee-categor
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { MatStepperModule } from '@angular/material/stepper';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HistoryModule } from './history/history.module';
 
 
 export function tokenGetter() {
@@ -124,7 +125,8 @@ registerLocaleData(localeVi, 'vi');
     LayoutModule,
     InputsModule,
     MatStepperModule,
-    NgbModule
+    NgbModule,
+    HistoryModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

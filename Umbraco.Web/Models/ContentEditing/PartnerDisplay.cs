@@ -114,6 +114,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
 
+        public IEnumerable<HistorySimple> Histories { get; set; } = new List<HistorySimple>();
 
     }
 }

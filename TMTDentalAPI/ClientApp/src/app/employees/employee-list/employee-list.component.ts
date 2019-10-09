@@ -85,7 +85,7 @@ export class EmployeeListComponent implements OnInit {
       this.gridView = rs2;
       this.loading = false;
     }, er => {
-      this.loading = true;
+      this.loading = false;
       console.log(er);
     }
     )

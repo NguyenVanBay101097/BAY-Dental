@@ -99,6 +99,19 @@
                                     <label class="o_form_label">Tiểu sử bệnh</label>
                                 </td>
                                 <td colspan="1" style="width:100%" class="o_td_control_left">
+                                    <div *ngFor="let i of historiesList">
+                                        <label><input type="checkbox" [checked]="checked(i)"
+                                                (change)="checkboxChange(i,$event.target.checked)" /> {{i.name}}
+                                        </label>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">Tiểu sử khác</label>
+                                </td>
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <textarea class="form-control" formControlName="medicalHistory"></textarea>
                                 </td>
                             </tr>

@@ -1,4 +1,5 @@
 import { EmployeeSimple } from '../employees/employee';
+import { HistorySimple } from '../history/history';
 
 export class PartnerSimple {
     id: string;
@@ -32,6 +33,7 @@ export class PartnerDisplay extends PartnerBasic {
     birthDay: number;
     birthMonth: number;
     categories: PartnerCategorySimple[];
+    histories: HistorySimple[];
     jobTitle: string;
     fax: string;
     street: string;

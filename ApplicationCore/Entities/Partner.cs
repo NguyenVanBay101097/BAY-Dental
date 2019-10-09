@@ -94,9 +94,11 @@ namespace ApplicationCore.Entities
         public int? BirthDay { get; set; }
 
         /// <summary>
-        /// Tiền sử bệnh, nên hiển thị nếu là bệnh nhân (khách hàng)
+        /// Tiền sử bệnh khác, nên hiển thị nếu là bệnh nhân (khách hàng)
         /// </summary>
         public string MedicalHistory { get; set; }
+
+        public ICollection<PartnerHistoryRel> PartnerHistoryRels { get; set; } = new List<PartnerHistoryRel>();
 
         /// <summary>
         /// Mã tỉnh/thành phố

@@ -84,6 +84,7 @@ namespace TMTDentalAPI.Controllers
             var partner = _mapper.Map<Partner>(val);
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             SaveCategories(val, partner);
+            SaveHistories(val, partner);
             await _partnerService.CreateAsync(partner);
 
             val.Id = partner.Id;
@@ -111,7 +112,7 @@ namespace TMTDentalAPI.Controllers
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             partner.EmployeeId = val.EmployeeId;
             SaveCategories(val, partner);
-
+            SaveHistories(val, partner);
             await _partnerService.UpdateAsync(partner);
 
             return NoContent();
@@ -189,6 +190,26 @@ namespace TMTDentalAPI.Controllers
                     if (partner.PartnerPartnerCategoryRels.Any(x => x.CategoryId == categ.Id))
                         continue;
                     partner.PartnerPartnerCategoryRels.Add(_mapper.Map<PartnerPartnerCategoryRel>(categ));
+
+                }
+            }
+
+        }
+
+        private void SaveHistories(PartnerDisplay val, Partner partner)
+        {
+            var toRemove = partner.PartnerHistoryRels.Where(x => !val.Histories.Any(s => s.Id == x.HistoryId)).ToList();
+            foreach (var hist in toRemove)
+            {
+                partner.PartnerHistoryRels.Remove(hist);
+            }
+            if (val.Histories != null)
+            {
+                foreach (var hist in val.Histories)
+                {
+                    if (partner.PartnerHistoryRels.Any(x => x.HistoryId == hist.Id))
+                        continue;
+                    partner.PartnerHistoryRels.Add(_mapper.Map<PartnerHistoryRel>(hist));
 
                 }
             }

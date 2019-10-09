@@ -87,10 +87,13 @@ namespace Infrastructure.Data
         public DbSet<ProductStep> ProductSteps { get; set; }
         public DbSet<DotKhamStep> DotKhamSteps { get; set; }
         public DbSet<IrAttachment> IrAttachments { get; set; }
+        public DbSet<PartnerHistoryRel> PartnerHistoryRels { get; set; }
+        public DbSet<History> Histories { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
         public DbQuery<ModelAccessReport> ModelAccessReports { get; set; }
+        
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -155,6 +158,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductStepConfiguration());
             builder.ApplyConfiguration(new DotKhamStepConfiguration());
             builder.ApplyConfiguration(new IrAttachmentConfiguration());
+            builder.ApplyConfiguration(new PartnerHistoryRelConfiguration());
+            builder.ApplyConfiguration(new HistoryConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

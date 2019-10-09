@@ -15,7 +15,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<Partner, PartnerBasic>().ReverseMap();
 
             CreateMap<Partner, PartnerDisplay>()
-                .ForMember(x => x.Categories, x => x.MapFrom(s => s.PartnerPartnerCategoryRels));
+                .ForMember(x => x.Categories, x => x.MapFrom(s => s.PartnerPartnerCategoryRels))
+                .ForMember(x => x.Histories, x => x.MapFrom(s => s.PartnerHistoryRels));
             CreateMap<PartnerDisplay, Partner>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Employees, x => x.Ignore());
