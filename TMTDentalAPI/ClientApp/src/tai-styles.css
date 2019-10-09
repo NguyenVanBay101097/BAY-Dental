@@ -116,6 +116,9 @@ html .o_web_client>.o_action_manager .o_action .o_content {
     border-radius: 0!important;
 }
 
-.o_cp_searchview_group .btn-group .btn {
-    border-radius: 0;
+.o_advance_search {
+    position: absolute;
+    width: 300px;
+    background-color: red;
+    height: 100%;
 }

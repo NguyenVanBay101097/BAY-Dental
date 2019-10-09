@@ -27,9 +27,11 @@ import { ProductProductFormComponent } from './product-product-form/product-prod
 import { ProductStepCuDialogComponent } from './product-step-cu-dialog/product-step-cu-dialog.component';
 import { ProductStepFormComponent } from './product-step-form/product-step-form.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ProductAdvanceSearchComponent } from './product-advance-search/product-advance-search.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [ProductListComponent, ProductDialogComponent, ProductImportExcelDialogComponent, ProductSearchListComponent, ProductGridComponent, ProductServiceListComponent, ProductServiceFormComponent, ProductServiceCuDialogComponent, ProductAdvanceFilterComponent, ProductMedicineListComponent, ProductMedicineCuDialogComponent, ProductMedicineFormComponent, ProductLaboFormComponent, ProductLaboCuDialogComponent, ProductLaboListComponent, ProductProductListComponent, ProductProductCuDialogComponent, ProductProductFormComponent, ProductStepCuDialogComponent, ProductStepFormComponent],
+  declarations: [ProductListComponent, ProductDialogComponent, ProductImportExcelDialogComponent, ProductSearchListComponent, ProductGridComponent, ProductServiceListComponent, ProductServiceFormComponent, ProductServiceCuDialogComponent, ProductAdvanceFilterComponent, ProductMedicineListComponent, ProductMedicineCuDialogComponent, ProductMedicineFormComponent, ProductLaboFormComponent, ProductLaboCuDialogComponent, ProductLaboListComponent, ProductProductListComponent, ProductProductCuDialogComponent, ProductProductFormComponent, ProductStepCuDialogComponent, ProductStepFormComponent, ProductAdvanceSearchComponent],
   imports: [
     CommonModule,
     ProductsRoutingModule,
@@ -37,7 +39,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     ReactiveFormsModule,
     FormsModule,
     CustomComponentModule,
-    DragDropModule
+    DragDropModule,
+    NgbModule
   ],
   exports: [
     ProductSearchListComponent
