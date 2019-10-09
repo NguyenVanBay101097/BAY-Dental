@@ -69,6 +69,7 @@ html .o_web_client .o_action_manager {
 
 html .o_web_client .o_action_manager .o_action {
     height: 100%;
+    width: 100%;
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
@@ -104,4 +105,17 @@ html .o_web_client>.o_action_manager .o_action .o_content {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
     }
+}
+
+.o_cp_searchview_group {
+    display: flex;
+}
+
+.o_cp_searchview_group .o_searchview {
+    flex: 1 1 100%;
+    border-radius: 0!important;
+}
+
+.o_cp_searchview_group .btn-group .btn {
+    border-radius: 0;
 }

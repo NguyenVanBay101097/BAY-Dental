@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white pt-0 pb-0 shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-white pt-0 pb-0 shadow-sm" *ngIf="authService.isAuthenticated()">
     <a class="navbar-brand" href="#">
         <img src="/assets/images/logo.png">
     </a>
@@ -24,9 +24,8 @@
                         width="40" height="40" class="rounded-circle">
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-user">
-                    <a class="dropdown-item" href="#">Dashboard</a>
-                    <a class="dropdown-item" href="#">Edit Profile</a>
-                    <a class="dropdown-item" href="#">Log Out</a>
+                    <button class="dropdown-item" type="button" (click)="changePassword()">Đổi mật khẩu</button>
+                    <button class="dropdown-item" type="button" (click)="logout()">Đăng xuất</button>
                 </div>
             </li>
         </ul>

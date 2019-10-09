@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
+import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-customer-invoice-list',
@@ -20,12 +21,13 @@ export class CustomerInvoiceListComponent implements OnInit {
   opened = false;
   searchInvoiceNumber: string;
   searchPartnerNamePhone: string;
+  search: string;
   dateOrderFrom: Date;
   dateOrderTo: Date;
   searchUpdate = new Subject<string>();
 
   constructor(private accountInvoiceService: AccountInvoiceService, private intlService: IntlService,
-    private router: Router, private dialogService: DialogService) { }
+    private router: Router, private dialogService: DialogService, private parserFormatter: NgbDateParserFormatter) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -67,6 +69,7 @@ export class CustomerInvoiceListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.searchNumber = this.searchInvoiceNumber || '';
+    val.search = this.search || '';
     val.searchPartnerNamePhone = this.searchPartnerNamePhone || '';
     val.dateOrderFrom = this.dateOrderFrom ? this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US') : '';
     val.dateOrderTo = this.dateOrderTo ? this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US') : '';
@@ -126,6 +129,22 @@ export class CustomerInvoiceListComponent implements OnInit {
         }
       }
     });
+  }
+
+  onSearchChange(data) {
+    if (data.dateOrderFrom) {
+      this.dateOrderFrom = new Date(data.dateOrderFrom.year, data.dateOrderFrom.month - 1, data.dateOrderFrom.day);
+    } else {
+      this.dateOrderFrom = null;
+    }
+
+    if (data.dateOrderTo) {
+      this.dateOrderTo = new Date(data.dateOrderTo.year, data.dateOrderTo.month - 1, data.dateOrderTo.day);
+    } else {
+      this.dateOrderTo = null;
+    }
+
+    this.loadDataFromApi();
   }
 
 }

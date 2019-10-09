@@ -12,15 +12,18 @@ import { AccountInvoiceService } from './account-invoice.service';
 import { AccountInvoiceRegisterPaymentDialogComponent } from './account-invoice-register-payment-dialog/account-invoice-register-payment-dialog.component';
 import { InvoiceCreateDotkhamDialogComponent } from './invoice-create-dotkham-dialog/invoice-create-dotkham-dialog.component';
 import { CustomerInvoicePrintComponent } from './customer-invoice-print/customer-invoice-print.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AccountInvoiceAdvanceSearchComponent } from './account-invoice-advance-search/account-invoice-advance-search.component';
 
 @NgModule({
-  declarations: [CustomerInvoiceListComponent, CustomerInvoiceCreateUpdateComponent, AccountInvoiceLineDialogComponent, AccountInvoiceRegisterPaymentDialogComponent, InvoiceCreateDotkhamDialogComponent, CustomerInvoicePrintComponent],
+  declarations: [CustomerInvoiceListComponent, CustomerInvoiceCreateUpdateComponent, AccountInvoiceLineDialogComponent, AccountInvoiceRegisterPaymentDialogComponent, InvoiceCreateDotkhamDialogComponent, CustomerInvoicePrintComponent, AccountInvoiceAdvanceSearchComponent],
   imports: [
     CommonModule,
     AccountInvoicesRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgbModule
   ],
   exports: [
     CustomerInvoicePrintComponent

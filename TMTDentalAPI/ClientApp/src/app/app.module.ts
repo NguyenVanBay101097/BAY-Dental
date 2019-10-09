@@ -58,7 +58,8 @@ import { EmployeesModule } from './employees/employees.module';
 import { EmployeeCategoriesModule } from './employee-categories/employee-categories.module';
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { MatStepperModule } from '@angular/material/stepper';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateCustomParserFormatter } from './core/ngb-date-custom-parser-formatter';
 
 
 export function tokenGetter() {
@@ -129,7 +130,8 @@ registerLocaleData(localeVi, 'vi');
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpHandleErrorInterceptor, multi: true },
-    { provide: LOCALE_ID, useValue: 'vi-VN' }
+    { provide: LOCALE_ID, useValue: 'vi-VN' },
+    { provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter }
   ],
   bootstrap: [AppComponent]
 })

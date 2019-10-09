@@ -682,6 +682,11 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<AccountInvoiceBasic>> GetPagedResultAsync(AccountInvoicePaged val)
         {
             var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Number.Contains(val.Search) ||
+                x.Partner.Name.Contains(val.Search) ||
+                x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.SearchPartnerNamePhone))
                 query = query.Where(x => x.Partner.Name.Contains(val.SearchPartnerNamePhone) || x.Partner.Phone.Contains(val.SearchPartnerNamePhone));
             if (!string.IsNullOrEmpty(val.SearchNumber))

@@ -90,5 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
 
         public string Type { get; set; }
+
+        public string Search { get; set; }
     }
 }

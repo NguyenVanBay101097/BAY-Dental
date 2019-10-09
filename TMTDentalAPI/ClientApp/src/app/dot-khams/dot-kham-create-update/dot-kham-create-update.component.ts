@@ -38,7 +38,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dot-kham-create-update',
   templateUrl: './dot-kham-create-update.component.html',
-  styleUrls: ['./dot-kham-create-update.component.css']
+  styleUrls: ['./dot-kham-create-update.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class DotKhamCreateUpdateComponent implements OnInit {
   id: string;//id đợt khám

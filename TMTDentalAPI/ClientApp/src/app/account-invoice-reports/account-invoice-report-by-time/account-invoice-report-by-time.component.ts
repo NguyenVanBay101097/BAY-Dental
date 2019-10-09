@@ -9,7 +9,10 @@ import { debug } from 'util';
 @Component({
   selector: 'app-account-invoice-report-by-time',
   templateUrl: './account-invoice-report-by-time.component.html',
-  styleUrls: ['./account-invoice-report-by-time.component.css']
+  styleUrls: ['./account-invoice-report-by-time.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class AccountInvoiceReportByTimeComponent implements OnInit {
 

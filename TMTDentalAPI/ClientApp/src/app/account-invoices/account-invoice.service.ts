@@ -95,6 +95,7 @@ export class AccountInvoicePaged {
     limit: number;
     searchPartnerNamePhone: string;
     searchNumber: string;
+    search: string;
     dateInvoiceFrom: string;
     dateInvoiceTo: string;
     dateOrderFrom: string;

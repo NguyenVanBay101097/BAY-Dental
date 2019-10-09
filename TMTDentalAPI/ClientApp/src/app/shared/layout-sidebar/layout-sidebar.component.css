@@ -94,13 +94,38 @@
 .main-nav-wrapper.collapsed .main-nav .nav-sub {
     position: absolute;
     z-index: 1024;
-    left: 80px;
+    left: 60px;
+    margin-top: -50px;
+    width: 200px;
+}
+
+.main-nav-wrapper.collapsed .nav-sub li a.nav-link {
+    background-color: #1c2b36;
+    margin: 0;
+    padding-left: 1rem;
+    height: auto;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-link {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-link .menu-icon {
+    margin: 0;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-link .menu-open {
+    display: none;
 }
 
 .main-nav-wrapper.collapsed .nav-sub li a {
-    background-color: #333;
-    margin-left: 10px;
+    display: block;
 }
+
+
 
 
 

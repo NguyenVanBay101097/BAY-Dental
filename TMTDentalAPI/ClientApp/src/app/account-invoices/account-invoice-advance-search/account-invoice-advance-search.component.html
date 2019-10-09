@@ -1,0 +1,28 @@
+<div class="px-4 py-3" style="width: 300px;" [formGroup]="formGroup">
+    <h5>Theo ngày điều trị</h5>
+    <div class="form-group">
+        <label for="exampleDropdownFormEmail1">Từ ngày</label>
+        <div class="input-group">
+            <input class="form-control" formControlName="dateOrderFrom" ngbDatepicker #dateOrderFrom="ngbDatepicker">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dateOrderFrom.toggle()" type="button">
+                    <i class="far fa-calendar-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleDropdownFormPassword1">Đến ngày</label>
+        <div class="input-group">
+            <input class="form-control" formControlName="dateOrderTo" ngbDatepicker #dateOrderTo="ngbDatepicker">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dateOrderTo.toggle()" type="button">
+                    <i class="far fa-calendar-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="onSearch()">
+        <i class="fas fa-search"></i> Tìm
+    </button>
+</div>

@@ -1,23 +1,90 @@
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Hóa đơn điều trị</li>
-    </ol>
-    <div class="o_cp_searchview">
-    </div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
-                    mới</button>
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Hóa đơn điều trị</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số hóa đơn, khách hàng, SĐT"
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+                <div class="btn-group" ngbDropdown>
+                    <button class="btn btn-secondary btn-sm" type="button" ngbDropdownToggle>
+                        Nâng cao
+                    </button>
+                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
+                        <app-account-invoice-advance-search (searchChange)="onSearchChange($event)">
+                        </app-account-invoice-advance-search>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="o_cp_sidebar">
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
+                        mới</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
         </div>
-    </div>
-    <div class="o_cp_right">
+        <div class="o_cp_right">
+        </div>
     </div>
 </div>
 
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="partner" title="Khách hàng">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.partner ? dataItem.partner.name : ''}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="dateOrder" title="Ngày điều trị">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateOrder | date : 'short'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="number" title="Số hóa đơn">
+        </kendo-grid-column>
+        <kendo-grid-column field="user" title="Nhân viên">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.user ? dataItem.user.name : ''}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="residual" title="Còn nợ" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.residual | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{stateGet(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
+                    <span class="fa fa-edit"></span> Sửa</button>
+                <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
+                    <span class="fa fa-trash"></span> Xóa</button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>
+
+<!-- 
 <div class="d-flex">
     <div class="accordion search-section" id="accordionExample">
         <div class="card">
@@ -69,58 +136,8 @@
         </div>
     </div>
     <div>
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-            (pageChange)="pageChange($event)">
-            <kendo-grid-column field="partner" title="Khách hàng">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.partner ? dataItem.partner.name : ''}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="dateOrder" title="Ngày điều trị">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.dateOrder | date : 'short'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="number" title="Số hóa đơn">
-            </kendo-grid-column>
-            <kendo-grid-column field="user" title="Nhân viên">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.user ? dataItem.user.name : ''}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.amountTotal | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="residual" title="Còn nợ" class="text-right">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.residual | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="comment" title="Ghi chú">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.comment}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="state" title="Trạng thái">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{stateGet(dataItem.state)}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="id">
-                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                    Thao tác
-                </ng-template>
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
-                        <span class="fa fa-edit"></span> Sửa</button>
-                    <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
-                        <span class="fa fa-trash"></span> Xóa</button>
-                </ng-template>
-            </kendo-grid-column>
-        </kendo-grid>
+
     </div>
 </div>
 
-<div kendoDialogContainer></div>
+<div kendoDialogContainer></div> -->
