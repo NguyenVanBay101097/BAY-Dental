@@ -38,7 +38,7 @@
                         <i class="far fa-calendar-alt"></i>&nbsp;
                         <span *ngIf="getAppointment">{{getAppointState ? getAppointState.text : ''}} :
                             {{getAppointment.date | date : 'short'}}</span>
-                        <span *ngIf="!getAppointment">Lịch hẹn</span>
+                        <span *ngIf="!getAppointment">Hẹn tái khám</span>
                     </button>
 
                     <!-- <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"

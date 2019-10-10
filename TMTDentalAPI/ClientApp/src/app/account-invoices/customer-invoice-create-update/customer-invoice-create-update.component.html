@@ -6,7 +6,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/customer-invoices">Hóa đơn điều trị</a>
+                <a routerLink="/customer-invoices">Phiếu điều trị</a>
             </li>
             <li class="active">
                 <span *ngIf="getInvState == 'draft'">Mới</span>
@@ -65,7 +65,7 @@
                     </button>
                     <button type="button" class="btn btn-danger btn-sm" *ngIf="['open'].indexOf(getInvState) != -1"
                         (click)="actionCancel()">
-                        Hủy hóa đơn
+                        Hủy phiếu
                     </button>
                     <button type="button" class="btn btn-sm btn-primary" *ngIf="['cancel'].indexOf(getInvState) != -1"
                         (click)="actionCancelDraft()">
@@ -179,7 +179,7 @@
                                 <button type="button" class="btn btn-secondary btn-sm" accesskey="a"
                                     *ngIf="getInvState == 'draft'" aria-keyshortcuts="alt+a"
                                     (click)="showAddLineModal()">
-                                    Thêm</button>
+                                    Thêm điều trị</button>
                             </div>
                             <div>
                                 <table class="table table-sm mb-0">

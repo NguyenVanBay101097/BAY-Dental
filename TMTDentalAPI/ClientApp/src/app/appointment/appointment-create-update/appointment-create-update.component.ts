@@ -68,13 +68,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       user: null,
       userId: null,
       date: null,
-      dateObj: null,
+      dateObj: new Date(),
       note: null,
       companyId: null,
       // dotKhamId: this.dotKhamId,
       doctor: null,
       doctorId: null,
-      stateObj: null
+      stateObj: null,
+      state: 'confirmed',
     })
     if (this.appointId) {
       this.loadAppointmentToForm();
@@ -104,8 +105,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.userId = appoint.user ? appoint.user.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     appoint.date = this.intlService.formatDate(appoint.dateObj, 'g', 'en-US');
-    var today = new Date();
-    appoint.state = this.formCreate.get('stateObj').value.value;
 
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
       rs => {
@@ -184,7 +183,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   searchAssitants(search) {
     var empPaged = new EmployeePaged();
-    empPaged.position = "assistant";
+    empPaged.isAssistant = true;
     empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     if (search != null) {
@@ -195,7 +194,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   getDoctorList() {
     var empPn = new EmployeePaged;
-    empPn.position = "doctor";
+    empPn.isDoctor = true;
     empPn.limit = this.limit;
     empPn.offset = this.skip;
     this.employeeService.getEmployeeSimpleList(empPn).subscribe(

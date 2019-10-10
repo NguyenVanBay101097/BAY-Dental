@@ -5,11 +5,15 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { CompanyService, CompanyPaged, CompanyBasic } from '../company.service';
 import { CompanyCuDialogComponent } from '../company-cu-dialog/company-cu-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-company-list',
   templateUrl: './company-list.component.html',
-  styleUrls: ['./company-list.component.css']
+  styleUrls: ['./company-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class CompanyListComponent implements OnInit {
   gridData: GridDataResult;
@@ -18,7 +22,7 @@ export class CompanyListComponent implements OnInit {
   opened = false;
   loading = false;
 
-  constructor(private companyService: CompanyService, private windowService: WindowService, public intl: IntlService,
+  constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService,
     private dialogService: DialogService) { }
 
   ngOnInit() {
@@ -51,41 +55,23 @@ export class CompanyListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm chi nhánh',
-      content: CompanyCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(CompanyCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm chi nhánh';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: CompanyBasic) {
-    const windowRef = this.windowService.open({
-      title: `Sửa chi nhánh`,
-      content: CompanyCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(CompanyCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa chi nhánh';
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 

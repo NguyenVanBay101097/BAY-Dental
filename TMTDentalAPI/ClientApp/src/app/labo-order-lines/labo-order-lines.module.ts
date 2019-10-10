@@ -7,9 +7,10 @@ import { LaboOrderLineListComponent } from './labo-order-line-list/labo-order-li
 import { LaboOrderLineService } from './labo-order-line.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { LaboOrderLineAdvanceSearchComponent } from './labo-order-line-advance-search/labo-order-line-advance-search.component';
 
 @NgModule({
-  declarations: [LaboOrderLineCuDialogComponent, LaboOrderLineListComponent],
+  declarations: [LaboOrderLineCuDialogComponent, LaboOrderLineListComponent, LaboOrderLineAdvanceSearchComponent],
   imports: [
     CommonModule,
     LaboOrderLinesRoutingModule,

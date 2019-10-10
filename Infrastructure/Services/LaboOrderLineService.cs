@@ -65,6 +65,13 @@ namespace Infrastructure.Services
         private IQueryable<LaboOrderLine> GetQueryPaged(LaboOrderLinePaged val)
         {
             var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                x.Customer.Name.Contains(val.Search) ||
+                x.Customer.NameNoSign.Contains(val.Search) ||
+                x.Customer.Phone.Contains(val.Search));
+
             if (!string.IsNullOrEmpty(val.SearchSupplier))
                 query = query.Where(x => x.Supplier.Name.Contains(val.SearchSupplier) ||
                 x.Supplier.Ref.Contains(val.SearchSupplier) ||
@@ -88,12 +95,18 @@ namespace Infrastructure.Services
             if (val.SentDateFrom.HasValue)
                 query = query.Where(x => x.SentDate >= val.SentDateFrom);
             if (val.SentDateTo.HasValue)
-                query = query.Where(x => x.SentDate <= val.SentDateTo);
-
+            {
+                var sentDateTo = val.SentDateTo.Value.AddDays(1);
+                query = query.Where(x => x.SentDate < sentDateTo);
+            }
+               
             if (val.ReceivedDateFrom.HasValue)
                 query = query.Where(x => x.ReceivedDate >= val.ReceivedDateFrom);
             if (val.ReceivedDateTo.HasValue)
-                query = query.Where(x => x.ReceivedDate <= val.ReceivedDateTo);
+            {
+                var receivedDateTo = val.ReceivedDateTo.Value.AddDays(1);
+                query = query.Where(x => x.ReceivedDate < receivedDateTo);
+            }
 
             query = query.OrderByDescending(s => s.DateCreated);
             return query;

@@ -1,0 +1,46 @@
+<div class="o_advance_search_container" [class.show]="show">
+    <div [formGroup]="formGroup">
+        <h5>Theo ngày gửi</h5>
+        <div class="form-group">
+            <label>Từ ngày</label>
+            <div>
+                <kendo-datepicker formControlName="sentDateFrom">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Đến ngày</label>
+            <div>
+                <kendo-datepicker formControlName="sentDateTo">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <h5>Theo ngày nhận</h5>
+        <div class="form-group">
+            <label>Từ ngày</label>
+            <div>
+                <kendo-datepicker formControlName="receivedDateFrom">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Đến ngày</label>
+            <div>
+                <kendo-datepicker formControlName="receivedDateTo">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                Tìm kiếm
+            </button>
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onClear()">
+                Hủy lọc
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="toggleShow()">
+                Đóng
+            </button>
+        </div>
+    </div>
+</div>

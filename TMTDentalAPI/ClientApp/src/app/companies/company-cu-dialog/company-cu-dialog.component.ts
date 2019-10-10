@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { debug } from 'util';
 import { CompanyService } from '../company.service';
 import { HttpClient } from '@angular/common/http';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-company-cu-dialog',
@@ -37,7 +38,7 @@ export class CompanyCuDialogComponent implements OnInit {
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private companyService: CompanyService, public window: WindowRef, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private companyService: CompanyService, public activeModal: NgbActiveModal, private http: HttpClient) {
   }
 
   ngOnInit() {
@@ -156,7 +157,7 @@ export class CompanyCuDialogComponent implements OnInit {
     }
 
     this.saveOrUpdate().subscribe(() => {
-      this.window.close(true);
+      this.activeModal.close(true);
     }, err => {
       console.log(err);
     });
@@ -178,7 +179,7 @@ export class CompanyCuDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.window.close();
+    this.activeModal.dismiss();
   }
 }
 

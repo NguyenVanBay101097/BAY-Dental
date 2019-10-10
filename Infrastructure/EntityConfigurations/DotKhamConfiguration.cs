@@ -12,7 +12,7 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<DotKham> builder)
         {
             builder.HasOne(x => x.Invoice)
-                .WithMany()
+                .WithMany(x => x.DotKhams)
                 .HasForeignKey(x => x.InvoiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 

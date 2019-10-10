@@ -42,6 +42,7 @@ export class LaboOrderLineDisplay {
 export class LaboOrderLinePaged {
     offset: number;
     limit: number;
+    search: string;
     searchCustomer: string;
     searchSupplier: string;
     searchProduct: string;
@@ -77,7 +78,7 @@ export class LaboOrderLineService {
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<LaboOrderLinePaging> {
-        return this.http.get<LaboOrderLinePaging>(this.baseApi + this.apiUrl, { params: val });
+        return this.http.get<LaboOrderLinePaging>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     create(line: LaboOrderLineDisplay) {

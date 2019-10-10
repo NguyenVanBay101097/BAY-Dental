@@ -22,7 +22,10 @@ declare var $: any;
 @Component({
   selector: 'app-stock-picking-create-update',
   templateUrl: './stock-picking-create-update.component.html',
-  styleUrls: ['./stock-picking-create-update.component.css']
+  styleUrls: ['./stock-picking-create-update.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class StockPickingCreateUpdateComponent implements OnInit {
 

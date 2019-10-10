@@ -256,7 +256,7 @@ namespace Infrastructure.Services
             //lots of duplicate calls to action_invoice_open, so we remove those already open
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move).Include(x => x.Journal).Include(x => x.InvoiceLines)
-                .Include("InvoiceLines.Account").Include(x => x.Account)
+                .Include("InvoiceLines.Account").Include("InvoiceLines.Product").Include(x => x.Account)
                 .Include(x => x.Partner).Include(x => x.Company).Include(x => x.Journal.Sequence)
                 .ToListAsync();
             var to_open_invoices = self.Where(x => x.State != "open").ToList();
@@ -285,7 +285,7 @@ namespace Infrastructure.Services
             {
                 foreach (var line in invoice.InvoiceLines)
                 {
-                    if (!line.ProductId.HasValue)
+                    if (!line.ProductId.HasValue || line.Product == null)
                         continue;
 
                     var steps = await _productStepService.SearchQuery(x => x.ProductId == line.ProductId).ToListAsync();
@@ -310,7 +310,7 @@ namespace Infrastructure.Services
                     {
                         list.Add(new DotKhamStep
                         {
-                            Name = "Default",
+                            Name = line.Product.Name,
                             InvoicesId = invoice.Id,
                             ProductId = line.ProductId.Value,
                             Order = 0
@@ -576,6 +576,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
              .Include(x => x.Move).Include(x => x.PaymentMoveLines)
+             .Include(x => x.DotKhams)
              .Include(x => x.Move.Company).Include(x => x.Move.Journal)
              .Include(x => x.Move.Lines)
              .ToListAsync();
@@ -586,7 +587,9 @@ namespace Infrastructure.Services
                 if (inv.Move != null)
                     moves.Add(inv.Move);
                 if (inv.PaymentMoveLines.Any())
-                    throw new Exception("Bạn không thể hủy bỏ hóa đơn đã trả một phần, bạn cần hủy những dòng chi trả trước.");
+                    throw new Exception("Bạn không thể hủy bỏ phiếu điều trị đã trả một phần, bạn cần hủy những dòng chi trả trước.");
+                if (inv.DotKhams.Any())
+                    throw new Exception("Bạn không thể hủy phiếu điều trị đã tạo đợt khám.");
 
                 inv.Move = null;
                 inv.State = "cancel";

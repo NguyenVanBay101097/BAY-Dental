@@ -23,6 +23,7 @@ import { PrintService } from 'src/app/print.service';
 import { DotKhamLineService } from 'src/app/dot-khams/dot-kham-line.service';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+declare var $: any;
 
 @Component({
   selector: 'app-customer-invoice-create-update',
@@ -58,7 +59,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     this.orderForm = this.fb.group({
       partner: [null, Validators.required],
       user: null,
-      dateOrderObj: null,
+      dateOrderObj: new Date(),
       dateOrder: null,
       invoiceLines: this.fb.array([]),
       companyId: null,
@@ -498,6 +499,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
         this.router.navigate(['/dot-khams/edit/', result.result.id]);
       } else {
         this.loadDotKhamList();
+        $('#myTab a[href="#profile"]').tab('show');
       }
     }, () => {
     });

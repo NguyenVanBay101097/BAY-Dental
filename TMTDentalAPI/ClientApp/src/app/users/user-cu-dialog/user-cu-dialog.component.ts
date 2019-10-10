@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -13,7 +14,7 @@ export class UserCuDialogComponent implements OnInit {
   userForm: FormGroup;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
-  constructor(private fb: FormBuilder, private userService: UserService, public window: WindowRef) {
+  constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal) {
   }
 
   ngOnInit() {
@@ -39,7 +40,7 @@ export class UserCuDialogComponent implements OnInit {
     }
 
     this.saveOrUpdate().subscribe(() => {
-      this.window.close(true);
+      this.activeModal.close(true);
     }, err => {
       console.log(err);
     });
@@ -60,6 +61,6 @@ export class UserCuDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.window.close();
+    this.activeModal.close();
   }
 }

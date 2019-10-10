@@ -9,7 +9,10 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'app-stock-picking-list',
   templateUrl: './stock-picking-list.component.html',
-  styleUrls: ['./stock-picking-list.component.css']
+  styleUrls: ['./stock-picking-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class StockPickingListComponent implements OnInit {
 

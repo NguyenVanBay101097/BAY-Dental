@@ -5,20 +5,23 @@ import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogClose
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { UserCuDialogComponent } from '../user-cu-dialog/user-cu-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.css']
+  styleUrls: ['./user-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class UserListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  opened = false;
   loading = false;
 
-  constructor(private userService: UserService, private windowService: WindowService, public intl: IntlService,
+  constructor(private userService: UserService, private modalService: NgbModal, public intl: IntlService,
     private dialogService: DialogService) { }
 
   ngOnInit() {
@@ -51,41 +54,23 @@ export class UserListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm người dùng',
-      content: UserCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm người dùng';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: UserBasic) {
-    const windowRef = this.windowService.open({
-      title: `Sửa người dùng`,
-      content: UserCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa người dùng';
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 

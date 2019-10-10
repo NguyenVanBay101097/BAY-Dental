@@ -132,5 +132,7 @@ namespace ApplicationCore.Entities
         public decimal DiscountFixed { get; set; }
 
         public decimal DiscountAmount { get; set; }
+
+        public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
     }
 }

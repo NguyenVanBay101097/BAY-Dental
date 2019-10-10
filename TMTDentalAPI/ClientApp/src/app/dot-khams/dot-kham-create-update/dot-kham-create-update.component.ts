@@ -164,8 +164,12 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         this.dotKhamForm.patchValue(result);
         let date = this.intlService.parseDate(result.date);
         this.dotKhamForm.get('dateObj').patchValue(date);
-        // this.dotKhamForm.get('doctor').setValue(result.doctor);
-        // this.dotKhamForm.get('assistant').setValue(result.assistant);
+        if (result.doctor) {
+          this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [result.doctor], 'id');
+        }
+        if (result.assistant) {
+          this.assistantSimpleFilter = _.unionBy(this.assistantSimpleFilter, [result.assistant], 'id');
+        }
         if (result.user) {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
         }
@@ -721,7 +725,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   searchDoctors(search) {
     var empPaged = new EmployeePaged();
-    empPaged.position = "doctor";
+    empPaged.isDoctor = true;
     empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     if (search != null) {
@@ -732,7 +736,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   searchAssitants(search) {
     var empPaged = new EmployeePaged();
-    empPaged.position = "assistant";
+    empPaged.isAssistant = true;
     empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     if (search != null) {
@@ -780,7 +784,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   getDoctorList() {
     var empPn = new EmployeePaged;
-    empPn.position = "doctor";
+    empPn.isDoctor = true;
     empPn.limit = this.limit;
     empPn.offset = this.skip;
     this.employeeService.getEmployeeSimpleList(empPn).subscribe(
@@ -791,7 +795,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   getAssistantList() {
     var empPn = new EmployeePaged;
-    empPn.position = "assistant";
+    empPn.isAssistant = true;
     empPn.limit = this.limit;
     empPn.offset = this.skip;
     this.employeeService.getEmployeeSimpleList(empPn).subscribe(

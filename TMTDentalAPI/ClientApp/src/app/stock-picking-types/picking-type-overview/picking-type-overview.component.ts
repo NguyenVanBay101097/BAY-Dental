@@ -4,7 +4,10 @@ import { StockPickingTypePaged, StockPickingTypeService, StockPickingTypeBasic }
 @Component({
   selector: 'app-picking-type-overview',
   templateUrl: './picking-type-overview.component.html',
-  styleUrls: ['./picking-type-overview.component.css']
+  styleUrls: ['./picking-type-overview.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class PickingTypeOverviewComponent implements OnInit {
   limit = 20;

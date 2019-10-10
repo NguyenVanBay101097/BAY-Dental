@@ -11,7 +11,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-labo-order-line-list',
   templateUrl: './labo-order-line-list.component.html',
-  styleUrls: ['./labo-order-line-list.component.css']
+  styleUrls: ['./labo-order-line-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class LaboOrderLineListComponent implements OnInit {
   gridData: GridDataResult;
@@ -19,6 +22,7 @@ export class LaboOrderLineListComponent implements OnInit {
   skip = 0;
   loading = false;
   opened = false;
+  search: string;
   searchCustomer: string;
   searchSupplier: string;
   searchProduct: string;
@@ -55,13 +59,21 @@ export class LaboOrderLineListComponent implements OnInit {
     var val = new LaboOrderLinePaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.searchCustomer = this.searchCustomer || '';
-    val.searchSupplier = this.searchSupplier || '';
-    val.searchProduct = this.searchProduct || '';
-    val.sentDateFrom = this.sentDateFrom ? this.intlService.formatDate(this.sentDateFrom, 'd', 'en-US') : '';
-    val.sentDateTo = this.sentDateTo ? this.intlService.formatDate(this.sentDateTo, 'd', 'en-US') : '';
-    val.receivedDateFrom = this.receivedDateFrom ? this.intlService.formatDate(this.receivedDateFrom, 'd', 'en-US') : '';
-    val.receivedDateTo = this.receivedDateTo ? this.intlService.formatDate(this.receivedDateTo, 'd', 'en-US') : '';
+    if (this.search) {
+      val.search = this.search;
+    }
+    if (this.sentDateFrom) {
+      val.sentDateFrom = this.intlService.formatDate(this.sentDateFrom, 'd', 'en-US');
+    }
+    if (this.sentDateTo) {
+      val.sentDateTo = this.intlService.formatDate(this.sentDateTo, 'd', 'en-US');
+    }
+    if (this.receivedDateFrom) {
+      val.receivedDateFrom = this.intlService.formatDate(this.receivedDateFrom, 'd', 'en-US');
+    }
+    if (this.receivedDateTo) {
+      val.receivedDateTo = this.intlService.formatDate(this.receivedDateTo, 'd', 'en-US');
+    }
 
     this.laboOrderLineService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -75,6 +87,15 @@ export class LaboOrderLineListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  onAdvanceSearchChange(data) {
+    this.sentDateFrom = data.sentDateFrom;
+    this.sentDateTo = data.sentDateTo;
+    this.receivedDateFrom = data.receivedDateFrom;
+    this.receivedDateTo = data.receivedDateTo;
+
+    this.loadDataFromApi();
   }
 
   pageChange(event: PageChangeEvent): void {

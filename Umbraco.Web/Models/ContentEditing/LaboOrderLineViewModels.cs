@@ -144,6 +144,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? ReceivedDateFrom { get; set; }
 
         public DateTime? ReceivedDateTo { get; set; }
+
+        public string Search { get; set; }
     }
 
     public class LaboOrderLineDefaultGet

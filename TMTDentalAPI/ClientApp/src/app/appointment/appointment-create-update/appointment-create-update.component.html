@@ -60,17 +60,15 @@
                                     <label class="o_form_label">Trạng thái</label>
                                 </td>
                                 <td>
-                                    <kendo-combobox formControlName="stateObj" [data]="stateFilter"
+                                    <!-- <kendo-combobox formControlName="stateObj" [data]="stateFilter"
                                         [valueField]="'value'" [textField]="'text'" (valueChange)="changeState($event)"
                                         [itemDisabled]="itemDisabled">
-                                    </kendo-combobox>
-                                    <!-- <select class="form-control" formControlName="state">
-                                    <option value="confirmed">Đang hẹn</option>
-                                    <option value="waiting">Đang chờ</option>
-                                    <option value="done">Hoàn tất</option>
-                                    <option value="expired">Quá hạn</option>
-                                    <option value="cancel">Đã hủy</option>
-                                </select> -->
+                                    </kendo-combobox> -->
+                                    <select class="form-control" formControlName="state">
+                                        <option value="confirmed">Đang hẹn</option>
+                                        <option value="done">Đã tới</option>
+                                        <option value="cancel">Đã hủy</option>
+                                    </select>
                                     <!-- <label><input type="radio" formControlName="state" value="confirmed" /></label>
         <label><input type="radio" formControlName="state" value="waiting" /></label>
         <label><input type="radio" formControlName="state" value="done" /></label>
@@ -114,8 +112,8 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
-            class="fas fa-window-close"></i>&nbsp;Đóng</button>
     <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid && !timeAvailble()"
         (click)="createNewAppointment()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
+            class="fas fa-window-close"></i>&nbsp;Đóng</button>
 </div>
