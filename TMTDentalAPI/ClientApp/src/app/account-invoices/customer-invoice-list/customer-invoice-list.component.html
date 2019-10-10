@@ -9,14 +9,11 @@
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo số hóa đơn, khách hàng, SĐT"
                         type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
-                <div class="btn-group" ngbDropdown>
-                    <button class="btn btn-secondary btn-sm rounded-0" type="button" ngbDropdownToggle>
+                <div class="o_searchview_advance">
+                    <button class="btn btn-secondary btn-sm rounded-0" type="button"
+                        (click)="advanceFilter.toggleShow()">
                         Nâng cao
                     </button>
-                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
-                        <app-account-invoice-advance-search (searchChange)="onSearchChange($event)">
-                        </app-account-invoice-advance-search>
-                    </div>
                 </div>
             </div>
         </div>
@@ -84,60 +81,5 @@
     </kendo-grid>
 </div>
 
-<!-- 
-<div class="d-flex">
-    <div class="accordion search-section" id="accordionExample">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseOne"
-                    aria-expanded="true" aria-controls="collapseOne">
-                    Tìm kiếm
-                </a>
-            </div>
-
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-                <div class="card-body">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Theo số hóa đơn"
-                            [(ngModel)]="searchInvoiceNumber" (ngModelChange)="this.searchUpdate.next($event)" />
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" [(ngModel)]="searchPartnerNamePhone"
-                            placeholder="Theo tên, điện thoại KH" (ngModelChange)="this.searchUpdate.next($event)" />
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header" id="headingTwo">
-                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="false" aria-controls="collapseTwo">
-                    Ngày điều trị
-                </a>
-            </div>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label>Từ ngày</label>
-                        <div>
-                            <kendo-datepicker [(value)]="dateOrderFrom" (valueChange)="onChangeDateOrder($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Đến ngày</label>
-                        <div>
-                            <kendo-datepicker (valueChange)="onChangeDateOrder($event)" [(value)]="dateOrderTo">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div>
-
-    </div>
-</div>
-
-<div kendoDialogContainer></div> -->
+<app-account-invoice-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)">
+</app-account-invoice-advance-search>

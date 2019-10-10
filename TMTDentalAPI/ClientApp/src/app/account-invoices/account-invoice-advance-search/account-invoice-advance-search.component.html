@@ -1,28 +1,65 @@
-<div class="px-4 py-3" style="width: 300px;" [formGroup]="formGroup">
-    <h5>Theo ngày điều trị</h5>
-    <div class="form-group">
-        <label for="exampleDropdownFormEmail1">Từ ngày</label>
-        <div class="input-group">
-            <input class="form-control" formControlName="dateOrderFrom" ngbDatepicker #dateOrderFrom="ngbDatepicker">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary calendar" (click)="dateOrderFrom.toggle()" type="button">
-                    <i class="far fa-calendar-alt"></i>
-                </button>
+<div class="o_advance_search_container" [class.show]="show">
+    <div [formGroup]="formGroup">
+        <h5>Theo trạng thái</h5>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="draftState" id="draftState">
+                <label class="form-check-label" for="draftState">
+                    Nháp
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" formControlName="openState" id="openState" type="checkbox">
+                <label class="form-check-label" for="openState">
+                    Đã xác nhận
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" formControlName="paidState" id="paidState" type="checkbox">
+                <label class="form-check-label" for="paidState">
+                    Đã thanh toán
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" formControlName="cancelState" id="cancelState" type="checkbox">
+                <label class="form-check-label" for="cancelState">
+                    Hủy bỏ
+                </label>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="exampleDropdownFormPassword1">Đến ngày</label>
-        <div class="input-group">
-            <input class="form-control" formControlName="dateOrderTo" ngbDatepicker #dateOrderTo="ngbDatepicker">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary calendar" (click)="dateOrderTo.toggle()" type="button">
-                    <i class="far fa-calendar-alt"></i>
-                </button>
+        <div class="dropdown-divider"></div>
+        <h5>Theo nhân viên</h5>
+        <div class="form-group">
+            <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
+                formControlName="user" [valueField]="'id'">
+            </kendo-combobox>
+        </div>
+        <div class="dropdown-divider"></div>
+        <h5>Theo ngày điều trị</h5>
+        <div class="form-group">
+            <label>Từ ngày</label>
+            <div>
+                <kendo-datepicker formControlName="dateOrderFrom">
+                </kendo-datepicker>
             </div>
         </div>
+        <div class="form-group">
+            <label>Đến ngày</label>
+            <div>
+                <kendo-datepicker formControlName="dateOrderTo">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                Tìm kiếm
+            </button>
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onClear()">
+                Hủy lọc
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="toggleShow()">
+                Đóng
+            </button>
+        </div>
     </div>
-    <button type="button" class="btn btn-primary" (click)="onSearch()">
-        <i class="fas fa-search"></i> Tìm
-    </button>
 </div>

@@ -7,11 +7,15 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { UserSimple } from 'src/app/users/user-simple';
 
 @Component({
   selector: 'app-customer-invoice-list',
   templateUrl: './customer-invoice-list.component.html',
-  styleUrls: ['./customer-invoice-list.component.css']
+  styleUrls: ['./customer-invoice-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class CustomerInvoiceListComponent implements OnInit {
   gridData: GridDataResult;
@@ -25,6 +29,8 @@ export class CustomerInvoiceListComponent implements OnInit {
   dateOrderFrom: Date;
   dateOrderTo: Date;
   searchUpdate = new Subject<string>();
+  searchStates: string[] = [];
+  searchUser: UserSimple;
 
   constructor(private accountInvoiceService: AccountInvoiceService, private intlService: IntlService,
     private router: Router, private dialogService: DialogService, private parserFormatter: NgbDateParserFormatter) { }
@@ -73,6 +79,12 @@ export class CustomerInvoiceListComponent implements OnInit {
     val.searchPartnerNamePhone = this.searchPartnerNamePhone || '';
     val.dateOrderFrom = this.dateOrderFrom ? this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US') : '';
     val.dateOrderTo = this.dateOrderTo ? this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US') : '';
+    if (this.searchUser) {
+      val.userId = this.searchUser.id;
+    }
+    if (this.searchStates.length) {
+      val.state = this.searchStates.join(',');
+    }
 
     this.accountInvoiceService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -131,20 +143,29 @@ export class CustomerInvoiceListComponent implements OnInit {
     });
   }
 
-  onSearchChange(data) {
-    if (data.dateOrderFrom) {
-      this.dateOrderFrom = new Date(data.dateOrderFrom.year, data.dateOrderFrom.month - 1, data.dateOrderFrom.day);
-    } else {
-      this.dateOrderFrom = null;
+  onAdvanceSearchChange(data) {
+    this.dateOrderFrom = data.dateOrderFrom;
+    this.dateOrderTo = data.dateOrderTo;
+    var states = [];
+    if (data.draftState) {
+      states.push('draft');
     }
 
-    if (data.dateOrderTo) {
-      this.dateOrderTo = new Date(data.dateOrderTo.year, data.dateOrderTo.month - 1, data.dateOrderTo.day);
-    } else {
-      this.dateOrderTo = null;
+    if (data.openState) {
+      states.push('open');
     }
+
+    if (data.paidState) {
+      states.push('paid');
+    }
+
+    if (data.cancelState) {
+      states.push('cancel');
+    }
+
+    this.searchStates = states;
+    this.searchUser = data.user;
 
     this.loadDataFromApi();
   }
-
 }

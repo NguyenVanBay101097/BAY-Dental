@@ -102,6 +102,8 @@ export class AccountInvoicePaged {
     dateOrderTo: string;
     partnerId: string;
     type: string;
+    userId: string;
+    state: string;
 }
 
 @Injectable()

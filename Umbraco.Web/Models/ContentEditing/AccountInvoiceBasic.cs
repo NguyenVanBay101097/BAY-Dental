@@ -92,5 +92,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
 
         public string Search { get; set; }
+
+        public string State { get; set; }
+
+        public string UserId { get; set; }
     }
 }

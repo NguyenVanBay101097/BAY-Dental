@@ -707,6 +707,15 @@ namespace Infrastructure.Services
                 var types = val.Type.Split(",");
                 query = query.Where(x => types.Contains(x.Type));
             }
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+            if (!string.IsNullOrEmpty(val.UserId))
+            {
+                query = query.Where(x => x.UserId == val.UserId);
+            }
             if (val.PartnerId.HasValue)
             {
                 query = query.Where(x => x.PartnerId == val.PartnerId);
