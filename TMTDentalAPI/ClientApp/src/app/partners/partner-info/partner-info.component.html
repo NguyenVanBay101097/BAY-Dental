@@ -1,49 +1,62 @@
-<table style="width:100%" *ngIf="partner">
-    <tr>
-        <td class="label">Tên</td>
-        <td class="content">{{partner.name}}</td>
-        <td rowspan="6"><img
-                src="https://cdn.tuoitre.vn/thumb_w/640/2018/4/19/hoang-yen-chi-bi-15241082709871866097611.jpg"
-                height="220px" /></td>
-    </tr>
-    <tr>
-        <td class="label">Mã</td>
-        <td class="content">{{partner.ref}}</td>
-    </tr>
-    <tr>
-        <td class="label">Giới tính</td>
-        <td class="content">{{getGender(partner.gender)}}</td>
-    </tr>
-    <tr>
-        <td class="label">Tuổi</td>
-        <td class="content">{{partner.birthYear ? getAge(partner.birthYear) : ''}}</td>
-    </tr>
-    <tr>
-        <td class="label">Số điện thoại</td>
-        <td class="content">{{partner.phone}}</td>
-    </tr>
-    <tr>
-        <td class="label">Email</td>
-        <td class="content"></td>
-    </tr>
-    <tr>
-        <td class="label">Địa chỉ</td>
-        <td class="content" colspan="3">{{address}}</td>
-    </tr>
-    <tr>
-        <td class="label">Tiền căn</td>
-        <td class="content" colspan="3">{{partner.medicalHistory}}</td>
-    </tr>
-    <tr>
-        <td class="label">Nghề nghiệp</td>
-        <td class="content">{{partner.jobTitle}}</td>
-    </tr>
-    <tr>
-        <td class="label">Người giới thiệu</td>
-        <td class="content">{{partner.employees ? partner.employees.name : ''}}</td>
-    </tr>
-    <tr>
-        <td class="label">Ghi chú</td>
-        <td class="content">{{partner.note}}</td>
-    </tr>
-</table>
+<div class="d-flex">
+    <!-- <div class="detail_image"><img height="250px" />
+    </div> -->
+    <div class="detail_info row" *ngIf="partner">
+        <div class="col-6">
+            <div>
+                <div class="label">Tên</div>
+                <div class="content">{{partner.name}}</div>
+            </div>
+            <div>
+                <div class="label">Tuổi</div>
+                <div class="content">{{partner.birthYear ? getAge(partner.birthYear) : ''}}</div>
+            </div>
+            <div>
+                <div class="label">Giới tính</div>
+                <div class="content">{{getGender(partner.gender)}}</div>
+            </div>
+            <div>
+                <div class="label">Địa chỉ</div>
+                <div class="content">{{address}}</div>
+            </div>
+            <div>
+                <div class="label">Tiền sử bệnh</div>
+                <div class="content">{{getHistories()}}</div>
+            </div>
+            <div>
+                <div class="label">Tiền căn khác</div>
+                <div class="content">{{partner.medicalHistory}}</div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <div class="label">Mã</div>
+                <div class="content">{{partner.ref}}</div>
+            </div>
+            <div>
+                <div class="label">Số điện thoại</div>
+                <div class="content">{{partner.phone}}</div>
+            </div>
+            <div>
+                <div class="label">Email</div>
+                <div class="content">{{partner.email}}</div>
+            </div>
+            <div>
+                <div class="label">Nhóm</div>
+                <div class="content">{{getCategories()}}</div>
+            </div>
+            <div>
+                <div class="label">Nghề nghiệp</div>
+                <div class="content">{{partner.jobTitle}}</div>
+            </div>
+            <div>
+                <div class="label">Giới thiệu</div>
+                <div class="content">{{getReferral()}}</div>
+            </div>
+            <div>
+                <div class="label">Ghi chú</div>
+                <div class="content">{{partner.comment}}</div>
+            </div>
+        </div>
+    </div>
+</div>

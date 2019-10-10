@@ -108,6 +108,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         /// <summary>
+        /// Email
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Ảnh chân dung
         /// </summary>
         public string Avatar { get; set; }

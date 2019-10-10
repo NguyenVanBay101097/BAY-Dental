@@ -15,7 +15,10 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-partner-list',
   templateUrl: './partner-list.component.html',
-  styleUrls: ['./partner-list.component.css']
+  styleUrls: ['./partner-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class PartnerListComponent implements OnInit {
 
