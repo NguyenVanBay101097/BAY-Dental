@@ -483,8 +483,7 @@ export class AppointmentListComponent implements OnInit {
     const dialogRef: DialogRef = this.dialogService.open({
       title: 'Thông tin Khách hàng',
       content: PartnerInfoComponent,
-      width: 700,
-      height: 620,
+      width: 900,
       actions: [
         { text: 'Đóng', value: false },
         // { text: 'Tạo lịch hẹn', primary: true, value: true }

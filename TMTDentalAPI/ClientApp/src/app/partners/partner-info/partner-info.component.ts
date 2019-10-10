@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { PartnerService } from '../partner.service';
-import { PartnerDisplay } from '../partner-simple';
+import { PartnerDisplay, PartnerCategorySimple } from '../partner-simple';
+import { HistorySimple } from 'src/app/history/history';
+import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 
 @Component({
   selector: 'app-partner-info',
@@ -11,7 +13,8 @@ export class PartnerInfoComponent implements OnInit {
 
   constructor(private service: PartnerService) { }
 
-  partnerId: string;
+  @Input() public partnerId: string; // ID của khách hàng
+  // partnerId: string;
   partner = new PartnerDisplay();
 
   address: string;
@@ -62,6 +65,40 @@ export class PartnerInfoComponent implements OnInit {
     return today.getFullYear() - y;
   }
 
+  getHistories() {
+    if (this.partner.histories) {
+      var arr = new Array<string>();
+      this.partner.histories.forEach(e => {
+        arr.push(e.name);
+      });
+      return arr.join(', ');
+    }
+  }
 
+  getCategories() {
+    if (this.partner.categories) {
+      var arr = new Array<string>();
+      this.partner.categories.forEach(e => {
+        arr.push(e.name);
+      });
+      return arr.join(', ');
+    }
+  }
+
+  getReferral() {
+    if (this.partner.source) {
+      var s = this.partner.source;
+      switch (s.toLowerCase()) {
+        case 'employee':
+          return this.partner.employees.name;
+        case 'other':
+          return this.partner.note;
+        case 'ads':
+          return 'Quảng cáo';
+        case 'friend':
+          return 'Bạn bè';
+      }
+    }
+  }
 
 }

@@ -1,8 +1,20 @@
 .label{
     font-weight: bold;
-    padding: 10px;
-    min-width: 150px;
+    padding: 10px 0;
+    width: 120px;
+    display:inline-block;
+    margin-left : 10px;
+    vertical-align: top;
 }
 .content{
-    min-width: 150px;
+    width: 220px;
+    display:inline-block;
+    padding: 10px 0;    
+}
+.detail_info{
+    width:1000px;
+}
+.detail_image{
+    width:250px;
+    margin: 10px;
 }

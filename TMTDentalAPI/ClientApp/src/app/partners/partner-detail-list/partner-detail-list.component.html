@@ -1,7 +1,14 @@
 <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
-    [loading]="gridLoading" [selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)">
-    <kendo-grid-column field="number" title="Hóa đơn" width="140px"></kendo-grid-column>
-    <kendo-grid-column field="dateOrder" title="Ngày tạo">
+    [loading]="gridLoading">
+    <!--[selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)"-->
+    <kendo-grid-column field="number" title="Hóa đơn" width="140px">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <a class="text-primary" [routerLink]="['/customer-invoices/edit/', dataItem.id]">
+                {{dataItem.number }}
+            </a>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="dateOrder" title="Ngày điều trị">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.dateOrder | date : 'shortDate' }}
         </ng-template>
@@ -11,19 +18,22 @@
             {{dataItem.residual | number}}
         </ng-template>
     </kendo-grid-column>
+    <kendo-grid-column title="Tổng tiền">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amountTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Nhân viên">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.user ? dataItem.user.name : ''}}
+        </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column title="Trạng thái">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{stateGet(dataItem.state)}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-command-column title="Thao tác" width="250">
-        <ng-template kendoGridCellTemplate let-dataItem>
-            <kendo-dropdownbutton [data]="btnDropdown" [primary]="true"
-                (itemClick)="btnDropdownItemClick($event, dataItem.id)"><i class="fas fa-caret-down"
-                    title="Thao tác"></i>
-            </kendo-dropdownbutton>
-        </ng-template>
-    </kendo-grid-command-column>
+
     <kendo-grid-messages pagerItems="dòng" noRecords="Không có hóa đơn nào" pagerOf="/">
     </kendo-grid-messages>
 </kendo-grid>

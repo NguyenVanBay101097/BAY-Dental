@@ -41,6 +41,8 @@ export class PartnerDisplay extends PartnerBasic {
     city: PDWSimple;
     district: PDWSimple;
     ward: PDWSimple;
+    source: string;
+    note: string;
 }
 
 export class PartnerCategorySimple {
