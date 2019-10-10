@@ -75,6 +75,7 @@ html .o_web_client .o_action_manager .o_action {
     display: flex;
     -webkit-flex-flow: column nowrap;
     flex-flow: column nowrap;
+    position: relative;
 }
 
 html .o_web_client .o_action_manager .o_action>.o_cp_controller {
@@ -116,9 +117,25 @@ html .o_web_client>.o_action_manager .o_action .o_content {
     border-radius: 0!important;
 }
 
+.o_cp_searchview_group .o_searchview_advance {
+    flex: 0 0 auto;
+}
+
 .o_advance_search {
     position: absolute;
-    width: 300px;
-    background-color: red;
     height: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.o_advance_search .o_advance_search_container {
+    width: 300px;
+    margin-right: -300px;
+    transition: margin-right 250ms ease-out, transform 250ms ease-out;
+    padding: 15px;
+}
+
+.o_advance_search .o_advance_search_container.show {
+    margin-right: 0;
 }

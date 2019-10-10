@@ -42,6 +42,8 @@ export class ProductListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
+  showAdvanceFilter = false;
+
   constructor(private productService: ProductService, private windowService: WindowService,
     private dialogService: DialogService, public intl: IntlService, private productCategoryService: ProductCategoryService,
     private route: ActivatedRoute, private modalService: NgbModal) { }
@@ -122,6 +124,14 @@ export class ProductListComponent implements OnInit {
 
   loadFilteredCategs() {
     this.searchCategories().subscribe(result => this.filteredCategs = result);
+  }
+
+  onAdvanceSearchChange(filter) {
+    this.searchCateg = filter.categ ? filter.categ : null;
+    this.saleOKFilter = filter.saleOK;
+    this.keToaOKFilter = filter.keToaOK;
+    this.isLaboFilter = filter.isLabo;
+    this.loadDataFromApi();
   }
 
   searchCategories(search?: string) {

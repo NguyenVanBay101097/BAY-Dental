@@ -8,7 +8,10 @@ import { of, Observable } from 'rxjs';
 @Component({
   selector: 'app-product-advance-search',
   templateUrl: './product-advance-search.component.html',
-  styleUrls: ['./product-advance-search.component.css']
+  styleUrls: ['./product-advance-search.component.css'],
+  host: {
+    class: "o_advance_search"
+  }
 })
 export class ProductAdvanceSearchComponent implements OnInit {
   formGroup: FormGroup;
@@ -17,31 +20,40 @@ export class ProductAdvanceSearchComponent implements OnInit {
   filteredCategs: ProductCategoryBasic[];
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
-  categSearching = false;
-  searchFailed = false;
+  show = false;
+  defaultFormGroup = {
+    categ: null,
+    saleOK: false,
+    keToaOK: false,
+    isLabo: false
+  };
   constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService) { }
 
   ngOnInit() {
-    this.formGroup = this.fb.group({
-      categ: null,
-      saleOK: false,
-      keToaOK: false,
-      isLabo: false
+    this.formGroup = this.fb.group(this.defaultFormGroup);
+
+    this.categCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.categCbx.loading = true)),
+      switchMap(value => this.searchCategories(value))
+    ).subscribe(result => {
+      this.filteredCategs = result;
+      this.categCbx.loading = false;
     });
 
-    // this.categCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.categCbx.loading = true)),
-    //   switchMap(value => this.searchCategories(value))
-    // ).subscribe(result => {
-    //   this.filteredCategs = result;
-    //   this.categCbx.loading = false;
-    // });
+    this.loadFilteredCategs();
+  }
 
-    // this.loadFilteredCategs();
+  toggleShow() {
+    this.show = !this.show;
   }
 
   onSearch() {
+    this.searchChange.emit(this.formGroup.value);
+  }
+
+  onClear() {
+    this.formGroup = this.fb.group(this.defaultFormGroup);
     this.searchChange.emit(this.formGroup.value);
   }
 
@@ -54,21 +66,5 @@ export class ProductAdvanceSearchComponent implements OnInit {
   loadFilteredCategs() {
     this.searchCategories().subscribe(result => this.filteredCategs = result);
   }
-
-  search = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => this.categSearching = true),
-      switchMap(term =>
-        this.searchCategories(term).pipe(
-          tap(() => this.searchFailed = false),
-          catchError(() => {
-            this.searchFailed = true;
-            return of([]);
-          }))
-      ),
-      tap(() => this.categSearching = false)
-    )
 }
 

@@ -1,36 +1,44 @@
-<div class="px-4 py-3" style="width: 300px;" [formGroup]="formGroup">
-    <h5>Theo nhóm sản phẩm</h5>
-    <div class="form-group">
-        <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
-        </ng-template>
-        <input type="text" class="form-control" formControlName="categ" [ngbTypeahead]="search" [resultTemplate]="rt" />
+<div class="o_advance_search_container" [class.show]="show">
+    <div [formGroup]="formGroup">
+        <h5>Theo nhóm sản phẩm</h5>
+        <div class="form-group">
+            <kendo-combobox [data]="filteredCategs" [textField]="'completeName'" [filterable]="true" #categCbx
+                formControlName="categ" [valueField]="'id'">
+            </kendo-combobox>
+        </div>
+        <div class="dropdown-divider"></div>
+        <h5>Theo loại</h5>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="saleOK" id="saleOK">
+                <label class="form-check-label" for="saleOK">
+                    Dịch vụ
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" formControlName="keToaOK" id="keToaOK" type="checkbox">
+                <label class="form-check-label" for="keToaOK">
+                    Thuốc
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="isLabo" id="isLabo">
+                <label class="form-check-label" for="isLabo">
+                    Labo
+                </label>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                Tìm kiếm
+            </button>
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onClear()">
+                Hủy lọc
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="toggleShow()">
+                Đóng
+            </button>
+        </div>
+
     </div>
-    <div class="dropdown-divider"></div>
-    <h5>Theo loại</h5>
-    <div class="form-group">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" formControlName="saleOK" id="saleOK"
-                (change)="loadDataFromApi()">
-            <label class="form-check-label" for="saleOK">
-                Dịch vụ
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" formControlName="keToaOK" id="keToaOK" type="checkbox"
-                (change)="loadDataFromApi()">
-            <label class="form-check-label" for="keToaOK">
-                Thuốc
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" formControlName="isLabo" id="isLabo">
-            <label class="form-check-label" for="isLabo">
-                Labo
-            </label>
-        </div>
-    </div>
-    <button type="button" class="btn btn-primary" (click)="onSearch()">
-        <i class="fas fa-search"></i> Tìm
-    </button>
 </div>

@@ -9,14 +9,11 @@
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
                         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
-                <div class="btn-group" ngbDropdown>
-                    <button class="btn btn-secondary btn-sm rounded-0" type="button" ngbDropdownToggle>
+                <div class="o_searchview_advance">
+                    <button class="btn btn-secondary btn-sm rounded-0" type="button"
+                        (click)="advanceFilter.toggleShow()">
                         Nâng cao
                     </button>
-                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
-                        <app-product-advance-search (searchChange)="onSearchChange($event)">
-                        </app-product-advance-search>
-                    </div>
                 </div>
             </div>
         </div>
@@ -39,48 +36,52 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="dropdown">
+            <!-- <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false" type="button" id="dropdownMenuButton">
                     Thao tác
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <!-- <a class="dropdown-item" (click)="importFromExcel()">Thêm sản phẩm từ excel</a> -->
+                    <a class="dropdown-item" (click)="importFromExcel()">Thêm sản phẩm từ excel</a>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên sản phẩm">
-        </kendo-grid-column>
-        <kendo-grid-column field="defaultCode" title="Mã sản phẩm">
-        </kendo-grid-column>
-        <kendo-grid-column field="categName" title="Nhóm sản phẩm">
-        </kendo-grid-column>
-        <kendo-grid-column field="listPrice" class="text-right" title="Giá bán">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.listPrice | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="qtyAvailable" class="text-right" title="Tồn kho">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="id">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
-            </ng-template>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
-                    <i class="far fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
-                    <i class="far fa-trash-alt"></i></button>
-            </ng-template>
-        </kendo-grid-column>
-    </kendo-grid>
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="name" title="Tên sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="defaultCode" title="Mã sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="categName" title="Nhóm sản phẩm">
+            </kendo-grid-column>
+            <kendo-grid-column field="listPrice" class="text-right" title="Giá bán">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.listPrice | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="qtyAvailable" class="text-right" title="Tồn kho">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="id">
+                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                    Thao tác
+                </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+                        <i class="far fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                        <i class="far fa-trash-alt"></i></button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
 </div>
+
+<app-product-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)"></app-product-advance-search>
