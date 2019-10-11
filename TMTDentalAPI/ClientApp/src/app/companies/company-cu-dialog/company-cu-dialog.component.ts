@@ -50,7 +50,8 @@ export class CompanyCuDialogComponent implements OnInit {
       district: null,
       ward: null,
       email: null,
-      phone: null
+      phone: null,
+      logo: null
     });
 
     if (this.id) {

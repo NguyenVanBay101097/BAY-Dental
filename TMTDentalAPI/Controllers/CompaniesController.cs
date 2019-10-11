@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Services;
@@ -20,17 +23,19 @@ namespace TMTDentalAPI.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly ICompanyService _companyService;
+        private readonly IUploadService _uploadService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
-        public CompaniesController(ICompanyService companyService,
+        public CompaniesController(ICompanyService companyService, IUploadService uploadService,
             IUnitOfWorkAsync unitOfWork,
             CatalogDbContext context,
             IMapper mapper, IIRModelAccessService modelAccessService)
         {
             _unitOfWork = unitOfWork;
             _companyService = companyService;
+            _uploadService = uploadService;
             _context = context;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
@@ -69,6 +74,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             _modelAccessService.Check("Company", "Create");
             var company = _mapper.Map<Company>(val);
+
             await _unitOfWork.BeginTransactionAsync();
             //await _companyService.CreateAsync(company);
             _unitOfWork.Commit();
@@ -95,6 +101,8 @@ namespace TMTDentalAPI.Controllers
             company.Partner.DistrictName = val.District != null ? val.District.Name : string.Empty;
             company.Partner.WardCode = val.Ward != null ? val.Ward.Code : string.Empty;
             company.Partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
+
+            await SaveLogo(company, val);
             await _unitOfWork.BeginTransactionAsync();
             await _companyService.UpdateAsync(company);
             _unitOfWork.Commit();
@@ -144,6 +152,19 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
           
             return Ok(true);
+        }
+
+        private async Task SaveLogo(Company company, CompanyDisplay val)
+        {
+            if (!string.IsNullOrEmpty(val.Logo) && ImageHelper.IsBase64String(val.Logo))
+            {
+                var fileName = Path.GetRandomFileName() + "." + ImageHelper.GetImageExtension(val.Logo);
+                company.Logo = await _uploadService.UploadBinaryAsync(val.Logo, fileName: fileName);
+            }
+            else if (string.IsNullOrEmpty(val.Logo))
+            {
+                company.Logo = null;
+            }
         }
     }
 }

@@ -127,7 +127,8 @@ registerLocaleData(localeVi, 'vi');
     InputsModule,
     MatStepperModule,
     NgbModule,
-    HistoryModule
+    HistoryModule,
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

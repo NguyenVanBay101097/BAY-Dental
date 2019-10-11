@@ -31,5 +31,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? AccountExpenseId { get; set; }
         public AccountAccount AccountExpense { get; set; }
+
+        public string Logo { get; set; }
     }
 }

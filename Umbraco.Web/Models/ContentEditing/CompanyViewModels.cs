@@ -57,6 +57,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DistrictSimple District { get; set; }
 
         public WardSimple Ward { get; set; }
+
+        public string Logo { get; set; }
     }
 
     public class CitySimple
