@@ -1,16 +1,28 @@
 <!-- <div kendoWindowContainer></div> -->
 <div kendoDialogContainer></div>
-<div [formGroup]="formFilter">
+<div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">Lịch hẹn</li>
         </ol>
         <div class="o_cp_searchview">
-            <div class="o_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, khách hàng, SĐT..." type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+                <div class="o_searchview_advance">
+                    <button class="btn btn-secondary btn-sm rounded-0" type="button"
+                        (click)="advanceFilter.toggleShow()">
+                        Nâng cao
+                    </button>
+                </div>
+            </div>
+            <!-- <div class="o_searchview">
                 <input type="text" class="o_searchview_input" formControlName="search" [(ngModel)]="search"
                     (ngModelChange)="this.searchUpdate.next($event)"
                     placeholder="Theo tên, số điện thoại khách hàng hoặc tên bác sĩ" />
-            </div>
+            </div> -->
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -31,40 +43,8 @@
         <div class="o_cp_right">
         </div>
     </div>
-
-    <div class="mainLeft">
+    <!-- <div class="mainLeft">
         <div class="accordion" id="accordionExample">
-
-            <!-- <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
-                            aria-expanded="false" aria-controls="collapseOne">
-                            Tìm kiếm
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <input type="text" class="form-control" [(ngModel)]="searchCustomer"
-                                (ngModelChange)="this.searchCustomerUpdate.next($event)"
-                                formControlName="searchCustomer" placeholder="Theo mã, tên hoặc SĐT khách hàng" />
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" formControlName="searchDoctor"
-                                [(ngModel)]="searchDoctor" (ngModelChange)="this.searchDoctorUpdate.next($event)"
-                                placeholder="Theo bác sĩ" />
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" [(ngModel)]="searchAppoint"
-                                (ngModelChange)="this.searchAppointUpdate.next($event)" formControlName="searchAppoint"
-                                placeholder="Theo mã lịch hẹn" />
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
             <div class="card">
                 <div class="card-header" id="headingTwo">
                     <h2 class="mb-0">
@@ -156,33 +136,37 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
-<div class="mainRight">
-    <kendo-grid *ngIf='!schedulerShow' [data]="this.gridView" [height]="600" [pageable]='true'
-        (pageChange)="pageChange($event)" [loading]="loading" [pageSize]="limit">
+<div class="o_content">
+    <kendo-grid *ngIf='!schedulerShow' [data]="this.gridView" [pageable]='true' (pageChange)="pageChange($event)"
+        [loading]="loading" [pageSize]="limit">
         <kendo-grid-column field="name" title="Mã"></kendo-grid-column>
         <kendo-grid-column field="partner.name" title="Khách hàng" width='200px;'>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-link mr-2"
+                <div>{{dataItem.partner ? dataItem.partner.name : ''}}</div>
+                <div>SĐT: {{dataItem.partner ? dataItem.partner.phone : ''}}</div>
+                <!-- <button class="btn btn-link mr-2"
                     (click)="openCustomerInfo(dataItem.partnerId)">{{dataItem.partner ? dataItem.partner.name : ''}}</button>
                 <div *ngIf="dataItem.partner && dataItem.partner.phone">
                     <i class="fas fa-mobile-alt" style="padding-left : 12px;"></i>
                     {{dataItem.partner ? dataItem.partner.phone : ''}}
-                </div>
+                </div> -->
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="doctor.name" title="Bác sĩ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-link mr-2"
+                <div>{{dataItem.doctor ? dataItem.doctor.name : ''}}</div>
+                <div>SĐT: {{dataItem.doctor ? dataItem.doctor.phone : ''}}</div>
+                <!-- <button class="btn btn-link mr-2"
                     (click)="openEmployeeInfo(dataItem.doctorId)">{{dataItem.doctor ? dataItem.doctor.name : ''}}</button>
                 <div *ngIf="dataItem.doctor && dataItem.doctor.phone">
                     <i class="fas fa-mobile-alt" style="padding-left : 12px;"></i>
                     {{dataItem.doctor ? dataItem.doctor.phone : ''}}
-                </div>
+                </div> -->
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="date" title="Thời gian">
+        <kendo-grid-column field="date" title="Ngày hẹn">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date : 'short'}}
             </ng-template>
@@ -247,4 +231,6 @@
         </kendo-scheduler-messages>
     </kendo-scheduler>
 </div>
-<div class="k-overlay" *ngIf="windowOpened"></div>
+
+<app-appointment-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)">
+</app-appointment-advance-search>

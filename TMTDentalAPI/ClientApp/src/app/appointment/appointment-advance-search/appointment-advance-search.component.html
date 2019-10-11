@@ -1,0 +1,64 @@
+<div class="o_advance_search_container" [class.show]="show">
+    <div [formGroup]="formGroup">
+        <h5>Theo trạng thái</h5>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="confirmedState" id="confirmedState">
+                <label class="form-check-label" for="confirmedState">
+                    Đang hẹn
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="doneState" id="doneState">
+                <label class="form-check-label" for="doneState">
+                    Đã tới
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="cancelState" id="cancelState">
+                <label class="form-check-label" for="cancelState">
+                    Đã hủy
+                </label>
+            </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <h5>Theo ngày hẹn</h5>
+        <div class="form-group">
+            <select class="form-control" [(ngModel)]="dateOption" [ngModelOptions]="{standalone: true}"
+                (change)="changeDateOption($event)">
+                <option value="all">Tất cả</option>
+                <option value="today">Hôm nay</option>
+                <option value="yesterday">Hôm qua</option>
+                <option value="this_week">Tuần này</option>
+                <option value="this_month">Tháng này</option>
+                <option value="this_year">Năm này</option>
+                <option value="custom">Tùy chọn</option>
+            </select>
+        </div>
+        <div class="form-group" *ngIf="dateOption == 'custom'">
+            <label>Từ ngày</label>
+            <div>
+                <kendo-datepicker formControlName="dateFrom">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div class="form-group" *ngIf="dateOption == 'custom'">
+            <label>Đến ngày</label>
+            <div>
+                <kendo-datepicker formControlName="dateTo">
+                </kendo-datepicker>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                Tìm kiếm
+            </button>
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onClear()">
+                Hủy lọc
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="toggleShow()">
+                Đóng
+            </button>
+        </div>
+    </div>
+</div>

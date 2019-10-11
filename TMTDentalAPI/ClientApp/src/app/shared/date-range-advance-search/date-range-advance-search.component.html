@@ -1,0 +1,27 @@
+<div [formGroup]="formGroup">
+    <div class="form-group">
+        <select class="form-control">
+            <option value="">Tất cả</option>
+            <option value="">Hôm nay</option>
+            <option value="">Hôm qua</option>
+            <option value="">Tuần này</option>
+            <option value="">Tháng này</option>
+            <option value="">Năm này</option>
+            <option value="">Tùy chọn</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Từ ngày</label>
+        <div>
+            <kendo-datepicker formControlName="dateFrom">
+            </kendo-datepicker>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Đến ngày</label>
+        <div>
+            <kendo-datepicker formControlName="dateTo">
+            </kendo-datepicker>
+        </div>
+    </div>
+</div>

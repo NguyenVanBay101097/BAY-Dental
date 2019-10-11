@@ -18,7 +18,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-appointment-list',
   templateUrl: './appointment-list.component.html',
-  styleUrls: ['./appointment-list.component.css']
+  styleUrls: ['./appointment-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class AppointmentListComponent implements OnInit {
 
@@ -117,11 +120,20 @@ export class AppointmentListComponent implements OnInit {
     //   });
   }
 
+  onAdvanceSearchChange(filter) {
+    this.fromDateList = filter.dateFrom;
+    this.toDateList = filter.dateTo;
+    this.confirmed = filter.confirmedState;
+    this.done = filter.doneState;
+    this.cancel = filter.cancelState;
+    this.loadByView();
+  }
+
   changeDateRangeFilter() {
     this.fromDateList = new Date(this.formFilter.get('frDate').value);
     this.toDateList = new Date(this.formFilter.get('toDate').value);
-    var frDate = formatDate(new Date(this.formFilter.get('frDate').value), 'g', 'en-US');
-    var toDate = formatDate(new Date(this.formFilter.get('toDate').value), 'g', 'en-US');
+    var frDate = formatDate(new Date(this.formFilter.get('frDate').value), 'd', 'en-US');
+    var toDate = formatDate(new Date(this.formFilter.get('toDate').value), 'd', 'en-US');
     var d1 = new Date(frDate);
     var d2 = new Date(toDate);
     var diff = (d2.getTime() - d1.getTime()) / (3600 * 24000);
@@ -147,13 +159,9 @@ export class AppointmentListComponent implements OnInit {
   getState(state: string) {
     switch (state) {
       case 'done':
-        return 'Hoàn tất';
+        return 'Đã tới';
       case 'cancel':
         return 'Đã hủy';
-      case 'waiting':
-        return 'Đang chờ';
-      case 'expired':
-        return 'Quá hạn';
       default:
         return 'Đang hẹn';
     }
@@ -237,8 +245,8 @@ export class AppointmentListComponent implements OnInit {
 
     appointmentPaged = this.formFilter.value;
     appointmentPaged.offset = this.skip;
-    appointmentPaged.dateTimeFrom = this.intlService.formatDate(this.schedulerShow ? this.fromDateScheduler : this.fromDateList, 'g', 'en-US');
-    appointmentPaged.dateTimeTo = this.intlService.formatDate(this.schedulerShow ? this.toDateScheduler : this.toDateList, 'g', 'en-US');
+    appointmentPaged.dateTimeFrom = this.intlService.formatDate(this.schedulerShow ? this.fromDateScheduler : this.fromDateList, 'd', 'en-US');
+    appointmentPaged.dateTimeTo = this.intlService.formatDate(this.schedulerShow ? this.toDateScheduler : this.toDateList, 'd', 'en-US');
     appointmentPaged.state = stateList.join(',');
     return appointmentPaged;
   }
@@ -278,8 +286,8 @@ export class AppointmentListComponent implements OnInit {
   }
 
   showGridView() {
-    this.loadToday();
-    // this.loadAppointmentList();
+    // this.loadToday();
+    this.loadAppointmentList();
     this.schedulerShow = false;
   }
 
@@ -386,7 +394,7 @@ export class AppointmentListComponent implements OnInit {
                 var appPatch = new AppointmentPatch();
                 var ar = [];
 
-                appPatch.date = this.intlService.formatDate(e.end, 'g', 'en-US');
+                appPatch.date = this.intlService.formatDate(e.end, 'd', 'en-US');
                 if (e.dataItem.state.toString() == "expired") {
                   appPatch.state = "confirmed";
                 }

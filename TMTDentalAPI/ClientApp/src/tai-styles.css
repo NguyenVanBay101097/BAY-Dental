@@ -127,6 +127,7 @@ html .o_web_client>.o_action_manager .o_action .o_content {
     right: 0;
     background: white;
     border: 1px solid #ccc;
+    z-index: 1000;
 }
 
 .o_advance_search .o_advance_search_container {

@@ -16,7 +16,7 @@ export class EmpCategoriesCreateUpdateComponent implements OnInit {
   formCreate: FormGroup;
   empCategId: string;
   isChange = false;
-
+  title: string;
   typeList = new Array<{ type: string; id: string }>();
   ngOnInit() {
     this.formCreate = this.fb.group({

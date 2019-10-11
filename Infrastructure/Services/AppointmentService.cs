@@ -86,7 +86,10 @@ namespace Infrastructure.Services
             if (val.DateTimeFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateTimeFrom);
             if (val.DateTimeTo.HasValue)
-                query = query.Where(x => x.Date <= val.DateTimeTo);
+            {
+                var dateTo = val.DateTimeTo.Value.AddDays(1);
+                query = query.Where(x => x.Date < dateTo);
+            }
 
             if (val.DotKhamId.HasValue)
                 query = query.Where(x => x.DotKhamId == val.DotKhamId);

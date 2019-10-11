@@ -15,6 +15,8 @@ import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.componen
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
 import { NavSidebarService } from './nav-sidebar.service';
 import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/field-binary-image-simple.component';
+import { DateRangeAdvanceSearchComponent } from './date-range-advance-search/date-range-advance-search.component';
+import { MyCustomKendoModule } from './my-customer-kendo.module';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/fie
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,
     LayoutHeaderComponent,
-    FieldBinaryImageSimpleComponent
+    FieldBinaryImageSimpleComponent,
+    DateRangeAdvanceSearchComponent
   ],
   exports: [
     HeaderComponent,
@@ -36,7 +39,8 @@ import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/fie
     ConfirmDialogComponent,
     LayoutSidebarComponent,
     LayoutHeaderComponent,
-    FieldBinaryImageSimpleComponent
+    FieldBinaryImageSimpleComponent,
+    DateRangeAdvanceSearchComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +48,8 @@ import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/fie
     MyOwnCustomMaterialModule,
     FlexLayoutModule,
     RouterModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MyCustomKendoModule
   ],
   providers: [NavSidebarService],
   entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent],

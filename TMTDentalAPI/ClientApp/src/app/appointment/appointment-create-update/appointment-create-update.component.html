@@ -112,8 +112,8 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid && !timeAvailble()"
-        (click)="createNewAppointment()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createNewAppointment()"><i
+            class="fas fa-save"></i>&nbsp;Lưu</button>
     <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button>
 </div>
