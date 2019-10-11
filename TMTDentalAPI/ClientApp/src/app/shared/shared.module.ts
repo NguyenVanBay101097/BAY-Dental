@@ -14,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.component';
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
 import { NavSidebarService } from './nav-sidebar.service';
+import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/field-binary-image-simple.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { NavSidebarService } from './nav-sidebar.service';
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,
-    LayoutHeaderComponent
+    LayoutHeaderComponent,
+    FieldBinaryImageSimpleComponent
   ],
   exports: [
     HeaderComponent,
@@ -33,7 +35,8 @@ import { NavSidebarService } from './nav-sidebar.service';
     TopMenuComponent,
     ConfirmDialogComponent,
     LayoutSidebarComponent,
-    LayoutHeaderComponent
+    LayoutHeaderComponent,
+    FieldBinaryImageSimpleComponent
   ],
   imports: [
     CommonModule,

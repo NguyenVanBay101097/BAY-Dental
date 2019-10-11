@@ -8,6 +8,7 @@ import { CompanyCuDialogComponent } from './company-cu-dialog/company-cu-dialog.
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CompanyCreateUpdateComponent } from './company-create-update/company-create-update.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [CompanyListComponent, CompanyCuDialogComponent, CompanyCreateUpdateComponent],
@@ -15,7 +16,8 @@ import { CompanyCreateUpdateComponent } from './company-create-update/company-cr
     CommonModule,
     CompaniesRoutingModule,
     MyCustomKendoModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ],
   providers: [
     CompanyService

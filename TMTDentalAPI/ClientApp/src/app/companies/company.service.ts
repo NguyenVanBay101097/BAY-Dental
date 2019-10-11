@@ -22,6 +22,7 @@ export class CompanyDisplay {
     district: { name: string, code: string };
     ward: { name: string, code: string };
     street: string;
+    logo: string;
 }
 
 export class CompanyPaging {

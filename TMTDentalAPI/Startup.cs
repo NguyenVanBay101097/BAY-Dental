@@ -165,7 +165,9 @@ namespace TMTDentalAPI
             services.AddScoped<IIrAttachmentRepository, IrAttachmentRepository>();
             services.AddScoped<IIrAttachmentService, IrAttachmentService>();
             services.AddScoped<IHistoryService, HistoryService>();
+            services.AddScoped<IUploadService, UploadService>();
             services.AddSingleton<IMailSender, SendGridSender>();
+            
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
 
