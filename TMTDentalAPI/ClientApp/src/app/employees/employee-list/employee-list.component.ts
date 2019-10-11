@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { EmployeePaged } from '../employee';
+import { EmployeePaged, EmployeeBasic } from '../employee';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { EmployeeService } from '../employee.service';
 import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
@@ -12,7 +12,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-employee-list',
   templateUrl: './employee-list.component.html',
-  styleUrls: ['./employee-list.component.css']
+  styleUrls: ['./employee-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class EmployeeListComponent implements OnInit {
 
@@ -25,7 +28,6 @@ export class EmployeeListComponent implements OnInit {
   skip = 0;
   pageSize = 20;
 
-  formFilter: FormGroup;
   search: string;
   searchUpdate = new Subject<string>();
 
@@ -36,45 +38,25 @@ export class EmployeeListComponent implements OnInit {
   btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
 
   ngOnInit() {
-    this.formFilter = this.fb.group({
-      search: null,
-      isDoctor: null,
-      isAssistant: null,
-      isOther: null
-    });
-
     this.getEmployeesList();
     this.searchChange();
-
   }
 
   getEmployeesList() {
     var positionList = new Array<string>();
     this.loading = true;
     var empPaged = new EmployeePaged();
-    empPaged = this.formFilter.value;
     empPaged.limit = this.pageSize;
     empPaged.offset = this.skip;
-    if (this.formFilter.get('isDoctor').value) {
-      positionList.push('doctor');
+    if (this.search) {
+      empPaged.search = this.search;
     }
-    if (this.formFilter.get('isAssistant').value) {
-      positionList.push('assistant');
+    if (this.isDoctor) {
+      empPaged.isDoctor = this.isDoctor;
     }
-    if (this.formFilter.get('isOther').value) {
-      positionList.push('other');
+    if (this.isAssistant) {
+      empPaged.isAssistant = this.isAssistant;
     }
-    empPaged.position = positionList.join(',');
-    // if (this.isDoctor === true) {
-    //   empPaged.isDoctor = this.isDoctor;
-    // }
-    // if (this.isAssistant === true) {
-    //   empPaged.isAssistant = this.isAssistant;
-    // }
-    // if (this.isOther === true) {
-    //   empPaged.isDoctor = false;
-    //   empPaged.isAssistant = false;
-    // }
 
     this.service.getEmployeePaged(empPaged).pipe(
       map(rs1 => (<GridDataResult>{
@@ -127,6 +109,47 @@ export class EmployeeListComponent implements OnInit {
   //     }
   //   )
   // }
+
+  onAdvanceSearchChange(filter) {
+    this.isDoctor = filter.isDoctor;
+    this.isAssistant = filter.isAssistant;
+    this.getEmployeesList();
+  }
+
+  createDoctor() {
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm bác sĩ';
+    modalRef.componentInstance.isDoctor = true;
+    modalRef.result.then(() => {
+      this.getEmployeesList();
+    });
+  }
+
+  createAssistant() {
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm phụ tá';
+    modalRef.componentInstance.isAssistant = true;
+    modalRef.result.then(() => {
+      this.getEmployeesList();
+    });
+  }
+
+  createEmployee() {
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm nhân viên thường';
+    modalRef.result.then(() => {
+      this.getEmployeesList();
+    });
+  }
+
+  editEmployee(item: EmployeeBasic) {
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa nhân viên';
+    modalRef.componentInstance.empId = item.id;
+    modalRef.result.then(() => {
+      this.getEmployeesList();
+    });
+  }
 
   openModal(id, isDoctor, isAssistant) {
     const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });

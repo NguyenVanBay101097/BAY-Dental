@@ -24,6 +24,7 @@ export class CompanyCuDialogComponent implements OnInit {
   opened = false;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
+  title: string;
 
   dataSourceCities: Array<{ code: string, name: string }>;
   dataSourceDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;

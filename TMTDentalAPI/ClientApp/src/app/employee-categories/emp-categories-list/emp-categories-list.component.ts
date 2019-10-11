@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { DialogRef, DialogCloseResult, WindowService, DialogService, WindowRef, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { EmployeeCategoryPaged } from '../emp-category';
+import { EmployeeCategoryPaged, EmployeeCategoryBasic } from '../emp-category';
 import { EmpCategoryService } from '../emp-category.service';
 import { EmpCategoriesCreateUpdateComponent } from '../emp-categories-create-update/emp-categories-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,7 +12,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-emp-categories-list',
   templateUrl: './emp-categories-list.component.html',
-  styleUrls: ['./emp-categories-list.component.css']
+  styleUrls: ['./emp-categories-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class EmpCategoriesListComponent implements OnInit {
 
@@ -24,15 +27,10 @@ export class EmpCategoriesListComponent implements OnInit {
   skip = 0;
   pageSize = 20;
 
-  formFilter: FormGroup;
   search: string;
   searchUpdate = new Subject<string>();
 
   ngOnInit() {
-    this.formFilter = this.fb.group({
-      search: null
-    });
-
     this.getCategEmployeesList();
     this.searchChange();
 
@@ -41,9 +39,11 @@ export class EmpCategoriesListComponent implements OnInit {
   getCategEmployeesList() {
     this.loading = true;
     var empPaged = new EmployeeCategoryPaged();
-    empPaged = this.formFilter.value;
     empPaged.limit = this.pageSize;
     empPaged.offset = this.skip;
+    if (this.search) {
+      empPaged.search = this.search;
+    }
 
     this.service.getCategEmployeePaged(empPaged).pipe(
       map(rs1 => (<GridDataResult>{
@@ -74,30 +74,13 @@ export class EmpCategoriesListComponent implements OnInit {
     this.getCategEmployeesList();
   }
 
-  // openWindow(id) {
-  //   const windowRef: WindowRef = this.windowService.open(
-  //     {
-  //       title: 'Nhóm nhân viên',
-  //       content: EmpCategoriesCreateUpdateComponent,
-  //       minWidth: 250,
-  //     });
-  //   this.windowOpened = true;
-  //   const instance = windowRef.content.instance;
-  //   instance.empCategId = id;
-
-  //   windowRef.result.subscribe(
-  //     (result) => {
-  //       this.windowOpened = false;
-  //       if (!(result instanceof WindowCloseResult)) {
-  //         this.getCategEmployeesList();
-  //       }
-  //     }
-  //   )
-  // }
-  openModal(id) {
+  openModal(item: EmployeeCategoryBasic) {
     const modalRef = this.modalService.open(EmpCategoriesCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    if (id) {
-      modalRef.componentInstance.empCategId = id;
+    if (item) {
+      modalRef.componentInstance.empCategId = item.id;
+      modalRef.componentInstance.title = 'Sửa nhóm nhân viên';
+    } else {
+      modalRef.componentInstance.title = 'Thêm nhóm nhân viên'
     }
     modalRef.result.then(
       rs => {

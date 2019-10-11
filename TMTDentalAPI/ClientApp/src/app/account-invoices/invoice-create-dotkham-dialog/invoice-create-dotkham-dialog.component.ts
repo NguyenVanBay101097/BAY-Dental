@@ -22,6 +22,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
   filteredAssistants: EmployeeSimple[];
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
+  title: string;
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
     private employeeService: EmployeeService, public activeModal: NgbActiveModal) { }

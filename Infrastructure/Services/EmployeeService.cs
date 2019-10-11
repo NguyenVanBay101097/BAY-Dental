@@ -86,16 +86,12 @@ namespace Infrastructure.Services
             if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
             {
                 var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-
-                entity.IsAssistant = false;
-                entity.IsDoctor = false;
                 entity.Ref = await sequenceService.NextByCode("employee");
                 if (string.IsNullOrEmpty(entity.Ref))
                 {
                     await InsertEmployeeSequence();
                     entity.Ref = await sequenceService.NextByCode("employee");
                 }
-
             }
 
             return await base.CreateAsync(entity);

@@ -23,6 +23,7 @@ export class ProductCategoryDialogComponent implements OnInit {
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  title: string;
 
   @Input() public id: string;
 

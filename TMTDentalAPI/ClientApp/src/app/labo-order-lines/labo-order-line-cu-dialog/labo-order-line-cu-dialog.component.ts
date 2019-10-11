@@ -25,6 +25,7 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
   filteredCustomers: PartnerSimple[] = [];
   filteredSuppliers: PartnerSimple[] = [];
   filteredProducts: ProductSimple[] = [];
+  title: string;
 
   @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
   @ViewChild('supplierCbx', { static: true }) supplierCbx: ComboBoxComponent;

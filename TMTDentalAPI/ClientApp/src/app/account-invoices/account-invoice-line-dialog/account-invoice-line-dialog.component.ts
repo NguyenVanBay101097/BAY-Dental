@@ -36,6 +36,8 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
 
+  title: string;
+
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private userService: UserService, public activeModal: NgbActiveModal, private invLineService: AccountInvoiceLineService,

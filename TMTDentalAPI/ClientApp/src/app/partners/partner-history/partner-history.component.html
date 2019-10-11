@@ -150,12 +150,12 @@
                                         <img *ngFor="let image of imagePreviews2" [src]="image.src" alt="Image Preview"
                                             style="width:100%; margin: 10px;" />
                                     </div>
-                                    <div class="input-group">
+                                    <!-- <div class="input-group">
                                         <input type="file" (change)="handleFileInput($event.target.files)"
                                             id="inputGroupFileAddon01" multiple />
                                         <button [disabled]="filesToUpload.length == 0 || filesToUpload=='undefined'"
                                             (click)="uploadImage()">Upload</button>
-                                    </div>
+                                    </div> -->
                                     <!-- <div *ngIf="imagePreviewsName.length">
                                                     <p *ngFor="let name of imagePreviewsName">{{name}}</p>
                                                 </div> -->

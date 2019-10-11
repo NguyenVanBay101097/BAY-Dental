@@ -8,9 +8,10 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { EmployeeCreateUpdateComponent } from './employee-create-update/employee-create-update.component';
 import { EmployeeService } from './employee.service';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
+import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employee-advance-search.component';
 
 @NgModule({
-  declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent],
+  declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent, EmployeeAdvanceSearchComponent],
   imports: [
     CommonModule,
     MyCustomKendoModule,

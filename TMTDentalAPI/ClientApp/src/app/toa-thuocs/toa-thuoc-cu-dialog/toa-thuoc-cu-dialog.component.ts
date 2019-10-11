@@ -28,6 +28,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
   lineSelected: ToaThuocLineDisplay;
   lines: ToaThuocLineDisplay[] = [];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
+  title: string;
   // opened = false;
 
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, private intlService: IntlService,

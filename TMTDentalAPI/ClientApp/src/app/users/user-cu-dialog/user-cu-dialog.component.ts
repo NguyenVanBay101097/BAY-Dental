@@ -13,7 +13,7 @@ export class UserCuDialogComponent implements OnInit {
   id: string;
   userForm: FormGroup;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
-
+  title: string;
   constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal) {
   }
 

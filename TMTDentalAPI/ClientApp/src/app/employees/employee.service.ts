@@ -10,18 +10,8 @@ export class EmployeeService {
 
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getEmployeePaged(empPaged: EmployeePaged): Observable<PagedResult2<EmployeeBasic>> {
-    var params = new HttpParams()
-      .set('offset', empPaged.offset.toString())
-      .set('limit', empPaged.limit.toString())
-    if (empPaged.search) {
-      params = params.set('search', empPaged.search);
-    };
-    if (empPaged.position) {
-      params = params.set('position', empPaged.position);
-    };
-
-    return this.http.get<PagedResult2<EmployeeBasic>>(this.baseApi + "api/Employees?" + params);
+  getEmployeePaged(empPaged: any): Observable<PagedResult2<EmployeeBasic>> {
+    return this.http.get<PagedResult2<EmployeeBasic>>(this.baseApi + "api/Employees", { params: new HttpParams({ fromObject: empPaged }) });
   }
 
   getEmployee(id): Observable<EmployeeDisplay> {

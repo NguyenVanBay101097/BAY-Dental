@@ -25,6 +25,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   isChange: boolean = false;
   formCreate: FormGroup;
   windowOpened: boolean = false;
+  title = 'Nhân viên';
 
   categoriesList: EmployeeCategoryBasic[] = [];
   categoriesList2: EmployeeCategoryDisplay[] = [];
@@ -39,15 +40,10 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       email: null,
       birthDay: null,
       birthDayObj: null,
-      category: [null, Validators.required]
+      category: [null]
     });
     this.loadAutocompleteTypes(null);
     this.getEmployeeInfo();
-  }
-
-  check() {
-    console.log(this.formCreate.get('isDoctor').value);
-    console.log(this.formCreate.get('isAssistant').value);
   }
 
   getEmployeeInfo() {
@@ -71,7 +67,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   createUpdateEmployee() {
     //this.assignValue();
     var value = this.formCreate.value;
-    value.categoryId = value.category.id;
+    value.categoryId = value.category ? value.category.id : null;
     if (!this.empId) {
       value.isDoctor = this.isDoctor;
       value.isAssistant = this.isAssistant;
@@ -171,18 +167,4 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       }
     )
   }
-
-  getPosition() {
-    if (this.isDoctor && !this.isAssistant) {
-      console.log(this.isDoctor + ' ' + this.isAssistant);
-      return 'Bác sĩ';
-    } else if (!this.isDoctor && this.isAssistant) {
-      console.log(this.isDoctor + ' ' + this.isAssistant);
-      return 'Phụ tá';
-    } else if (!this.isDoctor && !this.isAssistant) {
-      console.log(this.isDoctor + ' ' + this.isAssistant);
-      return 'Nhân viên';
-    }
-  }
-
 }

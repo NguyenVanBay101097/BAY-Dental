@@ -1,58 +1,36 @@
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Nhóm nhân viên</li>
-    </ol>
-    <div class="o_cp_searchview" [formGroup]="formFilter">
-        <input type="text" class="form-control" formControlName="search" [(ngModel)]="search"
-            (ngModelChange)="searchUpdate.next($event)" placeholder="Theo tên nhóm" />
-    </div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
-                    <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Nhóm nhân viên</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
-        <div class="o_cp_sidebar">
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
+                        <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
         </div>
-    </div>
-    <div class="o_cp_right">
+        <div class="o_cp_right">
+        </div>
     </div>
 </div>
-<!-- <div kendoWindowContainer></div> -->
-<div kendoDialogContainer></div>
 
-<!-- <div class="mainLeft">
-    <div class="accordion" id="accordionExample">
-        <div [formGroup]="formFilter">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
-                            aria-expanded="true" aria-controls="collapseOne">
-                            Tìm kiếm
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <input type="text" class="form-control" formControlName="search" [(ngModel)]="search"
-                                (ngModelChange)="searchUpdate.next($event)" placeholder="Theo tên nhóm" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-<div class="">
+<div class="o_content">
     <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác" width="250">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
+                <button kendoButton (click)="openModal(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
                         class="fas fa-edit"></i>&nbsp;Sửa</button>
                 <button kendoButton (click)="deleteCategEmployee(dataItem.id)" class="btn btn-danger btn-sm"><i
                         title="Vô hiệu hóa" class="fas fa-times"></i>&nbsp;Xóa</button>
@@ -62,4 +40,5 @@
         </kendo-grid-messages>
     </kendo-grid>
 </div>
-<div class="k-overlay" *ngIf="this.windowOpened"></div>
+
+<div kendoDialogContainer></div>

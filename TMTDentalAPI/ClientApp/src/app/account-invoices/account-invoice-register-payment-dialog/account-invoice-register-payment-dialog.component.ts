@@ -20,6 +20,7 @@ export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
   filteredJournals: AccountJournalSimple[];
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
+  title: string;
 
   constructor(private registerPaymentService: AccountRegisterPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService) { }
