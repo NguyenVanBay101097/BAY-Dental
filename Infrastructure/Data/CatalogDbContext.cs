@@ -89,6 +89,8 @@ namespace Infrastructure.Data
         public DbSet<IrAttachment> IrAttachments { get; set; }
         public DbSet<PartnerHistoryRel> PartnerHistoryRels { get; set; }
         public DbSet<History> Histories { get; set; }
+        public DbSet<ProductPricelist> ProductPricelists { get; set; }
+        public DbSet<ProductPricelistItem> ProductPricelistItems { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -160,6 +162,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new IrAttachmentConfiguration());
             builder.ApplyConfiguration(new PartnerHistoryRelConfiguration());
             builder.ApplyConfiguration(new HistoryConfiguration());
+            builder.ApplyConfiguration(new ProductPricelistConfiguration());
+            builder.ApplyConfiguration(new ProductPricelistItemConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
