@@ -315,5 +315,37 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+
+        public async Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self,
+            Guid? partnerId = null, decimal quantity = 1,
+            DateTime? date = null)
+        {
+            var res = new Dictionary<Guid, decimal>();
+            foreach (var product in self)
+            {
+                res.Add(product.Id, 0);
+            }
+
+            var plobj = GetService<IProductPricelistService>();
+            var qtys = new List<ProductQtyByPartner>();
+            foreach (var product in self)
+            {
+                qtys.Add(new ProductQtyByPartner
+                {
+                    Product = product,
+                    Quantity = quantity,
+                    PartnerId = partnerId
+                });
+            }
+            var prices = await plobj._ComputePriceRule(qtys, date: date);
+            foreach (var product in self)
+            {
+                if (prices.ContainsKey(product.Id))
+                    res[product.Id] = prices[product.Id].Price;
+            }
+
+            return res;
+        }
     }
 }
