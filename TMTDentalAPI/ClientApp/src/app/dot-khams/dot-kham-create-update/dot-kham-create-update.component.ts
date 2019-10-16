@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Injector } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, ElementRef, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -34,6 +34,8 @@ import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/dr
 import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch } from '../dot-khams';
 import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
+import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 
 @Component({
   selector: 'app-dot-kham-create-update',
@@ -59,6 +61,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   @ViewChild('invoiceCbx', { static: true }) invoiceCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
+  @ViewChild('inputFile', { static: true }) inputFile: ElementRef;
   // @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   opened = false;
   toaThuocPrint: ToaThuocPrint;
@@ -83,6 +86,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   window: WindowRef;
 
+  imagesPreview: IrAttachmentBasic[] = [];
+  filesPreview: IrAttachmentBasic[] = [];
 
   dialog = false;//Component được mở dưới dạng Dialog hay Tab mới
 
@@ -95,6 +100,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
     private toaThuocService: ToaThuocService, private appointmentService: AppointmentService, private productService: ProductService,
     private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal) { }
+
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
@@ -115,7 +121,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       // appointmentId: null,
       filter: "dotkham"
     });
-
 
     this.getCustomerList();
     this.getDoctorList();
@@ -148,6 +153,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
     this.filterChangeCombobox();
     this.valueChangeCombobox();
+    this.getImageIds();
+
   }
 
   getActiveRoute() {
@@ -948,7 +955,134 @@ export class DotKhamCreateUpdateComponent implements OnInit {
           return { text: 'Quá hạn', color: '#ffbf00' };
       }
     }
+  }
+
+  //ĐÍNH KÈM FILE/HÌNH ẢNH
+  addAttachments(e) {
+    var file_node = e.target;
+    var count = file_node.files.length;
+
+    var formData = new FormData();
+
+    console.log(file_node.files);
+    for (let i = 0; i < count; i++) {
+      var file = file_node.files[i];
+      formData.append('files', file);
+      var filereader = new FileReader();
+      filereader.readAsDataURL(file);
+      var self = this;
+    }
+    this.dotKhamService.uploadFiles(self.id, formData).subscribe(
+      rs => {
+        // this.getImageIds();
+        rs.forEach(e => {
+          if (this.getFileMineType(e.mineType) == 'image') {
+            console.log(1);
+            this.imagesPreview.push(e);
+          } else {
+            console.log(2);
+            this.filesPreview.push(e);
+          }
+        })
+      }
+    )
 
   }
+
+  //LOAD CÁC ATTACHMENT
+  getImageIds() {
+    this.imagesPreview = [];
+    this.filesPreview = [];
+    var ir = new IrAttachmentSearchRead;
+    ir.model = 'dotkham';
+    ir.resId = this.id;
+    this.dotKhamService.getImageIds(ir).subscribe(
+      rs => {
+        rs.forEach(e => {
+          // _.unionBy(this.imagesPreview, [src], 'id');
+          if (this.getFileMineType(e.mineType) == 'image') {
+            console.log(1);
+            this.imagesPreview.push(e);
+          } else {
+            console.log(2);
+            this.filesPreview.push(e);
+          }
+        });
+      }
+    )
+  }
+
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
+
+  //GET ID CỦA CÁC ATTACHMENT
+  deleteAttachments(item, event) {
+    event.stopPropagation();
+    const dialogRef: DialogRef = this.dialogService.open({
+      title: 'Xóa cuộc hẹn',
+      content: 'Bạn chắc chắn muốn xóa ' + item.name + ' ?',
+      width: 450,
+      height: 200,
+      minWidth: 250,
+      actions: [
+        { text: 'Thoát', value: false },
+        { text: 'Đồng ý', primary: true, value: true }
+      ]
+    });
+    dialogRef.result.subscribe(
+      rs => {
+        console.log(rs);
+        if (!(rs instanceof DialogCloseResult)) {
+          if (rs['value']) {
+            this.dotKhamService.deleteAttachment(item.id).subscribe(
+              () => {
+                // this.getImageIds();
+                if (this.getFileMineType(item.mineType) == 'image') {
+                  var index = this.imagesPreview.findIndex(x => x.id == item.id);
+                  if (index > -1) {
+                    this.imagesPreview.splice(index, 1);
+                  } else {
+                    this.getImageIds();
+                  }
+                } else {
+                  index = this.filesPreview.findIndex(x => x.id == item.id);
+                  if (index > -1) {
+                    this.filesPreview.splice(index, 1);
+                  } else {
+                    this.getImageIds();
+                  }
+                }
+              }
+            )
+          }
+        }
+      }
+    )
+  }
+
+  //LẤY ĐUÔI MỞ RỘNG CỦA FILE
+  getFileExtension(name: string) {
+    var type = name.substring(name.indexOf('.') + 1, name.length);
+    if (type == 'jpg' || type == 'png' || type == 'jpeg' || type == 'bmp' || type == 'gif') {
+      return 'image';
+    } else {
+      return 'file';
+    }
+
+  }
+
+  getFileMineType(mine: string) {
+    var type = mine.substring(0, mine.indexOf('/'));
+    console.log(type);
+    return type;
+  }
+
+  viewImage(attachment: IrAttachmentBasic) {
+    var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
+    modalRef.componentInstance.attachments = this.imagesPreview;
+    modalRef.componentInstance.attachmentSelected = attachment;
+  }
+  private propagateChange = (_: any) => { };
 
 }

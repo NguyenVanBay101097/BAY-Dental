@@ -26,7 +26,7 @@ export class FieldBinaryImageSimpleComponent implements AfterViewInit, ControlVa
   constructor() { }
 
   ngAfterViewInit(): void {
-    this.source = this.imgSource ? this.imgSource : this.placeholder;
+    this.writeValue(this.imgSource);
   }
 
   writeValue(obj: any): void {

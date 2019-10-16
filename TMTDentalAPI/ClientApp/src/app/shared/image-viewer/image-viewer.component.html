@@ -1,0 +1,49 @@
+<div class="o_viewer_content" (wheel)="scrollZoom($event)" (keydown.ArrowLeft)="showPrevious()"
+    (keydown.ArrowRight)="showNext()">
+    <div class="o_viewer-header">
+        <span class="o_image_caption">
+            <i class="fa fa-picture-o mr8"></i>
+            {{attachmentSelected.name}}
+            <a class="o_download_btn ml8 small" title="Download"
+                [href]="imageDownloadApi + '/' + attachmentSelected.id + '?download=true'">
+                <i class="fa fa-fw fa-download"></i>
+            </a>
+        </span>
+        <a class="o_close_btn float-right" href="" (click)="close()">x</a>
+    </div>
+    <div class="o_viewer_img_wrapper">
+        <div class="o_viewer_zoomer">
+            <img class="o_viewer_img" [src]="imageApi + '/' + attachmentSelected.id" [ngStyle]="style" />
+        </div>
+    </div>
+    <div class="o_viewer_toolbar btn-toolbar">
+        <div class="btn-group">
+            <a class="o_viewer_toolbar_btn btn o_zoom_in" href="" title="Zoom in" (click)="zoomIn()">
+                <i class="fa fa-fw fa-plus"></i>
+            </a>
+            <a class="o_viewer_toolbar_btn btn o_zoom_reset" href="" title="Reset zoom" (click)="resetZoom()">
+                <i class="fa fa-fw fa-search"></i>
+            </a>
+            <a class="o_viewer_toolbar_btn btn o_zoom_out" href="" title="Zoom out" (click)="zoomOut()">
+                <i class="fa fa-fw fa-minus"></i>
+            </a>
+        </div>
+        <div class="btn-group">
+            <a class="o_viewer_toolbar_btn btn o_rotate" href="" title="Rotate" (click)="rotate()">
+                <i class="fas fa-sync-alt"></i>
+            </a>
+        </div>
+        <div class="btn-group">
+            <a class="o_viewer_toolbar_btn btn o_download_btn" data-toggle="tooltip" data-placement="top"
+                title="Download" [href]="imageDownloadApi + '/' + attachmentSelected.id + '?download=true'">
+                <i class="fa fa-fw fa-download"></i>
+            </a>
+        </div>
+    </div>
+    <a class="arrow arrow-left move_previous" href="" (click)="showPrevious()">
+        <span class="fa fa-chevron-left"></span>
+    </a>
+    <a class="arrow arrow-right move_next" href="" (click)="showNext()">
+        <span class="fa fa-chevron-right"></span>
+    </a>
+</div>

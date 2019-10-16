@@ -17,6 +17,7 @@ import { NavSidebarService } from './nav-sidebar.service';
 import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/field-binary-image-simple.component';
 import { DateRangeAdvanceSearchComponent } from './date-range-advance-search/date-range-advance-search.component';
 import { MyCustomKendoModule } from './my-customer-kendo.module';
+import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { MyCustomKendoModule } from './my-customer-kendo.module';
     LayoutSidebarComponent,
     LayoutHeaderComponent,
     FieldBinaryImageSimpleComponent,
+    ImageViewerComponent,
     DateRangeAdvanceSearchComponent
   ],
   exports: [
@@ -52,6 +54,6 @@ import { MyCustomKendoModule } from './my-customer-kendo.module';
     MyCustomKendoModule
   ],
   providers: [NavSidebarService],
-  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent],
+  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent],
 })
 export class SharedModule { }

@@ -59,3 +59,245 @@
     float: left;
 }
 
+.o_form_view>.oe_chatter {
+    max-width: 1140px;
+}
+
+.o_form_view>.oe_chatter {
+    flex: 1000 0 auto;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 8px 0;
+}
+
+.o_chatter {
+    width: 100%;
+    padding-top: 0!important;
+}
+
+.o_form_view>.oe_chatter {
+    flex: 1 1 auto;
+    width: 530px;
+    padding: 0;
+    overflow: auto;
+    border-left: 1px solid #dee2e6;
+    background-color: #fff;
+}
+
+.oe_chatter .o_mail_chatter_attachments {
+    min-height: 50px;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment {
+    padding: 3px;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment .o_border_dashed {
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px dashed #dee2e6;
+    text-align: center;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment .o_border_dashed .o_attach_title {
+    position: relative;
+    top: 10px;
+    margin: 0 auto;
+    padding: 0 10px;
+    font-weight: 700;
+    background: #fff;
+}
+
+.o_attachments_list,.o_attachments_previews {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.o_attachment {
+    position: relative;
+    width: 20%;
+    padding: 5px;
+}
+
+.o_attachments_previews>.o_attachment {
+    width: 16.66666667%;
+}
+
+.o_attachments_previews {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment input.o_input_file {
+    position: absolute;
+    top: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+.o_attachment .o_attachment_wrap .o_attachment_delete_cross {
+    float: right;
+    cursor: pointer;
+}
+
+.o_attachment .o_attachment_wrap {
+    overflow: hidden;
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    padding: 4px 6px 0 4px;
+    background-color: rgba(0,0,0,.05);
+}
+
+.o_attachment .o_image.o_hover {
+    opacity: 1;
+}
+
+.o_attachment .o_image {
+    width: 38px;
+    height: 38px;
+    image-orientation: from-image;
+}
+
+.o_image {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    background-image: url('https://task.tpos.dev/unknown.73f7cdb5062e14b108f4.svg');
+    background-size: contain;
+}
+
+.o_image[data-mimetype*=document], .o_image[data-mimetype*=msword], .o_image[data-mimetype*=wordprocessing], .o_image[data-mimetype^=text-master] {
+    background-image: url('https://task.tpos.dev/document.f505ea3ad7d30ab5100a.svg');
+}
+
+.o_image[data-mimetype$=calc], .o_image[data-mimetype$=csv], .o_image[data-mimetype$=numbers], .o_image[data-mimetype*=excel], .o_image[data-mimetype*=mods], .o_image[data-mimetype*=spreadsheet], .o_image[data-mimetype*=vc] {
+    background-image: url('https://task.tpos.dev/spreadsheet.dbfce4fa0b37aa9bf909.svg');
+}
+
+.o_image[data-mimetype*=keynote], .o_image[data-mimetype*=powerpoint], .o_image[data-mimetype*=presentation], .o_image[data-mimetype*=slideshow], .o_image[data-mimetype*=teacher] {
+    background-image: url('https://task.tpos.dev/presentation.94c769646a3944818fe2.svg');
+}
+
+.o_image[data-mimetype$=rtf], .o_image[data-mimetype^=text] {
+    background-image: url('https://task.tpos.dev/text.6d89fc120cc4c66c6bc6.svg');
+}
+
+.o_attachments_previews>.o_attachment .o_image_box {
+    padding-top: 75%;
+    overflow: hidden;
+}
+
+.o_attachments_previews>.o_attachment .o_image_box .o_attachment_image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-size: cover;
+    background-position: center;
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+    transition: all .3s ease 0s;
+}
+
+.o_attachments_previews>.o_attachment .o_image_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0;
+    background-image: linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.9));
+    transition: all .3s ease 0s;
+    padding: 10px;
+}
+
+.o_attachments_previews>.o_attachment .o_image_overlay .o_attachment_title {
+    position: absolute;
+    top: auto;
+    left: auto;
+    bottom: 7px;
+    right: auto;
+    width: 80%;
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    font-size: 11px;
+}
+
+.o_attachments_previews>.o_attachment .o_image_overlay .o_attachment_download {
+    position: absolute;
+    top: auto;
+    left: auto;
+    bottom: 7px;
+    right: 7px;
+}
+
+.o_attachment .o_attachment_view {
+    cursor: zoom-in;
+    font-size: 13px;
+}
+
+.o_attachments_previews>.o_attachment .o_image_overlay.focus,
+.o_attachments_previews>.o_attachment .o_image_overlay:focus,
+.o_attachments_previews>.o_attachment .o_image_overlay:hover {
+	opacity: 1
+}
+
+.o_attachment .o_image.o_hover {
+	opacity: 1
+}
+
+.o_attachment:hover .o_attachment_delete {
+	transition: all .1s ease 0s;
+	-webkit-transform: translateX(0);
+	transform: translateX(0)
+}
+
+.o_mail_preview.o_preview_unread:hover {
+	background-color: #fff
+}
+
+.float-left {
+    float: left!important;
+}
+
+.float-right {
+    float: right!important;
+}
+
+.o_attachment .caption {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ml-1, .mx-1 {
+    margin-left: .25rem!important;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.small, small {
+    font-size: 80%;
+    font-weight: 400;
+}
+
+.text-uppercase {
+    text-transform: uppercase!important;
+}
+
+.o_attachment_delete_cross{
+    color: white;
+}

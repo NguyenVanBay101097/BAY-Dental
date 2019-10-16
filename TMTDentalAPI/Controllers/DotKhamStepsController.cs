@@ -95,7 +95,15 @@ namespace TMTDentalAPI.Controllers
             }
 
             var res = _dotKhamStepService.SearchQuery(x => x.InvoicesId == val.InvoicesId && x.ProductId == val.ProductId).Max(x=>x.Order);
-            val.Order = res + 1;
+            if (res.HasValue)
+            {
+                val.Order = res + 1;
+            }
+            else
+            {
+                val.Order = 1;
+            }
+            
             var dkstep = _mapper.Map<DotKhamStep>(val);
             await _dotKhamStepService.CreateAsync(dkstep);
 
@@ -110,7 +118,7 @@ namespace TMTDentalAPI.Controllers
             {
                 return NotFound();
             }
-            var query = await _dotKhamStepService.SearchQuery(x => x.Order > step.Order).ToListAsync();
+            var query = await _dotKhamStepService.SearchQuery(x => x.ProductId==step.ProductId && x.InvoicesId ==step.InvoicesId && x.Order > step.Order).ToListAsync();
             if (query.Count > 0)
             {
                 foreach (var item in query)
