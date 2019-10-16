@@ -1022,9 +1022,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     const dialogRef: DialogRef = this.dialogService.open({
       title: 'Xóa cuộc hẹn',
       content: 'Bạn chắc chắn muốn xóa ' + item.name + ' ?',
-      width: 450,
-      height: 200,
-      minWidth: 250,
       actions: [
         { text: 'Thoát', value: false },
         { text: 'Đồng ý', primary: true, value: true }
