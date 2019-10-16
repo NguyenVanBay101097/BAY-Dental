@@ -25,12 +25,20 @@ namespace ApplicationCore.Entities
         public Guid? CategId { get; set; }
         public ProductCategory Categ { get; set; }
 
+        /// <summary>
+        /// 3_global: Áp dụng tất cả dịch vụ
+        /// 2_product_category: Áp dụng trên 1 nhóm dịch vụ cụ thể
+        /// 0_product_variant: Áp dụng trên 1 dịch vụ cụ thể
+        /// </summary>
         public string AppliedOn { get; set; }
 
         public int MinQuantity { get; set; }
 
         public int Sequence { get; set; }
 
+        /// <summary>
+        /// list_price: Giá bán
+        /// </summary>
         public string Base { get; set; }
 
         public Guid? PriceListId { get; set; }
@@ -53,6 +61,10 @@ namespace ApplicationCore.Entities
 
         public DateTime? DateEnd { get; set; }
 
+        /// <summary>
+        /// fixed: Giá cố định
+        /// percentage: Giảm phần trăm
+        /// </summary>
         public string ComputePrice { get; set; }
 
         public decimal? FixedPrice { get; set; }
