@@ -35,7 +35,6 @@ import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch } 
 import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
-import Viewer from 'viewerjs';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 
 @Component({
@@ -1008,8 +1007,13 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   }
 
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
+
   //GET ID CỦA CÁC ATTACHMENT
-  deleteAttachments(item) {
+  deleteAttachments(item, event) {
+    event.stopPropagation();
     const dialogRef: DialogRef = this.dialogService.open({
       title: 'Xóa cuộc hẹn',
       content: 'Bạn chắc chắn muốn xóa ' + item.name + ' ?',
