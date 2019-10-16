@@ -974,7 +974,16 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
     this.dotKhamService.uploadFiles(self.id, formData).subscribe(
       rs => {
-        this.getImageIds();
+        // this.getImageIds();
+        rs.forEach(e => {
+          if (this.getFileMineType(e.mineType) == 'image') {
+            console.log(1);
+            this.imagesPreview.push(e);
+          } else {
+            console.log(2);
+            this.filesPreview.push(e);
+          }
+        })
       }
     )
 
@@ -991,7 +1000,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       rs => {
         rs.forEach(e => {
           // _.unionBy(this.imagesPreview, [src], 'id');
-          if (e.mineType.substr(0, e.mineType.indexOf('/')).toString() == 'image') {
+          if (this.getFileMineType(e.mineType) == 'image') {
             console.log(1);
             this.imagesPreview.push(e);
           } else {
@@ -1001,10 +1010,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         });
       }
     )
-  }
-
-  getFilesIds() {
-
   }
 
   stopPropagation(event) {
@@ -1032,22 +1037,22 @@ export class DotKhamCreateUpdateComponent implements OnInit {
           if (rs['value']) {
             this.dotKhamService.deleteAttachment(item.id).subscribe(
               () => {
-                this.getImageIds();
-                // if (this.getFileExtension(item.name) == 'image') {
-                //   var index = this.imagesPreview.findIndex(x => x.id == item.id);
-                //   if (index > -1) {
-                //     this.imagesPreview.splice(index, 1);
-                //   } else {
-                //     this.getImageIds();
-                //   }
-                // } else {
-                //   index = this.filesPreview.findIndex(x => x.id == item.id);
-                //   if (index > -1) {
-                //     this.filesPreview.splice(index, 1);
-                //   } else {
-                //     this.getImageIds();
-                //   }
-                // }
+                // this.getImageIds();
+                if (this.getFileMineType(item.mineType) == 'image') {
+                  var index = this.imagesPreview.findIndex(x => x.id == item.id);
+                  if (index > -1) {
+                    this.imagesPreview.splice(index, 1);
+                  } else {
+                    this.getImageIds();
+                  }
+                } else {
+                  index = this.filesPreview.findIndex(x => x.id == item.id);
+                  if (index > -1) {
+                    this.filesPreview.splice(index, 1);
+                  } else {
+                    this.getImageIds();
+                  }
+                }
               }
             )
           }
@@ -1058,7 +1063,19 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   //LẤY ĐUÔI MỞ RỘNG CỦA FILE
   getFileExtension(name: string) {
-    return name.substring(name.indexOf('.') + 1, name.length);
+    var type = name.substring(name.indexOf('.') + 1, name.length);
+    if (type == 'jpg' || type == 'png' || type == 'jpeg' || type == 'bmp' || type == 'gif') {
+      return 'image';
+    } else {
+      return 'file';
+    }
+
+  }
+
+  getFileMineType(mine: string) {
+    var type = mine.substring(0, mine.indexOf('/'));
+    console.log(type);
+    return type;
   }
 
   viewImage(attachment: IrAttachmentBasic) {

@@ -109,11 +109,9 @@ export class DotKhamService {
         return this.http.put(this.baseApi + 'api/DotKhamSteps/Reorder/' + index, list);
     }
 
-    uploadFiles(id, formData: FormData) {
-
-
+    uploadFiles(id, formData: FormData): Observable<IrAttachmentBasic[]> {
         // e.headers = e.headers.append("Access-Control-Allow-Credentials", "false");
-        return this.http.post(this.baseApi + this.apiUrl + `/${id}/BinaryUploadAttachment`, formData);
+        return this.http.post<IrAttachmentBasic[]>(this.baseApi + this.apiUrl + `/${id}/BinaryUploadAttachment`, formData);
     }
 
     getImageIds(irSR: IrAttachmentSearchRead): Observable<IrAttachmentBasic[]> {

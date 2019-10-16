@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
 
+
 namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -227,7 +228,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (files == null || files.Count == 0)
                 return BadRequest();
-            
+            var list = new List<IrAttachment>();
             foreach (var file in files)
             {
                 var attachment = new IrAttachment
@@ -245,9 +246,10 @@ namespace TMTDentalAPI.Controllers
                 }
 
                 await _attachmentService.CreateAsync(attachment);
+                list.Add(attachment);
             }
 
-            return NoContent();
+            return Ok(list);
         }
     }
 }
