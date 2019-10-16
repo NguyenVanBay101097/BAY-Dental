@@ -127,7 +127,7 @@ registerLocaleData(localeVi, 'vi');
     InputsModule,
     MatStepperModule,
     NgbModule,
-    HistoryModule,
+    HistoryModule
 
   ],
   providers: [

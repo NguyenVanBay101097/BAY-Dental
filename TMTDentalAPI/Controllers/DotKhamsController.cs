@@ -162,7 +162,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetLaboOrderLines(Guid id)
         {
             var res = await _laboOrderLineService.GetAllForDotKham(id);
-            return Ok(res);
+            return Ok(res); 
         }
 
         [HttpGet("{id}/GetAppointments")]
@@ -227,13 +227,15 @@ namespace TMTDentalAPI.Controllers
         {
             if (files == null || files.Count == 0)
                 return BadRequest();
-
+            
             foreach (var file in files)
             {
                 var attachment = new IrAttachment
                 {
                     Name = file.FileName,
                     DatasFname = file.FileName,
+                    ResId = id,
+                    ResModel = "dotkham"
                 };
 
                 using (var memoryStream = new MemoryStream())

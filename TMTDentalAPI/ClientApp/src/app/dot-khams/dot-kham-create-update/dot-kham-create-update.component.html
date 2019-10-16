@@ -204,6 +204,10 @@
                             <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo" role="tab"
                                 aria-controls="labo" aria-selected="false">Labo</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="image-tab" data-toggle="tab" href="#image" role="tab"
+                                aria-controls="image" aria-selected="false">Đính kèm</a>
+                        </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" id="appointment-tab" data-toggle="tab" href="#appointment" role="tab"
                                 aria-controls="appointment" aria-selected="false">Danh sách hẹn</a>
@@ -356,33 +360,89 @@
                                 </table>
                             </div>
                         </div>
-                        <!-- <div class="tab-pane" id="appointment" role="tabpanel" aria-labelledby="appointment-tab">
-                            <div>
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Mã</th>
-                                            <th>Ngày hẹn</th>
-                                            <th>Bác sĩ</th>
-                                            <th>Người hẹn</th>
-                                            <th>Ghi chú</th>
-                                            <th>Trạng thái</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let item of appointments">
-                                            <td><a class="text-primary" style="cursor: pointer;"
-                                                    (click)="editAppointment(item)">{{item.name}}</a></td>
-                                            <td>{{ item.date | date : 'short' }}</td>
-                                            <td>{{ item.doctor ? item.doctor.name : '' }}</td>
-                                            <td>{{ item.user ? item.user.name : '' }}</td>
-                                            <td>{{ item.note }}</td>
-                                            <td>{{ getAppointState(item.state) }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="tab-pane" id="image" role="tabpanel" aria-labelledby="image-tab">
+                            <div class="o_chatter oe_chatter">
+                                <div class="o_mail_chatter_attachments">
+                                    <div class="o_chatter_attachment">
+                                        <div class="o_border_dashed">
+                                            <span class="o_attach_title">Hình ảnh/Files</span>
+                                        </div>
+                                        <div class="o_attachments_previews">
+                                            <!-- Preview hình ảnh -->
+                                            <div class="o_attachment" *ngFor="let img of imagesPreview">
+                                                <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                                    <div class="o_image_box">
+                                                        <div class="o_attachment_image" id="{{img.name}}"
+                                                            [style.background-image]="'url('+dotKhamService.baseApi+'api/Web/Image/'+img.id+'/240x240?crop=true)'">
+                                                        </div>
+                                                        <div class="o_image_overlay o_attachment_view">
+                                                            <span class="fa fa-times o_attachment_delete_cross"
+                                                                (click)="deleteAttachments(img)"
+                                                                title="Delete {{img.name}}"></span>
+                                                            <span
+                                                                class="o_attachment_title text-white">{{img.name}}</span>
+                                                            <a class="o_attachment_download"
+                                                                href="{{dotKhamService.baseApi}}api/Web/Content/{{img.id}}?download=true">
+                                                                <i aria-label="Download"
+                                                                    class="fa fa-download text-white" role="img"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="o_attachments_list">
+                                            <!-- Danh sách files -->
+                                            <div class="o_attachment" *ngFor="let file of filesPreview"
+                                                title="{{file.name}}">
+                                                <div class="o_attachment_wrap">
+                                                    <span class="fa fa-times o_attachment_delete_cross"
+                                                        (click)="deleteAttachments(file)"
+                                                        title="Delete {{file.name}}"></span>
+                                                    <div class="o_image_box float-left">
+                                                        <a aria-label="Download"
+                                                            href="{{dotKhamService.baseApi}}api/Web/Content/{{file.id}}?download=true"
+                                                            title="Download">
+                                                            <span class="o_image o_hover"
+                                                                [attr.data-mimetype]="file.mineType"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div class="caption">
+                                                        <a class="ml-1"
+                                                            href="{{dotKhamService.baseApi}}api/Web/Content/{{file.id}}?download=true"
+                                                            title="{{file.name}}">{{file.name}}</a>
+                                                    </div>
+                                                    <div class="caption small">
+                                                        <span class="ml-1 small text-uppercase" title="Download">
+                                                            <b>{{getFileExtension(file.name)}}</b></span>
+                                                        <a href="" class="ml-1 o_attachment_download float-right"
+                                                            href="{{dotKhamService.baseApi}}api/Web/Content/{{file.id}}?download=true"
+                                                            title="Download">
+                                                            <i aria-label="Download" class="fa fa-download"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="o_chatter_attachment_form">
+                                            <div class="o_hidden_input_file ">
+                                                <div class="o_form_binary_form"><input #inputFile class="o_input_file"
+                                                        multiple="multiple" name="ufile" type="file"
+                                                        (change)="addAttachments($event)">
+                                                    <div class="text-center">
+                                                        <span class="btn btn-link o_upload_attachments_button"
+                                                            (click)="inputFile.click()">
+                                                            <span class="fa fa-plus-square"></span> Chọn file
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>

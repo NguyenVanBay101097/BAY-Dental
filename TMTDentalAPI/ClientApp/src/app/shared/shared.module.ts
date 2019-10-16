@@ -15,6 +15,7 @@ import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.componen
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
 import { NavSidebarService } from './nav-sidebar.service';
 import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/field-binary-image-simple.component';
+import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/fie
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,
     LayoutHeaderComponent,
-    FieldBinaryImageSimpleComponent
+    FieldBinaryImageSimpleComponent,
+    ImageViewerComponent
   ],
   exports: [
     HeaderComponent,
@@ -47,6 +49,6 @@ import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/fie
     ReactiveFormsModule
   ],
   providers: [NavSidebarService],
-  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent],
+  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent],
 })
 export class SharedModule { }

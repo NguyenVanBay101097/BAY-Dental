@@ -67,6 +67,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("[action]/{id}")]
         [HttpGet("[action]/{id}/{width}x{height}")]
         public async Task<IActionResult> Image(Guid id, int width, int height, bool crop = false)
         {

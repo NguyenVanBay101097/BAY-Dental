@@ -11,12 +11,15 @@ import { LaboOrderLineBasic } from '../labo-order-lines/labo-order-line.service'
 import { AccountInvoiceCbx } from '../account-invoices/account-invoice.service';
 import { DotKhamPaging, DotKhamDefaultGet, DotKhamDisplay, DotKhamStepDisplay, DotKhamPatch } from './dot-khams';
 import { AppointmentDisplay } from '../appointment/appointment';
+import { IrAttachmentSearchRead, IrAttachmentBasic } from '../shared/shared';
 
 
 
 @Injectable()
 export class DotKhamService {
     apiUrl = 'api/dotkhams';
+    readonly currentModel = 'dotkham';
+    readonly irApiUrl = 'api/IrAttachments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<DotKhamPaging> {
@@ -105,4 +108,20 @@ export class DotKhamService {
     reorder(index, list) {
         return this.http.put(this.baseApi + 'api/DotKhamSteps/Reorder/' + index, list);
     }
+
+    uploadFiles(id, formData: FormData) {
+
+
+        // e.headers = e.headers.append("Access-Control-Allow-Credentials", "false");
+        return this.http.post(this.baseApi + this.apiUrl + `/${id}/BinaryUploadAttachment`, formData);
+    }
+
+    getImageIds(irSR: IrAttachmentSearchRead): Observable<IrAttachmentBasic[]> {
+        return this.http.post<IrAttachmentBasic[]>(this.baseApi + this.irApiUrl + '/SearchRead', irSR);
+    }
+
+    deleteAttachment(id) {
+        return this.http.delete(this.baseApi + this.irApiUrl + '/' + id);
+    }
+
 }

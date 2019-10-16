@@ -10,6 +10,7 @@ import { DotKhamLineService } from './dot-kham-line.service';
 import { DotKhamLineOperationService } from './dot-kham-line-operation.service';
 import { DotKhamListComponent } from './dot-kham-list/dot-kham-list.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [DotKhamCreateUpdateComponent, DotKhamListComponent],
@@ -19,7 +20,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    DragDropModule
+    DragDropModule,
+    SharedModule
   ],
   providers: [
     DotKhamService,
