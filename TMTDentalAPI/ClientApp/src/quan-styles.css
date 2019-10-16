@@ -297,3 +297,7 @@ a {
 .text-uppercase {
     text-transform: uppercase!important;
 }
+
+.o_attachment_delete_cross{
+    color: white;
+}
