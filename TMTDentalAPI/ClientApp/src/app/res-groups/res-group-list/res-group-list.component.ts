@@ -9,7 +9,10 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-res-group-list',
   templateUrl: './res-group-list.component.html',
-  styleUrls: ['./res-group-list.component.css']
+  styleUrls: ['./res-group-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 
 export class ResGroupListComponent implements OnInit {

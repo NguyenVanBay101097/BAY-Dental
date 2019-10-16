@@ -8,6 +8,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using AutoMapper;
 using IdentityServer4.Services;
+using Infrastructure.Caches;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -166,6 +167,12 @@ namespace TMTDentalAPI
             services.AddScoped<IIrAttachmentService, IrAttachmentService>();
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<IUploadService, UploadService>();
+            services.AddScoped<IIRRuleService, IRRuleService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddMemoryCache();
+
+            services.AddSingleton<IMyCache, MyMemoryCache>();
             services.AddSingleton<IMailSender, SendGridSender>();
             
 

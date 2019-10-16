@@ -13,7 +13,10 @@ import { UserSimple } from 'src/app/users/user-simple';
 @Component({
   selector: 'app-res-group-create-update',
   templateUrl: './res-group-create-update.component.html',
-  styleUrls: ['./res-group-create-update.component.css']
+  styleUrls: ['./res-group-create-update.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class ResGroupCreateUpdateComponent implements OnInit {
   groupForm: FormGroup;
@@ -62,23 +65,23 @@ export class ResGroupCreateUpdateComponent implements OnInit {
     });
   }
 
-  checkAll(e) {
-    var value = e.target.checked;
+  checkAll(val: boolean) {
+    debugger;
     this.modelAccesses.controls.forEach(line => {
-      line.get('permRead').patchValue(value);
-      line.get('permCreate').patchValue(value);
-      line.get('permWrite').patchValue(value);
-      line.get('permUnlink').patchValue(value);
+      line.get('permRead').patchValue(val);
+      line.get('permCreate').patchValue(val);
+      line.get('permWrite').patchValue(val);
+      line.get('permUnlink').patchValue(val);
     });
   }
 
-  checkAllLine(e, index) {
-    var value = e.target.checked;
+
+  checkAllLine(val: boolean, index) {
     var line = this.modelAccesses.controls[index];
-    line.get('permRead').patchValue(value);
-    line.get('permCreate').patchValue(value);
-    line.get('permWrite').patchValue(value);
-    line.get('permUnlink').patchValue(value);
+    line.get('permRead').patchValue(val);
+    line.get('permCreate').patchValue(val);
+    line.get('permWrite').patchValue(val);
+    line.get('permUnlink').patchValue(val);
   }
 
   permChange(e, index) {

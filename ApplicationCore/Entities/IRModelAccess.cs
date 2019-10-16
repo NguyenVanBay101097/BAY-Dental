@@ -13,6 +13,7 @@ namespace ApplicationCore.Entities
             PermCreate = true;
             PermWrite = true;
             PermUnlink = true;
+            Name = "/";
         }
 
         public string Name { get; set; }

@@ -38,7 +38,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]ApplicationUserPaged val)
         {
-            _modelAccessService.Check("ResUser", "Read");
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));

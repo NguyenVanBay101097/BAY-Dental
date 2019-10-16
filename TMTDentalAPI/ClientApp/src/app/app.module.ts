@@ -61,6 +61,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { HistoryModule } from './history/history.module';
 import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCustomParserFormatter } from './core/ngb-date-custom-parser-formatter';
+import { ResGroupsModule } from './res-groups/res-groups.module';
 
 
 export function tokenGetter() {
@@ -127,8 +128,8 @@ registerLocaleData(localeVi, 'vi');
     InputsModule,
     MatStepperModule,
     NgbModule,
-    HistoryModule
-
+    HistoryModule,
+    ResGroupsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

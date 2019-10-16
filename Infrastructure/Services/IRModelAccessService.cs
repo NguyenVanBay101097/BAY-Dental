@@ -19,9 +19,9 @@ namespace Infrastructure.Services
         private const string CACHE_KEY_FORMAT = "{0}-ir.model.access-{1}-{2}-{3}";
         private readonly CatalogDbContext _context;
         private readonly AppTenant _tenant;
-        private IMemoryCache _cache;
+        private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,
-            CatalogDbContext context, IMemoryCache cache, ITenant<AppTenant> tenant)
+            CatalogDbContext context, IMyCache cache, ITenant<AppTenant> tenant)
         : base(repository, httpContextAccessor)
         {
             _context = context;
@@ -31,45 +31,54 @@ namespace Infrastructure.Services
 
         public bool Check(string model, string mode = "Read", bool raiseException = true)
         {
-            if (IsUserRoot)
-                return true;
+            var CACHE_KEY = "ir.model.access-{0}-{1}-{2}";
+            var key = string.Format(CACHE_KEY, UserId, model, mode);
 
-            var modes = new string[] { "Read", "Write", "Create", "Unlink" };
-            if (!modes.Contains(mode))
-                throw new Exception("Invalid access mode");
+            var result = _cache.GetOrCreate(key, entry =>
+            {
+                if (IsUserRoot)
+                    return true;
 
-            var userId = UserId;
-            bool r = false;
-            if (mode == "Read")
-            {
-                var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermRead=1",
-                new SqlParameter("@model", model),
-                new SqlParameter("@userId", userId)).FirstOrDefault();
-                r = access != null;
-            }
-            else if (mode == "Create")
-            {
-                var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermCreate=1",
-                  new SqlParameter("@model", model),
-                  new SqlParameter("@userId", userId)).FirstOrDefault();
-                r = access != null;
-            }
-            else if (mode == "Write")
-            {
-                var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermWrite=1",
-                  new SqlParameter("@model", model),
-                  new SqlParameter("@userId", userId)).FirstOrDefault();
-                r = access != null;
-            }
-            else if (mode == "Unlink")
-            {
-                var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermUnlink=1",
-                  new SqlParameter("@model", model),
-                  new SqlParameter("@userId", userId)).FirstOrDefault();
-                r = access != null;
-            }
+                var modes = new string[] { "Read", "Write", "Create", "Unlink" };
+                if (!modes.Contains(mode))
+                    throw new Exception("Invalid access mode");
 
-            if (!r && raiseException)
+                var userId = UserId;
+                bool r = false;
+                if (mode == "Read")
+                {
+                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermRead=1",
+                    new SqlParameter("@model", model),
+                    new SqlParameter("@userId", userId)).FirstOrDefault();
+                    r = access != null;
+                }
+                else if (mode == "Create")
+                {
+                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermCreate=1",
+                      new SqlParameter("@model", model),
+                      new SqlParameter("@userId", userId)).FirstOrDefault();
+                    r = access != null;
+                }
+                else if (mode == "Write")
+                {
+                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermWrite=1",
+                      new SqlParameter("@model", model),
+                      new SqlParameter("@userId", userId)).FirstOrDefault();
+                    r = access != null;
+                }
+                else if (mode == "Unlink")
+                {
+                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermUnlink=1",
+                      new SqlParameter("@model", model),
+                      new SqlParameter("@userId", userId)).FirstOrDefault();
+                    r = access != null;
+                }
+
+                entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+                return r;
+            });
+
+            if (!result && raiseException)
             {
                 var msgHeads = new Dictionary<string, string>();
                 msgHeads.Add("Read", "Xin lỗi, bạn không được phép xem tài liệu này.");
@@ -77,17 +86,20 @@ namespace Infrastructure.Services
                 msgHeads.Add("Create", "Xin lỗi, bạn không được phép tạo loại tài liệu này.");
                 msgHeads.Add("Unlink", "Xin lỗi, bạn không được phép xóa tài liệu này.");
 
-                var modelObj = GetService<IIRModelService>();
-                var irModel = modelObj.SearchQuery(x => x.Model == model).FirstOrDefault();
+                var irModel = _context.IRModels.Where(x => x.Model == model).FirstOrDefault();
                 var msg = msgHeads[mode];
                 if (irModel != null)
                 {
                     msg += " " + irModel.Name;
                 }
+                else
+                {
+                    msg += " " + model;
+                }
                 throw new Exception(msg);
             }
 
-            return r;
+            return result;
         }
     }
 }

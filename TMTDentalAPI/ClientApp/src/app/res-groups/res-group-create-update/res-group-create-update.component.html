@@ -1,111 +1,129 @@
-<div class="o_control_panel o_breadcrumb_full">
-    <ol class="breadcrumb">
-        <li>
-            <a routerLink="/res-groups">Nhóm quyền</a>
-        </li>
-        <li class="active">
-            {{groupForm.get('name').value}}
-        </li>
-    </ol>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" *ngIf="!id" (click)="onSave()" accesskey="s">
-                    Lưu</button>
-                <button type="button" class="btn btn-primary btn-sm" *ngIf="id" (click)="onUpdate()" accesskey="s">
-                    Lưu</button>
-                <button type="button" class="btn btn-light btn-sm" *ngIf="id" (click)="onNew()" accesskey="c">
-                    Thêm mới</button>
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/res-groups">Nhóm quyền</a>
+            </li>
+            <li class="active">
+                {{groupForm.get('name').value}}
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="!id" (click)="onSave()" accesskey="s">
+                        Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="id" (click)="onUpdate()" accesskey="s">
+                        Lưu</button>
+                    <button type="button" class="btn btn-light btn-sm" *ngIf="id" (click)="onNew()" accesskey="c">
+                        Thêm mới</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
             </div>
         </div>
-        <div class="o_cp_sidebar">
+        <div class="o_cp_right">
         </div>
-    </div>
-    <div class="o_cp_right">
     </div>
 </div>
 
-
-<form class="o_form_view o_form_editable" [formGroup]="groupForm" #form="ngForm">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="oe_title">
-                <label class="o_form_label oe_edit_only">Tên nhóm</label>
-                <h1>
-                    <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
-                </h1>
-            </div>
-            <div class="o_notebook">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                            aria-controls="home" aria-selected="true">Quyền truy cập</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="user-tab" data-toggle="tab" href="#user" role="tab" aria-controls="user"
-                            aria-selected="true">Người dùng</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div>
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <input type="checkbox" (change)="checkAll($event)">
-                                        </th>
-                                        <th>Đối tượng</th>
-                                        <th>Quyền</th>
-                                    </tr>
-                                </thead>
-                                <tbody formArrayName="modelAccesses">
-                                    <ng-container *ngFor="let line of modelAccesses.controls; let i=index">
-                                        <tr [formGroupName]="i">
-                                            <td>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        (change)="checkAllLine($event, i)">
-                                                </div>
-                                            </td>
-                                            <td>{{line.get('name').value}}</td>
-                                            <td>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        formControlName="permRead" id="inlineCheckbox1">
-                                                    <label class="form-check-label" for="inlineCheckbox1">Xem</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        formControlName="permCreate" id="inlineCheckbox2">
-                                                    <label class="form-check-label" for="inlineCheckbox2">Thêm</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        formControlName="permWrite" id="inlineCheckbox3">
-                                                    <label class="form-check-label" for="inlineCheckbox3">Sửa</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        formControlName="permUnlink" id="inlineCheckbox4">
-                                                    <label class="form-check-label" for="inlineCheckbox4">Xóa</label>
-                                                </div>
-                                            </td>
+<div class="o_content">
+    <form class="o_form_view o_form_editable" [formGroup]="groupForm" #form="ngForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên nhóm</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
+                    </h1>
+                </div>
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                aria-controls="home" aria-selected="true">Quyền truy cập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="user-tab" data-toggle="tab" href="#user" role="tab"
+                                aria-controls="user" aria-selected="true">Người dùng</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <button type="button" class="btn btn-success btn-sm mr-2"
+                                                    (click)="checkAll(true)">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    (click)="checkAll(false)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </th>
+                                            <th>Đối tượng</th>
+                                            <th>Quyền</th>
                                         </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody formArrayName="modelAccesses">
+                                        <ng-container *ngFor="let line of modelAccesses.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td>
+                                                    <button type="button" class="btn btn-success btn-sm mr-2"
+                                                        (click)="checkAllLine(true, i)">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        (click)="checkAllLine(false, i)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </td>
+                                                <td>{{line.get('name').value}}</td>
+                                                <td>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            formControlName="permRead" id="inlineCheckbox1">
+                                                        <label class="form-check-label"
+                                                            for="inlineCheckbox1">Xem</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            formControlName="permCreate" id="inlineCheckbox2">
+                                                        <label class="form-check-label"
+                                                            for="inlineCheckbox2">Thêm</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            formControlName="permWrite" id="inlineCheckbox3">
+                                                        <label class="form-check-label"
+                                                            for="inlineCheckbox3">Sửa</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            formControlName="permUnlink" id="inlineCheckbox4">
+                                                        <label class="form-check-label"
+                                                            for="inlineCheckbox4">Xóa</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade show" id="user" role="tabpanel" aria-labelledby="user-tab">
-                        <div>
-                            <kendo-multiselect [data]="listUsers" [textField]="'name'" [valueField]="'id'"
-                                formControlName="users">
-                            </kendo-multiselect>
+                        <div class="tab-pane fade show" id="user" role="tabpanel" aria-labelledby="user-tab">
+                            <div>
+                                <kendo-multiselect [data]="listUsers" [textField]="'name'" [valueField]="'id'"
+                                    formControlName="users">
+                                </kendo-multiselect>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
