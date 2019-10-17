@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { IRModelBasic } from '../ir-models/ir-model';
 
 export class ResGroupFilter {
     sort: string;
@@ -24,6 +25,7 @@ export class ResGroupDisplay {
 export class IRModelAccessDisplay {
     id: string;
     name: string;
+    model: IRModelBasic;
     permRead: boolean;
     permWrite: boolean;
     permCreate: boolean;

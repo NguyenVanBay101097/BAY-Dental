@@ -59,7 +59,8 @@ namespace Infrastructure.Services
                 list.Add(new IRModelAccessDisplay
                 {
                     Name = model.Name,
-                    ModelId = model.Id
+                    ModelId = model.Id,
+                    Model = _mapper.Map<IRModelBasic>(model)
                 });
             }
             res.ModelAccesses = list;

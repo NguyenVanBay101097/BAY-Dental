@@ -221,6 +221,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new DotKhamStepProfile());
                 mc.AddProfile(new HistoriesProfile());
                 mc.AddProfile(new PartnerHistoryRelProfile());
+                mc.AddProfile(new IRModelProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

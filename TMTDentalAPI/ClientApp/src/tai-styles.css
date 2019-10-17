@@ -137,6 +137,10 @@ html .o_web_client>.o_action_manager .o_action .o_content {
     padding: 15px;
 }
 
+.o_advance_search_dropdown .o_advance_search_dropdown_container {
+    width: 300px;
+}
+
 .o_advance_search .o_advance_search_container.show {
     margin-right: 0;
 }

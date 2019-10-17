@@ -41,8 +41,8 @@ export class AppointmentListComponent implements OnInit {
 
   schedulerShow: boolean;
 
-  fromDateList: Date;
-  toDateList: Date;
+  fromDateList: Date = new Date(new Date().toDateString());
+  toDateList: Date = new Date(new Date().toDateString());
   fromDateScheduler: Date;
   toDateScheduler: Date;
 
@@ -123,6 +123,19 @@ export class AppointmentListComponent implements OnInit {
   onAdvanceSearchChange(filter) {
     this.fromDateList = filter.dateFrom;
     this.toDateList = filter.dateTo;
+    this.confirmed = filter.confirmedState;
+    this.done = filter.doneState;
+    this.cancel = filter.cancelState;
+    this.loadByView();
+  }
+
+  onDateSearchChange(filter) {
+    this.fromDateList = filter.dateFrom;
+    this.toDateList = filter.dateTo;
+    this.loadByView();
+  }
+
+  onStateSearchChange(filter) {
     this.confirmed = filter.confirmedState;
     this.done = filter.doneState;
     this.cancel = filter.cancelState;

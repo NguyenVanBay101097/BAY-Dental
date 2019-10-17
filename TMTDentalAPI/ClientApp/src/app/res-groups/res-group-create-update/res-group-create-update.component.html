@@ -50,6 +50,10 @@
                     </ul>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    (click)="addAccess()">Thêm</button>
+                            </div>
                             <div>
                                 <table class="table table-sm">
                                     <thead>
@@ -64,8 +68,10 @@
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </th>
+                                            <th>Tên</th>
                                             <th>Đối tượng</th>
                                             <th>Quyền</th>
+                                            <th>#</th>
                                         </tr>
                                     </thead>
                                     <tbody formArrayName="modelAccesses">
@@ -82,6 +88,7 @@
                                                     </button>
                                                 </td>
                                                 <td>{{line.get('name').value}}</td>
+                                                <td>{{line.get('model').value.name}}</td>
                                                 <td>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="checkbox"
@@ -107,6 +114,12 @@
                                                         <label class="form-check-label"
                                                             for="inlineCheckbox4">Xóa</label>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-light mr-2"
+                                                        (click)="editLine(line)">Sửa</button>
+                                                    <button type="button" class="btn btn-sm btn-light"
+                                                        (click)="deleteLine(i)">Xóa</button>
                                                 </td>
                                             </tr>
                                         </ng-container>

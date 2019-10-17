@@ -7,9 +7,10 @@ import { ResGroupService } from './res-group.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ResGroupCreateUpdateComponent } from './res-group-create-update/res-group-create-update.component';
+import { ResGroupAccessCuDialogComponent } from './res-group-access-cu-dialog/res-group-access-cu-dialog.component';
 
 @NgModule({
-  declarations: [ResGroupListComponent, ResGroupCreateUpdateComponent],
+  declarations: [ResGroupListComponent, ResGroupCreateUpdateComponent, ResGroupAccessCuDialogComponent],
   imports: [
     CommonModule,
     ResGroupsRoutingModule,
@@ -19,6 +20,7 @@ import { ResGroupCreateUpdateComponent } from './res-group-create-update/res-gro
   ],
   providers: [
     ResGroupService
-  ]
+  ],
+  entryComponents: [ResGroupAccessCuDialogComponent]
 })
 export class ResGroupsModule { }

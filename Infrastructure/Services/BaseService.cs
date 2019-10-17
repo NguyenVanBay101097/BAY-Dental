@@ -201,6 +201,8 @@ namespace Infrastructure.Services
         {
             if (IsUserRoot)
                 return;
+            if (string.IsNullOrEmpty(UserId))
+                return;
 
             var domain = DomainRuleGet(typeof(TEntity).Name, mode: operation);
             if (domain == null)
@@ -212,6 +214,8 @@ namespace Infrastructure.Services
 
         private ISpecification<TEntity> DomainRuleGet(string model_name, string mode)
         {
+            if (string.IsNullOrEmpty(UserId))
+                return null;
             string DOMAIN_RULE_CACHE_KEY = "ir.rule-{0}-{1}-{2}";
             var cache = GetService<IMyCache>();
             var userObj = GetService<IUserService>();

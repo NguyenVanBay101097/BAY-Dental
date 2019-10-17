@@ -19,5 +19,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool PermUnlink { get; set; }
 
         public Guid ModelId { get; set; }
+        public IRModelBasic Model { get; set; }
     }
 }

@@ -8,6 +8,8 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { ResGroupService } from '../res-group.service';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { UserSimple } from 'src/app/users/user-simple';
+import { ResGroupAccessCuDialogComponent } from '../res-group-access-cu-dialog/res-group-access-cu-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -24,7 +26,7 @@ export class ResGroupCreateUpdateComponent implements OnInit {
   listUsers: UserSimple[];
 
   constructor(private fb: FormBuilder, private userService: UserService,
-    private groupService: ResGroupService, private windowService: WindowService,
+    private groupService: ResGroupService, private modalService: NgbModal,
     private route: ActivatedRoute, private notificationService: NotificationService,
     private router: Router) { }
 
@@ -66,7 +68,6 @@ export class ResGroupCreateUpdateComponent implements OnInit {
   }
 
   checkAll(val: boolean) {
-    debugger;
     this.modelAccesses.controls.forEach(line => {
       line.get('permRead').patchValue(val);
       line.get('permCreate').patchValue(val);
@@ -82,6 +83,30 @@ export class ResGroupCreateUpdateComponent implements OnInit {
     line.get('permCreate').patchValue(val);
     line.get('permWrite').patchValue(val);
     line.get('permUnlink').patchValue(val);
+  }
+
+  addAccess() {
+    let modalRef = this.modalService.open(ResGroupAccessCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm quyền truy cập';
+
+    modalRef.result.then((result) => {
+      this.modelAccesses.push(this.fb.group(result));
+    }, () => {
+    });
+  }
+
+  editLine(line: FormGroup) {
+    let modalRef = this.modalService.open(ResGroupAccessCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa quyền truy cập';
+    modalRef.componentInstance.item = line.value;
+    modalRef.result.then((result) => {
+      line.patchValue(result);
+    }, () => {
+    });
+  }
+
+  deleteLine(index) {
+    this.modelAccesses.removeAt(index);
   }
 
   permChange(e, index) {

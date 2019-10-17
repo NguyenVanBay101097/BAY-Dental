@@ -20,8 +20,8 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="bd-user" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                    <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg"
-                        width="40" height="40" class="rounded-circle">
+                    <img src="/assets/images/user_avatar.png" width="40" height="40" class="rounded-circle">
+                    <span class="oe_topbar_name" *ngIf="authService.userInfo">{{authService.userInfo.userName}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-user">
                     <button class="dropdown-item" type="button" (click)="changePassword()">Đổi mật khẩu</button>

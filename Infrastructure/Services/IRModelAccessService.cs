@@ -31,6 +31,9 @@ namespace Infrastructure.Services
 
         public bool Check(string model, string mode = "Read", bool raiseException = true)
         {
+            if (string.IsNullOrEmpty(UserId))
+                return true;
+
             var CACHE_KEY = "ir.model.access-{0}-{1}-{2}";
             var key = string.Format(CACHE_KEY, UserId, model, mode);
 

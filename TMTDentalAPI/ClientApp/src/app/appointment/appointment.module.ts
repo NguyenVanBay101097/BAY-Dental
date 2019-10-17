@@ -12,16 +12,20 @@ import { AppointmentCuDialogComponent } from './appointment-cu-dialog/appointmen
 import { EmployeeInfoComponent } from '../employees/employee-info/employee-info.component';
 import { AppointmentAdvanceSearchComponent } from './appointment-advance-search/appointment-advance-search.component';
 import { SharedModule } from '../shared/shared.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AppointmentDateFilterComponent } from './appointment-date-filter/appointment-date-filter.component';
+import { AppointmentStateFilterComponent } from './appointment-state-filter/appointment-state-filter.component';
 
 @NgModule({
-  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent],
+  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent],
   imports: [
     CommonModule,
     AppointmentRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    NgbModule
   ],
   entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent],
   providers: [

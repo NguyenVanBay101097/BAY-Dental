@@ -1,0 +1,77 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="name" #nameInput />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đối tượng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="listModels" [textField]="'name'" [filterable]="true"
+                                        #modelCbx formControlName="model" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Quyền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="permRead"
+                                            formControlName="permRead">
+                                        <label class="form-check-label" for="permRead">Xem</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="permCreate"
+                                            formControlName="permCreate">
+                                        <label class="form-check-label" for="permCreate">Thêm</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="permWrite"
+                                            formControlName="permWrite">
+                                        <label class="form-check-label" for="permWrite">Sửa</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="permUnlink"
+                                            formControlName="permUnlink">
+                                        <label class="form-check-label" for="permUnlink">Xóa</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

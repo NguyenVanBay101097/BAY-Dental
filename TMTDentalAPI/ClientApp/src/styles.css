@@ -754,6 +754,10 @@ html .o_web_client {
     padding: 12px 18px 11px 16px;
 }
 
+.o_cp_right .o_search_options .o_advance_search_dropdown {
+  margin-right: 5px;
+}
+
 
 
 
