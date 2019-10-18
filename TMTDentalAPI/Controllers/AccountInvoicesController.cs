@@ -149,6 +149,17 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ids.Any())
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _accountInvoiceService.Unlink(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
 
         [HttpGet("{id}/GetPaymentInfoJson")]
         public async Task<IActionResult> GetPaymentInfoJson(Guid id)

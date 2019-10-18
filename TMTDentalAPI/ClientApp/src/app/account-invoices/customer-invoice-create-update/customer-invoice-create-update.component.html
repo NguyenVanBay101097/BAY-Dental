@@ -1,7 +1,3 @@
-<div class="loading" *ngIf="loading">
-    <div class="loader"></div>
-</div>
-
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
@@ -286,7 +282,96 @@
                                                                     <tbody>
                                                                         <tr *ngFor="let payment of payments">
                                                                             <td>
-                                                                                <a
+                                                                                <ng-template #invoicePaymentContent>
+                                                                                    <div>
+                                                                                        <table
+                                                                                            class="oe_form_group pophover_table">
+                                                                                            <tr
+                                                                                                class="oe_form_group_row">
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell oe_form_group_cell_label">
+                                                                                                    <label
+                                                                                                        class="oe_form_label">Tên</label>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell">
+                                                                                                    <span
+                                                                                                        class="oe_form_char_content">{{payment.name}}</span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr
+                                                                                                class="oe_form_group_row">
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell oe_form_group_cell_label">
+                                                                                                    <label
+                                                                                                        class="oe_form_label">Ngày</label>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell">
+                                                                                                    <span
+                                                                                                        class="oe_form_char_content">{{payment.date | date: 'shortDate'}}</span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr
+                                                                                                class="oe_form_group_row">
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell oe_form_group_cell_label">
+                                                                                                    <label
+                                                                                                        class="oe_form_label">Phương
+                                                                                                        thức</label>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell">
+                                                                                                    <span
+                                                                                                        class="oe_form_char_content">{{payment.journalName}}</span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr
+                                                                                                class="oe_form_group_row">
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell oe_form_group_cell_label">
+                                                                                                    <label
+                                                                                                        class="oe_form_label">Tham
+                                                                                                        chiếu</label>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell">
+                                                                                                    <span
+                                                                                                        class="oe_form_char_content">{{payment.ref}}</span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr
+                                                                                                class="oe_form_group_row">
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell oe_form_group_cell_label">
+                                                                                                    <label
+                                                                                                        class="oe_form_label">Số
+                                                                                                        tiền</label>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    class="oe_form_group_cell">
+                                                                                                    <span
+                                                                                                        class="oe_form_char_content">{{payment.amount | number}}</span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr
+                                                                                                class="oe_form_group_row">
+                                                                                                <td class="oe_form_group_cell"
+                                                                                                    style="text-align:left">
+                                                                                                    &nbsp;
+                                                                                                </td>
+                                                                                                <td class="oe_form_group_cell"
+                                                                                                    style="text-align:right">
+                                                                                                    <a *ngIf="payment.accountPaymentId != null"
+                                                                                                        class="btn btn-sm btn-primary">Mở</a>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                                <a [ngbPopover]="invoicePaymentContent"
+                                                                                    popoverTitle="Thông tin thanh toán"
+                                                                                    placement="left"
                                                                                     class="js_payment_info fa fa-info-circle"></a>
                                                                             </td>
                                                                             <td>

@@ -425,7 +425,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _ComputeResidual(IEnumerable<AccountInvoice> self)
+        public IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).Include("Move.Lines")
+                .Include("Move.Lines.Account").ToList();
+            return _ComputeResidual(self);
+        }
+
+        public IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<AccountInvoice> self)
         {
             foreach (var invoice in self)
             {
@@ -456,6 +463,14 @@ namespace Infrastructure.Services
                 else
                     invoice.Reconciled = false;
             }
+
+            return self;
+        }
+
+        public async Task UpdateResidual(IEnumerable<Guid> ids)
+        {
+            var invoices = _ComputeResidual(ids);
+            await UpdateAsync(invoices);
         }
 
         private AccountMoveLine LineGetConvert(AccountMoveLineItem line, Guid partnerId, DateTime date, Guid journalId)
@@ -643,7 +658,20 @@ namespace Infrastructure.Services
             await UpdateAsync(invoices);
         }
 
-        public void _ComputePayments(IEnumerable<AccountInvoice> self)
+        public async Task UpdatePayments(IEnumerable<Guid> ids)
+        {
+            var invoices = _ComputePayments(ids);
+            await UpdateAsync(invoices);
+        }
+
+        public IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).Include("Move.Lines")
+                .Include("Move.Lines.MatchedCredits").Include("Move.Lines.MatchedDebits").ToList();
+            return _ComputePayments(self);
+        }
+
+        public IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<AccountInvoice> self)
         {
             foreach (var invoice in self)
             {
@@ -667,6 +695,8 @@ namespace Infrastructure.Services
                     });
                 }
             }
+
+            return self;
         }
 
         public async Task<PagedResult<AccountInvoice>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20)
@@ -746,6 +776,30 @@ namespace Infrastructure.Services
             await base.UpdateAsync(inv);
         }
 
+        public async Task TriggerChange_MoveLinesResidual(IEnumerable<AccountMoveLine> amls)
+        {
+            var invs = amls.Where(x => x.Invoice != null).Select(x => x.Invoice).Distinct().ToList();
+            if (invs.Any())
+            {
+                _ComputeResidual(invs);
+                _ComputePayments(invs);
+                await UpdateAsync(invs);
+            }
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var invoice in self)
+            {
+                if (invoice.State != "draft" && invoice.State != "cancel")
+                    throw new Exception("Bạn không thể xóa hóa đơn có trạng thái khác mới hoặc hủy bỏ.");
+                else if (!string.IsNullOrEmpty(invoice.MoveName))
+                    throw new Exception("Bạn không thể xóa hóa đơn đã xác nhận (có số hóa đơn). Bạn có thể chuyển sang trạng thái nháp, thay đổi nội dung hóa đơn sau đó xác nhận lại.");
+            }
+
+            await DeleteAsync(self);
+        }
     }
 
     public class ComputeInvoiceTotalsRes

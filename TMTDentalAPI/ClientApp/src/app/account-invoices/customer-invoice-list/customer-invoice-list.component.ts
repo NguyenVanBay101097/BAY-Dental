@@ -6,8 +6,12 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserSimple } from 'src/app/users/user-simple';
+import { AccountInvoiceRegisterPaymentDialogComponent } from '../account-invoice-register-payment-dialog/account-invoice-register-payment-dialog.component';
+import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from '../account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-customer-invoice-list',
@@ -32,8 +36,11 @@ export class CustomerInvoiceListComponent implements OnInit {
   searchStates: string[] = [];
   searchUser: UserSimple;
 
+  selectedIds: string[] = [];
+
   constructor(private accountInvoiceService: AccountInvoiceService, private intlService: IntlService,
-    private router: Router, private dialogService: DialogService, private parserFormatter: NgbDateParserFormatter) { }
+    private router: Router, private dialogService: DialogService, private parserFormatter: NgbDateParserFormatter,
+    private modalService: NgbModal, private registerPaymentService: AccountRegisterPaymentService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -103,6 +110,41 @@ export class CustomerInvoiceListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  registerPayment() {
+    if (this.selectedIds.length == 0) {
+      return false;
+    }
+
+    var val = new AccountRegisterPaymentDefaultGet();
+    val.invoiceIds = this.selectedIds;
+    this.registerPaymentService.defaultGet(val).subscribe(result => {
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thanh toán';
+      modalRef.componentInstance.defaultVal = result;
+      modalRef.result.then(() => {
+        this.selectedIds = [];
+        this.loadDataFromApi();
+      }, () => {
+      });
+    });
+  }
+
+  unlink() {
+    if (this.selectedIds.length == 0) {
+      return false;
+    }
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa hóa đơn';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.accountInvoiceService.unlink(this.selectedIds).subscribe(() => {
+        this.selectedIds = [];
+        this.loadDataFromApi();
+      });
+    });
   }
 
 

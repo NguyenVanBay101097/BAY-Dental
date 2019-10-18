@@ -23,6 +23,8 @@ import { PrintService } from 'src/app/print.service';
 import { DotKhamLineService } from 'src/app/dot-khams/dot-kham-line.service';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from '../account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 declare var $: any;
 
 @Component({
@@ -42,7 +44,6 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   payments: PaymentInfoContent[] = [];
   record: AccountInvoiceDisplay;
   dotKhams: DotKhamBasic[] = [];
-  loading = false;
   invoicePrint: AccountInvoicePrint;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
@@ -53,7 +54,8 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     private userService: UserService, private route: ActivatedRoute,
     public intlService: IntlService, private windowService: WindowService, private accountInvoiceService: AccountInvoiceService,
     private notificationService: NotificationService, private modalService: NgbModal,
-    private router: Router, private printService: PrintService, private dotkhamLinesService: DotKhamLineService) { }
+    private router: Router, private printService: PrintService, private dotkhamLinesService: DotKhamLineService,
+    private registerPaymentService: AccountRegisterPaymentService) { }
 
   ngOnInit() {
     this.orderForm = this.fb.group({
@@ -377,26 +379,20 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     val.partnerId = val.partner.id;
     val.userId = val.user ? val.user.id : null;
     val.dateInvoice = this.intlService.formatDate(val.dateInvoiceD, 'g', 'en-US');
-    this.loading = true;
     this.accountInvoiceService.create(val).subscribe(result => {
       this.accountInvoiceService.invoiceOpen([result.id]).subscribe(() => {
         this.router.navigate(['/customer-invoices/edit', result.id]);
       }, () => {
-        this.loading = false;
       });
     }, () => {
-      this.loading = false;
     });
   }
 
   onConfirm() {
     if (this.id) {
-      this.loading = true;
       this.accountInvoiceService.invoiceOpen([this.id]).subscribe(() => {
-        this.loading = false;
         this.reloadData();
       }, () => {
-        this.loading = false;
       });
     }
   }
@@ -434,14 +430,20 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   }
 
   actionInvoicePayment() {
-    let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thanh toán';
-    modalRef.componentInstance.invoiceId = this.id;
+    if (this.id) {
+      var val = new AccountRegisterPaymentDefaultGet();
+      val.invoiceIds = [this.id];
+      this.registerPaymentService.defaultGet(val).subscribe(result => {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = result;
+        modalRef.result.then(() => {
+          this.reloadData();
+        }, () => {
+        });
+      });
 
-    modalRef.result.then(() => {
-      this.reloadData();
-    }, () => {
-    });
+    }
   }
 
   computeAmountTotal() {
@@ -467,24 +469,18 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
 
   actionCancel() {
     if (this.id) {
-      this.loading = true;
       this.accountInvoiceService.actionCancel([this.id]).subscribe(() => {
-        this.loading = false;
         this.reloadData();
       }, () => {
-        this.loading = false;
       });
     }
   }
 
   actionCancelDraft() {
     if (this.id) {
-      this.loading = true;
       this.accountInvoiceService.actionCancelDraft([this.id]).subscribe(() => {
-        this.loading = false;
         this.reloadData();
       }, () => {
-        this.loading = false;
       });
     }
   }

@@ -18,6 +18,9 @@ import { FieldBinaryImageSimpleComponent } from './field-binary-image-simple/fie
 import { DateRangeAdvanceSearchComponent } from './date-range-advance-search/date-range-advance-search.component';
 import { MyCustomKendoModule } from './my-customer-kendo.module';
 import { ImageViewerComponent } from './image-viewer/image-viewer.component';
+import { DisableControlDirective } from './disable-control-directive';
+import { AppLoadingService } from './app-loading.service';
+import { LoadingComponent } from './loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,9 @@ import { ImageViewerComponent } from './image-viewer/image-viewer.component';
     LayoutHeaderComponent,
     FieldBinaryImageSimpleComponent,
     ImageViewerComponent,
-    DateRangeAdvanceSearchComponent
+    DateRangeAdvanceSearchComponent,
+    DisableControlDirective,
+    LoadingComponent
   ],
   exports: [
     HeaderComponent,
@@ -42,7 +47,9 @@ import { ImageViewerComponent } from './image-viewer/image-viewer.component';
     LayoutSidebarComponent,
     LayoutHeaderComponent,
     FieldBinaryImageSimpleComponent,
-    DateRangeAdvanceSearchComponent
+    DateRangeAdvanceSearchComponent,
+    DisableControlDirective,
+    LoadingComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +60,7 @@ import { ImageViewerComponent } from './image-viewer/image-viewer.component';
     ReactiveFormsModule,
     MyCustomKendoModule
   ],
-  providers: [NavSidebarService],
+  providers: [NavSidebarService, AppLoadingService],
   entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent],
 })
 export class SharedModule { }

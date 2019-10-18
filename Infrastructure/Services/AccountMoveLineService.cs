@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,11 @@ namespace Infrastructure.Services
             return base.CreateAsync(entity);
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            await Unlink(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).ToList());
+        }
+
         public async Task Unlink(IEnumerable<AccountMoveLine> self)
         {
             UpdateCheck(self);
@@ -78,7 +84,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _AmountResidual(IEnumerable<AccountMoveLine> lines)
+        public IEnumerable<AccountMoveLine> _AmountResidual(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Account).Include(x => x.MatchedDebits)
+                .Include(x => x.MatchedCredits).ToList();
+            return _AmountResidual(self);
+        }
+
+        public IEnumerable<AccountMoveLine> _AmountResidual(IEnumerable<AccountMoveLine> lines)
         {
             foreach (var line in lines)
             {
@@ -105,6 +118,8 @@ namespace Infrastructure.Services
                 line.Reconciled = reconciled;
                 line.AmountResidual = Math.Round(amount * sign);
             }
+
+            return lines;
         }
 
         public void _StoreBalance(IEnumerable<AccountMoveLine> lines)
@@ -199,6 +214,41 @@ namespace Infrastructure.Services
             }
 
             return new PairToReconcileRes { Credit = credit, Debit = debit };
+        }
+
+        public async Task RemoveMoveReconcile(IEnumerable<Guid> moveIds)
+        {
+            await RemoveMoveReconcile(SearchQuery(x => moveIds.Contains(x.Id)).Include(x => x.MatchedDebits)
+                .Include(x => x.MatchedCredits).ToList());
+        }
+
+        public async Task RemoveMoveReconcile(IEnumerable<AccountMoveLine> self)
+        {
+            if (!self.Any())
+                return;
+
+            var recMoveObj = GetService<IAccountPartialReconcileService>();
+            var invObj = GetService<IAccountInvoiceService>();
+            var recMoves = new List<AccountPartialReconcile>().AsEnumerable();
+            foreach (var moveLine in self)
+            {
+                recMoves = recMoves.Concat(moveLine.MatchedDebits);
+                recMoves = recMoves.Concat(moveLine.MatchedCredits);
+            }
+
+            var amlsToRecompute = recMoves.Select(x => x.DebitMoveId).Concat(recMoves.Select(x => x.CreditMoveId)).ToList();
+            await recMoveObj.Unlink(recMoves.Select(x => x.Id).ToList());
+
+            //trigger update
+            var amls = _AmountResidual(amlsToRecompute);
+            await UpdateAsync(amls);
+
+            var invoiceIds = amls.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
+            if (invoiceIds.Any())
+            {
+                await invObj.UpdatePayments(invoiceIds);
+                await invObj.UpdateResidual(invoiceIds);
+            }
         }
     }
 

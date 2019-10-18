@@ -51,8 +51,8 @@ namespace Infrastructure.Services
             var invoices = await invoiceService.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
             if (invoices.Any(x => x.State != "open"))
                 throw new Exception("Bạn chỉ có thể thanh toán cho hóa đơn đã xác nhận");
-            //if (invoices.Any(x => x.CommercialPartnerId != invoices[0].CommercialPartnerId))
-            //    throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
+            if (invoices.Any(x => x.PartnerId != invoices[0].PartnerId))
+                throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
             var dict = MAP_INVOICE_TYPE_PAYMENT_SIGN;
             if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
                 throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
@@ -60,7 +60,7 @@ namespace Infrastructure.Services
             //    throw new Exception("Các hóa đơn phải có chung tiền tệ");
 
             var total_amount = invoices.Sum(x => x.Residual * dict[x.Type]);
-            var communication = string.Join(" ", invoices.Select(x => x.Reference).Distinct());
+            var communication = string.Join(" ", invoices.Select(x => x.Number).Distinct());
 
             var rec = new AccountRegisterPaymentDisplay
             {

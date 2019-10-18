@@ -3043,7 +3043,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.AccountFullReconcile", "FullReconcile")
                         .WithMany("ReconciledLines")
-                        .HasForeignKey("FullReconcileId");
+                        .HasForeignKey("FullReconcileId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.AccountInvoice", "Invoice")
                         .WithMany()

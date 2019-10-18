@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,9 +58,14 @@ namespace Infrastructure.Services
             return recs;
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.FullReconcile).ToListAsync();
+            await Unlink(self);
+        }
+
         public async Task Unlink(IEnumerable<AccountPartialReconcile> self)
         {
-            
             var full_to_unlink = new List<AccountFullReconcile>().AsEnumerable();
             foreach (var rec in self)
             {

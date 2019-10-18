@@ -10,8 +10,10 @@ namespace Infrastructure.Services
     {
         Task Post(IEnumerable<AccountMove> moves, AccountInvoice invoice = null);
         Task ButtonCancel(IEnumerable<AccountMove> self);
+        Task ButtonCancel(IEnumerable<Guid> ids);
         bool _CheckLockDate(IEnumerable<AccountMove> self);
         Task Unlink(IEnumerable<AccountMove> self);
+        Task Unlink(IEnumerable<Guid> ids);
         Task Write(IEnumerable<AccountMove> self);
     }
 }

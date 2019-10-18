@@ -66,7 +66,10 @@ namespace Infrastructure.Services
 
         public async Task<int> CountAsync(ISpecification<TEntity> spec)
         {
-            return await _repository.CountAsync(spec);
+            CheckAccessRights(typeof(TEntity).Name, "Read");
+            spec = _ApplyIRRules(spec, "Read");
+            var query = _repository.SearchQuery(domain: spec.AsExpression());
+            return await query.CountAsync();
         }
 
         public TEntity Create(TEntity entity)

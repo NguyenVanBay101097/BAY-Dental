@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,31 +13,11 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class ProductPricelistService : IProductPricelistService
+    public class ProductPricelistService : BaseService<ProductPricelist>, IProductPricelistService
     {
-        private readonly IProductPricelistRepository _pricelistRepository;
-        private readonly IProductPricelistItemRepository _priceListItemRepository;
-
-        public ProductPricelistService(IProductPricelistRepository pricelistRepository,
-            IProductPricelistItemRepository priceListItemRepository)
+        public ProductPricelistService(IAsyncRepository<ProductPricelist> repository, IHttpContextAccessor httpContextAccessor)
+            : base(repository, httpContextAccessor)
         {
-            _pricelistRepository = pricelistRepository;
-            _priceListItemRepository = priceListItemRepository;
-        }
-
-        public async Task<ProductPricelist> CreateAsync(ProductPricelist pricelist)
-        {
-            return await _pricelistRepository.InsertAsync(pricelist);
-        }
-
-        public async Task<ProductPricelist> GetByIdAsync(Guid id)
-        {
-            return await _pricelistRepository.GetByIdAsync(id);
-        }
-
-        public async Task DeleteAsync(ProductPricelist pricelist)
-        {
-            await _pricelistRepository.DeleteAsync(pricelist);
         }
 
         public async Task<PagedResult2<ProductPricelistBasic>> GetPagedResultAsync(ProductPricelistPaged val)
@@ -44,14 +25,14 @@ namespace Infrastructure.Services
             ISpecification<ProductPricelist> spec = new InitialSpecification<ProductPricelist>(x => x.Active);
             if (!string.IsNullOrWhiteSpace(val.Search))
                 spec = spec.And(new InitialSpecification<ProductPricelist>(x => x.Name.Contains(val.Search)));
-            var items = await _pricelistRepository.SearchQuery(spec, sort: x => x.OrderBy(s => s.Sequence).ThenByDescending(s => s.DateCreated),
-                limit: val.Limit, offset: val.Offset, isPagingEnabled: true)
+            var items = await SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenByDescending(s => s.DateCreated),
+                limit: val.Limit, offSet: val.Offset)
                 .Select(x => new ProductPricelistBasic
                 {
                     Id = x.Id,
                     Name = x.Name
                 }).ToListAsync();
-            var totalItems = await _pricelistRepository.CountAsync(spec);
+            var totalItems = await CountAsync(spec);
             return new PagedResult2<ProductPricelistBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -60,24 +41,19 @@ namespace Infrastructure.Services
 
         public async Task<ProductPricelist> GetPriceListForUpdate(Guid id)
         {
-            var spec = new InitialSpecification<ProductPricelist>(x => x.Id == id && x.Active);
-            return await _pricelistRepository.FirstOrDefaultAsync(spec, includes: "Items");
-        }
-
-        public async Task UpdateAsync(ProductPricelist pricelist)
-        {
-            await _pricelistRepository.UpdateAsync(pricelist);
+            return await SearchQuery(x => x.Id == id && x.Active).Include(x => x.Items).FirstOrDefaultAsync();
         }
 
         public async Task<IDictionary<Guid, ComputePriceRuleResValue>> _ComputePriceRule(IEnumerable<ProductQtyByPartner> products_qty_partner,
              DateTime? date = null)
         {
             if (!date.HasValue)
-                date = DateTime.Today;
+                date = DateTime.Now;
             var products = products_qty_partner.Select(x => x.Product);
             if (!products.Any())
                 return new Dictionary<Guid, ComputePriceRuleResValue>();
 
+            var categObj = GetService<IProductCategoryService>();
             var categ_ids = new HashSet<Guid>();
             foreach (var p in products)
             {
@@ -85,6 +61,8 @@ namespace Infrastructure.Services
                 while (categ != null)
                 {
                     categ_ids.Add(categ.Id);
+                    if (categ.ParentId.HasValue && categ.Parent == null)
+                        categ.Parent = await categObj.SearchQuery(x => x.Id == categ.ParentId).Include(x => x.Parent).FirstOrDefaultAsync();
                     categ = categ.Parent;
                 }
             }
@@ -156,14 +134,15 @@ namespace Infrastructure.Services
 
         public async Task<IList<ProductPricelistItem>> _ComputePriceRuleGetItems(DateTime date, IEnumerable<Guid> productIds, IEnumerable<Guid> categIds)
         {
-            var itemIds = await _priceListItemRepository.SearchQuery(new InitialSpecification<ProductPricelistItem>(x =>
+            var itemObj = GetService<IProductPricelistItemService>();
+            var itemIds = await itemObj.SearchQuery(x =>
                 (!x.ProductId.HasValue || productIds.Contains(x.ProductId.Value)) &&
                 (!x.CategId.HasValue || categIds.Contains(x.CategId.Value)) &&
                 (!x.DateStart.HasValue || x.DateStart <= date) &&
                 (!x.DateEnd.HasValue || x.DateStart >= date)
-                ), sort: x => x.OrderBy(s => s.AppliedOn).ThenByDescending(s => s.MinQuantity).ThenByDescending(s => s.Categ.CompleteName).ThenByDescending(s => s.DateCreated))
+                , orderBy: x => x.OrderBy(s => s.AppliedOn).ThenByDescending(s => s.MinQuantity).ThenByDescending(s => s.Categ.CompleteName).ThenByDescending(s => s.DateCreated))
                 .Select(x => x.Id).ToListAsync();
-            var items = await _priceListItemRepository.SearchQuery(new InitialSpecification<ProductPricelistItem>(x => itemIds.Contains(x.Id))).ToListAsync();
+            var items = await itemObj.SearchQuery(x => itemIds.Contains(x.Id)).ToListAsync();
             return items;
         }
     }

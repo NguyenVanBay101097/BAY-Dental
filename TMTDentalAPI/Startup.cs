@@ -169,6 +169,8 @@ namespace TMTDentalAPI
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<IIRRuleService, IRRuleService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductPricelistService, ProductPricelistService>();
+            services.AddScoped<IProductPricelistItemService, ProductPricelistItemService>();
 
             services.AddMemoryCache();
 
@@ -178,7 +180,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
 
-            var mappingConfig = new MapperConfiguration(mc =>
+            Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
                 mc.AddProfile(new ProductCategoryProfile());
                 mc.AddProfile(new ProductProfile());
@@ -222,7 +224,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HistoriesProfile());
                 mc.AddProfile(new PartnerHistoryRelProfile());
                 mc.AddProfile(new IRModelProfile());
-            });
+                mc.AddProfile(new AccountPaymentProfile());
+            };
+
+            var mappingConfig = new MapperConfiguration(mapperConfigExp);
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 

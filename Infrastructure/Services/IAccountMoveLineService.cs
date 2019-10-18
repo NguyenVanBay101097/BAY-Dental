@@ -9,7 +9,7 @@ namespace Infrastructure.Services
 {
     public interface IAccountMoveLineService : IBaseService<AccountMoveLine>
     {
-        void _AmountResidual(IEnumerable<AccountMoveLine> lines);
+        IEnumerable<AccountMoveLine> _AmountResidual(IEnumerable<AccountMoveLine> lines);
         void _StoreBalance(IEnumerable<AccountMoveLine> lines);
         Task Unlink(IEnumerable<AccountMoveLine> lines);
         ComputeAmountFieldsRes ComputeAmountFields(decimal amount);
@@ -22,5 +22,9 @@ namespace Infrastructure.Services
             Guid? companyId = null,
             bool initBal = false,
             IList<Guid> companyIds = null);
+
+        Task RemoveMoveReconcile(IEnumerable<AccountMoveLine> self);
+        Task RemoveMoveReconcile(IEnumerable<Guid> ids);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

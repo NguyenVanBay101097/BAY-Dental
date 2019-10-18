@@ -1,0 +1,77 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">{{getTitle()}}</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tham chiếu, khách hàng, SĐT..."
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="dropdown">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false" type="button" id="dropdownMenuButton" *ngIf="selectedIds.length">
+                    Thao tác
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <button class="dropdown-item" (click)="cancelSelected()">Hủy thanh toán</button>
+                    <button class="dropdown-item" (click)="unlinkSelected()">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'"
+            [selectedKeys]="selectedIds">
+            <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+            <kendo-grid-column field="paymentDate" title="Ngày">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.paymentDate | date: 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="name" title="Tham chiếu">
+            </kendo-grid-column>
+            <kendo-grid-column field="journalName" title="Phương thức">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Đối tác">
+            </kendo-grid-column>
+            <kendo-grid-column field="amount" class="text-right" title="Số tiền">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amount | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{ showState(dataItem.state) }}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="id">
+                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                    Thao tác
+                </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+                        <i class="far fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                        <i class="far fa-trash-alt"></i></button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
