@@ -14,6 +14,7 @@ export class ProductCategoryFilter {
 
 export class ProductCategoryBasic {
     id: string;
+    name: string;
     completeName: string;
 }
 

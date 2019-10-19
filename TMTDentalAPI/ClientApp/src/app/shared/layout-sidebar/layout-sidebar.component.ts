@@ -55,6 +55,7 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
+        { name: 'Bảng giá', link: '/price-list-list' },
       ]
     },
     {

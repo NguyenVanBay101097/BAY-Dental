@@ -1,0 +1,285 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a>Bảng giá</a>
+            </li>
+            <li class="active">
+                <span></span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-light btn-sm" (click)="exit()">
+                        Thoát
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" [disabled]="formPrice.invalid"
+                        (click)="savePriceList()">
+                        Lưu
+                    </button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_form_view" [formGroup]="formPrice">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span>Mới</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tên bảng giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <input formControlName="name" class="form-control" type="text" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày bắt đầu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-datepicker formControlName="dateStartObj" [min]="today"
+                                            [max]="maxDateStart" format="dd/MM/yyyy HH:mm"
+                                            (valueChange)="changeDateStart($event)">
+                                        </kendo-datepicker>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhóm khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-combobox formControlName="partnerCatergory" [data]="pnCateg"
+                                            [valueField]="'id'" [textField]="'name'">
+                                        </kendo-combobox>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label">
+                                        Ngày kết thúc
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-datepicker formControlName="dateEndObj" [min]="minDateEnd"
+                                            format="dd/MM/yyyy HH:mm" (valueChange)="changeDateEnd($event)">
+                                        </kendo-datepicker>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_grid_group">
+                    <div class="o_grid_col_left">
+                        <div [formGroup]="formItem">
+                            <table>
+                                <tbody>
+                                    <tr class="o_apply_tr">
+                                        <td class="o_apply_td_label">
+                                            Áp dụng trên
+                                        </td>
+                                        <td class="o_apply_td">
+                                            <kendo-combobox [data]="optionData" [valueField]="'value'"
+                                                formControlName="appliedOnObj" [textField]="'text'"
+                                                (valueChange)="changeApply($event.value)">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                    <tr class="o_apply_tr">
+                                        <td class="o_apply_td_label">
+                                            Giảm
+                                        </td>
+                                        <td class="o_apply_td">
+                                            <div>
+                                                <div class="o_discount_input">
+                                                    <kendo-numerictextbox
+                                                        *ngIf="formItem.get('discountType').value=='fixed'"
+                                                        type="number" class="form-control" min="0"
+                                                        formControlName="fixedPrice" [format]="'n0'">
+                                                    </kendo-numerictextbox>
+                                                    <kendo-numerictextbox
+                                                        *ngIf="formItem.get('discountType').value=='percent'"
+                                                        type="number" class="form-control" min="0"
+                                                        formControlName="percentPrice" [format]="'n0'">
+                                                    </kendo-numerictextbox>
+                                                </div>
+                                                <div class="o_discount_label">
+                                                    <label>
+                                                        <input type="radio" formControlName="discountType" value="fixed"
+                                                            checked />VND
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" formControlName="discountType"
+                                                            value="percent" />%
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="categoryShow" class="o_apply_tr">
+                                        <td class="o_apply_td_label">
+                                            Nhóm dịch vụ
+                                        </td>
+                                        <td class="o_apply_td">
+                                            <kendo-combobox [data]="serviceCategories" [valueField]="'id'"
+                                                formControlName="categ" [textField]="'name'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="serviceShow" class="o_apply_tr">
+                                        <td class="o_apply_td_label">
+                                            Dịch vụ
+                                        </td>
+                                        <td class="o_apply_td">
+                                            <kendo-combobox [data]="services" [valueField]="'id'" [textField]="'name'"
+                                                formControlName="product">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary mr-2" (click)="addItems()" *ngIf="!selectItem"
+                                [disabled]="formItem.invalid">Thêm</button>
+                            <button type="button" class="btn btn-primary btn-sm mr-2" *ngIf="selectItem"
+                                (click)="updateItem()">Cập nhật</button>
+                            <button type="button" class="btn btn-primary btn-sm" *ngIf="selectItem"
+                                (click)="resetForm(formItem)">Hủy</button>
+                        </div>
+                        <!-- <kendo-grid [data]="gridDataLeft" [pageSize]="pageSize" [skip]="skip" [pageable]="true"
+                            [loading]="loadingLeft" (pageChange)="pageChange($event)" [selectable]="{mode : 'single'}"
+                            (selectionChange)="rowSelectionChange($event)" [kendoGridSelectBy]="'id'"
+                            [selectedKeys]="[invSelectedId]">
+                            <kendo-grid-column field="name" title="Dịch vụ/Nhóm dịch vụ">
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Nhóm cha">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{dataItem.parent ? dataItem.parent.name : dataItem.categName ? dataItem.categName : ''}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            
+                            <kendo-grid-column field="listPrice" title="Giá">
+                            </kendo-grid-column> 
+                            <kendo-grid-messages pagerItems="dòng" noRecords="Không có dịch vụ để hiển thị" pagerOf="/">
+                            </kendo-grid-messages>
+                        </kendo-grid> -->
+                    </div>
+                    <div class="o_grid_col_right">
+                        <table class="o_table_detail_items">
+                            <thead>
+                                <tr class="o_tr_detail_items">
+                                    <th class="o_th_detail_items">Phạm vi</th>
+                                    <th class="o_th_detail_items">Đối tượng</th>
+                                    <th class="o_th_detail_items">Chi tiết giảm</th>
+                                    <th class="o_th_detail_items">Thao tác</th>
+                                    <!-- <th>Giá sau khi giảm</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of items; let i=index" class="o_tr_detail_items"
+                                    [class.table-active]="selectItem===item">
+                                    <td class="o_td_detail_items">{{transAppliedOn(item.appliedOn)}}</td>
+                                    <td class="o_td_detail_items">
+                                        {{item.product ? item.product.name : item.categ ? item.categ.name : ''}}</td>
+                                    <td class="o_td_detail_items">
+                                        {{(item.fixedPrice > 0) ? (item.fixedPrice | number ) : (item.percentPrice> 0) ? (item.percentPrice | number) :0}}
+                                        {{(item.fixedPrice > 0) ? 'VND' : (item.percentPrice> 0) ? '%' :''}}
+                                    </td>
+                                    <td class="o_td_detail_items">
+                                        <button class="btn btn-sm btn-success mr8" title="Sửa" (click)="editItem(i)"><i
+                                                class="fas fa-edit"></i></button>
+                                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="removeItem(i)"><i
+                                                class="fas fa-trash"></i></button>
+                                    </td>
+                                    <!-- <td>{{item.computePrice}}</td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- <kendo-grid [data]="gridDataRight" [pageSize]="limit" [skip]="skip" [pageable]="true"
+                            [loading]="loadingRight" (pageChange)="pageChange($event)">
+                            <kendo-grid-column field="name" title="Tên dịch vụ">
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Nhóm">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{dataItem.categName ? dataItem.categName : dataItem.categ ? dataItem.categ.name : ''}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Giá hiện tại">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{(dataItem.listPrice ? dataItem.listPrice : '' )| number}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column>
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex" title="Giảm">
+                                    <div class="d-flex">
+                                        <div class="o_discount_input">
+                                            <input type="number" class="form-control" min="0"
+                                                (change)="changeDiscount($event,rowIndex)" />
+                                        </div>
+                                        <div>
+                                            <label class="o_discount_label">
+                                                <input type="radio" name="a" value="fixed" checked />VND
+                                            </label>
+                                            <label class="o_discount_label">
+                                                <input type="radio" name="a" value="percent" />%
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Giá sau giảm">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-command-column title="Thao tác" width="100">
+                                <ng-template kendoGridCellTemplate let-dataItem>
+                                    <button class="btn btn-sm btn-danger" title="Xóa"
+                                        (click)="removeItems(dataItem.id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </ng-template>
+                            </kendo-grid-command-column>
+                            <kendo-grid-messages pagerItems="dòng" noRecords="Không có dịch vụ để hiển thị" pagerOf="/">
+                            </kendo-grid-messages>
+                        </kendo-grid> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

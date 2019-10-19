@@ -298,6 +298,75 @@ a {
     text-transform: uppercase!important;
 }
 
-.o_attachment_delete_cross{
-    color: white;
+.o_attachments_previews>.o_attachment .o_image_overlay .o_attachment_delete_cross {
+    color: #fff;
+}
+
+.o_content .o_form_view .o_form_sheet_bg .o_form_maxwidth{
+     max-width: 100%;
+ }
+
+ .o_form_view .o_group .o_group_col_4 {
+  display: inline-block;
+  width: 33%;
+  vertical-align: top;
+}
+.o_form_view .o_grid_group{
+    height: 250px;
+}
+.o_form_view .o_grid_group .o_grid_col_left{
+    display: inline-block;
+    vertical-align: top;
+    width: 35%;
+    padding: 5px;
+    height: 100%;
+}
+
+.o_form_view .o_grid_group .o_grid_col_right{
+    display: inline-block;
+    vertical-align: top;
+    width: 65%;
+    padding: 5px 100px;
+}
+
+.o_form_view .o_grid_group .o_grid_col_left .o_apply_tr{
+    margin: 3px;
+    vertical-align: top;
+}
+.o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td,
+.o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td_label{
+    padding: 5px;
+}
+
+.o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td_label{
+    width: 150px;
+}
+
+.o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td{
+    width: 200px;
+}
+
+.o_form_view .o_grid_group .o_grid_col_left .o_discount_label{
+    display: inline;
+}
+
+.o_form_view .o_grid_group .o_grid_col_left .o_discount_label label{
+    padding-left: 10px;
+}
+/* 
+.o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td .o_discount_input{   
+    width: 60%;
+} */
+
+.o_table_detail_items {
+
+}
+
+.o_th_detail_items {
+    width: 200px;
+}
+
+.o_td_detail_items {
+    width: 200px;
+    padding: 3px;
 }

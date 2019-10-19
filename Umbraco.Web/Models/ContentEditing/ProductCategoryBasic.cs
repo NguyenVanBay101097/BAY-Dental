@@ -16,6 +16,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string CompleteName { get; set; }
+
+        public Guid? ParentId { get; set; }
+        public ProductCategorySimple Parent { get; set; }
     }
 
     public class ProductCategoryPaged

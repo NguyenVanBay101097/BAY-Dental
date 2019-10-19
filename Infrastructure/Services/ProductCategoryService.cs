@@ -56,8 +56,18 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductCategoryBasic>> GetPagedResultAsync(ProductCategoryPaged val)
         {
             var query = GetQueryPaged(val);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (val.ServiceCateg.HasValue)
+                query = query.Where(x => x.ServiceCateg == true);
+            if (val.LaboCateg.HasValue)
+                query = query.Where(x => x.LaboCateg == true);
+            if (val.ProductCateg.HasValue)
+                query = query.Where(x => x.ProductCateg == true);
+            if (val.MedicineCateg.HasValue)
+                query = query.Where(x => x.MedicineCateg == true);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit)
+            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x=>x.Parent)
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
@@ -71,6 +81,17 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<ProductCategoryBasic>> GetAutocompleteAsync(ProductCategoryPaged val)
         {
             var query = GetQueryPaged(val);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (val.ServiceCateg.HasValue)
+                query = query.Where(x => x.ServiceCateg == true);
+            if (val.LaboCateg.HasValue)
+                query = query.Where(x => x.LaboCateg == true);
+            if (val.ProductCateg.HasValue)
+                query = query.Where(x => x.ProductCateg == true);
+            if (val.MedicineCateg.HasValue)
+                query = query.Where(x => x.MedicineCateg == true);
 
             var items = await query.Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();

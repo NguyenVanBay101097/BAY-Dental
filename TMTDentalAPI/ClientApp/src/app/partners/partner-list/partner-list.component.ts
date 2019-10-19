@@ -119,7 +119,6 @@ export class PartnerListComponent implements OnInit {
   sortChange(sort: SortDescriptor[]): void {
     this.sort = sort;
     this.getPartnersList();
-
   }
 
   // getQuery() {
