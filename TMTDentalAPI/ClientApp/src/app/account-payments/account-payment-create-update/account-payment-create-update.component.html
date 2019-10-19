@@ -99,7 +99,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="payment.State != 'draft' && payment.partner"
+                                    <span *ngIf="payment.state != 'draft' && payment.partner"
                                         class="o_form_field">{{payment.partner.name}}</span>
                                 </td>
                             </tr>
@@ -110,7 +110,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="payment.State != 'draft' && payment.journal"
+                                    <span *ngIf="payment.state != 'draft' && payment.journal"
                                         class="o_form_field">{{payment.journal.name}}</span>
                                 </td>
                             </tr>
@@ -121,7 +121,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="payment.State != 'draft'"
+                                    <span *ngIf="payment.state != 'draft'"
                                         class="o_form_field">{{payment.amount | number}}</span>
                                 </td>
                             </tr>
@@ -136,7 +136,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="payment.State != 'draft'"
+                                    <span *ngIf="payment.state != 'draft'"
                                         class="o_form_field">{{payment.paymentDate | date: 'shortDate'}}</span>
                                 </td>
                             </tr>
@@ -147,7 +147,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="payment.State != 'draft'"
+                                    <span *ngIf="payment.state != 'draft'"
                                         class="o_form_field">{{payment.communication}}</span>
                                 </td>
                             </tr>

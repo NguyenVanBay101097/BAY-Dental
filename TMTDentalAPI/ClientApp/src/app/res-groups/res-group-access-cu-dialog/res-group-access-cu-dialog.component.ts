@@ -21,6 +21,7 @@ export class ResGroupAccessCuDialogComponent implements OnInit {
   item: IRModelAccessDisplay;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('modelCbx', { static: true }) modelCbx: ComboBoxComponent;
+  title: string;
   constructor(private fb: FormBuilder, private modelService: IRModelService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {

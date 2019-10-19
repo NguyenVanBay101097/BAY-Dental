@@ -85,6 +85,7 @@ registerLocaleData(localeVi, 'vi');
     ProductCategoriesModule,
     AppointmentModule,
     CoreModule,
+    IntlModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {

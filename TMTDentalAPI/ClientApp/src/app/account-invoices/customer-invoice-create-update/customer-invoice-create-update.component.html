@@ -363,6 +363,7 @@
                                                                                                 <td class="oe_form_group_cell"
                                                                                                     style="text-align:right">
                                                                                                     <a *ngIf="payment.accountPaymentId != null"
+                                                                                                        [routerLink]="['/accountpayments/edit/' + payment.accountPaymentId]"
                                                                                                         class="btn btn-sm btn-primary">Mở</a>
                                                                                                 </td>
                                                                                             </tr>

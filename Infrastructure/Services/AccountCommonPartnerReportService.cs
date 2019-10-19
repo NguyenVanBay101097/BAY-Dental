@@ -34,6 +34,13 @@ namespace Infrastructure.Services
             var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted");
             query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
             (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
             var list = await query
                .GroupBy(x => new {
                    PartnerId = x.Partner.Id,
@@ -77,6 +84,13 @@ namespace Infrastructure.Services
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted");
             query2 = query2.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
              (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query2 = query2.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
             var list2 = await query2
                       .GroupBy(x => new {
                           PartnerId = x.Partner.Id,

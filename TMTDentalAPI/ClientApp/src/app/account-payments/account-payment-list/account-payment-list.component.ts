@@ -132,6 +132,18 @@ export class AccountPaymentListComponent implements OnInit {
     this.router.navigate(['/accountpayments/edit/' + item.id]);
   }
 
+  deleteItem(item: AccountPaymentBasic) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa thanh toán';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.paymentService.unlink([item.id]).subscribe(() => {
+        this.selectedIds = [];
+        this.loadDataFromApi();
+      });
+    });
+  }
+
   // deleteItem(item) {
   //   const dialog: DialogRef = this.dialogService.open({
   //     title: "Xóa nhóm sản phẩm",

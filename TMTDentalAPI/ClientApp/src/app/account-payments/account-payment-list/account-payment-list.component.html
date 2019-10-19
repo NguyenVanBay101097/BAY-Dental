@@ -68,7 +68,7 @@
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
                         <i class="far fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                    <button class="btn btn-danger btn-sm" (click)="$event.stopPropagation();deleteItem(dataItem)">
                         <i class="far fa-trash-alt"></i></button>
                 </ng-template>
             </kendo-grid-column>

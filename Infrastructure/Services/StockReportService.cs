@@ -30,6 +30,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)
                 query = query.Where(x => x.product_id == val.ProductId);
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
+                x.Product.DefaultCode.Contains(val.Search));
+            }
 
             var list = await query
                .GroupBy(x => new {
@@ -66,6 +71,11 @@ namespace Infrastructure.Services
                 query2 = query2.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)
                 query2 = query2.Where(x => x.product_id == val.ProductId);
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query2 = query2.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
+                x.Product.DefaultCode.Contains(val.Search));
+            }
 
             var list2 = await query2.Select(x => new {
                 ProductId = x.Product.Id,

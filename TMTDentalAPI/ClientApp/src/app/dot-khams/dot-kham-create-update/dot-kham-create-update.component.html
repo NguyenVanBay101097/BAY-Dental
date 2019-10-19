@@ -218,13 +218,30 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div>
-                                <div style="width: 15%">
-                                    <select formControlName="filter" (change)="loadDotKhamSteps()" class="form-control">
-                                        <option value="dotkham">Đợt khám</option>
-                                        <option value="all">Tất cả</option>
-                                    </select>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <select formControlName="filter" (change)="loadDotKhamSteps()"
+                                            style="width: auto;" class="form-control my-1 mr-2">
+                                            <option value="dotkham">Đợt khám</option>
+                                            <option value="all">Tất cả</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="form-inline">
+                                            <label class="my-1 mr-2">Công đoạn</label>
+                                            <input class="form-control my-1 mr-2" type="text" formControlName="step" />
+                                            <label class="my-1 mr-2">Dịch vụ</label>
+                                            <kendo-combobox formControlName="product" class="my-1 mr-2"
+                                                [filterable]="true" [data]="productSimpleFilteredList"
+                                                (filterChange)="filterProductSimple($event)" [valueField]="'id'"
+                                                [textField]="'name'">
+                                            </kendo-combobox>
+                                            <button [disabled]="invoiceState=='cancel'" (click)="createDKSteps()"
+                                                class="btn btn-secondary mr-2">Thêm</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <table class="o_group o_inner_group o_group_col_6" *ngIf="getState=='confirmed'">
+                                <!-- <table class="o_group o_inner_group o_group_col_6" *ngIf="getState=='confirmed'">
                                     <tbody>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
@@ -235,6 +252,7 @@
                                             <td colspan="1" style="width: 50%;">
                                                 <div>
                                                     <input class="form-control" type="text" formControlName="step" />
+
                                                 </div>
                                             </td>
                                             <td colspan="1" class="o_td_label">
@@ -253,7 +271,7 @@
                                                     class="btn btn-info btn-sm mr-2">Thêm</button></td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table> -->
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>

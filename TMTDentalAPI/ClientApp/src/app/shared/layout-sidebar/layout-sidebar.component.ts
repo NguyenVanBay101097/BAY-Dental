@@ -74,10 +74,14 @@ export class LayoutSidebarComponent implements OnInit {
   }
 
   onMenuClick(index) {
-    if (this.activeIndex == index) {
+    if (this.sidebarService.collapsed) {
       this.activeIndex = -1;
     } else {
-      this.activeIndex = index;
+      if (this.activeIndex == index) {
+        this.activeIndex = -1;
+      } else {
+        this.activeIndex = index;
+      }
     }
   }
 
