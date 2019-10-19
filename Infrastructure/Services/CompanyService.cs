@@ -662,12 +662,12 @@ namespace Infrastructure.Services
             query = query.OrderBy(s => s.Name);
             return query;
         }
+    }
 
-        public class IRModelCsvLine
-        {
-            public string model { get; set; }
+    public class IRModelCsvLine
+    {
+        public string model { get; set; }
 
-            public string name { get; set; }
-        }
+        public string name { get; set; }
     }
 }

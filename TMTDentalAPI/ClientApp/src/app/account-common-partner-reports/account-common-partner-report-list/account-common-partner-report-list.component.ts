@@ -7,6 +7,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { aggregateBy } from '@progress/kendo-data-query';
 
 @Component({
   selector: 'app-account-common-partner-report-list',
@@ -30,6 +31,11 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
+  public total: any;
+  public aggregates: any[] = [
+    { field: 'end', aggregate: 'sum' },
+  ];
+
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
@@ -49,14 +55,14 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.partnerCbx.loading = true)),
-      switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
-    });
+    // this.partnerCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.partnerCbx.loading = true)),
+    //   switchMap(value => this.searchPartners(value))
+    // ).subscribe(result => {
+    //   this.filteredPartners = result;
+    //   this.partnerCbx.loading = false;
+    // });
   }
 
   onChangeDate(value: any) {
@@ -84,6 +90,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;
+      this.total = aggregateBy(this.items, this.aggregates);
       this.loadItems();
       this.loading = false;
     }, err => {

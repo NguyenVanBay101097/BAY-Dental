@@ -13,7 +13,10 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'app-stock-report-xuat-nhap-ton',
   templateUrl: './stock-report-xuat-nhap-ton.component.html',
-  styleUrls: ['./stock-report-xuat-nhap-ton.component.css']
+  styleUrls: ['./stock-report-xuat-nhap-ton.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 
 export class StockReportXuatNhapTonComponent implements OnInit {

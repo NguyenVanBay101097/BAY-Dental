@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     public interface IIRModelService: IBaseService<IRModel>
     {
         Task<PagedResult2<IRModel>> GetPagedAsync(int offset = 0, int limit = 10, string filter = "");
+        Task InsertSampleData();
     }
 }

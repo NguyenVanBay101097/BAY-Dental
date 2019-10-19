@@ -9,20 +9,21 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IRModelsController : BaseApiController
+    public class IRRulesController : BaseApiController
     {
-        private readonly IIRModelService _modelService;
+        private readonly IIRRuleService _ruleService;
         private readonly IMapper _mapper;
-        public IRModelsController(IIRModelService modelService,
+        public IRRulesController(IIRRuleService ruleService,
             IMapper mapper)
         {
-            _modelService = modelService;
+            _ruleService = ruleService;
             _mapper = mapper;
         }
 
@@ -30,10 +31,10 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(int offset = 0,
            int limit = 10, string filter = "")
         {
-            var paged = await _modelService.GetPagedAsync(offset: offset, limit: limit, filter: filter);
-            var res = new PagedResult2<IRModelBasic>(paged.TotalItems, paged.Offset, paged.Limit)
+            var paged = await _ruleService.GetPagedAsync(offset: offset, limit: limit, filter: filter);
+            var res = new PagedResult2<IRRuleBasic>(paged.TotalItems, paged.Offset, paged.Limit)
             {
-                Items = _mapper.Map<IEnumerable<IRModelBasic>>(paged.Items)
+                Items = _mapper.Map<IEnumerable<IRRuleBasic>>(paged.Items)
             };
 
             return Ok(res);
@@ -43,40 +44,40 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var model = await _modelService.GetByIdAsync(id);
+            var model = await _ruleService.SearchQuery(x => x.Id == id).Include(x => x.Model).FirstOrDefaultAsync();
             if (model == null)
             {
                 return NotFound();
             }
-            var display = _mapper.Map<IRModelDisplay>(model);
+            var display = _mapper.Map<IRRuleDisplay>(model);
             return Ok(display);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(IRModelSave val)
+        public async Task<IActionResult> Create(IRRuleDisplay val)
         {
             if (val == null || !ModelState.IsValid)
                 return BadRequest();
 
-            var model = _mapper.Map<IRModel>(val);
+            var rule = _mapper.Map<IRRule>(val);
 
-            await _modelService.CreateAsync(model);
+            await _ruleService.CreateAsync(rule);
+            val.Id = rule.Id;
 
-            var display = _mapper.Map<IRModelDisplay>(model);
-            return Ok(display);
+            return Ok(val);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, IRModelSave val)
+        public async Task<IActionResult> Update(Guid id, IRRuleDisplay val)
         {
-            var model = await _modelService.GetByIdAsync(id);
+            var model = await _ruleService.GetByIdAsync(id);
             if (model == null)
             {
                 return NotFound();
             }
             model = _mapper.Map(val, model);
 
-            await _modelService.UpdateAsync(model);
+            await _ruleService.UpdateAsync(model);
 
             return NoContent();
         }
@@ -84,20 +85,13 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var model = await _modelService.GetByIdAsync(id);
+            var model = await _ruleService.GetByIdAsync(id);
             if (model == null)
             {
                 return NotFound();
             }
-            await _modelService.DeleteAsync(model);
+            await _ruleService.DeleteAsync(model);
             return NoContent();
-        }
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> InsertSampleData()
-        {
-            await _modelService.InsertSampleData();
-            return Ok(true);
         }
     }
 }

@@ -1,6 +1,6 @@
-<div>
-    <div>
-        <div style="display: flex;">
+<div style="display: flex;align-items: center;">
+    <div style="padding: 10px 15px;flex: 1;">
+        <div style="display: flex;align-items: center;">
             <span style="width: 40px;
             height: 40px;
             text-align: center;
@@ -15,12 +15,15 @@
                 <i class="fas fa-dollar-sign"></i>
             </span>
             <div style="display: flex;flex-direction: column;">
-                <span>43.338.007</span>
-                <span>Doanh thu</span>
+                <span style="font-size: 24px;
+                font-weight: 600;
+                color: #28a745!important;
+                line-height: 24px;" *ngIf="total && total['amountTotal']">{{total["amountTotal"].sum | number}}</span>
+                <span class="text-muted">Tổng tiền</span>
             </div>
         </div>
     </div>
-    <div>
+    <div style="flex: 1;">
         <nav class="btn-group o_cp_switch_buttons" role="toolbar">
             <button [ngClass]="{'active': view_type == 'list'}" accesskey="l" data-view-type="list"
                 aria-label="View list" (click)="switchView('list')" class="btn btn-light o_cp_switch_list" title=""
@@ -42,7 +45,7 @@
             (pageChange)="pageChange($event)">
             <kendo-grid-column field="dateStr" title="Thời gian">
             </kendo-grid-column>
-            <kendo-grid-column field="amountTotal" class="text-right" title="Tổng doanh thu"
+            <kendo-grid-column field="amountTotal" class="text-right" title="Tổng tiền"
                 footerClass="text-right font-weight-bold">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.amountTotal | number}}

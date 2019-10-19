@@ -44,9 +44,12 @@
                 {{dataItem.credit | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ">
+        <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ" footerClass="text-right font-weight-bold">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.end | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['end']">
+                {{total["end"].sum | number}}
             </ng-template>
         </kendo-grid-column>
         <div *kendoGridDetailTemplate="let dataItem">

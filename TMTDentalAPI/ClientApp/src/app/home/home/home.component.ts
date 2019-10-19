@@ -13,7 +13,10 @@ export class AppointmentState {
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class HomeComponent implements OnInit {
   todaySummary: AccountInvoiceReportHomeSummaryVM;

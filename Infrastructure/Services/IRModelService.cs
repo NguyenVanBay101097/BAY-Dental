@@ -2,10 +2,13 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using CsvHelper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +17,12 @@ namespace Infrastructure.Services
 {
     public class IRModelService : BaseService<IRModel>, IIRModelService
     {
-        public IRModelService(IAsyncRepository<IRModel> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public IRModelService(IAsyncRepository<IRModel> repository, IHttpContextAccessor httpContextAccessor,
+            IHostingEnvironment hostingEnvironment)
         : base(repository, httpContextAccessor)
         {
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<PagedResult2<IRModel>> GetPagedAsync(int offset = 0, int limit = 10, string filter = "")
@@ -34,6 +40,31 @@ namespace Infrastructure.Services
             {
                 Items = itemsOnPage
             };
+        }
+
+        public async Task InsertSampleData()
+        {
+            var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ir_model_data.csv");
+            if (!File.Exists(file_path))
+                return;
+            var models = new List<IRModel>();
+            using (TextReader reader = File.OpenText(file_path))
+            {
+                var csv = new CsvReader(reader);
+                csv.Configuration.BadDataFound = null;
+                var records = csv.GetRecords<IRModelCsvLine>().ToList();
+                foreach (var record in records)
+                {
+                    var model = new IRModel
+                    {
+                        Model = record.model,
+                        Name = record.name,
+                    };
+                    models.Add(model);
+                }
+            }
+
+            await CreateAsync(models);
         }
     }
 }

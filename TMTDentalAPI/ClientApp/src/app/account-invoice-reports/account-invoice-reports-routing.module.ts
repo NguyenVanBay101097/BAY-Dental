@@ -8,6 +8,7 @@ const routes: Routes = [
     path: 'account-invoice-reports',
     component: AccountInvoiceReportIndexComponent,
     children: [
+      { path: '', redirectTo: 'time', pathMatch: 'full' },
       { path: 'time', component: AccountInvoiceReportByTimeComponent }
     ]
   }

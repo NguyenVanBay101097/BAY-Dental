@@ -800,6 +800,18 @@ namespace Infrastructure.Services
 
             await DeleteAsync(self);
         }
+
+        public override ISpecification<AccountInvoice> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.invoice_comp_rule":
+                    return new InitialSpecification<AccountInvoice>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 
     public class ComputeInvoiceTotalsRes

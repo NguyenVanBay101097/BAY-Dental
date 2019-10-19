@@ -61,7 +61,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     this.orderForm = this.fb.group({
       partner: [null, Validators.required],
       user: null,
-      dateOrderObj: new Date(),
+      dateOrderObj: [null, Validators.required],
       dateOrder: null,
       invoiceLines: this.fb.array([]),
       companyId: null,

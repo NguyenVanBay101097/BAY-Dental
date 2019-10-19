@@ -9,3 +9,9 @@ export class IRRulePaging {
     totalItems: number;
     items: IRRuleBasic[];
 }
+
+export class IRRulePaged {
+    limit: number;
+    offset: number;
+    filter: string;
+}

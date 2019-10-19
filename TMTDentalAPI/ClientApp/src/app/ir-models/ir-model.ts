@@ -9,3 +9,9 @@ export class IRModelPaging {
     totalItems: number;
     items: IRModelBasic[];
 }
+
+export class IRModelPaged {
+    limit: number;
+    offset: number;
+    filter: string;
+}

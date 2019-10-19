@@ -154,6 +154,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(true);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> InsertSecurityData()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _companyService.InsertSecurityData();
+            _unitOfWork.Commit();
+            return Ok(true);
+        }
+
         private async Task SaveLogo(Company company, CompanyDisplay val)
         {
             if (!string.IsNullOrEmpty(val.Logo) && ImageHelper.IsBase64String(val.Logo))
