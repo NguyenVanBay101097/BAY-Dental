@@ -15,7 +15,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./account-invoice-register-payment-dialog.component.css']
 })
 export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
-  invoiceId: string;
+  invoiceIds: string[] = [];
   paymentForm: FormGroup;
   filteredJournals: AccountJournalSimple[];
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
@@ -54,13 +54,14 @@ export class AccountInvoiceRegisterPaymentDialogComponent implements OnInit {
 
   defaultGet() {
     var val = new AccountRegisterPaymentDefaultGet();
-    val.invoiceIds = [this.invoiceId];
+    val.invoiceIds = this.invoiceIds;
     this.registerPaymentService.defaultGet(val).subscribe(result => {
       this.paymentForm.patchValue(result);
       var paymentDate = this.intlService.parseDate(result.paymentDate);
       this.paymentForm.get('paymentDateObj').patchValue(paymentDate);
     }, err => {
       console.log(err);
+      this.activeModal.dismiss();
     })
   }
 

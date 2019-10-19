@@ -1291,6 +1291,49 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("IRModelDatas");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.IRRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<bool>("Global");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<Guid>("ModelId");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<bool>("PermCreate");
+
+                    b.Property<bool>("PermRead");
+
+                    b.Property<bool>("PermUnlink");
+
+                    b.Property<bool>("PermWrite");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModelId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("IRRules");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.IRSequence", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1976,6 +2019,19 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("RoutingLines");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.RuleGroupRel", b =>
+                {
+                    b.Property<Guid>("RuleId");
+
+                    b.Property<Guid>("GroupId");
+
+                    b.HasKey("RuleId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("RuleGroupRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrder", b =>
@@ -2987,7 +3043,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.AccountFullReconcile", "FullReconcile")
                         .WithMany("ReconciledLines")
-                        .HasForeignKey("FullReconcileId");
+                        .HasForeignKey("FullReconcileId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.AccountInvoice", "Invoice")
                         .WithMany()
@@ -3398,6 +3455,22 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.IRRule", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.IRModel", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.IRSequence", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -3664,7 +3737,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("ResGroupsUsersRels")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -3703,6 +3776,19 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.RuleGroupRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ResGroup", "Group")
+                        .WithMany("RuleGroupRels")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.IRRule", "Rule")
+                        .WithMany("RuleGroupRels")
+                        .HasForeignKey("RuleId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrder", b =>

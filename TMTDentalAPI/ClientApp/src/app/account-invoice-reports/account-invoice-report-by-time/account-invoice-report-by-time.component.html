@@ -1,32 +1,26 @@
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Báo cáo doanh thu</li>
-    </ol>
-    <div class="o_cp_searchview">
-        <!-- <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            </div> -->
-    </div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <!-- <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
-                </div> -->
+<div>
+    <div>
+        <div style="display: flex;">
+            <span style="width: 40px;
+            height: 40px;
+            text-align: center;
+            background: #0094da;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-right: 10px;">
+                <i class="fas fa-dollar-sign"></i>
+            </span>
+            <div style="display: flex;flex-direction: column;">
+                <span>43.338.007</span>
+                <span>Doanh thu</span>
+            </div>
         </div>
-        <div class="o_cp_sidebar">
-        </div>
     </div>
-    <div class="o_cp_right">
-        <!-- <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false" type="button" id="dropdownMenuButton">
-                    Thao tác
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">Xóa</a>
-                </div>
-            </div> -->
+    <div>
         <nav class="btn-group o_cp_switch_buttons" role="toolbar">
             <button [ngClass]="{'active': view_type == 'list'}" accesskey="l" data-view-type="list"
                 aria-label="View list" (click)="switchView('list')" class="btn btn-light o_cp_switch_list" title=""
@@ -42,120 +36,48 @@
     </div>
 </div>
 
-
-<div class="d-flex">
-    <div class="accordion search-section" id="accordionExample">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <a href="#" onclick="javascript:void(0);" data-toggle="collapse" data-target="#collapseOne"
-                    aria-expanded="true" aria-controls="collapseOne">Chọn khoảng thời gian</a>
+<div>
+    <div *ngIf="view_type == 'list'">
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="dateStr" title="Thời gian">
+            </kendo-grid-column>
+            <kendo-grid-column field="amountTotal" class="text-right" title="Tổng doanh thu"
+                footerClass="text-right font-weight-bold">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amountTotal | number}}
+                </ng-template>
+                <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['amountTotal']">
+                    {{total["amountTotal"].sum | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <!-- <kendo-grid-column field="residual" class="text-right" title="Còn nợ"
+                footerClass="text-right font-weight-bold">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.residual | number}}
+                </ng-template>
+                <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['residual']">
+                    {{total["residual"].sum | number}}
+                </ng-template>
+            </kendo-grid-column> -->
+            <div *kendoGridDetailTemplate="let dataItem">
+                <app-account-invoice-report-by-time-detail [item]="dataItem">
+                </app-account-invoice-report-by-time-detail>
             </div>
-
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label>Báo cáo theo</label>
-                        <div>
-                            <select class="form-control" [(ngModel)]="groupBy" (change)="loadDataFromApi()">
-                                <option value="day">Ngày</option>
-                                <option value="month">Tháng</option>
-                                <option value="year">Năm</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" *ngIf="groupBy == 'day'">
-                        <label>Từ ngày</label>
-                        <div>
-                            <kendo-datepicker [(value)]="dateFrom" (valueChange)="onChangeDate($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                    <div class="form-group" *ngIf="groupBy == 'day'">
-                        <label>Đến ngày</label>
-                        <div>
-                            <kendo-datepicker [(value)]="dateTo" (valueChange)="onChangeDate($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                    <div class="form-group" *ngIf="groupBy == 'month'">
-                        <label>Từ tháng</label>
-                        <div>
-                            <kendo-datepicker [(value)]="monthFrom" [bottomView]="'year'" [topView]="'decade'"
-                                [format]="'MM-yyyy'" (valueChange)="onChangeDate($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                    <div class="form-group" *ngIf="groupBy == 'month'">
-                        <label>Đến tháng</label>
-                        <div>
-                            <kendo-datepicker [(value)]="monthTo" [format]="'MM-yyyy'" [bottomView]="'year'"
-                                [topView]="'decade'" (valueChange)="onChangeDate($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                    <div class="form-group" *ngIf="groupBy == 'year'">
-                        <label>Từ năm</label>
-                        <div>
-                            <kendo-datepicker [(value)]="yearFrom" [bottomView]="'decade'" [topView]="'century'"
-                                [format]="'yyyy'" (valueChange)="onChangeDate($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                    <div class="form-group" *ngIf="groupBy == 'year'">
-                        <label>Đến năm</label>
-                        <div>
-                            <kendo-datepicker [(value)]="yearTo" [bottomView]="'decade'" [topView]="'century'"
-                                [format]="'yyyy'" (valueChange)="onChangeDate($event)">
-                            </kendo-datepicker>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </kendo-grid>
     </div>
-    <div class="flex-fill">
-        <div *ngIf="view_type == 'list'">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                (pageChange)="pageChange($event)">
-                <kendo-grid-column field="dateStr" title="Thời gian">
-                </kendo-grid-column>
-                <kendo-grid-column field="amountTotal" class="text-right" title="Tổng tiền"
-                    footerClass="text-right font-weight-bold">
+
+    <div *ngIf="view_type == 'graph'">
+        <kendo-chart>
+            <kendo-chart-series>
+                <kendo-chart-series-item type="column" [data]="items" field="amountTotal" categoryField="dateStr">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.amountTotal | number}}
                     </ng-template>
-                    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['amountTotal']">
-                        {{total["amountTotal"].sum | number}}
-                    </ng-template>
-                </kendo-grid-column>
-                <kendo-grid-column field="residual" class="text-right" title="Còn nợ"
-                    footerClass="text-right font-weight-bold">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.residual | number}}
-                    </ng-template>
-                    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['residual']">
-                        {{total["residual"].sum | number}}
-                    </ng-template>
-                </kendo-grid-column>
-                <div *kendoGridDetailTemplate="let dataItem">
-                    <app-account-invoice-report-by-time-detail [item]="dataItem">
-                    </app-account-invoice-report-by-time-detail>
-                </div>
-            </kendo-grid>
-        </div>
-
-        <div *ngIf="view_type == 'graph'">
-            <kendo-chart>
-                <kendo-chart-series>
-                    <kendo-chart-series-item type="column" [data]="items" field="amountTotal" categoryField="dateStr">
-                        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                            {{dataItem.amountTotal | number}}
-                        </ng-template>
-                    </kendo-chart-series-item>
-                    <kendo-chart-series-item type="column" [data]="items" field="residual" categoryField="dateStr">
-                    </kendo-chart-series-item>
-                </kendo-chart-series>
-            </kendo-chart>
-        </div>
+                </kendo-chart-series-item>
+                <!-- <kendo-chart-series-item type="column" [data]="items" field="residual" categoryField="dateStr">
+                </kendo-chart-series-item> -->
+            </kendo-chart-series>
+        </kendo-chart>
     </div>
 </div>

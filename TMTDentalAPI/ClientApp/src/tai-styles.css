@@ -137,6 +137,62 @@ html .o_web_client>.o_action_manager .o_action .o_content {
     padding: 15px;
 }
 
+.o_advance_search_dropdown .o_advance_search_dropdown_container {
+    width: 300px;
+}
+
 .o_advance_search .o_advance_search_container.show {
     margin-right: 0;
+}
+
+.oe_subtotal_footer td.oe_form_group_cell {
+    text-align: right;
+    padding: 0 !important;
+}
+
+td.oe_form_group_cell_label label {
+    line-height: 18px;
+    display: block;
+    min-width: 150px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.pophover_table label.oe_form_label {
+    font-weight: bold;
+    text-align: left;
+    min-width: 100px;
+    padding-right: 15px;
+}
+
+.o_form_view .o_form_field_radio .o_radio_item {
+    -ms-flex: 0 0 auto;
+    -moz-flex: 0 0 auto;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    display: -ms-flexbox;
+    display: -moz-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.o_form_view .o_form_field_radio .o_radio_item>input {
+    -ms-flex: 0 0 auto;
+    -moz-flex: 0 0 auto;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    margin: 0 5px 0 0;
+}
+
+.o_form_view .o_form_field_radio .o_radio_item>label {
+    margin: 0;
+}
+
+.o_form_view .o_form_field_radio.o_vertical .o_radio_item {
+    margin-bottom: 5px;
 }

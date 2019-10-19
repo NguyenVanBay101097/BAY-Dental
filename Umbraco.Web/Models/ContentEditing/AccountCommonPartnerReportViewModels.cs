@@ -32,6 +32,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ResultSelection { get; set; }
 
         public string Display { get; set; }
+
+        public string Search { get; set; }
     }
 
     public class AccountCommonPartnerReportItem

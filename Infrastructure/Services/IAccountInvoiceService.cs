@@ -25,5 +25,9 @@ namespace Infrastructure.Services
         Task<IEnumerable<AccountInvoiceCbx>> GetOpenPaid(string search = "");
         Task<AccountInvoicePrint> GetAccountInvoicePrint(Guid id);
         Task DeleteInvoice(Guid id);
+        Task TriggerChange_MoveLinesResidual(IEnumerable<AccountMoveLine> amls);
+        Task UpdatePayments(IEnumerable<Guid> ids);
+        Task UpdateResidual(IEnumerable<Guid> ids);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

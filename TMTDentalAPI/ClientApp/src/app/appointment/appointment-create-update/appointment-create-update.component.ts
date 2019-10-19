@@ -68,7 +68,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       user: null,
       userId: null,
       date: null,
-      dateObj: new Date(),
+      dateObj: [null, Validators.required],
       note: null,
       companyId: null,
       // dotKhamId: this.dotKhamId,
@@ -100,6 +100,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   //Create + Update
   createNewAppointment() {
+    if (!this.formCreate.valid) {
+      return false;
+    }
+
     var appoint = this.formCreate.value;
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.userId = appoint.user ? appoint.user.id : null;

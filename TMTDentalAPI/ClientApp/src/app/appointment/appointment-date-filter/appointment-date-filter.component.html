@@ -1,0 +1,50 @@
+<div ngbDropdown #myDrop="ngbDropdown" [autoClose]="false">
+    <button class="btn btn-primary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+        <i class="fas fa-filter"></i>
+        Ngày:
+        <span *ngIf="dateFrom && dateTo">{{dateFrom | date: 'shortDate'}} - {{dateTo | date: 'shortDate'}}</span>
+        <span *ngIf="dateFrom && !dateTo">{{dateFrom | date: 'shortDate'}} - ...</span>
+        <span *ngIf="!dateFrom && dateTo">... - {{dateTo | date: 'shortDate'}}</span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
+        <div class="px-4 py-3" [formGroup]="formGroup">
+            <h5>Tìm theo ngày</h5>
+            <div class="form-group">
+                <select class="form-control" [(ngModel)]="dateOption" [ngModelOptions]="{standalone: true}"
+                    (change)="changeDateOption($event)">
+                    <option value="all">Gợi ý chọn nhanh</option>
+                    <option value="today">Hôm nay</option>
+                    <option value="yesterday">Hôm qua</option>
+                    <option value="this_week">Tuần này</option>
+                    <option value="this_month">Tháng này</option>
+                    <option value="this_year">Năm này</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Từ ngày</label>
+                <div>
+                    <kendo-datepicker formControlName="dateFrom">
+                    </kendo-datepicker>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Đến ngày</label>
+                <div>
+                    <kendo-datepicker formControlName="dateTo">
+                    </kendo-datepicker>
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                    Tìm kiếm
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear()">
+                    Hủy lọc
+                </button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="myDrop.toggle()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

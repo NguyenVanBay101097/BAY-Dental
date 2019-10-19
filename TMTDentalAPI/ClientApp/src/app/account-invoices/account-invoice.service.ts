@@ -135,6 +135,10 @@ export class AccountInvoiceService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
+    unlink(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/Unlink", ids);
+    }
+
     invoiceOpen(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + "/invoiceopen", ids);
     }

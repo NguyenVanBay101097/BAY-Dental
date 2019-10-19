@@ -1,20 +1,28 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
     public class AccountPaymentService : BaseService<AccountPayment>, IAccountPaymentService
     {
-
-        public AccountPaymentService(IAsyncRepository<AccountPayment> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public AccountPaymentService(IAsyncRepository<AccountPayment> repository, IHttpContextAccessor httpContextAccessor,
+            IMapper mapper)
         : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public async Task Post(IEnumerable<AccountPayment> payments)
@@ -322,6 +330,86 @@ namespace Infrastructure.Services
                 Journal = move.Journal,
                 JournalId = move.JournalId,
             };
+        }
+
+        public async Task<PagedResult2<AccountPaymentBasic>> GetPagedResultAsync(AccountPaymentPaged val)
+        {
+            ISpecification<AccountPayment> spec = new InitialSpecification<AccountPayment>(x => true);
+            if (!string.IsNullOrWhiteSpace(val.Search))
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) ||
+                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)));
+
+            if (!string.IsNullOrEmpty(val.PartnerType))
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerType == val.PartnerType));
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var states = val.State.Split(",");
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => states.Contains(x.State)));
+            }
+
+            if (val.PaymentDateFrom.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate <= val.PaymentDateFrom));
+
+            if (val.PaymentDateTo.HasValue)
+            {
+                var paymentDateTo = val.PaymentDateTo.Value.AddDays(1);
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
+            }
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated), limit: val.Limit, offSet: val.Offset);
+
+            var items = await _mapper.ProjectTo<AccountPaymentBasic>(query).ToListAsync();
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<AccountPaymentBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
+        public async Task CancelAsync(IEnumerable<Guid> ids)
+        {
+            await CancelAsync(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines)
+                .Include("MoveLines.Move").Include("MoveLines.Move.Lines").Include(x => x.AccountInvoicePaymentRels).ToList());
+        }
+
+        public async Task CancelAsync(IEnumerable<AccountPayment> payments)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            foreach (var rec in payments)
+            {
+                foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
+                {
+                    if (rec.AccountInvoicePaymentRels.Any())
+                        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
+
+                    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
+                    await moveObj.Unlink(new List<Guid>() { move.Id });
+                }
+
+                rec.State = "draft";
+            }
+
+            await UpdateAsync(payments);
+        }
+
+        public async Task UnlinkAsync(IEnumerable<Guid> ids)
+        {
+            var payments = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            await UnlinkAsync(payments);
+        }
+
+        public async Task UnlinkAsync(IEnumerable<AccountPayment> payments)
+        {
+            foreach (var rec in payments.ToList())
+            {
+                if (rec.State != "draft")
+                    throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
+            }
+
+            await DeleteAsync(payments);
         }
     }
 }

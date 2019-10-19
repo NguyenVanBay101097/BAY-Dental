@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public AccountJournalProfile()
         {
             CreateMap<AccountJournal, AccountJournalSimple>();
+            CreateMap<AccountJournal, AccountJournalBasic>();
         }
     }
 }

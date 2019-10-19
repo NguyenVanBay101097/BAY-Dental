@@ -61,8 +61,10 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { HistoryModule } from './history/history.module';
 import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCustomParserFormatter } from './core/ngb-date-custom-parser-formatter';
+import { ResGroupsModule } from './res-groups/res-groups.module';
+import { IrModelsModule } from './ir-models/ir-models.module';
+import { IrRulesModule } from './ir-rules/ir-rules.module';
 import { PriceListModule } from './price-list/price-list.module';
-
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -84,6 +86,7 @@ registerLocaleData(localeVi, 'vi');
     ProductCategoriesModule,
     AppointmentModule,
     CoreModule,
+    IntlModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {
@@ -129,6 +132,9 @@ registerLocaleData(localeVi, 'vi');
     MatStepperModule,
     NgbModule,
     HistoryModule,
+    ResGroupsModule,
+    IrModelsModule,
+    IrRulesModule,
     PriceListModule
 
   ],

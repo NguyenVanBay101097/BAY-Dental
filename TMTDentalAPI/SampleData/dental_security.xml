@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record model="res.groups" id="dental.group_user">
+      <field name="name">Lễ tân</field>
+    </record>
+
+    <record model="res.groups" id="dental.group_manager">
+      <field name="name">Bác sĩ</field>
+    </record>
+
+    <record model="res.groups" id="base.group_admin">
+      <field name="name">Chủ chi nhánh</field>
+    </record>
+  </data>
+</odoo>
+

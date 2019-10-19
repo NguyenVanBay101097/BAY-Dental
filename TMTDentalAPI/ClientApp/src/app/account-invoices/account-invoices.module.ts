@@ -14,9 +14,10 @@ import { InvoiceCreateDotkhamDialogComponent } from './invoice-create-dotkham-di
 import { CustomerInvoicePrintComponent } from './customer-invoice-print/customer-invoice-print.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccountInvoiceAdvanceSearchComponent } from './account-invoice-advance-search/account-invoice-advance-search.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @NgModule({
-  declarations: [CustomerInvoiceListComponent, CustomerInvoiceCreateUpdateComponent, AccountInvoiceLineDialogComponent, AccountInvoiceRegisterPaymentDialogComponent, InvoiceCreateDotkhamDialogComponent, CustomerInvoicePrintComponent, AccountInvoiceAdvanceSearchComponent],
+  declarations: [CustomerInvoiceListComponent, CustomerInvoiceCreateUpdateComponent, AccountInvoiceLineDialogComponent, AccountInvoiceRegisterPaymentDialogComponent, InvoiceCreateDotkhamDialogComponent, CustomerInvoicePrintComponent, AccountInvoiceAdvanceSearchComponent, AccountInvoiceRegisterPaymentDialogV2Component],
   imports: [
     CommonModule,
     AccountInvoicesRoutingModule,
@@ -35,7 +36,8 @@ import { AccountInvoiceAdvanceSearchComponent } from './account-invoice-advance-
   entryComponents: [
     AccountInvoiceLineDialogComponent,
     AccountInvoiceRegisterPaymentDialogComponent,
-    InvoiceCreateDotkhamDialogComponent
+    InvoiceCreateDotkhamDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component
   ]
 })
 export class AccountInvoicesModule { }

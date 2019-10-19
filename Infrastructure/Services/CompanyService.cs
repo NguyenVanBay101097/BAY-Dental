@@ -87,7 +87,7 @@ namespace Infrastructure.Services
 
             await InsertModuleDentalData();
 
-            //await InsertSecurityData();
+            await InsertSecurityData();
         }
 
         public async Task InsertModuleAccountData(Company main_company)
@@ -614,6 +614,7 @@ namespace Infrastructure.Services
             using (TextReader reader = File.OpenText(file_path))
             {
                 var csv = new CsvReader(reader);
+                csv.Configuration.BadDataFound = null;
                 var records = csv.GetRecords<IRModelCsvLine>().ToList();
                 foreach (var record in records)
                 {

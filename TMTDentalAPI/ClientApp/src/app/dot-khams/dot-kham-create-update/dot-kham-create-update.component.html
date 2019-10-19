@@ -206,7 +206,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="image-tab" data-toggle="tab" href="#image" role="tab"
-                                aria-controls="image" aria-selected="false">Đính kèm</a>
+                                aria-controls="image" aria-selected="false">Hình ảnh/File</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" id="appointment-tab" data-toggle="tab" href="#appointment" role="tab"
@@ -218,13 +218,30 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div>
-                                <div style="width: 15%">
-                                    <select formControlName="filter" (change)="loadDotKhamSteps()" class="form-control">
-                                        <option value="dotkham">Đợt khám</option>
-                                        <option value="all">Tất cả</option>
-                                    </select>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <select formControlName="filter" (change)="loadDotKhamSteps()"
+                                            style="width: auto;" class="form-control my-1 mr-2">
+                                            <option value="dotkham">Đợt khám</option>
+                                            <option value="all">Tất cả</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="form-inline">
+                                            <label class="my-1 mr-2">Công đoạn</label>
+                                            <input class="form-control my-1 mr-2" type="text" formControlName="step" />
+                                            <label class="my-1 mr-2">Dịch vụ</label>
+                                            <kendo-combobox formControlName="product" class="my-1 mr-2"
+                                                [filterable]="true" [data]="productSimpleFilteredList"
+                                                (filterChange)="filterProductSimple($event)" [valueField]="'id'"
+                                                [textField]="'name'">
+                                            </kendo-combobox>
+                                            <button [disabled]="invoiceState=='cancel'" (click)="createDKSteps()"
+                                                class="btn btn-secondary mr-2">Thêm</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <table class="o_group o_inner_group o_group_col_6" *ngIf="getState=='confirmed'">
+                                <!-- <table class="o_group o_inner_group o_group_col_6" *ngIf="getState=='confirmed'">
                                     <tbody>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
@@ -235,6 +252,7 @@
                                             <td colspan="1" style="width: 50%;">
                                                 <div>
                                                     <input class="form-control" type="text" formControlName="step" />
+
                                                 </div>
                                             </td>
                                             <td colspan="1" class="o_td_label">
@@ -253,59 +271,58 @@
                                                     class="btn btn-info btn-sm mr-2">Thêm</button></td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table> -->
                                 <table class="table table-sm">
-                                    <tr class="row">
-                                        <!-- <th>#</th> -->
-                                        <th class="col">Dịch vụ</th>
-                                        <th class="col">Công đoạn</th>
-                                        <th class="col">Đợt khám</th>
-                                        <th class="col">Trạng thái</th>
-                                        <th class="col">Thao tác</th>
-                                    </tr>
-                                    <span>
-                                        <div *ngFor="let stepList of dotKhamStepsList" cdkDropList
-                                            [cdkDropListData]="stepList" (cdkDropListDropped)="drop($event)">
-                                            <tr class="row" *ngFor="let step of stepList" cdkDrag>
-                                                <!-- <td>
-                                                    <ng-container *ngIf="step.id==stepList[0].id">
-                                                        <span *ngIf="doneList.indexOf(stepList)>-1"><i
-                                                                class="fas fa-check"></i></span>
-                                                        <span *ngIf="!(doneList.indexOf(stepList)>-1)"><i
-                                                                class="fas fa-hourglass-half"></i></span>
-                                                    </ng-container>
-                                                </td> -->
-                                                <td class="col">
-                                                    <span>
-                                                        <b *ngIf="step.id==stepList[0].id">
-                                                            {{stepList[0].product ? stepList[0].product.name : ''}}
-                                                        </b>
-                                                    </span>
-                                                </td>
-                                                <td class="col">
-                                                    {{step.name}}
-                                                </td>
-                                                <td class="col">
-                                                    {{step.dotKham ? step.dotKham.name : ''}}
-                                                </td>
-                                                <td class="col">
-                                                    <button [disabled]="invoiceState=='cancel'"
-                                                        (click)="checkState(step.id,step.state)" class="btn btn-sm mr-2"
-                                                        [class.btn-light]="step.state=='draft'"
-                                                        [class.btn-primary]="step.state=='progress'"
-                                                        [class.btn-success]="step.state=='done'">
-                                                        {{getStateLine(step.state)}}
-                                                    </button>
-                                                </td>
-                                                <td class="col">
-                                                    <button [disabled]="invoiceState=='cancel'"
-                                                        (click)="deleteSteps(step.id)"
-                                                        class="btn btn-light btn-sm mr-2">
-                                                        <i title="Xóa" class="fas fa-trash"></i>&nbsp;Xóa</button>
-                                                </td>
-                                            </tr>
-                                        </div>
-                                    </span>
+                                    <thead>
+                                        <tr>
+                                            <!-- <th>#</th> -->
+                                            <th>Dịch vụ</th>
+                                            <th>Công đoạn</th>
+                                            <th>Đợt khám</th>
+                                            <th>Trạng thái</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngFor="let stepList of dotKhamStepsList" cdkDropList
+                                        [cdkDropListData]="stepList" (cdkDropListDropped)="drop($event)">
+                                        <tr *ngFor="let step of stepList" cdkDrag>
+                                            <!-- <td>
+                                                        <ng-container *ngIf="step.id==stepList[0].id">
+                                                            <span *ngIf="doneList.indexOf(stepList)>-1"><i
+                                                                    class="fas fa-check"></i></span>
+                                                            <span *ngIf="!(doneList.indexOf(stepList)>-1)"><i
+                                                                    class="fas fa-hourglass-half"></i></span>
+                                                        </ng-container>
+                                                    </td> -->
+                                            <td>
+                                                <span>
+                                                    <b *ngIf="step.id==stepList[0].id">
+                                                        {{stepList[0].product ? stepList[0].product.name : ''}}
+                                                    </b>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {{step.name}}
+                                            </td>
+                                            <td>
+                                                {{step.dotKham ? step.dotKham.name : ''}}
+                                            </td>
+                                            <td>
+                                                <button [disabled]="invoiceState=='cancel'"
+                                                    (click)="checkState(step.id,step.state)" class="btn btn-sm mr-2"
+                                                    [class.btn-light]="step.state=='draft'"
+                                                    [class.btn-primary]="step.state=='progress'"
+                                                    [class.btn-success]="step.state=='done'">
+                                                    {{getStateLine(step.state)}}
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button [disabled]="invoiceState=='cancel'"
+                                                    (click)="deleteSteps(step.id)" class="btn btn-light btn-sm mr-2">
+                                                    <i title="Xóa" class="fas fa-trash"></i>&nbsp;Xóa</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -321,9 +338,10 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let line of toaThuocs">
-                                            <td><button [disabled]="invoiceState=='cancel'"
-                                                    class="text-primary btn btn-link"
-                                                    (click)="editToaThuoc(line)">{{line.name}}</button></td>
+                                            <td>
+                                                <a class="text-primary" style="cursor: pointer;"
+                                                    (click)="editToaThuoc(line)">{{line.name}}</a>
+                                            </td>
                                             <td>{{ line.date | date : 'short' }}</td>
                                             <td>
                                                 <button [disabled]="invoiceState=='cancel'" type="button"

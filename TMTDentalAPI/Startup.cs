@@ -8,6 +8,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using AutoMapper;
 using IdentityServer4.Services;
+using Infrastructure.Caches;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -166,12 +167,20 @@ namespace TMTDentalAPI
             services.AddScoped<IIrAttachmentService, IrAttachmentService>();
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<IUploadService, UploadService>();
+            services.AddScoped<IIRRuleService, IRRuleService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductPricelistService, ProductPricelistService>();
+            services.AddScoped<IProductPricelistItemService, ProductPricelistItemService>();
+
+            services.AddMemoryCache();
+
+            services.AddSingleton<IMyCache, MyMemoryCache>();
             services.AddSingleton<IMailSender, SendGridSender>();
             
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
 
-            var mappingConfig = new MapperConfiguration(mc =>
+            Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
                 mc.AddProfile(new ProductCategoryProfile());
                 mc.AddProfile(new ProductProfile());
@@ -214,7 +223,11 @@ namespace TMTDentalAPI
                 mc.AddProfile(new DotKhamStepProfile());
                 mc.AddProfile(new HistoriesProfile());
                 mc.AddProfile(new PartnerHistoryRelProfile());
-            });
+                mc.AddProfile(new IRModelProfile());
+                mc.AddProfile(new AccountPaymentProfile());
+            };
+
+            var mappingConfig = new MapperConfiguration(mapperConfigExp);
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 

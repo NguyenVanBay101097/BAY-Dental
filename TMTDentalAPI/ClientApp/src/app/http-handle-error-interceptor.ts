@@ -3,17 +3,19 @@ import {
     HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse
 } from '@angular/common/http';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, finalize } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { AppLoadingService } from './shared/app-loading.service';
 
 
 @Injectable()
 export class HttpHandleErrorInterceptor implements HttpInterceptor {
 
-    constructor(private notificationService: NotificationService, private router: Router) { }
+    constructor(private notificationService: NotificationService, private router: Router, private loadingService: AppLoadingService) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler) {
+        this.loadingService.setLoading(true);
         return next.handle(req).pipe(
             map((event: HttpEvent<any>) => {
                 if (event instanceof HttpResponse) {
@@ -49,6 +51,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                 });
 
                 return throwError(error);
-            }));
+            }),
+            finalize(() => this.loadingService.setLoading(false)));
     }
 }

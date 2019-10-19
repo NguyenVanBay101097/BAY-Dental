@@ -14,7 +14,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<IRModelAccess, IRModelAccessDisplay>();
             CreateMap<IRModelAccessDisplay, IRModelAccess>()
-                .ForMember(x => x.Id, x => x.Ignore());
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Model, x => x.Ignore());
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.GroupId);
 
             builder.HasOne(x => x.User)
-               .WithMany()
+               .WithMany(x => x.ResGroupsUsersRels)
                .HasForeignKey(x => x.UserId);
         }
     }

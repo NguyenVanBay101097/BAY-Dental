@@ -2,11 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
 import { StockReportXuatNhapTonItem, StockReportService, StockReportXuatNhapTonSearch } from '../stock-report.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
 import { ProductService, ProductPaged, ProductFilter } from 'src/app/products/product.service';
+import { Subject } from 'rxjs';
 
 
 @Component({
@@ -27,6 +28,9 @@ export class StockReportXuatNhapTonComponent implements OnInit {
   searchProduct: ProductSimple;
   searchCateg: ProductCategoryBasic;
 
+  search: string;
+  searchUpdate = new Subject<string>();
+
   filteredProducts: ProductSimple[];
   filteredCategs: ProductCategoryBasic[];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
@@ -40,6 +44,13 @@ export class StockReportXuatNhapTonComponent implements OnInit {
     this.dateFrom = new Date(date.getFullYear(), date.getMonth(), 1);
     this.dateTo = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     this.loadDataFromApi();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadDataFromApi();
+      });
 
     this.productCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -86,6 +97,7 @@ export class StockReportXuatNhapTonComponent implements OnInit {
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'd', 'en-US') : null;
     val.productId = this.searchProduct ? this.searchProduct.id : null;
     val.productCategId = this.searchCateg ? this.searchCateg.id : null;
+    val.search = this.search ? this.search : null;
 
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;

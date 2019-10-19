@@ -85,10 +85,12 @@
                                     <label class="o_form_label required-label">Ngày</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                    <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"
+                                    <!-- <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"
                                         [format]="'yyyy-MM-dd HH:mm'" formControlName="dateObj"
                                         [readonly]="timeAvailble()">
-                                    </kendo-datepicker>
+                                    </kendo-datepicker> -->
+                                    <kendo-datetimepicker [steps]="{hour: 1, minute: 5}" formControlName="dateObj">
+                                    </kendo-datetimepicker>
                                 </td>
                             </tr>
                             <tr>

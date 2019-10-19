@@ -27,5 +27,7 @@ namespace ApplicationCore.Entities
         public bool Active { get; set; }
 
         public bool IsUserRoot { get; set; }
+
+        public ICollection<ResGroupsUsersRel> ResGroupsUsersRels { get; set; } = new List<ResGroupsUsersRel>();
     }
 }

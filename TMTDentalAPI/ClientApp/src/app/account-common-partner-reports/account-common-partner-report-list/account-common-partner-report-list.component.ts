@@ -5,12 +5,16 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-account-common-partner-report-list',
   templateUrl: './account-common-partner-report-list.component.html',
-  styleUrls: ['./account-common-partner-report-list.component.css']
+  styleUrls: ['./account-common-partner-report-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class AccountCommonPartnerReportListComponent implements OnInit {
 
@@ -23,6 +27,9 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   dateTo: Date;
   searchPartner: PartnerSimple;
 
+  search: string;
+  searchUpdate = new Subject<string>();
+
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
@@ -34,6 +41,13 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
     this.dateFrom = new Date(date.getFullYear(), date.getMonth(), 1);
     this.dateTo = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     this.loadDataFromApi();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadDataFromApi();
+      });
 
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -64,6 +78,9 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
     val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'd', 'en-US') : null;
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'd', 'en-US') : null;
     val.partnerId = this.searchPartner ? this.searchPartner.id : null;
+    if (this.search) {
+      val.search = this.search;
+    }
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;

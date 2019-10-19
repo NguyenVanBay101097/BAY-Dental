@@ -50,22 +50,17 @@ namespace Infrastructure.Services
 
         public async Task<ResGroupDisplay> DefaultGet()
         {
-            //lấy hết những ir model access ra add vào cho group, để người dùng chỉ cần check 
-            //sẽ dùng những ir model access nào active = false làm dữ liệu mẫu add cho group
             var res = new ResGroupDisplay();
-            var accessObj = GetService<IIRModelAccessService>();
-            var accesses = await accessObj.SearchQuery(x => !x.GroupId.HasValue && !x.Active, orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
+            var modelObj = GetService<IIRModelService>();
+            var models = await modelObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
             var list = new List<IRModelAccessDisplay>();
-            foreach(var access in accesses)
+            foreach(var model in models)
             {
                 list.Add(new IRModelAccessDisplay
                 {
-                    Name = access.Name,
-                    PermRead = access.PermRead,
-                    PermCreate = access.PermCreate,
-                    PermWrite = access.PermWrite,
-                    PermUnlink = access.PermUnlink,
-                    ModelId = access.ModelId
+                    Name = model.Name,
+                    ModelId = model.Id,
+                    Model = _mapper.Map<IRModelBasic>(model)
                 });
             }
             res.ModelAccesses = list;
@@ -74,7 +69,6 @@ namespace Infrastructure.Services
 
         public override Task<ResGroup> CreateAsync(ResGroup entity)
         {
-
             return base.CreateAsync(entity);
         }
     }

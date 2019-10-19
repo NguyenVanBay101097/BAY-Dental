@@ -38,7 +38,8 @@ namespace Infrastructure.EntityConfigurations
 
             builder.HasOne(x => x.FullReconcile)
                 .WithMany(x => x.ReconciledLines)
-                .HasForeignKey(x => x.FullReconcileId);
+                .HasForeignKey(x => x.FullReconcileId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.Payment)
                 .WithMany(x => x.MoveLines)

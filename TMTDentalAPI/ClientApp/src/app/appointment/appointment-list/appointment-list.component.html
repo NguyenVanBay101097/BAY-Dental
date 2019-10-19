@@ -11,12 +11,12 @@
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, khách hàng, SĐT..." type="text"
                         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
-                <div class="o_searchview_advance">
+                <!-- <div class="o_searchview_advance">
                     <button class="btn btn-secondary btn-sm rounded-0" type="button"
                         (click)="advanceFilter.toggleShow()">
                         Nâng cao
                     </button>
-                </div>
+                </div> -->
             </div>
             <!-- <div class="o_searchview">
                 <input type="text" class="o_searchview_input" formControlName="search" [(ngModel)]="search"
@@ -41,6 +41,14 @@
             </div>
         </div>
         <div class="o_cp_right">
+            <div class="btn-group o_search_options">
+                <app-appointment-date-filter [dateFrom]="fromDateList" [dateTo]="toDateList"
+                    (searchChange)="onDateSearchChange($event)">
+                </app-appointment-date-filter>
+                <app-appointment-state-filter [confirmedState]="confirmed" [doneState]="done" [cancelState]="cancel"
+                    (searchChange)="onStateSearchChange($event)">
+                </app-appointment-state-filter>
+            </div>
         </div>
     </div>
     <!-- <div class="mainLeft">
@@ -157,7 +165,7 @@
         <kendo-grid-column field="doctor.name" title="Bác sĩ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>{{dataItem.doctor ? dataItem.doctor.name : ''}}</div>
-                <div>SĐT: {{dataItem.doctor ? dataItem.doctor.phone : ''}}</div>
+                <!-- <div>SĐT: {{dataItem.doctor ? dataItem.doctor.phone : ''}}</div> -->
                 <!-- <button class="btn btn-link mr-2"
                     (click)="openEmployeeInfo(dataItem.doctorId)">{{dataItem.doctor ? dataItem.doctor.name : ''}}</button>
                 <div *ngIf="dataItem.doctor && dataItem.doctor.phone">
@@ -193,7 +201,7 @@
         [startTime]="schedulerConfig.startDisplay" [endTime]="schedulerConfig.endDisplay"
         [workDayStart]="schedulerConfig.workDayStart" [workDayEnd]="schedulerConfig.workDayEnd"
         [workWeekStart]="schedulerConfig.workWeekStart" [workWeekEnd]="schedulerConfig.workWeekEnd" [editable]="true"
-        style="height: 600px;" [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
+        [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
         [slotDuration]="schedulerConfig.slotDuration" (eventDblClick)="eventDblClick($event)"
         (slotDblClick)="slotDblClick($event)" (remove)="cancelOrRemoveEvent($event)" (dragEnd)="dragEvent($event)"
         (dateChange)="changeDateRangeScheduler($event)">
@@ -232,5 +240,5 @@
     </kendo-scheduler>
 </div>
 
-<app-appointment-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)">
-</app-appointment-advance-search>
+<!-- <app-appointment-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)">
+</app-appointment-advance-search> -->

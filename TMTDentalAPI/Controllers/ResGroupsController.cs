@@ -42,6 +42,7 @@ namespace TMTDentalAPI.Controllers
         {
             _modelAccessService.Check("ResGroup", "Read");
             var group = await _resGroupService.SearchQuery(x => x.Id == id).Include(x => x.ModelAccesses)
+                .Include("ModelAccesses.Model")
                 .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.User").FirstOrDefaultAsync();
             if (group == null)
             {

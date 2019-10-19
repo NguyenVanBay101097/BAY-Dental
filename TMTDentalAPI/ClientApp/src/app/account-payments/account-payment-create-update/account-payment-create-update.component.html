@@ -1,0 +1,160 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/accountpayments" [queryParams]="{partner_type: payment.partnerType}">
+                    <span *ngIf="payment.partnerType == 'customer'">Thanh toán điều trị</span>
+                    <span *ngIf="payment.partnerType == 'supplier'">Thanh toán mua hàng</span>
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="payment.state == 'draft'">Nháp</span>
+                <span *ngIf="payment.state != 'draft'">{{payment.name}}</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="payment.state == 'draft' && !id"
+                        (click)="onSave()">
+                        Lưu</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <button class="btn btn-sm btn-light" *ngIf="id" (click)="unlink()">
+                Xóa
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="payment.state == 'draft'"
+                        (click)="actionConfirm()">
+                        Xác nhận
+                    </button> -->
+                    <button type="button" class="btn btn-danger btn-sm" *ngIf="payment.state == 'posted'"
+                        (click)="actionCancel()">
+                        Hủy bỏ
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="payment.state !== 'posted'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': payment.state === 'posted', 'btn-secondary': payment.state !== 'posted'}"
+                        type="button">
+                        Đã vào sổ
+                    </button>
+                    <button [disabled]="payment.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': payment.state === 'draft', 'btn-secondary': payment.state !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span *ngIf="payment.state == 'draft'">Nháp</span>
+                        <span *ngIf="payment.state != 'draft'">{{payment.name}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Loại thanh toán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_form_field_radio o_vertical o_form_field o_form_required">
+                                        <div class="o_radio_item">
+                                            <input [disableControl]="payment.state != 'draft'" class="o_form_radio"
+                                                formControlName="paymentType" type="radio" id="radio54_outbound"
+                                                value="outbound">
+                                            <label class="o_form_label" for="radio54_outbound">Chuyển tiền</label>
+                                        </div>
+                                        <div class="o_radio_item">
+                                            <input [disableControl]="payment.state != 'draft'" class="o_form_radio"
+                                                type="radio" id="radio54_inbound" formControlName="paymentType"
+                                                value="inbound">
+                                            <label class="o_form_label" for="radio54_inbound">Nhận tiền</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan=" 1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        <span *ngIf="payment.partnerType == 'supplier'">Nhà cung cấp</span>
+                                        <span ng-show="payment.partnerType == 'customer'">Khách hàng</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="payment.state != 'draft' && payment.partner"
+                                        class="o_form_field">{{payment.partner.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan=" 1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="payment.state != 'draft' && payment.journal"
+                                        class="o_form_field">{{payment.journal.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan=" 1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="payment.state != 'draft'"
+                                        class="o_form_field">{{payment.amount | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày thanh toán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="payment.state != 'draft'"
+                                        class="o_form_field">{{payment.paymentDate | date: 'shortDate'}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="payment.state != 'draft'"
+                                        class="o_form_field">{{payment.communication}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

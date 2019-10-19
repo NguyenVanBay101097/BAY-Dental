@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -142,6 +143,11 @@ namespace Infrastructure.Services
             //    throw new Exception("Không thể tạo bút toán không cân đối.");
         }
 
+        public async Task ButtonCancel(IEnumerable<Guid> ids)
+        {
+            await ButtonCancel(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Journal).Include(x => x.Company).ToList());
+        }
+
         public async Task ButtonCancel(IEnumerable<AccountMove> self)
         {
             foreach (var move in self)
@@ -155,13 +161,18 @@ namespace Infrastructure.Services
             _CheckLockDate(self);
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            await Unlink(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToList());
+        }
+
         public async Task Unlink(IEnumerable<AccountMove> self)
         {
             var moveLineObj = GetService<IAccountMoveLineService>();
             foreach (var move in self)
             {
                 //moveLineObj.UpdateCheck(move.Lines);
-                await moveLineObj.Unlink(move.Lines); //unlink already update_check
+                await moveLineObj.Unlink(move.Lines.Select(x => x.Id).ToList()); //unlink already update_check
             }
 
             await DeleteAsync(self);
