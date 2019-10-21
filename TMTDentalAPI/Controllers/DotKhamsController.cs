@@ -228,6 +228,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (files == null || files.Count == 0)
                 return BadRequest();
+            _modelAccessService.Check("DotKham", "Write");
             var list = new List<IrAttachment>();
             foreach (var file in files)
             {

@@ -52,7 +52,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]PartnerPaged val)
         {
-            _modelAccessService.Check("Partner", "Read");
             var result = await _partnerService.GetPagedResultAsync(val);
 
             return Ok(result);
@@ -61,7 +60,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("Partner", "Read");
             var partner = await _partnerService.GetPartnerForDisplayAsync(id);
             if (partner == null)
             {
@@ -80,7 +78,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("Partner", "Create");
             var partner = _mapper.Map<Partner>(val);
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             SaveCategories(val, partner);
@@ -96,7 +93,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("Partner", "Update");
             var partner = await _partnerService.GetPartnerForDisplayAsync(id);
             if (partner == null)
                 return NotFound();
@@ -121,7 +117,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("Partner", "Unlink");
             var partner = await _partnerService.GetByIdAsync(id);
             if (partner == null)
                 return NotFound();
@@ -219,7 +214,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}/GetInfo")]
         public async Task<IActionResult> GetInfo(Guid id)
         {
-            _modelAccessService.Check("Partner", "Read");
             var res = await _partnerService.GetInfo(id);
             return Ok(res);
         }

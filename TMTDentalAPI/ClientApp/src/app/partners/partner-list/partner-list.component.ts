@@ -213,8 +213,8 @@ export class PartnerListComponent implements OnInit {
 
   deleteCustomer(id) {
     const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa khách hàng',
-      content: 'Bạn chắc chắn muốn xóa khách hàng này ?',
+      title: 'Xóa đối tác',
+      content: 'Bạn chắc chắn muốn xóa?',
       width: 450,
       height: 200,
       minWidth: 250,

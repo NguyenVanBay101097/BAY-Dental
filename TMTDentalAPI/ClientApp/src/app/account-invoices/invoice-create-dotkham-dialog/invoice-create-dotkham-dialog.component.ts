@@ -31,7 +31,7 @@ export class InvoiceCreateDotkhamDialogComponent implements OnInit {
     this.dotKhamForm = this.fb.group({
       doctor: [null, Validators.required],
       assistant: null,
-      dateObj: null,
+      dateObj: [null, Validators.required],
       note: null,
       companyId: null,
       userId: null,

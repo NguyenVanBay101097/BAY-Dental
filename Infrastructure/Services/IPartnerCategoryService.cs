@@ -12,6 +12,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<PartnerCategoryBasic>> GetPagedResultAsync(PartnerCategoryPaged val);
         Task<IEnumerable<PartnerCategoryBasic>> GetAutocompleteAsync(PartnerCategoryPaged val);
-        Task UpdateAsync2(PartnerCategory entity);
+        Task<PartnerCategory> CreatePartnerCategoryAsync(PartnerCategory categ);
+        Task UpdatePartnerCategoryAsync(PartnerCategory categ);
     }
 }

@@ -25,21 +25,27 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public override async Task<IEnumerable<PartnerCategory>> CreateAsync(IEnumerable<PartnerCategory> self)
+        public async Task<PartnerCategory> CreatePartnerCategoryAsync(PartnerCategory categ)
         {
-            foreach (var categ in self)
-            {
-                var recursion = await _CheckRecursion(categ);
-                if (!recursion)
-                    throw new Exception("Không thể tạo nhóm sản phẩm đệ quy.");
-
-                categ.CompleteName = await NameGet(categ);
-            }
-
-            await base.CreateAsync(self);
+            var recursion = await _CheckRecursion(categ);
+            if (!recursion)
+                throw new Exception("Không thể tạo nhóm sản phẩm đệ quy.");
+            categ.CompleteName = await NameGet(categ);
+            await base.CreateAsync(categ);
 
             await _ParentStoreCompute();
-            return self;
+            return categ;
+        }
+
+        public async Task UpdatePartnerCategoryAsync(PartnerCategory categ)
+        {
+            var recursion = await _CheckRecursion(categ);
+            if (!recursion)
+                throw new Exception("Không thể tạo nhóm sản phẩm đệ quy.");
+            categ.CompleteName = await NameGet(categ);
+            await base.UpdateAsync(categ);
+
+            await _ParentStoreCompute();
         }
 
         public async Task<IEnumerable<PartnerCategoryBasic>> GetAutocompleteAsync(PartnerCategoryPaged val)
@@ -50,36 +56,6 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<PartnerCategoryBasic>>(items);
-        }
-
-        public override async Task UpdateAsync(IEnumerable<PartnerCategory> entities)
-        {
-            foreach (var categ in entities)
-            {
-                if (categ.Parent != null && categ.Parent.Id != categ.ParentId)
-                    categ.Parent = await GetByIdAsync(categ.ParentId);
-                var recursion = await _CheckRecursion(categ);
-                if (!recursion)
-                    throw new Exception("Không thể tạo nhóm sản phẩm đệ quy.");
-                categ.CompleteName = await NameGet(categ);
-            }
-            await base.UpdateAsync(entities);
-
-            await _ParentStoreCompute();
-        }
-
-        public async Task UpdateAsync2(PartnerCategory entity)
-        {
-                if (entity.Parent != null && entity.Parent.Id != entity.ParentId)
-                    entity.Parent = await GetByIdAsync(entity.ParentId);
-                var recursion = await _CheckRecursion(entity);
-                if (!recursion)
-                    throw new Exception("Không thể tạo nhóm sản phẩm đệ quy.");
-                entity.CompleteName = await NameGet(entity);
-            
-            await base.UpdateAsync(new List<PartnerCategory>() { entity});
-
-            await _ParentStoreCompute();
         }
 
         private async Task _ParentStoreCompute()

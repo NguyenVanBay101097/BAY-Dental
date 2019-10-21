@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PartnerCategoryService, PartnerCategoryPaged, PartnerCategoryBasic } from '../partner-category.service';
 import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-partner-category-list',
@@ -23,7 +24,7 @@ export class PartnerCategoryListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private partnerCategoryService: PartnerCategoryService,
-    private windowService: WindowService, private dialogService: DialogService) {
+    private modalService: NgbModal, private dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -65,47 +66,28 @@ export class PartnerCategoryListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm nhóm đối tác',
-      content: PartnerCategoryCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm nhóm khách hàng';
 
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: PartnerCategoryBasic) {
-    const windowRef = this.windowService.open({
-      title: `Sửa nhóm sản phẩm`,
-      content: PartnerCategoryCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa nhóm khách hàng';
+    modalRef.componentInstance.id = item.id;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   deleteItem(item: PartnerCategoryBasic) {
     const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa nhóm sản phẩm',
+      title: 'Xóa nhóm khách hàng',
       content: 'Bạn có chắc chắn muốn xóa?',
       actions: [
         { text: 'Hủy bỏ', value: false },

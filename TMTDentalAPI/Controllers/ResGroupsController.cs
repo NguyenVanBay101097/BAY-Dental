@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
@@ -20,13 +21,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IResGroupService _resGroupService;
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
+        private readonly IMyCache _cache;
 
         public ResGroupsController(IResGroupService resGroupService,
-            IMapper mapper, IIRModelAccessService modelAccessService)
+            IMapper mapper, IIRModelAccessService modelAccessService,
+            IMyCache cache)
         {
             _resGroupService = resGroupService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -104,6 +108,14 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _resGroupService.DefaultGet();
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult ClearCache()
+        {
+            _modelAccessService.Check("ResGroup", "Write");
+            _cache.Clear();
+            return Ok(true);
         }
 
         private void SaveAccesses(ResGroupDisplay val, ResGroup group)

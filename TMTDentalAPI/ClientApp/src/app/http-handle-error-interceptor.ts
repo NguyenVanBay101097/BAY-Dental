@@ -45,7 +45,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                 this.notificationService.show({
                     content: message,
                     hideAfter: 3000,
-                    position: { horizontal: 'center', vertical: 'top' },
+                    position: { horizontal: 'right', vertical: 'bottom' },
                     animation: { type: 'fade', duration: 400 },
                     type: { style: 'error', icon: true }
                 });

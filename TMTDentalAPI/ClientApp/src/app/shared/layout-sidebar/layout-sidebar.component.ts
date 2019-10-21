@@ -48,6 +48,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm nhân viên', link: '/employee-categories' },
         { name: 'Sản phẩm', link: '/products' },
         { name: 'Nhóm sản phẩm', link: '/product-categories' },
+        { name: 'Tiểu sử bệnh', link: '/histories' },
       ]
     },
     {
@@ -56,6 +57,7 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
+        { name: 'Nhóm quyền', link: '/res-groups' },
         // { name: 'Bảng giá', link: '/price-list-list' },
       ]
     },

@@ -6,6 +6,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IPartnerCategoryService _partnerCategoryService;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
         public PartnerCategoriesController(IPartnerCategoryService partnerCategoryService,
-            IMapper mapper)
+            IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _partnerCategoryService = partnerCategoryService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -52,7 +55,9 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var category = _mapper.Map<PartnerCategory>(val);
-            await _partnerCategoryService.CreateAsync(category);
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerCategoryService.CreatePartnerCategoryAsync(category);
+            _unitOfWork.Commit();
 
             return CreatedAtAction(nameof(Get), new { id = category.Id }, val);
         }
@@ -67,7 +72,9 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             category = _mapper.Map(val, category);
-            await _partnerCategoryService.UpdateAsync2(category);
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerCategoryService.UpdatePartnerCategoryAsync(category);
+            _unitOfWork.Commit();
 
             return NoContent();
         }

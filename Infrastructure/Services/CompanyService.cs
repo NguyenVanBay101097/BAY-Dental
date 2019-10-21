@@ -607,10 +607,118 @@ namespace Infrastructure.Services
 
         public async Task InsertSecurityData()
         {
+            var modelDict = await InsertModels();
+            var groupDict = new Dictionary<string, ResGroup>();
+            var ruleDict = new Dictionary<string, IRRule>();
+            var accessDict = new Dictionary<string, IRModelAccess>();
+
+            async Task InsertGroupsRules()
+            {
+                var xml_file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_security.xml");
+                if (!File.Exists(xml_file_path))
+                    return;
+                XmlDocument doc = new XmlDocument();
+
+                var groupObj = GetService<IResGroupService>();
+                var ruleObj = GetService<IIRRuleService>();
+
+                doc.Load(xml_file_path);
+                var records = doc.GetElementsByTagName("record");
+                for (var i = 0; i < records.Count; i++)
+                {
+                    var errs = new List<string>();
+                    XmlElement record = (XmlElement)records[i];
+                    var model = record.GetAttribute("model");
+                    var id = record.GetAttribute("id");
+                    if (model == "res.groups")
+                    {
+                        var mdl = new ResGroup();
+                        var fields = record.GetElementsByTagName("field");
+                        for (var j = 0; j < fields.Count; j++)
+                        {
+                            XmlElement field = (XmlElement)fields[j];
+                            var field_name = field.GetAttribute("name");
+                            if (field_name == "name")
+                            {
+                                mdl.Name = field.InnerText;
+                            }
+                        }
+                        groupDict.Add(id, mdl);
+                    }
+                    else if (model == "ir.rule")
+                    {
+                        var rule = new IRRule();
+                        rule.Code = id;
+                        var fields = record.GetElementsByTagName("field");
+                        for (var j = 0; j < fields.Count; j++)
+                        {
+                            XmlElement field = (XmlElement)fields[j];
+                            var field_name = field.GetAttribute("name");
+                            if (field_name == "name")
+                            {
+                                rule.Name = field.InnerText;
+                            }
+                            else if (field_name == "model_id")
+                            {
+                                var vals = field.GetAttribute("ref");
+                                rule.Model = modelDict[vals];
+                            }
+                            else if (field_name == "global")
+                            {
+                                var vals = field.GetAttribute("eval");
+                                rule.Global = Boolean.Parse(vals);
+                            }
+                        }
+                        ruleDict.Add(id, rule);
+                    }
+                }
+
+                await groupObj.CreateAsync(groupDict.Values);
+                await ruleObj.CreateAsync(ruleDict.Values);
+            }
+            await InsertGroupsRules();
+
+            async Task InsertAccesses()
+            {
+                var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ir_model_access.csv");
+                if (!File.Exists(file_path))
+                    return;
+                var accessObj = GetService<IIRModelAccessService>();
+                using (TextReader reader = File.OpenText(file_path))
+                {
+                    var csv = new CsvReader(reader);
+                    var records = csv.GetRecords<IRModelAccessCsvLine>().ToList();
+
+                    var errors = new List<string>();
+                    foreach (var record in records)
+                    {
+                        var errs = new List<string>();
+                        var model_id = record.model_id;
+                        var group_id = record.group_id;
+
+                        accessDict.Add(record.id, new IRModelAccess
+                        {
+                            Name = record.name,
+                            Model = modelDict[model_id],
+                            Group = !string.IsNullOrEmpty(group_id) ? groupDict[group_id] : null,
+                            PermRead = record.perm_read ?? false,
+                            PermWrite = record.perm_write ?? false,
+                            PermCreate = record.perm_create ?? false,
+                            PermUnlink = record.perm_unlink ?? false,
+                        });
+                    }
+                }
+                await accessObj.CreateAsync(accessDict.Values);
+            }
+            await InsertAccesses();
+        }
+
+        private async Task<IDictionary<string, IRModel>> InsertModels()
+        {
+            var dict = new Dictionary<string, IRModel>();
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ir_model_data.csv");
             if (!File.Exists(file_path))
-                return;
-            var models = new List<IRModel>();
+                return dict;
             using (TextReader reader = File.OpenText(file_path))
             {
                 var csv = new CsvReader(reader);
@@ -623,20 +731,13 @@ namespace Infrastructure.Services
                         Model = record.model,
                         Name = record.name,
                     };
-
-                    model.ModelAccesses.Add(new IRModelAccess
-                    {
-                        Name = model.Name,
-                        Active = false,
-                        PermRead = false,
-                        PermCreate = false,
-                        PermWrite = false,
-                        PermUnlink = false
-                    });
+                    dict.Add(record.id, model);
                 }
             }
+
             var modelObj = GetService<IIRModelService>();
-            await modelObj.CreateAsync(models);
+            await modelObj.CreateAsync(dict.Values);
+            return dict;
         }
 
         public async Task<PagedResult2<CompanyBasic>> GetPagedResultAsync(CompanyPaged val)
@@ -666,8 +767,28 @@ namespace Infrastructure.Services
 
     public class IRModelCsvLine
     {
+        public string id { get; set; }
         public string model { get; set; }
 
         public string name { get; set; }
+    }
+
+    public class IRModelAccessCsvLine
+    {
+        public string id { get; set; }
+
+        public string name { get; set; }
+
+        public string model_id { get; set; }
+
+        public string group_id { get; set; }
+
+        public bool? perm_read { get; set; }
+
+        public bool? perm_write { get; set; }
+
+        public bool? perm_create { get; set; }
+
+        public bool? perm_unlink { get; set; }
     }
 }

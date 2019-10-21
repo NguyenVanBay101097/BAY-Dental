@@ -35,7 +35,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ProductCategoryPaged val)
         {
-            _modelAccessService.Check("ProductCategory", "Read");
             var res = await _productCategoryService.GetPagedResultAsync(val);
             return Ok(res);
         }
@@ -43,7 +42,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("ProductCategory", "Read");
             var category = await _productCategoryService.GetCategoryForDisplay(id);
             if (category == null)
             {
@@ -57,7 +55,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ProductCategory", "Create");
             var category = _mapper.Map<ProductCategory>(val);
             await _unitOfWork.BeginTransactionAsync();
             await _productCategoryService.CreateAsync(category);
@@ -73,7 +70,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ProductCategory", "Update");
             var category = await _productCategoryService.GetByIdAsync(id);
             if (category == null)
                 return NotFound();
@@ -89,7 +85,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("ProductCategory", "Unlink");
             var category = await _productCategoryService.GetByIdAsync(id);
             if (category == null)
                 return NotFound();

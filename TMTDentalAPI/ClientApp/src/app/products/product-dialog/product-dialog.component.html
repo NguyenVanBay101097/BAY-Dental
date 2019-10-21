@@ -11,7 +11,7 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên sản phẩm</label>
                     <h1>
-                        <input type="text" name="name" class="form-control" placeholder="Tên sản phẩm"
+                        <input type="text" name="name" ngbAutofocus class="form-control" placeholder="Tên sản phẩm"
                             formControlName="name" #nameInput>
                     </h1>
                     <!-- <div>
@@ -71,7 +71,7 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox [data]="filterdCategories"
                                                         [textField]="'completeName'" [filterable]="true" #categCbx
-                                                        formControlName="categ" [valueField]="'id'"
+                                                        ngbAutofocus formControlName="categ" [valueField]="'id'"
                                                         (filterChange)="categCbxFilterChange2($event)"
                                                         [loading]="categCbxLoading">
                                                     </kendo-combobox>

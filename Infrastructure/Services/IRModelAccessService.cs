@@ -19,6 +19,29 @@ namespace Infrastructure.Services
         private const string CACHE_KEY_FORMAT = "{0}-ir.model.access-{1}-{2}-{3}";
         private readonly CatalogDbContext _context;
         private readonly AppTenant _tenant;
+        public string[] TransientModels = new string[] {
+            "AccountAccount",
+            "AccountAccountType",
+            "AccountFullReconcile",
+            "AccountJournal",
+            "AccountMove",
+            "AccountMoveLine",
+            "AccountPartialReconcile",
+            "StockMove",
+            "StockLocation",
+            "StockQuant",
+            "StockWarehouse",
+            "IrAttachment",
+            "IRSequence",
+            "UoM",
+            "ProductStep",
+            "AccountRegisterPayment",
+            "AccountInvoiceLine",
+            "DotKhamStep",
+            "ToothCategory",
+            "Tooth",
+            "ProductPricelistItem"
+        };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,
             CatalogDbContext context, IMyCache cache, ITenant<AppTenant> tenant)
@@ -45,6 +68,10 @@ namespace Infrastructure.Services
                 var modes = new string[] { "Read", "Write", "Create", "Unlink" };
                 if (!modes.Contains(mode))
                     throw new Exception("Invalid access mode");
+
+                //transient models no nead check access right
+                if (TransientModels.Contains(model))
+                    return true;
 
                 var userId = UserId;
                 bool r = false;

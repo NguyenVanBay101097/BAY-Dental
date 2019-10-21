@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { PartnerCategoryService, PartnerCategoryBasic, PartnerCategoryPaged } from '../partner-category.service';
 import * as _ from 'lodash';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-partner-category-cu-dialog',
@@ -24,7 +25,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   @Input() public id: string;
 
   constructor(private fb: FormBuilder, private partnerCategoryService: PartnerCategoryService,
-    public window: WindowRef) {
+    public activeModal: NgbActiveModal) {
   }
 
   ngOnInit() {
@@ -65,9 +66,9 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(result => {
       if (result) {
-        this.window.close(result);
+        this.activeModal.close(result);
       } else {
-        this.window.close(true);
+        this.activeModal.close(true);
       }
     }, err => {
       console.log(err);
@@ -85,7 +86,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.window.close();
+    this.activeModal.close();
   }
 }
 

@@ -44,7 +44,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] CompanyPaged val)
         {
-            _modelAccessService.Check("Company", "Read");
             var res = await _companyService.GetPagedResultAsync(val);
             return Ok(res);
         }
@@ -52,8 +51,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-          
-            _modelAccessService.Check("Company", "Read");
             var company = await _companyService.SearchQuery(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
             if (company == null)
             {
@@ -88,7 +85,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("Company", "Update");
             var company = await _companyService.SearchQuery(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
             if (company == null)
                 return NotFound();
@@ -113,7 +109,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("Company", "Unlink");
             var company = await _companyService.GetByIdAsync(id);
             if (company == null)
                 return NotFound();
