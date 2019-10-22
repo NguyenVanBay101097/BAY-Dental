@@ -13,6 +13,7 @@ export class ProductPriceListItemSave {
     computePrice: string;
     fixedPrice: number;
     percentPrice: number;
+    partnerCategId: string;
 }
 
 export class ProductPriceListSave {
@@ -20,6 +21,19 @@ export class ProductPriceListSave {
     items: ProductPriceListItemSave[];
     dateStart: string;
     dateEnd: string;
+    partnerCategId: string;
+}
+
+export class ProductPricelistPaged {
+    offset: number;
+    limit: number;
+    search: string;
+}
+
+
+export class ProductPriceListBasic {
+    id: string;
+    name: string;
 }
 
 

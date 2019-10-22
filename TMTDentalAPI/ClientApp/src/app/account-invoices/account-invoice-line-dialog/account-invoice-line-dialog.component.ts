@@ -24,6 +24,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AccountInvoiceLineDialogComponent implements OnInit {
 
+  partnerId: string;
   invLineForm: FormGroup;
   filteredProducts: ProductSimple[];
   //filteredEmployees: PartnerSimple[];
@@ -218,6 +219,7 @@ export class AccountInvoiceLineDialogComponent implements OnInit {
     if (value && value.id) {
       var val = new AccountInvoiceLineOnChangeProduct();
       val.productId = value.id;
+      val.partnerId = this.partnerId ? this.partnerId : '';
       val.invoiceType = this.invoiceType;
       this.invLineService.onChangeProduct(val).subscribe(result => {
         this.invLineForm.patchValue(result);

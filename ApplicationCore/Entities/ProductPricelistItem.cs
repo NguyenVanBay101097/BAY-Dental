@@ -73,5 +73,8 @@ namespace ApplicationCore.Entities
 
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
+
+        public Guid? PartnerCategId { get; set; }
+        public PartnerCategory PartnerCateg { get; set; }
     }
 }

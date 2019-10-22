@@ -5,6 +5,7 @@ import { Injectable, Inject } from '@angular/core';
 export class AccountInvoiceLineOnChangeProduct {
     invoiceType: string;
     productId: string;
+    partnerId: string;
 }
 
 export class AccountInvoiceLineOnChangeProductResult {
