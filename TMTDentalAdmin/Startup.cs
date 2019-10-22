@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,7 +15,10 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Umbraco.Web.Mapping;
 
 namespace TMTDentalAdmin
@@ -33,6 +37,11 @@ namespace TMTDentalAdmin
         {
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));
 
+            // configure jwt authentication
+            var appSettingsSection = Configuration.GetSection("AdminAppSettings");
+            services.Configure<AdminAppSettings>(appSettingsSection);
+            var appSettings = appSettingsSection.Get<AdminAppSettings>();
+
             services.AddIdentity<ApplicationAdminUser, IdentityRole>(config =>
             {
                 config.Password.RequireLowercase = false;
@@ -48,12 +57,39 @@ namespace TMTDentalAdmin
                .AddEntityFrameworkStores<TenantDbContext>()
                .AddDefaultTokenProviders();
 
-            services.Configure<AdminAppSettings>(Configuration.GetSection("AdminAppSettings"));
+            // configure jwt authentication
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        IssuerSigningKeyResolver = (string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters) =>
+                        {
+                            var tenant = services.BuildServiceProvider().GetService<AppTenant>();
+                            List<SecurityKey> keys = new List<SecurityKey>();
+                            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+                            var signingKey = new SymmetricSecurityKey(key);
+                            keys.Add(signingKey);
+                            return keys;
+                        }
+                    };
+                });
+
 
             services.AddScoped<IDbContext, TenantDbContext>();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
+            services.AddSingleton<IMailSender, SendGridSender>();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -101,6 +137,7 @@ namespace TMTDentalAdmin
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseCors("AllowAll");
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

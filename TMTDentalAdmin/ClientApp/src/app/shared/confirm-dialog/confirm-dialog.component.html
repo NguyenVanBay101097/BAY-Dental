@@ -1,0 +1,15 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title || 'Xác nhận'}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <p>{{body}}</p>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s"><span>Xác nhận</span></button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

@@ -177,21 +177,20 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //if (_tenant != null)
-            //{
-            //    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            //    //builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
-            //    builder["Database"] = $"{_tenant.Hostname}.TMTDentalCatalogDb";
-            //    optionsBuilder.UseSqlServer(builder.ConnectionString);
-            //}
-            //else
-            //{
-            //    var defaultConnectionString = _connectionStrings.CatalogConnection;
-            //    optionsBuilder.UseSqlServer(defaultConnectionString);
-            //}
+            if (_tenant != null)
+            {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+                builder["Database"] = $"{_tenant.Hostname}.TMTDentalCatalogDb";
+                optionsBuilder.UseSqlServer(builder.ConnectionString);
+            }
+            else
+            {
+                var defaultConnectionString = _connectionStrings.CatalogConnection;
+                optionsBuilder.UseSqlServer(defaultConnectionString);
+            }
 
-            var defaultConnectionString = _connectionStrings.CatalogConnection;
-            optionsBuilder.UseSqlServer(defaultConnectionString);
+            //var defaultConnectionString = _connectionStrings.CatalogConnection;
+            //optionsBuilder.UseSqlServer(defaultConnectionString);
 
             base.OnConfiguring(optionsBuilder);
         }

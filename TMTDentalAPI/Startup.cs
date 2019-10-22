@@ -232,17 +232,17 @@ namespace TMTDentalAPI
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowAll",
-            //    builder =>
-            //    {
-            //        builder.AllowAnyOrigin()
-            //        .AllowAnyMethod()
-            //        .AllowAnyHeader()
-            //        .AllowCredentials();
-            //    });
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+                });
+            });
             services.AddCors();
             services.AddMemoryCache();
 
@@ -308,7 +308,7 @@ namespace TMTDentalAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            //app.UseCors("AllowAll");
+            app.UseCors("AllowAll");
             app.UseCors(
                 options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
             );
@@ -335,10 +335,5 @@ namespace TMTDentalAPI
                 }
             });
         }
-    }
-
-    public class AppSettings
-    {
-        public string Secret { get; set; }
     }
 }

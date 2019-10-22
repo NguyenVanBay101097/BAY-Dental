@@ -144,7 +144,7 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             await _companyService.SetupTenant(val);
-            //_unitOfWork.Commit();
+            _unitOfWork.Commit();
           
             return Ok(true);
         }

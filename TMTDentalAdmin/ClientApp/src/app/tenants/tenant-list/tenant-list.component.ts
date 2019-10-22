@@ -7,7 +7,10 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-tenant-list',
   templateUrl: './tenant-list.component.html',
-  styleUrls: ['./tenant-list.component.css']
+  styleUrls: ['./tenant-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 
 export class TenantListComponent implements OnInit {

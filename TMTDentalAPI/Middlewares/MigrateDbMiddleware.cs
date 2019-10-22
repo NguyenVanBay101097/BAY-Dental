@@ -25,7 +25,9 @@ namespace TMTDentalAPI.Middlewares
             if (tenant != null)
             {
                 var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
-                await dbContext.Database.MigrateAsync();
+                var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+                if (pendingMigrations.Any())
+                    await dbContext.Database.MigrateAsync();
             }
            
             // Call the next delegate/middleware in the pipeline

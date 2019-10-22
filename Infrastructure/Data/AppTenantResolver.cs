@@ -24,7 +24,15 @@ namespace Infrastructure.Data
 
         protected override string GetContextIdentifier(HttpContext context)
         {
-            return context.Request.Host.Value.ToLower();
+            var host = context.Request.Host.Host;
+            var subDomain = string.Empty;
+            if (!string.IsNullOrWhiteSpace(host))
+            {
+                subDomain = host.Split('.')[0];
+            }
+
+            subDomain = subDomain.Trim().ToLower();
+            return subDomain;
         }
 
         protected override IEnumerable<string> GetTenantIdentifiers(TenantContext<AppTenant> context)
@@ -36,6 +44,7 @@ namespace Infrastructure.Data
         {
             TenantContext<AppTenant> tenantContext = null;
             var subDomain = string.Empty;
+
             var host = context.Request.Host.Host;
             if (!string.IsNullOrWhiteSpace(host))
             {

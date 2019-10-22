@@ -8,7 +8,10 @@ import { TenantService } from '../tenant.service';
 @Component({
   selector: 'app-tenant-register',
   templateUrl: './tenant-register.component.html',
-  styleUrls: ['./tenant-register.component.css']
+  styleUrls: ['./tenant-register.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class TenantRegisterComponent implements OnInit {
   registerForm: FormGroup;
@@ -34,7 +37,7 @@ export class TenantRegisterComponent implements OnInit {
     this.loading = true;
     this.tenantService.register(this.registerForm.value).subscribe(() => {
       this.loading = false;
-      // this.router.navigate(['/tenants']);
+      this.router.navigate(['/tenants']);
     }, error => {
       this.loading = false;
       console.log('error', error);

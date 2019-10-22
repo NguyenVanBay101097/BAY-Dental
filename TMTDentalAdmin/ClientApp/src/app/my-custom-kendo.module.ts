@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { NotificationModule } from '@progress/kendo-angular-notification';
 
 const kendo = [
     GridModule,
@@ -11,6 +12,7 @@ const kendo = [
     InputsModule,
     DropDownsModule,
     DateInputsModule,
+    NotificationModule
 ];
 
 @NgModule({

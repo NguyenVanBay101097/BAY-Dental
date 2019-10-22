@@ -76,27 +76,28 @@ namespace TMTDentalAdmin.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-
+            await _unitOfWork.BeginTransactionAsync();
             var tenant = _mapper.Map<AppTenant>(val);
 
             await _tenantService.CreateAsync(tenant);
 
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.PostAsJsonAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+            using (HttpClient client = new HttpClient())
             {
-                CompanyName = val.CompanyName,
-                Name = val.Name,
-                Username = val.Username,
-                Password = val.Password,
-                Phone = val.Phone,
-                Email = val.Email
-            });
+                client.Timeout = new TimeSpan(1, 0, 0);
+                HttpResponseMessage response = await client.PostAsJsonAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                {
+                    CompanyName = val.CompanyName,
+                    Name = val.Name,
+                    Username = val.Username,
+                    Password = val.Password,
+                    Phone = val.Phone,
+                    Email = val.Email
+                });
 
-            if (!response.IsSuccessStatusCode)
-            {
-                bool returnValue = response.Content.ReadAsAsync<bool>().Result;
-                if (!returnValue)
+                if (!response.IsSuccessStatusCode)
                     throw new Exception("Register fail");
+
+                _unitOfWork.Commit();
             }
 
             return NoContent();

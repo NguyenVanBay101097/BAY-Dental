@@ -26,5 +26,10 @@ namespace ApplicationCore.Entities
         public string Hostname { get; set; }
 
         public DateTime? DateCreated { get; set; }
+
+        /// <summary>
+        /// Ngay het han
+        /// </summary>
+        public DateTime? DateExpired { get; set; }
     }
 }

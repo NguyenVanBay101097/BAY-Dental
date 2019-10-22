@@ -32,7 +32,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val)
         {
             var query = GetQueryPaged(val);
-            var items = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
 
             var totalItems = await query.CountAsync();
