@@ -225,6 +225,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PartnerHistoryRelProfile());
                 mc.AddProfile(new IRModelProfile());
                 mc.AddProfile(new AccountPaymentProfile());
+                mc.AddProfile(new ProductPricelistProfile());
                 mc.AddProfile(new IRRuleProfile());
             };
 

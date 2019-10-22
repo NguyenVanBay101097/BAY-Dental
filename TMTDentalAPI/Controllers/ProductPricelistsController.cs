@@ -32,6 +32,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var pricelist = await _pricelistService.GetPriceListForUpdate(id);
+            if (pricelist == null)
+            {
+                return NotFound();
+            }
+
+            pricelist.Items = pricelist.Items.OrderBy(x => x.Sequence).ToList();
+            var res = _mapper.Map<ProductPricelistSave>(pricelist);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(ProductPricelistSave val)
         {
@@ -99,7 +113,7 @@ namespace TMTDentalAPI.Controllers
                 else
                 {
                     var plItem = pricelist.Items.SingleOrDefault(c => c.Id == item.Id);
-                    _mapper.Map(item, plItem);
+                    plItem = _mapper.Map(item, plItem);
                     plItem.Sequence = sequence++;
                 }
             }

@@ -254,6 +254,10 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     return this.orderForm.get('residual').value;
   }
 
+  get getPartner() {
+    return this.orderForm.get('partner').value;
+  }
+
   actionViewDotKham() {
     if (this.dotKhams.length) {
       if (this.dotKhams.length == 1) {
@@ -263,18 +267,30 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
   }
 
   showAddLineModal() {
-    let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
-    modalRef.componentInstance.invoiceType = this.type;
+    if (this.getPartner) {
+      let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
+      modalRef.componentInstance.invoiceType = this.type;
+      modalRef.componentInstance.partnerId = this.getPartner.id;
 
-    modalRef.result.then(result => {
-      let line = result as any;
-      line.teeth = this.fb.array(line.teeth);
-      this.invoiceLines.push(this.fb.group(line));
+      modalRef.result.then(result => {
+        let line = result as any;
+        line.teeth = this.fb.array(line.teeth);
+        this.invoiceLines.push(this.fb.group(line));
 
-      this.computeAmountTotal();
-    }, () => {
-    });
+        this.computeAmountTotal();
+      }, () => {
+      });
+    } else {
+      this.notificationService.show({
+        content: 'Vui lòng chọn khách hàng',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
+
   }
 
   editLine(line: FormGroup) {
@@ -282,6 +298,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.invoiceType = this.type;
     modalRef.componentInstance.line = line.value;
+    modalRef.componentInstance.partnerId = this.getPartner.id;
 
     modalRef.result.then(result => {
       var a = result as any;

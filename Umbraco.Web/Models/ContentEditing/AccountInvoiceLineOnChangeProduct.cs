@@ -9,6 +9,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InvoiceType { get; set; }
 
         public Guid? ProductId { get; set; }
+
+        public Guid? PartnerId{ get; set; }
     }
 
     public class AccountInvoiceLineOnChangeProductResult
