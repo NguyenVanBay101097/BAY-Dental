@@ -23,6 +23,8 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
   @Input() public id: string;
+  title: string;
+
 
   constructor(private fb: FormBuilder, private partnerCategoryService: PartnerCategoryService,
     public activeModal: NgbActiveModal) {
