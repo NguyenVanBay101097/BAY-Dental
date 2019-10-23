@@ -27,7 +27,6 @@ export class AuthService {
             .performLogin(val)
             .pipe(
                 map((result: LoggedInViewModel) => {
-                    console.log(result);
                     if (result.succeeded) {
                         localStorage.setItem('access_token', result.token);
                         localStorage.setItem('user_info', JSON.stringify(result.user));

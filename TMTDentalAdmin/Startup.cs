@@ -1,5 +1,6 @@
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Middlewares;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Services;
@@ -87,6 +88,7 @@ namespace TMTDentalAdmin
 
             services.AddScoped<IDbContext, TenantDbContext>();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+            services.AddScoped(typeof(IAdminBaseService<>), typeof(AdminBaseService<>));
             services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
             services.AddSingleton<IMailSender, SendGridSender>();
@@ -117,6 +119,8 @@ namespace TMTDentalAdmin
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,6 +142,7 @@ namespace TMTDentalAdmin
             app.UseSpaStaticFiles();
             app.UseCors("AllowAll");
             app.UseAuthentication();
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

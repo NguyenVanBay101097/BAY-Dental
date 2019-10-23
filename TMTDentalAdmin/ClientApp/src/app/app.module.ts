@@ -19,6 +19,10 @@ import { HttpHandleErrorInterceptor } from './http-handle-error-interceptor';
 import { registerLocaleData } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 
+import { IntlModule } from '@progress/kendo-angular-intl';
+// Load all required data for the bg locale
+import '@progress/kendo-angular-intl/locales/vi/all';
+
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
@@ -52,7 +56,8 @@ registerLocaleData(localeVi, 'vi');
         blacklistedRoutes: []
       }
     }),
-    SharedModule
+    SharedModule,
+    IntlModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

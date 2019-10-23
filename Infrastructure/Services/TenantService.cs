@@ -8,25 +8,20 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.TenantData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class TenantService : ITenantService
+    public class TenantService : AdminBaseService<AppTenant>, ITenantService
     {
-        private readonly IAsyncRepository<AppTenant> _repository;
         private readonly IMapper _mapper;
-        public TenantService(IAsyncRepository<AppTenant> repository,
+        public TenantService(IAsyncRepository<AppTenant> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
+            : base(repository, httpContextAccessor)
         {
-            _repository = repository;
             _mapper = mapper;
-        }
-
-        public async Task<AppTenant> CreateAsync(AppTenant tenant)
-        {
-            return await _repository.InsertAsync(tenant);
         }
 
         public async Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val)
@@ -45,7 +40,7 @@ namespace Infrastructure.Services
 
         private IQueryable<AppTenant> GetQueryPaged(TenantPaged val)
         {
-            var query = _repository.SearchQuery();
+            var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search) ||
                 x.Hostname.Contains(val.Search));

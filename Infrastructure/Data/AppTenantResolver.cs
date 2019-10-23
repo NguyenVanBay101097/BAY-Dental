@@ -37,7 +37,7 @@ namespace Infrastructure.Data
 
         protected override IEnumerable<string> GetTenantIdentifiers(TenantContext<AppTenant> context)
         {
-            return new string[] { context.Tenant.Hostname };
+            return new string[] { context.Tenant.Hostname.ToLower() };
         }
 
         protected override Task<TenantContext<AppTenant>> ResolveAsync(HttpContext context)

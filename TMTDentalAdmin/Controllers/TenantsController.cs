@@ -10,6 +10,7 @@ using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Umbraco.Web.Models.ContentEditing;
@@ -18,7 +19,7 @@ namespace TMTDentalAdmin.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TenantsController : ControllerBase
+    public class TenantsController : BaseApiController
     {
         private readonly ITenantService _tenantService;
         private readonly IMapper _mapper;
@@ -76,9 +77,8 @@ namespace TMTDentalAdmin.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            await _unitOfWork.BeginTransactionAsync();
-            var tenant = _mapper.Map<AppTenant>(val);
 
+            var tenant = _mapper.Map<AppTenant>(val);
             await _tenantService.CreateAsync(tenant);
 
             using (HttpClient client = new HttpClient())
@@ -95,12 +95,38 @@ namespace TMTDentalAdmin.Controllers
                 });
 
                 if (!response.IsSuccessStatusCode)
+                {
+                    await _tenantService.DeleteAsync(tenant);
                     throw new Exception("Register fail");
+                }
+            }
+
+            return NoContent();
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateDateExpired(TenantUpdateDateExpiredViewModel val)
+        {
+            if (null == val || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var tenant = await _tenantService.GetByIdAsync(val.Id);
+            tenant.DateExpired = val.DateExpired;
+            await _tenantService.UpdateAsync(tenant);
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.Timeout = new TimeSpan(1, 0, 0);
+                HttpResponseMessage response = await client.GetAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Something fail");
 
                 _unitOfWork.Commit();
             }
 
             return NoContent();
         }
+
     }
 }

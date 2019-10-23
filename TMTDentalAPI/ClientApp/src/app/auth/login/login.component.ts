@@ -26,7 +26,11 @@ export class LoginComponent implements OnInit {
     }
 
     this.authService.login(this.loginForm.value).subscribe(data => {
-      this.router.navigateByUrl('/');
+      if (data.succeeded) {
+        this.router.navigateByUrl('/');
+      } else {
+        alert("Tài khoản hoặc mật khẩu không đúng");
+      }
     }, error => {
       console.log('error login', error);
     });

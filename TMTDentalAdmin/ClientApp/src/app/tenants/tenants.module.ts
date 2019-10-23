@@ -7,6 +7,7 @@ import { TenantService } from './tenant.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TenantListComponent } from './tenant-list/tenant-list.component';
 import { MyCustomKendoModule } from '../my-custom-kendo.module';
+import { TenantUpdateExpiredDialogComponent } from './tenant-update-expired-dialog/tenant-update-expired-dialog.component';
 
 @NgModule({
   imports: [
@@ -15,9 +16,12 @@ import { MyCustomKendoModule } from '../my-custom-kendo.module';
     ReactiveFormsModule,
     MyCustomKendoModule
   ],
-  declarations: [TenantRegisterComponent, TenantListComponent],
+  declarations: [TenantRegisterComponent, TenantListComponent, TenantUpdateExpiredDialogComponent],
   providers: [
     TenantService
+  ],
+  entryComponents: [
+    TenantUpdateExpiredDialogComponent
   ]
 })
 export class TenantsModule { }

@@ -48,23 +48,6 @@ namespace Infrastructure.TenantData.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tenants",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    CompanyName = table.Column<string>(nullable: true),
-                    Hostname = table.Column<string>(nullable: true),
-                    DateCreated = table.Column<DateTime>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tenants", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -170,6 +153,39 @@ namespace Infrastructure.TenantData.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Tenants",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    WriteById = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: true),
+                    LastUpdated = table.Column<DateTime>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    CompanyName = table.Column<string>(nullable: true),
+                    Hostname = table.Column<string>(nullable: true),
+                    DateExpired = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tenants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tenants_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Tenants_AspNetUsers_WriteById",
+                        column: x => x.WriteById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -208,6 +224,16 @@ namespace Infrastructure.TenantData.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tenants_CreatedById",
+                table: "Tenants",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tenants_WriteById",
+                table: "Tenants",
+                column: "WriteById");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

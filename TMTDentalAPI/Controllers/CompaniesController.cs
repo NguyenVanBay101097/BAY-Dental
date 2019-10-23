@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using SaasKit.Multitenancy;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,10 +30,13 @@ namespace TMTDentalAPI.Controllers
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
+        private readonly IMemoryCache _cache;
+        private readonly AppTenant _tenant;
         public CompaniesController(ICompanyService companyService, IUploadService uploadService,
             IUnitOfWorkAsync unitOfWork,
             CatalogDbContext context,
-            IMapper mapper, IIRModelAccessService modelAccessService)
+            IMapper mapper, IIRModelAccessService modelAccessService,
+            IMemoryCache cache, ITenant<AppTenant> tenant)
         {
             _unitOfWork = unitOfWork;
             _companyService = companyService;
@@ -39,6 +44,8 @@ namespace TMTDentalAPI.Controllers
             _context = context;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
+            _cache = cache;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet]
@@ -148,6 +155,17 @@ namespace TMTDentalAPI.Controllers
           
             return Ok(true);
         }
+
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        public IActionResult ClearCacheTenant()
+        {
+            if (_tenant != null)
+                _cache.Remove(_tenant.Hostname.ToLower());
+            return Ok(true);
+        }
+
+     
 
         [HttpPost("[action]")]
         public async Task<IActionResult> InsertSecurityData()

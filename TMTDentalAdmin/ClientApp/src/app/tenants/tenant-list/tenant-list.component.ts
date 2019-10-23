@@ -3,6 +3,8 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { TenantService, TenantPaged } from '../tenant.service';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TenantUpdateExpiredDialogComponent } from '../tenant-update-expired-dialog/tenant-update-expired-dialog.component';
 
 @Component({
   selector: 'app-tenant-list',
@@ -18,8 +20,9 @@ export class TenantListComponent implements OnInit {
   limit = 20;
   skip = 0;
   loading = false;
+  selectedIds: string[] = [];
 
-  constructor(private tenantService: TenantService, private router: Router) { }
+  constructor(private tenantService: TenantService, private router: Router, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -50,7 +53,16 @@ export class TenantListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  editItem() {
+  updateExpired() {
+    if (this.selectedIds.length !== 1) {
+      alert('Vui lòng chỉ chọn 1 dòng.');
+      return false;
+    }
 
+    let modalRef = this.modalService.open(TenantUpdateExpiredDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.id = this.selectedIds[0];
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    });
   }
 }

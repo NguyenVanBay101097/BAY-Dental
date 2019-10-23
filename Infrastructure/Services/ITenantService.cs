@@ -8,9 +8,8 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ITenantService
+    public interface ITenantService: IAdminBaseService<AppTenant>
     {
-        Task<AppTenant> CreateAsync(AppTenant tenant);
         Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val);
     }
 }

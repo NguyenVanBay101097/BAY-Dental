@@ -10,16 +10,50 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.TenantData.Migrations
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20190802094029_F")]
+    [Migration("20191023035223_F")]
     partial class F
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("ApplicationCore.Entities.AppTenant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CompanyName");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("DateExpired");
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("Hostname");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("Tenants");
+                });
 
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationAdminUser", b =>
                 {
@@ -70,28 +104,6 @@ namespace Infrastructure.TenantData.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("Infrastructure.TenantData.AppTenant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CompanyName");
-
-                    b.Property<DateTime?>("DateCreated");
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Hostname");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("Phone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tenants");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -202,6 +214,17 @@ namespace Infrastructure.TenantData.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.AppTenant", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationAdminUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationAdminUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

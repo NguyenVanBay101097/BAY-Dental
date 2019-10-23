@@ -6,15 +6,8 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class AppTenant
+    public class AppTenant: AdminBaseEntity
     {
-        public AppTenant()
-        {
-            Id = GuidComb.GenerateComb();
-            DateCreated = DateTime.Now;
-        }
-        public Guid Id { get; set; }
-
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -24,8 +17,6 @@ namespace ApplicationCore.Entities
         public string CompanyName { get; set; }
 
         public string Hostname { get; set; }
-
-        public DateTime? DateCreated { get; set; }
 
         /// <summary>
         /// Ngay het han

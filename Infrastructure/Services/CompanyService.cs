@@ -33,6 +33,9 @@ namespace Infrastructure.Services
 
         public async Task SetupCompany(string companyName, string userName, string email, string password, string name = "")
         {
+            var dbContext = GetService<CatalogDbContext>();
+            await dbContext.Database.MigrateAsync();
+
             var partnerObj = GetService<IPartnerService>();
             var companyObj = GetService<ICompanyService>();
             //tạo công ty và user_root

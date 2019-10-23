@@ -15,6 +15,15 @@
       </div>
     </div>
     <div class="o_cp_right">
+      <div class="dropdown">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false" type="button" id="dropdownMenuButton" *ngIf="selectedIds.length">
+          Thao tác
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <button class="dropdown-item" (click)="updateExpired()">Gia hạn</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -22,7 +31,8 @@
 
 <div class="o_content">
   <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-    (pageChange)="pageChange($event)">
+    (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="name" title="Khách hàng">
     </kendo-grid-column>
     <kendo-grid-column field="phone" title="Điện thoại">
@@ -30,6 +40,11 @@
     <kendo-grid-column field="companyName" title="Tên công ty">
     </kendo-grid-column>
     <kendo-grid-column field="hostname" title="Hostname">
+    </kendo-grid-column>
+    <kendo-grid-column field="dateExpired" title="Ngày hết hạn">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.dateExpired | date : 'shortDate'}}
+      </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="dateCreated" title="Ngày tạo">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

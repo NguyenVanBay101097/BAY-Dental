@@ -46,4 +46,8 @@ export class TenantService {
     register(val: TenantRegisterViewModel) {
         return this.http.post(this.baseApi + this.apiUrl + "/register", val);
     }
+
+    updateDateExpired(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateDateExpired", val);
+    }
 }

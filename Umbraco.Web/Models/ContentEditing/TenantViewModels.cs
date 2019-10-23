@@ -17,6 +17,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Hostname { get; set; }
 
         public DateTime? DateCreated { get; set; }
+
+        public DateTime? DateExpired { get; set; }
     }
 
     public class TenantDisplay

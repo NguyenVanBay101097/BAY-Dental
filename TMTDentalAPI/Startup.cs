@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Middlewares;
 using AutoMapper;
 using IdentityServer4.Services;
 using Infrastructure.Caches;
