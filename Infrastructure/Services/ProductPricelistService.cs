@@ -41,7 +41,12 @@ namespace Infrastructure.Services
 
         public async Task<ProductPricelist> GetPriceListForUpdate(Guid id)
         {
-            return await SearchQuery(x => x.Id == id && x.Active).Include(x => x.Items).FirstOrDefaultAsync();
+            return await SearchQuery(x => x.Id == id && x.Active)
+                .Include(x => x.Items)
+                .Include("Items.Product")
+                .Include("Items.Categ")
+                .Include("Items.PartnerCateg")
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IDictionary<Guid, ComputePriceRuleResValue>> _ComputePriceRule(IEnumerable<ProductQtyByPartner> products_qty_partner,
@@ -87,6 +92,17 @@ namespace Infrastructure.Services
                         continue;
                     if (rule.ProductId.HasValue && product.Id != rule.ProductId.Value)
                         continue;
+                    
+                    if (partnerId.HasValue)
+                    {
+                        var partnerObj = GetService<IPartnerService>();
+                        var partnerById = await partnerObj.GetPartnerForDisplayAsync(partnerId ?? Guid.Empty);
+
+                        if (rule.PartnerCategId.HasValue && 
+                            !partnerById.PartnerPartnerCategoryRels.Any(x => x.CategoryId== rule.PartnerCategId && x.PartnerId == partnerId))
+                            continue;
+                    }
+                    
 
                     if (rule.Categ != null)
                     {
@@ -135,14 +151,12 @@ namespace Infrastructure.Services
         public async Task<IList<ProductPricelistItem>> _ComputePriceRuleGetItems(DateTime date, IEnumerable<Guid> productIds, IEnumerable<Guid> categIds)
         {
             var itemObj = GetService<IProductPricelistItemService>();
-            var itemIds = await itemObj.SearchQuery(x =>
+            var items = await itemObj.SearchQuery(x =>
                 (!x.ProductId.HasValue || productIds.Contains(x.ProductId.Value)) &&
                 (!x.CategId.HasValue || categIds.Contains(x.CategId.Value)) &&
                 (!x.DateStart.HasValue || x.DateStart <= date) &&
-                (!x.DateEnd.HasValue || x.DateStart >= date)
-                , orderBy: x => x.OrderBy(s => s.AppliedOn).ThenByDescending(s => s.MinQuantity).ThenByDescending(s => s.Categ.CompleteName).ThenByDescending(s => s.DateCreated))
-                .Select(x => x.Id).ToListAsync();
-            var items = await itemObj.SearchQuery(x => itemIds.Contains(x.Id)).ToListAsync();
+                (!x.DateEnd.HasValue || x.DateEnd >= date)
+                , orderBy: x => x.OrderBy(s => s.AppliedOn).ThenByDescending(s => s.MinQuantity).ThenByDescending(s => s.Categ.CompleteName).ThenByDescending(s => s.DateCreated)).ToListAsync();
             return items;
         }
     }

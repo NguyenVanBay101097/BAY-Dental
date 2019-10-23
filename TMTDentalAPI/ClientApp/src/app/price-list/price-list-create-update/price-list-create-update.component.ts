@@ -13,8 +13,10 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DialogService } from '@progress/kendo-angular-dialog';
 import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductPriceListItemSave } from '../price-list';
+import { ProductPriceListItemSave, ProductPriceListSave } from '../price-list';
 import { FlexAlignStyleBuilder } from '@angular/flex-layout';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-price-list-create-update',
@@ -26,6 +28,7 @@ import { FlexAlignStyleBuilder } from '@angular/flex-layout';
 })
 export class PriceListCreateUpdateComponent implements OnInit {
   id: string;//Id bảng giá
+  priceListName: string; //Tên bảng giá
   formPrice: FormGroup;
   formItem: FormGroup;
 
@@ -47,72 +50,116 @@ export class PriceListCreateUpdateComponent implements OnInit {
 
   optionData = [];
 
-  today = new Date;
   constructor(private fb: FormBuilder, private service: PriceListService, private notificationService: NotificationService,
-    private dialogService: DialogService, private route: ActivatedRoute, private router: Router) { }
+    private dialogService: DialogService, private route: ActivatedRoute, private router: Router, private intlService: IntlService) { }
 
 
   ngOnInit() {
-    this.optionData = [{ value: '3_global', text: 'Tất cả' }, { value: '2_product_category', text: 'Nhóm dịch vụ' }, { value: '0_product_variant', text: 'Dịch vụ' }];
+    this.optionData = [{ value: '3_global', text: 'Tất cả dịch vụ' }, { value: '2_product_category', text: 'Nhóm dịch vụ' }, { value: '0_product_variant', text: 'Dịch vụ' }];
     this.formPrice = this.fb.group({
       name: [null, Validators.required],
       dateStart: null,
-      dateStartObj: [this.today, Validators.required],
+      dateStartObj: [null, Validators.required],
       dateEnd: null,
       dateEndObj: [null, Validators.required],
-      partnerCatergory: null,
+      partnerCateg: null,
       items: this.fb.array([])
     })
 
     this.formItem = this.fb.group({
-      discountType: ['fixed', Validators.required],
-      appliedOn: null,
-      appliedOnObj: [null, Validators.required],
+      computePrice: ['fixed', Validators.required],
+      appliedOn: [null, Validators.required],
       fixedPrice: 0,
       percentPrice: 0,
       product: null,
       categ: null
     })
 
+    this.getActiveRoute();
     this.maxDateStart = this.formPrice.get('dateEndObj').value;
     this.minDateEnd = this.formPrice.get('dateStartObj').value;
     this.loadPartnerCategories();
-    this.getActiveRoute();
 
   }
 
   getActiveRoute() {
-    // this.route.paramMap.pipe(
-    //   switchMap((params: ParamMap) => {
-    //     this.id = params.get("id");
-    //     if (this.id) {
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        this.id = params.get("id");
+        if (this.id) {
+          return this.service.getPriceList(this.id);
+        } else {
+          return new Observable<ProductPriceListSave>();
+        }
+      })).subscribe(result => {
+        this.formPrice.patchValue(result);
+        this.priceListName = result.name;
+        let dateStart = this.intlService.parseDate(result.dateStart);
+        this.formPrice.get('dateStartObj').patchValue(dateStart);
+        let dateEnd = this.intlService.parseDate(result.dateEnd);
+        this.formPrice.get('dateEndObj').patchValue(dateEnd);
+        this.items = result.items;
+        console.log(this.formPrice);
 
-    //     } else {
-    //     }
-    //   })).subscribe(result => {
-    //     this.formPrice.patchValue(result);        
-    //   });
+      });
+
+    // var par: ParamMap;
+    // this.id = par.get('id');
+    // if (this.id) {
+    //   this.service.getPriceList(this.id).subscribe(result => {
+    //     this.formPrice.patchValue(result);
+    //     let dateStart = this.intlService.parseDate(result.dateStart);
+    //     this.formPrice.get('dateStartObj').patchValue(dateStart);
+    //     let dateEnd = this.intlService.parseDate(result.dateEnd);
+    //     this.formPrice.get('dateEndObj').patchValue(dateEnd);
+    //     this.items = result.items;
+    //     console.log(this.formPrice);
+    //   })
+    // }
   }
 
   savePriceList() {
     var val = this.formPrice.value;
+    val.dateStart = this.intlService.formatDate(val.dateStartObj, 'g', 'en-US');
+    val.dateEnd = this.intlService.formatDate(val.dateEndObj, 'g', 'en-US');
+    val.partnerCategId = val.partnerCateg ? val.partnerCateg.id : '';
+    this.items.forEach(e => {
+      e.dateStart = val.dateStart;
+      e.dateEnd = val.dateEnd;
+      e.partnerCategId = val.partnerCateg ? val.partnerCateg.id : '';
+    });
     val.items = this.items;
     if (this.id) {
       this.service.updatePriceList(val, this.id).subscribe(
         rs => {
           this.router.navigate(['/price-list/edit/' + this.id]);
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
         }
       )
     } else {
       this.service.createPriceList(val).subscribe(
         rs => {
-          this.router.navigate(['/price-list/edit/' + val.id]);
+          this.router.navigate(['/price-list/edit/' + rs.id]);
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
         }
       )
     }
   }
 
   changeApply(val: string) {
+    console.log(val);
     if (val) {
       switch (val) {
         case "2_product_category":
@@ -156,7 +203,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
 
   loadServiceCategories() {
     var pdCategPg = new ProductCategoryPaged;
-    pdCategPg.serviceCateg = true;
+    // pdCategPg.serviceCateg = true;
     this.service.loadServiceCategories(pdCategPg).subscribe(
       rs => {
         this.serviceCategories = rs;
@@ -194,7 +241,6 @@ export class PriceListCreateUpdateComponent implements OnInit {
   }
 
 
-
   loadServiceDetail(id) {
     this.service.loadServiceDetail(id);
   }
@@ -222,12 +268,15 @@ export class PriceListCreateUpdateComponent implements OnInit {
   addItems() {
     if (this.checkItem()) {
       this.prepareItems();
+      var val = this.formItem.value;
+      val.categId = val.categ ? val.categ.id : '';
+      val.productId = val.product ? val.product.id : '';
 
-      this.items.push(this.formItem.value);
+      this.items.push(val);
       this.resetForm(this.formItem);
     } else {
       this.notificationService.show({
-        content: 'Giảm giá này đã tồn tại',
+        content: 'Quy định giá này đã tồn tại',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
@@ -237,8 +286,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
   }
 
   checkItem() {
-    debugger;
-    switch (this.getApplyOnObj.value.value) {
+    switch (this.getApplyOn.value) {
       case "3_global":
         if (this.items.filter(x => x.appliedOn == "3_global").length > 0
           && this.items.filter(x => x.appliedOn == "3_global")[0] !== this.selectItem) {
@@ -270,13 +318,13 @@ export class PriceListCreateUpdateComponent implements OnInit {
 
 
   prepareItems() {
-    this.getApplyOn.setValue(this.getApplyOnObj.value.value);
-    if (this.formItem.get('discountType').value == 'fixed') {
+    this.getApplyOn.setValue(this.getApplyOn.value);
+    if (this.formItem.get('computePrice').value == 'fixed') {
       this.formItem.get('percentPrice').setValue(0);
     } else {
       this.formItem.get('fixedPrice').setValue(0);
     }
-    switch (this.getApplyOnObj.value.value) {
+    switch (this.getApplyOn.value) {
       case "3_global":
         this.getCateg.setValue(null);
         this.getProduct.setValue(null);
@@ -290,22 +338,30 @@ export class PriceListCreateUpdateComponent implements OnInit {
     }
   }
 
-  editItem(index) {
-    var item = this.items[index];
-    this.selectIndex = index;
+  editItem(item) {
     this.selectItem = item;
-    this.formItem.patchValue(item);
+    this.selectIndex = this.items.indexOf(this.selectItem);
+    this.formItem.patchValue(this.selectItem);
+    if (this.selectItem.fixedPrice > 0) {
+      this.formItem.get('computePrice').setValue('fixed');
+    } else if (this.selectItem.percentPrice > 0) {
+      this.formItem.get('computePrice').setValue('percentage');
+    }
+    console.log(this.formItem.value);
     this.changeApply(item.appliedOn);
   }
 
   updateItem() {
     if (this.checkItem()) {
       this.prepareItems();
-      this.items[this.selectIndex] = this.formItem.value;
+      var val = this.formItem.value;
+      val.categId = val.categ ? val.categ.id : '';
+      val.productId = val.product ? val.product.id : '';
+      this.items[this.selectIndex] = val;
       this.resetForm(this.formItem);
     } else {
       this.notificationService.show({
-        content: 'Giảm giá này đã tồn tại',
+        content: 'Quy định giá này đã tồn tại',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
@@ -327,14 +383,21 @@ export class PriceListCreateUpdateComponent implements OnInit {
     return this.formItem.get('categ');
   }
 
-  get getApplyOnObj() {
-    return this.formItem.get('appliedOnObj');
-  }
-
   get getApplyOn() {
     return this.formItem.get('appliedOn');
   }
 
+  get getName() {
+    return this.formPrice.get('name');
+  }
+
+  get getdateStartObj() {
+    return this.formItem.get('dateStartObj');
+  }
+
+  get getdateEndObj() {
+    return this.formItem.get('dateEndObj');
+  }
 
   resetForm(form: FormGroup) {
     console.log(this.items);
@@ -342,6 +405,6 @@ export class PriceListCreateUpdateComponent implements OnInit {
     form.reset();
     this.serviceShow = false;
     this.categoryShow = false;
-    this.formItem.get('discountType').setValue('fixed');
+    this.formItem.get('computePrice').setValue('fixed');
   }
 }

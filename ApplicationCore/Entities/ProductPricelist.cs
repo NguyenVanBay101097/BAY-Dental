@@ -32,5 +32,8 @@ namespace ApplicationCore.Entities
         /// Gán dateend cho tất cả items
         /// </summary>
         public DateTime? DateEnd { get; set; }
+
+        public Guid? PartnerCategId { get; set; }
+        public PartnerCategory PartnerCateg { get; set; }
     }
 }

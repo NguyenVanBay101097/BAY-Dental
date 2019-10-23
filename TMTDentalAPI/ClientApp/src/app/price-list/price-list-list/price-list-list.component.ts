@@ -5,6 +5,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { ProductPricelistPaged } from '../price-list';
 
 @Component({
   selector: 'app-price-list-list',
@@ -24,22 +25,30 @@ export class PriceListListComponent implements OnInit {
 
   ngOnInit() {
     this.loadPriceLists();
+    this.searchChange();
   }
 
   loadPriceLists() {
     this.loading = true;
-    // this.service.loadPriceListList().pipe(
-    //   map(rs1 => (<GridDataResult>{
-    //     data: rs1.items,
-    //     total: rs1.totalItems
-    //   }))
-    // ).subscribe(rs2 => {
-    //   this.gridData = rs2;
-    //   this.loading = false;
-    // }, er => {
-    //   this.loading = true;
-    // }
-    // )
+    var plPaged = new ProductPricelistPaged;
+    plPaged.limit = this.pageSize;
+    plPaged.offset = this.skip;
+    if (this.search) {
+      plPaged.search = this.search;
+    }
+
+    this.service.loadPriceListList(plPaged).pipe(
+      map(rs1 => (<GridDataResult>{
+        data: rs1.items,
+        total: rs1.totalItems
+      }))
+    ).subscribe(rs2 => {
+      this.gridData = rs2;
+      this.loading = false;
+    }, er => {
+      this.loading = true;
+    }
+    )
   }
 
   searchChange() {
@@ -67,9 +76,10 @@ export class PriceListListComponent implements OnInit {
       rs => {
         if (!(rs instanceof DialogCloseResult)) {
           if (rs['value']) {
-            // this.service.deletePriceList(id).subscribe(
-
-            // );
+            this.service.deletePriceList(id).subscribe(rs => {
+              this.loadPriceLists();
+            }
+            );
           }
         }
       }

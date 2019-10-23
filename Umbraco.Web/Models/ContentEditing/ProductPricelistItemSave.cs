@@ -9,8 +9,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public Guid? ProductId { get; set; }
+        public ProductSimple Product { get; set; }
 
         public Guid? CategId { get; set; }
+        public ProductCategorySimple Categ { get; set; }
 
         public string AppliedOn { get; set; }
 
@@ -23,5 +25,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? FixedPrice { get; set; }
 
         public decimal? PercentPrice { get; set; }
+
+        public Guid? PartnerCategId { get; set; }
+        public PartnerCategoryBasic PartnerCateg { get; set; }
     }
 }
