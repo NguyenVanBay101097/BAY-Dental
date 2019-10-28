@@ -1,45 +1,46 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { SaleOrderPaging } from './sale-order-paging';
+import { Injectable, Inject } from '@angular/core';
+import { PagedResult2 } from '../core/paged-result-2';
+import { SaleOrderBasic } from './sale-order-basic';
 import { SaleOrderDisplay } from './sale-order-display';
-import { SaleOrderLineDisplay } from './sale-order-line-display';
-import { SaleOrderLineDefaultGet } from './sale-order-line-default-get';
+
+export class SaleOrderPaged {
+    limit: number;
+    offset: number;
+    search: string;
+}
 
 @Injectable()
 export class SaleOrderService {
-    apiUrl = 'http://localhost:50396/api/saleorders';
-    constructor(private http: HttpClient) { }
+    apiUrl = 'api/SaleOrders';
+    constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-    getPaging(pageIndex: number, pageSize: number)
-        : Observable<SaleOrderPaging> {
-        let params = new HttpParams()
-            .set('pageNumber', (pageIndex + 1).toString())
-            .set('pageSize', pageSize.toString());
-        return this.http.get<SaleOrderPaging>(this.apiUrl, { params });
+    getPaged(val: any): Observable<PagedResult2<SaleOrderBasic>> {
+        return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     get(id): Observable<SaleOrderDisplay> {
-        return this.http.get<SaleOrderDisplay>(this.apiUrl + "/" + id);
+        return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    defaultGet(): Observable<SaleOrderDisplay> {
-        return this.http.post<SaleOrderDisplay>(this.apiUrl + "/defaultget", {});
+    create(val: SaleOrderDisplay): Observable<SaleOrderDisplay> {
+        return this.http.post<SaleOrderDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    defaultLineGet(val: SaleOrderLineDefaultGet): Observable<SaleOrderLineDisplay> {
-        return this.http.post<SaleOrderLineDisplay>(this.apiUrl + "/defaultlineget", val);
-    }
-
-    create(product: SaleOrderDisplay) {
-        return this.http.post(this.apiUrl, product);
-    }
-
-    update(id: string, product: SaleOrderDisplay) {
-        return this.http.put(this.apiUrl + "/" + id, product);
+    update(id: string, val: SaleOrderDisplay) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
     delete(id: string) {
-        return this.http.delete(this.apiUrl + "/" + id);
+        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
+    defaultGet(): Observable<SaleOrderDisplay> {
+        return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet');
+    }
+
+    actionConfirm(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionConfirm', ids);
     }
 }

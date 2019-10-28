@@ -5,7 +5,7 @@ using System.Text;
 namespace ApplicationCore.Entities
 {
     /// <summary>
-    /// Phiếu điều trị nha khoa
+    /// Phiếu điều trị / phiếu bán hàng
     /// </summary>
     public class SaleOrder: BaseEntity
     {
@@ -37,6 +37,10 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Trạng thái
+        /// draft: Quotation
+        /// sale: Sales Order
+        /// done: Locked
+        /// cancel: Cancelled
         /// </summary>
         public string State { get; set; }
 
@@ -52,5 +56,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+
+        public string InvoiceStatus { get; set; }
     }
 }

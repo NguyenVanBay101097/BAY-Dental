@@ -21,6 +21,21 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public override Task<IEnumerable<AccountInvoiceLine>> CreateAsync(IEnumerable<AccountInvoiceLine> entities)
+        {
+            ComputePrice(entities);
+            foreach (var invLine in entities)
+            {
+                if (invLine.Invoice != null)
+                {
+                    var invoice = invLine.Invoice;
+                    invLine.CompanyId = invoice.CompanyId;
+                    invLine.PartnerId = invoice.PartnerId;
+                }
+            }
+            return base.CreateAsync(entities);
+        }
+
         public void ComputePrice(IEnumerable<AccountInvoiceLine> self)
         {
             foreach (var line in self)
@@ -43,7 +58,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        private async Task<AccountAccount> _DefaultAccount(Guid journalId, string type)
+        public async Task<AccountAccount> _DefaultAccount(Guid journalId, string type)
         {
             var journalObj = GetService<IAccountJournalService>();
             var journal = await journalObj.GetJournalWithDebitCreditAccount(journalId);

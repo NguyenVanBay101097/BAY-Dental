@@ -20,5 +20,7 @@ namespace Infrastructure.Services
 
         Task<SaleOrderLineDisplay> DefaultLineGet(SaleOrderLineDefaultGet val);
         Task<SaleOrderDisplay> DefaultGet();
+        Task<PagedResult2<SaleOrderBasic>> GetPagedResultAsync(SaleOrderPaged val);
+        Task ActionConfirm(IEnumerable<Guid> ids);
     }
 }

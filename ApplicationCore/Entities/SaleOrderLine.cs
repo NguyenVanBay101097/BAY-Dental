@@ -12,6 +12,7 @@ namespace ApplicationCore.Entities
         public SaleOrderLine()
         {
             State = "draft";
+            InvoiceStatus = "no";
         }
 
         public decimal PriceUnit { get; set; }
@@ -27,6 +28,9 @@ namespace ApplicationCore.Entities
 
         public Guid OrderId { get; set; }
         public SaleOrder Order { get; set; }
+
+        public Guid? ProductUOMId { get; set; }
+        public UoM ProductUOM { get; set; }
 
         /// <summary>
         /// %
@@ -49,5 +53,13 @@ namespace ApplicationCore.Entities
         public ApplicationUser Salesman { get; set; }
 
         public string Note { get; set; }
+
+        public string InvoiceStatus { get; set; }
+
+        public decimal? QtyToInvoice { get; set; }
+
+        public decimal? QtyInvoiced { get; set; }
+
+        public ICollection<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; } = new List<SaleOrderLineInvoiceRel>();
     }
 }

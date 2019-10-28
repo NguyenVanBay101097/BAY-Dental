@@ -65,5 +65,7 @@ namespace ApplicationCore.Entities
         public Tooth Tooth { get; set; }
 
         public ICollection<AccountInvoiceLineToothRel> AccountInvoiceLineToothRels { get; set; } = new List<AccountInvoiceLineToothRel>();
+
+        public ICollection<SaleOrderLineInvoiceRel> SaleLines { get; set; } = new List<SaleOrderLineInvoiceRel>();
     }
 }

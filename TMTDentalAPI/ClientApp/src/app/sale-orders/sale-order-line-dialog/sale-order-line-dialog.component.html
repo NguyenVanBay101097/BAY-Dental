@@ -1,119 +1,83 @@
-<form class="o_form_view" [formGroup]="saleLineForm">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="o_group">
-                <table class="o_group o_inner_group">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Dịch vụ
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
-                                    [allowCustom]="true" #productCbx formControlName="product" [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Bác sĩ
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true"
-                                    formControlName="salesman" [allowCustom]="true" #userCbx [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Đơn giá
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="priceUnit">
-                                </kendo-numerictextbox>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Số lượng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="productUOMQty">
-                                </kendo-numerictextbox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Giảm giá
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-numerictextbox [min]="0" [format]="'n0'" [max]="100" formControlName="discount">
-                                </kendo-numerictextbox>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Thành tiền
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-numerictextbox [min]="0" [format]="'n0'">
-                                </kendo-numerictextbox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
 
-            <div class="o_notebook">
-                <div>
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                                aria-controls="home" aria-selected="true">Chọn răng</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                                aria-controls="profile" aria-selected="false">Thông tin thêm</a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            ....
-                        </div>
-                        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-                    </div>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="saleLineForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Dịch vụ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredProducts" ngbAutofocus [textField]="'name'"
+                                        [filterable]="true" (valueChange)="onChangeProduct($event)" #productCbx
+                                        formControlName="product" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <div>
-                <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đơn giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="priceUnit">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Số lượng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="productUOMQty">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Thành tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [disabled]="true" [format]="'n0'"
+                                        [value]="getPriceSubTotal()">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

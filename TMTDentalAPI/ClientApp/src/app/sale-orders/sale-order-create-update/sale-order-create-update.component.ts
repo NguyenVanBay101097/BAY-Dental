@@ -1,54 +1,54 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
-import { UserService } from 'src/app/users/user.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { UserService, UserPaged } from 'src/app/users/user.service';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { SaleOrderService } from '../sale-order.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { Product } from 'src/app/products/product';
 import { ProductService, ProductFilter } from 'src/app/products/product.service';
-import { SaleOrderLineDefaultGet } from '../sale-order-line-default-get';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
-import { Observable } from 'rxjs';
 import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
+import { SaleOrderDisplay } from '../sale-order-display';
+import * as _ from 'lodash';
+import { UserSimple } from 'src/app/users/user-simple';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
-import { SaleOrderLineDisplay } from '../sale-order-line-display';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-sale-order-create-update',
   templateUrl: './sale-order-create-update.component.html',
-  styleUrls: ['./sale-order-create-update.component.css']
+  styleUrls: ['./sale-order-create-update.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class SaleOrderCreateUpdateComponent implements OnInit {
-  orderForm: FormGroup;
+  formGroup: FormGroup;
   id: string;
   filteredPartners: PartnerSimple[];
-  filteredUsers: PartnerSimple[];
-  filteredProducts: Product[];
+  filteredUsers: UserSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
-
-  opened = false;
+  saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
-    private productService: ProductService, private intlService: IntlService, private windowService: WindowService) {
+    private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
+    private router: Router, private notificationService: NotificationService) {
   }
 
   ngOnInit() {
-    this.orderForm = this.fb.group({
-      partner: null,
+    this.formGroup = this.fb.group({
+      partner: [null, Validators.required],
       user: null,
-      dateOrderD: new Date(10, 10, 2010),
-      dateOrder: '',
+      dateOrderObj: [null, Validators.required],
       orderLines: this.fb.array([]),
-      companyId: '',
-      userId: '',
-      partnerId: ''
+      companyId: null,
+      userId: null,
+      amountTotal: 0
     });
 
     this.route.paramMap.pipe(
@@ -60,11 +60,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.defaultGet();
         }
       })).subscribe(result => {
-        console.log(result);
-        this.orderForm.patchValue(result);
+        this.saleOrder = result;
+        this.formGroup.patchValue(result);
 
         let dateOrder = this.intlService.parseDate(result.dateOrder);
-        this.orderForm.get('dateOrderD').patchValue(dateOrder);
+        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+        if (result.user) {
+          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        }
+
+        const control = this.formGroup.get('orderLines') as FormArray;
+        control.clear();
+        result.orderLines.forEach(line => {
+          control.push(this.fb.group(line));
+        });
       });
 
     this.partnerCbx.filterChange.asObservable().pipe(
@@ -85,111 +94,136 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.userCbx.loading = false;
     });
 
-    // this.productCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.productCbx.loading = true)),
-    //   switchMap(value => this.searchProducts(value))
-    // ).subscribe(result => {
-    //   this.filteredProducts = result.items;
-    //   this.productCbx.loading = false;
-    // });
+    this.loadPartners();
+    this.loadUsers();
+  }
 
-    this.searchUsers('').subscribe(result => {
-      this.filteredUsers = result;
-    });
-
-    this.searchPartners('').subscribe(result => {
-      this.filteredPartners = result;
+  loadPartners() {
+    this.searchPartners().subscribe(result => {
+      this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
+      console.log(result);
     });
   }
 
-  searchPartners(filter: string) {
-    return this.partnerService.autocomplete(filter, true);
-  }
-
-  searchProducts(search: string) {
-    let filter = new ProductFilter();
-    filter.search = search;
-    return this.productService.getPaged(filter);
-  }
-
-  searchUsers(filter: string) {
-    return this.userService.autocomplete(filter);
-  }
-
-  userValueNormalizer(text: Observable<string>) {
-    return text.pipe(
-      map((a: string) => {
-        return {
-          value: null,
-          text: a
-        };
-      })
-    )
-  };
-
-  showAddLineModal() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm dịch vụ điều trị',
-      content: SaleOrderLineDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
+  loadUsers() {
+    this.searchUsers().subscribe(result => {
+      this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
+      console.log(result);
     });
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        var a = result as SaleOrderLineDisplay;
-        this.orderLines.push(this.fb.group(a));
-      }
-    });
-
-    // var product = this.productCbx.value;
-    // if (product) {
-    //   var val = new SaleOrderLineDefaultGet();
-    //   val.productId = product.id;
-    //   this.saleOrderService.defaultLineGet(val).subscribe(result => {
-    //     console.log(result);
-    //     this.orderLines.push(this.fb.group({
-    //       listPrice: result.priceUnit
-    //     }));
-    //   });
-    // }
   }
 
-  lineProduct(line: FormGroup) {
-    var product = line.get('product').value;
-    return product ? product.name : '';
+  searchPartners(filter?: string) {
+    var val = new PartnerPaged();
+    val.customer = true;
+    val.searchNamePhoneRef = filter;
+    return this.partnerService.getAutocompleteSimple(val);
   }
 
-  lineSalesman(line: FormGroup) {
-    var salesman = line.get('salesman').value;
-    return salesman ? salesman.name : '';
+  searchUsers(filter?: string) {
+    var val = new UserPaged();
+    val.search = filter;
+    return this.userService.autocompleteSimple(val);
   }
 
-  get orderLines() {
-    return this.orderForm.get('orderLines') as FormArray;
+  createNew() {
+    this.router.navigate(['/sale-orders/create']);
+  }
+
+  actionConfirm() {
+    if (this.id) {
+      this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
   }
 
   onSave() {
-    console.log(this.orderForm.value);
-    var val = this.orderForm.value;
-    val.dateOrder = this.intlService.formatDate(val.dateInvoice, 'g', 'en-US');
-    //this.saleOrderService.create(val).subscribe(() => console.log('success'));
-  }
+    if (!this.formGroup.valid) {
+      return false;
+    }
 
-  partnerDisplayFn(partner) {
-    if (partner) {
-      return partner.name;
+    console.log(this.formGroup.value);
+    var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.partnerId = val.partner.id;
+    val.userId = val.user ? val.user.id : null;
+    if (this.id) {
+      this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      });
+    } else {
+      this.saleOrderService.create(val).subscribe(result => {
+        this.router.navigate(['/sale-orders/edit/' + result.id]);
+      });
     }
   }
 
-  userDisplayFn(user) {
-    if (user) {
-      return user.name;
+  loadRecord() {
+    if (this.id) {
+      this.saleOrderService.get(this.id).subscribe(result => {
+        this.formGroup.patchValue(result);
+        let dateOrder = this.intlService.parseDate(result.dateOrder);
+        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+        let control = this.formGroup.get('orderLines') as FormArray;
+        control.clear();
+        result.orderLines.forEach(line => {
+          control.push(this.fb.group(line));
+        });
+      });
     }
+  }
+
+  get orderLines() {
+    return this.formGroup.get('orderLines') as FormArray;
+  }
+
+  showAddLineModal() {
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
+
+    modalRef.result.then(result => {
+      let line = result as any;
+      this.orderLines.push(this.fb.group(line));
+      this.computeAmountTotal();
+    }, () => {
+    });
+  }
+
+
+  editLine(line: FormGroup) {
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
+    modalRef.componentInstance.line = line.value;
+
+    modalRef.result.then(result => {
+      line.patchValue(result);
+      this.computeAmountTotal();
+    }, () => {
+    });
+  }
+
+  deleteLine(index: number) {
+    this.orderLines.removeAt(index);
+    this.computeAmountTotal();
+  }
+
+  get getAmountTotal() {
+    return this.formGroup.get('amountTotal').value;
+  }
+
+  computeAmountTotal() {
+    let total = 0;
+    this.orderLines.controls.forEach(line => {
+      total += line.get('priceSubTotal').value;
+    });
+    this.formGroup.get('amountTotal').patchValue(total);
   }
 }

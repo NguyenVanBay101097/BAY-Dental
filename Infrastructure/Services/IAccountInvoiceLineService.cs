@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<AccountInvoiceLineDisplay> DefaultGet(AccountInvoiceLineDefaultGet val);
         Task<AccountInvoiceLineOnChangeProductResult> OnChangeProduct(AccountInvoiceLineOnChangeProduct val);
         Task<IEnumerable<AccountInvoiceLineSimple>> GetDotKhamInvoiceLine(Guid id);
+        Task<AccountAccount> _DefaultAccount(Guid journalId, string type);
     }
 }

@@ -6,6 +6,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,31 +21,21 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ISaleOrderService _saleOrderService;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper)
+        public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
+            IUnitOfWorkAsync unitOfWork)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int pageNumber = 1,
-          int pageSize = 20,
-          string orderBy = "name",
-          string orderDirection = "asc",
-          string filter = "")
+        public async Task<IActionResult> Get([FromQuery]SaleOrderPaged val)
         {
-            var pageIndex = pageNumber - 1;
-
-            var result = await _saleOrderService.GetPagedResultAsync(pageIndex, pageSize, orderBy, orderDirection, filter);
-
-            var paged = new PagedResult<SaleOrderBasic>(result.TotalItems, pageNumber, pageSize)
-            {
-                //Có thể dùng thư viện automapper
-                Items = _mapper.Map<IEnumerable<SaleOrderBasic>>(result.Items),
-            };
-
-            return Ok(paged);
+            var result = await _saleOrderService.GetPagedResultAsync(val);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -101,7 +92,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("DefaultGet")]
+        [HttpGet("DefaultGet")]
         public async Task<IActionResult> DefaultGet()
         {
             var res = await _saleOrderService.DefaultGet();
@@ -128,6 +119,18 @@ namespace TMTDentalAPI.Controllers
                     _mapper.Map(line, order.OrderLines.SingleOrDefault(c => c.Id == line.Id));
                 }
             }
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionConfirm(ids);
+            _unitOfWork.Commit();
+            return NoContent();
         }
     }
 }

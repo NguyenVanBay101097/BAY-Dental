@@ -18,5 +18,9 @@ namespace Infrastructure.Services
         /// <param name="order"></param>
         void UpdateOrderInfo(ICollection<SaleOrderLine> orderLines, SaleOrder order);
         Task<SaleOrderLineDisplay> OnChangeProduct(SaleOrderLineDisplay val);
+        void _GetToInvoiceQty(IEnumerable<SaleOrderLine> lines);
+        void _ComputeInvoiceStatus(IEnumerable<SaleOrderLine> lines);
+        void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines);
+        AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
     }
 }

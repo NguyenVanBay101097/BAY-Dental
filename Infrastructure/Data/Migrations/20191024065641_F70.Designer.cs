@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191024065641_F70")]
+    partial class F70
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2129,8 +2131,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("ProductId");
 
-                    b.Property<Guid?>("ProductUOMId");
-
                     b.Property<decimal>("ProductUOMQty");
 
                     b.Property<decimal?>("QtyInvoiced");
@@ -2154,8 +2154,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("OrderPartnerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductUOMId");
 
                     b.HasIndex("SalesmanId");
 
@@ -3880,10 +3878,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
-                        .WithMany()
-                        .HasForeignKey("ProductUOMId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "Salesman")
                         .WithMany()
                         .HasForeignKey("SalesmanId");
@@ -3896,7 +3890,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineInvoiceRel", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.AccountInvoiceLine", "InvoiceLine")
-                        .WithMany("SaleLines")
+                        .WithMany()
                         .HasForeignKey("InvoiceLineId")
                         .OnDelete(DeleteBehavior.Cascade);
 

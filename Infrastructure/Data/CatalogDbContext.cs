@@ -93,6 +93,7 @@ namespace Infrastructure.Data
         public DbSet<ProductPricelistItem> ProductPricelistItems { get; set; }
         public DbSet<IRRule> IRRules { get; set; }
         public DbSet<RuleGroupRel> RuleGroupRels { get; set; }
+        public DbSet<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -168,6 +169,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductPricelistItemConfiguration());
             builder.ApplyConfiguration(new IRRuleConfiguration());
             builder.ApplyConfiguration(new RuleGroupRelConfiguration());
+            builder.ApplyConfiguration(new SaleOrderLineInvoiceRelConfiguration());
+            
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

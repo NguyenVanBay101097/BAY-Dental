@@ -111,7 +111,7 @@
 }
 
 .o_form_view .o_group .k-widget.k-combobox, .o_form_view .o_group .k-widget.k-numerictextbox, .o_form_view .o_group .k-widget.k-dateinput,
-.o_form_view .o_group .k-widget.k-datepicker  {
+.o_form_view .o_group .k-widget.k-datepicker, .o_form_view .o_group .k-widget.k-datetimepicker  {
   width: 100%;
 }
 

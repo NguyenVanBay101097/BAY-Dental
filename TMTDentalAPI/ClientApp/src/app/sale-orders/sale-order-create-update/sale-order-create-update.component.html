@@ -1,129 +1,201 @@
-<div class="o_control_panel o_breadcrumb_full">
-    <ol class="breadcrumb">
-        <li class="active">Phiếu điều trị</li>
-    </ol>
-    <div class="o_cp_searchview"></div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button mat-raised-button color="primary" (click)="onSave()">Lưu</button>
-            </div>
-        </div>
-    </div>
-    <div class="o_cp_right">
-    </div>
-</div>
-
-<form class="o_form_view" [formGroup]="orderForm">
-    <div class="o_form_sheet_bg">
-        <div class="o_form_sheet">
-            <div class="oe_title">
-                <h1>
-                    <span>New</span>
-                </h1>
-            </div>
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Khách hàng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
-                                    [allowCustom]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Ngày điều trị
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-dateinput formControlName="dateOrderD" [format]="'dd-MM-yyyy HH:mm'">
-                                </kendo-dateinput>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Bác sĩ
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
-                                    [valueNormalizer]="userValueNormalizer" [allowCustom]="true" formControlName="user"
-                                    [valueField]="'id'">
-                                </kendo-combobox>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div>
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                            aria-controls="home" aria-selected="true">Chi tiết điều trị</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                            aria-controls="profile" aria-selected="false">Thông tin khác</a>
-                    </li>
-                </ul>
-
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div>
-                            <!-- <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
-                                #productCbx [valueField]="'id'">
-                            </kendo-combobox> -->
-                            <button type="button" class="btn btn-primary" (click)="showAddLineModal()">Thêm DV</button>
-                        </div>
-                        <div>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Dịch vụ</th>
-                                        <th>Bác sĩ</th>
-                                        <th>Đơn giá</th>
-                                        <th>Số lượng</th>
-                                        <th>CK</th>
-                                        <th>Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody formArrayName="orderLines">
-                                    <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                        <tr [formGroupName]="i">
-                                            <td>{{ lineProduct(line) }}</td>
-                                            <td>{{ lineSalesman(line) }}</td>
-                                            <td>{{ line.get('priceUnit').value }}</td>
-                                            <td>{{ line.get('productUOMQty').value }}</td>
-                                            <td>{{ line.get('discount').value }}</td>
-                                            <td></td>
-                                        </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/sale-orders">Phiếu điều trị</a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{saleOrder.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
                 </div>
             </div>
         </div>
+        <div class="o_cp_right">
+        </div>
     </div>
-</form>
+</div>
 
-<div class="k-overlay" *ngIf="opened"></div>
-<div kendoWindowContainer></div>
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <!-- <button type="button" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                        Xác nhận
+                    </button> -->
+                    <button type="button" class="btn btn-primary btn-sm" (click)="actionConfirm()">
+                        Xác nhận
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['draft', 'cancel'].indexOf(getInvState) === -1" (click)="actionCreateDotKham()">
+                        Tạo đợt khám
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="actionInvoicePayment()">
+                        Thanh toán
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        Hủy phiếu
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" (click)="actionCancelDraft()">
+                        Chuyển thành nháp
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': saleOrder.state === 'done', 'btn-secondary': saleOrder.state !== 'done'}"
+                        type="button">
+                        Đã khóa
+                    </button>
+                    <button [disabled]="saleOrder.state !== 'sale'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': saleOrder.state === 'sale', 'btn-secondary': saleOrder.state !== 'sale'}"
+                        type="button">
+                        Đơn hàng
+                    </button>
+                    <button [disabled]="saleOrder.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': saleOrder.state === 'draft', 'btn-secondary': saleOrder.state !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                    <button *ngIf="saleOrder.state === 'cancel'" [disabled]="saleOrder.state !== 'cancel'"
+                        class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': saleOrder.state === 'cancel', 'btn-secondary': saleOrder.state !== 'cancel'}"
+                        type="button">
+                        Đã hủy
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span>{{saleOrder.name}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                        #partnerCbx formControlName="partner" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày điều trị
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datetimepicker formControlName="dateOrderObj">
+                                    </kendo-datetimepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhân viên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true"
+                                        #userCbx formControlName="user" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="o_notebook">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                aria-controls="home" aria-selected="true">Chi tiết điều trị</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    (click)="showAddLineModal()">Thêm</button>
+                            </div>
+                            <div>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Dịch vụ</th>
+                                            <th class="text-right">Đơn giá</th>
+                                            <th class="text-right">Số lượng</th>
+                                            <th class="text-right">Thành tiền</th>
+                                            <th class="text-right">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="orderLines">
+                                        <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td>{{ line.get('product').value.name }}</td>
+                                                <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
+                                                <td class="text-right">{{ line.get('productUOMQty').value | number }}
+                                                </td>
+                                                <td class="text-right">{{ line.get('priceSubTotal').value | number }}
+                                                </td>
+                                                <td class="text-right">
+                                                    <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                        (click)="editLine(line)">
+                                                        <span class="k-icon k-i-edit"></span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                        (click)="deleteLine(i)">
+                                                        <span class="k-icon k-i-delete"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
+                                            <label class="o_form_label oe_subtotal_footer_separator">
+                                                Tổng tiền
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <span
+                                                class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
