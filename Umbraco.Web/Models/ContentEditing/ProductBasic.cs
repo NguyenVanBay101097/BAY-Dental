@@ -102,6 +102,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool KeToaOK { get; set; }
 
         public bool IsLabo { get; set; }
+
+        public string Type2 { get; set; }
     }
 
     public class ProductPaged
@@ -128,6 +130,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
 
         public Guid? CategId { get; set; }
+
+        public string Type2 { get; set; }
     }
 
     public class ProductImportExcelViewModel

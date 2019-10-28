@@ -26,6 +26,7 @@ export class ProductCategoryDialogComponent implements OnInit {
   title: string;
 
   @Input() public id: string;
+  type: string;
 
   constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal) {
@@ -88,6 +89,7 @@ export class ProductCategoryDialogComponent implements OnInit {
 
   saveOrUpdate() {
     var val = this.myform.value;
+    val.type = this.type;
     val.parentId = val.parent ? val.parent.id : null;
     if (!this.id) {
       return this.productCategoryService.create(val);

@@ -81,5 +81,12 @@ namespace ApplicationCore.Entities
         public ICollection<StockQuant> StockQuants { get; set; }
 
         public bool IsLabo { get; set; }
+
+        /// <summary>
+        /// service: Dich vu
+        /// product: Vat tu
+        /// medicine: Thuoc
+        /// </summary>
+        public string Type2 { get; set; }
     }
 }

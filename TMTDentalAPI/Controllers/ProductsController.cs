@@ -47,7 +47,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]ProductPaged val)
         {
-            _modelAccessService.Check(typeof(Product).Name, "Read");
             var result = await _productService.GetPagedResultAsync(val);
             return Ok(result);
         }
@@ -55,7 +54,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check(typeof(Product).Name, "Read");
             var res = await _productService.GetProductDisplay(id);
             return Ok(res);
         }
@@ -65,7 +63,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check(typeof(Product).Name, "Create");
 
             var product = await _productService.CreateProduct(val);
 
@@ -79,7 +76,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == pd || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check(typeof(Product).Name, "Create");
 
             var val = _mapper.Map<ProductDisplay>(pd);
             var list = pd.stepList;
@@ -108,7 +104,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check(typeof(Product).Name, "Update");
             await _productService.UpdateProduct(id, val);
 
             return NoContent();
@@ -119,7 +114,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check(typeof(Product).Name, "Update");
             await _productService.UpdateProduct(id, val);
 
             //Thêm - cập nhật công đoạn
@@ -155,7 +149,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check(typeof(Product).Name, "Unlink");
             var product = await _productService.GetByIdAsync(id);
             if (product == null)
                 return NotFound();

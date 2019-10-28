@@ -48,5 +48,12 @@ namespace ApplicationCore.Entities
         /// Nhóm công đoạn
         /// </summary>
         public bool StepCateg { get; set; }
+
+        /// <summary>
+        /// service: Dich vu
+        /// product: Vat tu
+        /// medicine: Thuoc
+        /// </summary>
+        public string Type { get; set; }
     }
 }

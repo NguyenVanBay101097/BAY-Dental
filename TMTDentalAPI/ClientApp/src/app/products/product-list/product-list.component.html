@@ -1,12 +1,12 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Sản phẩm</li>
+            <li class="active">{{getTypeTitle()}}</li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên..." type="text"
                         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
                 <div class="o_searchview_advance">
@@ -20,16 +20,8 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false" type="button" id="dropdownMenuButton2">
-                        Thêm
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <button type="button" class="dropdown-item" (click)="createService()">Dịch vụ</button>
-                        <button type="button" class="dropdown-item" (click)="createMedicine()">Thuốc</button>
-                        <button type="button" class="dropdown-item" (click)="createLabo()">Labo</button>
-                        <button type="button" class="dropdown-item" (click)="createProduct()">Vật tư</button>
-                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="a"
+                        (click)="createItem()">Thêm</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -53,18 +45,18 @@
     <div>
         <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)">
-            <kendo-grid-column field="name" title="Tên sản phẩm">
+            <kendo-grid-column field="name" title="Tên {{getTypeLabel()}}">
             </kendo-grid-column>
-            <kendo-grid-column field="defaultCode" title="Mã sản phẩm">
+            <kendo-grid-column field="defaultCode" title="Mã {{getTypeLabel()}}">
             </kendo-grid-column>
-            <kendo-grid-column field="categName" title="Nhóm sản phẩm">
+            <kendo-grid-column field="categName" title="Nhóm {{getTypeLabel()}}">
             </kendo-grid-column>
             <kendo-grid-column field="listPrice" class="text-right" title="Giá bán">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.listPrice | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="qtyAvailable" class="text-right" title="Tồn kho">
+            <kendo-grid-column field="qtyAvailable" *ngIf="type == 'product'" class="text-right" title="Tồn kho">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
                 </ng-template>
@@ -84,5 +76,7 @@
     </div>
 </div>
 
-<app-product-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)"></app-product-advance-search>
+<app-product-advance-search #advanceFilter [filteredCategs]="filteredCategs" [categType]="type"
+    (searchChange)="onAdvanceSearchChange($event)">
+</app-product-advance-search>
 <div kendoDialogContainer></div>

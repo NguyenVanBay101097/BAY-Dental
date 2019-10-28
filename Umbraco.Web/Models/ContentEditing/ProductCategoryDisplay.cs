@@ -38,6 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool ProductCateg { get; set; }
 
         public string CompleteName { get; set; }
+
+        public string Type { get; set; }
     }
 
     public class ProductCategoryFilter

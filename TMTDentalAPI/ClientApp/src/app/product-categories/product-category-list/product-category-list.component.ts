@@ -13,8 +13,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-product-category-list',
   templateUrl: './product-category-list.component.html',
   providers: [ProductCategoryService],
-
-  styleUrls: ['./product-category-list.component.css']
+  styleUrls: ['./product-category-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class ProductCategoryListComponent implements OnInit {
   gridData: GridDataResult;
@@ -25,13 +27,18 @@ export class ProductCategoryListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
+  type: string;
 
   constructor(private productCategoryService: ProductCategoryService,
-    private modalService: NgbModal, private dialogService: DialogService) {
+    private modalService: NgbModal, private dialogService: DialogService,
+    private route: ActivatedRoute) {
   }
 
   ngOnInit() {
-    this.loadDataFromApi();
+    this.route.paramMap.subscribe(params => {
+      this.type = params.get('type');
+      this.loadDataFromApi();
+    });
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -48,6 +55,7 @@ export class ProductCategoryListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.type = this.type;
 
     this.productCategoryService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -68,10 +76,23 @@ export class ProductCategoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  getTypeTitle() {
+    switch (this.type) {
+      case 'service':
+        return 'Nhóm dịch vụ điều trị';
+      case 'product':
+        return 'Nhóm vật tư';
+      case 'medicine':
+        return 'Nhóm thuốc';
+      default:
+        return 'Nhóm sản phẩm';
+    }
+  }
+
   createItem() {
     let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Thêm nhóm sản phẩm';
-
+    modalRef.componentInstance.title = 'Thêm: ' + this.getTypeTitle();
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
       this.loadDataFromApi();
     }, () => {
@@ -80,8 +101,9 @@ export class ProductCategoryListComponent implements OnInit {
 
   editItem(item: ProductCategory) {
     let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Sửa nhóm sản phẩm';
+    modalRef.componentInstance.title = 'Sửa: ' + this.getTypeTitle();
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -90,7 +112,7 @@ export class ProductCategoryListComponent implements OnInit {
 
   deleteItem(item) {
     const dialog: DialogRef = this.dialogService.open({
-      title: "Xóa nhóm sản phẩm",
+      title: "Xóa: " + this.getTypeTitle(),
       content: 'Bạn có chắc chắn muốn xóa?',
       actions: [
         { text: 'Hủy bỏ', value: false },

@@ -75,7 +75,8 @@ namespace Infrastructure.Services
                 Type = x.Type,
                 Id = x.Id,
                 CategId = x.CategId,
-                QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty)
+                QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
+                Type2 = x.Type2
             });
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -91,7 +92,10 @@ namespace Infrastructure.Services
             //chung 1 group thì dùng toán tử or
             if (val.SaleOK.HasValue || val.PurchaseOK.HasValue || val.KeToaOK.HasValue || val.IsLabo.HasValue)
                 query2 = query2.Where(x => x.SaleOK == val.SaleOK || x.PurchaseOK == val.PurchaseOK || x.KeToaOK == val.KeToaOK || x.IsLabo == val.IsLabo);
-           
+
+            if (!string.IsNullOrEmpty(val.Type2))
+                query2 = query2.Where(x => x.Type2 == val.Type2);
+
             var items = await query2.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
 
@@ -269,7 +273,7 @@ namespace Infrastructure.Services
             var uomObj = GetService<IUoMService>();
             var productCategObj = GetService<IProductCategoryService>();
             var uom = await uomObj.DefaultUOM();
-            var categ = await productCategObj.DefaultCategory();
+            //var categ = await productCategObj.DefaultCategory();
             var res = new ProductDisplay();
             if (uom != null)
             {
@@ -279,10 +283,10 @@ namespace Infrastructure.Services
 
             res.CompanyId = CompanyId;
 
-            if (categ != null)
-            {
-                res.Categ = _mapper.Map<ProductCategoryBasic>(categ);
-            }
+            //if (categ != null)
+            //{
+            //    res.Categ = _mapper.Map<ProductCategoryBasic>(categ);
+            //}
 
             return res;
         }

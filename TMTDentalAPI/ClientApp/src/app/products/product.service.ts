@@ -28,6 +28,7 @@ export class ProductPaged {
     keToaOK: boolean;
     isLabo: boolean;
     type: string;
+    type2: string;
 }
 
 export class ProductBasic2 {

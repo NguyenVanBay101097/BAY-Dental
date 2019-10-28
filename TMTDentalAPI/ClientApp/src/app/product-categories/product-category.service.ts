@@ -38,6 +38,7 @@ export class ProductCategoryPaged {
     laboCateg: boolean;
     productCateg: boolean;
     medicineCateg: boolean;
+    type: string;
 }
 
 export class ProductCategoryPaging {

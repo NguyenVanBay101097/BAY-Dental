@@ -12,6 +12,10 @@ const routes: Routes = [
     component: ProductListComponent
   },
   {
+    path: 'products/:type',
+    component: ProductListComponent
+  },
+  {
     path: 'product-services',
     component: ProductServiceListComponent
   },

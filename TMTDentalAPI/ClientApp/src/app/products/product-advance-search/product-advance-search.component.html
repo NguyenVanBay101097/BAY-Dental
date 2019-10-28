@@ -1,12 +1,12 @@
 <div class="o_advance_search_container" [class.show]="show">
     <div [formGroup]="formGroup">
-        <h5>Theo nhóm sản phẩm</h5>
+        <h5>Theo nhóm {{getLabelTitle()}}</h5>
         <div class="form-group">
-            <kendo-combobox [data]="filteredCategs" [textField]="'completeName'" [filterable]="true" #categCbx
-                formControlName="categ" [valueField]="'id'">
+            <kendo-combobox [data]="filteredCategs" [textField]="'completeName'" #categCbx formControlName="categ"
+                [valueField]="'id'">
             </kendo-combobox>
         </div>
-        <div class="dropdown-divider"></div>
+        <!-- <div class="dropdown-divider"></div>
         <h5>Theo loại</h5>
         <div class="form-group">
             <div class="form-check">
@@ -27,7 +27,7 @@
                     Labo
                 </label>
             </div>
-        </div>
+        </div> -->
         <div>
             <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
                 Tìm kiếm

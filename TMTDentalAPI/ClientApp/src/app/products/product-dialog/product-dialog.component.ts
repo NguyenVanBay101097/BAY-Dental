@@ -47,7 +47,7 @@ export class ProductDialogComponent implements OnInit {
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
-
+  type: string;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
@@ -106,12 +106,28 @@ export class ProductDialogComponent implements OnInit {
       });
     } else {
       this.productService.defaultGet().subscribe(result => {
-        this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+        if (result.categ) {
+          this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+        }
+
         this.productForm.patchValue(result);
         if (this.productDefaultVal) {
           this.productForm.patchValue(this.productDefaultVal);
         }
       });
+    }
+  }
+
+  getLabelTitle() {
+    switch (this.type) {
+      case 'service':
+        return 'dịch vụ';
+      case 'product':
+        return 'vật tư';
+      case 'medicine':
+        return 'thuốc';
+      default:
+        return 'sản phẩm';
     }
   }
 
@@ -143,6 +159,7 @@ export class ProductDialogComponent implements OnInit {
   searchCategories(q?: string) {
     var val = new ProductCategoryPaged();
     val.search = q;
+    val.type = this.type;
     return this.productCategoryService.autocomplete(val);
   }
 
@@ -154,8 +171,8 @@ export class ProductDialogComponent implements OnInit {
 
   quickCreateCateg() {
     let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm nhóm sản phẩm';
-
+    modalRef.componentInstance.title = 'Thêm nhóm ' + this.getLabelTitle();
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
       this.filterdCategories.push(result as ProductCategoryBasic);
       this.productForm.patchValue({ categ: result });
@@ -193,6 +210,7 @@ export class ProductDialogComponent implements OnInit {
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
+    data.type2 = this.type;
     return data;
   }
 

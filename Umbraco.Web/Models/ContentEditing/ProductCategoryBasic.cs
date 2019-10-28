@@ -53,5 +53,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nhóm hàng hóa vật tư
         /// </summary>
         public bool? ProductCateg { get; set; }
+
+        public string Type { get; set; }
     }
 }

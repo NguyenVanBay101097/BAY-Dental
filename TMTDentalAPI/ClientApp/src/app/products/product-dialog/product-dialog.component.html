@@ -9,10 +9,10 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Tên sản phẩm</label>
+                    <label class="o_form_label oe_edit_only">Tên {{getLabelTitle()}}</label>
                     <h1>
-                        <input type="text" name="name" ngbAutofocus class="form-control" placeholder="Tên sản phẩm"
-                            formControlName="name" #nameInput>
+                        <input type="text" name="name" ngbAutofocus class="form-control" formControlName="name"
+                            #nameInput>
                     </h1>
                     <!-- <div>
                         <div class="form-check">
@@ -64,7 +64,7 @@
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Nhóm sản phẩm
+                                                    Nhóm {{getLabelTitle()}}
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
@@ -84,7 +84,7 @@
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Mã sản phẩm
+                                                    Mã {{getLabelTitle()}}
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">

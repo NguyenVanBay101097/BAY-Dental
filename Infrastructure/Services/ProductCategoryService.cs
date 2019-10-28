@@ -66,8 +66,10 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.ProductCateg == true);
             if (val.MedicineCateg.HasValue)
                 query = query.Where(x => x.MedicineCateg == true);
+            if (!string.IsNullOrEmpty(val.Type))
+                query = query.Where(x => x.Type == val.Type);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x=>x.Parent)
+            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Parent)
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
@@ -92,6 +94,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.ProductCateg == true);
             if (val.MedicineCateg.HasValue)
                 query = query.Where(x => x.MedicineCateg == true);
+            if (!string.IsNullOrEmpty(val.Type))
+                query = query.Where(x => x.Type == val.Type);
 
             var items = await query.Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
