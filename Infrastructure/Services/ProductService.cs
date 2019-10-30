@@ -107,6 +107,28 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val)
+        {
+            var query = SearchQuery(x => x.Active && x.Type2 == "labo");
+            if (!string.IsNullOrWhiteSpace(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
+
+            var items = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
+                .Select(x => new ProductLaboBasic {
+                    Id = x.Id,
+                    Name = x.Name,
+                    PurchasePrice = x.PurchasePrice
+                })
+                .ToListAsync();
+
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<ProductLaboBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
         public async Task<IEnumerable<ProductBasic>> GetAutocompleteAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
@@ -175,6 +197,35 @@ namespace Infrastructure.Services
             return await CreateAsync(product);
         }
 
+        public async Task<Product> CreateProduct(ProductLaboSave val)
+        {
+            var product = _mapper.Map<Product>(val);
+            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
+            product.Type2 = "labo";
+            product.SaleOK = false;
+
+            var companyId = CompanyId;
+            product.CompanyId = companyId;
+
+            var uomObj = GetService<IUoMService>();
+            var productCategObj = GetService<IProductCategoryService>();
+            var uom = await uomObj.DefaultUOM();
+            if (uom == null)
+                throw new Exception("Not found default uom");
+            product.UOMId = uom.Id;
+            product.UOMPOId = uom.Id;
+
+            var categ = await productCategObj.SearchQuery(x => x.Name == "Labo" && x.Type == "labo").FirstOrDefaultAsync();
+            if (categ == null)
+            {
+                categ = new ProductCategory() { Name = "Labo", Type = "labo" };
+                await productCategObj.CreateAsync(categ);
+            }
+            product.CategId = categ.Id;
+
+            return await CreateAsync(product);
+        }
+
         public async Task CreateProduct(IEnumerable<ProductDisplay> vals)
         {
             var self = new List<Product>();
@@ -234,6 +285,15 @@ namespace Infrastructure.Services
                     pcRel.StandardPrice = val.StandardPrice;
                 }
             }
+
+            await UpdateAsync(product);
+        }
+
+        public async Task UpdateProduct(Guid id, ProductLaboSave val)
+        {
+            var product = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            product = _mapper.Map(val, product);
+            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             await UpdateAsync(product);
         }

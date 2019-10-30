@@ -109,6 +109,42 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateLabo(ProductLaboSave val)
+        {
+            if (null == val || !ModelState.IsValid)
+                return BadRequest();
+            var product = await _productService.CreateProduct(val);
+
+            var basic = _mapper.Map<ProductLaboBasic>(product);
+            return Ok(basic);
+        }
+
+        [HttpPut("{id}/[action]")]
+        public async Task<IActionResult> UpdateLabo(Guid id, ProductLaboSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _productService.UpdateProduct(id, val);
+
+            return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetLabo(Guid id)
+        {
+            var product = await _productService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var display = _mapper.Map<ProductLaboDisplay>(product);
+            return Ok(display);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetLaboPaged([FromQuery]ProductPaged val)
+        {
+            var result = await _productService.GetLaboPagedResultAsync(val);
+            return Ok(result);
+        }
+
         [HttpPost("UpdateWithSteps/{id}")]
         public async Task<IActionResult> UpdateWithSteps(Guid id, ProductDisplayAndStep val)
         {

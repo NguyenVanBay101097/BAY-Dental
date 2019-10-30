@@ -24,6 +24,10 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<ProductDisplayAndStep, ProductDisplay>();
             CreateMap<ProductDisplayAndStep, List<ProductStepDisplay>>();
+
+            CreateMap<Product, ProductLaboBasic>();
+            CreateMap<Product, ProductLaboDisplay>();
+            CreateMap<ProductLaboSave, Product>();
         }
     }
 }

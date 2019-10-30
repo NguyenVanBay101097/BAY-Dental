@@ -9,6 +9,13 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class Product: BaseEntity
     {
+        public Product()
+        {
+            Active = true;
+            SaleOK = true;
+            PurchaseOK = true;
+            Type = "consu";
+        }
         public string Name { get; set; }
 
         public string NameNoSign { get; set; }
@@ -86,7 +93,13 @@ namespace ApplicationCore.Entities
         /// service: Dich vu
         /// product: Vat tu
         /// medicine: Thuoc
+        /// labo: Labo
         /// </summary>
         public string Type2 { get; set; }
+
+        /// <summary>
+        /// Giá mua
+        /// </summary>
+        public decimal? PurchasePrice { get; set; }
     }
 }

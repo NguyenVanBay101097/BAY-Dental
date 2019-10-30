@@ -7,6 +7,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { ProductSimple } from './product-simple';
 import { ProductStepDisplay, ProductDisplayAndStep } from './product-step';
+import { PagedResult2 } from '../core/paged-result-2';
 
 export class ProductFilter {
     search: string;
@@ -51,6 +52,23 @@ export class ProductPaging2 {
 
 export class ProductImportExcelViewModel {
     fileBase64: string;
+}
+
+export class ProductLaboBasic {
+    id: string;
+    name: string;
+    purchasePrice: number;
+}
+
+export class ProductLaboSave {
+    name: string;
+    purchasePrice: number;
+}
+
+export class ProductLaboDisplay {
+    id: string;
+    name: string;
+    purchasePrice: number;
 }
 
 @Injectable()
@@ -115,6 +133,22 @@ export class ProductService {
 
     importExcel(val: ProductImportExcelViewModel) {
         return this.http.post(this.baseApi + this.apiUrl + "/ImportExcel", val);
+    }
+
+    getLaboPaged(val: any): Observable<PagedResult2<ProductLaboBasic>> {
+        return this.http.get<PagedResult2<ProductLaboBasic>>(this.baseApi + this.apiUrl + '/GetLaboPaged', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getLabo(id: string): Observable<ProductLaboDisplay> {
+        return this.http.get<ProductLaboDisplay>(this.baseApi + this.apiUrl + "/" + id + '/GetLabo');
+    }
+
+    createLabo(product: ProductLaboSave): Observable<ProductLaboBasic> {
+        return this.http.post<ProductLaboBasic>(this.baseApi + this.apiUrl + '/CreateLabo', product);
+    }
+
+    updateLabo(id: string, product: ProductLaboSave) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id + "/UpdateLabo", product);
     }
 
     //==============================PHẦN CÔNG ĐOẠN - STEP=====================================//

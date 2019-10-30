@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductPaged, ProductBasic2 } from '../product.service';
+import { ProductService, ProductPaged, ProductBasic2, ProductLaboBasic } from '../product.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -10,13 +10,19 @@ import { Product } from '../product';
 import { ProductAdvanceFilter } from '../product-advance-filter/product-advance-filter.component';
 import { ProductMedicineCuDialogComponent } from '../product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { ProductLaboCuDialogComponent } from '../product-labo-cu-dialog/product-labo-cu-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'app-product-labo-list',
   templateUrl: './product-labo-list.component.html',
-  styleUrls: ['./product-labo-list.component.css']
+  styleUrls: ['./product-labo-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class ProductLaboListComponent implements OnInit {
-  constructor(private productService: ProductService, private windowService: WindowService, private dialogService: DialogService) { }
+  constructor(private productService: ProductService, private windowService: WindowService, private dialogService: DialogService,
+    private modalService: NgbModal) { }
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
@@ -45,10 +51,8 @@ export class ProductLaboListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.purchaseOK = true;
-    val.categId = this.searchCategId || '';
 
-    this.productService.getPaged(val).pipe(
+    this.productService.getLaboPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -68,75 +72,33 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm labo',
-      content: ProductLaboCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
+    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm Labo';
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
+  }
 
-    this.opened = true;
+  editItem(item: ProductLaboBasic) {
+    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa Labo';
+    modalRef.componentInstance.id = item.id;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
 
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
+  deleteItem(item: ProductLaboBasic) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa Labo';
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa labo ${item.name}?`;
+    modalRef.result.then(() => {
+      this.productService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
-      }
-    });
-  }
-
-  editItem(item: ProductBasic2) {
-    const windowRef = this.windowService.open({
-      title: `Sửa labo`,
-      content: ProductLaboCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
-    });
-  }
-
-  onFilterChange(filter: ProductAdvanceFilter) {
-    this.searchCategId = filter.categId;
-    this.loadDataFromApi();
-  }
-
-  deleteItem(item: ProductBasic2) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa labo',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
-
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        console.log('close');
-      } else {
-        console.log('action', result);
-        if (result['value']) {
-          this.productService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-            console.log(err);
-          });
-        }
-      }
+      });
+    }, () => {
     });
   }
 }

@@ -29,5 +29,9 @@ namespace Infrastructure.Services
         Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self,
             Guid? partnerId = null, decimal quantity = 1,
             DateTime? date = null);
+
+        Task<Product> CreateProduct(ProductLaboSave val);
+        Task UpdateProduct(Guid id, ProductLaboSave val);
+        Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val);
     }
 }

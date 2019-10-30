@@ -1,13 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Product } from '../product';
 import { ProductService } from '../product.service';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { debug } from 'util';
-import { ProductMedicineFormComponent } from '../product-medicine-form/product-medicine-form.component';
-import { ProductCategoryDialogComponent } from 'src/app/product-categories/product-category-dialog/product-category-dialog.component';
-import { ProductCategoryDisplay, ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import * as _ from 'lodash';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-labo-cu-dialog',
@@ -15,67 +9,25 @@ import * as _ from 'lodash';
   styleUrls: ['./product-labo-cu-dialog.component.css']
 })
 export class ProductLaboCuDialogComponent implements OnInit {
-  opened = false;
   formGroup: FormGroup;
-  filteredCategories: ProductCategoryBasic[] = [];
   id: string;
-  @ViewChild('productForm', { static: true }) productForm: ProductMedicineFormComponent;
 
-  constructor(private productService: ProductService, public window: WindowRef, private fb: FormBuilder,
-    private windowService: WindowService, private productCategoryService: ProductCategoryService) {
-    this.formGroup = this.fb.group({
-      name: ['', Validators.required],
-      saleOK: false,
-      purchaseOK: false,
-      categ: [null, Validators.required],
-      uomId: null,
-      uompoId: null,
-      type: 'consu',
-      listPrice: 1,
-      standardPrice: 0,
-      companyId: null,
-      defaultCode: '',
-      keToaOK: false,
-      description: null
-    });
+  constructor(private productService: ProductService, public activeModal: NgbActiveModal, private fb: FormBuilder) {
   }
 
   ngOnInit() {
-    if (this.id) {
-      this.productService.get(this.id).subscribe(result => {
-        if (result.categ) {
-          this.filteredCategories = _.unionBy(this.filteredCategories, [result.categ as ProductCategoryBasic], 'id');
-        }
+    this.formGroup = this.fb.group({
+      name: ['', Validators.required],
+      purchasePrice: 0,
+    });
 
-        this.formGroup.patchValue(result);
-      });
-    } else {
-      this.productService.defaultGet().subscribe(result => {
-        this.formGroup.patchValue(result);
-        //cập nhật 1 số trường cho phù hợp khi tạo 1 dịch vụ
-        this.formGroup.get('purchaseOK').patchValue(true);
-        this.formGroup.get('saleOK').patchValue(false);
-        this.formGroup.get('type').patchValue('consu');
+    if (this.id) {
+      setTimeout(() => {
+        this.productService.getLabo(this.id).subscribe(result => {
+          this.formGroup.patchValue(result);
+        });
       });
     }
-
-    this.loadFilteredCategories();
-  }
-
-  onFilterChangeCateg(value) {
-    this.searchCategories(value).subscribe(result => this.filteredCategories = result);
-  }
-
-  searchCategories(q?: string) {
-    var val = new ProductCategoryPaged();
-    val.search = q;
-    val.laboCateg = true;
-    val.limit = 20;
-    return this.productCategoryService.autocomplete(val);
-  }
-
-  loadFilteredCategories() {
-    this.searchCategories().subscribe(result => this.filteredCategories = result);
   }
 
   onSave() {
@@ -84,44 +36,15 @@ export class ProductLaboCuDialogComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.categId = val.categ.id;
     if (this.id) {
-      this.productService.update(this.id, val).subscribe(() => {
-        this.window.close(true);
+      this.productService.updateLabo(this.id, val).subscribe(() => {
+        this.activeModal.close(true);
       });
     } else {
-      return this.productService.create(val).subscribe(result => {
-        this.window.close(result);
+      return this.productService.createLabo(val).subscribe(result => {
+        this.activeModal.close(result);
       });;
     }
-  }
-
-  onCancel() {
-    this.window.close();
-  }
-
-  onBtnCreateCategClick() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm nhóm labo',
-      content: ProductCategoryDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    const instance = windowRef.content.instance;
-    let defaultCateg = new ProductCategoryDisplay();
-    defaultCateg.laboCateg = true;
-    instance.defaultCateg = defaultCateg;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.filteredCategories.push(result as ProductCategoryBasic);
-        this.formGroup.patchValue({ categ: result });
-      }
-    });
   }
 }
 
