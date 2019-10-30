@@ -57,6 +57,7 @@ namespace Infrastructure.Services
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
                 line.Order = order;
+                line.State = order.State;
             }
         }
 

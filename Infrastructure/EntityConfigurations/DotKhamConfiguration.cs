@@ -13,8 +13,11 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.HasOne(x => x.Invoice)
                 .WithMany(x => x.DotKhams)
-                .HasForeignKey(x => x.InvoiceId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.InvoiceId);
+
+            builder.HasOne(x => x.SaleOrder)
+             .WithMany(x => x.DotKhams)
+             .HasForeignKey(x => x.SaleOrderId);
 
             builder.HasOne(x => x.Partner)
                .WithMany()

@@ -29,5 +29,6 @@ namespace Infrastructure.Services
         Task UpdatePayments(IEnumerable<Guid> ids);
         Task UpdateResidual(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
+        void _ComputeAmount(AccountInvoice invoice);
     }
 }

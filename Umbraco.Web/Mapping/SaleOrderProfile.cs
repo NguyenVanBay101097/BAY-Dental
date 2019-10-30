@@ -17,6 +17,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrder, SaleOrderDisplay>();
             CreateMap<SaleOrderDisplay, SaleOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.InvoiceStatus, x => x.Ignore())
                 .ForMember(x => x.Name, x => x.Ignore())
                 .ForMember(x => x.State, x => x.Ignore())
                 .ForMember(x => x.Partner, x => x.Ignore())

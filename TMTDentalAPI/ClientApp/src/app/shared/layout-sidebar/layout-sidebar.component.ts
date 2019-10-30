@@ -18,7 +18,8 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Điều trị',
       icon: 'fas fa-medkit',
       children: [
-        { name: 'Phiếu điều trị', link: '/customer-invoices' },
+        // { name: 'Phiếu điều trị', link: '/customer-invoices' },
+        { name: 'Phiếu điều trị', link: '/sale-orders' },
         { name: 'Đợt khám', link: '/dot-khams' },
         { name: 'Lịch hẹn', link: '/appointments' },
       ]

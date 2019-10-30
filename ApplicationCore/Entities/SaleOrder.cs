@@ -48,6 +48,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderLine> OrderLines { get; set; } = new List<SaleOrderLine>();
 
+        public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
+
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 

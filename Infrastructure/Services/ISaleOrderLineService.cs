@@ -7,7 +7,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ISaleOrderLineService
+    public interface ISaleOrderLineService: IBaseService<SaleOrderLine>
     {
         void ComputeAmount(ICollection<SaleOrderLine> orderLines);
 

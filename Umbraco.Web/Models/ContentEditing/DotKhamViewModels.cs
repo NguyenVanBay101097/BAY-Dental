@@ -94,8 +94,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Hóa đơn điều trị
         /// </summary>
-        public Guid InvoiceId { get; set; }
+        public Guid? InvoiceId { get; set; }
         public AccountInvoiceCbx Invoice { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrderBasic SaleOrder { get; set; }
 
         public Guid? AppointmentId { get; set; }
         public AppointmentPatch Appointment { get; set; }
@@ -110,6 +113,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class DotKhamDefaultGet
     {
         public Guid? InvoiceId { get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class ProductWithStepList

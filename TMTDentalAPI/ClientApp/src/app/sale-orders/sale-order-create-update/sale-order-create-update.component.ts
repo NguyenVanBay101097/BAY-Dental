@@ -16,6 +16,8 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -33,6 +35,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
+  dotKhams: DotKhamBasic[] = [];
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
@@ -65,6 +68,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         let dateOrder = this.intlService.parseDate(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
         if (result.user) {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
         }
@@ -72,7 +76,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
-          control.push(this.fb.group(line));
+          var g = this.fb.group(line);
+          g.setControl('teeth', this.fb.array(line.teeth));
+          control.push(g);
         });
       });
 
@@ -96,12 +102,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     this.loadPartners();
     this.loadUsers();
+    this.loadDotKhamList();
+  }
+
+  loadDotKhamList() {
+    if (this.id) {
+      return this.saleOrderService.getDotKhamList(this.id).subscribe(result => {
+        this.dotKhams = result;
+      });
+    }
   }
 
   loadPartners() {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
-      console.log(result);
     });
   }
 
@@ -137,6 +151,42 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  actionCreateDotKham() {
+    if (this.id) {
+      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Tạo đợt khám';
+      modalRef.componentInstance.saleOrderId = this.id;
+
+      modalRef.result.then(result => {
+        if (result.view) {
+          this.router.navigate(['/dot-khams/edit/', result.result.id]);
+        } else {
+          this.loadDotKhamList();
+          // $('#myTab a[href="#profile"]').tab('show');
+        }
+      }, () => {
+      });
+    }
+  }
+
+  onSaveConfirm() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.partnerId = val.partner.id;
+    val.userId = val.user ? val.user.id : null;
+    this.saleOrderService.create(val).subscribe(result => {
+      this.saleOrderService.actionConfirm([result.id]).subscribe(() => {
+        this.router.navigate(['/sale-orders/edit/' + result.id]);
+      }, () => {
+        this.router.navigate(['/sale-orders/edit/' + result.id]);
+      });
+    });
+  }
+
   onSave() {
     if (!this.formGroup.valid) {
       return false;
@@ -168,6 +218,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   loadRecord() {
     if (this.id) {
       this.saleOrderService.get(this.id).subscribe(result => {
+        this.saleOrder = result;
         this.formGroup.patchValue(result);
         let dateOrder = this.intlService.parseDate(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -175,8 +226,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         let control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
-          control.push(this.fb.group(line));
+          var g = this.fb.group(line);
+          g.setControl('teeth', this.fb.array(line.teeth));
+          control.push(g);
         });
+      });
+    }
+  }
+
+  actionCancel() {
+    if (this.id) {
+      this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+        this.loadRecord();
       });
     }
   }
@@ -191,6 +252,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(result => {
       let line = result as any;
+      line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
       this.computeAmountTotal();
     }, () => {
@@ -204,10 +266,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.line = line.value;
 
     modalRef.result.then(result => {
+      var a = result as any;
       line.patchValue(result);
+      line.setControl('teeth', this.fb.array(a.teeth || []));
       this.computeAmountTotal();
     }, () => {
     });
+  }
+
+  lineTeeth(line: FormGroup) {
+    var teeth = line.get('teeth').value as any[];
+    return teeth.map(x => x.name).join(',');
   }
 
   deleteLine(index: number) {

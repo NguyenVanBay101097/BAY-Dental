@@ -197,3 +197,27 @@ td.oe_form_group_cell_label label {
     margin-bottom: 5px;
 }
 
+.tooth-item {
+    padding: 15px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+.tooth-item.selected {
+    background-color: #6c757d;
+    color: white;
+}
+
+.teeth-map .table {
+    margin-bottom: 0;
+}
+
+.teeth-map .table tr:first-child td {
+    border-top: none;
+}
+
+.teeth-map .table tr td:first-child {
+    border-right: 1px solid #dee2e6;
+}

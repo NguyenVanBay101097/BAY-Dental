@@ -23,8 +23,11 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Hóa đơn điều trị
         /// </summary>
-        public Guid InvoiceId { get; set; }
+        public Guid? InvoiceId { get; set; }
         public AccountInvoice Invoice { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrder SaleOrder { get; set; }
 
         /// <summary>
         /// Khách hàng lấy từ invoice
@@ -49,6 +52,7 @@ namespace ApplicationCore.Entities
         /// Trạng thái
         /// draft: Nháp
         /// confirmed: Đã xác nhận
+        /// cancel: Hủy bỏ
         /// </summary>
         public string State { get; set; }
 

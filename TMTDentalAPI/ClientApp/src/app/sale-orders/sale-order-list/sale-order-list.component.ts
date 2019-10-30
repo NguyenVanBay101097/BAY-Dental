@@ -77,6 +77,22 @@ export class SaleOrderListComponent implements OnInit {
     }, 200);
   }
 
+  unlink() {
+    if (this.selectedIds.length == 0) {
+      return false;
+    }
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa hóa đơn';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.saleOrderService.unlink(this.selectedIds).subscribe(() => {
+        this.selectedIds = [];
+        this.loadDataFromApi();
+      });
+    });
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = new SaleOrderPaged();
@@ -116,7 +132,7 @@ export class SaleOrderListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa phiếu điều trị';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
-      this.saleOrderService.delete(item.id).subscribe(() => {
+      this.saleOrderService.unlink([item.id]).subscribe(() => {
         this.loadDataFromApi();
       });
     });

@@ -11,6 +11,7 @@ import { DotKhamLineOperationService } from './dot-kham-line-operation.service';
 import { DotKhamListComponent } from './dot-kham-list/dot-kham-list.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SharedModule } from '../shared/shared.module';
+import { DotKhamStepService } from './dot-kham-step.service';
 
 @NgModule({
   declarations: [DotKhamCreateUpdateComponent, DotKhamListComponent],
@@ -26,7 +27,8 @@ import { SharedModule } from '../shared/shared.module';
   providers: [
     DotKhamService,
     DotKhamLineService,
-    DotKhamLineOperationService
+    DotKhamLineOperationService,
+    DotKhamStepService
   ],
   entryComponents: [
     DotKhamCreateUpdateComponent

@@ -27,5 +27,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceTotal { get; set; }
 
         public string Note { get; set; }
+
+        /// <summary>
+        /// Chuẩn đoán
+        /// </summary>
+        public string Diagnostic { get; set; }
+
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategoryBasic ToothCategory { get; set; }
+
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+
+        public int? Sequence { get; set; }
     }
 }

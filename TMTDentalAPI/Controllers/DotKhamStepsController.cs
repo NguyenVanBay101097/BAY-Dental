@@ -133,5 +133,25 @@ namespace TMTDentalAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AssignDotKham(DotKhamStepAssignDotKhamVM val)
+        {
+            if (val == null || !ModelState.IsValid)
+                return BadRequest();
+
+            await _dotKhamStepService.AssignDotKham(val);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ToggleIsDone(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();
+
+            await _dotKhamStepService.ToggleIsDone(ids);
+            return NoContent();
+        }
     }
 }

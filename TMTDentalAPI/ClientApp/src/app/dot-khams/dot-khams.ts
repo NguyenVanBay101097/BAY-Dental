@@ -4,7 +4,7 @@ import { UserSimple } from '../users/user-simple';
 
 export class DotKhamDefaultGet {
     invoiceId: string;
-
+    saleOrderId: string;
 }
 
 export class DotKhamBasic {

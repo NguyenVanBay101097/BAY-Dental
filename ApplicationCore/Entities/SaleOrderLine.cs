@@ -61,5 +61,19 @@ namespace ApplicationCore.Entities
         public decimal? QtyInvoiced { get; set; }
 
         public ICollection<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; } = new List<SaleOrderLineInvoiceRel>();
+
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategory ToothCategory { get; set; }
+
+        /// <summary>
+        /// Chẩn đoán
+        /// </summary>
+        public string Diagnostic { get; set; }
+
+        public ICollection<SaleOrderLineToothRel> SaleOrderLineToothRels { get; set; } = new List<SaleOrderLineToothRel>();
+
+        public ICollection<DotKhamStep> DotKhamSteps { get; set; } = new List<DotKhamStep>();
+
+        public int? Sequence { get; set; }
     }
 }

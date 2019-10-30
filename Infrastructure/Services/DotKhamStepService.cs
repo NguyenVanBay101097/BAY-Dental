@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -26,12 +27,12 @@ namespace Infrastructure.Services
             var dotKham = await dotKhamService.GetByIdAsync(dotKhamId);
             if (show == "all")
             {
-                return await SearchQuery(x => x.InvoicesId == dotKham.InvoiceId)
+                return await SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == dotKham.SaleOrderId)
                     .Include(x => x.Product).Include(x => x.DotKham).ToListAsync();
             }
             else
             {
-                return await SearchQuery(x => x.InvoicesId == dotKham.InvoiceId &&
+                return await SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == dotKham.SaleOrderId &&
                 (!x.DotKhamId.HasValue || x.DotKhamId == dotKham.Id))
                     .Include(x => x.Product).Include(x => x.DotKham).ToListAsync();
             }
@@ -64,6 +65,41 @@ namespace Infrastructure.Services
                 }
             }
             return res;
+        }
+
+        public async Task AssignDotKham(DotKhamStepAssignDotKhamVM val)
+        {
+            var steps = await SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
+            foreach(var step in steps)
+            {
+                if (step.IsDone)
+                    continue;
+
+                if (!step.DotKhamId.HasValue)
+                {
+                    step.DotKhamId = val.DotKhamId;
+                }
+                else
+                {
+                    step.DotKhamId = null;
+                }
+            }
+            await UpdateAsync(steps);
+        }
+
+        public async Task ToggleIsDone(IEnumerable<Guid> ids)
+        {
+            var steps = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrder).ToListAsync();
+            foreach (var step in steps)
+            {
+                if (step.SaleOrder != null && (step.SaleOrder.State == "done" || step.SaleOrder.State == "cancel"))
+                    continue;
+                if (!step.DotKhamId.HasValue)
+                    continue;
+                step.IsDone = !step.IsDone;
+            }
+
+            await UpdateAsync(steps);
         }
     }
 }

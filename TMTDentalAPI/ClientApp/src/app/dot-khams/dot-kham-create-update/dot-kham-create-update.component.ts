@@ -31,11 +31,12 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { AppointmentCreateUpdateComponent } from 'src/app/appointment/appointment-create-update/appointment-create-update.component';
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch } from '../dot-khams';
+import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch, DotKhamDisplay } from '../dot-khams';
 import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
+import { DotKhamStepService, DotKhamStepAssignDotKhamVM } from '../dot-kham-step.service';
 
 @Component({
   selector: 'app-dot-kham-create-update',
@@ -69,6 +70,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   // dotKhamLines: DotKhamLineBasic[] = [];
   // dotKhamLinesList: DotKhamLineBasic[][] = [];
   dotKhamStepsList: DotKhamStepDisplay[][] = [];
+  dotKhamStepList: DotKhamStepDisplay[] = [];
 
   toaThuocs: ToaThuocBasic[] = [];
   laboOrderLines: LaboOrderLineBasic[] = [];
@@ -90,6 +92,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   filesPreview: IrAttachmentBasic[] = [];
 
   dialog = false;//Component được mở dưới dạng Dialog hay Tab mới
+  dotKham: DotKhamDisplay = new DotKhamDisplay();
 
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
@@ -99,14 +102,14 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     // private windowService: WindowService,
     private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
     private toaThuocService: ToaThuocService, private appointmentService: AppointmentService, private productService: ProductService,
-    private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal) { }
+    private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal,
+    private dotKhamStepService: DotKhamStepService) { }
 
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
       name: null,
       partner: [null, Validators.required],
-      invoice: [null, Validators.required],
       dateObj: null,
       date: null,
       note: null,
@@ -115,6 +118,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       state: null,
       doctor: [null, Validators.required],
       assistant: null,
+      saleOrderId: null,
       step: null,
       product: null,
       appointment: null,
@@ -147,7 +151,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
     this.loadToaThuocs();
     // this.loadAppointments();
-    this.loadDotKhamSteps();
+    // this.loadDotKhamSteps();
+    this.loadDotKhamStepList();
     this.loadLaboOrderLines();
     this.loadProductSimpleList();
 
@@ -168,6 +173,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
           return this.dotKhamService.defaultGet(defaultVal);
         }
       })).subscribe(result => {
+        this.dotKham = result;
         this.dotKhamForm.patchValue(result);
         let date = this.intlService.parseDate(result.date);
         this.dotKhamForm.get('dateObj').patchValue(date);
@@ -230,6 +236,21 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
   }
 
+  assignDotKham(step: DotKhamStepDisplay) {
+    var val = new DotKhamStepAssignDotKhamVM();
+    val.ids = [step.id];
+    val.dotKhamId = this.id;
+    this.dotKhamStepService.assignDotKham(val).subscribe(() => {
+      this.loadDotKhamStepList();
+    });
+  }
+
+  toggleIsDone(step: DotKhamStepDisplay) {
+    this.dotKhamStepService.toggleIsDone([step.id]).subscribe(() => {
+      this.loadDotKhamStepList();
+    });
+  }
+
   // loadAppointments() {
   //   if (this.id) {
   //     var val = new AppointmentPaged();
@@ -264,6 +285,14 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       this.dotKhamService.getDotKhamStepsByDKId2(this.id, this.getDotKhamFilter).subscribe(result => {
         this.dotKhamStepsList = result;
         console.log(result);//Tên dịch vụ tham chiếu đến tên của invoiceLine
+      })
+    }
+  }
+
+  loadDotKhamStepList() {
+    if (this.id) {
+      this.dotKhamService.getDotKhamStepsByDKId(this.id).subscribe(result => {
+        this.dotKhamStepList = result;
       })
     }
   }
@@ -586,6 +615,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   onUpdate() {
+    debugger;
+
     if (!this.dotKhamForm.valid) {
       return;
     }

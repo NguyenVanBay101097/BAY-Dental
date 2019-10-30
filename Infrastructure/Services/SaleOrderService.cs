@@ -114,6 +114,62 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .Include(x => x.DotKhams)
+                .Include("OrderLines.Order")
+                .Include("OrderLines.SaleOrderLineInvoiceRels")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                .ToListAsync();
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var invoiceIds = new List<Guid>().AsEnumerable();
+            var dotKhamIds = new List<Guid>().AsEnumerable();
+            foreach (var sale in self)
+            {
+                foreach (var line in sale.OrderLines)
+                {
+                    invoiceIds = invoiceIds.Union(line.SaleOrderLineInvoiceRels.Select(x => x.InvoiceLine.Invoice.Id).Distinct().ToList());
+                }
+
+                dotKhamIds = dotKhamIds.Union(sale.DotKhams.Select(x => x.Id).ToList());
+            }
+
+            await UpdateAsync(self);
+
+            if (invoiceIds.Any())
+            {
+                var invObj = GetService<IAccountInvoiceService>();
+                await invObj.ActionCancel(invoiceIds);
+            }
+
+            if (dotKhamIds.Any())
+            {
+                var dkObj = GetService<IDotKhamService>();
+                await dkObj.ActionCancel(dotKhamIds);
+            }
+
+            foreach (var sale in self)
+            {
+                foreach (var line in sale.OrderLines)
+                {
+                    line.State = "cancel";
+                }
+
+                saleLineObj._GetInvoiceQty(sale.OrderLines);
+                saleLineObj._GetToInvoiceQty(sale.OrderLines);
+                saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
+
+                sale.State = "cancel";
+                _GetInvoiced(new List<SaleOrder>() { sale });
+            }
+
+            await UpdateAsync(self);
+        }
+
 
         public async Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id)
         {
@@ -122,6 +178,9 @@ namespace Infrastructure.Services
                 .Include(x => x.User)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
+                .Include("OrderLines.ToothCategory")
+                .Include("OrderLines.SaleOrderLineToothRels")
+                .Include("OrderLines.SaleOrderLineToothRels.Tooth")
                 .FirstOrDefaultAsync();
         }
 
@@ -129,18 +188,84 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineToothRels")
+                .Include("OrderLines.DotKhamSteps")
                 .FirstOrDefaultAsync();
         }
 
         public async Task UpdateOrderAsync(SaleOrder order)
         {
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            saleLineObj.UpdateOrderInfo(order.OrderLines, order);
+            saleLineObj.ComputeAmount(order.OrderLines);
             await UpdateAsync(order);
+
+            var linesIds = order.OrderLines.Select(x => x.Id).ToList();
+            var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
+                .Include(x => x.Order)
+                .Include(x => x.Product)
+               .Include(x => x.SaleOrderLineInvoiceRels)
+               .Include("SaleOrderLineInvoiceRels.InvoiceLine")
+               .Include("SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+               .ToListAsync();
+           
+            saleLineObj._GetInvoiceQty(lines);
+            saleLineObj._GetToInvoiceQty(lines);
+            saleLineObj._ComputeInvoiceStatus(lines);
+            await saleLineObj.UpdateAsync(lines);
+
+            _AmountAll(order);
+            _GetInvoiced(new List<SaleOrder>() { order });
+
+            await UpdateAsync(order);
+
+            if (order.InvoiceStatus == "to invoice")
+            {
+                var self = new List<SaleOrder>() { order };
+                var invoices = await ActionInvoiceCreate(self);
+                var invObj = GetService<IAccountInvoiceService>();
+                await invObj.ActionInvoiceOpen(invoices.Select(x => x.Id).ToList());
+
+                foreach (var saleOrder in self)
+                {
+                    saleLineObj._GetInvoiceQty(saleOrder.OrderLines);
+                    saleLineObj._GetToInvoiceQty(saleOrder.OrderLines);
+                    saleLineObj._ComputeInvoiceStatus(saleOrder.OrderLines);
+                }
+
+                _GetInvoiced(self);
+                await UpdateAsync(self);
+
+                await _GenerateDotKhamSteps(self);
+            }
         }
 
         public async Task<SaleOrder> GetSaleOrderByIdAsync(Guid id)
         {
             return await GetByIdAsync(id);
         }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.DotKhams)
+                .ToListAsync();
+            var states = new string[] { "draft", "cancel" };
+            foreach(var order in self)
+            {
+                if (!states.Contains(order.State))
+                {
+                    throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp hoặc hủy bỏ");
+                }
+            }
+
+            var dkStepObj = GetService<IDotKhamStepService>();
+            var dkSteps = await dkStepObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
+            await dkStepObj.DeleteAsync(dkSteps);
+
+            await DeleteAsync(self);
+        }
+
 
         public async Task UnlinkSaleOrderAsync(SaleOrder order)
         {
@@ -180,6 +305,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
+                .Include("OrderLines.DotKhamSteps")
                 .ToListAsync();
             foreach (var order in self)
             {
@@ -208,6 +334,53 @@ namespace Infrastructure.Services
 
             _GetInvoiced(self);
             await UpdateAsync(self);
+
+            await _GenerateDotKhamSteps(self);
+        }
+
+        private async Task _GenerateDotKhamSteps(IEnumerable<SaleOrder> self)
+        {
+            var dotKhamStepService = GetService<IDotKhamStepService>();
+            var productStepObj = GetService<IProductStepService>();
+            foreach (var order in self)
+            {
+                foreach (var line in order.OrderLines)
+                {
+                    if (!line.ProductId.HasValue || line.Product == null)
+                        continue;
+                    if (line.DotKhamSteps.Any())
+                        continue;
+
+                    var steps = await productStepObj.SearchQuery(x => x.ProductId == line.ProductId).ToListAsync();
+                    var list = new List<DotKhamStep>();
+                    if (steps.Any())
+                    {
+                        foreach (var step in steps)
+                        {
+                            list.Add(new DotKhamStep
+                            {
+                                Name = step.Name,
+                                ProductId = line.ProductId.Value,
+                                Order = step.Order,
+                                SaleOrderId = order.Id,
+                                SaleLineId = line.Id,
+                            });
+                        }
+                    }
+                    else
+                    {
+                        list.Add(new DotKhamStep
+                        {
+                            Name = line.Product.Name,
+                            SaleLineId = line.Id,
+                            ProductId = line.ProductId.Value,
+                            Order = 0,
+                            SaleOrderId = order.Id,
+                        });
+                    }
+                    await dotKhamStepService.CreateAsync(list);
+                }
+            }
         }
 
         public void _GetInvoiced(IEnumerable<SaleOrder> orders)
@@ -273,6 +446,8 @@ namespace Infrastructure.Services
                 {
                     await invLineObj.CreateAsync(invLines);
                     var inv = invoices[groupKey];
+                    invObj._ComputeAmount(inv);
+                    await invObj.UpdateAsync(inv);
                 }
             }
 

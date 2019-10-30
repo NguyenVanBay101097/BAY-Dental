@@ -235,7 +235,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        private void _ComputeAmount(AccountInvoice invoice)
+        public void _ComputeAmount(AccountInvoice invoice)
         {
             invoice.AmountUntaxed = invoice.InvoiceLines.Any() ? invoice.InvoiceLines.Sum(x => x.PriceSubTotal) : 0;
             if (invoice.DiscountType == "percentage")

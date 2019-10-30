@@ -19,9 +19,8 @@
                     <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
                         (click)="onSave()" *ngIf="!id">
                         Lưu</button>
-                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
-                        (click)="onUpdate()" *ngIf="id  && getState === 'draft'">
-                        Lưu thay đổi</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onUpdate()" *ngIf="id">
+                        Lưu</button>
                     <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
                         (click)="onConfirm()" *ngIf="id && getState === 'draft'">
                         Xác nhận</button>
@@ -91,14 +90,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="getInvoice  && id"
-                                        [routerLink]="['/customer-invoices/edit/', getInvoice.id]">{{getInvoice.number}}</a>
-                                    <div [hidden]="id">
+                                    <a *ngIf="dotKham.saleOrder && id"
+                                        [routerLink]="['/sale-orders/edit/', dotKham.saleOrder.id]">{{dotKham.saleOrder.name}}</a>
+                                    <!-- <div [hidden]="id">
                                         <kendo-combobox formControlName="invoice" [allowCustom]="false"
                                             [filterable]="true" [data]="customerInvoicesList" #invoiceCbx
                                             [valueField]="'id'" [textField]="'number'">
                                         </kendo-combobox>
-                                    </div>
+                                    </div> -->
                                 </td>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -218,7 +217,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div>
-                                <div class="row mb-2">
+                                <!-- <div class="row mb-2">
                                     <div class="col-3">
                                         <select formControlName="filter" (change)="loadDotKhamSteps()"
                                             style="width: auto;" class="form-control my-1 mr-2">
@@ -240,7 +239,7 @@
                                                 class="btn btn-secondary mr-2">Thêm</button>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- <table class="o_group o_inner_group o_group_col_6" *ngIf="getState=='confirmed'">
                                     <tbody>
                                         <tr>
@@ -272,10 +271,9 @@
                                         </tr>
                                     </tbody>
                                 </table> -->
-                                <table class="table table-sm">
+                                <!-- <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <!-- <th>#</th> -->
                                             <th>Dịch vụ</th>
                                             <th>Công đoạn</th>
                                             <th>Đợt khám</th>
@@ -286,14 +284,6 @@
                                     <tbody *ngFor="let stepList of dotKhamStepsList" cdkDropList
                                         [cdkDropListData]="stepList" (cdkDropListDropped)="drop($event)">
                                         <tr *ngFor="let step of stepList" cdkDrag>
-                                            <!-- <td>
-                                                        <ng-container *ngIf="step.id==stepList[0].id">
-                                                            <span *ngIf="doneList.indexOf(stepList)>-1"><i
-                                                                    class="fas fa-check"></i></span>
-                                                            <span *ngIf="!(doneList.indexOf(stepList)>-1)"><i
-                                                                    class="fas fa-hourglass-half"></i></span>
-                                                        </ng-container>
-                                                    </td> -->
                                             <td>
                                                 <span>
                                                     <b *ngIf="step.id==stepList[0].id">
@@ -320,6 +310,40 @@
                                                 <button [disabled]="invoiceState=='cancel'"
                                                     (click)="deleteSteps(step.id)" class="btn btn-light btn-sm mr-2">
                                                     <i title="Xóa" class="fas fa-trash"></i>&nbsp;Xóa</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table> -->
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Dịch vụ</th>
+                                            <th>Công đoạn</th>
+                                            <th>Đợt khám</th>
+                                            <th>Hoàn tất</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let step of dotKhamStepList">
+                                            <td>
+                                                {{step.product.name}}
+                                            </td>
+                                            <td>
+                                                {{step.name}}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-secondary"
+                                                    (click)="assignDotKham(step)">{{step.dotKham ? step.dotKham.name : 'Chưa khám'}}</button>
+                                            </td>
+                                            <td>
+                                                <button *ngIf="step.dotKham" class="btn btn-sm btn-secondary"
+                                                    (click)="toggleIsDone(step)">
+                                                    <span *ngIf="step.isDone === false">Chưa xong</span>
+                                                    <span *ngIf="step.isDone === true">Đã xong</span>
+                                                </button>
+                                                <button *ngIf="!step.dotKham" class="btn btn-sm btn-secondary">
+                                                    Chưa khám
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>

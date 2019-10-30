@@ -32,7 +32,7 @@ namespace Infrastructure.Services
                 .Include(x=>x.Doctor)
                 .Include(x => x.Assistant)
                 .Include(x => x.User)
-                .Include(x => x.Invoice)
+                .Include(x => x.SaleOrder)
                 .Include(x => x.Lines)
                 .Include(x => x.Appointment)
                 .Include("Lines.Product")
@@ -47,6 +47,15 @@ namespace Infrastructure.Services
                 .Include(x => x.User)
                 .Include(x=>x.Doctor)
                 .Include(x=>x.Assistant)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DotKham>> GetDotKhamsForSaleOrder(Guid saleOrderId)
+        {
+            return await SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
+                .Include(x => x.User)
+                .Include(x => x.Doctor)
+                .Include(x => x.Assistant)
                 .ToListAsync();
         }
 
@@ -80,6 +89,14 @@ namespace Infrastructure.Services
 
             dotKham.State = "confirmed";
             await UpdateAsync(dotKham);            
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var dk in self)
+                dk.State = "cancel";
+            await UpdateAsync(self);
         }
 
         public async Task<PagedResult2<DotKham>> GetPagedResultAsync(DotKhamPaged val)
@@ -116,6 +133,18 @@ namespace Infrastructure.Services
                 res.Invoice = _mapper.Map<AccountInvoiceCbx>(invoice);
                 var partnerObj = GetService<IPartnerService>();
                 var partner = partnerObj.SearchQuery(x => x.Id == invoice.PartnerId).FirstOrDefault();
+                res.Partner = _mapper.Map<PartnerSimple>(partner);
+            }
+
+            if (val.SaleOrderId.HasValue)
+            {
+                var saleObj = GetService<ISaleOrderService>();
+                var saleOrder = await saleObj.SearchQuery(x => x.Id == val.SaleOrderId).FirstOrDefaultAsync();
+                res.SaleOrderId = saleOrder.Id;
+                res.SaleOrder = _mapper.Map<SaleOrderBasic>(saleOrder);
+                res.PartnerId = saleOrder.PartnerId;
+                var partnerObj = GetService<IPartnerService>();
+                var partner = partnerObj.SearchQuery(x => x.Id == saleOrder.PartnerId).FirstOrDefault();
                 res.Partner = _mapper.Map<PartnerSimple>(partner);
             }
             return res;

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191028071411_F73")]
+    partial class F73
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2120,8 +2122,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("DateCreated");
 
-                    b.Property<string>("Diagnostic");
-
                     b.Property<decimal>("Discount");
 
                     b.Property<string>("InvoiceStatus");
@@ -2157,11 +2157,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("SalesmanId");
 
-                    b.Property<int?>("Sequence");
-
                     b.Property<string>("State");
-
-                    b.Property<Guid?>("ToothCategoryId");
 
                     b.Property<string>("WriteById");
 
@@ -2181,8 +2177,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("SalesmanId");
 
-                    b.HasIndex("ToothCategoryId");
-
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleOrderLines");
@@ -2199,19 +2193,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("InvoiceLineId");
 
                     b.ToTable("SaleOrderLineInvoiceRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineToothRel", b =>
-                {
-                    b.Property<Guid>("SaleLineId");
-
-                    b.Property<Guid>("ToothId");
-
-                    b.HasKey("SaleLineId", "ToothId");
-
-                    b.HasIndex("ToothId");
-
-                    b.ToTable("SaleOrderLineToothRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.StockLocation", b =>
@@ -3935,10 +3916,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("SalesmanId");
 
-                    b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
-                        .WithMany()
-                        .HasForeignKey("ToothCategoryId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -3954,19 +3931,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "OrderLine")
                         .WithMany("SaleOrderLineInvoiceRels")
                         .HasForeignKey("OrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineToothRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleLine")
-                        .WithMany("SaleOrderLineToothRels")
-                        .HasForeignKey("SaleLineId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
-                        .WithMany()
-                        .HasForeignKey("ToothId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

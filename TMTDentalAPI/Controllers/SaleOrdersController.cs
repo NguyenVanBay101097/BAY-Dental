@@ -22,13 +22,15 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderService _saleOrderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IDotKhamService _dotKhamService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork)
+            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _dotKhamService = dotKhamService;
         }
 
         [HttpGet]
@@ -46,6 +48,14 @@ namespace TMTDentalAPI.Controllers
             {
                 return NotFound();
             }
+
+            var res = _mapper.Map<SaleOrderDisplay>(saleOrder);
+            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            foreach (var inl in res.OrderLines)
+            {
+                inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
+            }
+
             return Ok(_mapper.Map<SaleOrderDisplay>(saleOrder));
         }
 
@@ -76,7 +86,9 @@ namespace TMTDentalAPI.Controllers
 
             SaveOrderLines(val, order);
 
+            await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.UpdateOrderAsync(order);
+            _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -106,17 +118,89 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.Unlink(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         private void SaveOrderLines(SaleOrderDisplay val, SaleOrder order)
         {
+            var existLines = order.OrderLines.ToList();
+            var lineToRemoves = new List<SaleOrderLine>();
+            foreach (var existLine in existLines)
+            {
+                bool found = false;
+                foreach (var item in val.OrderLines)
+                {
+                    if (item.Id == existLine.Id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                order.OrderLines.Remove(line);
+            }
+
+            //Cập nhật sequence cho tất cả các line của val
+            int sequence = 0;
+            foreach (var line in val.OrderLines)
+            {
+                line.Sequence = sequence++;
+            }
+
             foreach (var line in val.OrderLines)
             {
                 if (line.Id == Guid.Empty)
                 {
-                    order.OrderLines.Add(_mapper.Map<SaleOrderLine>(line));
+                    var saleLine = _mapper.Map<SaleOrderLine>(line);
+                    foreach (var tooth in line.Teeth)
+                    {
+                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        {
+                            ToothId = tooth.Id
+                        });
+                    }
+                    order.OrderLines.Add(saleLine);
                 }
                 else
                 {
-                    _mapper.Map(line, order.OrderLines.SingleOrDefault(c => c.Id == line.Id));
+                    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                    if (saleLine != null)
+                    {
+                        _mapper.Map(line, saleLine);
+                        saleLine.SaleOrderLineToothRels.Clear();
+                        foreach (var tooth in line.Teeth)
+                        {
+                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = tooth.Id
+                            });
+                        }
+                    }
                 }
             }
         }
@@ -131,6 +215,14 @@ namespace TMTDentalAPI.Controllers
             await _saleOrderService.ActionConfirm(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("{id}/GetDotKhamList")]
+        public async Task<IActionResult> GetDotKhamList(Guid id)
+        {
+            var dotKhams = await _dotKhamService.GetDotKhamsForSaleOrder(id);
+            var res = _mapper.Map<IEnumerable<DotKhamBasic>>(dotKhams);
+            return Ok(res);
         }
     }
 }

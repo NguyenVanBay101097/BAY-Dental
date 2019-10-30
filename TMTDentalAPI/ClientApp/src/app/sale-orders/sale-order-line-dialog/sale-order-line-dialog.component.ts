@@ -9,6 +9,8 @@ import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDisplay } from '../sale-order-line-display';
 import { SaleOrderLineService } from '../sale-order-line.service';
+import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 
 @Component({
   selector: 'app-sale-order-line-dialog',
@@ -21,9 +23,14 @@ export class SaleOrderLineDialogComponent implements OnInit {
   line: SaleOrderLineDisplay;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   title: string;
+  filteredToothCategories: ToothCategoryBasic[] = [];
+
+  hamList: { [key: string]: {} };
+  teethSelected: ToothDisplay[] = [];
 
   constructor(private fb: FormBuilder, private productService: ProductService,
-    public activeModal: NgbActiveModal, private saleLineService: SaleOrderLineService) { }
+    public activeModal: NgbActiveModal, private saleLineService: SaleOrderLineService,
+    private toothService: ToothService, private toothCategoryService: ToothCategoryService) { }
 
   ngOnInit() {
     this.saleLineForm = this.fb.group({
@@ -34,6 +41,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
       productUOMQty: 1,
       discount: 0,
       priceSubTotal: 1,
+      diagnostic: null,
+      toothCategory: null,
     });
 
     setTimeout(() => {
@@ -46,6 +55,15 @@ export class SaleOrderLineDialogComponent implements OnInit {
       }
 
       this.saleLineForm.patchValue(this.line);
+      this.teethSelected = [...this.line.teeth];
+      if (this.line.toothCategory) {
+        this.loadTeethMap(this.line.toothCategory);
+      }
+    } else {
+      this.loadDefaultToothCategory().subscribe(result => {
+        this.saleLineForm.get('toothCategory').patchValue(result);
+        this.loadTeethMap(result);
+      })
     }
 
     this.productCbx.filterChange.asObservable().pipe(
@@ -58,6 +76,67 @@ export class SaleOrderLineDialogComponent implements OnInit {
     });
 
     this.loadFilteredProducts();
+
+    this.loadToothCategories();
+  }
+
+  onSelected(tooth: ToothDisplay) {
+    if (this.isSelected(tooth)) {
+      var index = this.getSelectedIndex(tooth);
+      this.teethSelected.splice(index, 1);
+    } else {
+      this.teethSelected.push(tooth);
+    }
+  }
+
+  getSelectedIndex(tooth: ToothDisplay) {
+    for (var i = 0; i < this.teethSelected.length; i++) {
+      if (this.teethSelected[i].id === tooth.id) {
+        return i;
+      }
+    }
+
+    return null;
+  }
+
+  isSelected(tooth: ToothDisplay) {
+    for (var i = 0; i < this.teethSelected.length; i++) {
+      if (this.teethSelected[i].id === tooth.id) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  loadToothCategories() {
+    return this.toothCategoryService.getAll().subscribe(result => this.filteredToothCategories = result);
+  }
+
+  loadDefaultToothCategory() {
+    return this.toothCategoryService.getDefaultCategory();
+  }
+
+  processTeeth(teeth: ToothDisplay[]) {
+    this.hamList = {
+      '0_up': { '0_right': [], '1_left': [] },
+      '1_down': { '0_right': [], '1_left': [] }
+    };
+
+    for (var i = 0; i < teeth.length; i++) {
+      var tooth = teeth[i];
+      if (tooth.position === '1_left') {
+        this.hamList[tooth.viTriHam][tooth.position].push(tooth);
+      } else {
+        this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
+      }
+    }
+  }
+
+  loadTeethMap(categ: ToothCategoryBasic) {
+    var val = new ToothFilter();
+    val.categoryId = categ.id;
+    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
   }
 
   loadFilteredProducts() {
@@ -95,6 +174,14 @@ export class SaleOrderLineDialogComponent implements OnInit {
     });
   }
 
+  onChangeToothCategory(value: any) {
+    if (value.id) {
+      this.teethSelected = [];
+      this.loadTeethMap(value);
+    }
+  }
+
+
   onSave() {
     if (!this.saleLineForm.valid) {
       return;
@@ -102,7 +189,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
     var val = this.saleLineForm.value;
     val.productId = val.product.id;
+    val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
+    val.teeth = this.teethSelected;
     this.activeModal.close(val);
   }
 

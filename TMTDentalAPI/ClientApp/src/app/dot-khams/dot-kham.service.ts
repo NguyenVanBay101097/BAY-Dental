@@ -78,6 +78,7 @@ export class DotKhamService {
     getDotKhamStepsByDKId(id: string): Observable<DotKhamStepDisplay[]> {
         return this.http.get<DotKhamStepDisplay[]>(this.baseApi + this.apiUrl + `/${id}/VisibleSteps`);
     }
+
     getDotKhamStepsByDKId2(id: string, filter: string): Observable<DotKhamStepDisplay[][]> {
         return this.http.get<DotKhamStepDisplay[][]>(this.baseApi + this.apiUrl + `/${id}/VisibleSteps2?show=` + filter);
     }

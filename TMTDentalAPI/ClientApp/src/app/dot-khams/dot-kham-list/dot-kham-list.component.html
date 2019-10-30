@@ -39,11 +39,11 @@
             {{dataItem.partner ? dataItem.partner.name : ''}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="invoice" title="Hóa đơn điều trị">
+    <!-- <kendo-grid-column field="invoice" title="Hóa đơn điều trị">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.invoice ? dataItem.invoice.number : ''}}
         </ng-template>
-    </kendo-grid-column>
+    </kendo-grid-column> -->
     <kendo-grid-column field="date" title="Ngày khám">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.date | date : 'short'}}

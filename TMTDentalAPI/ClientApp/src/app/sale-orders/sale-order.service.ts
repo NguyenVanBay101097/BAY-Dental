@@ -4,6 +4,7 @@ import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { SaleOrderBasic } from './sale-order-basic';
 import { SaleOrderDisplay } from './sale-order-display';
+import { DotKhamBasic } from '../dot-khams/dot-khams';
 
 export class SaleOrderPaged {
     limit: number;
@@ -42,5 +43,17 @@ export class SaleOrderService {
 
     actionConfirm(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionConfirm', ids);
+    }
+
+    actionCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
+    }
+
+    unlink(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
+    }
+
+    getDotKhamList(id: string): Observable<DotKhamBasic[]> {
+        return this.http.get<DotKhamBasic[]>(this.baseApi + this.apiUrl + `/${id}/GetDotKhamList`);
     }
 }

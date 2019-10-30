@@ -20,10 +20,15 @@ namespace ApplicationCore.Entities
         public Guid? DotKhamId { get; set; }
         public DotKham DotKham { get; set; }
 
-        public Guid InvoicesId { get; set; }
+        public Guid? InvoicesId { get; set; }
         public AccountInvoice Invoice { get; set; }
 
-        
+        public Guid? SaleLineId { get; set; }
+        public SaleOrderLine SaleLine { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrder SaleOrder { get; set; }
+
         /// <summary>
         /// Trạng thái: chưa tiến hành, đang tiến hành, hoàn thành
         /// draft: chưa tiến hành

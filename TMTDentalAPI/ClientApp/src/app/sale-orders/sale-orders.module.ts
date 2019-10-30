@@ -9,9 +9,10 @@ import { SaleOrderService } from './sale-order.service';
 import { SaleOrderLineDialogComponent } from './sale-order-line-dialog/sale-order-line-dialog.component';
 import { SaleOrderListComponent } from './sale-order-list/sale-order-list.component';
 import { SaleOrderLineService } from './sale-order-line.service';
+import { SaleOrderCreateDotKhamDialogComponent } from './sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent],
+  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,
@@ -24,7 +25,8 @@ import { SaleOrderLineService } from './sale-order-line.service';
     SaleOrderLineService
   ],
   entryComponents: [
-    SaleOrderLineDialogComponent
+    SaleOrderLineDialogComponent,
+    SaleOrderCreateDotKhamDialogComponent
   ]
 })
 export class SaleOrdersModule { }
