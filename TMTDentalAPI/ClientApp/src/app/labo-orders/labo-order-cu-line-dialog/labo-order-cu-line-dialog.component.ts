@@ -8,7 +8,8 @@ import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { LaboOrderLineDisplay } from 'src/app/labo-order-lines/labo-order-line.service';
+import { LaboOrderLineDisplay, LaboOrderLineService, LaboOrderLineOnChangeProduct } from 'src/app/labo-order-lines/labo-order-line.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-labo-order-cu-line-dialog',
@@ -28,7 +29,8 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     public activeModal: NgbActiveModal,
-    private toothService: ToothService, private toothCategoryService: ToothCategoryService) { }
+    private toothService: ToothService, private toothCategoryService: ToothCategoryService,
+    private laboOrderLineService: LaboOrderLineService, private intlService: IntlService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -41,6 +43,8 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       toothCategory: null,
       color: null,
       note: null,
+      warrantyCode: null,
+      warrantyPeriodObj: null,
     });
 
     setTimeout(() => {
@@ -51,12 +55,18 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       if (this.line.product) {
         this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
       }
+      setTimeout(() => {
+        this.formGroup.patchValue(this.line);
+        if (this.line.warrantyPeriod) {
+          let warrantyPeriod = this.intlService.parseDate(this.line.warrantyPeriod);
+          this.formGroup.get('warrantyPeriodObj').patchValue(warrantyPeriod);
+        }
 
-      this.formGroup.patchValue(this.line);
-      this.teethSelected = [...this.line.teeth];
-      if (this.line.toothCategory) {
-        this.loadTeethMap(this.line.toothCategory);
-      }
+        this.teethSelected = [...this.line.teeth];
+        if (this.line.toothCategory) {
+          this.loadTeethMap(this.line.toothCategory);
+        }
+      });
     } else {
       setTimeout(() => {
         this.loadDefaultToothCategory().subscribe(result => {
@@ -83,6 +93,9 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
+    if (this.lineState != 'draft') {
+      return false;
+    }
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);
@@ -156,6 +169,10 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     return this.productService.autocomplete2(val);
   }
 
+  get lineState() {
+    return this.line ? this.line.state : 'draft';
+  }
+
   getPriceSubTotal() {
     return this.getPriceUnit() * this.getQuantity();
   }
@@ -173,10 +190,13 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   }
 
   onChangeProduct(value: any) {
-    var val = this.formGroup.value;
-    // this.saleLineService.onChangeProduct(val).subscribe(result => {
-    //   this.formGroup.patchValue(result);
-    // });
+    if (value) {
+      var val = new LaboOrderLineOnChangeProduct();
+      val.productId = value.id;
+      this.laboOrderLineService.onChangeProduct(val).subscribe(result => {
+        this.formGroup.patchValue(result);
+      });
+    }
   }
 
   onChangeToothCategory(value: any) {
@@ -197,6 +217,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.priceSubtotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
+    val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     this.activeModal.close(val);
   }
 

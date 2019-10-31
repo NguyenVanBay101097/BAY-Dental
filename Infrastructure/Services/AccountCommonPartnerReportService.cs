@@ -172,7 +172,7 @@ namespace Infrastructure.Services
                         Date = x.Date,
                         MoveName = x.Move.Name,
                         Name = x.Name,
-                        Ref = x.Ref,
+                        Ref = x.Move.Ref,
                         Debit = x.Account.InternalType == "payable" ? x.Credit : x.Debit,
                         Credit = x.Account.InternalType == "payable" ? x.Debit : x.Credit,
                     }).ToList();

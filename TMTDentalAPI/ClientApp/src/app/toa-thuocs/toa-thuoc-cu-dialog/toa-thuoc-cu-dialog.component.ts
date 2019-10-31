@@ -57,9 +57,13 @@ export class ToaThuocCuDialogComponent implements OnInit {
     // });
 
     if (this.id) {
-      this.loadRecord();
+      setTimeout(() => {
+        this.loadRecord();
+      });
     } else {
-      this.loadDefault();
+      setTimeout(() => {
+        this.loadDefault();
+      });
     }
 
     // this.searchProducts(null).subscribe(result => {
@@ -143,7 +147,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     val.dotKhamId = this.dotKhamId;
     this.toaThuocService.defaultGet(val).subscribe(result => {
       this.toaThuocForm.patchValue(result);
-      let date = this.intlService.parseDate(result.date);
+      let date = new Date(result.date);
       this.toaThuocForm.get('dateObj').patchValue(date);
     });
   }
@@ -153,7 +157,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
       this.toaThuocService.get(this.id).subscribe(result => {
         console.log(result);
         this.toaThuocForm.patchValue(result);
-        let date = this.intlService.parseDate(result.date);
+        let date = new Date(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
         this.lines = result.lines;
       });

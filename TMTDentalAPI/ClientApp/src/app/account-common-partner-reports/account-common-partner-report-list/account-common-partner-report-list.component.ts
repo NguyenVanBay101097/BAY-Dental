@@ -8,6 +8,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { aggregateBy } from '@progress/kendo-data-query';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-account-common-partner-report-list',
@@ -27,6 +28,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   searchPartner: PartnerSimple;
+  resultSelection: string;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -40,13 +42,17 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
-    private partnerService: PartnerService) { }
+    private partnerService: PartnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     var date = new Date();
     this.dateFrom = new Date(date.getFullYear(), date.getMonth(), 1);
     this.dateTo = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    this.loadDataFromApi();
+
+    this.route.queryParamMap.subscribe(params => {
+      this.resultSelection = params.get('result_selection');
+      this.loadDataFromApi();
+    });
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -87,6 +93,8 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
     if (this.search) {
       val.search = this.search;
     }
+
+    val.resultSelection = this.resultSelection;
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;

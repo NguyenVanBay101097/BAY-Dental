@@ -356,14 +356,15 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   actionCreateLabo() {
     if (this.id) {
-      let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-      modalRef.componentInstance.title = 'Tạo labo';
-      modalRef.componentInstance.dotKhamId = this.id;
+      this.router.navigate(['/labo-orders/create'], { queryParams: { dot_kham_id: this.id } });
+      // let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      // modalRef.componentInstance.title = 'Tạo labo';
+      // modalRef.componentInstance.dotKhamId = this.id;
 
-      modalRef.result.then(() => {
-        this.loadLaboOrderLines();
-      }, () => {
-      });
+      // modalRef.result.then(() => {
+      //   this.loadLaboOrderLines();
+      // }, () => {
+      // });
     }
   }
 

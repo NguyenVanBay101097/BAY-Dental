@@ -25,6 +25,7 @@ import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/lab
 export class LaboOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
+  dotKhamId: string;
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
@@ -44,16 +45,28 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
+    this.dotKhamId = this.route.snapshot.queryParamMap.get('dot_kham_id');
+
     if (this.id) {
       this.loadRecord();
     } else {
-      this.laboOrderService.defaultGet({}).subscribe(result => {
-        this.laboOrder = result;
-        this.formGroup.patchValue(result);
+      setTimeout(() => {
+        this.laboOrderService.defaultGet({}).subscribe(result => {
+          this.laboOrder = result;
+          this.formGroup.patchValue(result);
 
-        let dateOrder = this.intlService.parseDate(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-      });
+          let dateOrder = new Date(result.dateOrder);
+          this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+          const control = this.formGroup.get('orderLines') as FormArray;
+          control.clear();
+          result.orderLines.forEach(line => {
+            var g = this.fb.group(line);
+            g.setControl('teeth', this.fb.array(line.teeth));
+            control.push(g);
+          });
+        });
+      }, 200);
     }
 
     this.partnerCbx.filterChange.asObservable().pipe(
@@ -82,7 +95,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/sale-orders/create']);
+    this.router.navigate(['/labo-orders/create']);
   }
 
   onSaveConfirm() {
@@ -92,15 +105,24 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'g', 'en-US') : null;
     val.partnerId = val.partner.id;
-    val.userId = val.user ? val.user.id : null;
+    val.dotKhamId = this.dotKhamId;
     this.laboOrderService.create(val).subscribe(result => {
-      this.laboOrderService.actionConfirm([result.id]).subscribe(() => {
-        this.router.navigate(['/sale-orders/edit/' + result.id]);
+      this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
+        this.router.navigate(['/labo-orders/edit/' + result.id]);
       }, () => {
-        this.router.navigate(['/sale-orders/edit/' + result.id]);
+        this.router.navigate(['/labo-orders/edit/' + result.id]);
       });
     });
+  }
+
+  buttonConfirm() {
+    if (this.id) {
+      this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
   }
 
   onSave() {
@@ -112,6 +134,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'g', 'en-US') : null;
     val.partnerId = val.partner.id;
+    val.dotKhamId = this.dotKhamId;
     if (this.id) {
       this.laboOrderService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
@@ -135,7 +158,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
       this.laboOrderService.get(this.id).subscribe(result => {
         this.laboOrder = result;
         this.formGroup.patchValue(result);
-        let dateOrder = this.intlService.parseDate(result.dateOrder);
+        let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
         if (result.datePlanned) {
@@ -154,9 +177,9 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  actionCancel() {
+  buttonCancel() {
     if (this.id) {
-      this.laboOrderService.actionCancel([this.id]).subscribe(() => {
+      this.laboOrderService.buttonCancel([this.id]).subscribe(() => {
         this.loadRecord();
       });
     }

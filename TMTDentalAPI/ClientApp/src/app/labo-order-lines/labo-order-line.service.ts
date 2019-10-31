@@ -41,6 +41,7 @@ export class LaboOrderLineDisplay {
     receivedDate: string;
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
+    state: string;
 }
 
 export class LaboOrderLinePaged {

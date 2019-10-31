@@ -58,6 +58,20 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<AccountAccount> _DefaultAccount(Guid? journalId = null, string type = "", AccountJournal journal = null)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            if (journal != null || journalId.HasValue)
+            {
+                if (journal == null)
+                    journal = await journalObj.SearchQuery(x => x.Id == journalId.Value).Include(x => x.DefaultCreditAccount).Include(x => x.DefaultDebitAccount).FirstOrDefaultAsync();
+                if (type == "out_invoice" || type == "in_refund")
+                    return journal.DefaultCreditAccount;
+                return journal.DefaultDebitAccount;
+            }
+            return null;
+        }
+
         public async Task<AccountAccount> _DefaultAccount(Guid journalId, string type)
         {
             var journalObj = GetService<IAccountJournalService>();

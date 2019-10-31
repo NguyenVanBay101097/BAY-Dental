@@ -4,12 +4,25 @@ import { CustomerInvoiceListComponent } from './customer-invoice-list/customer-i
 import { CustomerInvoiceCreateUpdateComponent } from './customer-invoice-create-update/customer-invoice-create-update.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { CustomerInvoicePrintComponent } from './customer-invoice-print/customer-invoice-print.component';
+import { AccountInvoiceListComponent } from './account-invoice-list/account-invoice-list.component';
+import { AccountInvoiceCreateUpdateComponent } from './account-invoice-create-update/account-invoice-create-update.component';
 
 const routes: Routes = [
   {
+    path: 'account-invoices',
+    component: AccountInvoiceListComponent,
+  },
+  {
+    path: 'account-invoices/create',
+    component: AccountInvoiceCreateUpdateComponent,
+  },
+  {
+    path: 'account-invoices/edit/:id',
+    component: AccountInvoiceCreateUpdateComponent,
+  },
+  {
     path: 'customer-invoices',
     component: CustomerInvoiceListComponent,
-    canActivate: [AuthGuard]
   },
   {
     path: 'customer-invoices/create',

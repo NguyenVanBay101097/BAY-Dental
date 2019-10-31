@@ -76,6 +76,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateOrder { get; set; }
 
+        public DateTime? DateInvoice { get; set; }
+
         public string Note { get; set; }
 
         public string DiscountType { get; set; }

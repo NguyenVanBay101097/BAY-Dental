@@ -90,6 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class LaboOrderLineOnChangeProductResult
     {
+        public string Name { get; set; }
         public decimal PriceUnit { get; set; }
     }
 }

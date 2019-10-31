@@ -30,5 +30,9 @@ namespace Infrastructure.Services
         Task UpdateResidual(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
         void _ComputeAmount(AccountInvoice invoice);
+        Task<AccountInvoiceLine> PrepareInvoiceLineFromLBLine(AccountInvoice self, LaboOrderLine line, AccountJournal journal = null, string type = "out_invoice");
+        void _ComputeAmount(IEnumerable<AccountInvoice> self);
+        IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<Guid> ids);
+        IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<Guid> ids);
     }
 }

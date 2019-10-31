@@ -14,6 +14,7 @@ export class AccountInvoiceDisplay {
     comment: string;
     state: string;
     dateOrder: string;
+    dateInvoice: string;
     partnerId: string;
     partner: PartnerSimple;
     invoiceLines: AccountInvoiceLineDisplay[];

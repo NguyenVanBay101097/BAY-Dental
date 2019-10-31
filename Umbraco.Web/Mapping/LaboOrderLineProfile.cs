@@ -18,6 +18,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<LaboOrderLineDisplay, LaboOrderLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
+                .ForMember(x => x.State, x => x.Ignore())
                 .ForMember(x => x.ToothCategory, x => x.Ignore())
                 .ForMember(x => x.Customer, x => x.Ignore())
                 .ForMember(x => x.Company, x => x.Ignore());

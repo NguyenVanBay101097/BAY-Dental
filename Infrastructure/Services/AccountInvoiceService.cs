@@ -251,6 +251,25 @@ namespace Infrastructure.Services
             invoice.AmountTotalSigned = invoice.AmountTotal * sign;
         }
 
+        public void _ComputeAmount(IEnumerable<AccountInvoice> self)
+        {
+            foreach(var invoice in self)
+            {
+                invoice.AmountUntaxed = invoice.InvoiceLines.Any() ? invoice.InvoiceLines.Sum(x => x.PriceSubTotal) : 0;
+                if (invoice.DiscountType == "percentage")
+                    invoice.DiscountAmount = Math.Round(invoice.AmountUntaxed * invoice.DiscountPercent / 100);
+                else
+                    invoice.DiscountAmount = invoice.DiscountFixed;
+
+                invoice.AmountUntaxed = invoice.AmountUntaxed - invoice.DiscountAmount;
+                invoice.AmountTax = 0;
+                invoice.AmountTotal = invoice.AmountUntaxed + invoice.AmountTax;
+
+                var sign = invoice.Type == "in_refund" || invoice.Type == "out_refund" ? -1 : 1;
+                invoice.AmountTotalSigned = invoice.AmountTotal * sign;
+            }
+        }
+
         public async Task ActionInvoiceOpen(IEnumerable<Guid> ids)
         {
             //lots of duplicate calls to action_invoice_open, so we remove those already open
@@ -273,7 +292,7 @@ namespace Infrastructure.Services
 
             //await ActionDotKhamCreate(to_open_invoices);
 
-            await _GenerateDotKhamSteps(to_open_invoices);
+            //await _GenerateDotKhamSteps(to_open_invoices);
 
             await InvoiceValidate(to_open_invoices);
         }
@@ -425,6 +444,13 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 'state', 'currency_id', 'invoice_line_ids.price_subtotal',
+        /// 'move_id.line_ids.amount_residual',
+        /// 'move_id.line_ids.currency_id')
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         public IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<Guid> ids)
         {
             var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).Include("Move.Lines")
@@ -591,7 +617,8 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
              .Include(x => x.Move).Include(x => x.PaymentMoveLines)
-             .Include(x => x.DotKhams)
+             .Include("PaymentMoveLines.MoveLine")
+             .Include("PaymentMoveLines.MoveLine.Payment")
              .Include(x => x.Move.Company).Include(x => x.Move.Journal)
              .Include(x => x.Move.Lines)
              .ToListAsync();
@@ -602,7 +629,12 @@ namespace Infrastructure.Services
                 if (inv.Move != null)
                     moves.Add(inv.Move);
                 if (inv.PaymentMoveLines.Any())
-                    throw new Exception("Bạn không thể hủy bỏ phiếu điều trị đã trả một phần, bạn cần hủy những dòng chi trả trước.");
+                {
+                    var payments = inv.PaymentMoveLines.Select(x => x.MoveLine).Where(x => x.Payment != null).Select(x => x.Payment).Distinct().ToList();
+                    throw new Exception("Bạn không thể hủy bỏ phiếu điều trị đã trả một phần, bạn cần hủy những dòng chi trả trước: " +
+                        string.Join(", ", payments.Select(x => x.Name)));
+                }
+                   
                 if (inv.DotKhams.Any())
                     throw new Exception("Bạn không thể hủy phiếu điều trị đã tạo đợt khám.");
 
@@ -671,6 +703,11 @@ namespace Infrastructure.Services
             return _ComputePayments(self);
         }
 
+        /// <summary>
+        /// move_id.line_ids.amount_residual
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
         public IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<AccountInvoice> self)
         {
             foreach (var invoice in self)
@@ -811,6 +848,33 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task<AccountInvoiceLine> PrepareInvoiceLineFromLBLine(AccountInvoice self, LaboOrderLine line, AccountJournal journal = null, string type = "out_invoice")
+        {
+            var invLineObj = GetService<IAccountInvoiceLineService>();
+            decimal qty = line.ProductQty - line.QtyInvoiced;
+            if (qty <= 0)
+                qty = 0;
+
+            var account = await invLineObj._DefaultAccount(journal: journal, type: type);
+            if (account == null)
+                throw new Exception("Không tìm thấy tài khoản cho chi tiết hóa đơn");
+            var data = new AccountInvoiceLine
+            {
+                LaboLineId = line.Id,
+                Name = line.Order.Name + ": " + line.Name,
+                UoMId = line.Product.UOMId,
+                ProductId = line.ProductId,
+                AccountId = account.Id,
+                PriceUnit = line.PriceUnit,
+                Quantity = qty,
+                Discount = 0,
+                InvoiceId = self.Id,
+                Invoice = self,
+            };
+
+            return data;
         }
     }
 

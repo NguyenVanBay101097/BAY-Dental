@@ -178,7 +178,9 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                res.PriceUnit = await productObj.GetStandardPrice(val.ProductId.Value);
+                var product = await productObj.GetByIdAsync(val.ProductId.Value);
+                res.PriceUnit = product.PurchasePrice ?? 0;
+                res.Name = product.Name;
             }
 
             return res;

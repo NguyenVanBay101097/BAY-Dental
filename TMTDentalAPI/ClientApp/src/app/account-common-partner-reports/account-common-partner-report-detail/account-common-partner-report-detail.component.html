@@ -5,10 +5,10 @@
             {{dataItem.date | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="name" title="Mô tả">
+    <kendo-grid-column field="name" title="Diễn giải">
     </kendo-grid-column>
-    <kendo-grid-column field="moveName" title="Bút toán">
-    </kendo-grid-column>
+    <!-- <kendo-grid-column field="moveName" title="Bút toán">
+    </kendo-grid-column> -->
     <kendo-grid-column field="begin" class="text-right" title="Nợ đầu kỳ">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.begin | number}}

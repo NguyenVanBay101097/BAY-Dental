@@ -66,7 +66,9 @@ export class ToaThuocLineCuFormComponent implements OnInit, OnChanges {
       this.productCbx.loading = false;
     });
 
-    this.loadFilteredProducts();
+    setTimeout(() => {
+      this.loadFilteredProducts();
+    });
   }
 
   ngOnChanges(changes) {

@@ -89,6 +89,12 @@ namespace Infrastructure.Services
         {
             var labo = _mapper.Map<LaboOrder>(val);
             labo.CompanyId = CompanyId;
+            if (val.DotKhamId.HasValue)
+            {
+                var dotKhamObj = GetService<IDotKhamService>();
+                var dotKham = await dotKhamObj.GetByIdAsync(val.DotKhamId.Value);
+                labo.CustomerId = dotKham.PartnerId;
+            }
             SaveOrderLines(val, labo);
 
             var lbLineObj = GetService<ILaboOrderLineService>();
@@ -125,7 +131,127 @@ namespace Infrastructure.Services
             var lbLineObj = GetService<ILaboOrderLineService>();
             lbLineObj._ComputeAmount(labo.OrderLines);
 
+            _AmountAll(new List<LaboOrder>() { labo });
             await UpdateAsync(labo);
+        }
+
+        public async Task<IList<AccountInvoice>> ActionInvoiceCreate(IEnumerable<LaboOrder> self)
+        {
+            var invObj = GetService<IAccountInvoiceService>();
+            var invLineObj = GetService<IAccountInvoiceLineService>();
+            var res = new List<AccountInvoice>();
+            foreach (var order in self)
+            {
+                var invData = await PrepareInvoice(order);
+                res.Add(invData);
+                var invLines = new List<AccountInvoiceLine>();
+                foreach (var poLine in order.OrderLines)
+                {
+                    if (poLine.State == "cancel")
+                        continue;
+
+                    var invLineData = await invObj.PrepareInvoiceLineFromLBLine(invData, poLine, journal: invData.Journal, type: "in_invoice");
+                    invLines.Add(invLineData);
+                }
+
+                invData.InvoiceLines = invLines;
+                invLineObj.ComputePrice(invData.InvoiceLines);
+                invObj._ComputeAmount(invData);
+                await invObj.CreateAsync(invData);
+            }
+
+            return res;
+        }
+
+        private async Task<AccountInvoice> PrepareInvoice(LaboOrder order)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.SearchQuery(x => x.Type == "purchase").Include(x => x.DefaultDebitAccount)
+                .Include(x => x.DefaultCreditAccount).FirstOrDefaultAsync();
+            if (journal == null)
+                throw new Exception("Không tìm thấy nhật ký mua hàng");
+            var accountObj = GetService<IAccountAccountService>();
+            var account = await accountObj.GetAccountPayableCurrentCompany();
+
+            return new AccountInvoice()
+            {
+                Name = !string.IsNullOrEmpty(order.PartnerRef) ? order.PartnerRef : order.Name,
+                AccountId = account.Id,
+                Type = "in_invoice",
+                PartnerId = order.PartnerId,
+                Origin = order.Name,
+                JournalId = journal.Id,
+                Journal = journal,
+                CompanyId = order.CompanyId,
+                UserId = UserId,
+            };
+        }
+
+        public async Task ButtonConfirm(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines).Include("OrderLines.Product")
+                .ToListAsync();
+            foreach (var order in self)
+            {
+                if (order.State != "draft" && order.State != "sent")
+                    continue;
+
+                order.State = "purchase";
+                foreach (var line in order.OrderLines)
+                    line.State = "purchase";
+            }
+
+           
+            var invObj = GetService<IAccountInvoiceService>();
+            var invoices = await ActionInvoiceCreate(self);
+            await invObj.ActionInvoiceOpen(invoices.Select(x => x.Id).ToList());
+
+            var lbLineObj = GetService<ILaboOrderLineService>();
+            lbLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ButtonCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.InvoiceLines")
+                .ToListAsync();
+            var invoiceIds = new List<Guid>().AsEnumerable();
+            foreach (var order in self)
+            {
+                invoiceIds = invoiceIds.Union(order.OrderLines.SelectMany(x => x.InvoiceLines)
+                    .Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList());
+            }
+            if (invoiceIds.Any())
+            {
+                var invObj = GetService<IAccountInvoiceService>();
+                await invObj.ActionCancel(invoiceIds);
+            }
+
+            foreach(var order in self)
+            {
+                order.State = "cancel";
+                foreach (var line in order.OrderLines)
+                    line.State = "cancel";
+            }
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionDone(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ToListAsync();
+            foreach (var order in self)
+            {
+                foreach (var line in order.OrderLines)
+                    line.State = "done";
+
+                order.State = "done";
+            }
+
+            await UpdateAsync(self);
         }
 
         public LaboOrderDisplay DefaultGet(LaboOrderDefaultGet val)

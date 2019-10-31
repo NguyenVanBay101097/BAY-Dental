@@ -18,10 +18,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredProducts" ngbAutofocus [textField]="'name'"
-                                        [filterable]="true" (valueChange)="onChangeProduct($event)" #productCbx
-                                        formControlName="product" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredProducts" [class.d-none]="lineState != 'draft'"
+                                        ngbAutofocus [textField]="'name'" [filterable]="true"
+                                        (valueChange)="onChangeProduct($event)" #productCbx formControlName="product"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState.state == 'draft'">{{line.product ? line.product.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -31,7 +34,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="color" />
+                                    <input type="text" class="form-control" [class.d-none]="lineState != 'draft'"
+                                        formControlName="color" />
+                                    <span *ngIf="line" [class.d-none]="lineState.state == 'draft'">{{line.color}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -41,7 +46,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                    <textarea type="text" class="form-control" [class.d-none]="lineState != 'draft'"
+                                        formControlName="note"></textarea>
+                                    <pre *ngIf="line" [class.d-none]="lineState.state == 'draft'">{{line.note}}</pre>
                                 </td>
                             </tr>
                         </tbody>
@@ -55,8 +62,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="productQty">
+                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState != 'draft'"
+                                        [format]="'n0'" formControlName="productQty">
                                     </kendo-numerictextbox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState.state == 'draft'">{{line.productQty | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -66,8 +76,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="priceUnit">
+                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState != 'draft'"
+                                        [format]="'n0'" formControlName="priceUnit">
                                     </kendo-numerictextbox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState.state == 'draft'">{{line.priceUnit | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -77,9 +90,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [disabled]="true" [format]="'n0'"
-                                        [value]="getPriceSubTotal()">
-                                    </kendo-numerictextbox>
+                                    <span>{{getPriceSubTotal() | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -95,17 +106,40 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredToothCategories" [textField]="'name'"
-                                        [filterable]="true" formControlName="toothCategory"
-                                        (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx
-                                        [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredToothCategories"
+                                        [class.d-none]="lineState != 'draft'" [textField]="'name'" [filterable]="true"
+                                        formControlName="toothCategory" (valueChange)="onChangeToothCategory($event)"
+                                        #toothCategoryCbx [valueField]="'id'">
                                     </kendo-combobox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState.state == 'draft'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã bảo hành
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="warrantyCode" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hạn bảo hành
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="warrantyPeriodObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

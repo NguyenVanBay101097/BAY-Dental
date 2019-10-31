@@ -84,5 +84,41 @@ namespace TMTDentalAPI.Controllers
             var res = _laboOrderService.DefaultGet(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboOrderService.ButtonConfirm(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboOrderService.ButtonCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboOrderService.Unlink(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

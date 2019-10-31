@@ -33,15 +33,11 @@
                         Xác nhận
                     </button>
                     <button type="button" *ngIf="id && laboOrder.state == 'draft'" class="btn btn-primary btn-sm"
-                        (click)="actionConfirm()">
+                        (click)="buttonConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['draft', 'cancel'].indexOf(laboOrder.state) === -1" (click)="actionCreateDotKham()">
-                        Tạo đợt khám
-                    </button>
-                    <button *ngIf="['sale'].indexOf(laboOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
-                        (click)="actionCancel()">
+                    <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button"
+                        class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy phiếu
                     </button>
                     <!-- <button type="button" class="btn btn-primary btn-sm"
@@ -64,8 +60,8 @@
                         type="button">
                         Đã khóa
                     </button>
-                    <button [disabled]="laboOrder.state !== 'sale'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': laboOrder.state === 'sale', 'btn-secondary': laboOrder.state !== 'sale'}"
+                    <button [disabled]="laboOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': laboOrder.state === 'purchase', 'btn-secondary': laboOrder.state !== 'purchase'}"
                         type="button">
                         Đơn hàng
                     </button>
@@ -154,7 +150,7 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <div class="mb-2" *ngIf="['cancel', 'done'].indexOf(laboOrder.state) === -1">
+                            <div class="mb-2" *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1">
                                 <button type="button" class="btn btn-secondary btn-sm"
                                     (click)="showAddLineModal()">Thêm</button>
                             </div>
@@ -187,7 +183,9 @@
                                                         (click)="editLine(line)">
                                                         <span class="k-icon k-i-edit"></span>
                                                     </button>
-                                                    <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                    <button
+                                                        *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1"
+                                                        type="button" class="btn btn-icon btn-sm btn-light"
                                                         (click)="deleteLine(i)">
                                                         <span class="k-icon k-i-delete"></span>
                                                     </button>

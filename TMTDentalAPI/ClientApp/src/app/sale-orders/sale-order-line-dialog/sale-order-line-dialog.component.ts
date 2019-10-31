@@ -50,20 +50,24 @@ export class SaleOrderLineDialogComponent implements OnInit {
     }, 200);
 
     if (this.line) {
-      if (this.line.product) {
-        this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
-      }
+      setTimeout(() => {
+        if (this.line.product) {
+          this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
+        }
 
-      this.saleLineForm.patchValue(this.line);
-      this.teethSelected = [...this.line.teeth];
-      if (this.line.toothCategory) {
-        this.loadTeethMap(this.line.toothCategory);
-      }
+        this.saleLineForm.patchValue(this.line);
+        this.teethSelected = [...this.line.teeth];
+        if (this.line.toothCategory) {
+          this.loadTeethMap(this.line.toothCategory);
+        }
+      });
     } else {
-      this.loadDefaultToothCategory().subscribe(result => {
-        this.saleLineForm.get('toothCategory').patchValue(result);
-        this.loadTeethMap(result);
-      })
+      setTimeout(() => {
+        this.loadDefaultToothCategory().subscribe(result => {
+          this.saleLineForm.get('toothCategory').patchValue(result);
+          this.loadTeethMap(result);
+        })
+      });
     }
 
     this.productCbx.filterChange.asObservable().pipe(
@@ -75,9 +79,10 @@ export class SaleOrderLineDialogComponent implements OnInit {
       this.productCbx.loading = false;
     });
 
-    this.loadFilteredProducts();
-
-    this.loadToothCategories();
+    setTimeout(() => {
+      this.loadFilteredProducts();
+      this.loadToothCategories();
+    });
   }
 
   onSelected(tooth: ToothDisplay) {

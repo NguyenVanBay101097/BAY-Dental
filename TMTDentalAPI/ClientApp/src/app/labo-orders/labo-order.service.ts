@@ -64,12 +64,12 @@ export class LaboOrderService {
         return this.http.post<LaboOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
-    actionConfirm(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ActionConfirm', ids);
+    buttonConfirm(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ButtonConfirm', ids);
     }
 
-    actionCancel(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
+    buttonCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ButtonCancel', ids);
     }
 
     unlink(ids: string[]) {

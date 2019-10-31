@@ -65,8 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       })).subscribe(result => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
-
-        let dateOrder = this.intlService.parseDate(result.dateOrder);
+        let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
         if (result.user) {
@@ -122,7 +121,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   loadUsers() {
     this.searchUsers().subscribe(result => {
       this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
-      console.log(result);
     });
   }
 
@@ -220,7 +218,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.get(this.id).subscribe(result => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
-        let dateOrder = this.intlService.parseDate(result.dateOrder);
+        let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
         let control = this.formGroup.get('orderLines') as FormArray;

@@ -25,6 +25,7 @@ export class AccountPaymentListComponent implements OnInit {
   partnerType: string;
 
   selectedIds: string[] = [];
+  title: 'Thanh toán';
 
   constructor(private paymentService: AccountPaymentService, private route: ActivatedRoute, private modalService: NgbModal,
     private router: Router) {
@@ -52,9 +53,9 @@ export class AccountPaymentListComponent implements OnInit {
     if (this.search) {
       val.search = this.search;
     }
-    if (this.partnerType) {
-      val.partnerType = this.partnerType;
-    }
+    // if (this.partnerType) {
+    //   val.partnerType = this.partnerType;
+    // }
 
     this.paymentService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
