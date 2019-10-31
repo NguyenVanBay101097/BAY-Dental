@@ -67,5 +67,8 @@ namespace ApplicationCore.Entities
         public ICollection<AccountInvoiceLineToothRel> AccountInvoiceLineToothRels { get; set; } = new List<AccountInvoiceLineToothRel>();
 
         public ICollection<SaleOrderLineInvoiceRel> SaleLines { get; set; } = new List<SaleOrderLineInvoiceRel>();
+
+        public Guid? LaboLineId { get; set; }
+        public LaboOrderLine LaboLine { get; set; }
     }
 }

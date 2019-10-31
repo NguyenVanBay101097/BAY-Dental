@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191030101420_F78")]
+    partial class F78
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,8 +260,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("InvoiceId");
 
-                    b.Property<Guid?>("LaboLineId");
-
                     b.Property<DateTime?>("LastUpdated");
 
                     b.Property<string>("Name")
@@ -302,8 +302,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("InvoiceId");
-
-                    b.HasIndex("LaboLineId");
 
                     b.HasIndex("PartnerId");
 
@@ -1539,11 +1537,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<decimal>("ProductQty");
 
-                    b.Property<decimal>("QtyInvoiced");
-
                     b.Property<int?>("Sequence");
-
-                    b.Property<string>("State");
 
                     b.Property<Guid?>("ToothCategoryId");
 
@@ -3065,11 +3059,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("InvoiceLines")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ApplicationCore.Entities.LaboOrderLine", "LaboLine")
-                        .WithMany("InvoiceLines")
-                        .HasForeignKey("LaboLineId")
-                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()

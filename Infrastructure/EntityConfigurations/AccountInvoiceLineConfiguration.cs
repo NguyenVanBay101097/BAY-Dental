@@ -21,6 +21,11 @@ namespace Infrastructure.EntityConfigurations
            .WithMany()
            .HasForeignKey(x => x.ToothId);
 
+            builder.HasOne(x => x.LaboLine)
+                .WithMany(x => x.InvoiceLines)
+                .HasForeignKey(x => x.LaboLineId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasOne(x => x.Invoice)
               .WithMany(x => x.InvoiceLines)
               .HasForeignKey(x => x.InvoiceId)

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191030075113_F77")]
+    partial class F77
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,8 +260,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("InvoiceId");
 
-                    b.Property<Guid?>("LaboLineId");
-
                     b.Property<DateTime?>("LastUpdated");
 
                     b.Property<string>("Name")
@@ -302,8 +302,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("InvoiceId");
-
-                    b.HasIndex("LaboLineId");
 
                     b.HasIndex("PartnerId");
 
@@ -1539,13 +1537,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<decimal>("ProductQty");
 
-                    b.Property<decimal>("QtyInvoiced");
-
                     b.Property<int?>("Sequence");
-
-                    b.Property<string>("State");
-
-                    b.Property<Guid?>("ToothCategoryId");
 
                     b.Property<string>("WarrantyCode");
 
@@ -1567,24 +1559,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ToothCategoryId");
-
                     b.HasIndex("WriteById");
 
                     b.ToTable("LaboOrderLines");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.LaboOrderLineToothRel", b =>
-                {
-                    b.Property<Guid>("LaboLineId");
-
-                    b.Property<Guid>("ToothId");
-
-                    b.HasKey("LaboLineId", "ToothId");
-
-                    b.HasIndex("ToothId");
-
-                    b.ToTable("LaboOrderLineToothRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
@@ -3066,11 +3043,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ApplicationCore.Entities.LaboOrderLine", "LaboLine")
-                        .WithMany("InvoiceLines")
-                        .HasForeignKey("LaboLineId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId");
@@ -3724,26 +3696,9 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
-                        .WithMany()
-                        .HasForeignKey("ToothCategoryId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.LaboOrderLineToothRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.LaboOrderLine", "LaboLine")
-                        .WithMany("LaboOrderLineToothRels")
-                        .HasForeignKey("LaboLineId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
-                        .WithMany()
-                        .HasForeignKey("ToothId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>

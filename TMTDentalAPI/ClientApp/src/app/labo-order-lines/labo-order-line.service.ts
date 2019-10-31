@@ -3,6 +3,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple } from '../partners/partner-simple';
 import { ProductSimple } from '../products/product-simple';
+import { ToothBasic, ToothDisplay } from '../teeth/tooth.service';
+import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
 
 export class LaboOrderLineBasic {
     id: string;
@@ -37,6 +39,8 @@ export class LaboOrderLineDisplay {
     invoiceId: string;
     sentDate: string;
     receivedDate: string;
+    teeth: ToothDisplay[];
+    toothCategory: ToothCategoryBasic;
 }
 
 export class LaboOrderLinePaged {

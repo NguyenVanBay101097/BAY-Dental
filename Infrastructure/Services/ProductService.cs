@@ -171,6 +171,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.SaleOK == val.SaleOK);
             if (!string.IsNullOrEmpty(val.Type))
                 query = query.Where(x => x.Type == val.Type);
+            if (!string.IsNullOrEmpty(val.Type2))
+                query = query.Where(x => x.Type2 == val.Type2);
 
             return await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Select(x => new ProductSimple
             {

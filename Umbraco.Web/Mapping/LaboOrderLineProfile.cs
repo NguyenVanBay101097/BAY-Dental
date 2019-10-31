@@ -2,6 +2,7 @@
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -12,15 +13,14 @@ namespace Umbraco.Web.Mapping
         public LaboOrderLineProfile()
         {
             CreateMap<LaboOrderLine, LaboOrderLineBasic>();
-
-            CreateMap<LaboOrderLine, LaboOrderLineDisplay>();
+            CreateMap<LaboOrderLine, LaboOrderLineDisplay>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderLineToothRels.Select(m => m.Tooth)));
             CreateMap<LaboOrderLineDisplay, LaboOrderLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
+                .ForMember(x => x.ToothCategory, x => x.Ignore())
                 .ForMember(x => x.Customer, x => x.Ignore())
-                .ForMember(x => x.Supplier, x => x.Ignore())
-                .ForMember(x => x.Company, x => x.Ignore())
-                .ForMember(x => x.Invoice, x => x.Ignore());
+                .ForMember(x => x.Company, x => x.Ignore());
         }
     }
 }

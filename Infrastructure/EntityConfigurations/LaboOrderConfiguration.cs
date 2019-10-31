@@ -7,33 +7,29 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class LaboOrderLineConfiguration : IEntityTypeConfiguration<LaboOrderLine>
+    public class LaboOrderConfiguration : IEntityTypeConfiguration<LaboOrder>
     {
-        public void Configure(EntityTypeBuilder<LaboOrderLine> builder)
+        public void Configure(EntityTypeBuilder<LaboOrder> builder)
         {
+            builder.Property(x => x.Name).IsRequired();
+
             builder.HasOne(x => x.Partner)
              .WithMany()
-             .HasForeignKey(x => x.PartnerId);
-
-            builder.HasOne(x => x.Product)
-            .WithMany()
-            .HasForeignKey(x => x.ProductId);
-
-            builder.HasOne(x => x.ToothCategory)
-           .WithMany()
-           .HasForeignKey(x => x.ToothCategoryId);
+             .HasForeignKey(x => x.PartnerId)
+             .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Customer)
                .WithMany()
                .HasForeignKey(x => x.CustomerId);
 
-            builder.HasOne(x => x.Order)
-              .WithMany(x => x.OrderLines)
-              .HasForeignKey(x => x.OrderId);
+            builder.HasOne(x => x.User)
+              .WithMany()
+              .HasForeignKey(x => x.UserId);
 
             builder.HasOne(x => x.Company)
                 .WithMany()
-                .HasForeignKey(x => x.CompanyId);
+                .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

@@ -95,6 +95,8 @@ namespace Infrastructure.Data
         public DbSet<RuleGroupRel> RuleGroupRels { get; set; }
         public DbSet<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; }
         public DbSet<SaleOrderLineToothRel> SaleOrderLineToothRels { get; set; }
+        public DbSet<LaboOrder> LaboOrders { get; set; }
+        public DbSet<LaboOrderLineToothRel> LaboOrderLineToothRels { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -172,6 +174,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new RuleGroupRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderLineInvoiceRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderLineToothRelConfiguration());
+            builder.ApplyConfiguration(new LaboOrderConfiguration());
+            builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

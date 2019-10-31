@@ -65,6 +65,7 @@ import { ResGroupsModule } from './res-groups/res-groups.module';
 import { IrModelsModule } from './ir-models/ir-models.module';
 import { IrRulesModule } from './ir-rules/ir-rules.module';
 import { PriceListModule } from './price-list/price-list.module';
+import { LaboOrdersModule } from './labo-orders/labo-orders.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -135,7 +136,8 @@ registerLocaleData(localeVi, 'vi');
     ResGroupsModule,
     IrModelsModule,
     IrRulesModule,
-    PriceListModule
+    PriceListModule,
+    LaboOrdersModule
 
   ],
   providers: [

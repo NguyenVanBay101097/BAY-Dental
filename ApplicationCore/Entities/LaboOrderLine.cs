@@ -6,49 +6,39 @@ namespace ApplicationCore.Entities
 {
     public class LaboOrderLine: BaseEntity
     {
+        public LaboOrderLine()
+        {
+            Sequence = 10;
+        }
+
         public string Name { get; set; }
 
-        /// <summary>
-        /// Khách hàng
-        /// </summary>
-        public Guid CustomerId { get; set; }
-        public Partner Customer { get; set; }
+        public int? Sequence { get; set; }
 
-        /// <summary>
-        /// Tên labo
-        /// </summary>
-        public Guid ProductId { get; set; }
+        public decimal ProductQty { get; set; }
+
+        public Guid? ProductId { get; set; }
         public Product Product { get; set; }
 
-        /// <summary>
-        /// Nhà cung cấp
-        /// </summary>
-        public Guid SupplierId { get; set; }
-        public Partner Supplier { get; set; }
+        public Guid? PartnerId { get; set; }
+        public Partner Partner { get; set; }
+
+        public Guid? CustomerId { get; set; }
+        public Partner Customer { get; set; }
 
         /// <summary>
         /// Màu sắc
         /// </summary>
         public string Color { get; set; }
 
-        /// <summary>
-        /// Số lượng
-        /// </summary>
-        public decimal Quantity { get; set; }
-
         public decimal PriceUnit { get; set; }
 
         public decimal PriceSubtotal { get; set; }
 
-        /// <summary>
-        /// Ngày gửi
-        /// </summary>
-        public DateTime? SentDate { get; set; }
+        public decimal PriceTotal { get; set; }
 
-        /// <summary>
-        /// Ngày nhận
-        /// </summary>
-        public DateTime? ReceivedDate { get; set; }
+        public Guid OrderId { get; set; }
+        public LaboOrder Order { get; set; }
 
         /// <summary>
         /// Mã bảo hành
@@ -60,15 +50,20 @@ namespace ApplicationCore.Entities
         /// </summary>
         public DateTime? WarrantyPeriod { get; set; }
 
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
         public string Note { get; set; }
 
-        public Guid? InvoiceId { get; set; }
-        public AccountInvoice Invoice { get; set; }
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategory ToothCategory { get; set; }
 
-        public Guid? DotKhamId { get; set; }
-        public DotKham DotKham { get; set; }
+        public ICollection<LaboOrderLineToothRel> LaboOrderLineToothRels { get; set; } = new List<LaboOrderLineToothRel>();
+
+        public ICollection<AccountInvoiceLine> InvoiceLines { get; set; } = new List<AccountInvoiceLine>();
+
+        public decimal QtyInvoiced { get; set; }
+
+        public string State { get; set; }
     }
 }

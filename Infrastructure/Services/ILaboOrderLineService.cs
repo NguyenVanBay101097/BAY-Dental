@@ -15,5 +15,7 @@ namespace Infrastructure.Services
         Task<LaboOrderLineDisplay> DefaultGet(LaboOrderLineDefaultGet val);
         Task<LaboOrderLineOnChangeProductResult> OnChangeProduct(LaboOrderLineOnChangeProduct val);
         Task<IEnumerable<LaboOrderLineBasic>> GetAllForDotKham(Guid dotKhamId);
+        void _ComputeAmount(IEnumerable<LaboOrderLine> self);
+        void _ComputeQtyInvoiced(IEnumerable<LaboOrderLine> self);
     }
 }

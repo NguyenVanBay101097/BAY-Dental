@@ -17,6 +17,7 @@ export class ProductFilter {
     limit: number;
     offset: number;
     type: string;
+    type2: string;
 }
 
 export class ProductPaged {
