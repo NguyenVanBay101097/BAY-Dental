@@ -18,6 +18,7 @@ import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-ord
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -35,6 +36,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
+  saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
@@ -163,6 +165,44 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           // $('#myTab a[href="#profile"]').tab('show');
         }
       }, () => {
+      });
+    }
+  }
+
+  printSaleOrder() {
+    if (this.id) {
+      this.saleOrderService.getPrint(this.id).subscribe((result: any) => {
+        this.saleOrderPrint = result;
+        setTimeout(() => {
+          var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
+          var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+          popupWin.document.open();
+          popupWin.document.write(`
+              <html>
+                <head>
+                  <title>Print tab</title>
+                  <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+                  <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+                </head>
+            <body onload="window.print();window.close()">${printContents}</body>
+              </html>`
+          );
+          popupWin.document.close();
+          this.saleOrderPrint = null;
+        });
+      });
+    }
+  }
+
+  actionDone() {
+    if (this.id) {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Khóa phiếu điều trị';
+      modalRef.componentInstance.body = 'Khi khóa phiếu điều trị bạn sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
+      modalRef.result.then(() => {
+        this.saleOrderService.actionDone([this.id]).subscribe(() => {
+          this.loadRecord();
+        });
       });
     }
   }

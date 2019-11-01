@@ -13,6 +13,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboOrderDisplay, LaboOrderService } from '../labo-order.service';
 import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
+declare var $: any;
 
 @Component({
   selector: 'app-labo-order-create-update',
@@ -29,6 +30,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
+  laboOrderPrint: any;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private laboOrderService: LaboOrderService,
@@ -85,6 +87,50 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
     });
+  }
+
+  printLaboOrder() {
+    if (this.id) {
+      this.laboOrderService.getPrint(this.id).subscribe((result: any) => {
+        this.laboOrderPrint = result;
+        setTimeout(() => {
+          var printContents = document.getElementById('printLaboOrderDiv').innerHTML;
+          var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+          popupWin.document.open();
+          popupWin.document.write(`
+              <html>
+                <head>
+                  <title>Print tab</title>
+                  <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+                  <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+                </head>
+            <body onload="window.print();window.close()">${printContents}</body>
+              </html>`
+          );
+          popupWin.document.close();
+          this.laboOrderPrint = null;
+          // var html = document.getElementById('printLaboOrderDiv').innerHTML;
+          // var hiddenFrame = $('<iframe style="visibility: hidden"></iframe>').appendTo('body')[0];
+          // hiddenFrame.contentWindow.printAndRemove = function () {
+          //   hiddenFrame.contentWindow.print();
+          //   $(hiddenFrame).remove();
+          // };
+          // var htmlContent = "<!doctype html>" +
+          //   "<html>" +
+          //   "<head>" +
+          //   '<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />' +
+          //   '<link rel="stylesheet" type="text/css" href="/assets/css/print.css" />' +
+          //   "<head>" +
+          //   '<body onload="printAndRemove();">' +
+          //   html +
+          //   '</body>' +
+          //   "</html>";
+          // var doc = hiddenFrame.contentWindow.document.open("text/html", "replace");
+          // doc.write(htmlContent);
+          // doc.close();
+        }, 200);
+      });
+    }
   }
 
   searchPartners(filter?: string) {

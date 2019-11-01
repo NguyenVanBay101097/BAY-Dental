@@ -140,6 +140,14 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _saleOrderService.GetPrint(id);
+            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            return Ok(res);
+        }
+
         private void SaveOrderLines(SaleOrderDisplay val, SaleOrder order)
         {
             var existLines = order.OrderLines.ToList();
@@ -162,6 +170,8 @@ namespace TMTDentalAPI.Controllers
 
             foreach (var line in lineToRemoves)
             {
+                if (line.State != "draft")
+                    continue;
                 order.OrderLines.Remove(line);
             }
 
@@ -213,6 +223,17 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.ActionConfirm(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionDone(ids);
             _unitOfWork.Commit();
             return NoContent();
         }

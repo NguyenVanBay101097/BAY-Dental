@@ -64,6 +64,10 @@ export class LaboOrderService {
         return this.http.post<LaboOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
+    getPrint(id) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
+    }
+
     buttonConfirm(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ButtonConfirm', ids);
     }

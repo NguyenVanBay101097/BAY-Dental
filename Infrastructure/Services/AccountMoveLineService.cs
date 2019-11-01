@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,6 +33,26 @@ namespace Infrastructure.Services
             if (companyIds == null)
                 companyIds = new List<Guid>();
             return SearchQuery(x => (!dateTo.HasValue || x.Date <= dateTo.Value) &&
+                        (!dateFrom.HasValue || ((initBal && x.Date < dateFrom.Value) || (!initBal && x.Date >= dateFrom.Value))) &&
+                        (!journalIds.Any() || journalIds.Contains(x.JournalId.Value)) &&
+                        (!companyId.HasValue || x.CompanyId == companyId.Value) &&
+                        (state == "all" || x.Move.State == state) &&
+                         (!companyIds.Any() || companyIds.Contains(x.Company.Id)));
+        }
+
+        public ISpecification<AccountMoveLine> _QueryGetSpec(DateTime? dateTo = null, DateTime? dateFrom = null,
+           IEnumerable<Guid> journalIds = null,
+           string state = "all",
+           Guid? companyId = null,
+           bool initBal = false,
+           IList<Guid> companyIds = null)
+        {
+
+            if (journalIds == null)
+                journalIds = new List<Guid>();
+            if (companyIds == null)
+                companyIds = new List<Guid>();
+            return new InitialSpecification<AccountMoveLine>(x => (!dateTo.HasValue || x.Date <= dateTo.Value) &&
                         (!dateFrom.HasValue || ((initBal && x.Date < dateFrom.Value) || (!initBal && x.Date >= dateFrom.Value))) &&
                         (!journalIds.Any() || journalIds.Contains(x.JournalId.Value)) &&
                         (!companyId.HasValue || x.CompanyId == companyId.Value) &&

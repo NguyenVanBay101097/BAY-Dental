@@ -12,7 +12,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public AccountCommonPartnerReportSearch()
         {
             ResultSelection = "customer";
-            Display = "all";
+            //Display = "all";
+            Display = "not_zero";
         }
         /// <summary>
         /// Từ ngày

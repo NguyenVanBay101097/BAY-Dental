@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,13 @@ namespace Infrastructure.Services
             Guid? companyId = null,
             bool initBal = false,
             IList<Guid> companyIds = null);
+
+        ISpecification<AccountMoveLine> _QueryGetSpec(DateTime? dateTo = null, DateTime? dateFrom = null,
+           IEnumerable<Guid> journalIds = null,
+           string state = "all",
+           Guid? companyId = null,
+           bool initBal = false,
+           IList<Guid> companyIds = null);
 
         Task RemoveMoveReconcile(IEnumerable<AccountMoveLine> self);
         Task RemoveMoveReconcile(IEnumerable<Guid> ids);

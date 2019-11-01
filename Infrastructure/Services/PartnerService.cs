@@ -324,5 +324,63 @@ namespace Infrastructure.Services
             };
 
         }
+
+        public Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
+       DateTime? fromDate = null,
+       DateTime? toDate = null)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var spec = amlObj._QueryGetSpec(companyId: CompanyId, state: "posted", dateFrom: fromDate,
+                dateTo: toDate);
+            var types = new[] { "receivable", "payable" };
+            if (ids != null)
+            {
+                spec = spec.And(new InitialSpecification<AccountMoveLine>(x => ids.Contains(x.Partner.Id)));
+            }
+
+            spec = spec.And(new InitialSpecification<AccountMoveLine>(x => x.PartnerId.HasValue && types.Contains(x.Account.InternalType) &&
+                x.Reconciled == false));
+
+            var res = amlObj.SearchQuery(spec.AsExpression())
+                .GroupBy(x => new { PartnerId = x.PartnerId.Value, Type = x.Account.InternalType })
+                .Select(x => new
+                {
+                    PartnerId = x.Key.PartnerId,
+                    Type = x.Key.Type,
+                    Amount = x.Sum(s => s.AmountResidual)
+                }).ToList();
+
+
+            var dict = new Dictionary<Guid, PartnerCreditDebitItem>();
+            if (ids != null)
+            {
+                foreach (var id in ids)
+                    dict.Add(id, new PartnerCreditDebitItem());
+            }
+
+            foreach (var item in res)
+            {
+                if (!dict.ContainsKey(item.PartnerId))
+                {
+                    dict.Add(item.PartnerId, new PartnerCreditDebitItem());
+                }
+
+                var val = item.Amount;
+
+                if (item.Type == "receivable")
+                    dict[item.PartnerId].Credit = val;
+                else if (item.Type == "payable")
+                    dict[item.PartnerId].Debit = -val;
+            }
+
+            return dict;
+        }
+    }
+
+    public class PartnerCreditDebitItem
+    {
+        public decimal Credit { get; set; }
+
+        public decimal Debit { get; set; }
     }
 }

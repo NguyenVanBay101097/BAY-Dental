@@ -29,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IDotKhamStepService _dotKhamStepService;
         private readonly IIrAttachmentService _attachmentService;
+        private readonly ILaboOrderService _laboOrderService;
 
         public DotKhamsController(IDotKhamService dotKhamService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IToaThuocService toaThuocService,
@@ -36,7 +37,8 @@ namespace TMTDentalAPI.Controllers
             ILaboOrderLineService laboOrderLineService,
             IIRModelAccessService modelAccessService,
             IDotKhamStepService dotKhamStepService,
-            IIrAttachmentService attachmentService)
+            IIrAttachmentService attachmentService,
+            ILaboOrderService laboOrderService)
         {
             _dotKhamService = dotKhamService;
             _mapper = mapper;
@@ -47,6 +49,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _dotKhamStepService = dotKhamStepService;
             _attachmentService = attachmentService;
+            _laboOrderService = laboOrderService;
         }
 
         [HttpGet]
@@ -164,6 +167,13 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderLineService.GetAllForDotKham(id);
             return Ok(res); 
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetLaboOrders(Guid id)
+        {
+            var res = await _laboOrderService.GetAllForDotKham(id);
+            return Ok(res);
         }
 
         [HttpGet("{id}/GetAppointments")]

@@ -24,5 +24,7 @@ namespace Infrastructure.Services
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
+        Task<SaleOrderPrintVM> GetPrint(Guid id);
+        Task ActionDone(IEnumerable<Guid> ids);
     }
 }

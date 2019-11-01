@@ -135,11 +135,34 @@ namespace Infrastructure.Services
                     dict[item.PartnerId].Debit = item.Credit;
                     dict[item.PartnerId].Credit = item.Debit;
                 }
-
-                dict[item.PartnerId].End = dict[item.PartnerId].Begin + dict[item.PartnerId].Debit - dict[item.PartnerId].Credit;
             }
 
-            return dict.Values;
+            var res = new List<AccountCommonPartnerReportItem>();
+            foreach (var item in dict)
+            {
+                var begin = dict[item.Key].Begin;
+                var debit = dict[item.Key].Debit;
+                var credit = dict[item.Key].Credit;
+                var end = begin + debit - credit;
+                if (val.Display == "not_zero" && end <= 0.00001M)
+                    continue;
+                var value = item.Value;
+                res.Add(new AccountCommonPartnerReportItem
+                {
+                    PartnerId = item.Key,
+                    DateFrom = date_from,
+                    DateTo = date_to,
+                    ResultSelection = val.ResultSelection,
+                    PartnerRef = value.PartnerRef,
+                    Begin = begin,
+                    Debit = debit,
+                    Credit = credit,
+                    End = end,
+                    PartnerName = value.PartnerName,
+                    PartnerPhone = value.PartnerPhone,
+                }); ;
+            }
+            return res;
         }
 
         public async Task<IEnumerable<AccountCommonPartnerReportItemDetail>> ReportDetail(AccountCommonPartnerReportItem val)

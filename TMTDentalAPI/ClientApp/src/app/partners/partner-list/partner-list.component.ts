@@ -10,6 +10,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 
 @Component({
@@ -50,7 +52,8 @@ export class PartnerListComponent implements OnInit {
 
   constructor(
     private service: PartnerService, private windowService: WindowService,
-    private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal) { }
+    private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal,
+    private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.windowOpened = false;
@@ -76,6 +79,24 @@ export class PartnerListComponent implements OnInit {
         console.log(er);
       }
     );
+  }
+
+  registerPayment(id: string) {
+    this.service.getDefaultRegisterPayment(id).subscribe(result => {
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thanh toán';
+      modalRef.componentInstance.defaultVal = result;
+      modalRef.result.then(() => {
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'right', vertical: 'bottom' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }, () => {
+      });
+    });
   }
 
   getPartnersList() {

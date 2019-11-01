@@ -85,7 +85,15 @@ export class SaleOrderLineDialogComponent implements OnInit {
     });
   }
 
+  get lineState() {
+    return this.line ? this.line.state : 'draft';
+  }
+
   onSelected(tooth: ToothDisplay) {
+    if (this.lineState != "draft") {
+      return false;
+    }
+
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);

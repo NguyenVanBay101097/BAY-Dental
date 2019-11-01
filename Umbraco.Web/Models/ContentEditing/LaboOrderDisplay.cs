@@ -41,5 +41,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<LaboOrderLineDisplay> OrderLines { get; set; } = new List<LaboOrderLineDisplay>();
 
         public Guid? DotKhamId { get; set; }
+        public DotKhamSimple DotKham { get; set; }
     }
 }

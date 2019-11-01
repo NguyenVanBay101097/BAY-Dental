@@ -109,7 +109,6 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-
         [HttpPost("[action]")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
@@ -119,6 +118,14 @@ namespace TMTDentalAPI.Controllers
             await _laboOrderService.Unlink(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _laboOrderService.GetPrint(id);
+            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            return Ok(res);
         }
     }
 }

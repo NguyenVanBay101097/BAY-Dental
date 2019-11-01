@@ -37,6 +37,11 @@ export class SaleOrderService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
+
+    getPrint(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
+    }
+
     defaultGet(): Observable<SaleOrderDisplay> {
         return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet');
     }
@@ -47,6 +52,10 @@ export class SaleOrderService {
 
     actionCancel(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
+    }
+
+    actionDone(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
     unlink(ids: string[]) {

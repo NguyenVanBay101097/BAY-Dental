@@ -85,7 +85,10 @@ namespace TMTDentalAPI.Controllers
 
             group = _mapper.Map(val, group);
             SaveAccesses(val, group);
-            SaveUsers(val, group);
+
+            var refreshCacheUsers = new List<ApplicationUser>();
+
+            SaveUsers(val, group, refreshCacheUsers);
             await _resGroupService.UpdateAsync(group);
 
             return NoContent();
@@ -133,10 +136,13 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
-        private void SaveUsers(ResGroupDisplay val, ResGroup group)
+        private void SaveUsers(ResGroupDisplay val, ResGroup group, IList<ApplicationUser> refreshCacheUsers = null)
         {
             if (val.Users == null)
                 return;
+            if (refreshCacheUsers == null)
+                refreshCacheUsers = new List<ApplicationUser>();
+
             group.ResGroupsUsersRels.Clear();
             foreach(var user in val.Users)
             {

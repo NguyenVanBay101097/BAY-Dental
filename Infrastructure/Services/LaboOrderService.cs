@@ -53,6 +53,21 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<IEnumerable<LaboOrderBasic>> GetAllForDotKham(Guid dotKhamId)
+        {
+            var res = await SearchQuery(x => x.DotKhamId == dotKhamId).Select(x => new LaboOrderBasic
+            {
+                Id = x.Id,
+                AmountTotal = x.AmountTotal,
+                DateOrder = x.DateOrder,
+                Name = x.Name,
+                PartnerName = x.Partner.Name,
+                State = x.State,
+                CustomerName = x.Customer.Name
+            }).ToListAsync();
+            return res;
+        }
+
         public async Task<LaboOrderDisplay> GetLaboDisplay(Guid id)
         {
             //var res = await SearchQuery(x => x.Id == id).Select(x => new LaboOrderDisplay
@@ -75,6 +90,7 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
+                .Include(x => x.DotKham)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
                 .Include("OrderLines.ToothCategory")
@@ -295,6 +311,8 @@ namespace Infrastructure.Services
 
             foreach (var line in lineToRemoves)
             {
+                if (line.State != "draft")
+                    continue;
                 order.OrderLines.Remove(line);
             }
 
@@ -339,6 +357,22 @@ namespace Infrastructure.Services
                     }
                 }
             }
+        }
+
+        public async Task<LaboOrderPrintVM> GetPrint(Guid id)
+        {
+            var order = await SearchQuery(x => x.Id == id)
+               .Include(x => x.Partner)
+               .Include(x => x.Company)
+               .Include(x => x.Company.Partner)
+               .Include(x => x.OrderLines)
+               .Include("OrderLines.Product")
+               .FirstOrDefaultAsync();
+            var res = _mapper.Map<LaboOrderPrintVM>(order);
+            var partnerObj = GetService<IPartnerService>();
+            res.CompanyAddress = partnerObj.GetFormatAddress(order.Company.Partner);
+            res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
+            return res;
         }
 
         public override async Task<LaboOrder> CreateAsync(LaboOrder labo)

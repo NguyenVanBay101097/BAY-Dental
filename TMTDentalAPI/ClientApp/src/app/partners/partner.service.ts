@@ -100,6 +100,10 @@ export class PartnerService {
         return this.http.get(this.baseApi + "api/ProductCategories/" + uid);
     }
 
+    getDefaultRegisterPayment(id: string) {
+        return this.http.get(this.baseApi + "api/Partners/" + id + '/GetDefaultRegisterPayment');
+    }
+
     readonly ashipApiUrl = "https://aship.skyit.vn/api/ApiShipping";
 
     getProvinceAship(request): Observable<City[]> {

@@ -39,7 +39,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     if (this.defaultVal) {
       this.paymentForm.patchValue(this.defaultVal);
-      var paymentDate = this.intlService.parseDate(this.defaultVal.paymentDate);
+      var paymentDate = new Date(this.defaultVal.paymentDate);
       this.paymentForm.get('paymentDateObj').setValue(paymentDate);
     }
 
@@ -86,7 +86,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   create() {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
-    val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'g', 'en-US');
+    val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
     return this.registerPaymentService.create(val);
   }
 

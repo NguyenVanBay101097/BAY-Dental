@@ -83,7 +83,7 @@ export class SaleOrderListComponent implements OnInit {
     }
 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa hóa đơn';
+    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.saleOrderService.unlink(this.selectedIds).subscribe(() => {

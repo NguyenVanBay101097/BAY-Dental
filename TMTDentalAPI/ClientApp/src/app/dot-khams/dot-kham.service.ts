@@ -12,6 +12,7 @@ import { AccountInvoiceCbx } from '../account-invoices/account-invoice.service';
 import { DotKhamPaging, DotKhamDefaultGet, DotKhamDisplay, DotKhamStepDisplay, DotKhamPatch } from './dot-khams';
 import { AppointmentDisplay } from '../appointment/appointment';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from '../shared/shared';
+import { LaboOrderBasic } from '../labo-orders/labo-order.service';
 
 
 
@@ -68,6 +69,10 @@ export class DotKhamService {
 
     getLaboOrderLines(id: string): Observable<LaboOrderLineBasic[]> {
         return this.http.post<LaboOrderLineBasic[]>(this.baseApi + this.apiUrl + `/${id}/GetLaboOrderLines`, null);
+    }
+
+    getLaboOrders(id: string): Observable<LaboOrderBasic[]> {
+        return this.http.get<LaboOrderBasic[]>(this.baseApi + this.apiUrl + `/${id}/GetLaboOrders`);
     }
 
     getCustomerInvoices(id: string): Observable<AccountInvoiceCbx[]> {

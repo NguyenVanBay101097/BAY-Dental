@@ -130,6 +130,8 @@ namespace Infrastructure.Services
             var dotKhamIds = new List<Guid>().AsEnumerable();
             foreach (var sale in self)
             {
+                if (sale.DotKhams.Any())
+                    throw new Exception("Không thể hủy phiếu điều trị đã có đợt khám.");
                 foreach (var line in sale.OrderLines)
                 {
                     invoiceIds = invoiceIds.Union(line.SaleOrderLineInvoiceRels.Select(x => x.InvoiceLine.Invoice.Id).Distinct().ToList());
@@ -165,6 +167,25 @@ namespace Infrastructure.Services
 
                 sale.State = "cancel";
                 _GetInvoiced(new List<SaleOrder>() { sale });
+            }
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionDone(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .ToListAsync();
+
+            foreach (var sale in self)
+            {
+                foreach (var line in sale.OrderLines)
+                {
+                    line.State = "done";
+                }
+
+                sale.State = "done";
             }
 
             await UpdateAsync(self);
@@ -461,6 +482,22 @@ namespace Infrastructure.Services
             }
 
             return invoices.Values.ToList();
+        }
+
+        public async Task<SaleOrderPrintVM> GetPrint(Guid id)
+        {
+            var order = await SearchQuery(x => x.Id == id)
+               .Include(x => x.Partner)
+               .Include(x => x.Company)
+               .Include(x => x.Company.Partner)
+               .Include(x => x.OrderLines)
+               .Include("OrderLines.Product")
+               .FirstOrDefaultAsync();
+            var res = _mapper.Map<SaleOrderPrintVM>(order);
+            var partnerObj = GetService<IPartnerService>();
+            res.CompanyAddress = partnerObj.GetFormatAddress(order.Company.Partner);
+            res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
+            return res;
         }
 
         public async Task<AccountInvoice> PrepareInvoice(SaleOrder order, AccountJournal journal)

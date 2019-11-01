@@ -108,7 +108,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <!-- <kendo-dateinput formControlName="dateObj" [format]="'dd-MM-yyyy HH:mm'">
                                                                     </kendo-dateinput> -->
-                                    {{dotKhamForm.get('date').value | date : 'shortDate'}}
+                                    {{dotKhamForm.get('date').value | date : 'short'}}
                                 </td>
                             </tr>
                         </tbody>
@@ -355,7 +355,7 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Mã</th>
+                                            <th>Số</th>
                                             <th>Ngày</th>
                                             <th>#</th>
                                         </tr>
@@ -384,19 +384,19 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Mã</th>
-                                            <th>Tên labo</th>
-                                            <th>Số lượng</th>
+                                            <th>Số</th>
+                                            <th>Nhà cung cấp</th>
                                             <th>Ngày gửi</th>
+                                            <th>Tổng tiền</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let line of laboOrderLines">
-                                            <td><a class="text-primary" style="cursor: pointer;"
-                                                    (click)="editLaboLine(line)">{{line.name}}</a></td>
-                                            <td>{{ line.product ? line.product.name : '' }}</td>
-                                            <td>{{ line.quantity | number }}</td>
-                                            <td>{{ line.sentDate | date : 'shortDate' }}</td>
+                                        <tr *ngFor="let order of laboOrders">
+                                            <td><a [routerLink]="['/labo-orders/edit/', order.id]"
+                                                    style="cursor: pointer;">{{order.name}}</a></td>
+                                            <td>{{ order.partnerName }}</td>
+                                            <td>{{ order.dateOrder | date : 'short' }}</td>
+                                            <td>{{ order.amountTotal | number }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

@@ -37,6 +37,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { DotKhamStepService, DotKhamStepAssignDotKhamVM } from '../dot-kham-step.service';
+import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
 
 @Component({
   selector: 'app-dot-kham-create-update',
@@ -73,7 +74,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   dotKhamStepList: DotKhamStepDisplay[] = [];
 
   toaThuocs: ToaThuocBasic[] = [];
-  laboOrderLines: LaboOrderLineBasic[] = [];
+  laboOrders: LaboOrderBasic[] = [];
   appointments: AppointmentBasic[] = [];
   customerInvoicesList: AccountInvoiceCbx[] = [];
 
@@ -153,7 +154,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     // this.loadAppointments();
     // this.loadDotKhamSteps();
     this.loadDotKhamStepList();
-    this.loadLaboOrderLines();
+    this.loadLaboOrders();
     this.loadProductSimpleList();
 
     this.filterChangeCombobox();
@@ -175,7 +176,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       })).subscribe(result => {
         this.dotKham = result;
         this.dotKhamForm.patchValue(result);
-        let date = this.intlService.parseDate(result.date);
+        let date = new Date(result.date);
         this.dotKhamForm.get('dateObj').patchValue(date);
         if (result.doctor) {
           this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [result.doctor], 'id');
@@ -263,10 +264,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   //   }
   // }
 
-  loadLaboOrderLines() {
+  loadLaboOrders() {
     if (this.id) {
-      this.dotKhamService.getLaboOrderLines(this.id).subscribe(result => {
-        this.laboOrderLines = result;
+      this.dotKhamService.getLaboOrders(this.id).subscribe(result => {
+        this.laboOrders = result;
       })
     }
   }
@@ -362,7 +363,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       // modalRef.componentInstance.dotKhamId = this.id;
 
       // modalRef.result.then(() => {
-      //   this.loadLaboOrderLines();
+      //   this.loadLaboOrders();
       // }, () => {
       // });
     }
@@ -455,7 +456,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
 
     modalRef.result.then(() => {
-      this.loadLaboOrderLines();
+      this.loadLaboOrders();
     }, () => {
     });
   }
@@ -980,7 +981,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         case 'cancel':
           return { text: 'Đã hủy', color: '#cc0000' };
         case 'done':
-          return { text: 'Kết thúc', color: '#666666' };
+          return { text: 'Đã tới', color: '#666666' };
         case 'waiting':
           return { text: 'Đang chờ', color: '#0080ff' };
         case 'expired':

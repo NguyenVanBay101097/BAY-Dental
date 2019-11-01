@@ -18,5 +18,7 @@ namespace Infrastructure.Services
         LaboOrderDisplay DefaultGet(LaboOrderDefaultGet val);
         Task ButtonConfirm(IEnumerable<Guid> ids);
         Task ButtonCancel(IEnumerable<Guid> ids);
+        Task<LaboOrderPrintVM> GetPrint(Guid id);
+        Task<IEnumerable<LaboOrderBasic>> GetAllForDotKham(Guid dotKhamId);
     }
 }

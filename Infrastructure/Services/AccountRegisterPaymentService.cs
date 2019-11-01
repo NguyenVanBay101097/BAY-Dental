@@ -80,6 +80,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => x.Id == Id)
                 .Include(x => x.Partner)
                 .Include(x => x.Journal).Include(x => x.Journal.Sequence)
+                .Include(x => x.Journal.Company)
                 .Include(x => x.Journal.DefaultCreditAccount)
                 .Include(x => x.Journal.DefaultDebitAccount)
                 .Include(x => x.AccountRegisterPaymentInvoiceRels)

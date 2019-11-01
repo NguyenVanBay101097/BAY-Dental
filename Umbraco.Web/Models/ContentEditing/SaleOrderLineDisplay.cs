@@ -6,6 +6,11 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderLineDisplay
     {
+        public SaleOrderLineDisplay()
+        {
+            State = "draft";
+        }
+
         public Guid Id { get; set; }
 
         public decimal PriceUnit { get; set; }
@@ -37,6 +42,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public ToothCategoryBasic ToothCategory { get; set; }
 
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+
+        public string State { get; set; }
 
         public int? Sequence { get; set; }
     }

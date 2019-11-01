@@ -24,7 +24,7 @@
                                         [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState.state == 'draft'">{{line.product ? line.product.name : ''}}</span>
+                                        [class.d-none]="lineState == 'draft'">{{line.product ? line.product.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -36,7 +36,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" [class.d-none]="lineState != 'draft'"
                                         formControlName="color" />
-                                    <span *ngIf="line" [class.d-none]="lineState.state == 'draft'">{{line.color}}</span>
+                                    <span *ngIf="line" [class.d-none]="lineState == 'draft'">{{line.color}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -48,7 +48,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <textarea type="text" class="form-control" [class.d-none]="lineState != 'draft'"
                                         formControlName="note"></textarea>
-                                    <pre *ngIf="line" [class.d-none]="lineState.state == 'draft'">{{line.note}}</pre>
+                                    <pre *ngIf="line" [class.d-none]="lineState == 'draft'">{{line.note}}</pre>
                                 </td>
                             </tr>
                         </tbody>
@@ -66,7 +66,7 @@
                                         [format]="'n0'" formControlName="productQty">
                                     </kendo-numerictextbox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState.state == 'draft'">{{line.productQty | number}}</span>
+                                        [class.d-none]="lineState == 'draft'">{{line.productQty | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -80,7 +80,7 @@
                                         [format]="'n0'" formControlName="priceUnit">
                                     </kendo-numerictextbox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState.state == 'draft'">{{line.priceUnit | number}}</span>
+                                        [class.d-none]="lineState == 'draft'">{{line.priceUnit | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -112,7 +112,7 @@
                                         #toothCategoryCbx [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState.state == 'draft'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
+                                        [class.d-none]="lineState == 'draft'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
                                 </td>
                             </tr>
                         </tbody>

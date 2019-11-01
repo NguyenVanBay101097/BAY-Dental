@@ -21,5 +21,8 @@ namespace Infrastructure.Services
         Task<string> UploadImage(IFormFile file);
         Task<PartnerInfoViewModel> GetInfo(Guid id);
         Task<PagedResult2<AccountInvoiceDisplay>> GetCustomerInvoices(AccountInvoicePaged val);
+        Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
+       DateTime? fromDate = null,
+       DateTime? toDate = null);
     }
 }

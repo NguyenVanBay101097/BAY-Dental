@@ -8,4 +8,5 @@ export class SaleOrderLineDisplay {
     productId: string;
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
+    state: string;
 }
