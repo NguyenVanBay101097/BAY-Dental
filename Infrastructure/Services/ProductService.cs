@@ -347,5 +347,17 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        //public override ISpecification<Product> RuleDomainGet(IRRule rule)
+        //{
+        //    var companyId = CompanyId;
+        //    switch (rule.Code)
+        //    {
+        //        case "product_comp_rule":
+        //            return new InitialSpecification<Product>(x => x.CompanyId == companyId);
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }

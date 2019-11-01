@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -88,6 +89,18 @@ namespace Infrastructure.Services
                     Name = x.Name
                 }).ToListAsync();
             return items;
+        }
+
+        public override ISpecification<AccountJournal> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.journal_comp_rule":
+                    return new InitialSpecification<AccountJournal>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

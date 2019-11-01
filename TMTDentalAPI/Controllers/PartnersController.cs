@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
@@ -14,6 +15,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
+using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -148,7 +151,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("UploadImage/{id}")]
-        public async Task<IActionResult> UploadImage(Guid id,IFormFile file)
+        public async Task<IActionResult> UploadImage(Guid id, IFormFile file)
         {
             var path = await _partnerService.UploadImage(file);
 
@@ -164,7 +167,7 @@ namespace TMTDentalAPI.Controllers
             patch.ApplyTo(entityMap);
 
             entity = _mapper.Map(entityMap, entity);
-            
+
             await _partnerService.UpdateAsync(entity);
 
             return Ok();
@@ -224,6 +227,32 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _partnerService.GetCustomerInvoices(val);
             return Ok(res);
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExcelImport(IFormFile file)
+        {
+            await _partnerService.ImportExcel2(file);
+            return Ok();
+        }
+
+    //Check địa chỉ 
+    [HttpGet("CheckAddress")]
+        public async Task<IActionResult> CheckAddress([FromQuery]string text)
+        {
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(response.Content.ReadAsAsync<IEnumerable<AddressCheckApi>>());
+            }
+            else
+            {
+                return Ok();
+            }
         }
     }
 }

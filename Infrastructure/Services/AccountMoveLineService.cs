@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -248,6 +249,18 @@ namespace Infrastructure.Services
             {
                 await invObj.UpdatePayments(invoiceIds);
                 await invObj.UpdateResidual(invoiceIds);
+            }
+        }
+
+        public override ISpecification<AccountMoveLine> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.moveline_comp_rule":
+                    return new InitialSpecification<AccountMoveLine>(x => x.CompanyId == companyId);
+                default:
+                    return null;
             }
         }
     }

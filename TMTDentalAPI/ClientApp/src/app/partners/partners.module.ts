@@ -19,12 +19,14 @@ import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/p
 import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { MatStepperModule } from '@angular/material/stepper';
+import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-invoice-lines.component';
+import { PartnerImportComponent } from './partner-import/partner-import.component';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
     PartnerCustomerListComponent, PartnerCustomerListDetailComponent, PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent, PartnerHistoryComponent, PartnerDetailListComponent, PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent],
+    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
@@ -33,7 +35,7 @@ import { MatStepperModule } from '@angular/material/stepper';
     FormsModule,
     MatStepperModule
   ],
-  entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent],
+  entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent, PartnerImportComponent],
   providers: [
     PartnerService
   ]

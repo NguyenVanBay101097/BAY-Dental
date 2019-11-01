@@ -1,0 +1,25 @@
+<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
+    [loading]="gridLoading">
+    <!--[selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)"-->
+    <kendo-grid-column field="name" title="Tên dịch vụ">
+    </kendo-grid-column>
+    <kendo-grid-column title="Răng">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{lineTeeth(dataItem.teeth)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Hóa đơn">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.invoice ? dataItem.invoice.number :'' }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="dateOrder" title="Ngày điều trị">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{(dataItem.invoice ? dataItem.invoice.dateOrder : '' )| date : 'shortDate' }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Chẩn đoán" field="diagnostic">
+    </kendo-grid-column>
+    <kendo-grid-messages pagerItems="dòng" noRecords="Không có dịch vụ nào" pagerOf="/">
+    </kendo-grid-messages>
+</kendo-grid>

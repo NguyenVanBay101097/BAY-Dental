@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WindowService, WindowRef, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { SortDescriptor, orderBy } from '@progress/kendo-data-query';
 import { PartnerService } from '../partner.service';
 import { PartnerBasic, PartnerPaged, PartnerDisplay } from '../partner-simple';
 import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent, GridComponent, SelectionEvent, CellClickEvent } from '@progress/kendo-angular-grid';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { KendoButtonService } from '@progress/kendo-angular-buttons';
+import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
+import { PartnerImportComponent } from '../partner-import/partner-import.component';
 
 
 @Component({
@@ -22,6 +25,8 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 })
 export class PartnerListComponent implements OnInit {
 
+  @ViewChild('grid', { static: true }) grid: GridComponent;
+  expandKeys: string[] = [];
   // gridData: PartnerBasic[];
   loading = false;
   gridView: GridDataResult;
@@ -252,5 +257,55 @@ export class PartnerListComponent implements OnInit {
     return today.getFullYear() - y;
   }
 
+  rowSelectionChange(e: SelectionEvent) {
+    console.log(e.selectedRows[0]);
+    console.log(e);
+    var selected = e.selectedRows[0];
+    if (e.selectedRows.indexOf(selected) == -1) {
+      console.log(1);
+      this.grid.collapseRow(selected.index);
+    } else if (e.selectedRows.indexOf(selected) > -1) {
+      console.log(2);
+      this.grid.expandRow(selected.index);
+    }
+    // this.getInvoiceDetail(e.selectedRows[0].dataItem.id);
+  }
 
+  cellClick(e: CellClickEvent) {
+    console.log(e);
+    this.grid.expandRow(e.rowIndex);
+    var index = this.expandKeys.indexOf(e.dataItem.id);
+    if (index == -1) {
+      this.expandKeys.push(e.dataItem.id)
+      this.grid.expandRow(e.rowIndex);
+    } else if (index > -1) {
+      this.expandKeys.splice(index, 1);
+      this.grid.collapseRow(e.rowIndex);
+    }
+    // if(this.grid.row)
+    // this.grid.selectionChange.toPromise().then(
+    //   rs => {
+    //     var item = { dataItem: e.dataItem, index: e.rowIndex };
+    //     console.log(rs.selectedRows.indexOf(item));
+    //     if (rs.selectedRows.indexOf(item) == -1) {
+    //       rs.selectedRows.push(item);
+    //       this.grid.expandRow(e.rowIndex);
+    //     } else {
+    //       rs.selectedRows.splice(0, 1);
+    //       this.grid.collapseRow(e.rowIndex);
+    //     }
+
+    //   }
+    // )
+  }
+
+  importFromExcel() {
+    const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(
+      rs => {
+        this.getPartnersList();
+      },
+      er => { }
+    )
+  }
 }

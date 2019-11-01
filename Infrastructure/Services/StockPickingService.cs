@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -119,6 +120,18 @@ namespace Infrastructure.Services
             }
           
             await UpdateAsync(self);
+        }
+
+        public override ISpecification<StockPicking> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "stock.picking_comp_rule":
+                    return new InitialSpecification<StockPicking>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

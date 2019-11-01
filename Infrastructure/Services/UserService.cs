@@ -1,4 +1,6 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -23,5 +25,17 @@ namespace Infrastructure.Services
         {
             return _userManager.Users.Where(x => x.Id == id);
         }
+
+        //public override ISpecification<ApplicationUser> RuleDomainGet(IRRule rule)
+        //{
+        //    var companyId = CompanyId;
+        //    switch (rule.Code)
+        //    {
+        //        case "account.invoice_comp_rule":
+        //            return new InitialSpecification<ApplicationUser>(x => x.CompanyId == companyId);
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }

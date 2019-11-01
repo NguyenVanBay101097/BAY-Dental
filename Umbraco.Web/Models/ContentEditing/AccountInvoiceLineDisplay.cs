@@ -34,6 +34,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ToothId { get; set; }
         public ToothBasic Tooth { get; set; }
 
+        public Guid? InvoiceId { get; set; }
+        public AccountInvoiceSimple Invoice { get; set; }
+
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
     }
 }

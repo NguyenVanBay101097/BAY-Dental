@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -181,6 +182,18 @@ namespace Infrastructure.Services
                 Prefix = "LH",
                 Padding = 4,
             });
+        }
+
+        public override ISpecification<Appointment> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "appointment_comp_rule":
+                    return new InitialSpecification<Appointment>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -56,6 +57,18 @@ namespace Infrastructure.Services
                 line.SalesmanId = order.UserId;
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
+            }
+        }
+
+        public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "sale.order.line_comp_rule":
+                    return new InitialSpecification<SaleOrderLine>(x => x.CompanyId == companyId);
+                default:
+                    return null;
             }
         }
     }

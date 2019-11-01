@@ -304,6 +304,16 @@ a {
 
 .o_content .o_form_view .o_form_sheet_bg .o_form_maxwidth{
      max-width: 100%;
+}
+
+.o_form_view .o_group .o_group_col_6_fixed {
+  display: inline-block;
+  width: 48%;
+  vertical-align: top;
+}
+
+.o_table_right{
+     float: right;
  }
 
  .o_form_view .o_group .o_group_col_4 {
@@ -389,4 +399,30 @@ a {
 
 .o_grid_group .o_grid_group_divider {
     margin : 5px 0;
+}
+
+/* Label cho cột phải và trái */
+.o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label_right {
+  padding: 0px 15px 15px 0px;
+}
+
+.o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label_left {
+  padding: 0px 15px 15px 0px;
+}
+
+/* Các form bên cột phải và trái */
+/* .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_control_right{
+  padding: 0 0 0 45px;
+} 
+.o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_control_left{
+  padding: 0 45px 0 0;
+} */
+
+.k-hierarchy-col, .k-hierarchy-cell{
+    display: none;
+}
+
+.o_address_detail{
+    font-size: 0.8em;
+    padding: 0 10px; 
 }

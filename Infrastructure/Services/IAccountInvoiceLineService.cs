@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,6 @@ namespace Infrastructure.Services
         Task<AccountInvoiceLineDisplay> DefaultGet(AccountInvoiceLineDefaultGet val);
         Task<AccountInvoiceLineOnChangeProductResult> OnChangeProduct(AccountInvoiceLineOnChangeProduct val);
         Task<IEnumerable<AccountInvoiceLineSimple>> GetDotKhamInvoiceLine(Guid id);
+        Task<PagedResult2<AccountInvoiceLineDisplay>> GetPagedResultAsync(AccountInvoiceLinesPaged val);
     }
 }

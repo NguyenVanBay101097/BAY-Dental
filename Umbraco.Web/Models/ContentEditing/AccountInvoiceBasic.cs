@@ -97,4 +97,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string UserId { get; set; }
     }
+
+    public class AccountInvoiceSimple
+    {
+        public Guid Id { get; set; }
+
+        public string Number { get; set; }
+
+        public DateTime? DateOrder { get; set; }
+    }
 }

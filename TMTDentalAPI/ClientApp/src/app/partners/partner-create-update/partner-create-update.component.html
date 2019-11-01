@@ -23,14 +23,14 @@
                 <div class="oe_title">
                     <label *ngIf="queryCustomer" class="o_form_label oe_edit_only required-label">Tên khách
                         hàng</label>
-                    <label *ngIf="!queryCustomer" class="o_form_label oe_edit_only">Tên NCC</label>
+                    <label *ngIf="!queryCustomer" class="o_form_label oe_edit_only required-label">Tên NCC</label>
                     <h1>
                         <input class="form-control" formControlName="name">
                     </h1>
                 </div>
                 <!---------------------------- CUSTOMER ---------------------------------->
                 <div class="o_group" *ngIf="queryCustomer">
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6_fixed">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_left">
@@ -42,18 +42,24 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_left">
-                                    <label class="o_form_label">Giới</label>
+                                    <label class="o_form_label">Giới tính</label>
                                 </td>
                                 <td colspan="1" style="width:100%" class="o_td_control_left">
-                                    <input type="radio" class="radio-gender-male" value="Male" id="male"
-                                        formControlName="gender" />
-                                    <label for="male">Nam</label>
-                                    <input type="radio" class="radio-gender-female" value="Female" id="female"
-                                        formControlName="gender" />
-                                    <label for="female">Nữ</label>
-                                    <input type="radio" class="radio-gender-other" value="Other" id="other"
-                                        formControlName="gender" />
-                                    <label for="other">Khác</label>
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" class="radio-gender-male" value="Male"
+                                                formControlName="gender" />
+                                            Nam
+                                        </label>
+                                        <label><input type="radio" class="radio-gender-female" value="Female"
+                                                formControlName="gender" />
+                                            Nữ
+                                        </label>
+                                        <label><input type="radio" class="radio-gender-other" value="Other"
+                                                formControlName="gender" />
+                                            Khác
+                                        </label>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -99,7 +105,7 @@
                                     <label class="o_form_label">Tiểu sử bệnh</label>
                                 </td>
                                 <td colspan="1" style="width:100%" class="o_td_control_left">
-                                    <div *ngFor="let i of historiesList">
+                                    <div *ngFor="let i of historiesList" class="checkbox">
                                         <label><input type="checkbox" [checked]="checked(i)"
                                                 (change)="checkboxChange(i,$event.target.checked)" /> {{i.name}}
                                         </label>
@@ -117,7 +123,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6_fixed o_table_right">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_right">
@@ -132,7 +138,37 @@
                                     <label class="o_form_label">Số nhà</label>
                                 </td>
                                 <td colspan="1" style="width:100%" class="o_td_control_right">
-                                    <input class="form-control" formControlName="street" />
+                                    <div class="input-group">
+                                        <input class="form-control" formControlName="street" />
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-light" [disabled]="!formCreate.get('street').value"
+                                                (click)="checkAddressApi()">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="o_address_detail" *ngIf="addressCheck.length>0">
+                                        <span class="text-primary">"{{checkedText}}"</span>
+                                        <table class="table table-hover table-sm">
+                                            <tbody>
+                                                <tr *ngFor="let ad of addressCheck; let i = index">
+                                                    <td (click)="chooseAddress(ad,i)">
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" [value]="i"
+                                                                    [checked]="getAddressCheckDetail.value==i"
+                                                                    formControlName="addressCheckDetail" />
+                                                                {{ad.address}}
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- <div *ngFor="let i of addressCheck" class="o_address_detail">
+                                        <div (click)="chooseAddress(i)">{{i.address}}</div>
+                                    </div> -->
                                 </td>
                             </tr>
                             <tr>
@@ -170,14 +206,13 @@
                                     </kendo-combobox>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
 
                 <!-------------------------------------- SUPPLIER --------------------------------->
                 <div class="o_group" *ngIf="!queryCustomer">
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6_fixed">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_left">
@@ -198,31 +233,16 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_left">
-                                    <label class="o_form_label">Số Fax</label>
-                                </td>
-                                <td colspan="1" style="width:100%" class="o_td_control_left">
-                                    <input class="form-control" (input)="onlyGetNumbers('fax')" maxlength="10"
-                                        formControlName="fax" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
                                     <label class="o_form_label">Email</label>
                                 </td>
                                 <td colspan="1" style="width:100%" class="o_td_control_left">
                                     <input class="form-control" formControlName="email" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
-                                    <label class="o_form_label">Ghi chú</label></td>
-                                <td colspan="1" style="width:100%" class="o_td_control_left">
-                                    <textarea class="form-control" formControlName="comment"></textarea>
-                                </td>
-                            </tr>
+
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6_fixed o_table_right">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_right">
@@ -233,6 +253,22 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">Số Fax</label>
+                                </td>
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
+                                    <input class="form-control" (input)="onlyGetNumbers('fax')" maxlength="10"
+                                        formControlName="fax" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">Ghi chú</label></td>
+                                <td colspan="1" style="width:100%" class="o_td_control_left">
+                                    <textarea class="form-control" formControlName="comment"></textarea>
+                                </td>
+                            </tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label o_td_label_right">
                                     <label class="o_form_label">Tỉnh/Thành</label>
                                 </td>
@@ -266,7 +302,7 @@
                                         (filterChange)="filterWard($event)">
                                     </kendo-combobox>
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
@@ -280,7 +316,7 @@
                                         <div class="tab-pane fade show active" id="home" role="tabpanel"
                                             aria-labelledby="home-tab">
                                             <div class="o_group">
-                                                <table class="o_group o_inner_group o_group_col_6">
+                                                <table class="o_group o_inner_group o_group_col_6_fixed">
                                                     <tbody>
                                                         <tr>
                                                             <td colspan="1" class="o_td_label o_td_label_left">
@@ -306,7 +342,7 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <table class="o_group o_inner_group o_group_col_6">
+                                                <table class="o_group o_inner_group o_group_col_6_fixed o_table_right">
                                                     <tbody>
                                                         <tr>
                                                             <td colspan="1" class="o_td_label o_td_label_right">
@@ -340,23 +376,25 @@
                                     </div>
                                     <div class="d-flex">
                                         <div class="panel-source">
-                                            <div>
-                                                <input type="radio" value="ads" formControlName="source"
-                                                    id="ads" /><label for="ads">Quảng cáo</label>
+                                            <div class="radio">
+                                                <label><input type="radio" value="ads" formControlName="source" />
+                                                    Quảng cáo
+                                                </label>
                                             </div>
-                                            <div>
-                                                <input type="radio" value="friend" formControlName="source"
-                                                    id="friend" /><label for="friend">Bạn
-                                                    bè</label>
+                                            <div class="radio">
+                                                <label><input type="radio" value="friend" formControlName="source" />
+                                                    Bạn bè
+                                                </label>
                                             </div>
-                                            <div>
-                                                <input type="radio" value="employee" formControlName="source"
-                                                    id="employee" /><label for="employee">Nhân
-                                                    viên</label>
+                                            <div class="radio">
+                                                <label><input type="radio" value="employee" formControlName="source">
+                                                    Nhân viên
+                                                </label>
                                             </div>
-                                            <div>
-                                                <input type="radio" value="other" formControlName="source"
-                                                    id="others" /><label for="others">Khác</label>
+                                            <div class="radio">
+                                                <label><input type="radio" value="other" formControlName="source" />
+                                                    Khác
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="panel-source-detail">
@@ -411,11 +449,11 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
-        (click)="createNewCustomer()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+        (click)="createNewCustomer()">&nbsp;Lưu</button>
     <!-- <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button> -->
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)"><i
-            class="fas fa-window-close"></i>&nbsp;Đóng</button>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)">
+        Đóng</button>
 
     <button type="button" hidden class="btn btn-primary btn-sm mr-2" *ngIf="cusId==null" (click)="createNewAndMore()"><i
             class="fas fa-plus-circle"></i>&nbsp;Lưu và Thêm mới</button>

@@ -21,5 +21,7 @@ namespace Infrastructure.Services
         Task<string> UploadImage(IFormFile file);
         Task<PartnerInfoViewModel> GetInfo(Guid id);
         Task<PagedResult2<AccountInvoiceDisplay>> GetCustomerInvoices(AccountInvoicePaged val);
+        Task ImportExcel(IFormFile file);
+        Task ImportExcel2(IFormFile file);
     }
 }

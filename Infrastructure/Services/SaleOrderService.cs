@@ -142,5 +142,17 @@ namespace Infrastructure.Services
             res.User = _mapper.Map<ApplicationUserSimple>(user);
             return res;
         }
+
+        public override ISpecification<SaleOrder> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "sale.order_comp_rule":
+                    return new InitialSpecification<SaleOrder>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 }
