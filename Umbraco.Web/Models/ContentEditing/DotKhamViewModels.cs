@@ -58,6 +58,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DotKhamDisplay()
         {
             Date = DateTime.Now;
+            State = "draft";
         }
 
         public Guid Id { get; set; }

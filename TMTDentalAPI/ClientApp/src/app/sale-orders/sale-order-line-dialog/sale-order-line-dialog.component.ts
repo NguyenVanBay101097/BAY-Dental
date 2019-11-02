@@ -8,7 +8,7 @@ import { ProductSimple } from 'src/app/products/product-simple';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDisplay } from '../sale-order-line-display';
-import { SaleOrderLineService } from '../sale-order-line.service';
+import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from '../sale-order-line.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 
@@ -27,6 +27,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
+
+  partnerId: string;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     public activeModal: NgbActiveModal, private saleLineService: SaleOrderLineService,
@@ -181,10 +183,14 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   onChangeProduct(value: any) {
-    var val = this.saleLineForm.value;
-    this.saleLineService.onChangeProduct(val).subscribe(result => {
-      this.saleLineForm.patchValue(result);
-    });
+    if (value) {
+      var val = new SaleOrderLineOnChangeProduct();
+      val.productId = value.id;
+      val.partnerId = this.partnerId;
+      this.saleLineService.onChangeProduct(val).subscribe(result => {
+        this.saleLineForm.patchValue(result);
+      });
+    }
   }
 
   onChangeToothCategory(value: any) {

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { IRModelBasic } from 'src/app/ir-models/ir-model';
+import { IRModelBasic, IRModelPaged } from 'src/app/ir-models/ir-model';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { IRModelService } from 'src/app/ir-models/ir-model.service';
@@ -26,7 +26,7 @@ export class ResGroupAccessCuDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
+      // name: ['', Validators.required],
       model: [null, Validators.required],
       permRead: true,
       permCreate: true,
@@ -35,10 +35,12 @@ export class ResGroupAccessCuDialogComponent implements OnInit {
     });
 
     if (this.item) {
-      if (this.item.model) {
-        this.listModels = _.unionBy(this.listModels, [this.item.model], 'id');
-      }
-      this.formGroup.patchValue(this.item);
+      setTimeout(() => {
+        if (this.item.model) {
+          this.listModels = _.unionBy(this.listModels, [this.item.model], 'id');
+        }
+        this.formGroup.patchValue(this.item);
+      });
     }
 
     this.modelCbx.filterChange.asObservable().pipe(
@@ -51,13 +53,25 @@ export class ResGroupAccessCuDialogComponent implements OnInit {
     });
 
 
+    // setTimeout(() => {
+    //   this.nameInput.nativeElement.focus();
+    // }, 200);
     setTimeout(() => {
-      this.nameInput.nativeElement.focus();
-    }, 200);
+      this.loadListModels();
+    });
+  }
+
+  loadListModels() {
+    return this.searchModels().subscribe(result => {
+      this.listModels = _.unionBy(this.listModels, result.items, 'id');
+    });
   }
 
   searchModels(q?: string) {
-    return this.modelService.getPaged(new HttpParams().set('filter', q));
+    var paged = new IRModelPaged();
+    paged.limit = 20;
+    paged.filter = q || '';
+    return this.modelService.getPaged(paged);
   }
 
   onSave() {

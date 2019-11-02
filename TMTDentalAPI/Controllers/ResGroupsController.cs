@@ -22,15 +22,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IMyCache _cache;
+        private readonly IUserService _userService;
 
         public ResGroupsController(IResGroupService resGroupService,
             IMapper mapper, IIRModelAccessService modelAccessService,
-            IMyCache cache)
+            IMyCache cache, IUserService userService)
         {
             _resGroupService = resGroupService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
             _cache = cache;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -65,8 +67,15 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService.Check("ResGroup", "Create");
             var group = _mapper.Map<ResGroup>(val);
             SaveAccesses(val, group);
+
+            var refreshCacheUserIds = new List<string>().AsEnumerable();
+            refreshCacheUserIds = refreshCacheUserIds.Union(group.ResGroupsUsersRels.Select(x => x.UserId).ToList());
+            refreshCacheUserIds = refreshCacheUserIds.Union(val.Users.Select(x => x.Id).ToList());
+
             SaveUsers(val, group);
             await _resGroupService.CreateAsync(group);
+
+            _userService.ClearSecurityCache(refreshCacheUserIds);
 
             val.Id = group.Id;
             return Ok(val);
@@ -86,10 +95,14 @@ namespace TMTDentalAPI.Controllers
             group = _mapper.Map(val, group);
             SaveAccesses(val, group);
 
-            var refreshCacheUsers = new List<ApplicationUser>();
+            var refreshCacheUserIds = new List<string>().AsEnumerable();
+            refreshCacheUserIds = refreshCacheUserIds.Union(group.ResGroupsUsersRels.Select(x => x.UserId).ToList());
+            refreshCacheUserIds = refreshCacheUserIds.Union(val.Users.Select(x => x.Id).ToList());
 
-            SaveUsers(val, group, refreshCacheUsers);
+            SaveUsers(val, group);
             await _resGroupService.UpdateAsync(group);
+
+            _userService.ClearSecurityCache(refreshCacheUserIds);
 
             return NoContent();
         }
@@ -98,10 +111,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             _modelAccessService.Check("ResGroup", "Unlink");
-            var group = await _resGroupService.GetByIdAsync(id);
+            var group = await _resGroupService.SearchQuery(x => x.Id == id).Include(x => x.ModelAccesses)
+               .Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
             if (group == null)
                 return NotFound();
             await _resGroupService.DeleteAsync(group);
+
+            var refreshCacheUserIds = new List<string>().AsEnumerable();
+            refreshCacheUserIds = refreshCacheUserIds.Union(group.ResGroupsUsersRels.Select(x => x.UserId).ToList());
+            _userService.ClearSecurityCache(refreshCacheUserIds);
 
             return NoContent();
         }
@@ -123,25 +141,51 @@ namespace TMTDentalAPI.Controllers
 
         private void SaveAccesses(ResGroupDisplay val, ResGroup group)
         {
-            foreach (var access in val.ModelAccesses)
+            var existAccesses = group.ModelAccesses.ToList();
+            var lineToRemoves = new List<IRModelAccess>();
+            foreach (var existLine in existAccesses)
             {
-                if (access.Id == Guid.Empty)
+                bool found = false;
+                foreach (var item in val.ModelAccesses)
                 {
-                    group.ModelAccesses.Add(_mapper.Map<IRModelAccess>(access));
+                    if (item.Id == existLine.Id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                group.ModelAccesses.Remove(line);
+            }
+
+            foreach (var line in val.ModelAccesses)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var acccess = _mapper.Map<IRModelAccess>(line);
+                    group.ModelAccesses.Add(acccess);
                 }
                 else
                 {
-                    _mapper.Map(access, group.ModelAccesses.SingleOrDefault(c => c.Id == access.Id));
+                    var acccess = group.ModelAccesses.SingleOrDefault(c => c.Id == line.Id);
+                    if (acccess != null)
+                    {
+                        _mapper.Map(line, acccess);
+                    }
                 }
             }
         }
 
-        private void SaveUsers(ResGroupDisplay val, ResGroup group, IList<ApplicationUser> refreshCacheUsers = null)
+        private void SaveUsers(ResGroupDisplay val, ResGroup group)
         {
             if (val.Users == null)
                 return;
-            if (refreshCacheUsers == null)
-                refreshCacheUsers = new List<ApplicationUser>();
 
             group.ResGroupsUsersRels.Clear();
             foreach(var user in val.Users)

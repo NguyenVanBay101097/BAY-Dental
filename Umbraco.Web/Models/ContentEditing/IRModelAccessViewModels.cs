@@ -6,6 +6,11 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class IRModelAccessDisplay
     {
+        public IRModelAccessDisplay()
+        {
+            Name = "/";
+        }
+
         public Guid Id { get; set; }
 
         public string Name { get; set; }

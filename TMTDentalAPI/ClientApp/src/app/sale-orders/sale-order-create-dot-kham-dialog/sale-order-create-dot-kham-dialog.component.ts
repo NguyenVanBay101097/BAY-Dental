@@ -73,7 +73,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     this.dotKhamService.defaultGet(val).subscribe(result => {
       console.log(result);
       this.dotKhamForm.patchValue(result);
-      let date = this.intlService.parseDate(result.date);
+      let date = new Date(result.date);
       this.dotKhamForm.get('dateObj').patchValue(date);
     });
   }

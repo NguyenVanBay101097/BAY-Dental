@@ -220,9 +220,15 @@ namespace Infrastructure.Services
             if (string.IsNullOrEmpty(UserId))
                 return null;
             string DOMAIN_RULE_CACHE_KEY = "ir.rule-{0}-{1}-{2}";
+
             var cache = GetService<IMyCache>();
             var userObj = GetService<IUserService>();
             var key = string.Format(DOMAIN_RULE_CACHE_KEY, UserId, model_name, mode);
+
+            var tenant = _httpContextAccessor.HttpContext.GetTenant<AppTenant>();
+            if (tenant != null)
+                key = tenant.Hostname + "-" + key;
+
             var res = cache.GetOrCreate(key, entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);

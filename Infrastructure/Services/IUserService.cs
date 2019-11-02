@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface IUserService
     {
         IQueryable<ApplicationUser> GetQueryById(string id);
+        void ClearSecurityCache(IEnumerable<string> ids);
     }
 }

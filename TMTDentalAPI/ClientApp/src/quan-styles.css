@@ -418,9 +418,10 @@ a {
   padding: 0 45px 0 0;
 } */
 
-.k-hierarchy-col, .k-hierarchy-cell{
+/*Ảnh hưởng đến những grid khác*/
+/* .k-hierarchy-col, .k-hierarchy-cell{
     display: none;
-}
+} */
 
 .o_address_detail{
     font-size: 0.8em;

@@ -29,6 +29,7 @@ namespace Infrastructure.Services
             "AccountPartialReconcile",
             "StockMove",
             "StockLocation",
+            "StockPickingType",
             "StockQuant",
             "StockWarehouse",
             "IrAttachment",
@@ -36,11 +37,13 @@ namespace Infrastructure.Services
             "UoM",
             "ProductStep",
             "AccountRegisterPayment",
+            "AccountInvoice",
             "AccountInvoiceLine",
             "DotKhamStep",
             "ToothCategory",
             "Tooth",
-            "ProductPricelistItem"
+            "ProductPricelistItem",
+            "SaleOrderLine"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,
@@ -59,6 +62,8 @@ namespace Infrastructure.Services
 
             var CACHE_KEY = "ir.model.access-{0}-{1}-{2}";
             var key = string.Format(CACHE_KEY, UserId, model, mode);
+            if (_tenant != null)
+                key = _tenant.Hostname + "-" + key;
 
             var result = _cache.GetOrCreate(key, entry =>
             {

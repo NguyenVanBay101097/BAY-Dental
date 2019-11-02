@@ -40,7 +40,6 @@ export class ResGroupCreateUpdateComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     if (this.id) {
       this.groupService.get(this.id).subscribe(result => {
-        console.log(result);
         this.groupForm.patchValue(result);
         result.modelAccesses.forEach(line => {
           this.modelAccesses.push(this.fb.group(line));
@@ -48,7 +47,6 @@ export class ResGroupCreateUpdateComponent implements OnInit {
       });
     } else {
       this.groupService.defaultGet().subscribe(result => {
-        console.log(result);
         this.groupForm.patchValue(result);
         result.modelAccesses.forEach(line => {
           this.modelAccesses.push(this.fb.group(line));

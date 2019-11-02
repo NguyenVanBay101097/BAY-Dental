@@ -285,8 +285,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   showAddLineModal() {
+    var partner = this.formGroup.get('partner').value;
+    if (!partner) {
+      alert('Vui lòng chọn khách hàng');
+      return false;
+    }
+
     let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
+    modalRef.componentInstance.partnerId = partner.Id;
 
     modalRef.result.then(result => {
       let line = result as any;
@@ -299,9 +306,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
 
   editLine(line: FormGroup) {
+    var partner = this.formGroup.get('partner').value;
+    if (!partner) {
+      alert('Vui lòng chọn khách hàng');
+      return false;
+    }
+
     let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.line = line.value;
+    modalRef.componentInstance.partnerId = partner.Id;
 
     modalRef.result.then(result => {
       var a = result as any;

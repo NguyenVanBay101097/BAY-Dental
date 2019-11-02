@@ -67,9 +67,9 @@
   vertical-align: top;
 }
 
-/* .o_form_view .o_group.o_inner_group > tbody > tr > td {
+.o_form_view .o_group.o_inner_group > tbody > tr > td {
   padding: 0 45px 0 0;
-} */
+}
 
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
   width: 0%;

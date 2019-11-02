@@ -11,7 +11,7 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group">
                         <tbody>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Tên
@@ -20,7 +20,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="name" #nameInput />
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -28,8 +28,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="listModels" [textField]="'name'" [filterable]="true"
-                                        #modelCbx formControlName="model" [valueField]="'id'">
+                                    <kendo-combobox [data]="listModels" ngbAutofocus [textField]="'name'"
+                                        [filterable]="true" #modelCbx formControlName="model" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
