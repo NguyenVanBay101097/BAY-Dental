@@ -123,7 +123,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       step: null,
       product: null,
       appointment: null,
-      // appointmentId: null,
+      appointmentId: null,
       filter: "dotkham"
     });
 

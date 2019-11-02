@@ -14,11 +14,14 @@ namespace Infrastructure.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMyCache _cache;
         public UserService(UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IMyCache cache)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _cache = cache;
         }
 
         public IQueryable<ApplicationUser> GetQueryById(string id)
@@ -37,5 +40,15 @@ namespace Infrastructure.Services
         //            return null;
         //    }
         //}
+
+        public void ClearSecurityCache(IEnumerable<string> ids)
+        {
+            var tenant = _httpContextAccessor.HttpContext.GetTenant<AppTenant>();
+            foreach (var id in ids)
+            {
+                _cache.RemoveByPattern(string.Format("{0}ir.model.access-{1}", tenant != null ? tenant.Hostname + "-" : "", id));
+                _cache.RemoveByPattern(string.Format("{0}ir.rule-{1}", tenant != null ? tenant.Hostname + "-" : "", id));
+            }
+        }
     }
 }

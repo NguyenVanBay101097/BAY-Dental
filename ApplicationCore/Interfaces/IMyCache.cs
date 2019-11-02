@@ -11,5 +11,6 @@ namespace ApplicationCore.Interfaces
         /// Clears all cache entries.
         /// </summary>
         void Clear();
+        void RemoveByPattern(string pattern);
     }
 }

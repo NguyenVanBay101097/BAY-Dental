@@ -5,19 +5,18 @@
 "model_product","Product","Sản phẩm"
 "model_product_category","ProductCategory","Nhóm sản phẩm"
 "model_res_group","ResGroup","Nhóm quyền"
-"model_stock_picking","StockPicking","Phiếu giao nhận"
-"model_stock_picking_type","StockPickingType","Hoạt động kho"
-"model_account_invoice","AccountInvoice","Hóa đơn điều trị"
+"model_stock_picking","StockPicking","Phiếu nhập xuất"
 "model_account_payment","AccountPayment","Thanh toán"
 "model_appointment","Appointment","Lịch hẹn"
 "model_company","Company","Chi nhánh"
 "model_dot_kham","DotKham","Đợt khám"
 "model_toa_thuoc","ToaThuoc","Toa thuốc"
-"model_labo_order_line","LaboOrderLine","Labo"
+"model_labo_order_line","LaboOrder","Labo"
 "model_employee","Employee","Nhân viên"
 "model_employee_category","EmployeeCategory","Nhóm nhân viên"
 "model_history","History","Tiểu sử bệnh"
-"model_dot_kham_step","DotKhamStep","Công đoạn đợt khám"
+"model_product_pricelist","ProductPricelist","Bảng giá"
+"model_sale_order","SaleOrder","Phiếu điều trị"
 
 
 

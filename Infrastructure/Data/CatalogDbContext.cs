@@ -101,7 +101,7 @@ namespace Infrastructure.Data
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
         public DbQuery<ModelAccessReport> ModelAccessReports { get; set; }
-        
+        public DbQuery<SaleReport> SaleReports { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -176,6 +176,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleOrderLineToothRelConfiguration());
             builder.ApplyConfiguration(new LaboOrderConfiguration());
             builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
+            builder.ApplyConfiguration(new SaleReportConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

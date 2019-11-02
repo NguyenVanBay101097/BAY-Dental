@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,17 +35,20 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<SaleOrderLineDisplay> OnChangeProduct(SaleOrderLineDisplay val)
+        public async Task<SaleOrderLineOnChangeProductResult> OnChangeProduct(SaleOrderLineOnChangeProduct val)
         {
-            if (val.Product != null)
+            var res = new SaleOrderLineOnChangeProductResult();
+            if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.GetByIdAsync(val.Product.Id);
-                val.Name = product.Name;
-                val.PriceUnit = product.ListPrice;
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value).Include(x => x.Categ).FirstOrDefaultAsync();
+                res.Name = product.Name;
+                var computePrice = await productObj._ComputeProductPrice(new List<Product>() { product }, val.PartnerId);
+                res.PriceUnit = computePrice[product.Id];
+
             }
 
-            return val;
+            return res;
         }
 
         public void UpdateOrderInfo(ICollection<SaleOrderLine> self, SaleOrder order)

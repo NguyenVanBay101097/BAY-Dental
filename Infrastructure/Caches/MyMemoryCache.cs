@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Caches
 {
@@ -61,6 +62,27 @@ namespace Infrastructure.Caches
         public void Remove(object key)
         {
             this._cache.Remove(key);
+        }
+
+        /// <summary>
+        /// Removes items by pattern
+        /// </summary>
+        /// <param name="pattern">pattern</param>
+        public virtual void RemoveByPattern(string pattern)
+        {
+            var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var keysToRemove = new List<string>();
+
+            foreach (var item in _cacheEntries)
+            {
+                if (regex.IsMatch((string)item.Key))
+                    keysToRemove.Add((string)item.Key);
+            }
+
+            foreach (string key in keysToRemove)
+            {
+                Remove(key);
+            }
         }
 
         public void Clear()
