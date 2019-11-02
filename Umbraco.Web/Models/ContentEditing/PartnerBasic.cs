@@ -74,6 +74,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Phone { get; set; }
 
+        public string Fax { get; set; }
+
         public string Ref { get; set; }
 
         public string Gender { get; set; }

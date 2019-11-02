@@ -233,14 +233,14 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImport(IFormFile file)
+        public async Task<IActionResult> ExcelImport(IFormFile file, bool isCustomer)
         {
-            await _partnerService.ImportExcel2(file);
+            await _partnerService.ImportExcel2(file, isCustomer);
             return Ok();
         }
 
-    //Check địa chỉ 
-    [HttpGet("CheckAddress")]
+        //Check địa chỉ 
+        [HttpGet("CheckAddress")]
         public async Task<IActionResult> CheckAddress([FromQuery]string text)
         {
             HttpClient client = new HttpClient();

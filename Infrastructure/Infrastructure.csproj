@@ -28,12 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
-    <ProjectReference Include="..\Umbraco.Web\Umbraco.Web.csproj" />
+    <Folder Include="ContentEditing\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ContentEditing\" />
+    <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
+    <ProjectReference Include="..\Umbraco.Web\Umbraco.Web.csproj" />
   </ItemGroup>
 
 </Project>

@@ -334,231 +334,227 @@ namespace Infrastructure.Services
 
         public async Task ImportExcel(IFormFile file)
         {
-        //    if (file == null) throw new Exception("File is null");
+            //    if (file == null) throw new Exception("File is null");
 
-        //    //đường dẫn upload trên local
-        //    var prefixPath = "C:/Users/TPOS-002/Desktop/tempFiles";
+            //    //đường dẫn upload trên local
+            //    var prefixPath = "C:/Users/TPOS-002/Desktop/tempFiles";
 
-        //    var uploadPath = Path.Combine(prefixPath).Replace("\\", "/");
+            //    var uploadPath = Path.Combine(prefixPath).Replace("\\", "/");
 
-        //    var fileName = file.FileName;
+            //    var fileName = file.FileName;
 
-        //    int index = 0;
+            //    int index = 0;
 
-        //    //Ten file ton tai ??
-        //    while (System.IO.File.Exists(Path.Combine(uploadPath, fileName)))
-        //    {
-        //        index++;
-        //        fileName = string.Format("{0}-{1}{2}", Path.GetFileNameWithoutExtension(file.FileName), index, Path.GetExtension(file.FileName));
-        //    }
-        //    //Folder ton tai ??
-        //    if (!System.IO.Directory.Exists(uploadPath))
-        //    {
-        //        Directory.CreateDirectory(uploadPath);
-        //    }
-        //    var newPath = Path.Combine(uploadPath, fileName).Replace("\\", "/");
-        //    //Chep file vao thu muc
-        //    using (var fileStream = new FileStream(newPath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(fileStream);
-        //    }
+            //    //Ten file ton tai ??
+            //    while (System.IO.File.Exists(Path.Combine(uploadPath, fileName)))
+            //    {
+            //        index++;
+            //        fileName = string.Format("{0}-{1}{2}", Path.GetFileNameWithoutExtension(file.FileName), index, Path.GetExtension(file.FileName));
+            //    }
+            //    //Folder ton tai ??
+            //    if (!System.IO.Directory.Exists(uploadPath))
+            //    {
+            //        Directory.CreateDirectory(uploadPath);
+            //    }
+            //    var newPath = Path.Combine(uploadPath, fileName).Replace("\\", "/");
+            //    //Chep file vao thu muc
+            //    using (var fileStream = new FileStream(newPath, FileMode.Create))
+            //    {
+            //        await file.CopyToAsync(fileStream);
+            //    }
 
-        //    var returnPath = Path.Combine(prefixPath, fileName).Replace("\\", "/");
+            //    var returnPath = Path.Combine(prefixPath, fileName).Replace("\\", "/");
 
-        //    var sqlTable = "dbo.Partners";
-        //    var excelQuery = "Select * from [Sheet1$]";
+            //    var sqlTable = "dbo.Partners";
+            //    var excelQuery = "Select * from [Sheet1$]";
 
-        //    var dt = new DataTable();
-        //    dt.Columns.Add("Id", typeof(Guid));
+            //    var dt = new DataTable();
+            //    dt.Columns.Add("Id", typeof(Guid));
 
-        //    dt.Columns.Add("CreatedById");
-        //    dt.Columns.Add("WriteById");
-        //    dt.Columns.Add("DateCreated");
-        //    dt.Columns.Add("LastUpdated");
+            //    dt.Columns.Add("CreatedById");
+            //    dt.Columns.Add("WriteById");
+            //    dt.Columns.Add("DateCreated");
+            //    dt.Columns.Add("LastUpdated");
 
-        //    dt.Columns.Add("DisplayName");
-        //    dt.Columns.Add("Name");
-        //    dt.Columns.Add("NameNoSign");
-        //    dt.Columns.Add("Street");
-        //    dt.Columns.Add("Phone");
-        //    dt.Columns.Add("Email");
-        //    dt.Columns.Add("Supplier");
-        //    dt.Columns.Add("Customer");
-        //    dt.Columns.Add("CompanyId");
-        //    dt.Columns.Add("Ref");
-        //    dt.Columns.Add("Comment");
+            //    dt.Columns.Add("DisplayName");
+            //    dt.Columns.Add("Name");
+            //    dt.Columns.Add("NameNoSign");
+            //    dt.Columns.Add("Street");
+            //    dt.Columns.Add("Phone");
+            //    dt.Columns.Add("Email");
+            //    dt.Columns.Add("Supplier");
+            //    dt.Columns.Add("Customer");
+            //    dt.Columns.Add("CompanyId");
+            //    dt.Columns.Add("Ref");
+            //    dt.Columns.Add("Comment");
 
-        //    dt.Columns.Add("Active");
-        //    dt.Columns.Add("Employee");
-        //    dt.Columns.Add("CityCode");
-        //    dt.Columns.Add("CityName");
-        //    dt.Columns.Add("DistrictName");
-        //    dt.Columns.Add("DistrictCode");
-        //    dt.Columns.Add("WardCode");
-        //    dt.Columns.Add("WardName");
-        //    dt.Columns.Add("MedicalHisory");
-        //    dt.Columns.Add("BirthDay");
-        //    dt.Columns.Add("BirthMonth");
-        //    dt.Columns.Add("BirthYear");
-        //    dt.Columns.Add("Gender");
-        //    dt.Columns.Add("JobTitle");
+            //    dt.Columns.Add("Active");
+            //    dt.Columns.Add("Employee");
+            //    dt.Columns.Add("CityCode");
+            //    dt.Columns.Add("CityName");
+            //    dt.Columns.Add("DistrictName");
+            //    dt.Columns.Add("DistrictCode");
+            //    dt.Columns.Add("WardCode");
+            //    dt.Columns.Add("WardName");
+            //    dt.Columns.Add("MedicalHisory");
+            //    dt.Columns.Add("BirthDay");
+            //    dt.Columns.Add("BirthMonth");
+            //    dt.Columns.Add("BirthYear");
+            //    dt.Columns.Add("Gender");
+            //    dt.Columns.Add("JobTitle");
 
-        //    var adrList = new List<KeyValuePair<Guid,string>>();
-        //    try
-        //    {
-        //        string excelConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" + returnPath + "; Extended Properties='Excel 12.0 Xml; HDR=YES;'";
-        //        string connectionString = "Server=.\\SQLEXPRESS;User Id=sa;Password=123123;Initial Catalog=TMTDentalCatalogDb;";
-        //        OleDbConnection oleConn = new OleDbConnection(excelConnectionString);
-        //        OleDbCommand oleCmd = new OleDbCommand(excelQuery, oleConn);
-        //        oleConn.Open();
-        //        OleDbDataReader reader = oleCmd.ExecuteReader();
-        //        SqlBulkCopy bulkCopy = new SqlBulkCopy(connectionString);
-        //        bulkCopy.DestinationTableName = sqlTable;
-                
-        //        var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-        //        dt.Load(reader);
-        //        for (int i = 0; i < dt.Rows.Count; i++)
-        //        {
-        //            var row = dt.Rows[i];
-        //            row["Id"] = GuidComb.GenerateComb();
-        //            row["Active"] = true;
-        //            row["Employee"] = false;
-        //            row["Customer"] = true;
-        //            row["Supplier"] = false;
-        //            row["DateCreated"] = DateTime.Now;
-        //            row["LastUpdated"] = DateTime.Now;
-        //            row["WriteById"] = UserId;
-        //            row["CreatedById"] = UserId;                    
-        //            row["NameNoSign"] = StringUtils.RemoveSignVietnameseV2(row["Tên KH"].ToString());
-                    
-        //            if (string.IsNullOrEmpty(row["Mã KH"].ToString()))
-        //            {
-        //                row["Mã KH"] = await sequenceService.NextByCode("customer");
-        //            }
-        //            var pt = new Partner();
-        //            pt.Name = row["Tên KH"].ToString();
-        //            pt.Ref = row["Mã KH"].ToString();
-        //            row["DisplayName"] = _NameGet(pt);
-        //            if (!string.IsNullOrEmpty(row["Ngày sinh"].ToString()))
-        //            {
-        //                var str = row["Ngày sinh"].ToString();
-        //                var ar = new string[3];
-        //                if (str.IndexOf("-") > -1)
-        //                {
-        //                   ar = row["Ngày sinh"].ToString().Split("-");
-                           
-        //                } else if(str.IndexOf(".") > -1)
-        //                {
-        //                    ar = row["Ngày sinh"].ToString().Split(".");
-        //                } else if (str.IndexOf("/") > -1)
-        //                {
-        //                    ar = row["Ngày sinh"].ToString().Split("/");
-        //                }
-        //                row["BirthDay"] = ar[0];
-        //                row["BirthMonth"] = ar[1];
-        //                row["BirthYear"] = ar[2];
+            //    var adrList = new List<KeyValuePair<Guid,string>>();
+            //    try
+            //    {
+            //        string excelConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" + returnPath + "; Extended Properties='Excel 12.0 Xml; HDR=YES;'";
+            //        string connectionString = "Server=.\\SQLEXPRESS;User Id=sa;Password=123123;Initial Catalog=TMTDentalCatalogDb;";
+            //        OleDbConnection oleConn = new OleDbConnection(excelConnectionString);
+            //        OleDbCommand oleCmd = new OleDbCommand(excelQuery, oleConn);
+            //        oleConn.Open();
+            //        OleDbDataReader reader = oleCmd.ExecuteReader();
+            //        SqlBulkCopy bulkCopy = new SqlBulkCopy(connectionString);
+            //        bulkCopy.DestinationTableName = sqlTable;
 
-        //            }
-        //            if (!string.IsNullOrEmpty(row["Địa chỉ"].ToString()))
-        //            {
-        //                //AddressCheckApi address = await AddressHandleAsync(row["Địa chỉ"].ToString());
-        //                //row["Street"] = address.ShortAddress;
-        //                //row["CityCode"] = address.CityCode;
-        //                //row["CityName"] = address.CityName;
-        //                //row["DistrictCode"] = address.DistrictCode;
-        //                //row["DistrictName"] = address.DistrictName;
-        //                //row["WardCode"] = address.WardCode;
-        //                //row["WardName"] = address.WardName;
-        //                adrList.Add(new KeyValuePair<Guid,string>(Guid.Parse(row["Id"].ToString()), row["Địa chỉ"].ToString()));
-        //            }
+            //        var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
+            //        dt.Load(reader);
+            //        for (int i = 0; i < dt.Rows.Count; i++)
+            //        {
+            //            var row = dt.Rows[i];
+            //            row["Id"] = GuidComb.GenerateComb();
+            //            row["Active"] = true;
+            //            row["Employee"] = false;
+            //            row["Customer"] = true;
+            //            row["Supplier"] = false;
+            //            row["DateCreated"] = DateTime.Now;
+            //            row["LastUpdated"] = DateTime.Now;
+            //            row["WriteById"] = UserId;
+            //            row["CreatedById"] = UserId;                    
+            //            row["NameNoSign"] = StringUtils.RemoveSignVietnameseV2(row["Tên KH"].ToString());
 
-        //            if (!string.IsNullOrEmpty(row["Giới tính"].ToString()))
-        //            {
-        //                var gender = row["Giới tính"].ToString();
-        //                if(gender.ToLower() == "nam")
-        //                {
-        //                    row["Gender"] = "Male";
-        //                } else if (gender.ToLower() == "nữ")
-        //                {
-        //                    row["Gender"] = "Female";
-        //                }
-        //                else
-        //                {
-        //                    row["Gender"] = "Other";
-        //                }
+            //            if (string.IsNullOrEmpty(row["Mã KH"].ToString()))
+            //            {
+            //                row["Mã KH"] = await sequenceService.NextByCode("customer");
+            //            }
+            //            var pt = new Partner();
+            //            pt.Name = row["Tên KH"].ToString();
+            //            pt.Ref = row["Mã KH"].ToString();
+            //            row["DisplayName"] = _NameGet(pt);
+            //            if (!string.IsNullOrEmpty(row["Ngày sinh"].ToString()))
+            //            {
+            //                var str = row["Ngày sinh"].ToString();
+            //                var ar = new string[3];
+            //                if (str.IndexOf("-") > -1)
+            //                {
+            //                   ar = row["Ngày sinh"].ToString().Split("-");
 
-        //            }
-        //        }
-                
-        //        var listTask = await RunTaskAsync(pairs: adrList);
-        //        for(int i = 0; i < dt.Rows.Count; i++)
-        //        {
-        //            var row = dt.Rows[i];
-        //            var address = listTask.Where(x => x.Key == Guid.Parse(row["Id"].ToString())).FirstOrDefault().Value;
-        //            row["Street"] = address.ShortAddress;
-        //            row["CityCode"] = address.CityCode;
-        //            row["CityName"] = address.CityName;
-        //            row["DistrictCode"] = address.DistrictCode;
-        //            row["DistrictName"] = address.DistrictName;
-        //            row["WardCode"] = address.WardCode;
-        //            row["WardName"] = address.WardName;
-        //        }
+            //                } else if(str.IndexOf(".") > -1)
+            //                {
+            //                    ar = row["Ngày sinh"].ToString().Split(".");
+            //                } else if (str.IndexOf("/") > -1)
+            //                {
+            //                    ar = row["Ngày sinh"].ToString().Split("/");
+            //                }
+            //                row["BirthDay"] = ar[0];
+            //                row["BirthMonth"] = ar[1];
+            //                row["BirthYear"] = ar[2];
 
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Id", "Id"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Tên KH", "Name"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Mã KH", "Ref"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("SĐT", "Phone"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Email", "Email"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Tiền căn", "MedicalHistory"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Gender", "Gender"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Nghề nghiệp", "JobTitle"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Ghi chú", "Comment"));
+            //            }
+            //            if (!string.IsNullOrEmpty(row["Địa chỉ"].ToString()))
+            //            {
+            //                //AddressCheckApi address = await AddressHandleAsync(row["Địa chỉ"].ToString());
+            //                //row["Street"] = address.ShortAddress;
+            //                //row["CityCode"] = address.CityCode;
+            //                //row["CityName"] = address.CityName;
+            //                //row["DistrictCode"] = address.DistrictCode;
+            //                //row["DistrictName"] = address.DistrictName;
+            //                //row["WardCode"] = address.WardCode;
+            //                //row["WardName"] = address.WardName;
+            //                adrList.Add(new KeyValuePair<Guid,string>(Guid.Parse(row["Id"].ToString()), row["Địa chỉ"].ToString()));
+            //            }
 
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Supplier", "Supplier"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Customer", "Customer"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Active", "Active"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Employee", "Employee"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("NameNoSign", "NameNoSign"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DisplayName", "DisplayName"));
+            //            if (!string.IsNullOrEmpty(row["Giới tính"].ToString()))
+            //            {
+            //                var gender = row["Giới tính"].ToString();
+            //                if(gender.ToLower() == "nam")
+            //                {
+            //                    row["Gender"] = "Male";
+            //                } else if (gender.ToLower() == "nữ")
+            //                {
+            //                    row["Gender"] = "Female";
+            //                }
+            //                else
+            //                {
+            //                    row["Gender"] = "Other";
+            //                }
 
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Street", "Street"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("CityCode", "CityCode"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("CityName", "CityName"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DistrictCode", "DistrictCode"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DistrictName", "DistrictName"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("WardCode", "WardCode"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("WardName", "WardName"));
+            //            }
+            //        }
 
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("BirthDay", "BirthDay"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("BirthMonth", "BirthMonth"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("BirthYear", "BirthYear"));
+            //        var listTask = await RunTaskAsync(pairs: adrList);
+            //        for(int i = 0; i < dt.Rows.Count; i++)
+            //        {
+            //            var row = dt.Rows[i];
+            //            var address = listTask.Where(x => x.Key == Guid.Parse(row["Id"].ToString())).FirstOrDefault().Value;
+            //            row["Street"] = address.ShortAddress;
+            //            row["CityCode"] = address.CityCode;
+            //            row["CityName"] = address.CityName;
+            //            row["DistrictCode"] = address.DistrictCode;
+            //            row["DistrictName"] = address.DistrictName;
+            //            row["WardCode"] = address.WardCode;
+            //            row["WardName"] = address.WardName;
+            //        }
 
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DateCreated", "DateCreated"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("LastUpdated", "LastUpdated"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("WriteById", "WriteById"));
-        //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("CreatedById", "CreatedById"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Id", "Id"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Tên KH", "Name"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Mã KH", "Ref"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("SĐT", "Phone"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Email", "Email"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Tiền căn", "MedicalHistory"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Gender", "Gender"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Nghề nghiệp", "JobTitle"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Ghi chú", "Comment"));
 
-        //        bulkCopy.WriteToServer(dt);
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Supplier", "Supplier"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Customer", "Customer"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Active", "Active"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Employee", "Employee"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("NameNoSign", "NameNoSign"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DisplayName", "DisplayName"));
 
-        //        oleConn.Close();
-        //        File.Delete(returnPath);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        File.Delete(returnPath);
-        //        throw ex;
-        //    }
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("Street", "Street"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("CityCode", "CityCode"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("CityName", "CityName"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DistrictCode", "DistrictCode"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DistrictName", "DistrictName"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("WardCode", "WardCode"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("WardName", "WardName"));
+
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("BirthDay", "BirthDay"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("BirthMonth", "BirthMonth"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("BirthYear", "BirthYear"));
+
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("DateCreated", "DateCreated"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("LastUpdated", "LastUpdated"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("WriteById", "WriteById"));
+            //        bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping("CreatedById", "CreatedById"));
+
+            //        bulkCopy.WriteToServer(dt);
+
+            //        oleConn.Close();
+            //        File.Delete(returnPath);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        File.Delete(returnPath);
+            //        throw ex;
+            //    }
         }
 
-        public async Task ImportExcel2(IFormFile file)
+        public async Task ImportExcel2(IFormFile file, bool isCustomer)
         {
             if (file == null) throw new Exception("File is null");
-            var genderDict = new Dictionary<string, string>()
-            {
-                { "nam","Male" },
-                { "nữ","Female" }
-            };
             var list = new List<PartnerImportExcel>();
+
             using (var stream = new MemoryStream())
             {
                 file.CopyTo(stream);
@@ -566,73 +562,17 @@ namespace Infrastructure.Services
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    
-                    var adList = new List<string>();
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
-                    {
-                        var address = Convert.ToString(worksheet.Cells[row, 5].Value);
-                        if(!string.IsNullOrEmpty(address))
-                            adList.Add(address.ToLower());
-                    }
-                    var dict = await RunTaskAsync(strs: adList.Distinct().ToList());
-
-                    var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
-                    {
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        var custRef = Convert.ToString(worksheet.Cells[row, 2].Value);
-                        var gender = Convert.ToString(worksheet.Cells[row, 3].Value).ToLower();
-                        var address = Convert.ToString(worksheet.Cells[row, 5].Value);
-                        var dob = Convert.ToString(worksheet.Cells[row, 9].Value);
-                        var ar = new string[3];
-
-                        if (dob.IndexOf("-") > -1)
-                            ar = dob.Split("-");
-                        else if (dob.IndexOf(".") > -1)
-                            ar = dob.Split(".");
-                        else if (dob.IndexOf("/") > -1)
-                            ar = dob.Split("/");
-
-                        var item = new PartnerImportExcel
-                        {
-                            Name = name,
-                            Ref = !string.IsNullOrEmpty(custRef) ? custRef : await sequenceService.NextByCode("customer"),
-                            Gender = genderDict.ContainsKey(gender) ? genderDict[gender] : "Other",
-                            Phone = Convert.ToString(worksheet.Cells[row, 4].Value),
-                            MedicalHistory = Convert.ToString(worksheet.Cells[row, 6].Value),
-                            JobTitle = Convert.ToString(worksheet.Cells[row, 7].Value),
-                            Email = Convert.ToString(worksheet.Cells[row, 8].Value),
-                            BirthDay = ar[0],
-                            BirthMonth = ar[1],
-                            BirthYear = ar[2],
-                            Comment = Convert.ToString(worksheet.Cells[row, 10].Value),
-                            Customer = true,
-                            Supplier = false
-                    };
-                        if (dict.ContainsKey(address.ToLower()))
-                        {
-                            item.Street = dict[address.ToLower()].ShortAddress;
-                            item.CityName = dict[address.ToLower()].CityName;
-                            item.CityCode = dict[address.ToLower()].CityCode;
-                            item.DistrictName = dict[address.ToLower()].DistrictName;
-                            item.DistrictCode = dict[address.ToLower()].DistrictCode;
-                            item.WardName = dict[address.ToLower()].WardName;
-                            item.WardCode = dict[address.ToLower()].WardCode;
-                        }
-
-                        list.Add(item);
-                    }
-                    
+                    list = await HandleExcelRowsByCustomerOrSupplierAsync(worksheet, isCustomer);
                 }
             }
 
-           var pnList = _mapper.Map<List<Partner>>(list);
-            foreach(var pn in pnList)
+            var pnList = _mapper.Map<List<Partner>>(list);
+            foreach (var pn in pnList)
                 await CreateAsync(pn);
 
         }
 
-        public async Task<Dictionary<string,AddressCheckApi>> RunTaskAsync(List<string> strs, int limit = 100)
+        public async Task<Dictionary<string, AddressCheckApi>> RunTaskAsync(List<string> strs, int limit = 100)
         {
             int offset = 0;
             var dict = new Dictionary<string, AddressCheckApi>();
@@ -664,17 +604,17 @@ namespace Infrastructure.Services
             //    }
             //}
             //return dictionary;
-          
-          
+
+
             return dict;
         }
 
         private async Task<KeyValuePair<string, AddressCheckApi>> AddressHandleAsync(string text)
-        {            
+        {
             HttpClient client = new HttpClient();
             HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
             var res = response.Content.ReadAsAsync<AddressCheckApi[]>().Result.ToList().FirstOrDefault();
-            var pair = new KeyValuePair<string,AddressCheckApi>(text, res);
+            var pair = new KeyValuePair<string, AddressCheckApi>(text, res);
             return pair;
         }
 
@@ -741,6 +681,96 @@ namespace Infrastructure.Services
             }
 
             return dict;
+        }
+
+        public async Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, bool isCustomer)
+        {
+            var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
+            var list = new List<PartnerImportExcel>();
+            if (isCustomer)
+            {
+                var adList = new List<string>();
+                for (var i = 2; i <= worksheet.Dimension.Rows; i++)
+                {
+                    var add = Convert.ToString(worksheet.Cells[i, 6].Value);
+                    if (!string.IsNullOrEmpty(add))
+                        adList.Add(add.ToLower());
+                }
+                var dict = await RunTaskAsync(strs: adList.Distinct().ToList());
+                var genderDict = new Dictionary<string, string>()
+                {
+                    { "nam","Male" },
+                    { "nữ","Female" }
+                };
+
+                for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                {
+                    var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                    var custRef = Convert.ToString(worksheet.Cells[row, 2].Value);
+                    var gender = Convert.ToString(worksheet.Cells[row, 3].Value).ToLower();
+                    var dob = Convert.ToString(worksheet.Cells[row, 4].Value);
+                    var ar = new string[3];
+                    var address = Convert.ToString(worksheet.Cells[row, 6].Value);
+                    if (dob.IndexOf("-") > -1)
+                        ar = dob.Split("-");
+                    else if (dob.IndexOf(".") > -1)
+                        ar = dob.Split(".");
+                    else if (dob.IndexOf("/") > -1)
+                        ar = dob.Split("/");
+
+                    var item = new PartnerImportExcel
+                    {
+                        Name = name,
+                        Ref = !string.IsNullOrEmpty(custRef) ? custRef : await sequenceService.NextByCode("customer"),
+                        Gender = genderDict.ContainsKey(gender) ? genderDict[gender] : "Other",
+                        Phone = Convert.ToString(worksheet.Cells[row, 5].Value),
+                        MedicalHistory = Convert.ToString(worksheet.Cells[row, 7].Value),
+                        JobTitle = Convert.ToString(worksheet.Cells[row, 8].Value),
+                        Email = Convert.ToString(worksheet.Cells[row, 9].Value),
+                        BirthDay = ar[0],
+                        BirthMonth = ar[1],
+                        BirthYear = ar[2],
+                        Comment = Convert.ToString(worksheet.Cells[row, 10].Value),
+                        Customer = true,
+                        Supplier = false
+                    };
+                    if (dict.ContainsKey(address.ToLower()))
+                    {
+                        item.Street = dict[address.ToLower()].ShortAddress;
+                        item.CityName = dict[address.ToLower()].CityName;
+                        item.CityCode = dict[address.ToLower()].CityCode;
+                        item.DistrictName = dict[address.ToLower()].DistrictName;
+                        item.DistrictCode = dict[address.ToLower()].DistrictCode;
+                        item.WardName = dict[address.ToLower()].WardName;
+                        item.WardCode = dict[address.ToLower()].WardCode;
+                    }
+                    list.Add(item);
+                }
+            }
+            else
+            {
+                for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                {
+                    var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                    var suppRef = Convert.ToString(worksheet.Cells[row, 2].Value);
+                    var item = new PartnerImportExcel
+                    {
+                        Name = name,
+                        Ref = !string.IsNullOrEmpty(suppRef) ? suppRef : await sequenceService.NextByCode("supplier"),
+                        Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
+                        Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
+                        Street = Convert.ToString(worksheet.Cells[row, 5].Value),
+                        Email = Convert.ToString(worksheet.Cells[row, 6].Value),
+                        Comment = Convert.ToString(worksheet.Cells[row, 7].Value),
+                        Customer = false,
+                        Supplier = true
+                    };
+
+                    list.Add(item);
+                }
+            }
+
+            return list;
         }
     }
 

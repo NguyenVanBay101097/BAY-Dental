@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,9 +23,11 @@ namespace Infrastructure.Services
         Task<PartnerInfoViewModel> GetInfo(Guid id);
         Task<PagedResult2<AccountInvoiceDisplay>> GetCustomerInvoices(AccountInvoicePaged val);
         Task ImportExcel(IFormFile file);
-        Task ImportExcel2(IFormFile file);
+        Task ImportExcel2(IFormFile file, bool isCustomer);
         Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
        DateTime? fromDate = null,
        DateTime? toDate = null);
+
+        Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, bool isCustomer);
     }
 }
