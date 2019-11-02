@@ -27,15 +27,15 @@ namespace TMTDentalAPI.Middlewares
             var tenant = context.GetTenant<AppTenant>();
             if (tenant != null)
             {
-                Microsoft.Extensions.Primitives.StringValues skipCheck = "";
-                if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
-                {
-                    var now = DateTime.Now;
-                    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
-                    {
-                        await HandleExpiredAsync(context);
-                    }
-                }
+                //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
+                //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
+                //{
+                //    var now = DateTime.Now;
+                //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
+                //    {
+                //        await HandleExpiredAsync(context);
+                //    }
+                //}
 
                 var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
                 var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
