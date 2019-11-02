@@ -271,6 +271,18 @@ namespace Infrastructure.Services
                 await invObj.UpdateResidual(invoiceIds);
             }
         }
+
+        public override ISpecification<AccountMoveLine> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.moveline_comp_rule":
+                    return new InitialSpecification<AccountMoveLine>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 
     public class ComputeAmountFieldsRes

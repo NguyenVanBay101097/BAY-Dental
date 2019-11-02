@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,18 @@ namespace Infrastructure.Services
             warehouse.InTypeId = inType.Id;
 
             await UpdateAsync(warehouse);
+        }
+
+        public override ISpecification<StockWarehouse> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "stock.warehouse_comp_rule":
+                    return new InitialSpecification<StockWarehouse>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

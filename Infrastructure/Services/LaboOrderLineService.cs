@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -184,6 +185,18 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+
+        public override ISpecification<LaboOrderLine> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "labo.order.line_comp_rule":
+                    return new InitialSpecification<LaboOrderLine>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

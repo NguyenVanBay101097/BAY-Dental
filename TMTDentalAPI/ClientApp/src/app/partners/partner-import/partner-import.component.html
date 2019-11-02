@@ -1,0 +1,24 @@
+<header class="modal-header">
+    <h4 class="modal-title">Import Excel<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div [formGroup]="formImport">
+        <table class="table">
+            <tr>
+                <td>Chọn tệp</td>
+                <td><input formControlName="file" type="file" (change)="changeAttachment($event)" /></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="import()" [disabled]="!selectedFile">
+        <i class="fas fa-upload"></i>&nbsp;Import</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2"><i class="fas fa-file-alt"></i>&nbsp;Tải file mẫu</button>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)">
+        Đóng</button>
+</div>

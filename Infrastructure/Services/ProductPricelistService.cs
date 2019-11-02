@@ -159,6 +159,18 @@ namespace Infrastructure.Services
                 , orderBy: x => x.OrderBy(s => s.AppliedOn).ThenByDescending(s => s.MinQuantity).ThenByDescending(s => s.Categ.CompleteName).ThenByDescending(s => s.DateCreated)).ToListAsync();
             return items;
         }
+
+        public override ISpecification<ProductPricelist> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "product.pricelist_comp_rule":
+                    return new InitialSpecification<ProductPricelist>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 
     public class ProductQtyByPartner

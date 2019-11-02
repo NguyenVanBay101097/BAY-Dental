@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,6 +27,18 @@ namespace Infrastructure.Services
         {
             var companyId = CompanyId;
             return await SearchQuery(x => x.InternalType == "receivable" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
+
+        public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.invoice_comp_rule":
+                    return new InitialSpecification<AccountAccount>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

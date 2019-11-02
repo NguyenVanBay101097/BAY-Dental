@@ -20,3 +20,16 @@ export class AccountInvoiceLineDisplay {
     toothCategory: ToothCategoryBasic;
 }
 
+
+export class AccountInvoiceLinePaged {
+    offset: number;
+    limit: number;
+    invoiceId: string;
+    productId: string;
+    accountId: string;
+    partnerId: string;
+    toothCategoryId: string;
+    diagnostic: string;
+}
+
+

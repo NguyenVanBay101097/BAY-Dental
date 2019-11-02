@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -152,6 +153,18 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
+        }
+
+        public override ISpecification<Employee> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "employee_comp_rule":
+                    return new InitialSpecification<Employee>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

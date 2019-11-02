@@ -62,4 +62,53 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Avatar { get; set; }
     }
+
+    public class PartnerImportExcel
+    {
+        public PartnerImportExcel()
+        {
+            Active = true;
+            Employee = false;
+        }
+        public string Name { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Ref { get; set; }
+
+        public string Gender { get; set; }
+
+        public string Street { get; set; }
+
+        public string CityName { get; set; }
+        public string CityCode { get; set; }
+
+        public string DistrictCode { get; set; }
+        public string DistrictName { get; set; }
+
+        public string WardCode { get; set; }
+        public string WardName { get; set; }
+
+        public string BirthDay { get; set; }
+
+        public string BirthMonth { get; set; }
+
+        public string BirthYear { get; set; }
+
+        public string MedicalHistory { get; set; }
+
+        public string JobTitle { get; set; }
+
+        public string Email { get; set; }
+
+        public string Comment { get; set; }
+
+        public bool Supplier { get; set; }
+
+        public bool Customer { get; set; }
+
+        public bool Active { get; set; }
+
+        public bool Employee { get; set; }
+    }
 }

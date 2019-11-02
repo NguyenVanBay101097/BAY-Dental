@@ -36,4 +36,15 @@ export class ProductPriceListBasic {
     name: string;
 }
 
+export class AddressCheckApi {
+    address: string;
+    cityCode: string;
+    cityName: string;
+    districtCode: string;
+    districtName: string;
+    shortAddress: string;
+    telephone: string;
+    wardCode: string;
+    wardName: string;
+}
 

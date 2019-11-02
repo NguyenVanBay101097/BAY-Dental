@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -327,6 +328,18 @@ namespace Infrastructure.Services
             await CreateAsync(quant);
 
             return quant;
+        }
+
+        public override ISpecification<StockQuant> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "stock.quant_comp_rule":
+                    return new InitialSpecification<StockQuant>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 

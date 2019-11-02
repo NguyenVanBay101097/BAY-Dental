@@ -411,5 +411,17 @@ namespace Infrastructure.Services
 
             await DeleteAsync(payments);
         }
+
+        public override ISpecification<AccountPayment> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.payment_comp_rule":
+                    return new InitialSpecification<AccountPayment>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 }

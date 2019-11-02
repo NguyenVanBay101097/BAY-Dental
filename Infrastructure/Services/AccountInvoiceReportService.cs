@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -176,5 +177,17 @@ namespace Infrastructure.Services
 
             return query;
         }
+
+        //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)
+        //{
+        //    var companyId = CompanyId;
+        //    switch (rule.Code)
+        //    {
+        //        case "account.invoice_comp_rule":
+        //            return new InitialSpecification<AccountInvoiceReport>(x => x.company_id == companyId);
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }

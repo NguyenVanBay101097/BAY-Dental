@@ -19,6 +19,16 @@ namespace TMTDentalAPI.Controllers
             _invLineService = invLineService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery]AccountInvoiceLinesPaged val)
+        {
+            if (val == null || !ModelState.IsValid)
+                return BadRequest();
+
+            var res = await _invLineService.GetPagedResultAsync(val);
+            return Ok(res);
+        }
+
         [HttpPost("DefaultGet")]
         public async Task<IActionResult> DefaultGet(AccountInvoiceLineDefaultGet val)
         {

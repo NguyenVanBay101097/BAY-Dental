@@ -11,6 +11,7 @@ import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HistorySimple } from 'src/app/history/history';
+import { AddressCheckApi } from 'src/app/price-list/price-list';
 
 
 
@@ -22,6 +23,7 @@ import { HistorySimple } from 'src/app/history/history';
 
 
 export class PartnerCreateUpdateComponent implements OnInit {
+  @ViewChild('grid', { static: true }) grid: any;
 
   constructor(private fb: FormBuilder, private service: PartnerService, private activeRoute: ActivatedRoute, public activeModal: NgbActiveModal) { }
 
@@ -50,6 +52,8 @@ export class PartnerCreateUpdateComponent implements OnInit {
   provincesFilter: City[] = [];
   wardsFilter: Ward[] = [];
   employeeSimpleFilter: EmployeeSimple[] = [];
+  addressCheck: AddressCheckApi[] = [];
+  checkedText: string;
 
   queryCustomer: boolean = false;
   querySupplier: boolean = false;
@@ -92,7 +96,8 @@ export class PartnerCreateUpdateComponent implements OnInit {
       jobTitle: null,
       employees: null,
       source: null,
-      note: null
+      note: null,
+      addressCheckDetail: 0
     })
 
     this.formImage = this.fb.group({
@@ -245,22 +250,22 @@ export class PartnerCreateUpdateComponent implements OnInit {
             (this.formCreate.get('histories') as FormArray).push(new FormControl(e));
           });
           if (rs.city && rs.city.code) {
-            this.formCreate.get('city').setValue(rs.city);
+            this.getCity.setValue(rs.city);
             this.getDistrictList(rs.city.code);
-            this.formCreate.get('district').enable();
+            this.getDistrict.enable();
           } else {
-            this.formCreate.get('district').disable();
+            this.getDistrict.disable();
           }
           if (rs.district && rs.district.code) {
-            this.formCreate.get('district').setValue(rs.district);
+            this.getDistrict.setValue(rs.district);
             this.getWardList(rs.district.code);
-            this.formCreate.get('ward').enable();
+            this.getWard.enable();
           } else {
-            this.formCreate.get('ward').disable();
+            this.getWard.disable();
           }
           if (rs.ward && rs.ward.code) {
             this.getWardList(rs.district.code);
-            this.formCreate.get('ward').setValue(rs.ward);
+            this.getWard.setValue(rs.ward);
           }
           this.employeeSimpleFilter = _.unionBy(this.employeeSimpleFilter, [rs.employees], 'id');
 
@@ -311,28 +316,28 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
   ////=====================Sự kiện thay đổi tỉnh tp - quận huyện==========================
   changeProvince() {
-    this.formCreate.get('district').setValue(null);
-    this.formCreate.get('ward').setValue(null);
-    this.formCreate.get('ward').disable();
-    var cityValue = this.formCreate.get('city').value as City;
+    this.getDistrict.setValue(null);
+    this.getWard.setValue(null);
+    this.getWard.disable();
+    var cityValue = this.getCity.value as City;
     if (cityValue != null) {
       this.getDistrictList(cityValue.code);
-      this.formCreate.get('district').enable();
+      this.getDistrict.enable();
     }
     else {
-      this.formCreate.get('district').disable();
+      this.getDistrict.disable();
     }
   }
 
   changeDistrict() {
-    this.formCreate.get('ward').setValue(null);
-    var districtValue = this.formCreate.get('district').value as District;
+    this.getWard.setValue(null);
+    var districtValue = this.getDistrict.value as District;
     if (districtValue != null) {
       this.getWardList(districtValue.code);
-      this.formCreate.get('ward').enable();
+      this.getWard.enable();
     }
     else {
-      this.formCreate.get('ward').disable();
+      this.getWard.disable();
     }
   }
 
@@ -350,8 +355,8 @@ export class PartnerCreateUpdateComponent implements OnInit {
   //=======================Lấy TP Tỉnh - Quận Huyện - Phường Xã=============================
   getProvinceList() {
     if (this.cusId == null) {
-      this.formCreate.get('district').disable();
-      this.formCreate.get('ward').disable();
+      this.getDistrict.disable();
+      this.getWard.disable();
     }
 
     var request = new AshipRequest();
@@ -444,5 +449,66 @@ export class PartnerCreateUpdateComponent implements OnInit {
     } else if (this.cusId && this.querySupplier) {
       return 'Cập nhật thông tin nhà cung cấp';
     }
+  }
+
+  checkAddressApi() {
+    var address = this.getStreet.value;
+    this.service.checkAddressApi(address).subscribe(
+      rs => {
+        this.checkedText = this.getStreet.value;
+        this.addressCheck = rs['result'];
+        this.addressCheck = this.addressCheck.slice(0, 5);
+        console.log(rs);
+        this.chooseAddress(rs['result'][0], 0);
+      }
+    )
+  }
+
+  chooseAddress(adr: AddressCheckApi, e: number) {
+    this.getAddressCheckDetail.setValue(e);
+    var city = { code: adr.cityCode, name: adr.cityName };
+    var district = { code: adr.districtCode, name: adr.districtName };
+    var ward = { code: adr.wardCode, name: adr.wardName };
+    this.getStreet.setValue(adr.shortAddress);
+    if (city.code) {
+      this.getCity.setValue(city);
+      this.changeProvince();
+    } else {
+      this.getCity.setValue(null);
+    }
+    if (district.code) {
+      this.getDistrict.enable();
+      this.getDistrict.setValue(district);
+      this.changeDistrict();
+    } else {
+      this.getDistrict.setValue(null);
+    }
+    if (ward.code) {
+      this.getWard.enable();
+      this.getWard.setValue(ward);
+    } else {
+      this.getWard.setValue(null);
+    }
+    // this.addressCheck = [];
+  }
+
+  get getStreet() {
+    return this.formCreate.get('street');
+  }
+
+  get getCity() {
+    return this.formCreate.get('city');
+  }
+
+  get getDistrict() {
+    return this.formCreate.get('district');
+  }
+
+  get getWard() {
+    return this.formCreate.get('ward');
+  }
+
+  get getAddressCheckDetail() {
+    return this.formCreate.get('addressCheckDetail');
   }
 }

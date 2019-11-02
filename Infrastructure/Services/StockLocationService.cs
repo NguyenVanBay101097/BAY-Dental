@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -115,6 +116,18 @@ namespace Infrastructure.Services
             }
 
             return name;
+        }
+
+        public override ISpecification<StockLocation> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "stock.location_comp_rule":
+                    return new InitialSpecification<StockLocation>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

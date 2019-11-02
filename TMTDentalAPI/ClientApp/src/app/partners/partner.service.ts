@@ -7,6 +7,8 @@ import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, Paymen
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
 import { EmployeeSimple } from '../employees/employee';
 import { HistoryPaged, HistorySimple } from '../history/history';
+import { AccountInvoiceLinePaged, AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
+import { AddressCheckApi } from '../price-list/price-list';
 
 export class PartnerFilter {
     search: string;
@@ -198,5 +200,20 @@ export class PartnerService {
 
     getHistories(): Observable<HistorySimple[]> {
         return this.http.get<HistorySimple[]>(this.baseApi + 'api/histories/GetHistoriesCheckbox');
+    }
+
+    getInvoiceLineByPartner(paged): Observable<PagedResult2<AccountInvoiceLineDisplay>> {
+        return this.http.get<PagedResult2<AccountInvoiceLineDisplay>>(this.baseApi + 'api/AccountInvoiceLines', { params: paged });
+    }
+
+    checkAddressApi(text: string): Observable<AddressCheckApi[]> {
+        return this.http.get<AddressCheckApi[]>(this.baseApi + this.apiUrl + '/CheckAddress?text=' + text);
+    }
+
+    importFromExcel(file: File) {
+        var formData = new FormData();
+        // formData.append('file', file);
+        formData.set('file', file);
+        return this.http.post(this.baseApi + this.apiUrl + "/ExcelImport", formData);
     }
 }

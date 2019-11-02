@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -125,6 +126,18 @@ namespace Infrastructure.Services
                 Prefix = "TT",
                 Padding = 6,
             });
+        }
+
+        public override ISpecification<ToaThuoc> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "toa.thuoc_comp_rule":
+                    return new InitialSpecification<ToaThuoc>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

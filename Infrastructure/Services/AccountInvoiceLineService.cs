@@ -1,10 +1,13 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -135,6 +138,49 @@ namespace Infrastructure.Services
             var res = _mapper.Map<IEnumerable<AccountInvoiceLineSimple>>(accInvLines);
 
             return res;
+        }
+        
+        public async Task<PagedResult2<AccountInvoiceLineDisplay>> GetPagedResultAsync(AccountInvoiceLinesPaged val)
+        {
+            var query = SearchQuery();
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            if (val.InvoiceId.HasValue)
+                query = query.Where(x => x.PartnerId == val.InvoiceId);
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.PartnerId == val.ProductId);
+            if (val.ToothCategoryId.HasValue)
+                query = query.Where(x => x.PartnerId == val.ToothCategoryId);
+            if (!string.IsNullOrEmpty(val.Diagnostic))
+                query = query.Where(x => x.Diagnostic.Contains(val.Diagnostic));
+
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)
+                .Include(x=>x.Product)
+                .Include(x => x.Partner)
+                .Include(x => x.Account)
+                .Include(x => x.ToothCategory)
+                .Include(x => x.Invoice)
+                .Include(x => x.AccountInvoiceLineToothRels)
+                .Include("AccountInvoiceLineToothRels.Tooth")
+                .ToListAsync();
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<AccountInvoiceLineDisplay>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<AccountInvoiceLineDisplay>>(items)
+            };
+        }
+
+        public override ISpecification<AccountInvoiceLine> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.invoice.line_comp_rule":
+                    return new InitialSpecification<AccountInvoiceLine>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }
