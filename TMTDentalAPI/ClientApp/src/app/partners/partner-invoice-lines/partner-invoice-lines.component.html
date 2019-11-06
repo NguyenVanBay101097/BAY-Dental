@@ -3,19 +3,19 @@
     <!--[selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)"-->
     <kendo-grid-column field="name" title="Tên dịch vụ">
     </kendo-grid-column>
-    <kendo-grid-column title="Răng">
+    <!-- <kendo-grid-column title="Răng">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{lineTeeth(dataItem.teeth)}}
         </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Hóa đơn">
+    </kendo-grid-column> -->
+    <kendo-grid-column title="Phiếu điều trị">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.invoice ? dataItem.invoice.number :'' }}
+            {{dataItem.order ? dataItem.order.name : '' }}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="dateOrder" title="Ngày điều trị">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{(dataItem.invoice ? dataItem.invoice.dateOrder : '' )| date : 'shortDate' }}
+            {{dataItem.dateCreated | date : 'shortDate' }}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Chẩn đoán" field="diagnostic">

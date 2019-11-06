@@ -35,6 +35,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.ToothCategoryId, x => x.Condition(s => s.State == "draft"));
 
             CreateMap<SaleOrderLine, SaleOrderLinePrintVM>();
+
+            CreateMap<SaleOrderLine, SaleOrderLineBasic>();
         }
     }
 }

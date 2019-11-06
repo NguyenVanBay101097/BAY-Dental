@@ -16,5 +16,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public string Search { get; set; }
+
+        public Guid PartnerId { get; set; }
+        public PartnerSimple Partner { get; set; }
     }
 }

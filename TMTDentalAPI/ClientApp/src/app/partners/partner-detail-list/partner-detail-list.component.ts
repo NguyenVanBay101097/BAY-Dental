@@ -4,6 +4,7 @@ import { AccountInvoicePaged } from 'src/app/account-invoices/account-invoice.se
 import { PartnerService } from '../partner.service';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
 
 @Component({
   selector: 'app-partner-detail-list',
@@ -23,7 +24,7 @@ export class PartnerDetailListComponent implements OnInit {
   constructor(private service: PartnerService, private router: Router) { }
 
   ngOnInit() {
-    this.loadInvoices();
+    this.loadSaleOrder();
   }
 
   loadInvoices() {
@@ -43,6 +44,24 @@ export class PartnerDetailListComponent implements OnInit {
         this.gridLoading = false;
       }
     )
+  }
+  loadSaleOrder() {
+    this.gridLoading = true;
+    var soPaged = new SaleOrderPaged;
+    soPaged.partnerId = this.id;
+    this.service.getSaleOrderByPartner(soPaged).pipe(
+      map(rs1 => (<GridDataResult>{
+        data: rs1.items,
+        total: rs1.totalItems
+      }))
+    ).subscribe(rs2 => {
+      this.gridView = rs2;
+      this.gridLoading = false;
+    }, er => {
+      this.gridLoading = true;
+      console.log(er);
+    }
+    );
   }
 
   pageChange(event: PageChangeEvent): void {

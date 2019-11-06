@@ -1,10 +1,13 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -127,6 +130,33 @@ namespace Infrastructure.Services
             };
 
             return res;
+        }
+
+        public async Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search));
+            if (val.OrderPartnerId.HasValue)
+                query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == val.ProductId);
+            if (val.OrderId.HasValue)
+                query = query.Where(x => x.OrderId == val.OrderId);
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State.Contains(val.State));
+            if (val.DateOrderFrom.HasValue)
+                query = query.Where(x => x.DateCreated <= val.DateOrderFrom);
+            if (val.DateOrderTo.HasValue)
+                query = query.Where(x => x.DateCreated >= val.DateOrderTo);
+
+            var items = await query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<SaleOrderLine>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)

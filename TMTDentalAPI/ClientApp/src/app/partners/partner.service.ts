@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel } from './partner-simple';
@@ -9,12 +9,35 @@ import { EmployeeSimple } from '../employees/employee';
 import { HistoryPaged, HistorySimple } from '../history/history';
 import { AccountInvoiceLinePaged, AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
 import { AddressCheckApi } from '../price-list/price-list';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 
 export class PartnerFilter {
     search: string;
     customer: boolean;
     supplier: boolean;
     employee: boolean;
+}
+
+export class SaleOrderLineBasic {
+    name: string;
+    state: string;
+    orderPartnerId: string;
+    orderId: string;
+    productId: string;
+    diagnostic: string;
+    dateCreated: string;
+}
+
+export class SaleOrderLinePaged {
+    limit: number;
+    offset: number;
+    state: string;
+    orderPartnerId: string;
+    orderId: string;
+    productId: string;
+    search: string;
+    dateOrderFrom: string;
+    dateOrderTo: string;
 }
 
 @Injectable()
@@ -210,10 +233,18 @@ export class PartnerService {
         return this.http.get<AddressCheckApi[]>(this.baseApi + this.apiUrl + '/CheckAddress?text=' + text);
     }
 
-    importFromExcel(file: File) {
+    importFromExcel(file: File, isCustomer: boolean) {
         var formData = new FormData();
         // formData.append('file', file);
         formData.set('file', file);
-        return this.http.post(this.baseApi + this.apiUrl + "/ExcelImport", formData);
+        return this.http.post(this.baseApi + this.apiUrl + "/ExcelImport?isCustomer=" + isCustomer, formData);
+    }
+
+    getSaleOrderByPartner(paged): Observable<PagedResult2<SaleOrderBasic>> {
+        return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + 'api/SaleOrders', { params: paged });
+    }
+
+    getSaleOrderLineByPartner(paged): Observable<PagedResult2<SaleOrderLineBasic>> {
+        return this.http.get<PagedResult2<SaleOrderLineBasic>>(this.baseApi + 'api/SaleOrderLines', { params: paged });
     }
 }
