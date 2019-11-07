@@ -10,11 +10,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { KendoButtonService } from '@progress/kendo-angular-buttons';
-import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
-import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { PartnerImportComponent } from '../partner-import/partner-import.component';
 
 
 @Component({
@@ -237,7 +235,8 @@ export class PartnerListComponent implements OnInit {
     }
   }
 
-  deleteCustomer(id) {
+  deleteCustomer(id, event) {
+    event.stopPropagation();
     const dialogRef: DialogRef = this.dialogService.open({
       title: 'Xóa đối tác',
       content: 'Bạn chắc chắn muốn xóa?',

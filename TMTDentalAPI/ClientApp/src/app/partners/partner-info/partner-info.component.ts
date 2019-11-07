@@ -3,6 +3,9 @@ import { PartnerService } from '../partner.service';
 import { PartnerDisplay, PartnerCategorySimple } from '../partner-simple';
 import { HistorySimple } from 'src/app/history/history';
 import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-partner-info',
@@ -11,7 +14,8 @@ import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-categor
 })
 export class PartnerInfoComponent implements OnInit {
 
-  constructor(private service: PartnerService) { }
+  constructor(private service: PartnerService, private modalService: NgbModal,
+    private notificationService: NotificationService) { }
 
   @Input() public partnerId: string; // ID của khách hàng
   // partnerId: string;
@@ -99,6 +103,17 @@ export class PartnerInfoComponent implements OnInit {
           return 'Bạn bè';
       }
     }
+  }
+
+  openModal(id) {
+    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.cusId = id;
+    modalRef.result.then(
+      rs => {
+        this.getPartnerInfo();
+      },
+      er => { }
+    )
   }
 
 }

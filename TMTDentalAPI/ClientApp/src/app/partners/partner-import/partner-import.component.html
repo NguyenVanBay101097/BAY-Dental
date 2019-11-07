@@ -18,7 +18,8 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm mr-2" (click)="import()" [disabled]="!selectedFile">
         <i class="fas fa-upload"></i>&nbsp;Import</button>
-    <button type="button" class="btn btn-primary btn-sm mr-2"><i class="fas fa-file-alt"></i>&nbsp;Tải file mẫu</button>
+    <a [href]="isCustomer ? 'assets/files/MauThemKH.xlsx' : 'assets/files/MauThemNCC.xlsx'"><button type="button"
+            class="btn btn-primary btn-sm mr-2"><i class="fas fa-file-alt"></i>&nbsp;Tải file mẫu</button></a>
     <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)">
         Đóng</button>
 </div>

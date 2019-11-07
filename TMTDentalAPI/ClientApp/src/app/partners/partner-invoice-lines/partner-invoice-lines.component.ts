@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AccountInvoiceLinePaged } from 'src/app/account-invoices/account-invoice-line-display';
-import { PartnerService } from '../partner.service';
+import { PartnerService, SaleOrderLinePaged } from '../partner.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 
@@ -21,7 +21,7 @@ export class PartnerInvoiceLinesComponent implements OnInit {
   gridLoading = false;
 
   ngOnInit() {
-    this.loadInvoiceLines();
+    this.loadSaleOrderLines();
   }
 
   loadInvoiceLines() {
@@ -29,6 +29,25 @@ export class PartnerInvoiceLinesComponent implements OnInit {
     var ilPaged = new AccountInvoiceLinePaged;
     ilPaged.partnerId = this.id;
     this.service.getInvoiceLineByPartner(ilPaged).pipe(
+      map(rs1 => (<GridDataResult>{
+        data: rs1.items,
+        total: rs1.totalItems
+      }))
+    ).subscribe(rs2 => {
+      this.gridView = rs2;
+      this.gridLoading = false;
+    }, er => {
+      this.gridLoading = true;
+      console.log(er);
+    }
+    );
+  }
+
+  loadSaleOrderLines() {
+    this.gridLoading = true;
+    var slPaged = new SaleOrderLinePaged;
+    slPaged.orderPartnerId = this.id;
+    this.service.getSaleOrderLineByPartner(slPaged).pipe(
       map(rs1 => (<GridDataResult>{
         data: rs1.items,
         total: rs1.totalItems

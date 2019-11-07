@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { PartnerService } from '../partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-partner-import',
@@ -11,16 +12,35 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 })
 export class PartnerImportComponent implements OnInit {
 
-  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private service: PartnerService, private notificationService: NotificationService) { }
+  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private activeRoute: ActivatedRoute,
+    private service: PartnerService, private notificationService: NotificationService, private router: Router) { }
 
   isChange: boolean = false;
   formImport: FormGroup;
   selectedFile: File;
+  isCustomer = false;
 
   ngOnInit() {
     this.formImport = this.fb.group({
       file: [null, Validators.required],
     })
+    this.routingChange();
+  }
+
+  routingChange() {
+    this.activeRoute.queryParamMap.subscribe(
+      params => {
+        if (params['params']['customer'] == 'true') {
+          this.isCustomer = true;
+        }
+        if (params['params']['supplier'] == 'true') {
+          this.isCustomer = false;
+        }
+      },
+      er => {
+        console.log(er);
+      }
+    );
   }
 
   closeModal(rs) {
@@ -37,7 +57,7 @@ export class PartnerImportComponent implements OnInit {
   }
 
   import() {
-    this.service.importFromExcel(this.selectedFile).subscribe(
+    this.service.importFromExcel(this.selectedFile, this.isCustomer).subscribe(
       rs => {
         this.isChange = true;
         this.closeModal(null);

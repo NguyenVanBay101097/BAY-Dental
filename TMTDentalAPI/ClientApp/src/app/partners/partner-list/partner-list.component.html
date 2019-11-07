@@ -98,7 +98,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" id="invoice-tab" data-toggle="tab" href="#invoice_{{dataItem.id}}" role="tab"
-              aria-controls="invoice" aria-selected="false">Hóa đơn</a>
+              aria-controls="invoice" aria-selected="false">Phiếu điều trị</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="invoice-line-tab" data-toggle="tab" href="#invoice-line_{{dataItem.id}}" role="tab"
@@ -128,9 +128,11 @@
 
     <kendo-grid-command-column title="Thao tác" width="150">
       <ng-template kendoGridCellTemplate let-dataItem>
-        <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
+        <!-- <button title="Thanh toán" kendoButton (click)="registerPayment(dataItem.id)" class="btn btn-primary btn-sm"><i
+            class="fas fa-file-invoice-dollar"></i></button> -->
+        <button *ngIf="querySupplier" title="Sửa" (click)="openModal(dataItem.id)" class="btn btn-success mr5"><i
             class="fas fa-edit"></i></button>
-        <button kendoButton (click)="deleteCustomer(dataItem.id)" class="btn btn-danger btn-sm"><i title="Xóa"
+        <button title="Xóa" (click)="deleteCustomer(dataItem.id,$event)" class="btn btn-danger mr5"><i
             class="fas fa-times"></i></button>
         <!-- <button kendoButton style="color: white" class="btn btn-info btn-sm" *ngIf="queryCustomer"
           [routerLink]="['/partners/history/'+dataItem.id]"><i title="Lịch sử điều trị"

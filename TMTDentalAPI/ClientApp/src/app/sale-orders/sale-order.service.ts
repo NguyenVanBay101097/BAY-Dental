@@ -10,6 +10,7 @@ export class SaleOrderPaged {
     limit: number;
     offset: number;
     search: string;
+    partnerId: string;
 }
 
 @Injectable()
