@@ -5,6 +5,7 @@ import { AppointmentPaged, PagedResult2, AppointmentBasic } from '../appointment
 import { formatDate } from '@angular/common';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ProductSimple } from '../products/product-simple';
+import { SaleReportTopServicesCs } from './sale-report';
 
 export class TopServices {
   productQtyTotal: number;
@@ -33,8 +34,12 @@ export class HomeService {
     return this.http.post<AppointStateCount[]>(this.baseApi + "api/Appointments/CountAppointment", { dateFrom: dateFrom, dateTo: dateTo });
   }
 
-  getTopServiceCount(number: number): Observable<TopServices[]> {
+  getInvoicedTopService(number: number): Observable<TopServices[]> {
     return this.http.get<TopServices[]>(this.baseApi + "api/AccountInvoiceReports/GetTop/" + number);
+  }
+
+  getSaleReportTopService(val): Observable<SaleReportTopServicesCs[]> {
+    return this.http.get<SaleReportTopServicesCs[]>(this.baseApi + "api/SaleReports/GetTopService", { params: val });
   }
 
   getAmountResidualToday(): Observable<AmountInvoice[]> {

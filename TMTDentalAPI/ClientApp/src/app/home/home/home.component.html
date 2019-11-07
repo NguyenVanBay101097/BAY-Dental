@@ -1,20 +1,5 @@
 <div class="o_content">
-    <div class="container p3">
-        <div class="card">
-            <div class="card-body" style="height: 430px">
-                <h5 class="card-title">5 dịch vụ được sử dụng nhiều nhất</h5>
-                <div>
-                    <kendo-chart [seriesColors]="['pink']" style="height: 350px">
-                        <kendo-chart-series>
-                            <kendo-chart-series-item type="bar" [data]="topServiceItems" field="productQtyTotal"
-                                categoryField="productName">
-                            </kendo-chart-series-item>
-                        </kendo-chart-series>
-                    </kendo-chart>
-                </div>
-            </div>
-        </div>
-    </div>
+    <app-sale-report></app-sale-report>
     <div class="container p3">
         <div class="card">
             <div class="card-body">

@@ -24,8 +24,6 @@ export class HomeComponent implements OnInit {
   constructor(private intlService: IntlService, private homeService: HomeService,
     private reportService: AccountInvoiceReportService, private productService: ProductService) { }
 
-
-  topServiceItems = new Array<TopServices>();
   invoiceItems = [];
   appointItems = [];
 
@@ -44,7 +42,6 @@ export class HomeComponent implements OnInit {
     //Đếm lịch hẹn
     this.countAppoint();
     //Top dịch vụ
-    this.getTopServices();
   }
 
   countAppoint() {
@@ -113,15 +110,6 @@ export class HomeComponent implements OnInit {
       default:
         return 'Còn nợ' + ' \n' + e.value.toLocaleString('vi');
     }
-  }
-
-  getTopServices() {
-    this.homeService.getTopServiceCount(5).subscribe(
-      rs => {
-        this.topServiceItems = rs;
-        console.log(this.topServiceItems);
-      }
-    )
   }
 
   sample() {

@@ -427,3 +427,18 @@ a {
     font-size: 0.8em;
     padding: 0 10px; 
 }
+
+.q-sort-by-filter{
+    width: 200px;
+    float: right;
+    padding: 5px;
+}
+
+.q-card-bar > .q-card-title{
+    font-weight: 500;
+    font-size: 1.3em;
+}
+
+.q-card-bar > div{
+    display: inline-block;
+}
