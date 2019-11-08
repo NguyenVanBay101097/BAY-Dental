@@ -279,6 +279,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("ProductId");
 
+                    b.Property<Guid?>("PurchaseLineId");
+
                     b.Property<decimal>("Quantity");
 
                     b.Property<int>("Sequence");
@@ -308,6 +310,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseLineId");
 
                     b.HasIndex("ToothCategoryId");
 
@@ -2021,6 +2025,141 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ProductSteps");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.PurchaseOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal?>("AmountTax");
+
+                    b.Property<decimal?>("AmountTotal");
+
+                    b.Property<decimal?>("AmountUntaxed");
+
+                    b.Property<Guid>("CompanyId");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateApprove");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime>("DateOrder");
+
+                    b.Property<DateTime?>("DatePlanned");
+
+                    b.Property<string>("InvoiceStatus");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Notes");
+
+                    b.Property<string>("Origin");
+
+                    b.Property<Guid>("PartnerId");
+
+                    b.Property<string>("PartnerRef");
+
+                    b.Property<Guid>("PickingTypeId");
+
+                    b.Property<Guid?>("RefundOrderId");
+
+                    b.Property<string>("State");
+
+                    b.Property<string>("Type");
+
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("PickingTypeId");
+
+                    b.HasIndex("RefundOrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("PurchaseOrders");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.PurchaseOrderLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("CompanyId");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("DatePlanned");
+
+                    b.Property<decimal?>("Discount");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name");
+
+                    b.Property<Guid>("OrderId");
+
+                    b.Property<Guid?>("PartnerId");
+
+                    b.Property<decimal?>("PriceSubtotal");
+
+                    b.Property<decimal?>("PriceTax");
+
+                    b.Property<decimal?>("PriceTotal");
+
+                    b.Property<decimal>("PriceUnit");
+
+                    b.Property<Guid?>("ProductId");
+
+                    b.Property<decimal>("ProductQty");
+
+                    b.Property<Guid?>("ProductUOMId");
+
+                    b.Property<decimal?>("ProductUOMQty");
+
+                    b.Property<decimal?>("QtyInvoiced");
+
+                    b.Property<int?>("Sequence");
+
+                    b.Property<string>("State");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUOMId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("PurchaseOrderLines");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2366,6 +2505,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Note");
 
+                    b.Property<string>("Origin");
+
                     b.Property<Guid?>("PartnerId");
 
                     b.Property<Guid?>("PickingId");
@@ -2376,7 +2517,13 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("ProductId");
 
+                    b.Property<decimal?>("ProductQty");
+
+                    b.Property<Guid?>("ProductUOMId");
+
                     b.Property<decimal>("ProductUOMQty");
+
+                    b.Property<Guid?>("PurchaseLineId");
 
                     b.Property<int>("Sequence");
 
@@ -2403,6 +2550,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PickingTypeId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUOMId");
+
+                    b.HasIndex("PurchaseLineId");
 
                     b.HasIndex("WarehouseId");
 
@@ -2433,6 +2584,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name");
 
                     b.Property<string>("Note");
+
+                    b.Property<string>("Origin");
 
                     b.Property<Guid?>("PartnerId");
 
@@ -3078,6 +3231,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
+
+                    b.HasOne("ApplicationCore.Entities.PurchaseOrderLine", "PurchaseLine")
+                        .WithMany("InvoiceLines")
+                        .HasForeignKey("PurchaseLineId");
 
                     b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
                         .WithMany()
@@ -3932,6 +4089,72 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.PurchaseOrder", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.StockPickingType", "PickingType")
+                        .WithMany()
+                        .HasForeignKey("PickingTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.PurchaseOrder", "RefundOrder")
+                        .WithMany()
+                        .HasForeignKey("RefundOrderId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.PurchaseOrderLine", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.PurchaseOrder", "Order")
+                        .WithMany("OrderLines")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId");
+
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
+                        .WithMany()
+                        .HasForeignKey("ProductUOMId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -4152,6 +4375,14 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
+                        .WithMany()
+                        .HasForeignKey("ProductUOMId");
+
+                    b.HasOne("ApplicationCore.Entities.PurchaseOrderLine", "PurchaseLine")
+                        .WithMany()
+                        .HasForeignKey("PurchaseLineId");
 
                     b.HasOne("ApplicationCore.Entities.StockWarehouse", "Warehouse")
                         .WithMany()

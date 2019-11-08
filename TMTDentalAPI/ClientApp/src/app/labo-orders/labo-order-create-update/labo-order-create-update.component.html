@@ -232,26 +232,6 @@
                             </table>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Mã đợt khám</th>
-                                        <th>Ngày khám</th>
-                                        <th>Người tạo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let dk of dotKhams">
-                                        <td>
-                                            <a [routerLink]="['/dot-khams/edit/', dk.id]">{{dk.name}}</a>
-                                        </td>
-                                        <td>{{ dk.date | date : 'short' }}</td>
-                                        <td>{{ dk.user ? dk.user.name : '' }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>

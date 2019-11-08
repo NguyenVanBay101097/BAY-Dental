@@ -54,6 +54,20 @@ export class LaboOrderLineListComponent implements OnInit {
     }, 200);
   }
 
+  stateGet(state) {
+    switch (state) {
+      case 'purchase':
+        return 'Đơn hàng';
+      case 'done':
+        return 'Đã khóa';
+      case 'cancel':
+        return 'Đã hủy';
+      default:
+        return 'Nháp';
+    }
+  }
+
+
   loadDataFromApi() {
     this.loading = true;
     var val = new LaboOrderLinePaged();

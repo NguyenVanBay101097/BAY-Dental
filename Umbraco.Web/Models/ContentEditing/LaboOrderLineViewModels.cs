@@ -11,35 +11,34 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Khách hàng
         /// </summary>
-        public Guid CustomerId { get; set; }
-        public PartnerSimple Customer { get; set; }
+  
+        public string CustomerName { get; set; }
+
+        public string ProductName { get; set; }
+
+        public string PartnerName { get; set; }
+
+        public decimal ProductQty { get; set; }
+
+        public decimal PriceTotal { get; set; }
 
         /// <summary>
-        /// Tên labo
+        /// Mã bảo hành
         /// </summary>
-        public Guid ProductId { get; set; }
-        public ProductSimple Product { get; set; }
+        public string WarrantyCode { get; set; }
 
         /// <summary>
-        /// Nhà cung cấp
+        /// Hạn bảo hành
         /// </summary>
-        public Guid SupplierId { get; set; }
-        public PartnerSimple Supplier { get; set; }
+        public DateTime? WarrantyPeriod { get; set; }
 
-        /// <summary>
-        /// Số lượng
-        /// </summary>
-        public decimal Quantity { get; set; }
+        public DateTime DateOrder { get; set; }
 
-        /// <summary>
-        /// Ngày gửi
-        /// </summary>
-        public DateTime? SentDate { get; set; }
+        public DateTime? DatePlanned { get; set; }
 
-        /// <summary>
-        /// Ngày nhận
-        /// </summary>
-        public DateTime? ReceivedDate { get; set; }
+        public string State { get; set; }
+
+        public string OrderName { get; set; }
     }
 
    
@@ -53,26 +52,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
 
         public int Limit { get; set; }
-
-        public Guid? CustomerId { get; set; }
-
-        public Guid? SupplierId { get; set; }
-
-        public Guid? ProductId { get; set; }
-
-        public string SearchCustomer { get; set; }
-
-        public string SearchSupplier { get; set; }
-
-        public string SearchProduct { get; set; }
-
-        public DateTime? SentDateFrom { get; set; }
-
-        public DateTime? SentDateTo { get; set; }
-
-        public DateTime? ReceivedDateFrom { get; set; }
-
-        public DateTime? ReceivedDateTo { get; set; }
 
         public string Search { get; set; }
     }

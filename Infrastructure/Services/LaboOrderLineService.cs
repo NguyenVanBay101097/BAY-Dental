@@ -53,17 +53,38 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderLineBasic>> GetPagedResultAsync(LaboOrderLinePaged val)
         {
-            //var query = GetQueryPaged(val);
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                x.Order.Name.Contains(val.Search) ||
+                x.WarrantyCode.Contains(val.Search) ||
+                x.Customer.Name.Contains(val.Search) ||
+                x.Customer.NameNoSign.Contains(val.Search) ||
+                x.Customer.Phone.Contains(val.Search));
 
-            //var items = await query.Include(x => x.Customer).Include(x => x.Supplier).Include(x => x.Product).Skip(val.Offset).Take(val.Limit)
-            //    .ToListAsync();
-            //var totalItems = await query.CountAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit)
+                .Select(x => new LaboOrderLineBasic {
+                    Id = x.Id,
+                    Name = x.Name,
+                    CustomerName = x.Customer.Name,
+                    DateOrder = x.Order.DateOrder,
+                    PartnerName = x.Partner.Name,
+                    ProductQty = x.ProductQty,
+                    PriceTotal = x.PriceTotal,
+                    ProductName = x.Product.Name,
+                    State = x.State,
+                    WarrantyCode = x.WarrantyCode,
+                    WarrantyPeriod = x.WarrantyPeriod,
+                    DatePlanned = x.Order.DatePlanned,
+                    OrderName = x.Order.Name
+                })
+                .ToListAsync();
+            var totalItems = await query.CountAsync();
 
-            //return new PagedResult2<LaboOrderLineBasic>(totalItems, val.Offset, val.Limit)
-            //{
-            //    Items = _mapper.Map<IEnumerable<LaboOrderLineBasic>>(items)
-            //};
-            return null;
+            return new PagedResult2<LaboOrderLineBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         private IQueryable<LaboOrderLine> GetQueryPaged(LaboOrderLinePaged val)

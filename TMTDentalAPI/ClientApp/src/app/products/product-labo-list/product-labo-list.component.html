@@ -25,7 +25,7 @@
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+        (pageChange)="onPageChange($event)">
         <kendo-grid-column field="name" title="Tên labo">
         </kendo-grid-column>
         <kendo-grid-column field="purchasePrice" class="text-right" title="Giá mua">

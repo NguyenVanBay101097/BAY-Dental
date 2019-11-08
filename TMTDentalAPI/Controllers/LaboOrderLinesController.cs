@@ -35,7 +35,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] LaboOrderLinePaged val)
         {
-            _modelAccessService.Check("LaboOrderLine", "Read");
             var res = await _laboOrderLineService.GetPagedResultAsync(val);
             return Ok(res);
         }
@@ -43,7 +42,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("LaboOrderLine", "Read");
             var laboLine = await _laboOrderLineService.GetLaboLineForDisplay(id);
             if (laboLine == null)
             {
@@ -57,7 +55,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("LaboOrderLine", "Create");
             var laboLine = _mapper.Map<LaboOrderLine>(val);
             await _laboOrderLineService.CreateAsync(laboLine);
 
@@ -70,7 +67,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("LaboOrderLine", "Write");
             var laboLine = await _laboOrderLineService.GetByIdAsync(id);
             if (laboLine == null)
                 return NotFound();
@@ -84,7 +80,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("LaboOrderLine", "Unlink");
             var laboLine = await _laboOrderLineService.GetByIdAsync(id);
             if (laboLine == null)
                 return NotFound();
