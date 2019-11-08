@@ -9,5 +9,7 @@ export class SaleOrderDisplay {
     user: UserSimple;
     companyId: string;
     userId: string;
+    state: string;
+    residualSum: number;
     orderLines: SaleOrderLineDisplay[];
 }

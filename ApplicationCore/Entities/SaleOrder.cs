@@ -60,5 +60,7 @@ namespace ApplicationCore.Entities
         public ApplicationUser User { get; set; }
 
         public string InvoiceStatus { get; set; }
+
+        public decimal? Residual { get; set; }
     }
 }

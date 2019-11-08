@@ -6,6 +6,7 @@ import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-categor
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @Component({
   selector: 'app-partner-info',
@@ -114,6 +115,24 @@ export class PartnerInfoComponent implements OnInit {
       },
       er => { }
     )
+  }
+
+  registerPayment(id: string) {
+    this.service.getDefaultRegisterPayment(id).subscribe(result => {
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thanh toán';
+      modalRef.componentInstance.defaultVal = result;
+      modalRef.result.then(() => {
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'right', vertical: 'bottom' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }, () => {
+      });
+    });
   }
 
 }

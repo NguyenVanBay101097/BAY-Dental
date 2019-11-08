@@ -61,6 +61,7 @@ namespace Infrastructure.Services
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
+            order.ResidualSum = order.AmountTotal;
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
@@ -536,5 +537,10 @@ namespace Infrastructure.Services
 
             return vals;
         }
+
+        //public async Task<IEnumerable<>> GetPaymentInfo(Guid id)
+        //{
+        //    var saleOrder = SearchQuery().;
+        //}
     }
 }

@@ -8,7 +8,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public SaleReportTopServicesFilter()
         {
-            Number = 5;
+            Number = 10;
         }
         public int Number { get; set; }
 

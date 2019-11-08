@@ -49,5 +49,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
+
+        public decimal? ResidualSum { get; set; }
     }
 }

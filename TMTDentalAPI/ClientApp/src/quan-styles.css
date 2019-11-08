@@ -442,3 +442,11 @@ a {
 .q-card-bar > div{
     display: inline-block;
 }
+
+.mr5{
+    margin : 0 0 0 5px;
+}
+
+.q-button-group{
+    padding: 5px;
+}

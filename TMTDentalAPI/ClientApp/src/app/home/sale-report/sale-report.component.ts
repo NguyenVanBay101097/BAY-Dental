@@ -16,13 +16,13 @@ export class SaleReportComponent implements OnInit {
 
   topServiceItems = new Array<SaleReportTopServicesCs>();
   invoiceOrQty = true;
-  limit = 5;
+  limit = 10;
 
   formFilter: FormGroup;
   ngOnInit() {
     this.formFilter = this.fb.group({
       by: 'byInvoice',
-      limit: 5
+      limit: 10
     })
     this.getTopServices();
   }
@@ -63,6 +63,6 @@ export class SaleReportComponent implements OnInit {
 
   public labelContent = (e: any) => {
     console.log(formatNumber(e.value, 'vi-VN'));
-    return formatNumber(parseInt(e.value), 'vi-VN');
+    return formatNumber(e.value, 'vi-VN');
   };
 }

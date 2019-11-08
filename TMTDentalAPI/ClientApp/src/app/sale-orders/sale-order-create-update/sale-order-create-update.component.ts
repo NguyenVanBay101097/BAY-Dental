@@ -53,7 +53,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       orderLines: this.fb.array([]),
       companyId: null,
       userId: null,
-      amountTotal: 0
+      amountTotal: 0,
+      state: null,
+      residualSum: null
     });
 
     this.route.paramMap.pipe(
@@ -338,6 +340,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   get getAmountTotal() {
     return this.formGroup.get('amountTotal').value;
+  }
+
+  get getState() {
+    return this.formGroup.get('state').value;
+  }
+
+  get getResidualSum() {
+    return this.formGroup.get('residualSum').value;
   }
 
   computeAmountTotal() {
