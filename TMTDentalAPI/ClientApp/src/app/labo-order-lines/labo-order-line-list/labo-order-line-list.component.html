@@ -1,26 +1,19 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Quản lý labo</li>
+            <li class="active">Báo cáo labo</li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, khách hàng, SĐT" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                </div>
-                <div class="o_searchview_advance">
-                    <button class="btn btn-secondary btn-sm rounded-0" type="button"
-                        (click)="advanceFilter.toggleShow()">
-                        Nâng cao
-                    </button>
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã bảo hành, số phiếu, khách hàng, SĐT"
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -31,57 +24,50 @@
     </div>
 </div>
 
-
-<div kendoDialogContainer></div>
-
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Mã">
-        </kendo-grid-column>
-        <kendo-grid-column field="supplier" title="Nhà cung cấp">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.supplier ? dataItem.supplier.name : ''}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="customer" title="Khách hàng">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.customer ? dataItem.customer.name : ''}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="product" title="Tên labo">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.product ? dataItem.product.name : ''}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="quantity" title="SL" class="text-right" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.quantity | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="sentDate" title="Ngày gửi" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.sentDate | date : 'shortDate'}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="receivedDate" title="Ngày nhận" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.receivedDate | date : 'shortDate'}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="id" width="160">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
-            </ng-template>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
-                    <span class="fa fa-edit"></span> Sửa</button>
-                <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
-                    <span class="fa fa-trash"></span> Xóa</button>
-            </ng-template>
-        </kendo-grid-column>
-    </kendo-grid>
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="orderName" title="Phiếu labo" width="100">
+            </kendo-grid-column>
+            <kendo-grid-column field="customerName" title="Khách hàng" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Nhà cung cấp" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="productName" title="Loại labo" width="100">
+            </kendo-grid-column>
+            <kendo-grid-column field="productQty" title="Số lượng" class="text-right" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.productQty | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="priceTotal" title="Thành tiền" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.priceTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.dateOrder | date : 'short'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="datePlanned" title="Ngày nhận" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.datePlanned | date : 'short'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.warrantyPeriod | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{stateGet(dataItem.state)}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
 </div>
-
-<app-labo-order-line-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)">
-</app-labo-order-line-advance-search>

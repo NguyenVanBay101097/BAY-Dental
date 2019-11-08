@@ -74,6 +74,7 @@ namespace Infrastructure.Services
                 NameNoSign = x.NameNoSign,
                 Type = x.Type,
                 Id = x.Id,
+                PurchasePrice = x.PurchasePrice ?? 0,
                 CategId = x.CategId,
                 QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
                 Type2 = x.Type2

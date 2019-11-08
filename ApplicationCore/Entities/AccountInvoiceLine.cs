@@ -70,5 +70,8 @@ namespace ApplicationCore.Entities
 
         public Guid? LaboLineId { get; set; }
         public LaboOrderLine LaboLine { get; set; }
+
+        public Guid? PurchaseLineId { get; set; }
+        public PurchaseOrderLine PurchaseLine { get; set; }
     }
 }

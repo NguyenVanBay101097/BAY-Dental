@@ -876,6 +876,33 @@ namespace Infrastructure.Services
 
             return data;
         }
+
+        public async Task<AccountInvoiceLine> PrepareInvoiceLineFromPOLine(AccountInvoice self, PurchaseOrderLine line, AccountJournal journal = null, string type = "out_invoice")
+        {
+            var invLineObj = GetService<IAccountInvoiceLineService>();
+            decimal qty = line.ProductQty - (line.QtyInvoiced ?? 0);
+            if (qty <= 0)
+                qty = 0;
+
+            var account = await invLineObj._DefaultAccount(journal: journal, type: type);
+            if (account == null)
+                throw new Exception("Không tìm thấy tài khoản cho chi tiết hóa đơn");
+            var data = new AccountInvoiceLine
+            {
+                PurchaseLineId = line.Id,
+                Name = line.Order.Name + ": " + line.Name,
+                UoMId = line.Product.UOMId,
+                ProductId = line.ProductId,
+                AccountId = account.Id,
+                PriceUnit = line.PriceUnit,
+                Quantity = qty,
+                Discount = 0,
+                InvoiceId = self.Id,
+                Invoice = self,
+            };
+
+            return data;
+        }
     }
 
     public class ComputeInvoiceTotalsRes

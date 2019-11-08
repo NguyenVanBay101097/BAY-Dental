@@ -56,5 +56,22 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        public void _Compute(IEnumerable<StockMove> self)
+        {
+            _ComputeProductQty(self);
+        }
+
+        private void _ComputeProductQty(IEnumerable<StockMove> moves)
+        {
+            foreach (var move in moves)
+                move.ProductQty = move.ProductUOMQty;
+        }
+
+        public override Task<IEnumerable<StockMove>> CreateAsync(IEnumerable<StockMove> entities)
+        {
+            _Compute(entities);
+            return base.CreateAsync(entities);
+        }
     }
 }

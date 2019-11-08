@@ -66,6 +66,9 @@ import { IrModelsModule } from './ir-models/ir-models.module';
 import { IrRulesModule } from './ir-rules/ir-rules.module';
 import { PriceListModule } from './price-list/price-list.module';
 import { LaboOrdersModule } from './labo-orders/labo-orders.module';
+import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
+
+import { HotkeyModule } from 'angular2-hotkeys';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -137,8 +140,9 @@ registerLocaleData(localeVi, 'vi');
     IrModelsModule,
     IrRulesModule,
     PriceListModule,
-    LaboOrdersModule
-
+    LaboOrdersModule,
+    PurchaseOrdersModule,
+    HotkeyModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

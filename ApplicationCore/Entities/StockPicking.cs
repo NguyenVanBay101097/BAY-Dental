@@ -43,5 +43,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid LocationDestId { get; set; }
         public StockLocation LocationDest { get; set; }
+
+        public string Origin { get; set; }
     }
 }

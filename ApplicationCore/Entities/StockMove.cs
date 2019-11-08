@@ -40,6 +40,11 @@ namespace ApplicationCore.Entities
 
         public decimal ProductUOMQty { get; set; }
 
+        public decimal? ProductQty { get; set; }
+
+        public Guid? ProductUOMId { get; set; }
+        public UoM ProductUOM { get; set; }
+
         /// <summary>
         /// sản phẩm di chuyển
         /// </summary>
@@ -79,5 +84,10 @@ namespace ApplicationCore.Entities
         public Company Company { get; set; }
 
         public int Sequence { get; set; }
+
+        public string Origin { get; set; }
+
+        public Guid? PurchaseLineId { get; set; }
+        public PurchaseOrderLine PurchaseLine { get; set; }
     }
 }

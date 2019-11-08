@@ -97,6 +97,8 @@ namespace Infrastructure.Data
         public DbSet<SaleOrderLineToothRel> SaleOrderLineToothRels { get; set; }
         public DbSet<LaboOrder> LaboOrders { get; set; }
         public DbSet<LaboOrderLineToothRel> LaboOrderLineToothRels { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -177,6 +179,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderConfiguration());
             builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
             builder.ApplyConfiguration(new SaleReportConfiguration());
+            builder.ApplyConfiguration(new PurchaseOrderConfiguration());
+            builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
@@ -189,7 +193,7 @@ namespace Infrastructure.Data
             if (_tenant != null)
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-                builder["Database"] = $"{_tenant.Hostname}.TMTDentalCatalogDb";
+                builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
                 optionsBuilder.UseSqlServer(builder.ConnectionString);
             }
             else
