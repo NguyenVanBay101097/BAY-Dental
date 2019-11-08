@@ -1,6 +1,7 @@
 import { PartnerSimple } from '../partners/partner-simple';
 
 import { UserSimple } from '../users/user-simple';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 
 export class DotKhamDefaultGet {
     invoiceId: string;
@@ -44,7 +45,8 @@ export class DotKhamDisplay {
     note: string;
     state: string;
     companyId: string;
-    lines: []
+    lines: [];
+    saleOrder: SaleOrderBasic;
 }
 
 export class DotKhamPaging {

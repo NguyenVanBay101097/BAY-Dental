@@ -4,6 +4,7 @@ import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
 import { LaboOrderLineDisplay } from '../labo-order-lines/labo-order-line.service';
+import { DotKhamBasic } from '../dot-khams/dot-khams';
 
 export class LaboOrderPaged {
     limit: number;
@@ -33,6 +34,7 @@ export class LaboOrderDisplay {
     datePlanned: string;
     dotKhamId: string;
     orderLines: LaboOrderLineDisplay[];
+    dotKham: DotKhamBasic;
 }
 
 @Injectable()

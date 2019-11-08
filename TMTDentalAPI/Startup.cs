@@ -173,6 +173,8 @@ namespace TMTDentalAPI
             services.AddScoped<IProductPricelistService, ProductPricelistService>();
             services.AddScoped<IProductPricelistItemService, ProductPricelistItemService>();
             services.AddScoped<ILaboOrderService, LaboOrderService>();
+            services.AddScoped<IPurchaseOrderLineService, PurchaseOrderLineService>();
+            services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<ISaleReportService, SaleReportService>();
 
             services.AddMemoryCache();
@@ -231,6 +233,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ProductPricelistProfile());
                 mc.AddProfile(new IRRuleProfile());
                 mc.AddProfile(new LaboOrderProfile());
+                mc.AddProfile(new PurchaseOrderProfile());
+                mc.AddProfile(new PurchaseOrderLineProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

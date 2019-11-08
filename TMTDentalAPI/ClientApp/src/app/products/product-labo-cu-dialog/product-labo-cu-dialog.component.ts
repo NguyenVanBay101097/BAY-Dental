@@ -11,6 +11,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ProductLaboCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
+  title: string;
 
   constructor(private productService: ProductService, public activeModal: NgbActiveModal, private fb: FormBuilder) {
   }

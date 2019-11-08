@@ -1,9 +1,10 @@
 import { UserSimple } from '../users/user-simple';
 import { SaleOrderLineDisplay } from './sale-order-line-display';
+import { PartnerSimple } from '../partners/partner-simple';
 
 export class SaleOrderDisplay {
     id: string;
-    partner: object;
+    partner: PartnerSimple;
     partnerId: string;
     dateOrder: string;
     user: UserSimple;
@@ -12,4 +13,6 @@ export class SaleOrderDisplay {
     state: string;
     residualSum: number;
     orderLines: SaleOrderLineDisplay[];
+    state: string;
+    name: string;
 }

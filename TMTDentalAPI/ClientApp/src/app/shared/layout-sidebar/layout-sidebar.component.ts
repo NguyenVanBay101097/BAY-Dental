@@ -29,6 +29,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-tooth',
       children: [
         { name: 'Phiếu Labo', link: '/labo-orders' },
+        { name: 'Báo cáo labo', link: '/labo-order-lines' },
       ]
     },
     {
