@@ -17,5 +17,6 @@ namespace Infrastructure.Services
         Task SetupTenant(CompanySetupTenant val);
         Task<PagedResult2<CompanyBasic>> GetPagedResultAsync(CompanyPaged val);
         Task InsertSecurityData();
+        Task InsertCompanyData(Company company);
     }
 }

@@ -28,7 +28,8 @@ namespace Infrastructure.EntityConfigurations
 
             builder.HasOne(x => x.PurchaseLine)
                 .WithMany(x => x.InvoiceLines)
-                .HasForeignKey(x => x.PurchaseLineId);
+                .HasForeignKey(x => x.PurchaseLineId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.Invoice)
               .WithMany(x => x.InvoiceLines)

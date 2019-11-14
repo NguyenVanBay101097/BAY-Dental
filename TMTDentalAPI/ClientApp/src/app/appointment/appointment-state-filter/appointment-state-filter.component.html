@@ -1,43 +1,13 @@
-<div ngbDropdown #myDrop="ngbDropdown" [autoClose]="false">
-    <button class="btn btn-primary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownAppointmentState"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-filter"></i>
-        Trạng thái: {{getResult()}}
+        {{getResult()}}
     </button>
-    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
-        <div class="px-4 py-3" [formGroup]="formGroup">
-            <h5>Theo trạng thái</h5>
-            <div class="form-group">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" formControlName="confirmedState"
-                        id="confirmedState">
-                    <label class="form-check-label" for="confirmedState">
-                        Đang hẹn
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" formControlName="doneState" id="doneState">
-                    <label class="form-check-label" for="doneState">
-                        Đã tới
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" formControlName="cancelState" id="cancelState">
-                    <label class="form-check-label" for="cancelState">
-                        Đã hủy
-                    </label>
-                </div>
-            </div>
-            <div>
-                <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
-                    Tìm kiếm
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear()">
-                    Hủy lọc
-                </button>
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="myDrop.toggle()">
-                    Đóng
-                </button>
-            </div>
-        </div>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownAppointmentState">
+        <button class="dropdown-item" *ngFor="let state of states" type="button" [ngClass]="state.class"
+            (click)="onSelect(state.value)">
+            <span>{{state.text}}</span>
+        </button>
     </div>
 </div>

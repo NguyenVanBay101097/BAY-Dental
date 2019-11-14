@@ -24,20 +24,24 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IPartnerService _partnerService;
         private readonly IIRModelAccessService _modelAccessService;
+        private readonly IUserService _userService;
         public ApplicationUsersController(UserManager<ApplicationUser> userManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
-            IIRModelAccessService modelAccessService)
+            IIRModelAccessService modelAccessService,
+            IUserService userService)
         {
             _userManager = userManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _partnerService = partnerService;
             _modelAccessService = modelAccessService;
+            _userService = userService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]ApplicationUserPaged val)
         {
+            _modelAccessService.Check("ResUser", "Read");
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
@@ -56,7 +60,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(string id)
         {
             _modelAccessService.Check("ResUser", "Read");
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
+                .Include("ResCompanyUsersRels.Company").FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
@@ -83,6 +88,12 @@ namespace TMTDentalAPI.Controllers
 
             var user = _mapper.Map<ApplicationUser>(val);
             user.PartnerId = partner.Id;
+
+            foreach (var company in val.Companies)
+            {
+                user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
+            }
+
             var result = await _userManager.CreateAsync(user, val.Password);
             if (!result.Succeeded)
                 throw new Exception("fail create user");
@@ -98,16 +109,26 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResUser", "Update");
-            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
+            _modelAccessService.Check("ResUser", "Write");
+            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
+                .Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
             if (user == null)
                 return NotFound();
             await _unitOfWork.BeginTransactionAsync();
 
             user = _mapper.Map(val, user);
+            user.ResCompanyUsersRels.Clear();
+            foreach (var company in val.Companies)
+            {
+                user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
+            }
+
             await _userManager.UpdateAsync(user);
-            await _userManager.RemovePasswordAsync(user);
-            await _userManager.AddPasswordAsync(user, val.Password);
+            if (!string.IsNullOrEmpty(val.Password))
+            {
+                await _userManager.RemovePasswordAsync(user);
+                await _userManager.AddPasswordAsync(user, val.Password);
+            }
 
             var partner = user.Partner;
             partner.Name = val.Name;
@@ -177,6 +198,38 @@ namespace TMTDentalAPI.Controllers
             var res = new ApplicationUserDisplay();
             res.CompanyId = CompanyId;
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetChangeCurrentCompany()
+        {
+            var userId = UserId;
+            var user = await _userManager.Users.Where(x => x.Id == userId).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
+                .Include("ResCompanyUsersRels.Company").FirstOrDefaultAsync();
+            if (user == null)
+                throw new Exception("không tìm thấy tài khoản trong hệ thống !");
+            var res = new UserChangeCurrentCompanyVM
+            {
+                CurrentCompany = _mapper.Map<CompanyBasic>(user.Company),
+                Companies = _mapper.Map<IEnumerable<CompanyBasic>>(user.ResCompanyUsersRels.Select(x => x.Company))
+            };
+
+            return Ok(res);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SwitchCompany(UserSwitchCompanyVM val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var user = await _userManager.FindByIdAsync(UserId);
+            user.CompanyId = val.CompanyId;
+            await _userManager.UpdateAsync(user);
+            _userService.ClearRuleCache(new List<string>() { user.Id });
+
+            return NoContent();
         }
     }
 }

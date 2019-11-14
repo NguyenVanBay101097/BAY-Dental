@@ -14,5 +14,8 @@ namespace Infrastructure.Services
         Task<AppointmentDisplay> DefaultGet(AppointmentDefaultGet val);
         Task<IEnumerable<AppointmentStateCount>> CountAppointment(DateFromTo dateFromTo);
         Task<AppointmentDisplay> GetAppointmentDisplayAsync(Guid id);
+        Task<IEnumerable<AppointmentBasic>> SearchRead(AppointmentSearch val);
+        Task<PagedResult2<AppointmentBasic>> SearchReadByDate(AppointmentSearchByDate val);
+        Task<AppointmentBasic> GetBasic(Guid id);
     }
 }

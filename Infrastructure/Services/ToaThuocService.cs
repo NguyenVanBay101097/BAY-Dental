@@ -133,7 +133,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "toa.thuoc_comp_rule":
+                case "sale.toa_thuoc_comp_rule":
                     return new InitialSpecification<ToaThuoc>(x => x.CompanyId == companyId);
                 default:
                     return null;

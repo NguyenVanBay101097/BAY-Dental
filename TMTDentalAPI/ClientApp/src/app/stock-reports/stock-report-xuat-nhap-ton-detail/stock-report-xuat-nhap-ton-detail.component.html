@@ -7,9 +7,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="movePickingId" title="Phiếu nhập/xuất">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <a class="text-primary" *ngIf="dataItem.movePickingId" target="_blank"
-                [routerLink]="['/pickings/edit/', dataItem.movePickingId]"
-                [queryParams]="{picking_type_id: dataItem.movePickingTypeId}">{{dataItem.movePickingName}}</a>
+            {{dataItem.movePickingName}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="begin" class="text-right" title="Tồn đầu">

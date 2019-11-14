@@ -13,6 +13,5 @@ export class SaleOrderDisplay {
     state: string;
     residualSum: number;
     orderLines: SaleOrderLineDisplay[];
-    state: string;
     name: string;
 }

@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface IIRModelDataService: IBaseService<IRModelData>
     {
         Task<IRModelData> GetObjectReference(string reference);
+        Task<T> GetRef<T>(string reference) where T : class;
     }
 }

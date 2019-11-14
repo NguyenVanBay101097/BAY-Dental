@@ -52,7 +52,7 @@ namespace Infrastructure.Services
         {
             var res = new ResGroupDisplay();
             var modelObj = GetService<IIRModelService>();
-            var models = await modelObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
+            var models = await modelObj.SearchQuery(x => !x.Transient, orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
             var list = new List<IRModelAccessDisplay>();
             foreach(var model in models)
             {

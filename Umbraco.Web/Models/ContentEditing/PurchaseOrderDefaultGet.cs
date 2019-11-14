@@ -6,5 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PurchaseOrderDefaultGet
     {
+        public string Type { get; set; }
     }
 }

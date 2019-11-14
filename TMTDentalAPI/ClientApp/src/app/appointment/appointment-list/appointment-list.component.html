@@ -9,7 +9,7 @@
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, khách hàng, SĐT..." type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        [(ngModel)]="search" (ngModelChange)="appointmentVMService.searchSubject.next($event)">
                 </div>
                 <!-- <div class="o_searchview_advance">
                     <button class="btn btn-secondary btn-sm rounded-0" type="button"
@@ -29,12 +29,14 @@
                 <div class="o_form_buttons_view">
                     <button class="btn btn-primary btn-sm" (click)="openModal(null,null)">
                         <i class="fas fa-calendar-plus"></i>&nbsp;Đặt lịch hẹn</button>
-                    <button *ngIf="!schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="schedulerShow"
+                    <button class="btn btn-primary btn-sm" (click)="refreshData()">
+                        <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
+                    <!-- <button *ngIf="!schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="schedulerShow"
                         (click)="showSchedulerDefault()">
                         <i class="fas fa-calendar-alt"></i>&nbsp;Xem lịch</button>
                     <button *ngIf="schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="!schedulerShow"
                         (click)="showGridView()">
-                        <i class="fas fa-list"></i>&nbsp;Xem danh sách</button>
+                        <i class="fas fa-list"></i>&nbsp;Xem danh sách</button> -->
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -42,12 +44,11 @@
         </div>
         <div class="o_cp_right">
             <div class="btn-group o_search_options">
+                <app-appointment-state-filter (searchChange)="onStateSearchChange($event)">
+                </app-appointment-state-filter>
                 <app-appointment-date-filter [dateFrom]="fromDateList" [dateTo]="toDateList"
                     (searchChange)="onDateSearchChange($event)">
                 </app-appointment-date-filter>
-                <app-appointment-state-filter [confirmedState]="confirmed" [doneState]="done" [cancelState]="cancel"
-                    (searchChange)="onStateSearchChange($event)">
-                </app-appointment-state-filter>
             </div>
         </div>
     </div>
@@ -147,97 +148,7 @@
     </div> -->
 </div>
 <div class="o_content">
-    <kendo-grid *ngIf='!schedulerShow' [data]="this.gridView" [pageable]='true' (pageChange)="pageChange($event)"
-        [loading]="loading" [pageSize]="limit">
-        <kendo-grid-column field="name" title="Mã"></kendo-grid-column>
-        <kendo-grid-column field="partner.name" title="Khách hàng" width='200px;'>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <div>{{dataItem.partner ? dataItem.partner.name : ''}}</div>
-                <div>SĐT: {{dataItem.partner ? dataItem.partner.phone : ''}}</div>
-                <!-- <button class="btn btn-link mr-2"
-                    (click)="openCustomerInfo(dataItem.partnerId)">{{dataItem.partner ? dataItem.partner.name : ''}}</button>
-                <div *ngIf="dataItem.partner && dataItem.partner.phone">
-                    <i class="fas fa-mobile-alt" style="padding-left : 12px;"></i>
-                    {{dataItem.partner ? dataItem.partner.phone : ''}}
-                </div> -->
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="doctor.name" title="Bác sĩ">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <div>{{dataItem.doctor ? dataItem.doctor.name : ''}}</div>
-                <!-- <div>SĐT: {{dataItem.doctor ? dataItem.doctor.phone : ''}}</div> -->
-                <!-- <button class="btn btn-link mr-2"
-                    (click)="openEmployeeInfo(dataItem.doctorId)">{{dataItem.doctor ? dataItem.doctor.name : ''}}</button>
-                <div *ngIf="dataItem.doctor && dataItem.doctor.phone">
-                    <i class="fas fa-mobile-alt" style="padding-left : 12px;"></i>
-                    {{dataItem.doctor ? dataItem.doctor.phone : ''}}
-                </div> -->
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="date" title="Ngày hẹn">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.date | date : 'short'}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="state" title="Trạng thái" width="150">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{getState(dataItem.state)}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-command-column title="Thao tác">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <button (click)="openModal(dataItem.id,null)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
-                        class="fas fa-edit"></i>&nbsp;Sửa</button>
-                <button (click)="deleteAppointment(dataItem.id)" class="btn btn-danger btn-sm mr-2"><i title="Xóa"
-                        class="fas fa-times"></i>&nbsp;Xóa</button>
-                <!-- <button (click)="openCustomerInfo(dataItem.partnerId)" class="btn btn-info btn-sm mr-2"><i
-                        class="fas fa-user"></i>&nbsp;Thông tin KH</button> -->
-            </ng-template>
-        </kendo-grid-command-column>
-        <kendo-grid-messages pagerItems="dòng" noRecords="Không có lịch hẹn nào" pagerOf="/"></kendo-grid-messages>
-    </kendo-grid>
-    <kendo-scheduler *ngIf='schedulerShow' [kendoSchedulerBinding]="events" [resources]="resources"
-        [selectedDate]="schedulerConfig.selectedDate" [selectedViewIndex]="schedulerConfig.indexViewNum"
-        [startTime]="schedulerConfig.startDisplay" [endTime]="schedulerConfig.endDisplay"
-        [workDayStart]="schedulerConfig.workDayStart" [workDayEnd]="schedulerConfig.workDayEnd"
-        [workWeekStart]="schedulerConfig.workWeekStart" [workWeekEnd]="schedulerConfig.workWeekEnd" [editable]="true"
-        [slotDivisions]="schedulerConfig.slotDivisions" [loading]="loading"
-        [slotDuration]="schedulerConfig.slotDuration" (eventDblClick)="eventDblClick($event)"
-        (slotDblClick)="slotDblClick($event)" (remove)="cancelOrRemoveEvent($event)" (dragEnd)="dragEvent($event)"
-        (dateChange)="changeDateRangeScheduler($event)">
-
-        <ng-template kendoSchedulerEventTemplate let-event="event" let-resources="resources">
-            <div [style.font-size.em]="fontSize()" style="padding-left:5px "><b>{{ event.title }}</b></div>
-            <div style="float: right">
-                <ng-container *ngFor="let resource of resources">
-                    <span *ngIf="!resource.length">
-                        <span [style.background]="resource.color">
-                            <!-- {{ resource.text }} -->
-                        </span>
-                    </span>
-                </ng-container>
-            </div>
-            <div [style.font-size.em]="fontSize()" style="float:right;font-style: italic">
-                {{ event.description }}</div>
-        </ng-template>
-
-        <kendo-scheduler-day-view>
-        </kendo-scheduler-day-view>
-
-        <kendo-scheduler-week-view>
-        </kendo-scheduler-week-view>
-
-        <kendo-scheduler-month-view>
-        </kendo-scheduler-month-view>
-
-        <!-- <kendo-scheduler-multi-day-view [numberOfDays]="schedulerConfig.numberOfDays">
-        </kendo-scheduler-multi-day-view> -->
-
-        <kendo-scheduler-messages today="Hôm nay" allDay="Tất cả" dayViewTitle="Ngày" weekViewTitle="Tuần"
-            monthViewTitle="Tháng" [multiDayViewTitle]="schedulerConfig.numberOfDays +' ngày kế'"
-            showWorkDay="Hiện giờ làm việc" showFullDay="Hiện cả ngày">
-        </kendo-scheduler-messages>
-    </kendo-scheduler>
+    <router-outlet></router-outlet>
 </div>
 
 <!-- <app-appointment-advance-search #advanceFilter (searchChange)="onAdvanceSearchChange($event)">

@@ -32,11 +32,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IMemoryCache _cache;
         private readonly AppTenant _tenant;
+        private readonly IPartnerService _partnerService;
         public CompaniesController(ICompanyService companyService, IUploadService uploadService,
             IUnitOfWorkAsync unitOfWork,
             CatalogDbContext context,
             IMapper mapper, IIRModelAccessService modelAccessService,
-            IMemoryCache cache, ITenant<AppTenant> tenant)
+            IMemoryCache cache, ITenant<AppTenant> tenant,
+            IPartnerService partnerService)
         {
             _unitOfWork = unitOfWork;
             _companyService = companyService;
@@ -46,6 +48,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _cache = cache;
             _tenant = tenant?.Value;
+            _partnerService = partnerService;
         }
 
         [HttpGet]
@@ -77,10 +80,44 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             _modelAccessService.Check("Company", "Create");
-            var company = _mapper.Map<Company>(val);
 
             await _unitOfWork.BeginTransactionAsync();
-            //await _companyService.CreateAsync(company);
+            var partner = new Partner
+            {
+                Name = val.Name,
+                Customer = false,
+                Supplier = false,
+                Email = val.Email,
+                Phone = val.Phone,
+                Street = val.Street,
+            };
+
+            if (val.City != null)
+            {
+                partner.CityCode = val.City.Code;
+                partner.CityName = val.City.Name;
+            }
+
+            if (val.District != null)
+            {
+                partner.DistrictCode = val.District.Code;
+                partner.DistrictName = val.District.Name;
+            }
+
+            if (val.Ward != null)
+            {
+                partner.WardCode = val.Ward.Code;
+                partner.WardName = val.Ward.Name;
+            }
+
+            await _partnerService.CreateAsync(partner);
+
+            var company = _mapper.Map<Company>(val);
+            company.PartnerId = partner.Id;
+         
+            await _companyService.CreateAsync(company);
+            await SaveLogo(company, val);
+            await _companyService.InsertCompanyData(company);
             _unitOfWork.Commit();
 
             val.Id = company.Id;
@@ -125,7 +162,7 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpPost("InsertAccountDataForCompany")]
+        [HttpGet("InsertAccountDataForCompany")]
         public async Task<IActionResult> InsertAccountDataForCompany()
         {
             await _unitOfWork.BeginTransactionAsync();

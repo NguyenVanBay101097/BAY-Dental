@@ -15,5 +15,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<StockPickingBasic>> GetPagedResultAsync(StockPickingPaged val);
         Task<StockPickingOnChangePickingTypeResult> OnChangePickingType(StockPickingOnChangePickingType val);
         Task<StockPicking> GetPickingForDisplay(Guid id);
+        Task<StockPickingDisplay> DefaultGetOutgoing();
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

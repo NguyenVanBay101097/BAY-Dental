@@ -140,7 +140,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "stock.warehouse_comp_rule":
+                case "stock.stock_warehouse_comp_rule":
                     return new InitialSpecification<StockWarehouse>(x => x.CompanyId == companyId);
                 default:
                     return null;

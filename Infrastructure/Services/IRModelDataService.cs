@@ -11,7 +11,6 @@ namespace Infrastructure.Services
 {
     public class IRModelDataService : BaseService<IRModelData>, IIRModelDataService
     {
-
         public IRModelDataService(IAsyncRepository<IRModelData> repository, IHttpContextAccessor httpContextAccessor)
         : base(repository, httpContextAccessor)
         {
@@ -26,6 +25,42 @@ namespace Infrastructure.Services
             var module = tmp[0];
             var name = tmp[1];
             return await SearchQuery(x => x.Name == name && x.Module == module).FirstOrDefaultAsync();
+        }
+
+        public async Task<T> GetRef<T>(string reference) where T : class
+        {
+            var data = await GetObjectReference(reference);
+
+            if (data != null && (data.ResId.HasValue))
+            {
+                switch (data.Model)
+                {
+                    case "res.groups":
+                        {
+                            var service = GetService<IResGroupService>();
+                            var group = await service.GetByIdAsync(data.ResId.Value);
+                            return (T)(object)group;
+                        }
+                    case "account.account.type":
+                        {
+                            var service = GetService<IAccountAccountTypeService>();
+                            var group = await service.GetByIdAsync(data.ResId.Value);
+                            return (T)(object)group;
+                        }
+                    case "stock.location":
+                        {
+                            var service = GetService<IStockLocationService>();
+                            var group = await service.GetByIdAsync(data.ResId.Value);
+                            return (T)(object)group;
+                        }
+                    default:
+                        {
+                            return null;
+                        }
+                }
+            }
+
+            return null;
         }
     }
 }

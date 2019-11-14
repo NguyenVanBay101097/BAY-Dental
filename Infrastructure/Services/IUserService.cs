@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         IQueryable<ApplicationUser> GetQueryById(string id);
         void ClearSecurityCache(IEnumerable<string> ids);
+        void ClearRuleCache(IEnumerable<string> ids);
     }
 }

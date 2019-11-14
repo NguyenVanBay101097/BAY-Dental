@@ -165,7 +165,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "product.pricelist_comp_rule":
+                case "product.product_pricelist_comp_rule":
                     return new InitialSpecification<ProductPricelist>(x => x.CompanyId == companyId);
                 default:
                     return null;

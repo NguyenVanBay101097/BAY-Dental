@@ -10,6 +10,7 @@ export class PurchaseOrderPaged {
     limit: number;
     offset: number;
     search: string;
+    type: string;
 }
 
 export class PurchaseOrderBasic {
@@ -31,7 +32,7 @@ export class PurchaseOrderDisplay {
     amountTotal: number;
     datePlanned: string;
     orderLines: PurchaseOrderLineDisplay[];
-    dotKham: DotKhamBasic;
+    type: string;
 }
 
 export class PurchaseOrderLineDisplay {

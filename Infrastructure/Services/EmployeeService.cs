@@ -160,7 +160,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "employee_comp_rule":
+                case "base.employee_comp_rule":
                     return new InitialSpecification<Employee>(x => x.CompanyId == companyId);
                 default:
                     return null;

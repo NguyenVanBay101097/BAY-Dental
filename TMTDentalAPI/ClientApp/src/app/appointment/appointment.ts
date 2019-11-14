@@ -14,6 +14,8 @@ export class AppointmentBasic {
     doctorId: string;
     doctor: EmployeeSimple;
     note: string;
+    partnerName: string;
+    doctorName: string;
 }
 
 export class AppointmentDisplay extends AppointmentBasic {
@@ -57,6 +59,21 @@ export class AppointmentPaged {
     dateTimeFrom: string;
     dateTimeTo: string;
     state: string;
+}
+
+export class AppointmentSearch {
+    search: string;//by appointment name
+    dateTimeFrom: string;
+    dateTimeTo: string;
+    state: string;
+}
+
+export class AppointmentSearchByDate {
+    search: string;
+    date: string;
+    state: string;
+    offset: number;
+    limit: number;
 }
 
 export class SchedulerConfig {

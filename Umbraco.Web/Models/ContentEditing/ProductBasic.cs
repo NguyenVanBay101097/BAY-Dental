@@ -157,6 +157,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal ListPrice { get; set; }
 
-        public decimal StandardPrice { get; set; }
+        public double StandardPrice { get; set; }
     }
 }

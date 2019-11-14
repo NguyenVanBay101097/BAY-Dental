@@ -184,7 +184,7 @@ namespace Infrastructure.Services
             }
         }
 
-        private async Task PriceUpdate(IEnumerable<StockQuant> quants, decimal newPrice)
+        private async Task PriceUpdate(IEnumerable<StockQuant> quants, double? newPrice)
         {
             foreach (var quant in quants)
             {
@@ -335,7 +335,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "stock.quant_comp_rule":
+                case "stock.stock_quant_rule":
                     return new InitialSpecification<StockQuant>(x => x.CompanyId == companyId);
                 default:
                     return null;

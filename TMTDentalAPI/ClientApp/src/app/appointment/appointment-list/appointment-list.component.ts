@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppointmentService } from '../appointment.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { AppointmentBasic, AppointmentPaged, SchedulerConfig, ApplicationUserSimple, AppointmentPatch } from '../appointment';
+import { AppointmentBasic, AppointmentPaged, SchedulerConfig, ApplicationUserSimple, AppointmentPatch, AppointmentSearch } from '../appointment';
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { WindowRef, WindowService, WindowCloseResult, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -14,6 +14,8 @@ import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { EmployeeInfoComponent } from 'src/app/employees/employee-info/employee-info.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppointmentVMService } from '../appointment-vm.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-appointment-list',
@@ -21,12 +23,16 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./appointment-list.component.css'],
   host: {
     class: 'o_action o_view_controller'
-  }
+  },
+  providers: [
+    AppointmentVMService
+  ]
 })
 export class AppointmentListComponent implements OnInit {
 
   constructor(private service: AppointmentService, private dialogService: DialogService, private intlService: IntlService,
-    private notificationService: NotificationService, private modalService: NgbModal) { }
+    private notificationService: NotificationService, private modalService: NgbModal,
+    public appointmentVMService: AppointmentVMService) { }
 
   gridView: GridDataResult;
   windowOpened: boolean;
@@ -41,12 +47,18 @@ export class AppointmentListComponent implements OnInit {
 
   schedulerShow: boolean;
 
-  fromDateList: Date = new Date(new Date().toDateString());
-  toDateList: Date = new Date(new Date().toDateString());
+  fromDateList: Date;
+  toDateList: Date;
   fromDateScheduler: Date;
   toDateScheduler: Date;
 
+  public weekStart: Date = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + (new Date().getDay() == 0 ? -6 : 1)));
+  public weekEnd: Date = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + (new Date().getDay() == 0 ? -6 : 1) + 6));
+  public today: Date = new Date(new Date().toDateString());
+  public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
+
   search: string;
+  stateFilter: string;
   // searchDoctor: string;
   // searchAppoint: string;
   searchUpdate = new Subject<string>();
@@ -92,9 +104,52 @@ export class AppointmentListComponent implements OnInit {
 
   ngOnInit() {
     // this.updateExpiredAppointment();
-    this.showGridView();
-    this.searchChange();
-    // this.updateTime();
+    // this.showGridView();
+    // this.searchChange();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadAppointments();
+      });
+
+    this.appointmentVMService.filter.subscribe(data => {
+      this.fromDateList = data.start;
+      this.toDateList = data.end;
+      this.loadAppointments();
+    });
+
+    this.appointmentVMService.eventEdit.subscribe(id => {
+      this.openModal(id, null);
+    });
+
+    this.appointmentVMService.eventDelete.subscribe(id => {
+      this.deleteAppointment2(id);
+    });
+
+    this.fromDateList = this.today;
+    this.toDateList = this.next3days;
+    this.appointmentVMService.setDateRange(this.fromDateList, this.toDateList);
+  }
+
+  loadAppointments() {
+    var val = new AppointmentSearch();
+    if (this.search) {
+      val.search = this.search;
+    }
+    if (this.fromDateList) {
+      val.dateTimeFrom = this.intlService.formatDate(this.fromDateList, 'd', 'en-US');
+    }
+    if (this.toDateList) {
+      val.dateTimeTo = this.intlService.formatDate(this.toDateList, 'd', 'en-US');
+    }
+
+    if (this.stateFilter) {
+      val.state = this.stateFilter;
+    }
+
+    this.appointmentVMService.query(val);
   }
 
   searchChange() {
@@ -132,14 +187,13 @@ export class AppointmentListComponent implements OnInit {
   onDateSearchChange(filter) {
     this.fromDateList = filter.dateFrom;
     this.toDateList = filter.dateTo;
-    this.loadByView();
+    this.appointmentVMService.setDateRange(this.fromDateList, this.toDateList);
+    // this.loadAppointments();
   }
 
-  onStateSearchChange(filter) {
-    this.confirmed = filter.confirmedState;
-    this.done = filter.doneState;
-    this.cancel = filter.cancelState;
-    this.loadByView();
+  onStateSearchChange(state) {
+    this.stateFilter = state;
+    this.appointmentVMService.setState(state);
   }
 
   changeDateRangeFilter() {
@@ -178,6 +232,10 @@ export class AppointmentListComponent implements OnInit {
       default:
         return 'Đang hẹn';
     }
+  }
+
+  refreshData() {
+    this.appointmentVMService.refreshData();
   }
 
   changeDateRangeScheduler(e) {
@@ -377,7 +435,11 @@ export class AppointmentListComponent implements OnInit {
     modalRef.componentInstance.timeConfig = time;
     modalRef.result.then(
       rs => {
-        this.loadByView();
+        if (rs) {
+          this.appointmentVMService.announceApCreate(rs.id);
+        }
+
+        // this.loadAppointments();
       },
       er => { }
     )
@@ -470,6 +532,17 @@ export class AppointmentListComponent implements OnInit {
         this.loadAppointmentList();
       }
     )
+  }
+
+  deleteAppointment2(id) {
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa lịch hẹn';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
+    modalRef.result.then(() => {
+      this.service.removeAppointment(id).subscribe(() => {
+        this.loadAppointments();
+      });
+    });
   }
 
   deleteAppointment(id, state) {

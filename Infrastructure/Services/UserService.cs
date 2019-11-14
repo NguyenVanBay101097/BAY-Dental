@@ -50,5 +50,14 @@ namespace Infrastructure.Services
                 _cache.RemoveByPattern(string.Format("{0}ir.rule-{1}", tenant != null ? tenant.Hostname + "-" : "", id));
             }
         }
+
+        public void ClearRuleCache(IEnumerable<string> ids)
+        {
+            var tenant = _httpContextAccessor.HttpContext.GetTenant<AppTenant>();
+            foreach (var id in ids)
+            {
+                _cache.RemoveByPattern(string.Format("{0}ir.rule-{1}", tenant != null ? tenant.Hostname + "-" : "", id));
+            }
+        }
     }
 }

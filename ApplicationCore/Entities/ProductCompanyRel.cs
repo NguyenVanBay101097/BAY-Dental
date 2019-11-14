@@ -12,6 +12,6 @@ namespace ApplicationCore.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
-        public decimal StandardPrice { get; set; }
+        public double StandardPrice { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace ApplicationCore.Entities
 
         public decimal Qty { get; set; }
 
-        public decimal Cost { get; set; }
+        public double? Cost { get; set; }
 
         public Guid LocationId { get; set; }
 

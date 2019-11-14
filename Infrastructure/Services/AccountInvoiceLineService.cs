@@ -176,7 +176,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "account.invoice.line_comp_rule":
+                case "account.account_invoice_line_comp_rule":
                     return new InitialSpecification<AccountInvoiceLine>(x => x.CompanyId == companyId);
                 default:
                     return null;

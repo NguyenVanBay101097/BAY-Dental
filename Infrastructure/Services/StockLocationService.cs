@@ -123,8 +123,8 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "stock.location_comp_rule":
-                    return new InitialSpecification<StockLocation>(x => x.CompanyId == companyId);
+                case "stock.stock_location_comp_rule":
+                    return new InitialSpecification<StockLocation>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }

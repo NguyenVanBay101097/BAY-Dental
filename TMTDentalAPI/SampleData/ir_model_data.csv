@@ -1,22 +1,53 @@
-﻿"id","model","name"
-"model_res_user","ResUser","Người dùng"
-"model_res_partner","Partner","Đối tác"
-"model_partner_category","PartnerCategory","Nhóm đối tác"
-"model_product","Product","Sản phẩm"
-"model_product_category","ProductCategory","Nhóm sản phẩm"
-"model_res_group","ResGroup","Nhóm quyền"
-"model_stock_picking","StockPicking","Phiếu nhập xuất"
-"model_account_payment","AccountPayment","Thanh toán"
-"model_appointment","Appointment","Lịch hẹn"
-"model_company","Company","Chi nhánh"
-"model_dot_kham","DotKham","Đợt khám"
-"model_toa_thuoc","ToaThuoc","Toa thuốc"
-"model_labo_order_line","LaboOrder","Labo"
-"model_employee","Employee","Nhân viên"
-"model_employee_category","EmployeeCategory","Nhóm nhân viên"
-"model_history","History","Tiểu sử bệnh"
-"model_product_pricelist","ProductPricelist","Bảng giá"
-"model_sale_order","SaleOrder","Phiếu điều trị"
+﻿id,model,name
+account.model_account_account,AccountAccount,Account
+account.model_account_account_type,AccountType,Account Account Type
+account.model_account_full_reconcile,AccountFullReconcile,Account Full Reconcile
+account.model_account_invoice,AccountInvoice,Account Invoice
+account.model_account_invoice_line,AccountInvoiceLine,Account Invoice Line
+account.model_account_invoice_report,AccountInvoiceReport,Account Invoice Report
+account.model_account_journal,AccountJournal,Account Journal
+account.model_account_move,AccountMove,Account Move
+account.model_account_move_line,AccountMoveLine,Account Move Line
+account.model_account_partial_reconcile,AccountPartialReconcile,Account Partial Reconcile
+account.model_account_payment,AccountPayment,Thanh toán
+base.model_res_user,ResUser,Người dùng
+base.model_res_company,Company,Chi nhánh
+base.model_employee,Employee,Nhân viên
+base.model_employee_category,EmployeeCategory,Nhóm nhân viên
+base.model_history,History,Tiểu sử bệnh
+base.model_res_group,ResGroup,Nhóm quyền
+base.model_ir_attachment,IRAttachment,IR Attachment
+base.model_ir_model,IRModel,IR Model
+base.model_ir_model_access,IRModelAccess,IR Model Access
+base.model_ir_model_data,IRModelData,IR Model Data
+base.model_ir_rule,IRRule,IR Rule
+base.model_ir_sequence,IRSequence,IR Sequence
+base.model_res_partner,Partner,Đối tác
+base.model_res_partner_category,PartnerCategory,Nhóm đối tác
+product.model_product_product,Product,Sản phẩm
+product.model_product_category,ProductCategory,Nhóm sản phẩm
+product.model_product_pricelist,ProductPricelist,Bảng giá
+product.model_product_pricelist_item,ProductPricelistItem,Product Pricelist Item
+stock.model_stock_location,StockLocation,Stock Location
+stock.model_stock_move,StockMove,Stock Move
+stock.model_stock_picking,StockPicking,Phiếu nhập xuất
+stock.model_stock_picking_type,StockPickingType,Stock Picking Type
+stock.model_stock_quant,StockQuant,Stock Quant
+stock.model_stock_warehouse,StockWarehouse,Stock Warehouse
+sale.model_appointment,Appointment,Lịch hẹn
+sale.model_dot_kham,DotKham,Đợt khám
+sale.model_toa_thuoc,ToaThuoc,Toa thuốc
+sale.model_sale_order,SaleOrder,Phiếu điều trị
+sale.model_sale_order_line,SaleOrderLine,Sale Order Line
+labo.model_labo_order,LaboOrder,Phiếu Labo
+labo.model_labo_order_line,LaboOrderLine,Labo Order Line
+purchase.model_purchase_order,PurchaseOrder,Mua hàng
+purchase.model_purchase_order_line,PurchaseOrderLine,Purchase Order Line
+
+
+
+
+
 
 
 

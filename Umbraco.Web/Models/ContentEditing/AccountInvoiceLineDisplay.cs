@@ -23,6 +23,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceSubTotal { get; set; }
         public decimal Quantity { get; set; }
 
+        public decimal Discount { get; set; }
+
         /// <summary>
         /// Chuẩn đoán
         /// </summary>

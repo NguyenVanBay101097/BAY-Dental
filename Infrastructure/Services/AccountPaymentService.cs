@@ -417,7 +417,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "account.payment_comp_rule":
+                case "account.account_payment_comp_rule":
                     return new InitialSpecification<AccountPayment>(x => x.CompanyId == companyId);
                 default:
                     return null;

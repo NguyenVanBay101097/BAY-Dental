@@ -1,0 +1,3 @@
+<input type="text" class="form-control rounded-0" id="productSearchInput" autocomplete="off"
+    placeholder="Tìm kiếm [Alt + q]..." [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
+    [ngModelOptions]="{standalone: true}" (keydown)="onKeydown($event)" accesskey="q">

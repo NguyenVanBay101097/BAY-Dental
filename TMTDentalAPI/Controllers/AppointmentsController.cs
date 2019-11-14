@@ -52,10 +52,10 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
 
-            var category = _mapper.Map<Appointment>(val);
-            await _appointmentService.CreateAsync(category);
+            var appointment = _mapper.Map<Appointment>(val);
+            await _appointmentService.CreateAsync(appointment);
 
-            return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
+            return CreatedAtAction(nameof(Get), new { id = appointment.Id }, appointment);
         }
 
         [HttpPut("{id}")]
@@ -137,6 +137,27 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> CountAppointment(DateFromTo dateFromTo)
         {
             var res = await _appointmentService.CountAppointment(dateFromTo);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SearchRead(AppointmentSearch val)
+        {
+            var res = await _appointmentService.SearchRead(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SearchReadByDate(AppointmentSearchByDate val)
+        {
+            var res = await _appointmentService.SearchReadByDate(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetBasic(Guid id)
+        {
+            var res = await _appointmentService.GetBasic(id);
             return Ok(res);
         }
 

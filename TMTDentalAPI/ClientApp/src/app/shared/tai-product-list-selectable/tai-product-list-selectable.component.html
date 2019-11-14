@@ -1,0 +1,13 @@
+<table class="table table-sm o_list_view">
+    <thead>
+        <tr>
+            <th>Tên hàng hóa</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of productList; let i=index" (click)="selectProduct(product)"
+            [class.table-active]="i === productSelectedIndex">
+            <td>{{product.name}}</td>
+        </tr>
+    </tbody>
+</table>

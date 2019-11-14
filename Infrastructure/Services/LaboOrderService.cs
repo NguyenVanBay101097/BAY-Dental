@@ -53,6 +53,18 @@ namespace Infrastructure.Services
             };
         }
 
+        public override ISpecification<LaboOrder> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "labo.labo_order_comp_rule":
+                    return new InitialSpecification<LaboOrder>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
+
         public async Task<IEnumerable<LaboOrderBasic>> GetAllForDotKham(Guid dotKhamId)
         {
             var res = await SearchQuery(x => x.DotKhamId == dotKhamId).Select(x => new LaboOrderBasic
