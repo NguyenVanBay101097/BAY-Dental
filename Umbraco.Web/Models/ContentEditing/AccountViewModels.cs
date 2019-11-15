@@ -26,9 +26,23 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Token { get; set; }
 
+        public string RefreshToken { get; set; }
+
         public object Configs { get; set; }
 
         public UserViewModel User { get; set; }
+    }
+
+    public class RefreshViewModel
+    {
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+    }
+
+    public class RefreshResponseViewModel
+    {
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 
     public class UserViewModel

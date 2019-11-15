@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SaasKit.Multitenancy;
@@ -28,17 +31,19 @@ namespace TMTDentalAPI.Controllers
         private readonly AppSettings _appSettings;
         private readonly AppTenant _tenant;
         private readonly IMailSender _mailSender;
+        private readonly IAsyncRepository<UserRefreshToken> _userRefreshTokenRepository;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
-            IMailSender mailSender)
+            IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
             _tenant = tenant?.Value;
             _mailSender = mailSender;
+            _userRefreshTokenRepository = userRefreshTokenRepository;
         }
 
         [AllowAnonymous]
@@ -56,6 +61,7 @@ namespace TMTDentalAPI.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.UserName);
+                    var refreshToken = await GenerateRefreshToken(user);
                     var roles = new List<string>();
 
                     _authenticationResult = new LoggedInViewModel
@@ -63,7 +69,7 @@ namespace TMTDentalAPI.Controllers
                         Succeeded = true,
                         Message = "Authentication succeeded",
                         Token = GenerateToken(user, DateTime.Now.AddDays(7), roles),
-
+                        RefreshToken = refreshToken.Token,
                         User = new UserViewModel
                         {
                             Id = user.Id,
@@ -94,6 +100,31 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(_authenticationResult);
         }
+
+        [AllowAnonymous]
+        [HttpPost("Refresh")]
+        public async Task<ActionResult> Refresh([FromBody]RefreshViewModel model)
+        {
+            var refreshToken = await _userRefreshTokenRepository.SearchQuery(x => x.Token == model.RefreshToken)
+                .Include(x => x.User).FirstOrDefaultAsync();
+            if (refreshToken == null)
+                return BadRequest();
+            if (refreshToken.Expiration.HasValue && refreshToken.Expiration < DateTime.Now)
+                return Unauthorized();
+            if (!await _signInManager.CanSignInAsync(refreshToken.User))
+                return Unauthorized();
+            if (_userManager.SupportsUserLockout && await _userManager.IsLockedOutAsync(refreshToken.User))
+                return Unauthorized();
+
+            var response = new RefreshResponseViewModel()
+            {
+                AccessToken = GenerateToken(refreshToken.User, DateTime.Now.AddDays(7)),
+                RefreshToken = refreshToken.Token
+            };
+
+            return Ok(response);
+        }
+
 
         [AllowAnonymous]
         [HttpPost("ForgotPassword")]
@@ -180,8 +211,10 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        private string GenerateToken(ApplicationUser user, DateTime expires, IList<string> roles)
+        private string GenerateToken(ApplicationUser user, DateTime expires, IList<string> roles = null)
         {
+            if (roles == null)
+                roles = new List<string>();
             var handler = new JwtSecurityTokenHandler();
 
             //ClaimsIdentity identity = new ClaimsIdentity(
@@ -207,6 +240,33 @@ namespace TMTDentalAPI.Controllers
                 Expires = expires,
             });
             return handler.WriteToken(securityToken);
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        private async Task<UserRefreshToken> GenerateRefreshToken(ApplicationUser user)
+        {
+            // Create the refresh token
+            var refreshToken = new UserRefreshToken()
+            {
+                Token = GenerateRefreshToken(),
+                Expiration = DateTime.Now.AddMonths(3) // Make this configurable
+            };
+
+            // Add it to the list of of refresh tokens for the user
+            user.RefreshTokens.Add(refreshToken);
+
+            // Update the user along with the new refresh token
+            await _userManager.UpdateAsync(user);
+            return refreshToken;
         }
     }
 }

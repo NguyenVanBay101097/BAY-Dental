@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { CompanyBasic, CompanySimple, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -13,8 +14,12 @@ export class UserCuDialogComponent implements OnInit {
   id: string;
   userForm: FormGroup;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
+
+  listCompanies: CompanyBasic[] = [];
+
   title: string;
-  constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal) {
+  constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal,
+    private companyService: CompanyService) {
   }
 
   ngOnInit() {
@@ -23,7 +28,9 @@ export class UserCuDialogComponent implements OnInit {
       userName: null,
       passWord: null,
       email: null,
-      companyId: null
+      companyId: null,
+      company: null,
+      companies: [[]]
     });
 
     if (this.id) {
@@ -31,8 +38,16 @@ export class UserCuDialogComponent implements OnInit {
     } else {
       this.userService.defaultGet().subscribe(result => this.userForm.patchValue(result));
     }
+
+    this.loadListCompanies();
   }
 
+  loadListCompanies() {
+    var val = new CompanyPaged();
+    this.companyService.getPaged(val).subscribe(result => {
+      this.listCompanies = result.items;
+    });
+  }
 
   onSave() {
     if (!this.userForm.valid) {

@@ -13,6 +13,11 @@ export class CompanyBasic {
     name: string;
 }
 
+export class CompanySimple {
+    id: string;
+    name: string;
+}
+
 export class CompanyDisplay {
     id: string;
     name: string;

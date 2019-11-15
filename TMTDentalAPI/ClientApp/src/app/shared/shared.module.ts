@@ -10,7 +10,7 @@ import { TopMenuComponent } from './top-menu/top-menu.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.component';
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
 import { NavSidebarService } from './nav-sidebar.service';
@@ -21,6 +21,11 @@ import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { DisableControlDirective } from './disable-control-directive';
 import { AppLoadingService } from './app-loading.service';
 import { LoadingComponent } from './loading/loading.component';
+import { ClickOutsideDirective } from './click-outside-directive';
+import { TaiSearchInputComponent } from './tai-search-input/tai-search-input.component';
+import { TaiProductListSelectableComponent } from './tai-product-list-selectable/tai-product-list-selectable.component';
+import { TaiDateRangeFilterDropdownComponent } from './tai-date-range-filter-dropdown/tai-date-range-filter-dropdown.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -36,7 +41,11 @@ import { LoadingComponent } from './loading/loading.component';
     ImageViewerComponent,
     DateRangeAdvanceSearchComponent,
     DisableControlDirective,
-    LoadingComponent
+    LoadingComponent,
+    ClickOutsideDirective,
+    TaiSearchInputComponent,
+    TaiProductListSelectableComponent,
+    TaiDateRangeFilterDropdownComponent
   ],
   exports: [
     HeaderComponent,
@@ -49,7 +58,11 @@ import { LoadingComponent } from './loading/loading.component';
     FieldBinaryImageSimpleComponent,
     DateRangeAdvanceSearchComponent,
     DisableControlDirective,
-    LoadingComponent
+    LoadingComponent,
+    ClickOutsideDirective,
+    TaiSearchInputComponent,
+    TaiProductListSelectableComponent,
+    TaiDateRangeFilterDropdownComponent
   ],
   imports: [
     CommonModule,
@@ -58,7 +71,9 @@ import { LoadingComponent } from './loading/loading.component';
     FlexLayoutModule,
     RouterModule,
     ReactiveFormsModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
+    FormsModule,
+    NgbModule
   ],
   providers: [NavSidebarService, AppLoadingService],
   entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent],

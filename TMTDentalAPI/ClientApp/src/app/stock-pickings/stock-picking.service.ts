@@ -40,6 +40,9 @@ export class StockPickingPaged {
     limit: number;
     pickingTypeId: string;
     search: string;
+    type: string;
+    dateFrom: string;
+    dateTo: string;
 }
 
 export class StockMoveDisplay {
@@ -49,6 +52,7 @@ export class StockMoveDisplay {
     product: ProductSimple;
     sequence: number;
     productUOMQty: number;
+    priceUnit: number;
 }
 
 export class StockPickingDefaultGet {
@@ -70,6 +74,14 @@ export class StockPickingService {
 
     defaultGet(val: StockPickingDefaultGet): Observable<StockPickingDisplay> {
         return this.http.post<StockPickingDisplay>(this.baseApi + this.apiUrl + "/defaultget", val);
+    }
+
+    defaultGetOutgoing(): Observable<StockPickingDisplay> {
+        return this.http.get<StockPickingDisplay>(this.baseApi + this.apiUrl + "/DefaultGetOutgoing");
+    }
+
+    defaultGetIncoming(): Observable<StockPickingDisplay> {
+        return this.http.get<StockPickingDisplay>(this.baseApi + this.apiUrl + "/DefaultGetIncoming");
     }
 
     create(val: StockPickingDisplay): Observable<StockPickingDisplay> {

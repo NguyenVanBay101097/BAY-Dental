@@ -32,6 +32,8 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search)));
+            if (!string.IsNullOrEmpty(val.Type))
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Type == val.Type));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
@@ -108,14 +110,30 @@ namespace Infrastructure.Services
             if (string.IsNullOrEmpty(purchase.Name) || purchase.Name == "/")
             {
                 var sequenceObj = GetService<IIRSequenceService>();
-                purchase.Name = await sequenceObj.NextByCode("purchase.order");
+                if (purchase.Type == "refund") 
+                    purchase.Name = await sequenceObj.NextByCode("purchase.refund");
+                else
+                    purchase.Name = await sequenceObj.NextByCode("purchase.order");
             }
             return await base.CreateAsync(purchase);
+        }
+
+        public override ISpecification<PurchaseOrder> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "purchase.purchase_order_comp_rule":
+                    return new InitialSpecification<PurchaseOrder>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
 
         public PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val)
         {
             var res = new PurchaseOrderDisplay();
+            res.Type = val.Type;
             var companyId = CompanyId;
             var pickingTypeObj = GetService<IStockPickingTypeService>();
             var pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == companyId).FirstOrDefault();
@@ -290,7 +308,7 @@ namespace Infrastructure.Services
             {
                 Name = !string.IsNullOrEmpty(order.PartnerRef) ? order.PartnerRef : order.Name,
                 AccountId = account.Id,
-                Type = "in_invoice",
+                Type = order.Type == "refund" ? "in_refund" : "in_invoice",
                 PartnerId = order.PartnerId,
                 Origin = order.Name,
                 JournalId = journal.Id,
@@ -318,6 +336,65 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task CreateReturns(IEnumerable<Guid> pickingIds)
+        {
+            var moveObj = GetService<IStockMoveService>();
+            var pickObj = GetService<IStockPickingService>();
+            var returnedLines = new List<StockMove>();
+            var pickings = await pickObj.SearchQuery(x => pickingIds.Contains(x.Id)).Include(x => x.MoveLines)
+                .Include(x => x.PickingType)
+                .Include("MoveLines.Location")
+                .Include("MoveLines.LocationDest")
+                .Include("MoveLines.Product")
+                .ToListAsync();
+            foreach (var pick in pickings)
+            {
+                if (!pick.PickingType.ReturnPickingTypeId.HasValue)
+                    throw new Exception("Không tìm thấy hoạt động để trả hàng");
+                var newPicking = new StockPicking(pick)
+                {
+                    PickingTypeId = pick.PickingType.ReturnPickingTypeId.Value,
+                    State = "draft",
+                    Origin = pick.Name,
+                    LocationId = pick.LocationDestId,
+                    LocationDestId = pick.LocationId,
+                    CompanyId = pick.CompanyId,
+                };
+
+                await pickObj.CreateAsync(newPicking);
+
+                foreach (var move in pick.MoveLines)
+                {
+                    var location = move.Location;
+                    var returnMove = new StockMove(move)
+                    {
+                        ProductId = move.ProductId,
+                        Product = move.Product,
+                        ProductUOMQty = move.ProductUOMQty,
+                        PickingId = newPicking.Id,
+                        Picking = newPicking,
+                        State = "draft",
+                        LocationId = move.LocationDestId,
+                        Location = move.LocationDest,
+                        LocationDestId = location.Id,
+                        LocationDest = location,
+                        PickingTypeId = pick.PickingTypeId,
+                        WarehouseId = pick.PickingType.WarehouseId,
+                        //OriginReturnedMoveId = move.Id,
+                        CompanyId = newPicking.CompanyId,
+                    };
+
+                    returnedLines.Add(returnMove);
+                }
+
+                if (!returnedLines.Any())
+                    throw new Exception("Không có dòng nào có thể trả hàng.");
+                await moveObj.CreateAsync(returnedLines);
+
+                await pickObj.ActionDone(new List<Guid>() { newPicking.Id });
+            }
+        }
+
         public async Task ButtonCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
@@ -341,9 +418,14 @@ namespace Infrastructure.Services
                 order.State = "cancel";
                 foreach (var line in order.OrderLines)
                     line.State = "cancel";
-            }
 
-            //tìm tất cả những phiếu nhập để tạo phiếu trả hàng
+                //tìm tất cả những phiếu nhập để tạo phiếu trả hàng
+                var pickingIds = GetPickingIds(order.Id);
+                if (pickingIds.Any())
+                {
+                    await CreateReturns(pickingIds);
+                }
+            }
 
             _GetInvoiced(self);
             await UpdateAsync(self);
@@ -390,14 +472,13 @@ namespace Infrastructure.Services
                 DateExpected = self.DatePlanned,
                 Date = self.Order.DateOrder,
                 LocationId = picking.LocationId,
-                LocationDestId = _GetDestinationLocation(self.Order).Id,
-                LocationDest = _GetDestinationLocation(self.Order),
+                LocationDestId = picking.LocationDestId,
                 State = "draft",
                 Origin = self.Order.Name,
                 PickingId = picking.Id,
                 PartnerId = self.Order.PartnerId,
                 PurchaseLineId = self.Id,
-                PriceUnit = priceUnit,
+                PriceUnit = (double)priceUnit,
                 PickingTypeId = self.Order.PickingTypeId,
                 WarehouseId = self.Order.PickingType.WarehouseId,
                 CompanyId = self.Order.CompanyId,
@@ -420,6 +501,9 @@ namespace Infrastructure.Services
             var location = locationObj.SearchQuery(x => x.Usage == "supplier").FirstOrDefault();
             if (location == null)
                 throw new Exception("Không tìm thấy địa điểm nhà cung cấp");
+
+            var locationDest = _GetDestinationLocation(order);
+
             var res = new StockPicking
             {
                 PickingTypeId = order.PickingTypeId,
@@ -427,9 +511,18 @@ namespace Infrastructure.Services
                 Date = order.DateOrder,
                 Origin = order.Name,
                 CompanyId = order.CompanyId,
-                LocationDest = _GetDestinationLocation(order),
-                LocationId = location.Id,
             };
+
+            if (order.Type == "refund")
+            {
+                res.LocationId = locationDest.Id;
+                res.LocationDestId = location.Id;
+            }
+            else
+            {
+                res.LocationId = location.Id;
+                res.LocationDestId = locationDest.Id;
+            }
 
             return res;
         }

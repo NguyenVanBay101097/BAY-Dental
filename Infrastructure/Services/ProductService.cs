@@ -108,6 +108,22 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids)
+        {
+            var res = ids.ToDictionary(x => x, x => 0M);
+            var quantObj = GetService<IStockQuantService>();
+            var data = await quantObj.SearchQuery(x => ids.Contains(x.Id) && x.Location.Usage == "internal")
+                .GroupBy(x => x.ProductId)
+                .Select(x => new
+                {
+                    ProductId = x.Key,
+                    QtyAvailable = x.Sum(s => s.Qty)
+                }).ToListAsync();
+            foreach (var item in data)
+                res[item.ProductId] = item.QtyAvailable;
+            return res;
+        }
+
         public async Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val)
         {
             var query = SearchQuery(x => x.Active && x.Type2 == "labo");
@@ -187,16 +203,6 @@ namespace Infrastructure.Services
             var product = _mapper.Map<Product>(val);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
             var companyId = CompanyId;
-            product.ProductCompanyRels = new List<ProductCompanyRel>()
-            {
-                new ProductCompanyRel
-                {
-                    CompanyId = companyId,
-                    ProductId = product.Id,
-                    StandardPrice = val.StandardPrice
-                }
-            };
-
             return await CreateAsync(product);
         }
 
@@ -243,7 +249,7 @@ namespace Infrastructure.Services
                     {
                         CompanyId = companyId,
                         ProductId = product.Id,
-                        StandardPrice = val.StandardPrice
+                        StandardPrice = (double)val.StandardPrice
                     }
                 };
                 self.Add(product);
@@ -267,7 +273,7 @@ namespace Infrastructure.Services
                     {
                         CompanyId = companyId,
                         ProductId = product.Id,
-                        StandardPrice = val.StandardPrice
+                        StandardPrice = (double)val.StandardPrice
                     }
                 };
             }
@@ -280,12 +286,12 @@ namespace Infrastructure.Services
                     {
                         CompanyId = companyId,
                         ProductId = product.Id,
-                        StandardPrice = val.StandardPrice
+                        StandardPrice = (double)val.StandardPrice
                     });
                 }
                 else
                 {
-                    pcRel.StandardPrice = val.StandardPrice;
+                    pcRel.StandardPrice = (double)val.StandardPrice;
                 }
             }
 
@@ -318,7 +324,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<decimal> GetStandardPrice(Guid id)
+        public async Task<double> GetStandardPrice(Guid id)
         {
             var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels).FirstOrDefaultAsync();
             var companyId = CompanyId;

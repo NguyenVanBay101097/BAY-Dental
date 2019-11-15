@@ -176,6 +176,7 @@ namespace TMTDentalAPI
             services.AddScoped<IPurchaseOrderLineService, PurchaseOrderLineService>();
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<ISaleReportService, SaleReportService>();
+            services.AddScoped<IRealRevenueReportService, RealRevenueReportService>();
 
             services.AddMemoryCache();
 

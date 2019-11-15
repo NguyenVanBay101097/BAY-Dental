@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,18 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search));
+            if (!string.IsNullOrEmpty(val.Type))
+                query = query.Where(x => x.PickingType.Code == val.Type);
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
+            }
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
 
             query = query.OrderByDescending(s => s.DateCreated);
             return query;
@@ -66,6 +79,40 @@ namespace Infrastructure.Services
                 res.LocationDestId = pickingType.DefaultLocationDestId.Value;
             }
          
+            return res;
+        }
+
+        public async Task<StockPickingDisplay> DefaultGetOutgoing()
+        {
+            var res = new StockPickingDisplay();
+            var companyId = CompanyId;
+            res.CompanyId = companyId;
+            var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "outgoing" && x.Warehouse.CompanyId == companyId).FirstOrDefaultAsync();
+            if (pickingType == null)
+                throw new Exception("Không tìm thấy hoạt động xuất kho");
+
+            res.PickingTypeId = pickingType.Id;
+            res.LocationId = pickingType.DefaultLocationSrcId.Value;
+            res.LocationDestId = pickingType.DefaultLocationDestId.Value;
+
+            return res;
+        }
+
+        public async Task<StockPickingDisplay> DefaultGetIncoming()
+        {
+            var res = new StockPickingDisplay();
+            var companyId = CompanyId;
+            res.CompanyId = companyId;
+            var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == companyId).FirstOrDefaultAsync();
+            if (pickingType == null)
+                throw new Exception("Không tìm thấy hoạt động nhập kho");
+
+            res.PickingTypeId = pickingType.Id;
+            res.LocationId = pickingType.DefaultLocationSrcId.Value;
+            res.LocationDestId = pickingType.DefaultLocationDestId.Value;
+
             return res;
         }
 
@@ -110,6 +157,8 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.MoveLines)
                 .Include("MoveLines.Location")
+                .Include("MoveLines.Product")
+                .Include("MoveLines.Product.ProductCompanyRels")
                 .Include("MoveLines.LocationDest")
                 .ToListAsync();
             var moveObj = GetService<IStockMoveService>();
@@ -127,11 +176,21 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "stock.picking_comp_rule":
+                case "stock.stock_picking_rule":
                     return new InitialSpecification<StockPicking>(x => x.CompanyId == companyId);
                 default:
                     return null;
             }
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            var moveObj = GetService<IStockMoveService>();
+            if (self.Any(x => x.State == "done"))
+                throw new Exception("Không thể xóa phiếu đã hoàn thành");
+            await moveObj.DeleteAsync(self.SelectMany(x => x.MoveLines));
+            await DeleteAsync(self);
         }
     }
 }

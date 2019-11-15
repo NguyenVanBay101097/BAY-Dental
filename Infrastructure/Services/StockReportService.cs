@@ -7,25 +7,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
     public class StockReportService: IStockReportService
     {
         private readonly CatalogDbContext _context;
-        public StockReportService(CatalogDbContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public StockReportService(CatalogDbContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected Guid CompanyId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return Guid.Empty;
+                var claim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "company_id");
+                return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
+            }
         }
 
         public async Task<IEnumerable<StockReportXuatNhapTonItem>> XuatNhapTonSummary(StockReportXuatNhapTonSearch val)
         {
             var today = DateTime.Today;
-            var date_from = val.DateFrom.HasValue ? val.DateFrom.Value : new DateTime(today.Year, today.Month, 1);
-            var date_to = val.DateTo.HasValue ? val.DateTo.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1); //23h59
-          
+            var monthStart = new DateTime(today.Year, today.Month, 1);
+            var monthEnd = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month), 23, 59, 59);
+            var date_from = val.DateFrom.HasValue ? val.DateFrom.Value.AbsoluteBeginOfDate() : monthStart;
+            var date_to = val.DateTo.HasValue ? val.DateTo.Value.AbsoluteEndOfDate() : monthEnd;
+
+            var companyId = CompanyId;
             var dict = new Dictionary<Guid, StockReportXuatNhapTonItem>();
-            var query = _context.StockHistories.Where(x => x.date < date_from);
+            var query = _context.StockHistories.Where(x => x.date < date_from && x.company_id == companyId);
             if (val.ProductCategId.HasValue)
                 query = query.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)
@@ -66,7 +84,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            var query2 = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to);
+            var query2 = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.company_id == companyId);
             if (val.ProductCategId.HasValue)
                 query2 = query2.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)
@@ -125,23 +143,39 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var date_from = val.DateFrom.HasValue ? val.DateFrom.Value : new DateTime(today.Year, today.Month, 1);
             var date_to = val.DateTo.HasValue ? val.DateTo.Value : today.AddDays(1).AddMinutes(-1);
-
+            var companyId = CompanyId;
             decimal begin = 0;
             var res = new List<AccountCommonPartnerReportItemDetail>();
 
-            begin = await _context.StockHistories.Where(x => x.date < date_from && x.product_id == val.ProductId).SumAsync(x => x.quantity);
+            begin = await _context.StockHistories.Where(x => x.date < date_from && x.product_id == val.ProductId && x.company_id == companyId).SumAsync(x => x.quantity);
 
-            var query2 = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.product_id == val.ProductId);
-            var list2 = query2.OrderBy(x => x.date)
-                    .Select(x => new StockReportXuatNhapTonItemDetail
-                    {
-                        Date = x.date,
-                        MovePickingName = x.Move.Picking.Name,
-                        MovePickingId = x.Move.PickingId,
-                        MovePickingTypeId = x.Move.Picking.PickingTypeId,
-                        Import = x.quantity > 0 ? x.quantity : 0,
-                        Export = x.quantity < 0 ? -x.quantity : 0,
-                    }).ToList();
+            var query2 = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.product_id == val.ProductId && x.company_id == companyId);
+            var list2 = query2.GroupBy(x => new { MoveId = x.move_id, Date = x.date, PickingName = x.Move.Picking.Name, PickingId = x.Move.PickingId }).Select(x => new
+            {
+                Date = x.Key.Date,
+                MoveId = x.Key.MoveId,
+                Quantity = x.Sum(s => s.quantity),
+                PickingName = x.Key.PickingName,
+                PickingId = x.Key.PickingId
+            }).OrderBy(x => x.Date).Select(x => new StockReportXuatNhapTonItemDetail
+            {
+                Date = x.Date,
+                MovePickingName = x.PickingName,
+                MovePickingId = x.PickingId,
+                Import = x.Quantity > 0 ? x.Quantity : 0,
+                Export = x.Quantity < 0 ? -x.Quantity : 0,
+            }).ToList();
+            //var list2 = query2.OrderBy(x => x.date)
+            //        .Select(x => new StockReportXuatNhapTonItemDetail
+            //        {
+            //            Date = x.date,
+            //            MovePickingName = x.Move.Picking.Name,
+            //            MovePickingId = x.Move.PickingId,
+            //            MovePickingTypeId = x.Move.Picking.PickingTypeId,
+            //            Import = x.quantity > 0 ? x.quantity : 0,
+            //            Export = x.quantity < 0 ? -x.quantity : 0,
+            //            PriceUnitOnQuant = x.price_unit_on_quant
+            //        }).ToList();
 
 
             foreach (var item in list2)

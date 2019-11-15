@@ -14,7 +14,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<StockPickingDisplay, StockPicking>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Partner, x => x.Ignore())
-                .ForMember(x => x.MoveLines, x => x.Ignore());
+                .ForMember(x => x.MoveLines, x => x.Ignore())
+                .ForMember(x => x.PartnerId, x => x.Condition(s => s.State == "draft"))
+                .ForMember(x => x.Date, x => x.Condition(s => s.State == "draft"));
 
             CreateMap<StockPicking, StockPickingBasic>();
             CreateMap<StockPicking, StockPickingDisplay>();

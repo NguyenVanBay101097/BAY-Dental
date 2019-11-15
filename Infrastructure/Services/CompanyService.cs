@@ -93,6 +93,176 @@ namespace Infrastructure.Services
             await InsertSecurityData();
         }
 
+
+        public async Task InsertCompanyData(Company company)
+        {
+            await CreateAccountData(company);
+
+            await CreateStockData(company);
+        }
+
+        private async Task CreateStockData(Company company)
+        {
+            #region StockWarehouse
+            var whObj = GetService<IStockWarehouseService>();
+            var wh = await whObj.CreateAsync(new StockWarehouse
+            {
+                Name = company.Name,
+                Code = "WH",
+                CompanyId = company.Id,
+            });
+
+            #endregion
+        }
+
+        private async Task CreateAccountData(Company company)
+        {
+            #region Account
+            var accountObj = GetService<IAccountAccountService>();
+            var irModelDataObj = GetService<IIRModelDataService>();
+            #region For receiableAccType
+            var receivableAccType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_receivable");
+            var creadiorsAcc = new AccountAccount
+            {
+                Name = "Phải thu của khách hàng",
+                Code = "131",
+                InternalType = receivableAccType.Type,
+                UserTypeId = receivableAccType.Id,
+                Reconcile = true,
+                CompanyId = company.Id,
+            };
+            #endregion
+
+            #region For cashBankAccType
+            var cashBankAccType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_liquidity");
+            var cashAcc = new AccountAccount
+            {
+                Name = "Tiền mặt",
+                Code = "1111",
+                InternalType = cashBankAccType.Type,
+                UserTypeId = cashBankAccType.Id,
+                CompanyId = company.Id,
+            };
+
+            var bankAcc = new AccountAccount
+            {
+                Name = "Ngân hàng",
+                Code = "1112",
+                InternalType = cashBankAccType.Type,
+                UserTypeId = cashBankAccType.Id,
+                CompanyId = company.Id,
+            };
+            #endregion
+
+            #region For payableAccType
+            var payableAccType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_payable");
+            var debtorsAcc = new AccountAccount
+            {
+                Name = "Phải trả người bán",
+                Code = "331",
+                InternalType = payableAccType.Type,
+                UserTypeId = payableAccType.Id,
+                Reconcile = true,
+                CompanyId = company.Id,
+            };
+            #endregion
+
+            #region For incomeAccType
+            var incomeAccType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
+            var incomeAcc = new AccountAccount
+            {
+                Name = "Doanh thu bán hàng hóa",
+                Code = "5111",
+                InternalType = incomeAccType.Type,
+                UserTypeId = incomeAccType.Id,
+                CompanyId = company.Id,
+            };
+            #endregion
+
+            #region For expenseAccType
+            var expenseAccType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_expenses");
+            var expenseAccount = new AccountAccount
+            {
+                Name = "Giá vốn bán hàng",
+                Code = "632",
+                InternalType = expenseAccType.Type,
+                UserTypeId = expenseAccType.Id,
+                CompanyId = company.Id,
+            };
+
+            #endregion
+
+           #region For currentAssetsType
+            var currentAssetsType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_assets");
+
+            var acc1561 = new AccountAccount
+            {
+                Name = "Giá mua hàng hoá",
+                Code = "1561",
+                InternalType = currentAssetsType.Type,
+                UserTypeId = currentAssetsType.Id,
+                CompanyId = company.Id,
+            };
+
+            #endregion
+
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561 });
+
+            #endregion
+
+            #region AccountJournal
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = new AccountJournal
+            {
+                Name = "Tiền mặt",
+                Type = "cash",
+                UpdatePosted = true,
+                Code = "CSH1",
+                DefaultDebitAccountId = cashAcc.Id,
+                DefaultCreditAccountId = cashAcc.Id,
+                CompanyId = company.Id,
+            };
+
+            var bankJournal = new AccountJournal
+            {
+                Name = "Ngân hàng",
+                Type = "bank",
+                UpdatePosted = true,
+                Code = "CSH2",
+                DefaultDebitAccountId = bankAcc.Id,
+                DefaultCreditAccountId = bankAcc.Id,
+                CompanyId = company.Id,
+            };
+
+            var saleJournal = new AccountJournal
+            {
+                Name = "Nhật ký bán hàng",
+                Type = "sale",
+                UpdatePosted = true,
+                DedicatedRefund = true,
+                Code = "INV",
+                DefaultDebitAccountId = incomeAcc.Id,
+                DefaultCreditAccountId = incomeAcc.Id,
+                CompanyId = company.Id,
+            };
+
+            var purchaseJournal = new AccountJournal
+            {
+                Name = "Nhật ký mua hàng",
+                Type = "purchase",
+                UpdatePosted = true,
+                DedicatedRefund = true,
+                Code = "BILL",
+                DefaultDebitAccountId = acc1561.Id,
+                DefaultCreditAccountId = acc1561.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal });
+
+            #endregion
+        }
+
         public async Task InsertModuleAccountData(Company main_company)
         {
             var account_account_dict = new Dictionary<string, AccountAccount>();
@@ -261,6 +431,11 @@ namespace Infrastructure.Services
             main_company.AccountIncomeId = accountIncome.Id;
             main_company.AccountExpenseId = accountExpense.Id;
             await UpdateAsync(main_company);
+
+            var modelDatas = new List<IRModelData>();
+            modelDatas.AddRange(PrepareModelData(account_type_dict, "account.account.type"));
+            var modelDataObj = GetService<IIRModelDataService>();
+            await modelDataObj.CreateAsync(modelDatas);
         }
 
         public async Task InsertModuleStockData(Company main_company)
@@ -355,9 +530,7 @@ namespace Infrastructure.Services
             }
 
             var modelDatas = new List<IRModelData>();
-            modelDatas.AddRange(PrepareModelData(stock_warehouses_dict, "stock.warehouse"));
             modelDatas.AddRange(PrepareModelData(stock_locations_dict, "stock.location"));
-            modelDatas.AddRange(PrepareModelData(stock_sequence_dict, "ir.sequence"));
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(modelDatas);
 

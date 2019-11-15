@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,6 +17,18 @@ namespace Infrastructure.Services
         public AccountMoveService(IAsyncRepository<AccountMove> repository, IHttpContextAccessor httpContextAccessor)
         : base(repository, httpContextAccessor)
         {
+        }
+
+        public override ISpecification<AccountMove> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "account.account_move_comp_rule":
+                    return new InitialSpecification<AccountMove>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
 
         public override Task<AccountMove> CreateAsync(AccountMove self)

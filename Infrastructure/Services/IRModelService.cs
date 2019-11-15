@@ -27,7 +27,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<IRModel>> GetPagedAsync(int offset = 0, int limit = 10, string filter = "")
         {
-            ISpecification<IRModel> spec = new InitialSpecification<IRModel>(x => true);
+            ISpecification<IRModel> spec = new InitialSpecification<IRModel>(x => !x.Transient);
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 spec = spec.And(new InitialSpecification<IRModel>(x => x.Name.Contains(filter)));

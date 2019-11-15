@@ -176,7 +176,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "dotkham_comp_rule":
+                case "sale.dot_kham_comp_rule":
                     return new InitialSpecification<DotKham>(x => x.CompanyId == companyId);
                 default:
                     return null;

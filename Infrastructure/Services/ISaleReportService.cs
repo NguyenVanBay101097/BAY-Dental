@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface ISaleReportService
     {
         Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val);
+        Task<IEnumerable<SaleReportItem>> GetReport(SaleReportSearch val);
     }
 }

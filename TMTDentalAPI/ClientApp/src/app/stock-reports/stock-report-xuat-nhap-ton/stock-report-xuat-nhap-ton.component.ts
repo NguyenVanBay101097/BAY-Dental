@@ -39,13 +39,15 @@ export class StockReportXuatNhapTonComponent implements OnInit {
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+
   constructor(private reportService: StockReportService, private intlService: IntlService,
     private productService: ProductService, private productCategService: ProductCategoryService) { }
 
   ngOnInit() {
-    var date = new Date();
-    this.dateFrom = new Date(date.getFullYear(), date.getMonth(), 1);
-    this.dateTo = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    this.dateFrom = new Date(this.monthStart);
+    this.dateTo = new Date(this.monthEnd);
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -55,23 +57,29 @@ export class StockReportXuatNhapTonComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+    // this.productCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.productCbx.loading = true)),
+    //   switchMap(value => this.searchProducts(value))
+    // ).subscribe(result => {
+    //   this.filteredProducts = result;
+    //   this.productCbx.loading = false;
+    // });
 
-    this.categCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap(value => this.searchCategs(value))
-    ).subscribe(result => {
-      this.filteredCategs = result;
-      this.categCbx.loading = false;
-    });
+    // this.categCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.categCbx.loading = true)),
+    //   switchMap(value => this.searchCategs(value))
+    // ).subscribe(result => {
+    //   this.filteredCategs = result;
+    //   this.categCbx.loading = false;
+    // });
+  }
+
+  onSearchChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.loadDataFromApi();
   }
 
   onChangeDate(value: any) {

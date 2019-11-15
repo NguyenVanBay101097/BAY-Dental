@@ -12,6 +12,30 @@ namespace ApplicationCore.Entities
             State = "draft";
         }
 
+        public StockMove(StockMove move)
+        {
+            Origin = move.Origin;
+            State = "draft";
+            Note = move.Note;
+            Name = move.Name;
+            DateExpected = move.DateExpected;
+            PickingId = move.PickingId;
+            PartnerId = move.PartnerId;
+            ProductUOMId = move.ProductUOMId;
+            ProductUOMQty = move.ProductUOMQty;
+            ProductQty = move.ProductQty;
+            ProductId = move.ProductId;
+            LocationId = move.LocationId;
+            LocationDestId = move.LocationDestId;
+            PickingTypeId = move.PickingTypeId;
+            PurchaseLineId = move.PurchaseLineId;
+            PurchaseLine = move.PurchaseLine;
+            Date = move.Date;
+            PriceUnit = move.PriceUnit;
+            WarehouseId = move.WarehouseId;
+            CompanyId = move.CompanyId;
+        }
+
         /// <summary>
         /// mô tả cho dịch chuyển
         /// </summary>
@@ -78,7 +102,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public DateTime Date { get; set; }
 
-        public decimal PriceUnit { get; set; }
+        public double? PriceUnit { get; set; }
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }

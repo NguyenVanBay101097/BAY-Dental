@@ -264,7 +264,7 @@ namespace TMTDentalAPI.Controllers
                             CategName = categName,
                             DefaultCode = Convert.ToString(worksheet.Cells[row, 6].Value),
                             ListPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
-                            StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                            StandardPrice = Convert.ToDouble(worksheet.Cells[row, 8].Value),
                         };
                         data.Add(item);
                     }

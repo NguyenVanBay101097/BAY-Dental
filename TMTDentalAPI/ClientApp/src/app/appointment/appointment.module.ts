@@ -15,9 +15,12 @@ import { SharedModule } from '../shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppointmentDateFilterComponent } from './appointment-date-filter/appointment-date-filter.component';
 import { AppointmentStateFilterComponent } from './appointment-state-filter/appointment-state-filter.component';
+import { AppointmentCalendarComponent } from './appointment-calendar/appointment-calendar.component';
+import { AppointmentVMService } from './appointment-vm.service';
+import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kanban.component';
 
 @NgModule({
-  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent],
+  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent, AppointmentCalendarComponent, AppointmentKanbanComponent],
   imports: [
     CommonModule,
     AppointmentRoutingModule,
@@ -29,7 +32,8 @@ import { AppointmentStateFilterComponent } from './appointment-state-filter/appo
   ],
   entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent],
   providers: [
-    AppointmentService
+    AppointmentService,
+    // AppointmentVMService
   ]
 })
 export class AppointmentModule { }

@@ -30,6 +30,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? DoctorId { get; set; }
         public EmployeeSimpleContact Doctor { get; set; }
+        public string DoctorName { get; set; }
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
@@ -40,6 +41,10 @@ namespace Umbraco.Web.Models.ContentEditing
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
         public PartnerSimpleContact Partner { get; set; }
+        public string PartnerName { get; set; }
+        public string PartnerPhone { get; set; }
+
+        public string Note { get; set; }
     }
 
     public class AppointmentDisplay
@@ -119,6 +124,32 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid? DotKhamId { get; set; }
+    }
+
+    public class AppointmentSearch
+    {
+        public string Search { get; set; }
+
+        public DateTime? DateTimeFrom { get; set; }
+
+        public DateTime? DateTimeTo { get; set; }
+
+        public string State { get; set; }
+
+        public Guid? DotKhamId { get; set; }
+    }
+
+    public class AppointmentSearchByDate
+    {
+        public string State { get; set; }
+
+        public DateTime? Date { get; set; }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public string Search { get; set; }
     }
 
     public class AppointmentDefaultGet

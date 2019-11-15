@@ -1,0 +1,137 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li><a routerLink="/outgoing-pickings">Phiếu xuất kho</a></li>
+            <li class="active">{{pickingName === '/' ? 'Mới' : pickingName}}</li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
+                        (click)="onSaveOrUpdate()">Lưu</button>
+                    <a [routerLink]="['/outgoing-pickings/create']" *ngIf="id" class="btn btn-secondary btn-sm">Thêm
+                        mới</a>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_form_view" [formGroup]="pickingForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(picking.state) !== -1"
+                        (click)="actionDone()">
+                        Hoàn thành
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="picking.state !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': picking.state === 'done', 'btn-secondary': picking.state !== 'done'}"
+                        type="button">
+                        Hoàn thành
+                    </button>
+                    <button [disabled]="picking.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': picking.state === 'draft', 'btn-secondary': picking.state !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <h1 class="hidden-xs"><span class="o_form_field">{{pickingName}}</span>
+                </h1>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày xuất
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy HH:mm">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" formControlName="note"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="o_form_section" *ngIf="picking.state == 'draft'">
+                    <div class="o_form_section_left">
+                        <div class="mb-2">
+                            <app-tai-search-input (searchChange)="onProductInputSearchChange($event)"
+                                (upDownEnterChange)="upDownEnterChange($event)">
+                            </app-tai-search-input>
+                        </div>
+                    </div>
+                    <div class="o_form_section_right">
+                    </div>
+                </div>
+
+                <div class="o_form_section">
+                    <div class="o_form_section_left" [class.d-none]="picking.state == 'done'">
+                        <app-tai-product-list-selectable #productListSelectable [productList]="productList"
+                            (changeProduct)="onChangeProduct($event)"></app-tai-product-list-selectable>
+                    </div>
+                    <div class="o_form_section_right">
+                        <table class="table table-sm" id="table_details">
+                            <thead>
+                                <tr>
+                                    <th width="50">STT</th>
+                                    <th width="200">Sản phẩm</th>
+                                    <th width="80" class="text-right">Số lượng</th>
+                                    <th width="60" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">#</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="moveLines">
+                                <ng-container *ngFor="let line of moveLines.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td class="align-middle">{{ i + 1 }}</td>
+                                        <td class="align-middle">{{ line.get('product').value.name}}</td>
+                                        <td class="align-middle text-right">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                formControlName="productUOMQty" style="width: 80px;" [spinners]="false">
+                                            </kendo-numerictextbox>
+                                            <span
+                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{ line.get('productUOMQty').value | number}}</span>
+                                        </td>
+                                        <td class="align-middle"
+                                            *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
+                                            <button type="button" class="btn btn-icon btn-sm btn-light" tabindex="-1"
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span></button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

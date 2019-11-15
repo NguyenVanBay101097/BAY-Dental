@@ -33,7 +33,7 @@ import { DotKhamsModule } from './dot-khams/dot-khams.module';
 import { ToaThuocsModule } from './toa-thuocs/toa-thuocs.module';
 import { AppointmentModule } from './appointment/appointment.module';
 
-import { JwtModule } from "@auth0/angular-jwt";
+import { JwtModule, JwtInterceptor } from "@auth0/angular-jwt";
 import { HomeModule } from './home/home.module';
 import { RoutingsModule } from './routings/routings.module';
 import { StockPickingsModule } from './stock-pickings/stock-pickings.module';
@@ -69,6 +69,9 @@ import { LaboOrdersModule } from './labo-orders/labo-orders.module';
 import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 
 import { HotkeyModule } from 'angular2-hotkeys';
+import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
+import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
+import { SaleReportModule } from './sale-report/sale-report.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -142,11 +145,20 @@ registerLocaleData(localeVi, 'vi');
     PriceListModule,
     LaboOrdersModule,
     PurchaseOrdersModule,
-    HotkeyModule.forRoot()
+    HotkeyModule.forRoot(),
+    RealRevenueReportModule,
+    SaleReportModule
   ],
   providers: [
+    JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
+    {
+      provide: HTTP_INTERCEPTORS,
+      useExisting: JwtInterceptor,
+      multi: true
+    },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpHandleErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: RefreshTokenInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'vi-VN' },
     { provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter }
   ],

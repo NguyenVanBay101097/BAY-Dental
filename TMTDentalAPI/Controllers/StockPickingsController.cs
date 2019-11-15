@@ -87,6 +87,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _stockPickingService.Unlink(new List<Guid>() { id });
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         private void SaveMoveLines(StockPickingDisplay val, StockPicking picking)
         {
             if (picking.State != "draft")
@@ -130,6 +139,20 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> DefaultGet(StockPickingDefaultGet val)
         {
             var res = await _stockPickingService.DefaultGet(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGetOutgoing()
+        {
+            var res = await _stockPickingService.DefaultGetOutgoing();
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGetIncoming()
+        {
+            var res = await _stockPickingService.DefaultGetIncoming();
             return Ok(res);
         }
 

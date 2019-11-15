@@ -4,6 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Router } from '@angular/router';
+import { CompanyBasic } from 'src/app/companies/company.service';
+import { UserChangeCurrentCompanyVM, UserService } from 'src/app/users/user.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -12,10 +14,26 @@ import { Router } from '@angular/router';
 })
 export class LayoutHeaderComponent implements OnInit {
 
+  userChangeCurrentCompany: UserChangeCurrentCompanyVM;
   constructor(private sidebarService: NavSidebarService, private modalService: NgbModal,
-    public authService: AuthService, private router: Router) { }
+    public authService: AuthService, private router: Router, private userService: UserService) { }
 
   ngOnInit() {
+    this.authService.currentUser.subscribe(user => {
+      if (user) {
+        this.userService.getChangeCurrentCompany().subscribe(result => {
+          this.userChangeCurrentCompany = result;
+        });
+      }
+    });
+  }
+
+  switchCompany(companyId) {
+    this.userService.switchCompany({ companyId: companyId }).subscribe(() => {
+      this.authService.refresh().subscribe(result => {
+        window.location.reload();
+      });
+    });
   }
 
   toggleSidebar() {

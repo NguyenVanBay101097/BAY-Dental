@@ -174,8 +174,9 @@
                                     <thead>
                                         <tr>
                                             <th>Dịch vụ</th>
-                                            <th class="text-right">Đơn giá</th>
                                             <th class="text-right">Số lượng</th>
+                                            <th class="text-right">Đơn giá</th>
+                                            <th class="text-right">Giảm (%)</th>
                                             <th class="text-right">Thành tiền</th>
                                             <th>#</th>
                                         </tr>
@@ -184,8 +185,9 @@
                                         <ng-container *ngFor="let line of invoiceLines.controls; let i=index">
                                             <tr [formGroupName]="i">
                                                 <td>{{ lineProduct(line) }}</td>
-                                                <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
                                                 <td class="text-right">{{ line.get('quantity').value | number }}</td>
+                                                <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
+                                                <td class="text-right">{{ line.get('discount').value | number }}</td>
                                                 <td class="text-right">{{ line.get('priceSubTotal').value | number }}
                                                 </td>
                                                 <td>

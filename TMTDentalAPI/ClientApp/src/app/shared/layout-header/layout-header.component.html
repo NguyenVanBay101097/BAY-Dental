@@ -17,10 +17,28 @@
             </li>
         </ul>
         <ul class="navbar-nav">
+            <li class="o_switch_company_menu nav-item dropdown" *ngIf="userChangeCurrentCompany">
+                <a class="nav-link dropdown-toggle" href="#" id="bd-company" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <span class="oe_topbar_name">{{userChangeCurrentCompany.currentCompany.name}}</span> <span
+                        class="caret"></span>
+                </a>
+                <ul class="dropdown-menu  dropdown-menu-right" role="menu" aria-labelledby="bd-company">
+                    <li *ngFor="let company of userChangeCurrentCompany.companies">
+                        <button (click)="switchCompany(company.id)" class="dropdown-item">
+                            <i *ngIf="company.id == userChangeCurrentCompany.currentCompany.id"
+                                class="fa fa-check o_current_company"></i>
+                            <span *ngIf="company.id !== userChangeCurrentCompany.currentCompany.id"
+                                class="o_company"></span>
+                            {{company.name}}
+                        </button>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="bd-user" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                    <img src="/assets/images/user_avatar.png" width="40" height="40" class="rounded-circle">
+                    <img src="/assets/images/user_avatar.png" width="20" height="20" class="rounded-circle">
                     <span class="oe_topbar_name" *ngIf="authService.userInfo">{{authService.userInfo.userName}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-user">

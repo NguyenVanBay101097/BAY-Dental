@@ -1225,6 +1225,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<bool>("Transient");
+
                     b.Property<string>("WriteById");
 
                     b.HasKey("Id");
@@ -1868,13 +1870,47 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("CompanyId");
 
-                    b.Property<decimal>("StandardPrice");
+                    b.Property<double>("StandardPrice");
 
                     b.HasKey("ProductId", "CompanyId");
 
                     b.HasIndex("CompanyId");
 
                     b.ToTable("ProductCompanyRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ProductPriceHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("CompanyId");
+
+                    b.Property<double>("Cost");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("DateTime");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<Guid>("ProductId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ProductPriceHistories");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ProductPricelist", b =>
@@ -2160,6 +2196,19 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PurchaseOrderLines");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ResCompanyUsersRel", b =>
+                {
+                    b.Property<Guid>("CompanyId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("CompanyId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResCompanyUsersRels");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2304,6 +2353,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Note");
 
                     b.Property<Guid>("PartnerId");
+
+                    b.Property<decimal?>("Residual");
 
                     b.Property<string>("State");
 
@@ -2513,7 +2564,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("PickingTypeId");
 
-                    b.Property<decimal>("PriceUnit");
+                    b.Property<double?>("PriceUnit");
 
                     b.Property<Guid>("ProductId");
 
@@ -2677,7 +2728,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("CompanyId");
 
-                    b.Property<decimal>("Cost");
+                    b.Property<double?>("Cost");
 
                     b.Property<string>("CreatedById");
 
@@ -3007,6 +3058,37 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("UoMCategories");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.UserRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("Expiration");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Token")
+                        .IsRequired();
+
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("UserRefreshTokens");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -3234,7 +3316,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.PurchaseOrderLine", "PurchaseLine")
                         .WithMany("InvoiceLines")
-                        .HasForeignKey("PurchaseLineId");
+                        .HasForeignKey("PurchaseLineId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
                         .WithMany()
@@ -4021,6 +4104,27 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ProductPriceHistory", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany("PriceHistories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ProductPricelist", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -4153,6 +4257,19 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResCompanyUsersRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
+                        .WithMany("ResCompanyUsersRels")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
@@ -4643,6 +4760,22 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.UserRefreshToken", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

@@ -15,7 +15,7 @@
                     </h1>
                 </div>
 
-                <div class="o_group">
+                <div class="o_group mt-0 mb-0">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -50,6 +50,42 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="email" class="form-control" formControlName="email" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="o_group mt-0">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <td colspan="2" style="width: 100%;">
+                                <div class="o_horizontal_separator">
+                                    Đa chi nhánh
+                                </div>
+                            </td>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chi nhánh cho phép
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'"
+                                        formControlName="companies">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chi nhánh hiện tại
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
+                                        formControlName="company" [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                         </tbody>

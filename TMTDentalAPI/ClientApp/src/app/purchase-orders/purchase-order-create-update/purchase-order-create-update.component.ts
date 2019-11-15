@@ -27,6 +27,7 @@ declare var $: any;
 export class PurchaseOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
+  type: string;
 
   purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
 
@@ -44,7 +45,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private router: Router, private hotkeysService: HotkeysService) {
 
     this.hotkeysService.add(new Hotkey('f2', (event: KeyboardEvent): boolean => {
-      console.log('Typed hotkey');
       this.focusProductSearchInput();
       return false; // Prevent bubbling
     }));
@@ -55,15 +55,16 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
       pickingTypeId: null,
-      orderLines: this.fb.array([])
+      orderLines: this.fb.array([]),
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
+    this.type = this.route.snapshot.queryParamMap.get('type');
 
     if (this.id) {
       this.loadRecord();
     } else {
-      this.purchaseOrderService.defaultGet({}).subscribe(result => {
+      this.purchaseOrderService.defaultGet({ type: this.type }).subscribe(result => {
         this.purchaseOrder = result;
         this.formGroup.patchValue(result);
 
@@ -173,6 +174,39 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     return total;
   }
 
+  onSaveConfirm() {
+    var index = _.findIndex(this.orderLines.controls, o => {
+      return o.get('productQty').value == null || o.get('priceUnit').value == null;
+    });
+    if (index !== -1) {
+      this.notificationService.show({
+        content: 'Vui lòng nhập số lượng và đơn giá',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'warning', icon: true }
+      });
+      return false;
+    }
+
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.partnerId = val.partner.id;
+    var data = Object.assign(this.purchaseOrder, val);
+    this.purchaseOrderService.create(data).subscribe(result => {
+      this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
+        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+      }, () => {
+        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+      });
+    });
+  }
+
+
   buttonConfirm() {
     if (this.id) {
       this.purchaseOrderService.buttonConfirm([this.id]).subscribe(() => {
@@ -181,8 +215,16 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  buttonCancel() {
+    if (this.id) {
+      this.purchaseOrderService.buttonCancel([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
   createNew() {
-    this.router.navigate(['/purchase-orders/create']);
+    this.router.navigate(['/purchase-orders/create'], { queryParams: { type: this.purchaseOrder.type } });
   }
 
   focusProductSearchInput() {
@@ -276,8 +318,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.partnerId = val.partner.id;
+    var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
-      this.purchaseOrderService.update(this.id, val).subscribe(() => {
+      this.purchaseOrderService.update(this.id, data).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -288,7 +331,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
       });
     } else {
-      this.purchaseOrderService.create(val).subscribe(result => {
+      this.purchaseOrderService.create(data).subscribe(result => {
         this.router.navigate(['/purchase-orders/edit/' + result.id]);
       });
     }

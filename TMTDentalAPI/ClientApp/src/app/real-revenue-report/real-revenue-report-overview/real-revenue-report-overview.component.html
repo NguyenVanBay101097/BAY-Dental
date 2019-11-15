@@ -1,0 +1,77 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Báo cáo khoản thu theo thời gian
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="d-flex">
+                <div class="btn-group mr-2" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of groups"
+                        [class.active]="item.value == groupBy" (click)="setGroupBy(item.value)">{{item.text}}</button>
+                </div>
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="dateStr" title="Thời gian">
+        </kendo-grid-column>
+        <kendo-grid-column field="debit" class="text-right" title="Tổng phải thu"
+            footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.debit | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['debit']">
+                {{total["debit"].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="credit" class="text-right" title="Tổng đã thu"
+            footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.credit | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['credit']">
+                {{total["credit"].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="balance" class="text-right" title="Còn nợ" footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.balance | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['balance']">
+                {{total["balance"].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+
+    <!-- <kendo-chart>
+        <kendo-chart-tooltip>
+            <ng-template kendoChartSeriesTooltipTemplate let-value="value">
+                {{value | number}}
+            </ng-template>
+        </kendo-chart-tooltip>
+        <kendo-chart-series>
+            <kendo-chart-series-item type="column" [data]="gridData" field="debit" categoryField="dateStr"
+                [spacing]="0">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.debit | number}}
+                </ng-template>
+            </kendo-chart-series-item>
+        </kendo-chart-series>
+    </kendo-chart> -->
+</div>

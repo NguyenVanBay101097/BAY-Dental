@@ -10,55 +10,37 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   }
 })
 export class AppointmentStateFilterComponent implements OnInit {
-  formGroup: FormGroup;
-  @Input() confirmedState: boolean;
-  @Input() doneState: boolean;
-  @Input() cancelState: boolean;
+  stateSelected: string;
+  states: { text: string, value: string, class: string }[] = [
+    { text: 'Tất cả trạng thái', value: '', class: '' },
+    { text: 'Đang hẹn', value: 'confirmed', class: 'text-primary' },
+    { text: 'Đã tới', value: 'done', class: 'text-success' },
+    { text: 'Đã hủy', value: 'cancel', class: 'text-dark' },
+  ];
 
   @Output() searchChange = new EventEmitter<any>();
 
-  defaultFormGroup = {
-    confirmedState: false,
-    doneState: false,
-    cancelState: false,
-  };
-
-  constructor(private fb: FormBuilder) { }
+  constructor() { }
 
   ngOnInit() {
-    this.formGroup = this.fb.group(this.defaultFormGroup);
-    if (this.confirmedState) {
-      this.formGroup.get('confirmedState').setValue(this.confirmedState);
-    }
-    if (this.doneState) {
-      this.formGroup.get('doneState').setValue(this.doneState);
-    }
-    if (this.cancelState) {
-      this.formGroup.get('cancelState').setValue(this.cancelState);
-    }
   }
 
-  onSearch() {
-    this.searchChange.emit(this.formGroup.value);
-  }
-
-  onClear() {
-    this.formGroup = this.fb.group(this.defaultFormGroup);
-    this.searchChange.emit(this.formGroup.value);
+  onSelect(state) {
+    this.stateSelected = state;
+    this.searchChange.emit(state);
   }
 
   getResult() {
-    var list = [];
-    if (this.confirmedState == true) {
-      list.push('Đang hẹn');
+    switch (this.stateSelected) {
+      case "confirmed":
+        return 'Đang hẹn';
+      case "done":
+        return 'Đã tới';
+      case "cancel":
+        return 'Đã hủy';
+      default:
+        return 'Tất cả trạng thái';
     }
-    if (this.doneState == true) {
-      list.push('Đã tới');
-    }
-    if (this.cancelState == true) {
-      list.push('Đã hủy');
-    }
-    return list.join(' - ');
   }
 }
 

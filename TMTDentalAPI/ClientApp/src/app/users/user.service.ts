@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { UserSimple } from './user-simple';
+import { CompanyBasic } from '../companies/company.service';
 
 export class UserBasic {
     id: string;
@@ -30,6 +31,11 @@ export class UserPaged {
     limit: number;
     searchNameUserName: string;
     search: string;
+}
+
+export class UserChangeCurrentCompanyVM {
+    currentCompany: CompanyBasic;
+    companies: CompanyBasic[];
 }
 
 @Injectable()
@@ -70,5 +76,13 @@ export class UserService {
 
     autocompleteSimple(val: UserPaged): Observable<UserSimple[]> {
         return this.http.post<UserSimple[]>(this.baseApi + this.apiUrl + "/autocompleteSimple", val);
+    }
+
+    getChangeCurrentCompany(): Observable<UserChangeCurrentCompanyVM> {
+        return this.http.get<UserChangeCurrentCompanyVM>(this.baseApi + this.apiUrl + "/GetChangeCurrentCompany");
+    }
+
+    switchCompany(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/SwitchCompany", data);
     }
 }

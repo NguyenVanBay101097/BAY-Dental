@@ -57,6 +57,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? MovePickingId { get; set; }
 
         public Guid? MovePickingTypeId { get; set; }
+
+        public double? PriceUnitOnQuant { get; set; }
     }
 }
 

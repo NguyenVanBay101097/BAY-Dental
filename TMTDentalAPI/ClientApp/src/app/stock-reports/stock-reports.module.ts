@@ -7,6 +7,7 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule } from '@angular/forms';
 import { StockReportService } from './stock-report.service';
 import { StockReportXuatNhapTonDetailComponent } from './stock-report-xuat-nhap-ton-detail/stock-report-xuat-nhap-ton-detail.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [StockReportXuatNhapTonComponent, StockReportXuatNhapTonDetailComponent],
@@ -14,7 +15,8 @@ import { StockReportXuatNhapTonDetailComponent } from './stock-report-xuat-nhap-
     CommonModule,
     StockReportsRoutingModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ],
   providers: [
     StockReportService

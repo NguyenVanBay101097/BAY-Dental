@@ -8,9 +8,10 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
 import { PurchaseOrderService } from './purchase-order.service';
 import { PurchaseOrderLineService } from './purchase-order-line.service';
+import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
 
 @NgModule({
-  declarations: [PurchaseOrderCreateUpdateComponent],
+  declarations: [PurchaseOrderCreateUpdateComponent, PurchaseOrderListComponent],
   imports: [
     CommonModule,
     PurchaseOrdersRoutingModule,

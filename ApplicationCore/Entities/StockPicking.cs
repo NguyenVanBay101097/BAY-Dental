@@ -6,6 +6,24 @@ namespace ApplicationCore.Entities
 {
     public class StockPicking: BaseEntity
     {
+        public StockPicking()
+        {
+            Date = DateTime.Now;
+            State = "draft";
+        }
+
+        public StockPicking(StockPicking picking)
+        {
+            Date = DateTime.Now;
+            Origin = picking.Origin;
+            PartnerId = picking.PartnerId;
+            PickingTypeId = picking.PickingTypeId;
+            Note = picking.Note;
+            CompanyId = picking.CompanyId;
+            LocationId = picking.LocationId;
+            LocationDestId = picking.LocationDestId;
+        }
+
         public Guid? PartnerId { get; set; }
 
         public Partner Partner { get; set; }

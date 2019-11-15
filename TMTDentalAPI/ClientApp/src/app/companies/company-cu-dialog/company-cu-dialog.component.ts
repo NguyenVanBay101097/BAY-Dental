@@ -55,21 +55,26 @@ export class CompanyCuDialogComponent implements OnInit {
     });
 
     if (this.id) {
-      this.companyService.get(this.id).subscribe(result => {
-        this.companyForm.patchValue(result);
-        if (result.city && result.city.code) {
-          this.handleCityChange(result.city);
-        }
-        if (result.district && result.district.code) {
-          this.handleDistrictChange(result.district);
-        }
-        if (result.ward && result.ward.code) {
-          this.handleWardChange(result.ward);
-        }
+      setTimeout(() => {
+        this.companyService.get(this.id).subscribe(result => {
+          this.companyForm.patchValue(result);
+          if (result.city && result.city.code) {
+            this.handleCityChange(result.city);
+          }
+          if (result.district && result.district.code) {
+            this.handleDistrictChange(result.district);
+          }
+          if (result.ward && result.ward.code) {
+            this.handleWardChange(result.ward);
+          }
+        });
       });
     }
 
-    this.loadSourceCities();
+    setTimeout(() => {
+      this.loadSourceCities();
+    });
+
   }
 
   loadSourceCities() {

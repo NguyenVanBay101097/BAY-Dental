@@ -190,9 +190,10 @@
                                         <tr>
                                             <th>Dịch vụ</th>
                                             <th>Răng</th>
-                                            <th>Chẩn đoán</th>
-                                            <th class="text-right">Đơn giá</th>
+                                            <th>Chuẩn đoán</th>
                                             <th class="text-right">Số lượng</th>
+                                            <th class="text-right">Đơn giá</th>
+                                            <th class="text-right">Giảm (%)</th>
                                             <th class="text-right">Thành tiền</th>
                                             <th class="text-right"
                                                 *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1">#</th>
@@ -204,9 +205,10 @@
                                                 <td>{{ line.get('product').value.name }}</td>
                                                 <td>{{lineTeeth(line)}}</td>
                                                 <td>{{line.get('diagnostic').value}}</td>
-                                                <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
                                                 <td class="text-right">{{ line.get('productUOMQty').value | number }}
                                                 </td>
+                                                <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
+                                                <td class="text-right">{{ line.get('discount').value | number }}</td>
                                                 <td class="text-right">{{ line.get('priceSubTotal').value | number }}
                                                 </td>
                                                 <td class="text-right"

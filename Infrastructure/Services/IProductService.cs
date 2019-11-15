@@ -17,7 +17,7 @@ namespace Infrastructure.Services
         Task<Product> CreateProduct(ProductDisplay val);
         Task UpdateProduct(Guid id, ProductDisplay val);
         Task<ProductDisplay> GetProductDisplay(Guid id);
-        Task<decimal> GetStandardPrice(Guid id);
+        Task<double> GetStandardPrice(Guid id);
         Task<PagedResult2<ProductBasic2>> GetPagedResultAsync(ProductPaged val);
 
         Task<ProductDisplay> DefaultGet();
@@ -33,5 +33,6 @@ namespace Infrastructure.Services
         Task<Product> CreateProduct(ProductLaboSave val);
         Task UpdateProduct(Guid id, ProductLaboSave val);
         Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val);
+        Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids);
     }
 }

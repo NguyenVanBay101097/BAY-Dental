@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { AppointmentDisplay, AppointmentPaged, AppointmentBasic, AppointmentPaging, AppointmentPatch, AppointmentDefaultGet } from './appointment';
+import { AppointmentDisplay, AppointmentPaged, AppointmentBasic, AppointmentPaging, AppointmentPatch, AppointmentDefaultGet, AppointmentSearchByDate } from './appointment';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../partners/partner-simple';
 import { formatDate } from '@angular/common';
@@ -75,6 +75,18 @@ export class AppointmentService {
 
   defaultGet(a: AppointmentDefaultGet): Observable<AppointmentDisplay> {
     return this.http.post<AppointmentDisplay>(this.baseApi + "api/Appointments/DefaultGet", a);
+  }
+
+  searchRead(val: any): Observable<AppointmentBasic[]> {
+    return this.http.post<AppointmentBasic[]>(this.baseApi + "api/Appointments/SearchRead", val);
+  }
+
+  searchReadByDate(val: AppointmentSearchByDate): Observable<PagedResult2<AppointmentBasic>> {
+    return this.http.post<PagedResult2<AppointmentBasic>>(this.baseApi + "api/Appointments/SearchReadByDate", val);
+  }
+
+  getBasic(id): Observable<AppointmentBasic> {
+    return this.http.get<AppointmentBasic>(this.baseApi + "api/Appointments/" + id + '/GetBasic');
   }
 
   removeAppointment(id) {

@@ -21,12 +21,31 @@ export class LoginViewModel {
     rememberMe: boolean;
 }
 
+export class RefreshViewModel {
+    accessToken: string;
+    refreshToken: string;
+}
+
+export class RefreshResponseViewModel {
+    accessToken: string;
+    refreshToken: string;
+}
+
 export class LoggedInViewModel {
     succeeded: boolean;
     message: string;
     token: string;
+    refreshToken: string;
     configs: object;
-    user: object;
+    user: UserViewModel;
+}
+
+export class UserViewModel {
+    id: string;
+    userName: string;
+    phone: string;
+    email: string;
+    name: string;
 }
 
 export class ForgotPasswordViewModel {
@@ -56,6 +75,10 @@ export class AuthResource {
     redirectUrl: string;
     performLogin(val: LoginViewModel): Observable<LoggedInViewModel> {
         return this.http.post<LoggedInViewModel>(this.baseApi + 'api/Account/Login', val);
+    }
+
+    performRefresh(val: RefreshViewModel): Observable<RefreshResponseViewModel> {
+        return this.http.post<RefreshResponseViewModel>(this.baseApi + 'api/Account/Refresh', val);
     }
 
     forgotPassword(val: ForgotPasswordViewModel): Observable<ForgotPasswordResponse> {

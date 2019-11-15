@@ -38,6 +38,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PickingTypeId { get; set; }
 
         public string Search { get; set; }
+
+        public string Type { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
     }
 
     public class StockPickingDisplay

@@ -2,7 +2,10 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/purchase-orders">Đơn mua hàng</a>
+                <a [routerLink]="['/purchase-orders']" [queryParams]="{type: purchaseOrder.type}">
+                    <span *ngIf="purchaseOrder.type === 'order'">Mua hàng</span>
+                    <span *ngIf="purchaseOrder.type === 'refund'">Trả hàng</span>
+                </a>
             </li>
             <li class="active">
                 <span *ngIf="id">{{purchaseOrder.name}}</span>
@@ -49,19 +52,6 @@
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy đơn
                     </button>
-                    <!-- <button type="button" class="btn btn-primary btn-sm"
-                                *ngIf="['draft', 'cancel'].indexOf(getInvState) === -1" (click)="actionCreateDotKham()">
-                                Tạo đợt khám
-                            </button>
-                            <button type="button" class="btn btn-primary btn-sm" (click)="actionInvoicePayment()">
-                                Thanh toán
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
-                                Hủy phiếu
-                            </button>
-                            <button type="button" class="btn btn-sm btn-primary" (click)="actionCancelDraft()">
-                                Chuyển thành nháp
-                            </button> -->
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="purchaseOrder.state !== 'purchase'" class="btn o_arrow_button disabled"

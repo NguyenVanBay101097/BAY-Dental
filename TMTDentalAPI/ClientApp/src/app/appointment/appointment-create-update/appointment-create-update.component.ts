@@ -78,19 +78,24 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       state: 'confirmed',
     })
     if (this.appointId) {
-      this.loadAppointmentToForm();
+      setTimeout(() => {
+        this.loadAppointmentToForm();
+      });
     } else {
-      if (this.timeConfig != null) {
-        this.formCreate.get('dateObj').setValue(this.timeConfig);
-      }
-      this.defaultGet();
+      setTimeout(() => {
+        if (this.timeConfig != null) {
+          this.formCreate.get('dateObj').setValue(this.timeConfig);
+        }
+        this.defaultGet();
+      });
     }
 
-    this.getDoctorList();
-    this.getCustomerList();
-    this.filterChangeCombobox();
-    this.setDateLimit();
-
+    setTimeout(() => {
+      this.getDoctorList();
+      this.getCustomerList();
+      this.filterChangeCombobox();
+      this.setDateLimit();
+    });
   }
 
   setDateLimit() {
@@ -214,7 +219,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           this.formCreate.patchValue(rs);
           this.formCreate.get('stateObj').setValue(this.stateFilter.filter(x => x.value == rs.state)[0]);
           this.state = rs.state;
-          let date = this.intlService.parseDate(rs.date);
+          let date = new Date(rs.date);
           this.formCreate.get('dateObj').patchValue(date);
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
@@ -370,7 +375,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         rs => {
           this.formCreate.patchValue(rs);
           if (this.timeConfig == null) {
-            let date = this.intlService.parseDate(rs.date);
+            let date = new Date(rs.date);
             this.formCreate.get('dateObj').patchValue(date);
           }
           // if (rs.user) {

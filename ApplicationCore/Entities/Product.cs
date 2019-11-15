@@ -87,6 +87,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<StockQuant> StockQuants { get; set; }
 
+        public ICollection<ProductPriceHistory> PriceHistories { get; set; } = new List<ProductPriceHistory>();
+
         public bool IsLabo { get; set; }
 
         /// <summary>

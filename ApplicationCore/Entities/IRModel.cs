@@ -10,6 +10,8 @@ namespace ApplicationCore.Entities
 
         public string Model { get; set; }
 
+        public bool Transient { get; set; }
+
         public ICollection<IRModelAccess> ModelAccesses { get; set; } = new List<IRModelAccess>();
     }
 }

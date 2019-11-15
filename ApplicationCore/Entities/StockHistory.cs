@@ -25,6 +25,6 @@ namespace ApplicationCore.Entities
 
         public DateTime? date { get; set; }
 
-        public decimal price_unit_on_quant { get; set; }
+        public double? price_unit_on_quant { get; set; }
     }
 }

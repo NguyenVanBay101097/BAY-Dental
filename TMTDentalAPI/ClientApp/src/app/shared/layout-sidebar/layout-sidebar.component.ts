@@ -21,7 +21,7 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Phiếu điều trị', link: '/customer-invoices' },
         { name: 'Phiếu điều trị', link: '/sale-orders' },
         { name: 'Đợt khám', link: '/dot-khams' },
-        { name: 'Lịch hẹn', link: '/appointments' },
+        { name: 'Lịch hẹn', link: '/appointments/kanban' },
       ]
     },
     {
@@ -36,7 +36,16 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Kho',
       icon: 'fas fa-th',
       children: [
-        { name: 'Hoạt động kho', link: '/picking-type-overview' },
+        { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
+        { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
+      ],
+    },
+    {
+      name: 'Mua hàng',
+      icon: 'fas fa-shopping-cart',
+      children: [
+        { name: 'Mua hàng', link: '/purchase-orders', params: { type: 'order' } },
+        { name: 'Trả hàng', link: '/purchase-orders', params: { type: 'refund' } },
       ]
     },
     {
@@ -79,6 +88,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
+        { name: 'Thống kê khoản thu theo thời gian', link: '/real-revenue-report' },
       ]
     },
   ];

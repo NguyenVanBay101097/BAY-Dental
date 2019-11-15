@@ -99,6 +99,9 @@ namespace Infrastructure.Data
         public DbSet<LaboOrderLineToothRel> LaboOrderLineToothRels { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
+        public DbSet<ResCompanyUsersRel> ResCompanyUsersRels { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+        public DbSet<ProductPriceHistory> ProductPriceHistories { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -181,6 +184,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleReportConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
+            builder.ApplyConfiguration(new ResCompanyUsersRelConfiguration());
+            builder.ApplyConfiguration(new UserRefreshTokenConfiguration());
+            builder.ApplyConfiguration(new ProductPriceHistoryConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

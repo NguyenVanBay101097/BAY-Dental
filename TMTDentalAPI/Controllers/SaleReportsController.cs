@@ -27,5 +27,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetReport(SaleReportSearch val)
+        {
+            var res = await _saleReportService.GetReport(val);
+            return Ok(res);
+        }
     }
 }

@@ -189,11 +189,105 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "appointment_comp_rule":
+                case "sale.appointment_comp_rule":
                     return new InitialSpecification<Appointment>(x => x.CompanyId == companyId);
                 default:
                     return null;
             }
+        }
+
+        public async Task<IEnumerable<AppointmentBasic>> SearchRead(AppointmentSearch val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
+                || x.Partner.Ref.Contains(val.Search));
+
+            if (val.DateTimeFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateTimeFrom);
+
+            if (val.DateTimeTo.HasValue)
+                query = query.Where(x => x.Date < val.DateTimeTo.Value);
+
+            if (val.DotKhamId.HasValue)
+                query = query.Where(x => x.DotKhamId == val.DotKhamId);
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var stateList = val.State.Split(",");
+                query = query.Where(x => stateList.Contains(x.State));
+            }
+
+            query = query.OrderByDescending(x => x.DateCreated);
+            var res = await query.Select(x => new AppointmentBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                PartnerName = x.Partner.Name,
+                DoctorName = x.Doctor.Name,
+                Date = x.Date,
+                State = x.State
+            }).ToListAsync();
+
+            return res;
+
+        }
+
+        public async Task<PagedResult2<AppointmentBasic>> SearchReadByDate(AppointmentSearchByDate val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
+                || x.Partner.Ref.Contains(val.Search));
+
+            if (val.Date.HasValue)
+            {
+                var dateFrom = val.Date.Value;
+                var dateTo = val.Date.Value.AddDays(1);
+                query = query.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var stateList = val.State.Split(",");
+                query = query.Where(x => stateList.Contains(x.State));
+            }
+
+            query = query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit);
+            var items = await query.Select(x => new AppointmentBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                PartnerName = x.Partner.Name,
+                DoctorName = x.Doctor.Name,
+                Date = x.Date,
+                State = x.State,
+                Note = x.Note,
+                PartnerPhone = x.Partner.Phone
+            }).ToListAsync();
+
+            var count = await query.CountAsync();
+            var res = new PagedResult2<AppointmentBasic>(count, val.Offset, val.Limit) { Items = items };
+
+            return res;
+
+        }
+
+        public async Task<AppointmentBasic> GetBasic(Guid id)
+        {
+            return await SearchQuery(x => x.Id == id).Select(x => new AppointmentBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                PartnerName = x.Partner.Name,
+                DoctorName = x.Doctor.Name,
+                Date = x.Date,
+                State = x.State,
+                Note = x.Note,
+                PartnerPhone = x.Partner.Phone
+            }).FirstOrDefaultAsync();
         }
     }
 }

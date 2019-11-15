@@ -17,5 +17,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val);
         Task ButtonConfirm(IEnumerable<Guid> ids);
+        Task ButtonCancel(IEnumerable<Guid> ids);
     }
 }

@@ -213,7 +213,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "labo.order.line_comp_rule":
+                case "labo.labo_order_line_comp_rule":
                     return new InitialSpecification<LaboOrderLine>(x => x.CompanyId == companyId);
                 default:
                     return null;

@@ -33,6 +33,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
 
         public Guid CompanyId { get; set; }
+        public CompanyBasic Company { get; set; }
+
+        public IEnumerable<CompanyBasic> Companies { get; set; } = new List<CompanyBasic>();
     }
 
     public class ApplicationUserPaged

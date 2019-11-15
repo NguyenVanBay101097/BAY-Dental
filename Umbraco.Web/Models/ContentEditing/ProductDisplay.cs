@@ -27,7 +27,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Giá vốn
         /// </summary>
-        public decimal StandardPrice { get; set; }
+        public double StandardPrice { get; set; }
 
         public bool IsLabo { get; set; }
 
