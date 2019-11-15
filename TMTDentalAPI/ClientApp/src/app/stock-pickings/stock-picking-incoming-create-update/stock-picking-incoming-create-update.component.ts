@@ -13,18 +13,21 @@ import { StockMoveService, StockMoveOnChangeProduct } from 'src/app/stock-moves/
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductBasic2, ProductService } from 'src/app/products/product.service';
 import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
+import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
 declare var jquery: any;
 declare var $: any;
 
 @Component({
-  selector: 'app-stock-picking-outgoing-create-update',
-  templateUrl: './stock-picking-outgoing-create-update.component.html',
-  styleUrls: ['./stock-picking-outgoing-create-update.component.css'],
+  selector: 'app-stock-picking-incoming-create-update',
+  templateUrl: './stock-picking-incoming-create-update.component.html',
+  styleUrls: ['./stock-picking-incoming-create-update.component.css'],
   host: {
     class: 'o_action o_view_controller'
   }
 })
-export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
+export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   pickingForm: FormGroup;
   opened = false;
   picking: StockPickingDisplay = new StockPickingDisplay();
@@ -32,6 +35,10 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   productSearch: string;
   productList: ProductBasic2[] = [];
+
+  filteredPartners: PartnerSimple[] = [];
+  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute,
@@ -62,6 +69,30 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     }
 
     this.loadProductList();
+
+    this.partnerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerCbx.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.filteredPartners = result;
+      this.partnerCbx.loading = false;
+    });
+
+    this.loadFilteredPartners();
+  }
+
+  loadFilteredPartners() {
+    this.searchPartners().subscribe(result => {
+      this.filteredPartners = result;
+    });
+  }
+
+  searchPartners(search?: string) {
+    var val = new PartnerPaged();
+    val.searchNamePhoneRef = search;
+    val.supplier = true;
+    return this.partnerService.getAutocompleteSimple(val);
   }
 
   loadProductList() {
@@ -93,7 +124,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   loadDefault() {
-    this.stockPickingService.defaultGetOutgoing().subscribe(result => {
+    this.stockPickingService.defaultGetIncoming().subscribe(result => {
       this.pickingForm.patchValue(result);
       this.picking = result;
     });
@@ -118,6 +149,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     item.product.name = value.name;
     item.name = value.name;
     item.productUOMQty = 1;
+    item.priceUnit = 0;
     let flag = true;
     this.moveLines.controls.forEach(line => {
       if (line.get('productId').value == item.productId) {
@@ -200,14 +232,14 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   checkQtyPriceValid() {
     var index = _.findIndex(this.moveLines.controls, o => {
-      return o.get('productUOMQty').value == null;
+      return o.get('productUOMQty').value == null || o.get('priceUnit').value == null
     });
     return index !== -1 ? false : true;
   }
 
   onSaveOrUpdate() {
     if (!this.checkQtyPriceValid()) {
-      alert('Vui lòng nhập số lượng');
+      alert('Vui lòng nhập số lượng và đơn giá');
       return;
     }
 
@@ -231,7 +263,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       });
     } else {
       this.stockPickingService.create(val).subscribe(result => {
-        this.router.navigate(['outgoing-pickings/edit/', result.id]);
+        this.router.navigate(['incoming-pickings/edit/', result.id]);
       });
     }
   }
@@ -242,7 +274,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         //update and done
 
         if (!this.checkQtyPriceValid()) {
-          alert('Vui lòng nhập số lượng');
+          alert('Vui lòng nhập số lượng và đơn giá');
           return;
         }
 
@@ -266,13 +298,12 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         });
       }
     } else {
-      //save and done
-
       if (!this.checkQtyPriceValid()) {
-        alert('Vui lòng nhập số lượng');
+        alert('Vui lòng nhập số lượng và đơn giá');
         return;
       }
 
+      //save and done
       if (!this.pickingForm.valid) {
         return;
       }
@@ -283,12 +314,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
       this.stockPickingService.create(val).subscribe(result => {
         this.stockPickingService.actionDone([result.id]).subscribe(() => {
-          this.router.navigate(['outgoing-pickings/edit/', result.id]);
+          this.router.navigate(['incoming-pickings/edit/', result.id]);
         }, () => {
-          this.router.navigate(['outgoing-pickings/edit/', result.id]);
+          this.router.navigate(['incoming-pickings/edit/', result.id]);
         });
       });
     }
   }
 }
+
 

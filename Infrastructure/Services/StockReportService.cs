@@ -150,16 +150,32 @@ namespace Infrastructure.Services
             begin = await _context.StockHistories.Where(x => x.date < date_from && x.product_id == val.ProductId && x.company_id == companyId).SumAsync(x => x.quantity);
 
             var query2 = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.product_id == val.ProductId && x.company_id == companyId);
-            var list2 = query2.OrderBy(x => x.date)
-                    .Select(x => new StockReportXuatNhapTonItemDetail
-                    {
-                        Date = x.date,
-                        MovePickingName = x.Move.Picking.Name,
-                        MovePickingId = x.Move.PickingId,
-                        MovePickingTypeId = x.Move.Picking.PickingTypeId,
-                        Import = x.quantity > 0 ? x.quantity : 0,
-                        Export = x.quantity < 0 ? -x.quantity : 0,
-                    }).ToList();
+            var list2 = query2.GroupBy(x => new { MoveId = x.move_id, Date = x.date, PickingName = x.Move.Picking.Name, PickingId = x.Move.PickingId }).Select(x => new
+            {
+                Date = x.Key.Date,
+                MoveId = x.Key.MoveId,
+                Quantity = x.Sum(s => s.quantity),
+                PickingName = x.Key.PickingName,
+                PickingId = x.Key.PickingId
+            }).OrderBy(x => x.Date).Select(x => new StockReportXuatNhapTonItemDetail
+            {
+                Date = x.Date,
+                MovePickingName = x.PickingName,
+                MovePickingId = x.PickingId,
+                Import = x.Quantity > 0 ? x.Quantity : 0,
+                Export = x.Quantity < 0 ? -x.Quantity : 0,
+            }).ToList();
+            //var list2 = query2.OrderBy(x => x.date)
+            //        .Select(x => new StockReportXuatNhapTonItemDetail
+            //        {
+            //            Date = x.date,
+            //            MovePickingName = x.Move.Picking.Name,
+            //            MovePickingId = x.Move.PickingId,
+            //            MovePickingTypeId = x.Move.Picking.PickingTypeId,
+            //            Import = x.quantity > 0 ? x.quantity : 0,
+            //            Export = x.quantity < 0 ? -x.quantity : 0,
+            //            PriceUnitOnQuant = x.price_unit_on_quant
+            //        }).ToList();
 
 
             foreach (var item in list2)

@@ -5,6 +5,7 @@ import { StockPickingCreateUpdateComponent } from './stock-picking-create-update
 import { StockPickingOutgoingListComponent } from './stock-picking-outgoing-list/stock-picking-outgoing-list.component';
 import { StockPickingOutgoingCreateUpdateComponent } from './stock-picking-outgoing-create-update/stock-picking-outgoing-create-update.component';
 import { StockPickingIncomingListComponent } from './stock-picking-incoming-list/stock-picking-incoming-list.component';
+import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incoming-create-update/stock-picking-incoming-create-update.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,14 @@ const routes: Routes = [
   {
     path: 'incoming-pickings',
     component: StockPickingIncomingListComponent
+  },
+  {
+    path: 'incoming-pickings/create',
+    component: StockPickingIncomingCreateUpdateComponent
+  },
+  {
+    path: 'incoming-pickings/edit/:id',
+    component: StockPickingIncomingCreateUpdateComponent
   },
 ];
 

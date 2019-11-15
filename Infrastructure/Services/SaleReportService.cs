@@ -1,11 +1,13 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,12 +19,27 @@ namespace Infrastructure.Services
     {
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SaleReportService(CatalogDbContext context,IMapper mapper)
+        public SaleReportService(CatalogDbContext context, IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        protected Guid CompanyId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return Guid.Empty;
+                var claim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "company_id");
+                return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
+            }
+        }
+
 
         public async Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val)
         {
@@ -35,7 +52,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CategId.Equals(val.CategId));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Equals(val.State.ToLower()));
-            if(val.DateFrom.HasValue)
+            if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom);
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo);
@@ -43,31 +60,170 @@ namespace Infrastructure.Services
             if (val.ByInvoice)
             {
                 return await query.GroupBy(x => new
-                            {
-                                ProductId = x.ProductId,
-                                ProductName = x.Product.Name
-                            }).Select(x => new SaleReportTopServicesCs
-                            {
-                                ProductId = x.Key.ProductId ?? Guid.Empty,
-                                PriceTotalSum = x.Sum(y => y.PriceTotal),
-                                ProductUOMQtySum = x.Sum(y => y.ProductUOMQty),
-                                ProductName = x.Key.ProductName
-                            }).OrderByDescending(x => x.PriceTotalSum).ThenByDescending(x => x.ProductUOMQtySum).Take(val.Number)
+                {
+                    ProductId = x.ProductId,
+                    ProductName = x.Product.Name
+                }).Select(x => new SaleReportTopServicesCs
+                {
+                    ProductId = x.Key.ProductId ?? Guid.Empty,
+                    PriceTotalSum = x.Sum(y => y.PriceTotal),
+                    ProductUOMQtySum = x.Sum(y => y.ProductUOMQty),
+                    ProductName = x.Key.ProductName
+                }).OrderByDescending(x => x.PriceTotalSum).ThenByDescending(x => x.ProductUOMQtySum).Take(val.Number)
                             .ToListAsync();
-            } else
+            }
+            else
             {
                 return await query.GroupBy(x => new
-                            {
-                                ProductId = x.ProductId,
-                                ProductName = x.Product.Name
-                            }).Select(x => new SaleReportTopServicesCs
-                            {
-                                ProductId = x.Key.ProductId ?? Guid.Empty,
-                                ProductUOMQtySum = x.Sum(y => y.ProductUOMQty),
-                                PriceTotalSum = x.Sum(y => y.PriceTotal),
-                                ProductName = x.Key.ProductName
-                            }).OrderByDescending(x => x.ProductUOMQtySum).ThenByDescending(x=>x.PriceTotalSum).Take(val.Number)
+                {
+                    ProductId = x.ProductId,
+                    ProductName = x.Product.Name
+                }).Select(x => new SaleReportTopServicesCs
+                {
+                    ProductId = x.Key.ProductId ?? Guid.Empty,
+                    ProductUOMQtySum = x.Sum(y => y.ProductUOMQty),
+                    PriceTotalSum = x.Sum(y => y.PriceTotal),
+                    ProductName = x.Key.ProductName
+                }).OrderByDescending(x => x.ProductUOMQtySum).ThenByDescending(x => x.PriceTotalSum).Take(val.Number)
                             .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<SaleReportItem>> GetReport(SaleReportSearch val)
+        {
+            //thời gian, tiền thực thu, doanh thu, còn nợ
+            var companyId = CompanyId;
+            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
+            }
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
+
+            if (val.GroupBy == "customer")
+            {
+                var result = await query.GroupBy(x => new {
+                    PartnerId = x.PartnerId,
+                    PartnerName = x.Partner.Name
+                })
+                  .Select(x => new SaleReportItem
+                  {
+                      Name = x.Key.PartnerName,
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal)
+                  }).ToListAsync();
+                return result;
+            }
+            if (val.GroupBy == "user")
+            {
+                var result = await query.GroupBy(x => new {
+                    UserId = x.UserId,
+                    UserName = x.User.Name
+                })
+                  .Select(x => new SaleReportItem
+                  {
+                      Name = x.Key.UserName,
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal)
+                  }).ToListAsync();
+                return result;
+            }
+            if (val.GroupBy == "product")
+            {
+                var result = await query.GroupBy(x => new {
+                    ProductId = x.ProductId,
+                    ProductName = x.Product.Name
+                })
+                  .Select(x => new SaleReportItem
+                  {
+                      Name = x.Key.ProductName,
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal)
+                  }).ToListAsync();
+                return result;
+            }
+            if (val.GroupBy == "date:quarter")
+            {
+                var result = await query.GroupBy(x => new {
+                    x.Date.Year,
+                    QuarterOfYear = (x.Date.Month - 1) / 3,
+                })
+                  .Select(x => new SaleReportItem
+                  {
+                      Year = x.Key.Year,
+                      Date = new DateTime(x.Key.Year, x.Key.QuarterOfYear * 3 + 1, 1),
+                      QuarterOfYear = x.Key.QuarterOfYear,
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal)
+                  }).ToListAsync();
+                foreach (var item in result)
+                {
+                    item.Name = $"Quý {item.QuarterOfYear}, {item.Year}";
+                }
+                return result;
+            }
+            else if (val.GroupBy == "date:month" || val.GroupBy == "date")
+            {
+                var result = await query.GroupBy(x => new {
+                    x.Date.Year,
+                    x.Date.Month,
+                })
+                  .Select(x => new SaleReportItem
+                  {
+                      Date = new DateTime(x.Key.Year, x.Key.Month, 1),
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal)
+                  }).ToListAsync();
+                foreach (var item in result)
+                {
+                    item.Name = item.Date.ToString("MM/yyyy");
+                }
+                return result;
+            }
+            if (val.GroupBy == "week")
+            {
+                var result = await query.GroupBy(x => new {
+                    Year = x.Date.Year,
+                    WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
+                        x.Date, CalendarWeekRule.FirstDay, DayOfWeek.Monday)
+                })
+                  .Select(x => new SaleReportItem
+                  {
+                      Year = x.Key.Year,
+                      WeekOfYear = x.Key.WeekOfYear,
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal)
+                  }).ToListAsync();
+                foreach (var item in result)
+                {
+                    item.Date = DateUtils.FirstDateOfWeekISO8601(item.Year, item.WeekOfYear);
+                    item.Name = $"Tuần {item.WeekOfYear}, {item.Year}";
+                }
+                return result;
+            }
+            else
+            {
+                var result = await query.GroupBy(x => new {
+                    x.Date.Year,
+                    x.Date.Month,
+                    x.Date.Day,
+                })
+                   .Select(x => new SaleReportItem
+                   {
+                       Date = new DateTime(x.Key.Year, x.Key.Month, x.Key.Day),
+                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                       PriceTotal = x.Sum(s => s.PriceTotal)
+                   }).ToListAsync();
+                foreach (var item in result)
+                {
+                    item.Name = item.Date.ToString("dd/MM/yyyy");
+                }
+                return result;
             }
         }
     }

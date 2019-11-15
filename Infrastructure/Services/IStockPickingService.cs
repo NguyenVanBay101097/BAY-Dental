@@ -17,5 +17,6 @@ namespace Infrastructure.Services
         Task<StockPicking> GetPickingForDisplay(Guid id);
         Task<StockPickingDisplay> DefaultGetOutgoing();
         Task Unlink(IEnumerable<Guid> ids);
+        Task<StockPickingDisplay> DefaultGetIncoming();
     }
 }

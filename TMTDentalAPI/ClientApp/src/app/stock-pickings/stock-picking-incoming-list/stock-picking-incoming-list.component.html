@@ -5,14 +5,14 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã..." type="text" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc nhà cung cấp..." type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <!-- <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button> -->
+                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -46,7 +46,7 @@
                 {{getState(dataItem)}}
             </ng-template>
         </kendo-grid-column>
-        <!-- <kendo-grid-column field="id">
+        <kendo-grid-column field="id">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
@@ -56,6 +56,6 @@
                 <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
                     <span class="fa fa-trash"></span> Xóa</button>
             </ng-template>
-        </kendo-grid-column> -->
+        </kendo-grid-column>
     </kendo-grid>
 </div>

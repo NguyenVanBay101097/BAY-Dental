@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StockPickingPaged, StockPickingService, StockPickingBasic } from '../stock-picking.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -92,16 +91,16 @@ export class StockPickingIncomingListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/outgoing-pickings/create']);
+    this.router.navigate(['/incoming-pickings/create']);
   }
 
   editItem(item: StockPickingBasic) {
-    this.router.navigate(['/outgoing-pickings/edit', item.id]);
+    this.router.navigate(['/incoming-pickings/edit', item.id]);
   }
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu xuất';
+    modalRef.componentInstance.title = 'Xóa phiếu nhập';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.stockPickingService.delete(item.id).subscribe(() => {

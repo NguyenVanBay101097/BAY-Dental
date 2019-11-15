@@ -33,11 +33,11 @@ export class LayoutSidebarComponent implements OnInit {
       ]
     },
     {
-      name: 'Quản lý kho',
+      name: 'Kho',
       icon: 'fas fa-th',
       children: [
         { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
-        { name: 'Phiếu xuất kho', link: '/incoming-pickings' },
+        { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
       ],
     },
     {
@@ -88,6 +88,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
+        { name: 'Thống kê khoản thu theo thời gian', link: '/real-revenue-report' },
       ]
     },
   ];

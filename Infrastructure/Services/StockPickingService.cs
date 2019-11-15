@@ -99,6 +99,23 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<StockPickingDisplay> DefaultGetIncoming()
+        {
+            var res = new StockPickingDisplay();
+            var companyId = CompanyId;
+            res.CompanyId = companyId;
+            var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == companyId).FirstOrDefaultAsync();
+            if (pickingType == null)
+                throw new Exception("Không tìm thấy hoạt động nhập kho");
+
+            res.PickingTypeId = pickingType.Id;
+            res.LocationId = pickingType.DefaultLocationSrcId.Value;
+            res.LocationDestId = pickingType.DefaultLocationDestId.Value;
+
+            return res;
+        }
+
         public async Task<StockPickingOnChangePickingTypeResult> OnChangePickingType(StockPickingOnChangePickingType val)
         {
             var res = new StockPickingOnChangePickingTypeResult();

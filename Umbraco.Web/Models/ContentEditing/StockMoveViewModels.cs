@@ -27,6 +27,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductSimple Product { get; set; }
 
         public int Sequence { get; set; }
+
+        public double? PriceUnit { get; set; }
     }
 
     public class StockMoveOnChangeProduct

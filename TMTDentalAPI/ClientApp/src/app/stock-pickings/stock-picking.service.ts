@@ -52,6 +52,7 @@ export class StockMoveDisplay {
     product: ProductSimple;
     sequence: number;
     productUOMQty: number;
+    priceUnit: number;
 }
 
 export class StockPickingDefaultGet {
@@ -77,6 +78,10 @@ export class StockPickingService {
 
     defaultGetOutgoing(): Observable<StockPickingDisplay> {
         return this.http.get<StockPickingDisplay>(this.baseApi + this.apiUrl + "/DefaultGetOutgoing");
+    }
+
+    defaultGetIncoming(): Observable<StockPickingDisplay> {
+        return this.http.get<StockPickingDisplay>(this.baseApi + this.apiUrl + "/DefaultGetIncoming");
     }
 
     create(val: StockPickingDisplay): Observable<StockPickingDisplay> {

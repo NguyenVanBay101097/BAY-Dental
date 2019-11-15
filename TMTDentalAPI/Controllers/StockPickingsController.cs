@@ -149,6 +149,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGetIncoming()
+        {
+            var res = await _stockPickingService.DefaultGetIncoming();
+            return Ok(res);
+        }
+
         [HttpPost("ActionDone")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
