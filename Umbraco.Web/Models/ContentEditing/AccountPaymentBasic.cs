@@ -11,7 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerName { get; set; }
 
         public DateTime PaymentDate { get; set; }
-
+        
         public string JournalName { get; set; }
 
         public string State { get; set; }

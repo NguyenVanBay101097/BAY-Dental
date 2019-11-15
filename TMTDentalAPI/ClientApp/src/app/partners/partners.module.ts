@@ -21,12 +21,13 @@ import { PartnerSupplierListComponent } from './partner-supplier-list/partner-su
 import { MatStepperModule } from '@angular/material/stepper';
 import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-invoice-lines.component';
 import { PartnerImportComponent } from './partner-import/partner-import.component';
+import { PartnerPaymentsComponent } from './partner-payments/partner-payments.component';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
     PartnerCustomerListComponent, PartnerCustomerListDetailComponent, PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent, PartnerHistoryComponent, PartnerDetailListComponent, PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent],
+    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,

@@ -72,6 +72,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("GetPaymentBasicList")]
+        public async Task<IActionResult> GetPaymentBasicList([FromQuery]AccountPaymentFilter val)
+        {
+            var res = await _paymentService.GetPaymentBasicList(val);
+            return Ok(res);
+        }
+
         //[HttpGet("{id}")]
         //public async Task<IActionResult> Get(Guid id)
         //{

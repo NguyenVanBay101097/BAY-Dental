@@ -17,7 +17,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class SaleOrderService: BaseService<SaleOrder>, ISaleOrderService
+    public class SaleOrderService : BaseService<SaleOrder>, ISaleOrderService
     {
         private readonly IMapper _mapper;
 
@@ -61,7 +61,6 @@ namespace Infrastructure.Services
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
-            order.ResidualSum = order.AmountTotal;
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
@@ -100,14 +99,15 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await query.Select(x => new SaleOrderBasic {
+            var items = await query.Select(x => new SaleOrderBasic
+            {
                 Id = x.Id,
                 AmountTotal = x.AmountTotal,
                 DateOrder = x.DateOrder,
                 Name = x.Name,
                 PartnerName = x.Partner.Name,
                 State = x.State,
-                UserName = x.User != null ? x.User.Name: string.Empty
+                UserName = x.User != null ? x.User.Name : string.Empty
             }).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -232,7 +232,7 @@ namespace Infrastructure.Services
                .Include("SaleOrderLineInvoiceRels.InvoiceLine")
                .Include("SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
                .ToListAsync();
-           
+
             saleLineObj._GetInvoiceQty(lines);
             saleLineObj._GetToInvoiceQty(lines);
             saleLineObj._ComputeInvoiceStatus(lines);
@@ -275,7 +275,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DotKhams)
                 .ToListAsync();
             var states = new string[] { "draft", "cancel" };
-            foreach(var order in self)
+            foreach (var order in self)
             {
                 if (!states.Contains(order.State))
                 {
@@ -324,11 +324,25 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public IEnumerable<Guid> DefaultGetInvoice(Guid id)
+        {
+            var order = SearchQuery(x => x.Id == id)
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoiceRels")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                .FirstOrDefault();
+            var invoiceIds = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice.Id).Distinct().ToList();
+
+            return invoiceIds;
+        }
+
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
+                .Include("OrderLines.Order")
                 .Include("OrderLines.DotKhamSteps")
                 .ToListAsync();
             foreach (var order in self)
@@ -357,6 +371,7 @@ namespace Infrastructure.Services
             }
 
             _GetInvoiced(self);
+            _ComputeResidual(self);
             await UpdateAsync(self);
 
             await _GenerateDotKhamSteps(self);
@@ -440,7 +455,7 @@ namespace Infrastructure.Services
 
             var invoices = new Dictionary<Guid, AccountInvoice>();
             var orderToUpdate = new HashSet<SaleOrder>();
-        
+
             foreach (var order in orders)
             {
                 var groupKey = order.Id;
@@ -538,9 +553,53 @@ namespace Infrastructure.Services
             return vals;
         }
 
-        //public async Task<IEnumerable<>> GetPaymentInfo(Guid id)
-        //{
-        //    var saleOrder = SearchQuery().;
-        //}
+        public void _ComputeResidual(IEnumerable<SaleOrder> self)
+        {
+            foreach (var order in self)
+            {
+                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels)
+                    .Select(x => x.InvoiceLine).Select(x => x.Invoice).Distinct().ToList();
+                decimal residual = 0M;
+                foreach (var invoice in invoices)
+                {
+                    if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
+                        continue;
+                    if (invoice.Type == "out_invoice")
+                        residual += invoice.Residual;
+                    else
+                        residual -= invoice.Residual;
+                }
+                order.Residual = residual;
+            }
+        }
+
+        public void _ComputeResidual(IEnumerable<AccountInvoice> invoices)
+        {
+            var invoiceObj = GetService<IAccountInvoiceService>();
+            var queryInvoices = invoiceObj.SearchQuery(x => invoices.Any(y => y.Id == x.Id))
+                .Include(x => x.InvoiceLines)
+                .Include("InvoiceLines.SaleLines")
+                .Include("InvoiceLines.SaleLines.OrderLine")
+                .Include("InvoiceLines.SaleLines.OrderLine.Order").ToList();
+            //Xác định ds hóa đơn thuộc phiếu điều trị nào
+            var order = queryInvoices.SelectMany(x => x.InvoiceLines).SelectMany(x => x.SaleLines).Select(x => x.OrderLine).Select(x => x.Order).FirstOrDefault();
+            var queryOrder = SearchQuery(x => x.Id == order.Id)
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoiceRels")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                .FirstOrDefault();
+
+            //Lấy tất cả invoices thuộc phiếu điều trị order
+            var allInvoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice).Distinct().ToList();
+
+            var residual = 0M;
+            foreach (var inv in allInvoices)
+            {
+                residual += inv.Residual;
+            }
+            order.Residual = residual;
+            Update(order);
+        }
     }
 }

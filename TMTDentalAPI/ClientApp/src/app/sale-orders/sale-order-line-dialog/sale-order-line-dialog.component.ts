@@ -59,6 +59,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
         this.saleLineForm.patchValue(this.line);
         this.teethSelected = [...this.line.teeth];
+        console.log(this.line);
         if (this.line.toothCategory) {
           this.loadTeethMap(this.line.toothCategory);
         }

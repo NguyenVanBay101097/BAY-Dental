@@ -32,7 +32,7 @@ namespace Infrastructure.Services
             {
                 if (rec.State != "draft")
                     throw new Exception("Chỉ những thanh toán nháp mới được vào sổ.");
-                if (rec.AccountInvoicePaymentRels.Any(x => x.Invoice.State != "open"))
+                if (rec.AccountInvoicePaymentRels.Any(x => x.Invoice.State != "open" && x.Invoice.State != "paid"))
                     throw new Exception("Chỉ được thanh toán cho những hóa đơn trạng thái đã xác nhận.");
                 string sequenceCode = "";
                 if (string.IsNullOrEmpty(rec.Name))
@@ -180,6 +180,9 @@ namespace Infrastructure.Services
             {
                 var invoiceIds = rec.AccountInvoicePaymentRels.Select(x => x.InvoiceId);
                 await invoiceObj.RegisterPayment(invoiceIds, counterpartAml);
+            } else
+            {
+
             }
 
             await moveObj.Write(new List<AccountMove>() { move });
@@ -234,6 +237,36 @@ namespace Infrastructure.Services
             else
             {
                 return _ComputeTotalInvoiceAmount(invoices) - amount;
+            }
+        }
+
+        /// <summary>
+        /// Thanh toán nợ, bắt đầu từ hóa đơn hết hạn sớm nhất của list phiếu điều trị truyền vào
+        /// </summary>
+        public void _ComputeResidualPayment(IEnumerable<SaleOrder> saleOrders, decimal amount)
+        {
+            foreach (var order in saleOrders)
+            {
+                var invoices = order.OrderLines.SelectMany(x=>x.SaleOrderLineInvoiceRels).Select(x=>x.InvoiceLine).Select(x=>x.Invoice)
+                    .OrderByDescending(x=>x.DateDue).ToList();
+                foreach (var inv in invoices)
+                {
+                    if (amount > inv.Residual)
+                    {
+                        amount -= inv.Residual;
+                        inv.Reconciled = true;
+                        inv.Residual = 0M;
+                    }
+                    else
+                    {
+                        inv.Residual -= amount;
+                    }
+
+                    if (amount == 0)
+                        break;
+                }
+                if (amount == 0)
+                    break;
             }
         }
 
@@ -357,6 +390,28 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
             }
 
+            if (val.SaleOrderId.HasValue)
+            {
+                var orderObj = GetService<ISaleOrderService>();
+                var order = orderObj.SearchQuery(x => x.Id == val.SaleOrderId)
+                    .Include(x => x.OrderLines)
+                    .Include("OrderLines.SaleOrderLineInvoiceRels")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.AccountInvoicePaymentRels")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.AccountInvoicePaymentRels.Payment")
+                    .FirstOrDefault();
+                var apIds = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice)
+                    .SelectMany(x => x.AccountInvoicePaymentRels).Select(x => x.Payment);
+
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => apIds.Any(y => y.Id == x.Id)));
+            }
+
+            if (val.PartnerId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
+            }
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated), limit: val.Limit, offSet: val.Offset);
 
             var items = await _mapper.ProjectTo<AccountPaymentBasic>(query).ToListAsync();
@@ -410,6 +465,58 @@ namespace Infrastructure.Services
             }
 
             await DeleteAsync(payments);
+        }
+
+        public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)
+        {
+            ISpecification<AccountPayment> spec = new InitialSpecification<AccountPayment>(x => true);
+
+            if (val.JournalId.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.JournalId == val.JournalId));
+
+            if (val.PartnerId.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId == val.PartnerId));
+
+            if (!string.IsNullOrEmpty(val.PartnerType))
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerType == val.PartnerType));
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var states = val.State.Split(",");
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => states.Contains(x.State)));
+            }
+
+            if (val.DateFrom.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate <= val.DateFrom));
+
+            if (val.DateTo.HasValue)
+            {
+                var paymentDateTo = val.DateTo.Value.AddDays(1);
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
+            }
+
+            if (val.SaleOrderId.HasValue)
+            {
+                var orderObj = GetService<ISaleOrderService>();
+                var order = orderObj.SearchQuery(x => x.Id == val.SaleOrderId)
+                    .Include(x => x.OrderLines)
+                    .Include("OrderLines.SaleOrderLineInvoiceRels")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.AccountInvoicePaymentRels")
+                    .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.AccountInvoicePaymentRels.Payment")
+                    .FirstOrDefault();
+                var apIds = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice)
+                    .SelectMany(x => x.AccountInvoicePaymentRels).Select(x => x.Payment);
+
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => apIds.Any(y => y.Id == x.Id)));
+            }
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            var items = await _mapper.ProjectTo<AccountPaymentBasic>(query).ToListAsync();
+
+            return items;
         }
 
         public override ISpecification<AccountPayment> RuleDomainGet(IRRule rule)

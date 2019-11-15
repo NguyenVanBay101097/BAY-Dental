@@ -369,6 +369,7 @@ namespace Infrastructure.Services
             //Creates invoice related analytics and financial move lines
             var accountMoveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
+            var orderObj = GetService<ISaleOrderService>();
             foreach (var invoice in self)
             {
                 if (invoice.Journal.Sequence == null)
@@ -442,6 +443,8 @@ namespace Infrastructure.Services
                 _ComputePayments(new List<AccountInvoice>() { invoice });
                 await UpdateAsync(invoice);
             }
+
+            orderObj._ComputeResidual(self);
         }
 
         /// <summary>
@@ -460,12 +463,13 @@ namespace Infrastructure.Services
 
         public IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<AccountInvoice> self)
         {
+            self = self.OrderBy(x => x.DateDue);
             foreach (var invoice in self)
             {
+                
                 decimal residual = 0;
                 decimal residualCompanySigned = 0;
                 var sign = invoice.Type == "in_refund" || invoice.Type == "out_refund" ? -1 : 1;
-
 
                 invoice.Residual = 0;
                 var partialReconciliationsDone = new List<long>();
@@ -484,6 +488,7 @@ namespace Infrastructure.Services
 
                 invoice.ResidualSigned = Math.Abs(residual) * sign;
                 invoice.Residual = Math.Abs(residual);
+
                 if (invoice.Residual == 0)
                     invoice.Reconciled = true;
                 else
@@ -686,6 +691,8 @@ namespace Infrastructure.Services
 
             //update invoices lại
             _ComputeResidual(invoices);
+            var orderObj = GetService<ISaleOrderService>();
+            orderObj._ComputeResidual(invoices);
             _ComputePayments(invoices);
             await UpdateAsync(invoices);
         }

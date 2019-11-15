@@ -11,8 +11,7 @@ export class SaleOrderDisplay {
     companyId: string;
     userId: string;
     state: string;
-    residualSum: number;
+    residual: number;
     orderLines: SaleOrderLineDisplay[];
-    state: string;
     name: string;
 }

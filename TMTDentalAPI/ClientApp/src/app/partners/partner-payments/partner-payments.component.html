@@ -1,0 +1,31 @@
+<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+    [loading]="gridLoading">
+    <kendo-grid-column field="paymentDate" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.paymentDate | date : 'shortDate' }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Số tiền">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Nội dung">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.name }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Phương thức">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.journalName}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Nhân viên">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-messages pagerItems="dòng" noRecords="Không có đợt thanh toán nào" pagerOf="/">
+    </kendo-grid-messages>
+</kendo-grid>

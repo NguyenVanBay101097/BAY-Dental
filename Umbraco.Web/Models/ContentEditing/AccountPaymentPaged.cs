@@ -21,5 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? PaymentDateFrom { get; set; }
         public DateTime? PaymentDateTo { get; set; }
 
+        public Guid? SaleOrderId { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 }

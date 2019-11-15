@@ -21,6 +21,8 @@ export class AccountPaymentPaged {
     state: string;
     paymentDateFrom: string;
     paymentDateTo: string;
+    saleOrderId: string;
+    partnerId: string;
 }
 
 export class AccountPaymentDisplay {

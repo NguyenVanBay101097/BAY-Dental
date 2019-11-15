@@ -5,11 +5,23 @@ import { PagedResult2 } from '../core/paged-result-2';
 import { SaleOrderBasic } from './sale-order-basic';
 import { SaleOrderDisplay } from './sale-order-display';
 import { DotKhamBasic } from '../dot-khams/dot-khams';
+import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../account-payments/account-register-payment.service';
+import { AccountPaymentPaged, AccountPaymentBasic } from '../account-payments/account-payment.service';
 
 export class SaleOrderPaged {
     limit: number;
     offset: number;
     search: string;
+    partnerId: string;
+}
+
+export class AccountPaymentFilter {
+    saleOrderId: string;
+    partnerType: string;
+    journalId: string;
+    state: string;
+    dateFrom: string;
+    dateTo: string;
     partnerId: string;
 }
 
@@ -65,5 +77,21 @@ export class SaleOrderService {
 
     getDotKhamList(id: string): Observable<DotKhamBasic[]> {
         return this.http.get<DotKhamBasic[]>(this.baseApi + this.apiUrl + `/${id}/GetDotKhamList`);
+    }
+
+    getDefaultRegisterPayment(id: string) {
+        return this.http.get(this.baseApi + 'api/Partners/' + id + '/GetDefaultRegisterPayment');
+    }
+
+    defaultGetInvoice(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/DefaultGetInvoice/' + id)
+    }
+
+    defaultValGet(val: AccountRegisterPaymentDefaultGet): Observable<AccountRegisterPaymentDisplay> {
+        return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + "api/accountregisterpayments/defaultget", val);
+    }
+
+    getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
+        return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });
     }
 }

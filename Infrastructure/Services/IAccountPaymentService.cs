@@ -14,5 +14,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<AccountPaymentBasic>> GetPagedResultAsync(AccountPaymentPaged val);
         Task CancelAsync(IEnumerable<Guid> ids);
         Task UnlinkAsync(IEnumerable<Guid> ids);
+        void _ComputeResidualPayment(IEnumerable<SaleOrder> saleOrders, decimal amount);
+        Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val);
+
     }
 }

@@ -39,6 +39,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     if (this.defaultVal) {
       this.paymentForm.patchValue(this.defaultVal);
+      console.log(this.defaultVal);
       var paymentDate = new Date(this.defaultVal.paymentDate);
       this.paymentForm.get('paymentDateObj').setValue(paymentDate);
     }

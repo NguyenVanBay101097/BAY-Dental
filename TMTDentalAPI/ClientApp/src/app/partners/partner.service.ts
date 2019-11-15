@@ -10,6 +10,7 @@ import { HistoryPaged, HistorySimple } from '../history/history';
 import { AccountInvoiceLinePaged, AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
 import { AddressCheckApi } from '../price-list/price-list';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { AccountPaymentBasic } from '../account-payments/account-payment.service';
 
 export class PartnerFilter {
     search: string;
@@ -246,5 +247,9 @@ export class PartnerService {
 
     getSaleOrderLineByPartner(paged): Observable<PagedResult2<SaleOrderLineBasic>> {
         return this.http.get<PagedResult2<SaleOrderLineBasic>>(this.baseApi + 'api/SaleOrderLines', { params: paged });
+    }
+
+    getPayments(val): Observable<PagedResult2<AccountPaymentBasic>> {
+        return this.http.get<PagedResult2<AccountPaymentBasic>>(this.baseApi + 'api/AccountPayments', { params: val });
     }
 }

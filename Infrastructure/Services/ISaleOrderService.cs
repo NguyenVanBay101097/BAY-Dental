@@ -26,5 +26,7 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         Task<SaleOrderPrintVM> GetPrint(Guid id);
         Task ActionDone(IEnumerable<Guid> ids);
+        IEnumerable<Guid> DefaultGetInvoice(Guid id);
+        void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
     }
 }

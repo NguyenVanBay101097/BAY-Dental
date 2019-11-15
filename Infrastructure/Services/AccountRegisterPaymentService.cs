@@ -49,7 +49,7 @@ namespace Infrastructure.Services
                 throw new Exception("Phải chọn tối thiểu 1 hóa đơn để thanh toán");
             var invoiceService = (IAccountInvoiceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountInvoiceService));
             var invoices = await invoiceService.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
-            if (invoices.Any(x => x.State != "open"))
+            if (invoices.Any(x => x.State != "open" && x.State != "paid"))
                 throw new Exception("Bạn chỉ có thể thanh toán cho hóa đơn đã xác nhận");
             if (invoices.Any(x => x.PartnerId != invoices[0].PartnerId))
                 throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
