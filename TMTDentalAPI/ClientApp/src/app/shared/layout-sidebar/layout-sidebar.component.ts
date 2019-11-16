@@ -87,8 +87,9 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Công nợ khách hàng', link: '/account-common-partner-reports', params: { result_selection: 'customer' } },
         { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
-        { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
-        { name: 'Thống kê khoản thu theo thời gian', link: '/real-revenue-report' },
+        // { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
+        { name: 'Thống kê khoản thu', link: '/real-revenue-report' },
+        { name: 'Thống kê điều trị', link: '/sale-report' },
       ]
     },
   ];

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { RealRevenueReportSearch, RealRevenueReportService, RealRevenueReportItem } from '../real-revenue-report.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-real-revenue-report-overview',
@@ -18,8 +19,15 @@ export class RealRevenueReportOverviewComponent implements OnInit {
   gridData: RealRevenueReportItem[] = [];
   dateFrom: Date;
   dateTo: Date;
-  groupBy = "day";
-  groups: {}[] = [
+  groupBy = "date";
+  groupBy2 = "month";
+
+  groups: { text: string, value: string }[] = [
+    { text: 'Thời gian', value: 'date' },
+    { text: 'Khách hàng', value: 'partner' },
+  ];
+
+  group2s: {}[] = [
     { text: 'Ngày', value: 'day' },
     { text: 'Tuần', value: 'week' },
     { text: 'Tháng', value: 'month' },
@@ -32,7 +40,6 @@ export class RealRevenueReportOverviewComponent implements OnInit {
     { field: 'credit', aggregate: 'sum' },
     { field: 'balance', aggregate: 'sum' }
   ];
-
 
   constructor(private intlService: IntlService, private realRevenueReportService: RealRevenueReportService) {
   }
@@ -53,6 +60,9 @@ export class RealRevenueReportOverviewComponent implements OnInit {
       val.dateTo = this.intlService.formatDate(this.dateTo, 'd', 'en-US');
     }
     val.groupBy = this.groupBy;
+    if (this.groupBy2 && this.groupBy == 'date') {
+      val.groupBy = val.groupBy + ":" + this.groupBy2;
+    }
     this.loading = true;
     this.realRevenueReportService.getReport(val).subscribe(result => {
       this.gridData = result;
@@ -63,6 +73,11 @@ export class RealRevenueReportOverviewComponent implements OnInit {
     });
   }
 
+  getTitle() {
+    var item = _.find(this.groups, o => o.value == this.groupBy);
+    return item.text;
+  }
+
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
@@ -71,6 +86,11 @@ export class RealRevenueReportOverviewComponent implements OnInit {
 
   setGroupBy(groupBy) {
     this.groupBy = groupBy;
+    this.loadDataFromApi();
+  }
+
+  setGroupBy2(groupBy) {
+    this.groupBy2 = groupBy;
     this.loadDataFromApi();
   }
 }

@@ -9,6 +9,14 @@ export class SaleReportItem {
     name: string;
 }
 
+export class SaleReportItemDetail {
+    date: string;
+    productUOMQty: number;
+    priceTotal: number;
+    name: string;
+    productName: string;
+}
+
 export class SaleReportSearch {
     dateFrom: string;
     dateTo: string;
@@ -23,5 +31,9 @@ export class SaleReportService {
 
     getReport(val: SaleReportSearch): Observable<SaleReportItem[]> {
         return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);
+    }
+
+    getReportDetail(val: SaleReportItem): Observable<SaleReportItemDetail[]> {
+        return this.http.post<SaleReportItemDetail[]>(this.baseApi + this.apiUrl + "/GetReportDetail", val);
     }
 }

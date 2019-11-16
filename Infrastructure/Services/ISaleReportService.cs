@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val);
         Task<IEnumerable<SaleReportItem>> GetReport(SaleReportSearch val);
+        Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val);
     }
 }

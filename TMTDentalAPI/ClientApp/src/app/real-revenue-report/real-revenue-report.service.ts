@@ -9,6 +9,16 @@ export class RealRevenueReportItem {
     balance: number;
 }
 
+export class RealRevenueReportItemDetail {
+    date: string;
+    debit: number;
+    credit: number;
+    balance: number;
+    name: string;
+    ref: string;
+}
+
+
 export class RealRevenueReportSearch {
     dateFrom: string;
     dateTo: string;
@@ -23,5 +33,9 @@ export class RealRevenueReportService {
 
     getReport(val: RealRevenueReportSearch): Observable<RealRevenueReportItem[]> {
         return this.http.post<RealRevenueReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);
+    }
+
+    getReportDetail(val: RealRevenueReportItem): Observable<RealRevenueReportItemDetail[]> {
+        return this.http.post<RealRevenueReportItemDetail[]>(this.baseApi + this.apiUrl + "/GetReportDetail", val);
     }
 }

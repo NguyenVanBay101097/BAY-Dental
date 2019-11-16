@@ -1,0 +1,30 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Phiếu điều trị">
+    </kendo-grid-column>
+    <kendo-grid-column field="productName" title="Dịch vụ">
+    </kendo-grid-column>
+    <kendo-grid-column field="productUOMQty" class="text-right" title="Số lượng"
+        footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.productUOMQty | number}}
+        </ng-template>
+        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['productUOMQty']">
+            {{total["productUOMQty"].sum | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="priceTotal" class="text-right" title="Tổng tiền"
+        footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.priceTotal | number}}
+        </ng-template>
+        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['priceTotal']">
+            {{total["priceTotal"].sum | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

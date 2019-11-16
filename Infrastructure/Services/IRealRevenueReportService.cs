@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface IRealRevenueReportService
     {
         Task<IEnumerable<RealRevenueReportItem>> GetReport(RealRevenueReportSearch val);
+        Task<IEnumerable<RealRevenueReportItemDetail>> GetReportDetail(RealRevenueReportItem val);
     }
 }

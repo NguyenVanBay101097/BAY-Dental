@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { SaleReportItem, SaleReportService, SaleReportSearch } from '../sale-report.service';
+import * as _ from 'lodash';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 
 @Component({
   selector: 'app-sale-report-overview',
@@ -15,13 +17,16 @@ export class SaleReportOverviewComponent implements OnInit {
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
-  gridData: SaleReportItem[] = [];
+  items: SaleReportItem[] = [];
+  gridData: GridDataResult;
+  limit = 20;
+  skip = 0;
   dateFrom: Date;
   dateTo: Date;
   groupBy = "date";
   groupBy2 = "month";
   search: string;
-  groups: {}[] = [
+  groups: { text: string, value: string }[] = [
     { text: 'Ngày điều trị', value: 'date' },
     { text: 'Khách hàng', value: 'customer' },
     { text: 'Nhân viên', value: 'user' },
@@ -51,6 +56,11 @@ export class SaleReportOverviewComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  getTitle() {
+    var item = _.find(this.groups, o => o.value == this.groupBy);
+    return item.text;
+  }
+
   loadDataFromApi() {
     var val = new SaleReportSearch();
     if (this.dateFrom) {
@@ -68,12 +78,25 @@ export class SaleReportOverviewComponent implements OnInit {
     }
     this.loading = true;
     this.saleReportService.getReport(val).subscribe(result => {
-      this.gridData = result;
-      this.total = aggregateBy(result, this.aggregates);
+      this.items = result;
+      this.total = aggregateBy(this.items, this.aggregates);
+      this.loadItems();
       this.loading = false;
     }, () => {
       this.loading = false;
     });
+  }
+
+  public pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadItems();
+  }
+
+  loadItems(): void {
+    this.gridData = {
+      data: this.items.slice(this.skip, this.skip + this.limit),
+      total: this.items.length
+    };
   }
 
   onSearchDateChange(data) {

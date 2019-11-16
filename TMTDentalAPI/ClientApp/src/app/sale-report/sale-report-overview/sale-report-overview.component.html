@@ -19,7 +19,7 @@
         </div>
         <div class="o_cp_right">
             <div class="d-flex">
-                <div class="btn-group mr-2" role="group" aria-label="Basic example" *ngIf="groupBy">
+                <div class="btn-group mr-2" role="group" aria-label="Basic example" *ngIf="groupBy == 'date'">
                     <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of group2s"
                         [class.active]="item.value == groupBy2" (click)="setGroupBy2(item.value)">{{item.text}}</button>
                 </div>
@@ -32,42 +32,61 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Thời gian">
-        </kendo-grid-column>
-        <kendo-grid-column field="productUOMQty" class="text-right" title="Số lượng"
-            footerClass="text-right font-weight-bold">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.productUOMQty | number}}
-            </ng-template>
-            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['productUOMQty']">
-                {{total["productUOMQty"].sum | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="priceTotal" class="text-right" title="Tổng tiền"
-            footerClass="text-right font-weight-bold">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.priceTotal | number}}
-            </ng-template>
-            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['priceTotal']">
-                {{total["priceTotal"].sum | number}}
-            </ng-template>
-        </kendo-grid-column>
-    </kendo-grid>
-
-    <!-- <kendo-chart>
-            <kendo-chart-tooltip>
-                <ng-template kendoChartSeriesTooltipTemplate let-value="value">
-                    {{value | number}}
-                </ng-template>
-            </kendo-chart-tooltip>
-            <kendo-chart-series>
-                <kendo-chart-series-item type="column" [data]="gridData" field="debit" categoryField="dateStr"
-                    [spacing]="0">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list"
+                aria-selected="true">Danh sách</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab" aria-controls="chart"
+                aria-selected="false">Biểu đồ</a>
+        </li>
+    </ul>
+    <div class="tab-content pt-2 bg-white">
+        <div class="tab-pane active" id="list" role="tabpanel" aria-labelledby="list-tab">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" [title]="getTitle()">
+                </kendo-grid-column>
+                <kendo-grid-column field="productUOMQty" class="text-right" title="Số lượng dịch vụ"
+                    footerClass="text-right font-weight-bold">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.debit | number}}
+                        {{dataItem.productUOMQty | number}}
                     </ng-template>
-                </kendo-chart-series-item>
-            </kendo-chart-series>
-        </kendo-chart> -->
+                    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['productUOMQty']">
+                        {{total["productUOMQty"].sum | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="priceTotal" class="text-right" title="Tổng tiền"
+                    footerClass="text-right font-weight-bold">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.priceTotal | number}}
+                    </ng-template>
+                    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['priceTotal']">
+                        {{total["priceTotal"].sum | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <app-sale-report-item-detail [item]="dataItem"></app-sale-report-item-detail>
+                </div>
+            </kendo-grid>
+        </div>
+        <div class="tab-pane" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+            <kendo-chart>
+                <kendo-chart-tooltip>
+                    <ng-template kendoChartSeriesTooltipTemplate let-value="value">
+                        {{value | number}}
+                    </ng-template>
+                </kendo-chart-tooltip>
+                <kendo-chart-series>
+                    <kendo-chart-series-item type="column" [data]="items" field="priceTotal" categoryField="name"
+                        [spacing]="0">
+                        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                            {{dataItem.priceTotal | number}}
+                        </ng-template>
+                    </kendo-chart-series-item>
+                </kendo-chart-series>
+            </kendo-chart>
+        </div>
+    </div>
 </div>

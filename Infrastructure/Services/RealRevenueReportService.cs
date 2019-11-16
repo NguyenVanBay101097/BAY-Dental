@@ -55,7 +55,24 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateTo);
             }
 
-            if (val.GroupBy == "quarter")
+            if (val.GroupBy == "partner")
+            {
+                var result = await query.GroupBy(x => new {
+                    PartnerId = x.PartnerId,
+                    PartnerName = x.Partner.Name,
+                })
+                  .Select(x => new RealRevenueReportItem
+                  {
+                      PartnerId = x.Key.PartnerId,
+                      Name = x.Key.PartnerName,
+                      Debit = x.Sum(s => s.Debit),
+                      Credit = x.Sum(s => s.Credit),
+                      Balance = x.Sum(s => s.Debit - s.Credit),
+                      GroupBy = val.GroupBy
+                  }).ToListAsync();
+                return result;
+            }
+            else if (val.GroupBy == "date:quarter")
             {
                 var result = await query.GroupBy(x => new {
                     x.Date.Value.Year,
@@ -68,15 +85,16 @@ namespace Infrastructure.Services
                       QuarterOfYear = x.Key.QuarterOfYear,
                       Debit = x.Sum(s => s.Debit),
                       Credit = x.Sum(s => s.Credit),
-                      Balance = x.Sum(s => s.Debit - s.Credit)
+                      Balance = x.Sum(s => s.Debit - s.Credit),
+                      GroupBy = val.GroupBy
                   }).ToListAsync();
                 foreach (var item in result)
                 {
-                    item.DateStr = $"Quý {item.QuarterOfYear}, {item.Year}";
+                    item.Name = $"Quý {item.QuarterOfYear}, {item.Year}";
                 }
                 return result;
             }
-            else if (val.GroupBy == "month")
+            else if (val.GroupBy == "date" || val.GroupBy == "date:month")
             {
                 var result = await query.GroupBy(x => new {
                       x.Date.Value.Year,
@@ -87,15 +105,16 @@ namespace Infrastructure.Services
                       Date = new DateTime(x.Key.Year, x.Key.Month, 1),
                       Debit = x.Sum(s => s.Debit),
                       Credit = x.Sum(s => s.Credit),
-                      Balance = x.Sum(s => s.Debit - s.Credit)
+                      Balance = x.Sum(s => s.Debit - s.Credit),
+                      GroupBy = val.GroupBy
                   }).ToListAsync();
                 foreach (var item in result)
                 {
-                    item.DateStr = item.Date.ToString("MM/yyyy");
+                    item.Name = item.Date.Value.ToString("MM/yyyy");
                 }
                 return result;
             }
-            if (val.GroupBy == "week")
+            if (val.GroupBy == "date:week")
             {
                 var result = await query.GroupBy(x => new {
                     Year = x.Date.Value.Year,
@@ -108,12 +127,13 @@ namespace Infrastructure.Services
                       WeekOfYear = x.Key.WeekOfYear,
                       Debit = x.Sum(s => s.Debit),
                       Credit = x.Sum(s => s.Credit),
-                      Balance = x.Sum(s => s.Debit - s.Credit)
+                      Balance = x.Sum(s => s.Debit - s.Credit),
+                      GroupBy = val.GroupBy
                   }).ToListAsync();
                 foreach(var item in result)
                 {
-                    item.Date = DateUtils.FirstDateOfWeekISO8601(item.Year, item.WeekOfYear);
-                    item.DateStr = $"Tuần {item.WeekOfYear}, {item.Year}";
+                    item.Date = DateUtils.FirstDateOfWeekISO8601(item.Year.Value, item.WeekOfYear.Value);
+                    item.Name = $"Tuần {item.WeekOfYear}, {item.Year}";
                 }
                 return result;
             }
@@ -129,14 +149,58 @@ namespace Infrastructure.Services
                        Date = new DateTime(x.Key.Year, x.Key.Month, x.Key.Day),
                        Debit = x.Sum(s => s.Debit),
                        Credit = x.Sum(s => s.Credit),
-                       Balance = x.Sum(s => s.Debit - s.Credit)
+                       Balance = x.Sum(s => s.Debit - s.Credit),
+                       GroupBy = val.GroupBy
                    }).ToListAsync();
                 foreach (var item in result)
                 {
-                    item.DateStr = item.Date.ToString("dd/MM/yyyy");
+                    item.Name = item.Date.Value.ToString("dd/MM/yyyy");
                 }
                 return result;
             }
+        }
+
+        public async Task<IEnumerable<RealRevenueReportItemDetail>> GetReportDetail(RealRevenueReportItem val)
+        {
+            var companyId = CompanyId;
+            var query = _context.AccountMoveLines.Where(x => x.Account.InternalType == "receivable" && x.CompanyId == companyId);
+            if (val.GroupBy == "partner")
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            else if (val.GroupBy == "date" || val.GroupBy == "date:month")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddMonths(1);
+                query = query.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+            else if (val.GroupBy == "date:quarter")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddMonths(3);
+                query = query.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+            else if (val.GroupBy == "date:week")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddDays(7);
+                query = query.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+            else if (val.GroupBy == "date:day")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddDays(1);
+                query = query.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+
+            var result = await query.Select(x => new RealRevenueReportItemDetail
+            {
+                Date = x.Date,
+                Name = x.Name,
+                Balance = x.Balance,
+                Credit = x.Credit,
+                Debit = x.Debit,
+                Ref = x.Ref
+            }).ToListAsync();
+            return result;
         }
     }
 }
