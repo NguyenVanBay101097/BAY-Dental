@@ -382,40 +382,37 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     var val = new AccountRegisterPaymentDefaultGet();
-    this.saleOrderService.defaultGetInvoice([this.id]).subscribe(rs1 => {
-      val.invoiceIds = rs1 as string[];
-      this.saleOrderService.defaultValGet(val).subscribe(rs2 => {
-        if (this.id) {
-          if (rs2.amount > 0) {
-            let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-            modalRef.componentInstance.title = 'Thanh toán';
-            rs2.communication = this.saleOrder.name;
-            modalRef.componentInstance.defaultVal = rs2;
-            modalRef.result.then(() => {
-              this.notificationService.show({
-                content: 'Thanh toán thành công',
-                hideAfter: 3000,
-                position: { horizontal: 'right', vertical: 'bottom' },
-                animation: { type: 'fade', duration: 400 },
-                type: { style: 'success', icon: true }
-              });
-              this.routeActive();
-              this.getAccountPayments();
-            }, () => {
-
-            });
-          } else {
+    val.invoiceIds = [this.id];
+    this.saleOrderService.defaultOrderGet(val).subscribe(rs2 => {
+      if (this.id) {
+        if (rs2.amount > 0) {
+          let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          modalRef.componentInstance.title = 'Thanh toán';
+          rs2.communication = this.saleOrder.name;
+          modalRef.componentInstance.defaultVal = rs2;
+          modalRef.result.then(() => {
             this.notificationService.show({
-              content: 'Không còn hóa đơn nào để thanh toán',
+              content: 'Thanh toán thành công',
               hideAfter: 3000,
               position: { horizontal: 'right', vertical: 'bottom' },
               animation: { type: 'fade', duration: 400 },
-              type: { style: 'error', icon: true }
+              type: { style: 'success', icon: true }
             });
-          }
+            this.routeActive();
+            this.getAccountPayments();
+          }, () => {
 
+          });
+        } else {
+          this.notificationService.show({
+            content: 'Không còn hóa đơn nào để thanh toán',
+            hideAfter: 3000,
+            position: { horizontal: 'right', vertical: 'bottom' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
         }
-      })
+      }
     })
   }
 

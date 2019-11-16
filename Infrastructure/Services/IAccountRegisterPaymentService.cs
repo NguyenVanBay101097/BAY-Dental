@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     {
         Task<AccountRegisterPaymentDisplay> DefaultGet(IEnumerable<Guid> invoice_ids);
         Task<AccountPayment> CreatePayment(Guid Id);
+        Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> order_ids);
     }
 }

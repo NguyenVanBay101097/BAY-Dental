@@ -144,43 +144,34 @@ export class SaleOrderListComponent implements OnInit {
       return false;
     }
     var val = new AccountRegisterPaymentDefaultGet();
-    this.saleOrderService.defaultGetInvoice(this.selectedIds).subscribe(rs1 => {
-      val.invoiceIds = rs1 as string[];
-      this.saleOrderService.defaultValGet(val).subscribe(rs2 => {
-        if (rs2.amount > 0) {
-          let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-          modalRef.componentInstance.title = 'Thanh toán';
-          rs2.communication = this.getCommunication();
-          modalRef.componentInstance.defaultVal = rs2;
-          modalRef.result.then(() => {
-            this.notificationService.show({
-              content: 'Thanh toán thành công',
-              hideAfter: 3000,
-              position: { horizontal: 'right', vertical: 'bottom' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'success', icon: true }
-            });
-            this.loadDataFromApi();
-          }, () => {
-
-          });
-        } else {
+    val.invoiceIds = this.selectedIds;
+    this.saleOrderService.defaultOrderGet(val).subscribe(rs2 => {
+      if (rs2.amount > 0) {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.result.then(() => {
           this.notificationService.show({
-            content: 'Không còn hóa đơn nào để thanh toán',
+            content: 'Thanh toán thành công',
             hideAfter: 3000,
             position: { horizontal: 'right', vertical: 'bottom' },
             animation: { type: 'fade', duration: 400 },
-            type: { style: 'error', icon: true }
+            type: { style: 'success', icon: true }
           });
-        }
-      })
-    });
-  }
+          this.loadDataFromApi();
+        }, () => {
 
-  getCommunication() {
-    var orderId = [];
-    this.gridData.data.filter(x => this.selectedIds.includes(x.id) == true).map(x => orderId.push(x.name));
-    return orderId.sort().join(" ");
+        });
+      } else {
+        this.notificationService.show({
+          content: 'Không còn hóa đơn nào để thanh toán',
+          hideAfter: 3000,
+          position: { horizontal: 'right', vertical: 'bottom' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+      }
+    })
   }
 }
 

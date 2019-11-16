@@ -73,6 +73,16 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("OrderDefaultGet")]
+        public async Task<IActionResult> OrderDefaultGet(AccountRegisterPaymentDefaultGet val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            //Truyền list id của các phiếu điều trị vào val.InvoiceIds
+            var res = await _registerPaymentService.OrderDefaultGet(val.InvoiceIds);
+            return Ok(res);
+        }
+
         [HttpPost("CreatePayment")]
         public async Task<IActionResult> CreatePayment(AccountRegisterPaymentCreatePayment val)
         {
