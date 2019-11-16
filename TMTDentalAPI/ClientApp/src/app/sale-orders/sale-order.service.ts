@@ -83,8 +83,8 @@ export class SaleOrderService {
         return this.http.get(this.baseApi + 'api/Partners/' + id + '/GetDefaultRegisterPayment');
     }
 
-    defaultGetInvoice(id: string) {
-        return this.http.get(this.baseApi + this.apiUrl + '/DefaultGetInvoice/' + id)
+    defaultGetInvoice(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/DefaultGetInvoice', ids)
     }
 
     defaultValGet(val: AccountRegisterPaymentDefaultGet): Observable<AccountRegisterPaymentDisplay> {

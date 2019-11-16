@@ -369,7 +369,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       console.log(total);
       total += line.get('priceSubTotal').value;
     });
-    this.computeResidual(total);
+    // this.computeResidual(total);
     this.formGroup.get('amountTotal').patchValue(total);
   }
 
@@ -382,13 +382,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     var val = new AccountRegisterPaymentDefaultGet();
-    this.saleOrderService.defaultGetInvoice(this.id).subscribe(rs1 => {
+    this.saleOrderService.defaultGetInvoice([this.id]).subscribe(rs1 => {
       val.invoiceIds = rs1 as string[];
       this.saleOrderService.defaultValGet(val).subscribe(rs2 => {
         if (this.id) {
           if (rs2.amount > 0) {
             let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
             modalRef.componentInstance.title = 'Thanh toán';
+            rs2.communication = this.saleOrder.name;
             modalRef.componentInstance.defaultVal = rs2;
             modalRef.result.then(() => {
               this.notificationService.show({

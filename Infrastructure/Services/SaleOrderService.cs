@@ -107,6 +107,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 PartnerName = x.Partner.Name,
                 State = x.State,
+                Residual = x.Residual,
                 UserName = x.User != null ? x.User.Name : string.Empty
             }).ToListAsync();
 
@@ -324,15 +325,19 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public IEnumerable<Guid> DefaultGetInvoice(Guid id)
+        public IEnumerable<Guid> DefaultGetInvoice(List<Guid> ids)
         {
-            var order = SearchQuery(x => x.Id == id)
+            var invoiceIds = new List<Guid>();
+            foreach (var id in ids)
+            {
+                var order = SearchQuery(x => x.Id == id)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.SaleOrderLineInvoiceRels")
                 .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
                 .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
                 .FirstOrDefault();
-            var invoiceIds = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice.Id).Distinct().ToList();
+                invoiceIds.AddRange(order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice.Id).Distinct().ToList());
+            }
 
             return invoiceIds;
         }
@@ -582,24 +587,28 @@ namespace Infrastructure.Services
                 .Include("InvoiceLines.SaleLines.OrderLine")
                 .Include("InvoiceLines.SaleLines.OrderLine.Order").ToList();
             //Xác định ds hóa đơn thuộc phiếu điều trị nào
-            var order = queryInvoices.SelectMany(x => x.InvoiceLines).SelectMany(x => x.SaleLines).Select(x => x.OrderLine).Select(x => x.Order).FirstOrDefault();
-            var queryOrder = SearchQuery(x => x.Id == order.Id)
+            var orders = queryInvoices.SelectMany(x => x.InvoiceLines).SelectMany(x => x.SaleLines).Select(x => x.OrderLine).Select(x => x.Order)
+                .Distinct().OrderBy(x=>x.DateCreated);
+            foreach(var order in orders)
+            {
+                var queryOrder = SearchQuery(x => x.Id == order.Id)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.SaleOrderLineInvoiceRels")
                 .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
                 .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
                 .FirstOrDefault();
 
-            //Lấy tất cả invoices thuộc phiếu điều trị order
-            var allInvoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice).Distinct().ToList();
+                //Lấy tất cả invoices thuộc phiếu điều trị order
+                var allInvoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice).Distinct().ToList();
 
-            var residual = 0M;
-            foreach (var inv in allInvoices)
-            {
-                residual += inv.Residual;
-            }
-            order.Residual = residual;
-            Update(order);
+                var residual = 0M;
+                foreach (var inv in allInvoices)
+                {
+                    residual += inv.Residual;
+                }
+                order.Residual = residual;
+                Update(order);
+            }            
         }
     }
 }

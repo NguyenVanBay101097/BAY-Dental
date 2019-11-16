@@ -29,6 +29,7 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <button class="dropdown-item" (click)="unlink()">Xóa</button>
+                    <button class="dropdown-item" (click)="payOrders()">Thanh toán</button>
                 </div>
             </div>
         </div>
@@ -53,6 +54,11 @@
         <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Còn nợ" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.residual | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái">

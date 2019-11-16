@@ -111,10 +111,10 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("DefaultGetInvoice/{id}")]
-        public async Task<IActionResult> DefaultGetInvoice(Guid id)
+        [HttpPost("DefaultGetInvoice")]
+        public IActionResult DefaultGetInvoice(List<Guid> ids)
         {
-            var res =  _saleOrderService.DefaultGetInvoice(id);
+            var res =  _saleOrderService.DefaultGetInvoice(ids);
             return Ok(res);
         }
 

@@ -32,5 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string UserName { get; set; }
+
+        public decimal? Residual { get; set; }
     }
 }

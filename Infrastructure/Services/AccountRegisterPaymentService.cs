@@ -68,7 +68,7 @@ namespace Infrastructure.Services
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
                 PartnerId = invoices[0].PartnerId,
                 PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
-                Communication = communication,
+                //Communication = communication,
                 InvoiceIds = invoice_ids
             };
 

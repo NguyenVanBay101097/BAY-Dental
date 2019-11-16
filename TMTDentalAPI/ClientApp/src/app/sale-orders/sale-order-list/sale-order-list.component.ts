@@ -11,6 +11,8 @@ import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 
 import { SaleOrderService, SaleOrderPaged } from '../sale-order.service';
 import { SaleOrderBasic } from '../sale-order-basic';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @Component({
   selector: 'app-sale-order-list',
@@ -37,9 +39,8 @@ export class SaleOrderListComponent implements OnInit {
 
   selectedIds: string[] = [];
 
-  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService,
-    private router: Router, private dialogService: DialogService,
-    private modalService: NgbModal, private registerPaymentService: AccountRegisterPaymentService) { }
+  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router, private dialogService: DialogService,
+    private modalService: NgbModal, private registerPaymentService: AccountRegisterPaymentService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -136,6 +137,50 @@ export class SaleOrderListComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
+  }
+
+  payOrders() {
+    if (this.selectedIds.length == 0) {
+      return false;
+    }
+    var val = new AccountRegisterPaymentDefaultGet();
+    this.saleOrderService.defaultGetInvoice(this.selectedIds).subscribe(rs1 => {
+      val.invoiceIds = rs1 as string[];
+      this.saleOrderService.defaultValGet(val).subscribe(rs2 => {
+        if (rs2.amount > 0) {
+          let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          modalRef.componentInstance.title = 'Thanh toán';
+          rs2.communication = this.getCommunication();
+          modalRef.componentInstance.defaultVal = rs2;
+          modalRef.result.then(() => {
+            this.notificationService.show({
+              content: 'Thanh toán thành công',
+              hideAfter: 3000,
+              position: { horizontal: 'right', vertical: 'bottom' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+            this.loadDataFromApi();
+          }, () => {
+
+          });
+        } else {
+          this.notificationService.show({
+            content: 'Không còn hóa đơn nào để thanh toán',
+            hideAfter: 3000,
+            position: { horizontal: 'right', vertical: 'bottom' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
+        }
+      })
+    });
+  }
+
+  getCommunication() {
+    var orderId = [];
+    this.gridData.data.filter(x => this.selectedIds.includes(x.id) == true).map(x => orderId.push(x.name));
+    return orderId.sort().join(" ");
   }
 }
 

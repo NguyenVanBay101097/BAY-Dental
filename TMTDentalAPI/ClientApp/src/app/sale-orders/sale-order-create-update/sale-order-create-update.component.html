@@ -242,7 +242,7 @@
                                                 class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
                                         </td>
                                     </tr>
-                                    <tr *ngIf="getInvState != 'draft'">
+                                    <tr *ngIf="getState != 'draft'">
                                         <td colspan="1" class="o_td_label pb-0">
                                             <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
                                                 Còn nợ
@@ -250,7 +250,7 @@
                                         </td>
                                         <td colspan="1" class="text-right">
                                             <span
-                                                class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getResidual | number}}</span>
+                                                class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{(getResidual ? getResidual : 0)| number}}</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -283,18 +283,16 @@
                                     <tr>
                                         <th>Ngày</th>
                                         <th>Số tiền</th>
-                                        <th>Tên</th>
+                                        <!-- <th>Tên</th> -->
                                         <th>Phương thức</th>
-                                        <th>Nhân viên</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let payment of payments">
                                         <td>{{ payment.paymentDate | date : 'shortDate'}}</td>
                                         <td>{{ payment.amount | number}}</td>
-                                        <td>{{ payment.name }}</td>
+                                        <!-- <td>{{ payment.name }}</td> -->
                                         <td>{{ payment.journalName }}</td>
-                                        <td></td>
                                     </tr>
                                 </tbody>
                             </table>

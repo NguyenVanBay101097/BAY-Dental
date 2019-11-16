@@ -6,6 +6,7 @@ export class SaleOrderBasic {
     dateInvoice: Date;
     partner: object;
     amountTotal: number;
+    residual: number;
     number: string;
     user: object;
 }
