@@ -108,6 +108,71 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson2(Guid id)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == id)
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoiceRels")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.PaymentMoveLines")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.PaymentMoveLines.MoveLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.PaymentMoveLines.MoveLine.Move")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.PaymentMoveLines.MoveLine.Journal")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.PaymentMoveLines.MoveLine.MatchedCredits")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.PaymentMoveLines.MoveLine.MatchedDebits")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.Move")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice.Move.Lines")
+                .FirstOrDefaultAsync();
+
+            var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice).Distinct().ToList();
+
+            var res = new List<PaymentInfoContent>();
+
+            foreach (var invoice in invoices)
+            {
+                var rels = invoice.PaymentMoveLines;
+
+                var amount = 0M;
+
+                foreach (var rel in rels)
+                {
+                    var payment = rel.MoveLine;
+                    if (invoice.Type == "out_invoice" || invoice.Type == "in_refund")
+                    {
+                        amount = payment.MatchedDebits.Where(x => invoice.Move.Lines.Contains(x.DebitMove)).Sum(x => x.Amount);
+                    }
+                    else if (invoice.Type == "in_invoice" || invoice.Type == "out_refund")
+                    {
+                        amount = payment.MatchedCredits.Where(x => invoice.Move.Lines.Contains(x.CreditMove)).Sum(x => x.Amount);
+                    }
+
+                    if (amount == 0)
+                        continue;
+
+                    var paymentRef = payment.Move.Name;
+                    if (!string.IsNullOrEmpty(payment.Move.Ref))
+                        paymentRef += " (" + payment.Move.Ref + ")";
+
+                    res.Add(new PaymentInfoContent
+                    {
+                        Name = payment.Name,
+                        JournalName = payment.Journal.Name,
+                        Amount = amount,
+                        Date = payment.Date,
+                        Ref = paymentRef,
+                        PaymentId = payment.Id,
+                        MoveId = payment.MoveId,
+                        AccountPaymentId = payment.PaymentId,
+                    });
+                }
+            }            
+            
+
+            return res;
+        }
+
         public async Task<AccountInvoiceDisplay> DefaultGet(AccountInvoiceDisplay val)
         {
             var res = new AccountInvoiceDisplay();

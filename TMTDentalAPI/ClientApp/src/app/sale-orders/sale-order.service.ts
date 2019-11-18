@@ -7,6 +7,7 @@ import { SaleOrderDisplay } from './sale-order-display';
 import { DotKhamBasic } from '../dot-khams/dot-khams';
 import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../account-payments/account-register-payment.service';
 import { AccountPaymentPaged, AccountPaymentBasic } from '../account-payments/account-payment.service';
+import { PaymentInfoContent } from '../account-invoices/account-invoice.service';
 
 export class SaleOrderPaged {
     limit: number;
@@ -97,5 +98,9 @@ export class SaleOrderService {
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
         return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });
+    }
+
+    getAccountPaymentReconcicles(id): Observable<PaymentInfoContent[]> {
+        return this.http.get<PaymentInfoContent[]>(this.baseApi + `api/AccountInvoices/${id}/GetPaymentInfoJson2`);
     }
 }

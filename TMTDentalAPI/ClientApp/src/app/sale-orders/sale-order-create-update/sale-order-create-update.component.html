@@ -283,15 +283,15 @@
                                     <tr>
                                         <th>Ngày</th>
                                         <th>Số tiền</th>
-                                        <!-- <th>Tên</th> -->
+                                        <th>Mã thanh toán</th>
                                         <th>Phương thức</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let payment of payments">
-                                        <td>{{ payment.paymentDate | date : 'shortDate'}}</td>
+                                    <tr *ngFor="let payment of paymentsInfo">
+                                        <td>{{ payment.date | date : 'shortDate'}}</td>
                                         <td>{{ payment.amount | number}}</td>
-                                        <!-- <td>{{ payment.name }}</td> -->
+                                        <td>{{ payment.ref }}</td>
                                         <td>{{ payment.journalName }}</td>
                                     </tr>
                                 </tbody>

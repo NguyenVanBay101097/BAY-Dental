@@ -168,6 +168,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/GetPaymentInfoJson2")]
+        public async Task<IActionResult> GetPaymentInfoJson2(Guid id)
+        {
+            var res = await _accountInvoiceService._GetPaymentInfoJson2(id);
+            return Ok(res);
+        }
+
         [HttpGet("{id}/GetDotKhamList")]
         public async Task<IActionResult> GetDotKhamList(Guid id)
         {

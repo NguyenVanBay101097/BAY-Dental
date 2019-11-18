@@ -22,6 +22,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
 import { AccountPaymentBasic, AccountPaymentPaged } from 'src/app/account-payments/account-payment.service';
+import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -43,7 +44,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   dotKhams: DotKhamBasic[] = [];
 
   payments: AccountPaymentBasic[] = [];
-
+  paymentsInfo: PaymentInfoContent[] = [];
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
@@ -80,7 +81,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.filteredUsers = result;
       this.userCbx.loading = false;
     });
-    this.getAccountPayments();
+    // this.getAccountPayments();
+    this.getAccountPaymentReconcicles();
     this.loadPartners();
     this.loadUsers();
     this.loadDotKhamList();
@@ -423,6 +425,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.getPaymentBasicList(val).subscribe(
         rs => {
           this.payments = rs;
+        }
+      )
+    }
+  }
+
+  getAccountPaymentReconcicles() {
+    if (this.id) {
+      this.saleOrderService.getAccountPaymentReconcicles(this.id).subscribe(
+        rs => {
+          this.paymentsInfo = rs;
         }
       )
     }
