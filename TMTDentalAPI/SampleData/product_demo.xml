@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="product_category_1" model="product.category">
+            <field name="name">Điều trị nha chu</field>
+            <field name="type">service</field>
+        </record>
+        <record id="product_category_2" model="product.category">
+          <field name="name">Nhổ răng</field>
+          <field name="type">service</field>
+        </record>
+        <record id="product_category_3" model="product.category">
+          <field name="name">Nội nha và phục hồi răng</field>
+          <field name="type">service</field>
+        </record>
+        <record id="product_category_4" model="product.category">
+          <field name="name">Phục hình răng sứ cố định thẩm mĩ</field>
+          <field name="type">service</field>
+        </record>
+        <record id="product_category_5" model="product.category">
+          <field name="name">Phục hình tháo lắp</field>
+          <field name="type">service</field>
+        </record>
+        
+        <record id="product_product_1" model="product.product">
+            <field name="name">Cạo vôi răng đánh bóng</field>
+            <field name="categ_id" ref="product_category_1"/>
+            <field name="list_price">4500000</field>
+            <field name="type">service</field>
+            <field name="type2">service</field>
+        </record>
+
+        <record id="product_product_2" model="product.product">
+          <field name="name">Nhổ chân răng</field>
+          <field name="categ_id" ref="product_category_2"/>
+          <field name="list_price">500000</field>
+          <field name="type">service</field>
+          <field name="type2">service</field>
+        </record>
+
+        <record id="product_product_3" model="product.product">
+          <field name="name">Tiểu phẩu răng khôn</field>
+          <field name="categ_id" ref="product_category_2"/>
+          <field name="list_price">3500000</field>
+          <field name="type">service</field>
+          <field name="type2">service</field>
+        </record>
+
+        <record id="product_product_4" model="product.product">
+          <field name="name">Chửa tủy</field>
+          <field name="categ_id" ref="product_category_3"/>
+          <field name="list_price">400000</field>
+          <field name="type">service</field>
+          <field name="type2">service</field>
+          <field name="step" sequence="1">Mở để trống</field>
+          <field name="step" sequence="2">Đặt As</field>
+          <field name="step" sequence="3">Sửa soạn ống tủy</field>
+          <field name="step" sequence="4">Quay Ca(OH)2</field>
+          <field name="step" sequence="5">Trám bít ống tủy</field>
+          <field name="step" sequence="6">Trám kết thúc</field>
+        </record>
+
+        <record id="product_product_5" model="product.product">
+          <field name="name">Răng sứ Invy Ultra</field>
+          <field name="categ_id" ref="product_category_4"/>
+          <field name="list_price">400000</field>
+          <field name="type">service</field>
+          <field name="type2">service</field>
+          <field name="step" sequence="1">Lấy dấu tạm thời</field>
+          <field name="step" sequence="2">Mài cùi</field>
+          <field name="step" sequence="3">Gắng răng</field>
+          <field name="step" sequence="4">Thử sường</field>
+        </record>
+
+        <record id="product_product_6" model="product.product">
+          <field name="name">Răng Nhựa Mĩ</field>
+          <field name="categ_id" ref="product_category_5"/>
+          <field name="list_price">300000</field>
+          <field name="type">service</field>
+          <field name="type2">service</field>
+          <field name="step" sequence="1">Lấy dấu</field>
+          <field name="step" sequence="2">Gắn răng</field>
+        </record>
+    </data>
+</odoo>

@@ -13,6 +13,9 @@ export class SaleOrderPaged {
     offset: number;
     search: string;
     partnerId: string;
+    dateOrderFrom: string;
+    dateOrderTo: string;
+    state: string;
 }
 
 export class AccountPaymentFilter {

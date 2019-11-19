@@ -140,6 +140,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = new ProductPaged();
     val.limit = 10;
     val.offset = 0;
+    val.purchaseOK = true;
     val.search = this.productSearch || '';
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;

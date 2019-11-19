@@ -84,7 +84,8 @@ export class ProductDialogComponent implements OnInit {
       stepName: null,
       note: null,
       default: true,
-      order: this.order
+      order: this.order,
+      purchasePrice: 0,
     });
 
     this.default();
@@ -109,13 +110,20 @@ export class ProductDialogComponent implements OnInit {
         if (result.categ) {
           this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
         }
-
         this.productForm.patchValue(result);
         if (this.productDefaultVal) {
           this.productForm.patchValue(this.productDefaultVal);
         }
       });
     }
+  }
+
+  get saleOK() {
+    return this.productForm.get('saleOK').value;
+  }
+
+  get purchaseOK() {
+    return this.productForm.get('purchaseOK').value;
   }
 
   getLabelTitle() {

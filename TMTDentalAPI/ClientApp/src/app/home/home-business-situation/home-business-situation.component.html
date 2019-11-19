@@ -1,0 +1,39 @@
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex align-items-center">
+            <span class="mr-2 fw500">Tình hình kinh doanh</span>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle bg-white btn-sm" type="button" id="dropdownMenu2"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>{{optionSelected.text}}</span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <button class="dropdown-item" type="button" *ngFor="let option of options"
+                        (click)="selectOption(option)">{{option.text}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="d-flex flex-fill">
+            <div class="d-flex flex-fill align-items-center justify-content-center">
+                <h2 class="text-success mr-2">
+                    <i class="fas fa-tag"></i>
+                </h2>
+                <div class="o-item-group">
+                    <div class="text-success fw500">{{(item ? item.productUOMQty : 0) | number}}</div>
+                    <small class="text-muted">Dịch vụ</small>
+                </div>
+            </div>
+            <div class="d-flex flex-fill align-items-center justify-content-center">
+                <h2 class="text-success mr-2">
+                    <i class="far fa-money-bill-alt"></i>
+                </h2>
+                <div class="o-item-group">
+                    <div class="text-success fw500">{{(item ? item.priceTotal : 0) | number}}</div>
+                    <small class="text-muted">Tổng tiền</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

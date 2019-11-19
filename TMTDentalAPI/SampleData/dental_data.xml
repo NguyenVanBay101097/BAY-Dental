@@ -361,9 +361,9 @@
       <field name="number_next">1</field>
       <field name="number_increment">1</field>
     </record>
-    <record id="sequence_labo_order_line" model="ir.sequence">
-      <field name="name">Labo Order Line</field>
-      <field name="code">labo.order.line</field>
+    <record id="sequence_labo_order" model="ir.sequence">
+      <field name="name">Labo Order</field>
+      <field name="code">labo.order</field>
       <field name="prefix">LB</field>
       <field name="padding">5</field>
       <field name="number_next">1</field>
@@ -373,6 +373,30 @@
       <field name="name">Appointment</field>
       <field name="code">appointment</field>
       <field name="prefix">AP</field>
+      <field name="padding">5</field>
+      <field name="number_next">1</field>
+      <field name="number_increment">1</field>
+    </record>
+    <record id="sequence_sale_order" model="ir.sequence">
+      <field name="name">Sale Order</field>
+      <field name="code">sale.order</field>
+      <field name="prefix">SO</field>
+      <field name="padding">5</field>
+      <field name="number_next">1</field>
+      <field name="number_increment">1</field>
+    </record>
+    <record id="sequence_purchase_order" model="ir.sequence">
+      <field name="name">Purchase Order</field>
+      <field name="code">purchase.order</field>
+      <field name="prefix">PO</field>
+      <field name="padding">5</field>
+      <field name="number_next">1</field>
+      <field name="number_increment">1</field>
+    </record>
+    <record id="sequence_purchase_refund" model="ir.sequence">
+      <field name="name">Purchase Refund</field>
+      <field name="code">purchase.refund</field>
+      <field name="prefix">RPO</field>
       <field name="padding">5</field>
       <field name="number_next">1</field>
       <field name="number_increment">1</field>

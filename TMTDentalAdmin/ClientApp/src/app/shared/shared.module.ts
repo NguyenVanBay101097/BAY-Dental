@@ -22,7 +22,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     LayoutSidebarComponent,
     LayoutHeaderComponent,
     DisableControlDirective,
-    LoadingComponent
+    LoadingComponent,
   ],
   exports: [
     ConfirmDialogComponent,

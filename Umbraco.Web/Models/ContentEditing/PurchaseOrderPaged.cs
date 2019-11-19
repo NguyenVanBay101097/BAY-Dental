@@ -14,5 +14,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public string Search { get; set; }
         public string Type { get; set; }
+
+        public DateTime? DateOrderFrom { get; set; }
+
+        public DateTime? DateOrderTo { get; set; }
+
+        public string State { get; set; }
     }
 }

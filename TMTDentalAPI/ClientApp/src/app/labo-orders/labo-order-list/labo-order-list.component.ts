@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
+import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -25,9 +27,20 @@ export class LaboOrderListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
 
+  dateOrderFrom: Date;
+  dateOrderTo: Date;
+  stateFilter: string;
+
+  stateFilterOptions: TmtOptionSelect[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Đơn hàng', value: 'purchase,done' },
+    { text: 'Nháp', value: 'draft,cancel' }
+  ];
+
+
   constructor(private laboOrderService: LaboOrderService,
     private router: Router,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private intlService: IntlService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -38,6 +51,17 @@ export class LaboOrderListComponent implements OnInit {
       .subscribe(() => {
         this.loadDataFromApi();
       });
+  }
+
+  onDateSearchChange(data) {
+    this.dateOrderFrom = data.dateFrom;
+    this.dateOrderTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
+  onStateSelectChange(data: TmtOptionSelect) {
+    this.stateFilter = data.value;
+    this.loadDataFromApi();
   }
 
   stateGet(state) {
@@ -75,6 +99,17 @@ export class LaboOrderListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+
+    if (this.dateOrderFrom) {
+      val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
+    }
+    if (this.dateOrderTo) {
+      val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
+    }
+    if (this.stateFilter) {
+      val.state = this.stateFilter;
+    }
+
 
     this.laboOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

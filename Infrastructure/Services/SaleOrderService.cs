@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
@@ -94,8 +95,23 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search)));
-            if (val.PartnerId != Guid.Empty)
+            if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.PartnerId == val.PartnerId));
+            if (val.DateOrderFrom.HasValue)
+            {
+                var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= dateFrom));
+            }
+            if (val.DateOrderTo.HasValue)
+            {
+                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
+            }
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var states = val.State.Split(",");
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => states.Contains(x.State)));
+            }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 

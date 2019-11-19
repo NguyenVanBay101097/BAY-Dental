@@ -8,6 +8,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
@@ -72,13 +73,18 @@ namespace TMTDentalAdmin.Controllers
             return Ok(val);
         }
 
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> Register(TenantRegisterViewModel val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
 
-            var tenant = _mapper.Map<AppTenant>(val);
+            var tenant = _tenantService.SearchQuery(x => x.Hostname == val.Hostname).FirstOrDefault();
+            if (tenant != null)
+                throw new Exception("Địa chỉ gian hàng đã được sử dụng");
+
+            tenant = _mapper.Map<AppTenant>(val);
             await _tenantService.CreateAsync(tenant);
 
             using (HttpClient client = new HttpClient())

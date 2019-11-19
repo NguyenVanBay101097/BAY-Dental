@@ -1,44 +1,40 @@
-<div class="container p3">
-    <div class="q-card">
-        <div class="card-body" [formGroup]="formFilter">
-            <div class="q-card-bar">
-                <div class="q-card-title">Các dịch vụ được sử dụng nhiều nhất</div>
-                <div class="q-sort-by-filter">
-                    <select class="form-control" formControlName="by" (change)="changeFilter($event.target.value)">
-                        <option value="byInvoice">Theo doanh thu</option>
-                        <option value="byQty">Theo số lượng</option>
-                    </select>
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex align-items-center">
+            <span class="mr-2 fw500">Top dịch vụ theo</span>
+            <select [(ngModel)]="fieldDisplay" class="o-select-custom mr-2">
+                <option value="productUOMQty">Số lượng</option>
+                <option value="priceTotal">Tổng tiền</option>
+            </select>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle bg-white btn-sm" type="button" id="dropdownMenu2"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>{{optionSelected.text}}</span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <button class="dropdown-item" type="button" *ngFor="let option of options"
+                        (click)="selectOption(option)">{{option.text}}</button>
                 </div>
-                <!-- <div class="q-sort-by-filter">
-                    <select class="form-control" formControlName="limit" (change)="changeLimit($event.target.value)">
-                        <option value="5">Top 5</option>
-                        <option value="10">Top 10</option>
-                    </select>
-                </div> -->
             </div>
         </div>
-        <div>
-            <kendo-chart [seriesColors]="['pink']" style="height: 350px">
-                <kendo-chart-series>
-                    <kendo-chart-series-item type="bar" [data]="topServiceItems"
-                        [field]="invoiceOrQty ? 'priceTotalSum' : 'productUOMQtySum'" categoryField="productName">
-                    </kendo-chart-series-item>
-                </kendo-chart-series>
-                <kendo-chart-tooltip>
-                    <ng-template kendoChartSeriesTooltipTemplate let-value="value">
-                        {{value | number}}
-                    </ng-template>
-                </kendo-chart-tooltip>
-                <kendo-chart-value-axis>
-                    <kendo-chart-value-axis-item>
-                        <kendo-chart-value-axis-item-labels [step]="2" [content]="labelContent">
-                            <!-- <ng-template kendoChartValueAxisItemLabelsTemplate let-content="content">
-                                {{content| number}}
-                            </ng-template> -->
-                        </kendo-chart-value-axis-item-labels>
-                    </kendo-chart-value-axis-item>
-                </kendo-chart-value-axis>
-            </kendo-chart>
-        </div>
+    </div>
+    <div class="card-body">
+        <kendo-chart [seriesColors]="['pink']" style="height: 350px">
+            <kendo-chart-series>
+                <kendo-chart-series-item type="bar" [data]="items" [field]="fieldDisplay" categoryField="name">
+                </kendo-chart-series-item>
+            </kendo-chart-series>
+            <kendo-chart-tooltip>
+                <ng-template kendoChartSeriesTooltipTemplate let-value="value">
+                    {{value | number}}
+                </ng-template>
+            </kendo-chart-tooltip>
+            <kendo-chart-value-axis>
+                <kendo-chart-value-axis-item>
+                    <kendo-chart-value-axis-item-labels [step]="2" [content]="labelContent">
+                    </kendo-chart-value-axis-item-labels>
+                </kendo-chart-value-axis-item>
+            </kendo-chart-value-axis>
+        </kendo-chart>
     </div>
 </div>

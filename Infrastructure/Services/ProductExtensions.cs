@@ -21,7 +21,8 @@ namespace Infrastructure.Services
             var rel = product.ProductCompanyRels.FirstOrDefault(x => x.CompanyId == companyId);
             if (rel == null)
                 product.ProductCompanyRels.Add(new ProductCompanyRel { CompanyId = companyId, StandardPrice = price });
-            rel.StandardPrice = price;
+            else 
+                rel.StandardPrice = price;
         }
     }
 }

@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  apiDomain: '/'
+  apiDomain: '/',
+  catalogHost: 'tmtdental.com',
+  catalogScheme: 'http'
 };

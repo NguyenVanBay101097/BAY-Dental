@@ -1593,6 +1593,101 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("LaboOrderLineToothRels");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.MailMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("AuthorId");
+
+                    b.Property<string>("Body");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("Date");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<string>("EmailFrom");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired();
+
+                    b.Property<string>("Model");
+
+                    b.Property<string>("RecordName");
+
+                    b.Property<Guid?>("ResId");
+
+                    b.Property<string>("Subject");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MailMessages");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailTrackingValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<string>("Field")
+                        .IsRequired();
+
+                    b.Property<string>("FieldDesc")
+                        .IsRequired();
+
+                    b.Property<string>("FieldType");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<Guid>("MailMessageId");
+
+                    b.Property<DateTime?>("NewValueDateTime");
+
+                    b.Property<decimal?>("NewValueDecimal");
+
+                    b.Property<int?>("NewValueInteger");
+
+                    b.Property<string>("NewValueText");
+
+                    b.Property<DateTime?>("OldValueDateTime");
+
+                    b.Property<decimal?>("OldValueDicimal");
+
+                    b.Property<int?>("OldValueInteger");
+
+                    b.Property<string>("OldValueText");
+
+                    b.Property<int>("TrackSequence");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("MailMessageId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MailTrackingValues");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3984,6 +4079,37 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ToothId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailMessage", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Partner", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailTrackingValue", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.MailMessage", "MailMessage")
+                        .WithMany("TrackingValues")
+                        .HasForeignKey("MailMessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>

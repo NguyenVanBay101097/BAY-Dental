@@ -11,6 +11,7 @@ import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 
 import { SaleOrderService, SaleOrderPaged } from '../sale-order.service';
 import { SaleOrderBasic } from '../sale-order-basic';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 
 @Component({
   selector: 'app-sale-order-list',
@@ -31,9 +32,16 @@ export class SaleOrderListComponent implements OnInit {
   search: string;
   dateOrderFrom: Date;
   dateOrderTo: Date;
+  stateFilter: string;
   searchUpdate = new Subject<string>();
   searchStates: string[] = [];
   searchUser: UserSimple;
+
+  stateFilterOptions: TmtOptionSelect[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Đơn hàng', value: 'sale,done' },
+    { text: 'Nháp', value: 'draft,cancel' }
+  ];
 
   selectedIds: string[] = [];
 
@@ -71,6 +79,17 @@ export class SaleOrderListComponent implements OnInit {
     }
   }
 
+  onDateSearchChange(data) {
+    this.dateOrderFrom = data.dateFrom;
+    this.dateOrderTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
+  onStateSelectChange(data: TmtOptionSelect) {
+    this.stateFilter = data.value;
+    this.loadDataFromApi();
+  }
+
   onChangeDateOrder(value: Date) {
     setTimeout(() => {
       this.loadDataFromApi();
@@ -99,6 +118,15 @@ export class SaleOrderListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    if (this.dateOrderFrom) {
+      val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
+    }
+    if (this.dateOrderTo) {
+      val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
+    }
+    if (this.stateFilter) {
+      val.state = this.stateFilter;
+    }
 
     this.saleOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

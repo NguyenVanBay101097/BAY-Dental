@@ -1,0 +1,24 @@
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex align-items-center height-sm">
+            <span class="fw500">Lịch hẹn hôm nay</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="d-flex">
+            <div class="d-flex flex-column flex-fill align-items-center justify-content-center o-item-group">
+                <div class="text-primary fw500">{{(stateCount['confirmed'] ? stateCount['confirmed'] : 0) | number}}
+                </div>
+                <small>Đang hẹn</small>
+            </div>
+            <div class="d-flex flex-column flex-fill align-items-center justify-content-center o-item-group">
+                <div class="text-success fw500">{{(stateCount['done'] ? stateCount['done'] : 0) | number}}</div>
+                <small>Đã tới</small>
+            </div>
+            <div class="d-flex flex-column flex-fill align-items-center justify-content-center o-item-group">
+                <div class="text-dark fw500">{{(stateCount['cancel'] ? stateCount['cancel'] : 0) | number}}</div>
+                <small>Đã hủy</small>
+            </div>
+        </div>
+    </div>
+</div>

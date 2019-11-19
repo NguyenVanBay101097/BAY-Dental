@@ -1,6 +1,18 @@
 <div class="o_content">
-    <app-sale-report></app-sale-report>
-    <div class="container p3">
+    <div class="container mb-2">
+        <div class="row">
+            <div class="col">
+                <app-home-business-situation></app-home-business-situation>
+            </div>
+            <div class="col">
+                <app-home-today-appointment></app-home-today-appointment>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <app-sale-report></app-sale-report>
+    </div>
+    <!-- <div class="container p3">
         <div class="card">
             <div class="card-body">
                 <div class="row" style="height: 400px">
@@ -21,23 +33,24 @@
                             </kendo-chart-series>
                             <kendo-chart-legend [visible]="false"></kendo-chart-legend>
                         </kendo-chart>
-                        <!-- <kendo-chart style="height: 350px">
-                                    <kendo-chart-title text="Units sold"></kendo-chart-title>
-                                    <kendo-chart-category-axis>
-                                        <kendo-chart-category-axis-item [categories]="['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']"
-                                            [title]="{ text: 'Ngày trong tuần' }">
-                                        </kendo-chart-category-axis-item>
-                                    </kendo-chart-category-axis>
-                                    <kendo-chart-series>
-                                        <kendo-chart-series-item type="area" [data]="[123, 276, 310, 212, 240, 156, 98]">
-                                        </kendo-chart-series-item>
-                                        <kendo-chart-series-item type="area" [data]="[165, 210, 287, 144, 190, 167, 212]">
-                                        </kendo-chart-series-item>
-                                        <kendo-chart-series-item type="area" [data]="[56, 140, 195, 46, 123, 78, 95]">
-                                        </kendo-chart-series-item>
-                                    </kendo-chart-series>
-                                    <kendo-chart-legend [visible]="true"></kendo-chart-legend>
-                                </kendo-chart> -->
+                        <kendo-chart style="height: 350px">
+                            <kendo-chart-title text="Units sold"></kendo-chart-title>
+                            <kendo-chart-category-axis>
+                                <kendo-chart-category-axis-item
+                                    [categories]="['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']"
+                                    [title]="{ text: 'Ngày trong tuần' }">
+                                </kendo-chart-category-axis-item>
+                            </kendo-chart-category-axis>
+                            <kendo-chart-series>
+                                <kendo-chart-series-item type="area" [data]="[123, 276, 310, 212, 240, 156, 98]">
+                                </kendo-chart-series-item>
+                                <kendo-chart-series-item type="area" [data]="[165, 210, 287, 144, 190, 167, 212]">
+                                </kendo-chart-series-item>
+                                <kendo-chart-series-item type="area" [data]="[56, 140, 195, 46, 123, 78, 95]">
+                                </kendo-chart-series-item>
+                            </kendo-chart-series>
+                            <kendo-chart-legend [visible]="true"></kendo-chart-legend>
+                        </kendo-chart>
                     </div>
                     <div class="col">
                         <h5 class="card-title">Lịch hẹn hôm nay</h5>
@@ -61,5 +74,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>

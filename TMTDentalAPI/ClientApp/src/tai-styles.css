@@ -739,3 +739,32 @@ td.oe_form_group_cell_label label {
 .o_kanban_view .oe_kanban_color_11::after {
 	background-color: #007bff!important;
 }
+
+.o-item-group {
+    font-size: 18px;
+    line-height: 1.1;
+}
+
+.fw500 {
+    font-weight: 500!important;
+}
+
+.height-sm {
+    height: 31px;
+}
+
+.o-select-custom {
+    width: auto;
+    height: 31px;
+    font-size: 14px;
+    border: none;
+}
+
+.o_search_options {
+    display: flex;
+}
+
+.o_search_options .dropdown {
+    display: flex;
+    margin-right: 5px;
+}

@@ -57,20 +57,24 @@ export class ProductListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    // this.categCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.categCbx.loading = true)),
-    //   switchMap(value => this.searchCategories(value))
-    // ).subscribe(result => {
-    //   this.filteredCategs = result;
-    //   this.categCbx.loading = false;
-    // });
+    this.categCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.categCbx.loading = true)),
+      switchMap(value => this.searchCategories(value))
+    ).subscribe(result => {
+      this.filteredCategs = result;
+      this.categCbx.loading = false;
+    });
 
     this.route.paramMap.subscribe(params => {
       this.type = params.get('type');
       this.loadDataFromApi();
       this.loadFilteredCategs();
     });
+  }
+
+  getCategTitle() {
+    return 'Nhóm ' + this.getTypeTitle()
   }
 
   getTypeTitle() {
@@ -165,6 +169,11 @@ export class ProductListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onCategChange(value) {
+    this.searchCateg = value;
+    this.loadDataFromApi();
+  }
+
   searchCategories(search?: string) {
     var val = new ProductCategoryPaged();
     val.search = search;
@@ -204,7 +213,7 @@ export class ProductListComponent implements OnInit {
       var productDefaultVal = new Product();
       productDefaultVal.type = 'product';
       productDefaultVal.saleOK = false;
-      productDefaultVal.purchaseOK = false;
+      productDefaultVal.purchaseOK = true;
       modalRef.componentInstance.productDefaultVal = productDefaultVal;
     } else if (this.type == 'medicine') {
       var productDefaultVal = new Product();
@@ -283,7 +292,7 @@ export class ProductListComponent implements OnInit {
     var productDefaultVal = new Product();
     productDefaultVal.type = 'product';
     productDefaultVal.saleOK = false;
-    productDefaultVal.purchaseOK = false;
+    productDefaultVal.purchaseOK = true;
     modalRef.componentInstance.productDefaultVal = productDefaultVal;
 
     modalRef.result.then(() => {

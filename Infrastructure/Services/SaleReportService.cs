@@ -40,10 +40,11 @@ namespace Infrastructure.Services
             }
         }
 
-
         public async Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val)
         {
+            var companyId = CompanyId;
             var query = _context.SaleReports.AsQueryable();
+            query = query.Where(x => x.CompanyId == companyId);
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId.Equals(val.PartnerId));
             if (val.CompanyId.HasValue)
@@ -94,7 +95,8 @@ namespace Infrastructure.Services
         {
             //thời gian, tiền thực thu, doanh thu, còn nợ
             var companyId = CompanyId;
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
+            var states = new string[] { "draft", "cancel" };
+            var query = _context.SaleReports.Where(x => x.CompanyId == companyId && !states.Contains(x.State));
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
@@ -230,7 +232,7 @@ namespace Infrastructure.Services
                 }
                 return result;
             }
-            else
+            else if (val.GroupBy == "date:day")
             {
                 var result = await query.GroupBy(x => new {
                     x.Date.Year,
@@ -250,12 +252,23 @@ namespace Infrastructure.Services
                 }
                 return result;
             }
+            else
+            {
+                var result = await query.GroupBy(x => 0)
+                  .Select(x => new SaleReportItem
+                  {
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal),
+                  }).ToListAsync();
+                return result;
+            }
         }
 
         public async Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val)
         {
             var companyId = CompanyId;
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
+            var states = new string[] { "draft", "cancel" };
+            var query = _context.SaleReports.Where(x => x.CompanyId == companyId && !states.Contains(x.State));
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();

@@ -242,7 +242,7 @@
                                                 class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
                                         </td>
                                     </tr>
-                                    <tr *ngIf="getInvState != 'draft'">
+                                    <tr *ngIf="saleOrder.state != 'draft'">
                                         <td colspan="1" class="o_td_label pb-0">
                                             <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
                                                 Còn nợ

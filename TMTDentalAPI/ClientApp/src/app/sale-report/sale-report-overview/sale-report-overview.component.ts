@@ -4,6 +4,8 @@ import { aggregateBy } from '@progress/kendo-data-query';
 import { SaleReportItem, SaleReportService, SaleReportSearch } from '../sale-report.service';
 import * as _ from 'lodash';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sale-report-overview',
@@ -26,6 +28,8 @@ export class SaleReportOverviewComponent implements OnInit {
   groupBy = "date";
   groupBy2 = "month";
   search: string;
+  searchUpdate = new Subject<string>();
+
   groups: { text: string, value: string }[] = [
     { text: 'Ngày điều trị', value: 'date' },
     { text: 'Khách hàng', value: 'customer' },
@@ -38,6 +42,12 @@ export class SaleReportOverviewComponent implements OnInit {
     { text: 'Tuần', value: 'week' },
     { text: 'Tháng', value: 'month' },
     { text: 'Quý', value: 'quarter' },
+  ];
+
+  states: {}[] = [
+    { text: 'Tất cả trạng thái', value: '' },
+    { text: 'Đơn hàng', value: 'sale,done' },
+    { text: 'Nháp', value: 'draft,cancel' },
   ];
 
   public total: any;
@@ -54,6 +64,13 @@ export class SaleReportOverviewComponent implements OnInit {
     // this.dateFrom = new Date(this.monthStart);
     // this.dateTo = new Date(this.monthEnd);
     this.loadDataFromApi();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadDataFromApi();
+      });
   }
 
   getTitle() {

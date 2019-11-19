@@ -9,12 +9,12 @@
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên..." type="text"
                         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
-                <div class="o_searchview_advance">
+                <!-- <div class="o_searchview_advance">
                     <button class="btn btn-secondary btn-sm rounded-0" type="button"
                         (click)="advanceFilter.toggleShow()">
                         Nâng cao
                     </button>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="o_cp_left">
@@ -37,6 +37,12 @@
                     <a class="dropdown-item" (click)="importFromExcel()">Thêm sản phẩm từ excel</a>
                 </div>
             </div> -->
+            <div>
+                <kendo-combobox [data]="filteredCategs" [placeholder]="getCategTitle()" [filterable]="true"
+                    (valueChange)="onCategChange($event)" [textField]="'completeName'" #categCbx
+                    [(ngModel)]="searchCateg" [valueField]="'id'">
+                </kendo-combobox>
+            </div>
         </div>
     </div>
 </div>

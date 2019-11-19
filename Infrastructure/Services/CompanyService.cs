@@ -647,6 +647,11 @@ namespace Infrastructure.Services
 
             var productUOMObj = GetService<IUoMService>();
             await productUOMObj.CreateAsync(product_uom_dict.Values);
+
+            var modelDatas = new List<IRModelData>();
+            modelDatas.AddRange(PrepareModelData(product_uom_dict, "uom"));
+            var modelDataObj = GetService<IIRModelDataService>();
+            await modelDataObj.CreateAsync(modelDatas);
         }
 
         public async Task InsertModuleDentalData()

@@ -6,6 +6,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PurchaseOrderService, PurchaseOrderPaged, PurchaseOrderBasic } from '../purchase-order.service';
+import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-purchase-order-list',
@@ -26,9 +28,19 @@ export class PurchaseOrderListComponent implements OnInit {
   selectedIds: string[] = [];
   type: string;
 
+  dateOrderFrom: Date;
+  dateOrderTo: Date;
+  stateFilter: string;
+
+  stateFilterOptions: TmtOptionSelect[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Đơn hàng', value: 'purchase,done' },
+    { text: 'Nháp', value: 'draft,cancel' }
+  ];
+
   constructor(private purchaseOrderService: PurchaseOrderService,
     private router: Router,
-    private modalService: NgbModal, private route: ActivatedRoute) { }
+    private modalService: NgbModal, private route: ActivatedRoute, private intlService: IntlService) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -42,6 +54,17 @@ export class PurchaseOrderListComponent implements OnInit {
       .subscribe(() => {
         this.loadDataFromApi();
       });
+  }
+
+  onDateSearchChange(data) {
+    this.dateOrderFrom = data.dateFrom;
+    this.dateOrderTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
+  onStateSelectChange(data: TmtOptionSelect) {
+    this.stateFilter = data.value;
+    this.loadDataFromApi();
   }
 
   stateGet(state) {
@@ -89,6 +112,15 @@ export class PurchaseOrderListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.type = this.type;
+    if (this.dateOrderFrom) {
+      val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
+    }
+    if (this.dateOrderTo) {
+      val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
+    }
+    if (this.stateFilter) {
+      val.state = this.stateFilter;
+    }
 
     this.purchaseOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

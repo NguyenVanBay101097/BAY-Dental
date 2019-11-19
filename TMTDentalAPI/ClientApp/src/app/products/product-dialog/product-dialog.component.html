@@ -95,7 +95,7 @@
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
-                                        <tr>
+                                        <tr *ngIf="saleOK == true">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Giá bán
@@ -107,32 +107,18 @@
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
-                                        <!-- <tr>
+                                        <tr *ngIf="purchaseOK">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Là thuốc
+                                                    Giá mua
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        formControlName="keToaOK" id="keToaOK">
-                                                </div>
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="purchasePrice">
+                                                </kendo-numerictextbox>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Là labo
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        formControlName="isLabo">
-                                                </div>
-                                            </td>
-                                        </tr> -->
                                     </tbody>
                                 </table>
                             </div>

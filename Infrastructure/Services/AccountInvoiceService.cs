@@ -368,8 +368,6 @@ namespace Infrastructure.Services
         {
             //Creates invoice related analytics and financial move lines
             var accountMoveObj = GetService<IAccountMoveService>();
-            var moveLineObj = GetService<IAccountMoveLineService>();
-            var orderObj = GetService<ISaleOrderService>();
             foreach (var invoice in self)
             {
                 if (invoice.Journal.Sequence == null)
@@ -443,8 +441,6 @@ namespace Infrastructure.Services
                 _ComputePayments(new List<AccountInvoice>() { invoice });
                 await UpdateAsync(invoice);
             }
-
-            orderObj._ComputeResidual(self);
         }
 
         /// <summary>

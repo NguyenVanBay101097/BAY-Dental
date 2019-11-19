@@ -140,16 +140,14 @@
         <!-- <button title="Thanh toán" kendoButton (click)="registerPayment(dataItem.id)" class="btn btn-primary btn-sm"><i
             class="fas fa-file-invoice-dollar"></i></button> -->
         <button *ngIf="querySupplier" title="Sửa" (click)="openModal(dataItem.id)" class="btn btn-success btn-sm mr5"><i
-            class="fas fa-edit"></i></button>
+            class="far fa-edit"></i></button>
         <button title="Xóa" (click)="deleteCustomer(dataItem.id,$event)" class="btn btn-danger btn-sm mr5"><i
-            class="fas fa-times"></i></button>
+            class="far fa-trash-alt"></i></button>
         <!-- <button kendoButton style="color: white" class="btn btn-info btn-sm" *ngIf="queryCustomer"
           [routerLink]="['/partners/history/'+dataItem.id]"><i title="Lịch sử điều trị"
             class="fas fa-notes-medical"></i></button> -->
       </ng-template>
     </kendo-grid-command-column>
-    <kendo-grid-messages pagerItems="dòng" noRecords="Không có khách hàng để hiển thị" pagerOf="/">
-    </kendo-grid-messages>
   </kendo-grid>
 </div>
 <div class="k-overlay" *ngIf="this.windowOpened"></div>

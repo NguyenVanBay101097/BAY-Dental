@@ -66,7 +66,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var order = _mapper.Map<SaleOrder>(val);
-            order.OrderLines = _mapper.Map<ICollection<SaleOrderLine>>(val.OrderLines);
+            SaveOrderLines(val, order);
             await _saleOrderService.CreateOrderAsync(order);
 
             val.Id = order.Id;

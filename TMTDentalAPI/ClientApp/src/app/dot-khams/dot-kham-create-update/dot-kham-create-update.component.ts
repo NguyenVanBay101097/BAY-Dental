@@ -1053,7 +1053,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   deleteAttachments(item, event) {
     event.stopPropagation();
     const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa cuộc hẹn',
+      title: 'Xóa hình ảnh/đính kèm',
       content: 'Bạn chắc chắn muốn xóa ' + item.name + ' ?',
       actions: [
         { text: 'Thoát', value: false },

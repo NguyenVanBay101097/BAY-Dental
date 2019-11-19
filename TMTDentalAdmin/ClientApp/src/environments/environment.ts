@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  apiDomain: 'http://localhost:52108/'
+  apiDomain: 'http://localhost:52108/',
+  catalogHost: 'myproject.com',
+  catalogScheme: 'http'
 };
 
 /*

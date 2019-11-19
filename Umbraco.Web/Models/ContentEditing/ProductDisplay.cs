@@ -32,6 +32,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsLabo { get; set; }
 
         public string Type2 { get; set; }
+
+        public decimal? PurchasePrice { get; set; }
     }
 
     //ProductDisplay + DS các step

@@ -212,6 +212,7 @@ namespace Infrastructure.Services
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
             product.Type2 = "labo";
             product.SaleOK = false;
+            product.PurchaseOK = false;
 
             var companyId = CompanyId;
             product.CompanyId = companyId;

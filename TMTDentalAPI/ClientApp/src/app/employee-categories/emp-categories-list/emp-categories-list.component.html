@@ -31,13 +31,11 @@
         <kendo-grid-command-column title="Thao tác" width="250">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="openModal(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
-                        class="fas fa-edit"></i>&nbsp;Sửa</button>
+                        class="far fa-edit"></i></button>
                 <button kendoButton (click)="deleteCategEmployee(dataItem.id)" class="btn btn-danger btn-sm"><i
-                        title="Vô hiệu hóa" class="fas fa-times"></i>&nbsp;Xóa</button>
+                        title="Xóa" class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-command-column>
-        <kendo-grid-messages pagerItems="dòng" noRecords="Không có nhân viên để hiển thị" pagerOf="/">
-        </kendo-grid-messages>
     </kendo-grid>
 </div>
 

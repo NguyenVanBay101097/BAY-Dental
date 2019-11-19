@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -38,19 +39,33 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class TenantRegisterViewModel
     {
+        [Required]
         public string Name { get; set; }
 
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
+        [Required]
+        [Phone]
         public string Phone { get; set; }
 
+        [Required]
         public string CompanyName { get; set; }
 
+        [Required]
+        [MinLength(6)]
         public string Hostname { get; set; }
 
+        [Required]
         public string Username { get; set; }
 
+        [Required]
+        [MinLength(6)]
         public string Password { get; set; }
+
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
     }
 
     public class TenantPaged

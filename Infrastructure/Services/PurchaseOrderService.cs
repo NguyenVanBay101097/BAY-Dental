@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,21 @@ namespace Infrastructure.Services
                 x.Partner.Phone.Contains(val.Search)));
             if (!string.IsNullOrEmpty(val.Type))
                 spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Type == val.Type));
+            if (val.DateOrderFrom.HasValue)
+            {
+                var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.DateOrder >= dateFrom));
+            }
+            if (val.DateOrderTo.HasValue)
+            {
+                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.DateOrder <= dateTo));
+            }
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var states = val.State.Split(",");
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => states.Contains(x.State)));
+            }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 

@@ -11,6 +11,9 @@ export class PurchaseOrderPaged {
     offset: number;
     search: string;
     type: string;
+    dateOrderFrom: string;
+    dateOrderTo: string;
+    state: string;
 }
 
 export class PurchaseOrderBasic {

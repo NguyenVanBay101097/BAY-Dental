@@ -7,9 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { HomeService } from './home.service';
 import { SaleReportComponent } from './sale-report/sale-report.component';
+import { HomeBusinessSituationComponent } from './home-business-situation/home-business-situation.component';
+import { HomeTodayAppointmentComponent } from './home-today-appointment/home-today-appointment.component';
 
 @NgModule({
-  declarations: [HomeComponent, SaleReportComponent],
+  declarations: [HomeComponent, SaleReportComponent, HomeBusinessSituationComponent, HomeTodayAppointmentComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,

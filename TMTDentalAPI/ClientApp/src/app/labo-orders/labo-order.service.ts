@@ -10,6 +10,9 @@ export class LaboOrderPaged {
     limit: number;
     offset: number;
     search: string;
+    dateOrderFrom: string;
+    dateOrderTo: string;
+    state: string;
 }
 
 export class LaboOrderBasic {

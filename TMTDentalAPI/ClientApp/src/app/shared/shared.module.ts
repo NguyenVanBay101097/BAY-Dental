@@ -26,6 +26,8 @@ import { TaiSearchInputComponent } from './tai-search-input/tai-search-input.com
 import { TaiProductListSelectableComponent } from './tai-product-list-selectable/tai-product-list-selectable.component';
 import { TaiDateRangeFilterDropdownComponent } from './tai-date-range-filter-dropdown/tai-date-range-filter-dropdown.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TmtOptionSelectDropdownComponent } from './tmt-option-select-dropdown/tmt-option-select-dropdown.component';
+import { TaiDateRangeSimpleDropdownComponent } from './tai-date-range-simple-dropdown/tai-date-range-simple-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ClickOutsideDirective,
     TaiSearchInputComponent,
     TaiProductListSelectableComponent,
-    TaiDateRangeFilterDropdownComponent
+    TaiDateRangeFilterDropdownComponent,
+    TmtOptionSelectDropdownComponent,
+    TaiDateRangeSimpleDropdownComponent
   ],
   exports: [
     HeaderComponent,
@@ -62,7 +66,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ClickOutsideDirective,
     TaiSearchInputComponent,
     TaiProductListSelectableComponent,
-    TaiDateRangeFilterDropdownComponent
+    TaiDateRangeFilterDropdownComponent,
+    TmtOptionSelectDropdownComponent,
+    TaiDateRangeSimpleDropdownComponent
   ],
   imports: [
     CommonModule,

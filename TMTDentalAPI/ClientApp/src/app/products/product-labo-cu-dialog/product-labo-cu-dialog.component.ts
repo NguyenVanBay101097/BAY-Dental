@@ -20,6 +20,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       purchasePrice: 0,
+
     });
 
     if (this.id) {

@@ -19,7 +19,7 @@ export class AppointmentVMService {
     private stateSubject = new Subject<string>();
     state$ = this.stateSubject.asObservable();
 
-    private searchSubject = new Subject<string>();
+    searchSubject = new Subject<string>();
     search$ = this.searchSubject.asObservable();
 
 

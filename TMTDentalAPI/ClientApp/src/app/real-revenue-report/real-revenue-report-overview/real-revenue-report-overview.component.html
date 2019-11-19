@@ -32,7 +32,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [loading]="loading">
         <kendo-grid-column field="name" [title]="getTitle()">
         </kendo-grid-column>
         <kendo-grid-column field="debit" class="text-right" title="Tổng phải thu"

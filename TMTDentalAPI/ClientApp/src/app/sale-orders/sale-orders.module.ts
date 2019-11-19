@@ -10,6 +10,7 @@ import { SaleOrderLineDialogComponent } from './sale-order-line-dialog/sale-orde
 import { SaleOrderListComponent } from './sale-order-list/sale-order-list.component';
 import { SaleOrderLineService } from './sale-order-line.service';
 import { SaleOrderCreateDotKhamDialogComponent } from './sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent],
@@ -18,7 +19,8 @@ import { SaleOrderCreateDotKhamDialogComponent } from './sale-order-create-dot-k
     SaleOrdersRoutingModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ],
   providers: [
     SaleOrderService,

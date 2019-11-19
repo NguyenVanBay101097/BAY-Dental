@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -22,6 +22,8 @@ import localeVi from '@angular/common/locales/vi';
 import { IntlModule } from '@progress/kendo-angular-intl';
 // Load all required data for the bg locale
 import '@progress/kendo-angular-intl/locales/vi/all';
+import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
+import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -35,7 +37,9 @@ registerLocaleData(localeVi, 'vi');
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
+    TrialRegistrationComponent,
+    TrialRegistrationSuccessComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -43,8 +47,8 @@ registerLocaleData(localeVi, 'vi');
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'register', component: TrialRegistrationComponent },
+      { path: 'register-success', component: TrialRegistrationSuccessComponent },
     ]),
     TenantsModule,
     MyCustomKendoModule,
@@ -58,6 +62,7 @@ registerLocaleData(localeVi, 'vi');
     }),
     SharedModule,
     IntlModule,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
