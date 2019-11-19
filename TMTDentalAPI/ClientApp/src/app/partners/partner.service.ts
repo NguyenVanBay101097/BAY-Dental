@@ -11,6 +11,8 @@ import { AccountInvoiceLinePaged, AccountInvoiceLineDisplay } from '../account-i
 import { AddressCheckApi } from '../price-list/price-list';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { AccountPaymentBasic } from '../account-payments/account-payment.service';
+import { LaboOrderBasic } from '../labo-orders/labo-order.service';
+import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
 
 export class PartnerFilter {
     search: string;
@@ -251,5 +253,13 @@ export class PartnerService {
 
     getPayments(val): Observable<PagedResult2<AccountPaymentBasic>> {
         return this.http.get<PagedResult2<AccountPaymentBasic>>(this.baseApi + 'api/AccountPayments', { params: val });
+    }
+
+    getLaboOrderByPartner(paged): Observable<PagedResult2<LaboOrderBasic>> {
+        return this.http.get<PagedResult2<LaboOrderBasic>>(this.baseApi + 'api/LaboOrders', { params: paged });
+    }
+
+    getPurchaseOrderByPartner(paged): Observable<PagedResult2<PurchaseOrderBasic>> {
+        return this.http.get<PagedResult2<PurchaseOrderBasic>>(this.baseApi + 'api/PurchaseOrders', { params: paged });
     }
 }

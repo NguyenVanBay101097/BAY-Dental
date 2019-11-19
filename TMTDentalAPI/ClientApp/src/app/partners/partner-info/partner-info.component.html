@@ -4,7 +4,7 @@
     <button title="Thanh toán" (click)="registerPayment(partnerId)" class="btn btn-primary btn-sm mr5"><i
             class="fas fa-money-check"></i>&nbsp;Thanh toán</button>
 </div>
-<div class="d-flex">
+<div *ngIf="!partner.supplier && partner.customer" class="d-flex">
     <!-- <div class="detail_image"><img height="250px" />
     </div> -->
     <div class="detail_info row" *ngIf="partner">
@@ -63,6 +63,46 @@
                 <div class="label">Ghi chú</div>
                 <div class="content">{{partner.comment}}</div>
             </div>
+        </div>
+
+    </div>
+</div>
+<div *ngIf="partner.supplier && !partner.customer" class="d-flex">
+    <!-- <div class="detail_image"><img height="250px" />
+    </div> -->
+    <div class="detail_info row" *ngIf="partner">
+        <div class="col-6">
+            <div>
+                <div class="label">Tên</div>
+                <div class="content">{{partner.name}}</div>
+            </div>
+            <div>
+                <div class="label">Số điện thoại</div>
+                <div class="content">{{partner.phone}}</div>
+            </div>
+            <div>
+                <div class="label">Địa chỉ</div>
+                <div class="content">{{address}}</div>
+            </div>
+            <div>
+                <div class="label">Ghi chú</div>
+                <div class="content">{{partner.comment}}</div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <div class="label">Mã</div>
+                <div class="content">{{partner.ref}}</div>
+            </div>
+            <div>
+                <div class="label">Số fax</div>
+                <div class="content">{{partner.fax}}</div>
+            </div>
+            <div>
+                <div class="label">Email</div>
+                <div class="content">{{partner.email}}</div>
+            </div>
+
         </div>
 
     </div>

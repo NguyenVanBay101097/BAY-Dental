@@ -12,5 +12,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateOrder { get; set; }
         public string State { get; set; }
         public decimal? AmountTotal { get; set; }
+        public string Type { get; set; }
     }
 }

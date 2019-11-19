@@ -10,6 +10,7 @@ export class LaboOrderPaged {
     limit: number;
     offset: number;
     search: string;
+    partnerId: string;
 }
 
 export class LaboOrderBasic {

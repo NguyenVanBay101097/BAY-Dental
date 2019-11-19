@@ -108,7 +108,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson2(Guid id)
+        public async Task<IEnumerable<PaymentInfoContent>> _GetSaleOrderPaymentInfoJson(Guid id)
         {
             var orderObj = GetService<ISaleOrderService>();
             var order = await orderObj.SearchQuery(x => x.Id == id)
@@ -161,7 +161,7 @@ namespace Infrastructure.Services
                         JournalName = payment.Journal.Name,
                         Amount = amount,
                         Date = payment.Date,
-                        Ref = paymentRef,
+                        Ref = payment.Move.Ref,
                         PaymentId = payment.Id,
                         MoveId = payment.MoveId,
                         AccountPaymentId = payment.PaymentId,

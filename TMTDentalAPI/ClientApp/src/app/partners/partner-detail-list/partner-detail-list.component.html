@@ -8,7 +8,7 @@
             </a>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="dateOrder" title="Ngày điều trị">
+    <kendo-grid-column field="dateOrder" [title]="isCustomer ? 'Ngày điều trị' : 'Ngày đặt'">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.dateOrder | date : 'shortDate' }}
         </ng-template>
@@ -23,16 +23,21 @@
             {{dataItem.amountTotal | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Nhân viên">
+    <!-- <kendo-grid-column title="Nhân viên">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.userName}}
         </ng-template>
-    </kendo-grid-column>
+    </kendo-grid-column> -->
     <kendo-grid-column title="Trạng thái">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{stateGet(dataItem.state)}}
         </ng-template>
     </kendo-grid-column>
+    <!-- <kendo-grid-column *ngIf="isSupplier" title="Khách hàng">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.customerName}}--{{dataItem.partnerName}}
+        </ng-template>
+    </kendo-grid-column> -->
 
     <kendo-grid-messages pagerItems="dòng" noRecords="Không có hóa đơn nào" pagerOf="/">
     </kendo-grid-messages>

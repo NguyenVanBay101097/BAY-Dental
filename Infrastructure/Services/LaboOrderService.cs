@@ -32,6 +32,8 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search)));
+            if (val.PartnerId != Guid.Empty)
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 

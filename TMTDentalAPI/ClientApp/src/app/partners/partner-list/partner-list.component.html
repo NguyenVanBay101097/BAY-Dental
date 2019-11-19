@@ -89,6 +89,11 @@
       </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="address" title="Địa chỉ" width="250"></kendo-grid-column>
+    <!--
+      ==============================================================================
+      -----------------------------------CUSTOMER-----------------------------------
+      ============================================================================== 
+    -->
     <div *ngIf="queryCustomer">
       <div *kendoGridDetailTemplate="let dataItem">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -117,7 +122,7 @@
           </div>
           <div class="tab-pane fade" id="invoice_{{dataItem.id}}" role="tabpanel" aria-labelledby="invoice-tab">
             <div style="padding:10px;">
-              <app-partner-detail-list [id]="dataItem.id"></app-partner-detail-list>
+              <app-partner-detail-list [id]="dataItem.id" [isCustomer]="true"></app-partner-detail-list>
             </div>
           </div>
           <div class="tab-pane fade" id="invoice-line_{{dataItem.id}}" role="tabpanel"
@@ -135,20 +140,73 @@
       </div>
     </div>
 
+    <!--
+      ==============================================================================
+      -----------------------------------SUPPLIER-----------------------------------
+      ============================================================================== 
+    -->
+    <div *ngIf="querySupplier">
+      <div *kendoGridDetailTemplate="let dataItem">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info_{{dataItem.id}}" role="tab"
+              aria-controls="info" aria-selected="true">Thông tin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo_{{dataItem.id}}" role="tab"
+              aria-controls="labo" aria-selected="false">Phiếu labo</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="order-refund-tab" data-toggle="tab" href="#order-refund_{{dataItem.id}}" role="tab"
+              aria-controls="order-refund" aria-selected="false">Lịch sử mua - trả hàng</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment_{{dataItem.id}}" role="tab"
+              aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="info_{{dataItem.id}}" role="tabpanel" aria-labelledby="info-tab">
+            <div>
+              <app-partner-info [partnerId]="dataItem.id"></app-partner-info>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="labo_{{dataItem.id}}" role="tabpanel" aria-labelledby="labo-tab">
+            <div style="padding:10px;">
+              <app-partner-detail-list [id]="dataItem.id" [isSupplier]="true"></app-partner-detail-list>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="order-refund_{{dataItem.id}}" role="tabpanel"
+            aria-labelledby="order-refund-tab">
+            <div style="padding:10px;">
+              <app-purchase-order-refund [id]="dataItem.id"></app-purchase-order-refund>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="payment_{{dataItem.id}}" role="tabpanel" aria-labelledby="payment-tab">
+            <div style="padding:10px;">
+              <app-partner-payments [partnerId]="dataItem.id"></app-partner-payments>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- -----------------------------------------------END----------------------------------------------- -->
+
     <kendo-grid-command-column title="Thao tác" width="150">
       <ng-template kendoGridCellTemplate let-dataItem>
         <!-- <button title="Thanh toán" kendoButton (click)="registerPayment(dataItem.id)" class="btn btn-primary btn-sm"><i
             class="fas fa-file-invoice-dollar"></i></button> -->
-        <button *ngIf="querySupplier" title="Sửa" (click)="openModal(dataItem.id)" class="btn btn-success btn-sm mr5"><i
-            class="fas fa-edit"></i></button>
+
         <button title="Xóa" (click)="deleteCustomer(dataItem.id,$event)" class="btn btn-danger btn-sm mr5"><i
             class="fas fa-times"></i></button>
+
         <!-- <button kendoButton style="color: white" class="btn btn-info btn-sm" *ngIf="queryCustomer"
           [routerLink]="['/partners/history/'+dataItem.id]"><i title="Lịch sử điều trị"
             class="fas fa-notes-medical"></i></button> -->
       </ng-template>
     </kendo-grid-command-column>
-    <kendo-grid-messages pagerItems="dòng" noRecords="Không có khách hàng để hiển thị" pagerOf="/">
+    <kendo-grid-messages pagerItems="dòng"
+      [noRecords]="queryCustomer ? 'Không có khách hàng để hiển thị' : 'Không có nhà cung cấp để hiển thị'" pagerOf="/">
     </kendo-grid-messages>
   </kendo-grid>
 </div>

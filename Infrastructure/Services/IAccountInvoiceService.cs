@@ -22,7 +22,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<AccountInvoiceBasic>> GetPagedResultAsync(AccountInvoicePaged val);
         Task UpdateInvoice(AccountInvoice inv);
         Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id);
-        Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson2(Guid id);
+        Task<IEnumerable<PaymentInfoContent>> _GetSaleOrderPaymentInfoJson(Guid id);
         Task<IEnumerable<AccountInvoiceCbx>> GetOpenPaid(string search = "");
         Task<AccountInvoicePrint> GetAccountInvoicePrint(Guid id);
         Task DeleteInvoice(Guid id);

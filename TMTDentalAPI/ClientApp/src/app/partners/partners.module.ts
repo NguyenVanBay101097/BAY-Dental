@@ -22,12 +22,13 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-invoice-lines.component';
 import { PartnerImportComponent } from './partner-import/partner-import.component';
 import { PartnerPaymentsComponent } from './partner-payments/partner-payments.component';
+import { PurchaseOrderRefundComponent } from './purchase-order-refund/purchase-order-refund.component';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
     PartnerCustomerListComponent, PartnerCustomerListDetailComponent, PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent, PartnerHistoryComponent, PartnerDetailListComponent, PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent],
+    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent, PurchaseOrderRefundComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,

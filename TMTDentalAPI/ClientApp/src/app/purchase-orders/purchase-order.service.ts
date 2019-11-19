@@ -11,6 +11,7 @@ export class PurchaseOrderPaged {
     offset: number;
     search: string;
     type: string;
+    partnerId: string;
 }
 
 export class PurchaseOrderBasic {
@@ -20,6 +21,7 @@ export class PurchaseOrderBasic {
     dateOrder: string;
     state: string;
     amountTotal: string;
+    type: string;
 }
 
 export class PurchaseOrderDisplay {
