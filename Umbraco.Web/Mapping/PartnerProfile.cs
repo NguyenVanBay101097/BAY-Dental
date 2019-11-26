@@ -31,7 +31,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PartnerImportExcel, Partner>()
                 .ForMember(x=>x.Id, x=>x.Ignore())
-                .ForMember(x => x.Employees, x => x.Ignore());
+                .ForMember(x => x.Employees, x => x.Ignore())
+                .ForMember(x=>x.Company, x=>x.Ignore());
         }
     }
 }

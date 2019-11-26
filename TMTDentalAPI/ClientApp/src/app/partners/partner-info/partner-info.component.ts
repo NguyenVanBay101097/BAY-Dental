@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PartnerService } from '../partner.service';
 import { PartnerDisplay, PartnerCategorySimple } from '../partner-simple';
 import { HistorySimple } from 'src/app/history/history';
@@ -14,7 +14,7 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-
   styleUrls: ['./partner-info.component.css']
 })
 export class PartnerInfoComponent implements OnInit {
-
+  @Output() createNewEvent = new EventEmitter<any>();
   constructor(private service: PartnerService, private modalService: NgbModal,
     private notificationService: NotificationService) { }
 
@@ -112,6 +112,7 @@ export class PartnerInfoComponent implements OnInit {
     modalRef.result.then(
       rs => {
         this.getPartnerInfo();
+        this.createNewEvent.next();
       },
       er => { }
     )

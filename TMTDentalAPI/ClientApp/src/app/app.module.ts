@@ -72,6 +72,8 @@ import { HotkeyModule } from 'angular2-hotkeys';
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
 import { SaleReportModule } from './sale-report/sale-report.module';
+import { ResBanksModule } from './res-banks/res-banks.module';
+import { ResPartnerBanksModule } from './res-partner-banks/res-partner-banks.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -147,7 +149,9 @@ registerLocaleData(localeVi, 'vi');
     PurchaseOrdersModule,
     HotkeyModule.forRoot(),
     RealRevenueReportModule,
-    SaleReportModule
+    SaleReportModule,
+    ResBanksModule,
+    ResPartnerBanksModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

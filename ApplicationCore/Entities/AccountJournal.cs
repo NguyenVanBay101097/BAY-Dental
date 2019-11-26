@@ -37,5 +37,8 @@ namespace ApplicationCore.Entities
         /// Xác định có nên dùng riêng mã phát sinh trả hàng
         /// </summary>
         public bool DedicatedRefund { get; set; }
+
+        public Guid? BankAccountId { get; set; }
+        public ResPartnerBank BankAccount { get; set; }
     }
 }

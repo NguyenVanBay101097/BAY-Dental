@@ -1,18 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { WindowService, WindowRef, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { SortDescriptor, orderBy } from '@progress/kendo-data-query';
-import { PartnerService } from '../partner.service';
+import { PartnerService, ImportExcelDirect } from '../partner.service';
 import { PartnerBasic, PartnerPaged, PartnerDisplay } from '../partner-simple';
 import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
 import { GridDataResult, PageChangeEvent, GridComponent, SelectionEvent, CellClickEvent } from '@progress/kendo-angular-grid';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
+import { saveAs } from '@progress/kendo-drawing/pdf';
 
 
 @Component({
@@ -52,6 +53,9 @@ export class PartnerListComponent implements OnInit {
   //   employee: new FormControl()
   // })
   closeResult: string;
+
+  excel = [];
+  ids = [];
 
   constructor(
     private service: PartnerService, private windowService: WindowService,
@@ -101,6 +105,13 @@ export class PartnerListComponent implements OnInit {
     ).subscribe(rs2 => {
       this.gridView = rs2;
       this.loading = false;
+
+      console.log(rs2);
+      this.ids = [];
+      rs2.data.forEach(row => {
+        this.ids.push(row.id);
+      });
+      this.xlsxExport();
     }, er => {
       this.loading = true;
       console.log(er);
@@ -302,14 +313,86 @@ export class PartnerListComponent implements OnInit {
     // )
   }
 
-  importFromExcel() {
+  importFromExcel(isCreateNew: boolean) {
     const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.isCreateNew = isCreateNew;
     modalRef.result.then(
       rs => {
         this.getPartnersList();
       },
       er => { }
     )
+  }
+
+
+  //=================== CLIENT Excel export ============================
+  exportAsXLSX(): void {
+    this.service.exportAsExcelFile(this.excel, 'Thông tin Đối tác');
+  }
+
+  xlsxExport() {
+    this.service.getPartnerDisplaysByIds(this.ids).subscribe(
+      rs => {
+        console.log(rs);
+        this.excel = [];
+        rs.forEach(item => {
+          if (item.customer) {
+            this.excel.push(
+              {
+                "Tên KH": item.name,
+                "Mã KH": item.ref,
+                "Giới tính": this.getGender(item.gender),
+                "Ngày sinh": this.getBirth(item),
+                "SĐT": item.phone,
+                "Địa chỉ": this.getAddress(item),
+                "Tiền căn": this.getHistories(item),
+                "Nghề nghiệp": item.jobTitle,
+                "Email": item.email,
+                "Ghi chú": item.comment
+              }
+            )
+          } else if (item.supplier) {
+            this.excel.push(
+              {
+                "Tên NCC": item.name,
+                "Mã NCC": item.ref,
+                "SĐT": item.phone,
+                "Fax": item.fax,
+                "Địa chỉ": item.street,
+                "Email": item.email,
+                "Ghi chú": item.comment
+              }
+            )
+          }
+
+        });
+      }
+    )
+  }
+
+  //=================== SERVER Excel export ============================
+  exportExcelFile() {
+    var paged = new PartnerPaged();
+    paged.searchNamePhoneRef = this.searchNamePhoneRef || '';
+    paged.customer = this.queryCustomer;
+    paged.supplier = this.querySupplier;
+    this.service.excelServerExport(paged).subscribe(
+      rs => {
+        let filename = 'file word';
+        let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        console.log(rs);
+
+        let data = window.URL.createObjectURL(newBlob);
+        let link = document.createElement('a');
+        link.href = data;
+        link.download = filename;
+        link.click();
+        setTimeout(() => {
+          // For Firefox it is necessary to delay revoking the ObjectURL
+          window.URL.revokeObjectURL(data);
+        }, 100);
+      }
+    );
   }
 
   registerPayment(id: string) {
@@ -328,5 +411,45 @@ export class PartnerListComponent implements OnInit {
       }, () => {
       });
     });
+  }
+
+  getAddress(rs: PartnerDisplay) {
+    var addArray = new Array<string>();
+    if (rs.street) {
+      addArray.push(rs.street);
+    }
+    if (rs.wardName) {
+      addArray.push(rs.wardName);
+    }
+    if (rs.districtName) {
+      addArray.push(rs.districtName);
+    }
+    if (rs.cityName) {
+      addArray.push(rs.cityName);
+    }
+    return addArray.join(', ');
+  }
+
+  getHistories(partner: PartnerDisplay) {
+    if (partner.histories || partner.medicalHistory) {
+      var arr = new Array<string>();
+
+      if (partner.medicalHistory) {
+        arr.push(partner.medicalHistory);
+      }
+
+      partner.histories.forEach(e => {
+        arr.push(e.name);
+      });
+      return arr.join(', ');
+    }
+  }
+
+  getBirth(partner: PartnerDisplay) {
+    var day = partner.birthDay ? partner.birthDay : '';
+    var month = partner.birthMonth ? partner.birthMonth : '';
+    var year = partner.birthYear ? partner.birthYear : '';
+
+    return day + '/' + month + '/' + year;
   }
 }

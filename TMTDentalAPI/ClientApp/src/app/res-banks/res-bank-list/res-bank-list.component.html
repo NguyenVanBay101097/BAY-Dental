@@ -1,0 +1,47 @@
+<!-- <div kendoWindowContainer></div> -->
+<div kendoDialogContainer></div>
+
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Ngân hàng</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Theo mã hoặc tên ngân hàng"
+                    [(ngModel)]="searchNameBIC" (ngModelChange)="this.searchNameBICUpdate.next($event)" />
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
+                        <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
+                    <!-- <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
+                        <i class="fas fa-upload"></i>&nbsp;Import Excel</button> -->
+
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
+        (pageChange)="pageChange($event)" [loading]="loading">
+        <kendo-grid-column field="bic" title="Mã Ngân hàng" width="100"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
+
+        <kendo-grid-command-column title="Thao tác" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
+                        class="fas fa-edit"></i></button>
+                <button title="Xóa" (click)="deleteBank(dataItem.id,$event)" class="btn btn-danger btn-sm mr5"><i
+                        class="fas fa-times"></i></button>
+            </ng-template>
+        </kendo-grid-command-column>
+        <kendo-grid-messages pagerItems="dòng" noRecords="Không có ngân hàng để hiển thị" pagerOf="/">
+        </kendo-grid-messages>
+    </kendo-grid>
+</div>

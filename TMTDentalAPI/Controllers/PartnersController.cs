@@ -17,6 +17,10 @@ using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 using System.Data.OleDb;
 using System.Data.SqlClient;
+using System.Net.Http.Headers;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using OfficeOpenXml;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -81,6 +85,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
+
             var partner = _mapper.Map<Partner>(val);
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             SaveCategories(val, partner);
@@ -99,6 +104,7 @@ namespace TMTDentalAPI.Controllers
             var partner = await _partnerService.GetPartnerForDisplayAsync(id);
             if (partner == null)
                 return NotFound();
+
             partner = _mapper.Map(val, partner);
 
             partner.CityCode = val.City != null ? val.City.Code : string.Empty;
@@ -233,9 +239,17 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImport(IFormFile file, bool isCustomer)
+        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
         {
-            await _partnerService.ImportExcel2(file, isCustomer);
+            await _partnerService.ImportExcel2(file, dir);
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        {
+            await _partnerService.ImportExcel2(file, dir);
             return Ok();
         }
 
@@ -287,6 +301,78 @@ namespace TMTDentalAPI.Controllers
             };
 
             return Ok(rec);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IEnumerable<PartnerDisplay>> GetPartnerDisplaysByIds(IEnumerable<Guid> ids)
+        {
+            var entity = await _partnerService.SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var res = _mapper.Map<IEnumerable<PartnerDisplay>>(entity);
+
+            return res;
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcelFile([FromQuery]PartnerPaged val)
+        {
+            var stream = new MemoryStream();
+            var partners = await _partnerService.GetQueryPaged(val).ToListAsync();
+            byte[] fileContent;
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Thông tin Đối tác");
+
+                worksheet.Cells[1, 1].Value = "Tên KH";
+                worksheet.Cells[1, 2].Value = "Mã KH";
+                worksheet.Cells[1, 3].Value = "Giới tính";
+                worksheet.Cells[1, 4].Value = "Ngày sinh";
+                worksheet.Cells[1, 5].Value = "SĐT";
+                worksheet.Cells[1, 6].Value = "Địa chỉ";
+                worksheet.Cells[1, 7].Value = "Tiền căn";
+                worksheet.Cells[1, 8].Value = "Nghề nghiệp";
+                worksheet.Cells[1, 9].Value = "Email";
+                worksheet.Cells[1, 10].Value = "Ghi chú";
+
+                for (int row = 2; row < partners.Count + 2; row++)
+                {
+                    var item = partners[row - 2]; 
+                    var entity = await _partnerService.GetPartnerForDisplayAsync(item.Id);
+
+                    var ar = new List<string>();
+
+                    if (!string.IsNullOrWhiteSpace(item.Street)) ar.Add(item.Street);
+                    if (!string.IsNullOrWhiteSpace(item.WardName)) ar.Add(item.WardName);
+                    if (!string.IsNullOrWhiteSpace(item.DistrictName)) ar.Add(item.DistrictName);
+                    if (!string.IsNullOrWhiteSpace(item.CityName)) ar.Add(item.CityName);
+
+                    var address = String.Join(", ", ar);
+
+                    var histories = entity.PartnerHistoryRels.Select(x => x.History.Name).ToList();
+                    histories.Add(item.MedicalHistory);
+
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.Ref;
+                    worksheet.Cells[row, 3].Value = item.Gender;
+                    worksheet.Cells[row, 4].Value = item.BirthDay + "/" + item.BirthMonth + "/" + item.BirthYear;
+                    worksheet.Cells[row, 5].Value = item.Phone;
+                    worksheet.Cells[row, 6].Value = address;
+                    worksheet.Cells[row, 7].Value = string.Join(", ", histories);
+                    worksheet.Cells[row, 8].Value = item.JobTitle;
+                    worksheet.Cells[row, 9].Value = item.Email;
+                    worksheet.Cells[row, 10].Value = item.Comment;
+                }
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string fileName = @"Thông tin đối tác.xlsx";
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }

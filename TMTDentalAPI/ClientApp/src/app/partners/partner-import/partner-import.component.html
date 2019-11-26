@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h4 class="modal-title">Import Excel<span class="o_subtitle text-muted small"></span></h4>
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
@@ -18,7 +18,7 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm mr-2" (click)="import()" [disabled]="!selectedFile">
         <i class="fas fa-upload"></i>&nbsp;Import</button>
-    <a [href]="isCustomer ? 'assets/files/MauThemKH.xlsx' : 'assets/files/MauThemNCC.xlsx'"><button type="button"
+    <a [href]="isCustomer ? 'assets/files/Mau_File_KH.xlsx' : 'assets/files/Mau_File_NCC.xlsx'"><button type="button"
             class="btn btn-primary btn-sm mr-2"><i class="fas fa-file-alt"></i>&nbsp;Tải file mẫu</button></a>
     <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)">
         Đóng</button>

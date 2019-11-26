@@ -44,6 +44,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.BankAccount)
+                .WithMany()
+                .HasForeignKey(x => x.BankAccountId);
         }
     }
 }
