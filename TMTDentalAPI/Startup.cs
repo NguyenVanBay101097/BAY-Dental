@@ -177,6 +177,8 @@ namespace TMTDentalAPI
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<ISaleReportService, SaleReportService>();
             services.AddScoped<IRealRevenueReportService, RealRevenueReportService>();
+            services.AddScoped<IResBankService, ResBankService>();
+            services.AddScoped<IResPartnerBankService, ResPartnerBankService>();
 
             services.AddMemoryCache();
 
@@ -236,6 +238,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LaboOrderProfile());
                 mc.AddProfile(new PurchaseOrderProfile());
                 mc.AddProfile(new PurchaseOrderLineProfile());
+                mc.AddProfile(new ResBankProfile());
+                mc.AddProfile(new ResPartnerBankProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

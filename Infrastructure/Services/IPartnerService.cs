@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -23,11 +25,10 @@ namespace Infrastructure.Services
         Task<PartnerInfoViewModel> GetInfo(Guid id);
         Task<PagedResult2<AccountInvoiceDisplay>> GetCustomerInvoices(AccountInvoicePaged val);
         Task ImportExcel(IFormFile file);
-        Task ImportExcel2(IFormFile file, bool isCustomer);
+        Task ImportExcel2(IFormFile file, Ex_ImportExcelDirect dir);
         Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
        DateTime? fromDate = null,
        DateTime? toDate = null);
-
-        Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, bool isCustomer);
+        IQueryable<Partner> GetQueryPaged(PartnerPaged val);
     }
 }

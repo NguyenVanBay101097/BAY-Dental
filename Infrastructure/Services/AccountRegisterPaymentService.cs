@@ -68,6 +68,49 @@ namespace Infrastructure.Services
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
                 PartnerId = invoices[0].PartnerId,
                 PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
+                //Communication = communication,
+                InvoiceIds = invoice_ids
+            };
+
+            return rec;
+        }
+
+        public async Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> order_ids)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orders = await orderObj.SearchQuery(x => order_ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoiceRels")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                .OrderBy(x=>x.DateCreated)
+                .Distinct()
+                .ToListAsync();
+
+            var invoice_ids = orders.SelectMany(x => x.OrderLines).SelectMany(x => x.SaleOrderLineInvoiceRels)
+                .Select(x => x.InvoiceLine).Select(x => x.Invoice.Id).Distinct();
+            
+            if (invoice_ids == null || invoice_ids.Count() == 0)
+                throw new Exception("Phải chọn tối thiểu 1 hóa đơn để thanh toán");
+            var invoiceService = (IAccountInvoiceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountInvoiceService));
+            var invoices = await invoiceService.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            if (invoices.Any(x => x.State != "open" && x.State != "paid"))
+                throw new Exception("Bạn chỉ có thể thanh toán cho hóa đơn đã xác nhận");
+            if (invoices.Any(x => x.PartnerId != invoices[0].PartnerId))
+                throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
+            var dict = MAP_INVOICE_TYPE_PAYMENT_SIGN;
+            if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
+                throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
+
+            var total_amount = invoices.Sum(x => x.Residual * dict[x.Type]);
+            var communication = string.Join(" ", orders.Select(x => x.Name).Distinct());
+
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount),
+                PaymentType = total_amount > 0 ? "inbound" : "outbound",
+                PartnerId = invoices[0].PartnerId,
+                PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
                 Communication = communication,
                 InvoiceIds = invoice_ids
             };

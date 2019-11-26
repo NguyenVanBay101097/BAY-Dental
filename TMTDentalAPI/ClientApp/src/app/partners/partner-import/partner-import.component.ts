@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { PartnerService } from '../partner.service';
+import { PartnerService, ImportExcelDirect } from '../partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 
@@ -19,12 +19,19 @@ export class PartnerImportComponent implements OnInit {
   formImport: FormGroup;
   selectedFile: File;
   isCustomer = false;
+  title = '';
+  isCreateNew = false;
 
   ngOnInit() {
     this.formImport = this.fb.group({
       file: [null, Validators.required],
     })
     this.routingChange();
+
+    if (this.isCreateNew)
+      this.title = 'Thêm mới từ Excel';
+    else
+      this.title = 'Cập nhật từ Excel';
   }
 
   routingChange() {
@@ -57,12 +64,15 @@ export class PartnerImportComponent implements OnInit {
   }
 
   import() {
-    this.service.importFromExcel(this.selectedFile, this.isCustomer).subscribe(
+    var dir = new ImportExcelDirect;
+    dir.isCreateNew = this.isCreateNew;
+    dir.isCustomer = this.isCustomer;
+    this.service.importFromExcelCreate(this.selectedFile, dir).subscribe(
       rs => {
         this.isChange = true;
         this.closeModal(null);
         this.notificationService.show({
-          content: 'Xuất file thành công',
+          content: 'Thêm dữ liệu từ file thành công',
           hideAfter: 3000,
           position: { horizontal: 'right', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },

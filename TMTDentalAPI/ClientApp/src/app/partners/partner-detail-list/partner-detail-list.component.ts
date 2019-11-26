@@ -5,6 +5,7 @@ import { PartnerService } from '../partner.service';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
+import { LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 
 @Component({
   selector: 'app-partner-detail-list',
@@ -14,6 +15,8 @@ import { SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
 export class PartnerDetailListComponent implements OnInit {
 
   @Input() public id: string; // ID của khách hàng
+  @Input() public isCustomer = false;
+  @Input() public isSupplier = false;
 
   gridLoading = false;
   gridView: GridDataResult;
@@ -24,7 +27,11 @@ export class PartnerDetailListComponent implements OnInit {
   constructor(private service: PartnerService, private router: Router) { }
 
   ngOnInit() {
-    this.loadSaleOrder();
+    if (this.isCustomer) {
+      this.loadSaleOrder();
+    } else if (this.isSupplier) {
+      this.loadLaboOrder();
+    }
   }
 
   loadInvoices() {
@@ -45,11 +52,31 @@ export class PartnerDetailListComponent implements OnInit {
       }
     )
   }
+
   loadSaleOrder() {
     this.gridLoading = true;
     var soPaged = new SaleOrderPaged;
     soPaged.partnerId = this.id;
     this.service.getSaleOrderByPartner(soPaged).pipe(
+      map(rs1 => (<GridDataResult>{
+        data: rs1.items,
+        total: rs1.totalItems
+      }))
+    ).subscribe(rs2 => {
+      this.gridView = rs2;
+      this.gridLoading = false;
+    }, er => {
+      this.gridLoading = true;
+      console.log(er);
+    }
+    );
+  }
+
+  loadLaboOrder() {
+    this.gridLoading = true;
+    var loPaged = new LaboOrderPaged;
+    loPaged.partnerId = this.id;
+    this.service.getLaboOrderByPartner(loPaged).pipe(
       map(rs1 => (<GridDataResult>{
         data: rs1.items,
         total: rs1.totalItems

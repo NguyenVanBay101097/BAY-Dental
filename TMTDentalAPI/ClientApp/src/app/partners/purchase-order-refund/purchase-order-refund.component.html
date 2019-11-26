@@ -1,0 +1,44 @@
+<div class="mr5" [formGroup]="formFilter">
+    <div class="form-check-inline">
+        <input class="form-check-input" type="checkbox" formControlName="isOrder" (change)="loadPurchaseOrder()"
+            id="order" />
+        <label class="form-check-label" for="order">
+            Phiếu mua
+        </label>
+    </div>
+    <div class="form-check-inline">
+        <input class="form-check-input" type="checkbox" formControlName="isRefund" (change)="loadPurchaseOrder()"
+            id="refund" />
+        <label class="form-check-label" for="refund">
+            Phiếu trả
+        </label>
+    </div>
+</div>
+<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
+    [loading]="gridLoading">
+    <kendo-grid-column field="name" title="Số phiếu">
+    </kendo-grid-column>
+    <kendo-grid-column title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.dateOrder | date : 'shortDate' }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Tổng tiền">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amountTotal | number }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Loại">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{typeGet(dataItem.type)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{stateGet(dataItem.state)}}
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-messages pagerItems="dòng" noRecords="Không có phiếu nào" pagerOf="/">
+    </kendo-grid-messages>
+</kendo-grid>

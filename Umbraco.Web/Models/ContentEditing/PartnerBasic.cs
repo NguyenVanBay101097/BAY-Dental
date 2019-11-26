@@ -72,6 +72,8 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public string Name { get; set; }
 
+        public string NameNoSign { get; set; }
+
         public string Phone { get; set; }
 
         public string Fax { get; set; }

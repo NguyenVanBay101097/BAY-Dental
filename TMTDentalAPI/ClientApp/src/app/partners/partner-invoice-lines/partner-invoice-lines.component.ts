@@ -65,7 +65,7 @@ export class PartnerInvoiceLinesComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.pageSize = event.take;
-    this.loadInvoiceLines();
+    this.loadSaleOrderLines();
   }
 
   lineTeeth(teeth: any[]) {

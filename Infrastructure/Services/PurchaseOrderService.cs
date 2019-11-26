@@ -33,7 +33,15 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search)));
+
+            string[] typeArr = null;
             if (!string.IsNullOrEmpty(val.Type))
+            {
+                typeArr = (val.Type).Split(",");
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => typeArr.Contains(x.Type)));
+            }
+            if (val.PartnerId.HasValue)
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x=>x.PartnerId.Equals(val.PartnerId)));
                 spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Type == val.Type));
             if (val.DateOrderFrom.HasValue)
             {
@@ -60,6 +68,7 @@ namespace Infrastructure.Services
                 DateOrder = x.DateOrder,
                 Name = x.Name,
                 PartnerName = x.Partner.Name,
+                Type = x.Type,
                 State = x.State,
             }).ToListAsync();
 

@@ -102,6 +102,8 @@ namespace Infrastructure.Data
         public DbSet<ResCompanyUsersRel> ResCompanyUsersRels { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public DbSet<ProductPriceHistory> ProductPriceHistories { get; set; }
+        public DbSet<ResBank> ResBanks { get; set; }
+        public DbSet<ResPartnerBank> ResPartnerBanks { get; set; }
         public DbSet<MailMessage> MailMessages { get; set; }
         public DbSet<MailTrackingValue> MailTrackingValues { get; set; }
         
@@ -190,6 +192,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ResCompanyUsersRelConfiguration());
             builder.ApplyConfiguration(new UserRefreshTokenConfiguration());
             builder.ApplyConfiguration(new ProductPriceHistoryConfiguration());
+            builder.ApplyConfiguration(new ResBankConfiguration());
+            builder.ApplyConfiguration(new ResPartnerBankConfiguration());
             builder.ApplyConfiguration(new MailMessageConfiguration());
             builder.ApplyConfiguration(new MailTrackingValueConfiguration());
 

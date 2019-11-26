@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PartnerService } from '../partner.service';
 import { WindowRef, WindowService } from '@progress/kendo-angular-dialog';
@@ -24,6 +24,7 @@ import { AddressCheckApi } from 'src/app/price-list/price-list';
 
 export class PartnerCreateUpdateComponent implements OnInit {
   @ViewChild('grid', { static: true }) grid: any;
+
 
   constructor(private fb: FormBuilder, private service: PartnerService, private activeRoute: ActivatedRoute, public activeModal: NgbActiveModal) { }
 
@@ -65,7 +66,6 @@ export class PartnerCreateUpdateComponent implements OnInit {
   skip: number = 0;
   limit: number = 20;
   ngOnInit() {
-
     this.formCreate = this.fb.group({
       name: [null, Validators.required],
       phone: [null, Validators.minLength(9)],
@@ -203,10 +203,13 @@ export class PartnerCreateUpdateComponent implements OnInit {
         this.closeModal(rs);
       },
       er => {
+        //Load lại grid view trên component cha
+
         console.log(er);
       }
     );
   }
+
 
   //Cho phép field phone chỉ nhập số
   onlyGetNumbers(formControlName) {

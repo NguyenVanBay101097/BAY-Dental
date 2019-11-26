@@ -20,6 +20,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
+using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -174,6 +175,20 @@ namespace Infrastructure.Services
                         entity.Ref = await sequenceService.NextByCode("supplier");
                     }
                 }
+            } else
+            {
+                if (entity.Customer == true)
+                {
+                    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Customer == true && x.Supplier == false).FirstOrDefault();
+                    if (partner != null)
+                        throw new Exception("Mã Khách hàng bị trùng !");
+                }
+                else if (entity.Supplier == true)
+                {
+                    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Supplier == true && x.Customer == false).FirstOrDefault();
+                    if (partner != null)
+                        throw new Exception("Mã Nhà cung cấp bị trùng !");
+                }
             }
 
             entity.DisplayName = _NameGet(entity);
@@ -215,6 +230,15 @@ namespace Infrastructure.Services
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);
+            if (!string.IsNullOrWhiteSpace(entity.Ref))
+            {
+                var partner = SearchQuery(x => x.Ref == entity.Ref && x.Id != entity.Id).FirstOrDefault();
+                if (partner != null)
+                    throw new Exception("Mã này đã tồn tại !");
+            }
+            else {
+                throw new Exception("Vui lòng nhập mã !");
+            }
             return base.UpdateAsync(entity);
         }
 
@@ -236,7 +260,7 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<PartnerSimple>>(partners);
         }
 
-        private IQueryable<Partner> GetQueryPaged(PartnerPaged val)
+        public IQueryable<Partner> GetQueryPaged(PartnerPaged val)
         {
             var query = SearchQuery();
             if (val.Customer.HasValue)
@@ -550,7 +574,7 @@ namespace Infrastructure.Services
             //    }
         }
 
-        public async Task ImportExcel2(IFormFile file, bool isCustomer)
+        public async Task ImportExcel2(IFormFile file, Ex_ImportExcelDirect dir)
         {
             if (file == null) throw new Exception("File is null");
             var list = new List<PartnerImportExcel>();
@@ -562,14 +586,31 @@ namespace Infrastructure.Services
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    list = await HandleExcelRowsByCustomerOrSupplierAsync(worksheet, isCustomer);
+                    list = await HandleExcelRowsByCustomerOrSupplierAsync(worksheet, dir);
                 }
             }
 
-            var pnList = _mapper.Map<List<Partner>>(list);
-            foreach (var pn in pnList)
-                await CreateAsync(pn);
+            if (dir.IsCreateNew)
+            {
+                foreach (var pn in list)
+                {
+                    var entity = _mapper.Map<Partner>(pn);
+                    await CreateAsync(entity);
+                }
 
+            }
+            else {
+                foreach (var pn in list)
+                {
+                    var entity = SearchQuery(x => x.Ref == pn.Ref).FirstOrDefault();
+                    if (entity != null)
+                    {
+                        entity = _mapper.Map(pn, entity);
+                        //entity = _mapper.Map<Partner>(pn);-->generate Guid
+                        await UpdateAsync(entity);
+                    }
+                }
+            }
         }
 
         public async Task<Dictionary<string, AddressCheckApi>> RunTaskAsync(List<string> strs, int limit = 100)
@@ -668,9 +709,7 @@ namespace Infrastructure.Services
             foreach (var item in res)
             {
                 if (!dict.ContainsKey(item.PartnerId))
-                {
                     dict.Add(item.PartnerId, new PartnerCreditDebitItem());
-                }
 
                 var val = item.Amount;
 
@@ -683,11 +722,11 @@ namespace Infrastructure.Services
             return dict;
         }
 
-        public async Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, bool isCustomer)
+        public async Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, Ex_ImportExcelDirect dir)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
             var list = new List<PartnerImportExcel>();
-            if (isCustomer)
+            if (dir.IsCustomer)
             {
                 var adList = new List<string>();
                 for (var i = 2; i <= worksheet.Dimension.Rows; i++)
@@ -706,7 +745,22 @@ namespace Infrastructure.Services
                 for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                 {
                     var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                    if (string.IsNullOrWhiteSpace(name))
+                        throw new Exception("Tên Khách hàng là bắt buộc");
+
                     var custRef = Convert.ToString(worksheet.Cells[row, 2].Value);
+                    if (!dir.IsCreateNew)
+                    {
+
+                        if (string.IsNullOrWhiteSpace(custRef))
+                            throw new Exception("Mã Khách hàng là bắt buộc");
+                    }
+                    else
+                    {
+
+                    }
+
+
                     var gender = Convert.ToString(worksheet.Cells[row, 3].Value).ToLower();
                     var dob = Convert.ToString(worksheet.Cells[row, 4].Value);
                     var ar = new string[3];
@@ -721,15 +775,16 @@ namespace Infrastructure.Services
                     var item = new PartnerImportExcel
                     {
                         Name = name,
+                        NameNoSign = StringUtils.RemoveSignVietnameseV2(name),
                         Ref = !string.IsNullOrEmpty(custRef) ? custRef : await sequenceService.NextByCode("customer"),
                         Gender = genderDict.ContainsKey(gender) ? genderDict[gender] : "Other",
                         Phone = Convert.ToString(worksheet.Cells[row, 5].Value),
                         MedicalHistory = Convert.ToString(worksheet.Cells[row, 7].Value),
                         JobTitle = Convert.ToString(worksheet.Cells[row, 8].Value),
                         Email = Convert.ToString(worksheet.Cells[row, 9].Value),
-                        BirthDay = ar[0],
-                        BirthMonth = ar[1],
-                        BirthYear = ar[2],
+                        BirthDay = !string.IsNullOrWhiteSpace(ar[0]) ? ar[0] : null,
+                        BirthMonth = !string.IsNullOrWhiteSpace(ar[1]) ? ar[1] : null,
+                        BirthYear = !string.IsNullOrWhiteSpace(ar[2]) ? ar[2] : null,
                         Comment = Convert.ToString(worksheet.Cells[row, 10].Value),
                         Customer = true,
                         Supplier = false
@@ -745,6 +800,7 @@ namespace Infrastructure.Services
                         item.WardCode = dict[address.ToLower()].WardCode;
                     }
                     list.Add(item);
+
                 }
             }
             else
@@ -752,10 +808,17 @@ namespace Infrastructure.Services
                 for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                 {
                     var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                    if (string.IsNullOrWhiteSpace(name))
+                        throw new Exception("Tên NCC là bắt buộc");
+
                     var suppRef = Convert.ToString(worksheet.Cells[row, 2].Value);
+                    if (!dir.IsCreateNew)
+                        if (string.IsNullOrWhiteSpace(suppRef)) throw new Exception("Mã NCC là bắt buộc");
+
                     var item = new PartnerImportExcel
                     {
                         Name = name,
+                        NameNoSign = StringUtils.RemoveSignVietnameseV2(name),
                         Ref = !string.IsNullOrEmpty(suppRef) ? suppRef : await sequenceService.NextByCode("supplier"),
                         Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
                         Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
@@ -767,11 +830,63 @@ namespace Infrastructure.Services
                     };
 
                     list.Add(item);
+
                 }
             }
 
             return list;
         }
+
+        //public async Task<File> ExportExcelFile(PartnerPaged val)
+        //{
+        //    val.Offset = 0;
+        //    val.Limit = int.MaxValue;
+
+        //    var partners = await GetQueryPaged(val).ToListAsync();
+        //    var memory = new MemoryStream();
+
+        //    using (var fs = new FileStream(Path.Combine(), FileMode.Create, FileAccess.Write))
+        //    {
+        //        var workbook = new XSSFWorkbook();
+        //        var sheet = workbook.CreateSheet("Thông tin Đối tác");
+        //        var row = sheet.CreateRow(0);
+
+        //        row.CreateCell(0).SetCellValue("Tên KH");
+        //        row.CreateCell(1).SetCellValue("Mã KH");
+        //        row.CreateCell(2).SetCellValue("Giới tính");
+        //        row.CreateCell(3).SetCellValue("Ngày sinh");
+        //        row.CreateCell(4).SetCellValue("SĐT");
+        //        row.CreateCell(5).SetCellValue("Địa chỉ");
+        //        row.CreateCell(6).SetCellValue("Tiền căn");
+        //        row.CreateCell(7).SetCellValue("Nghề nghiệp");
+        //        row.CreateCell(8).SetCellValue("Email");
+        //        row.CreateCell(9).SetCellValue("Ghi chú");
+
+        //        foreach (var item in partners)
+        //        {
+        //            var entity = await GetPartnerForDisplayAsync(item.Id);
+        //            var address = String.Join(", ",new string[4] { item.Street, item.WardName, item.DistrictName, item.CityName });
+        //            var histories = entity.PartnerHistoryRels.Select(x => x.History.Name).ToList();
+        //            histories.Add(item.MedicalHistory);
+
+        //            row.CreateCell(0).SetCellValue(item.Name);
+        //            row.CreateCell(1).SetCellValue(item.Ref);
+        //            row.CreateCell(2).SetCellValue(item.Gender);
+        //            row.CreateCell(3).SetCellValue(item.BirthDay+"/"+item.BirthMonth+"/"+item.BirthYear);
+        //            row.CreateCell(4).SetCellValue(item.Phone);
+        //            row.CreateCell(5).SetCellValue(address);
+        //            row.CreateCell(6).SetCellValue(string.Join(", ", histories));
+        //            row.CreateCell(7).SetCellValue(item.JobTitle);
+        //            row.CreateCell(8).SetCellValue(item.Email);
+        //            row.CreateCell(9).SetCellValue(item.Comment);
+        //        }
+
+        //        workbook.Write(fs);
+        //    }
+
+
+        //}
+
     }
 
     public class PartnerCreditDebitItem
@@ -779,5 +894,11 @@ namespace Infrastructure.Services
         public decimal Credit { get; set; }
 
         public decimal Debit { get; set; }
+    }
+
+    public class Ex_ImportExcelDirect
+    {
+        public bool IsCustomer { get; set; }
+        public bool IsCreateNew { get; set; }
     }
 }

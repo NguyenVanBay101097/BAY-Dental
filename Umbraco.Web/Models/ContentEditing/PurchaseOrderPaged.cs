@@ -14,6 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public string Search { get; set; }
         public string Type { get; set; }
+        public Guid? PartnerId { get; set; }
 
         public DateTime? DateOrderFrom { get; set; }
 

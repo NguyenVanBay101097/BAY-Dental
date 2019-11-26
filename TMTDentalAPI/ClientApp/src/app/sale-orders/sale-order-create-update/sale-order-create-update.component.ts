@@ -22,6 +22,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
 import { AccountPaymentBasic, AccountPaymentPaged } from 'src/app/account-payments/account-payment.service';
+import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -43,7 +44,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   dotKhams: DotKhamBasic[] = [];
 
   payments: AccountPaymentBasic[] = [];
-
+  paymentsInfo: PaymentInfoContent[] = [];
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
@@ -80,7 +81,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.filteredUsers = result;
       this.userCbx.loading = false;
     });
-    this.getAccountPayments();
+    // this.getAccountPayments();
+    this.getAccountPaymentReconcicles();
     this.loadPartners();
     this.loadUsers();
     this.loadDotKhamList();
@@ -369,7 +371,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       console.log(total);
       total += line.get('priceSubTotal').value;
     });
-    this.computeResidual(total);
+    // this.computeResidual(total);
     this.formGroup.get('amountTotal').patchValue(total);
   }
 
@@ -382,39 +384,37 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     var val = new AccountRegisterPaymentDefaultGet();
-    this.saleOrderService.defaultGetInvoice(this.id).subscribe(rs1 => {
-      val.invoiceIds = rs1 as string[];
-      this.saleOrderService.defaultValGet(val).subscribe(rs2 => {
-        if (this.id) {
-          if (rs2.amount > 0) {
-            let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-            modalRef.componentInstance.title = 'Thanh toán';
-            modalRef.componentInstance.defaultVal = rs2;
-            modalRef.result.then(() => {
-              this.notificationService.show({
-                content: 'Thanh toán thành công',
-                hideAfter: 3000,
-                position: { horizontal: 'right', vertical: 'bottom' },
-                animation: { type: 'fade', duration: 400 },
-                type: { style: 'success', icon: true }
-              });
-              this.routeActive();
-              this.getAccountPayments();
-            }, () => {
-
-            });
-          } else {
+    val.invoiceIds = [this.id];
+    this.saleOrderService.defaultOrderGet(val).subscribe(rs2 => {
+      if (this.id) {
+        if (rs2.amount > 0) {
+          let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          modalRef.componentInstance.title = 'Thanh toán';
+          rs2.communication = this.saleOrder.name;
+          modalRef.componentInstance.defaultVal = rs2;
+          modalRef.result.then(() => {
             this.notificationService.show({
-              content: 'Không còn hóa đơn nào để thanh toán',
+              content: 'Thanh toán thành công',
               hideAfter: 3000,
               position: { horizontal: 'right', vertical: 'bottom' },
               animation: { type: 'fade', duration: 400 },
-              type: { style: 'error', icon: true }
+              type: { style: 'success', icon: true }
             });
-          }
+            this.routeActive();
+            this.getAccountPayments();
+          }, () => {
 
+          });
+        } else {
+          this.notificationService.show({
+            content: 'Không còn hóa đơn nào để thanh toán',
+            hideAfter: 3000,
+            position: { horizontal: 'right', vertical: 'bottom' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
         }
-      })
+      }
     })
   }
 
@@ -425,6 +425,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.getPaymentBasicList(val).subscribe(
         rs => {
           this.payments = rs;
+        }
+      )
+    }
+  }
+
+  getAccountPaymentReconcicles() {
+    if (this.id) {
+      this.saleOrderService.getAccountPaymentReconcicles(this.id).subscribe(
+        rs => {
+          this.paymentsInfo = rs;
         }
       )
     }

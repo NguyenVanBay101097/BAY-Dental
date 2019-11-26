@@ -83,17 +83,22 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Mã tỉnh/thành phố
         /// </summary>
         public CitySimple City { get; set; }
-                        
+
+        public string CityName { get; set; }
+
         /// <summary>
         /// Tên quận/huyện
         /// </summary>
         public DistrictSimple District { get; set; }
-        
+
+        public string DistrictName { get; set; }
+
         /// <summary>
         /// Tên phường xã
         /// </summary>
         public WardSimple Ward { get; set; }
 
+        public string WardName { get; set; }
         /// <summary>
         /// Nguồn biết đến
         /// </summary>
@@ -120,6 +125,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
 
         public IEnumerable<HistorySimple> Histories { get; set; } = new List<HistorySimple>();
+
+        public string Fax { get; set; }
 
     }
 }
