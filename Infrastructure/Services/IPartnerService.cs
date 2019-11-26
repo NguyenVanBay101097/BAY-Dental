@@ -30,7 +30,6 @@ namespace Infrastructure.Services
        DateTime? fromDate = null,
        DateTime? toDate = null);
 
-        Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, bool isCustomer);
         Task<IEnumerable<PartnerReportLocationCity>> ReportLocationCity(ReportLocationCitySearch val);
         Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationDistrict(PartnerReportLocationCity val);
         Task<IEnumerable<PartnerReportLocationWard>> ReportLocationWard(PartnerReportLocationDistrict val);
