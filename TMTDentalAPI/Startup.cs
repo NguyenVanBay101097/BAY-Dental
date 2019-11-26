@@ -30,7 +30,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using TMTDentalAPI.Hubs;
 using TMTDentalAPI.Middlewares;
+using TMTDentalAPI.Services;
 using Umbraco.Web.Mapping;
 
 namespace TMTDentalAPI
@@ -177,12 +179,15 @@ namespace TMTDentalAPI
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<ISaleReportService, SaleReportService>();
             services.AddScoped<IRealRevenueReportService, RealRevenueReportService>();
+            services.AddScoped<IMailMessageService, MailMessageService>();
+            services.AddScoped<INotificationHubService, NotificationHubService>();
+            services.AddScoped<IAppointmentHubService, AppointmentHubService>();
 
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
             services.AddSingleton<IMailSender, SendGridSender>();
-            
+
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
 
@@ -236,6 +241,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LaboOrderProfile());
                 mc.AddProfile(new PurchaseOrderProfile());
                 mc.AddProfile(new PurchaseOrderLineProfile());
+                mc.AddProfile(new MailMessageProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -286,6 +292,8 @@ namespace TMTDentalAPI
             });
 
             services.AddHttpContextAccessor();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -322,9 +330,17 @@ namespace TMTDentalAPI
             app.UseCors(
                 options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
             );
+            app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
             app.UseAuthentication();
             app.UseMiddleware<MigrateDbMiddleware>();
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NotificationHub>("/notification");
+                routes.MapHub<AppointmentHub>("/appointment");
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

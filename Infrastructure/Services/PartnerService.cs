@@ -126,6 +126,7 @@ namespace Infrastructure.Services
             var totalItems = await query.CountAsync();
 
             var partnerList = new List<PartnerBasic>();
+            var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
             foreach (var i in items)
             {
                 var p = new PartnerBasic();
@@ -144,6 +145,15 @@ namespace Infrastructure.Services
                     p.Address = String.Join(", ", list);
                 }
                 partnerList.Add(p);
+
+                if (i.Customer)
+                {
+                    p.Debt = creditDebitDict[p.Id].Credit;
+                }
+                else if (i.Supplier)
+                {
+                    p.Debt = -creditDebitDict[p.Id].Debit;
+                }
             }
             return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -771,6 +781,79 @@ namespace Infrastructure.Services
             }
 
             return list;
+        }
+
+        public async Task<IEnumerable<PartnerReportLocationCity>> ReportLocationCity(ReportLocationCitySearch val)
+        {
+            var query = SearchQuery(x => x.Customer && x.Active);
+            if (!string.IsNullOrEmpty(val.CityCode))
+                query = query.Where(x => x.CityCode == val.CityCode);
+
+            var res = await query.GroupBy(x => new
+            {
+                x.CityCode,
+                x.CityName
+            }).Select(x => new PartnerReportLocationCity
+            {
+                CityCode = x.Key.CityCode,
+                CityName = x.Key.CityName,
+                Total = x.Count(),
+                Percentage = x.Count() * 100f / query.Count()
+            }).ToListAsync();
+
+            foreach (var item in res)
+            {
+                item.SearchCityCode = val.CityCode;
+                item.SearchDistrictCode = val.DistrictCode;
+                item.SearchWardCode = val.WardCode;
+            }
+            return res;
+        }
+        public async Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationDistrict(PartnerReportLocationCity val)
+        {
+            var query = SearchQuery(x => x.Customer && x.Active && x.CityCode == val.CityCode && x.CityName == val.CityName);
+            if (!string.IsNullOrEmpty(val.SearchDistrictCode))
+                query = query.Where(x => x.DistrictCode == val.SearchDistrictCode);
+            var res = await query.GroupBy(x => new
+            {
+                x.DistrictCode,
+                x.DistrictName
+            }).Select(x => new PartnerReportLocationDistrict
+            {
+                DistrictCode = x.Key.DistrictCode,
+                DistrictName = x.Key.DistrictName,
+                Total = x.Count(),
+                Percentage = x.Count() * 100f / query.Count()
+            }).ToListAsync();
+
+            foreach(var item in res)
+            {
+                item.CityCode = val.CityCode;
+                item.CityName = val.CityName;
+                item.SearchWardCode = val.SearchWardCode;
+            }
+
+            return res;
+        }
+
+        public async Task<IEnumerable<PartnerReportLocationWard>> ReportLocationWard(PartnerReportLocationDistrict val)
+        {
+            var query = SearchQuery(x => x.Customer && x.Active && x.DistrictCode == val.DistrictCode && x.DistrictName == val.DistrictName &&
+            x.CityCode == val.CityCode && x.CityName == val.CityName);
+            if (!string.IsNullOrEmpty(val.SearchWardCode))
+                query = query.Where(x => x.WardCode == val.SearchWardCode);
+            var res = await query.GroupBy(x => new
+            {
+                x.WardCode,
+                x.WardName
+            }).Select(x => new PartnerReportLocationWard
+            {
+                WardCode = x.Key.WardCode,
+                WardName = x.Key.WardName,
+                Total = x.Count(),
+                Percentage = x.Count() * 100f / query.Count()
+            }).ToListAsync();
+            return res;
         }
     }
 

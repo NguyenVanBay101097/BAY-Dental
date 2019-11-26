@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, HostListener, Input, Output, EventEmitter, forwardRef, AfterViewInit, ElementRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-field-binary-image-simple',
@@ -31,7 +32,8 @@ export class FieldBinaryImageSimpleComponent implements AfterViewInit, ControlVa
 
   writeValue(obj: any): void {
     if (obj) {
-      this.source = obj;
+      var source = environment.uploadDomain + 'api/Web/Image/' + obj;
+      this.source = source;
     } else {
       this.source = this.placeholder;
     }

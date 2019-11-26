@@ -22,6 +22,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Address { get; set; }
 
         public int? BirthYear { get; set; }
+
+        /// <summary>
+        /// Công nợ
+        /// </summary>
+        public decimal Debt { get; set; }
     }
 
     public class PartnerPaged

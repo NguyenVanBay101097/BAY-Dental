@@ -857,6 +857,19 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Appointments");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.AppointmentMailMessageRel", b =>
+                {
+                    b.Property<Guid>("AppointmentId");
+
+                    b.Property<Guid>("MailMessageId");
+
+                    b.HasKey("AppointmentId", "MailMessageId");
+
+                    b.HasIndex("MailMessageId");
+
+                    b.ToTable("AppointmentMailMessageRels");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Company", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1440,6 +1453,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Type")
                         .IsRequired();
 
+                    b.Property<string>("UploadId");
+
                     b.Property<string>("Url");
 
                     b.Property<string>("WriteById");
@@ -1634,6 +1649,51 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("MailMessages");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailMessageResPartnerRel", b =>
+                {
+                    b.Property<Guid>("MailMessageId");
+
+                    b.Property<Guid>("PartnerId");
+
+                    b.HasKey("MailMessageId", "PartnerId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.ToTable("MailMessageResPartnerRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<bool>("IsRead");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<Guid>("MailMessageId");
+
+                    b.Property<Guid>("ResPartnerId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("MailMessageId");
+
+                    b.HasIndex("ResPartnerId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MailNotifications");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.MailTrackingValue", b =>
@@ -3721,6 +3781,19 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.AppointmentMailMessageRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
+                        .WithMany("AppointmentMailMessageRels")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.MailMessage", "MailMessage")
+                        .WithMany()
+                        .HasForeignKey("MailMessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Company", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.AccountAccount", "AccountExpense")
@@ -4090,6 +4163,40 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailMessageResPartnerRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.MailMessage", "MailMessage")
+                        .WithMany("Recipients")
+                        .HasForeignKey("MailMessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailNotification", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.MailMessage", "MailMessage")
+                        .WithMany("Notifications")
+                        .HasForeignKey("MailMessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "ResPartner")
+                        .WithMany()
+                        .HasForeignKey("ResPartnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

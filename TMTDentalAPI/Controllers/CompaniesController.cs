@@ -218,7 +218,9 @@ namespace TMTDentalAPI.Controllers
             if (!string.IsNullOrEmpty(val.Logo) && ImageHelper.IsBase64String(val.Logo))
             {
                 var fileName = Path.GetRandomFileName() + "." + ImageHelper.GetImageExtension(val.Logo);
-                company.Logo = await _uploadService.UploadBinaryAsync(val.Logo, fileName: fileName);
+                var uploadResult = await _uploadService.UploadBinaryAsync(val.Logo, fileName: fileName);
+                if (uploadResult != null)
+                    company.Logo = uploadResult.Id;
             }
             else if (string.IsNullOrEmpty(val.Logo))
             {

@@ -85,10 +85,17 @@ namespace TMTDentalAPI.Controllers
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             SaveCategories(val, partner);
             SaveHistories(val, partner);
+            FixCityName(partner);
             await _partnerService.CreateAsync(partner);
 
             val.Id = partner.Id;
             return CreatedAtAction(nameof(Get), new { id = partner.Id }, val);
+        }
+
+        private void FixCityName(Partner partner)
+        {
+            if (!string.IsNullOrEmpty(partner.CityName) && partner.CityName.Contains("TP"))
+                partner.CityName = partner.CityName.Replace("TP", "Thành phố");
         }
 
         [HttpPut("{id}")]
@@ -112,6 +119,7 @@ namespace TMTDentalAPI.Controllers
             partner.EmployeeId = val.EmployeeId;
             SaveCategories(val, partner);
             SaveHistories(val, partner);
+            FixCityName(partner);
             await _partnerService.UpdateAsync(partner);
 
             return NoContent();
@@ -287,6 +295,27 @@ namespace TMTDentalAPI.Controllers
             };
 
             return Ok(rec);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ReportLocationCity(ReportLocationCitySearch val)
+        {
+            var res = await _partnerService.ReportLocationCity(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ReportLocationDistrict(PartnerReportLocationCity val)
+        {
+            var res = await _partnerService.ReportLocationDistrict(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ReportLocationWard(PartnerReportLocationDistrict val)
+        {
+            var res = await _partnerService.ReportLocationWard(val);
+            return Ok(res);
         }
     }
 }

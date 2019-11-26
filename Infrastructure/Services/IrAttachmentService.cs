@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,42 +13,55 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class IrAttachmentService : IIrAttachmentService
+    public class IrAttachmentService : BaseService<IrAttachment>, IIrAttachmentService
     {
-        private readonly IIrAttachmentRepository _attachmentRepository;
-        public IrAttachmentService(IIrAttachmentRepository attachmentRepository)
+        public IrAttachmentService(IAsyncRepository<IrAttachment> repository, IHttpContextAccessor httpContextAccessor)
+            : base(repository, httpContextAccessor)
         {
-            _attachmentRepository = attachmentRepository;
         }
 
-        public Task<IrAttachment> CreateAsync(IrAttachment attachment)
+        public override async Task<IEnumerable<IrAttachment>> CreateAsync(IEnumerable<IrAttachment> entities)
         {
-            return _attachmentRepository.InsertAsync(attachment);
+            foreach (var values in entities)
+            {
+                _CheckContents(values);
+                _MakeThumbnail(values);
+            }
+            return await base.CreateAsync(entities);
         }
 
-        public async Task DeleteAsync(IrAttachment attachment)
+        private void _MakeThumbnail(IrAttachment values)
         {
-            await _attachmentRepository.DeleteAsync(attachment);
         }
 
-        public async Task DeleteAttachments(IEnumerable<IrAttachment> attachments)
+        private void _CheckContents(IrAttachment values)
         {
-            await _attachmentRepository.DeleteAsync(attachments);
+            if (string.IsNullOrEmpty(values.MineType))
+                values.MineType = _ComputeMineType(values);
+        }
+
+        private string _ComputeMineType(IrAttachment values)
+        {
+            var provider = new FileExtensionContentTypeProvider();
+            string mineType = null;
+            if (!string.IsNullOrEmpty(values.MineType))
+                mineType = values.MineType;
+            if (mineType == null && !string.IsNullOrEmpty(values.DatasFname))
+                provider.TryGetContentType(values.DatasFname, out mineType);
+            if (mineType == null && !string.IsNullOrEmpty(values.Url))
+                provider.TryGetContentType(values.Url, out mineType);
+            //có thể viết hàm đoán minetype từ binary data, tạm thời viết sau
+            return mineType ?? "application/octet-stream";
         }
 
         public Task<IrAttachment> GetAttachment(string resModel, Guid? resId, string resField)
         {
-            return _attachmentRepository.FirstOrDefaultAsync(new InitialSpecification<IrAttachment>(x => x.ResModel == resModel && x.ResId == resId && x.ResField == resField));
+            return SearchQuery(x => x.ResModel == resModel && x.ResId == resId && x.ResField == resField).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<IrAttachment>> GetAttachments(string resModel, Guid? resId)
         {
-            return await _attachmentRepository.ListAsync(new InitialSpecification<IrAttachment>(x => x.ResModel == resModel && x.ResId == resId));
-        }
-
-        public Task<IrAttachment> GetByIdAsync(Guid id)
-        {
-            return _attachmentRepository.GetByIdAsync(id);
+            return await ListAsync(new InitialSpecification<IrAttachment>(x => x.ResModel == resModel && x.ResId == resId));
         }
 
         public async Task<IEnumerable<IrAttachmentBasic>> SearchRead(IrAttachmentSearchRead val)
@@ -56,13 +71,15 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<IrAttachment>(x => x.ResModel == val.Model));
             if (val.ResId.HasValue)
                 spec = spec.And(new InitialSpecification<IrAttachment>(x => x.ResId == val.ResId));
-            var query = _attachmentRepository.SearchQuery(spec);
+            var query = SearchQuery(spec.AsExpression());
             var res = await query.Select(x => new IrAttachmentBasic
             {
                 Id = x.Id,
                 Name = x.Name,
                 DatasFname = x.DatasFname,
-                MineType = x.MineType
+                MineType = x.MineType,
+                Url = x.Url,
+                UploadId = x.UploadId,
             }).ToListAsync();
             return res;
         }

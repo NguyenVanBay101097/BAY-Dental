@@ -38,6 +38,7 @@ import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { DotKhamStepService, DotKhamStepAssignDotKhamVM } from '../dot-kham-step.service';
 import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-dot-kham-create-update',
@@ -94,6 +95,9 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   dialog = false;//Component được mở dưới dạng Dialog hay Tab mới
   dotKham: DotKhamDisplay = new DotKhamDisplay();
+
+  webImageApi: string;
+  webContentApi: string;
 
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
@@ -161,6 +165,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     this.valueChangeCombobox();
     this.getImageIds();
 
+    this.webImageApi = environment.uploadDomain + 'api/Web/Image';
+    this.webContentApi = environment.uploadDomain + 'api/Web/Content';
   }
 
   getActiveRoute() {

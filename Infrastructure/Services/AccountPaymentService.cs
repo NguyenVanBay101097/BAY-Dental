@@ -180,14 +180,50 @@ namespace Infrastructure.Services
             {
                 var invoiceIds = rec.AccountInvoicePaymentRels.Select(x => x.InvoiceId);
                 await invoiceObj.RegisterPayment(invoiceIds, counterpartAml);
-            } else
+            }
+            else if (rec.Partner != null)
             {
-
+                //Tự động đối soát với tất cả account move line nợ từ cũ nhất tới mới nhất
+                await AutoReconcilePayment(rec, counterpartAml);
             }
 
             await moveObj.Write(new List<AccountMove>() { move });
             await moveObj.Post(new List<AccountMove>() { move });
             return move;
+        }
+
+        private async Task AutoReconcilePayment(AccountPayment self, AccountMoveLine paymentLine)
+        {
+            var moveLineObj = GetService<IAccountMoveLineService>();
+
+            var lineToReconcile = new List<AccountMoveLine>();
+            //dựa vào partner type để tìm các account move line nợ
+            if (self.Partner == null)
+                return;
+            var commercialPartnerId = self.Partner.Id;
+
+            var debt_lines = moveLineObj.SearchQuery(x => x.Reconciled == false && x.Id != paymentLine.Id && x.PartnerId == commercialPartnerId &&
+            ((self.PartnerType == "customer" && x.Account.InternalType == "receivable") 
+            || (self.PartnerType == "supplier" && x.Account.InternalType == "payable")),
+            orderBy: x => x.OrderBy(s => s.Date)).Include(x => x.Invoice).Include("Invoice.PaymentMoveLines").Include(x => x.Move).ToList();
+
+            lineToReconcile.AddRange(debt_lines);
+
+            var reconcileLines = lineToReconcile.Concat(new List<AccountMoveLine>() { paymentLine });
+            await moveLineObj.Reconcile(reconcileLines.ToList());
+
+            //trigger update
+            moveLineObj._AmountResidual(reconcileLines);
+            await moveLineObj.UpdateAsync(reconcileLines);
+
+            var invoices_to_update = reconcileLines.Where(x => x.Invoice != null).Select(x => x.Invoice).Distinct().ToList();
+            if (invoices_to_update.Any())
+            {
+                var invObj = GetService<IAccountInvoiceService>();
+                invObj._ComputeResidual(invoices_to_update);
+                invObj._ComputePayments(invoices_to_update);
+                await invObj.UpdateAsync(invoices_to_update);
+            }
         }
 
         private AccountMoveLine _GetLiquidityMoveLineVals(AccountPayment rec, decimal amount)

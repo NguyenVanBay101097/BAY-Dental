@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiDomain: 'http://tenant5.myproject.com:50396/'
+  apiDomain: 'http://tenant3.myproject.com:50396/',
+  uploadDomain: 'https://localhost:44324/',
   // apiDomain: 'http://localhost:50396/'
 };
 

@@ -78,17 +78,12 @@
     <kendo-grid-column field="ref" title="Mã" width="100"></kendo-grid-column>
     <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
     <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
-    <kendo-grid-column *ngIf="queryCustomer" title="Giới" width="70">
-      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        {{dataItem.gender ? getGender(dataItem.gender) : ''}}
-      </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Tuổi" width="70" *ngIf="queryCustomer">
-      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        {{dataItem.birthYear ? getAge(dataItem.birthYear) : ''}}
-      </ng-template>
-    </kendo-grid-column>
     <kendo-grid-column field="address" title="Địa chỉ" width="250"></kendo-grid-column>
+    <kendo-grid-column field="debt" title="Nợ hiện tại" width="120" class="text-right">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.debt | number}}
+      </ng-template>
+    </kendo-grid-column>
     <div *ngIf="queryCustomer">
       <div *kendoGridDetailTemplate="let dataItem">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -112,7 +107,7 @@
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="info_{{dataItem.id}}" role="tabpanel" aria-labelledby="info-tab">
             <div>
-              <app-partner-info [partnerId]="dataItem.id"></app-partner-info>
+              <app-partner-info [partnerId]="dataItem.id" (updateChange)="onUpdateChange()"></app-partner-info>
             </div>
           </div>
           <div class="tab-pane fade" id="invoice_{{dataItem.id}}" role="tabpanel" aria-labelledby="invoice-tab">

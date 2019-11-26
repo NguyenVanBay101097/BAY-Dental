@@ -72,6 +72,10 @@ import { HotkeyModule } from 'angular2-hotkeys';
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
 import { SaleReportModule } from './sale-report/sale-report.module';
+import { MomentModule } from 'ngx-moment';
+import { MailMessagesModule } from './mail-messages/mail-messages.module';
+import 'moment/locale/vi';
+import { PartnerReportModule } from './partner-report/partner-report.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -147,7 +151,14 @@ registerLocaleData(localeVi, 'vi');
     PurchaseOrdersModule,
     HotkeyModule.forRoot(),
     RealRevenueReportModule,
-    SaleReportModule
+    SaleReportModule,
+    MomentModule.forRoot({
+      relativeTimeThresholdOptions: {
+        'm': 59
+      }
+    }),
+    MailMessagesModule,
+    PartnerReportModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

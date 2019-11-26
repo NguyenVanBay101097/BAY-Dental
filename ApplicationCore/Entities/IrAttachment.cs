@@ -49,5 +49,7 @@ namespace ApplicationCore.Entities
         public bool Active { get; set; }
 
         public int? FileSize { get; set; }
+
+        public string UploadId { get; set; }
     }
 }

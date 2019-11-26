@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PartnerService } from '../partner.service';
 import { PartnerDisplay, PartnerCategorySimple } from '../partner-simple';
 import { HistorySimple } from 'src/app/history/history';
@@ -23,6 +23,8 @@ export class PartnerInfoComponent implements OnInit {
   partner = new PartnerDisplay();
 
   address: string;
+
+  @Output() updateChange = new EventEmitter<any>();
 
   ngOnInit() {
     if (this.partnerId) {
@@ -112,6 +114,7 @@ export class PartnerInfoComponent implements OnInit {
     modalRef.result.then(
       rs => {
         this.getPartnerInfo();
+        this.updateChange.emit(null);
       },
       er => { }
     )
@@ -130,6 +133,7 @@ export class PartnerInfoComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        this.updateChange.emit(null);
       }, () => {
       });
     });

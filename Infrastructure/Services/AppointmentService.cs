@@ -35,6 +35,7 @@ namespace Infrastructure.Services
                 await InsertAppointmentSequence();
                 entity.Name = await sequenceService.NextByCode("appointment");
             }
+
             return await base.CreateAsync(entity);
         }
 
@@ -255,8 +256,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateList.Contains(x.State));
             }
 
-            query = query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit);
-            var items = await query.Select(x => new AppointmentBasic
+            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit).Select(x => new AppointmentBasic
             {
                 Id = x.Id,
                 Name = x.Name,

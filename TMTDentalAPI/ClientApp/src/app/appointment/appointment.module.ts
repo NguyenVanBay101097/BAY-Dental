@@ -18,9 +18,10 @@ import { AppointmentStateFilterComponent } from './appointment-state-filter/appo
 import { AppointmentCalendarComponent } from './appointment-calendar/appointment-calendar.component';
 import { AppointmentVMService } from './appointment-vm.service';
 import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kanban.component';
+import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
 
 @NgModule({
-  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent, AppointmentCalendarComponent, AppointmentKanbanComponent],
+  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent, AppointmentCalendarComponent, AppointmentKanbanComponent, AppointmentDetailDialogComponent],
   imports: [
     CommonModule,
     AppointmentRoutingModule,
@@ -30,7 +31,7 @@ import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kan
     SharedModule,
     NgbModule
   ],
-  entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent],
+  entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
   providers: [
     AppointmentService,
     // AppointmentVMService

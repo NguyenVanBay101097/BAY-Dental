@@ -19,5 +19,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DatasFname { get; set; }
 
         public string MineType { get; set; }
+
+        public string Url { get; set; }
+        public string UploadId { get; set; }
     }
 }
