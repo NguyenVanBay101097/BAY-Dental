@@ -379,7 +379,7 @@ namespace TMTDentalAPI.Controllers
 
                     var histories = entity.PartnerHistoryRels.Select(x => x.History.Name).ToList();
                     histories.Add(item.MedicalHistory);
-
+                        
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
                     worksheet.Cells[row, 3].Value = (item.Gender=="Male") ? "Nam" : (item.Gender == "Female") ? "Nữ" : "Khác";
