@@ -353,7 +353,7 @@ namespace TMTDentalAPI.Controllers
 
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
-                    worksheet.Cells[row, 3].Value = item.Gender;
+                    worksheet.Cells[row, 3].Value = (item.Gender=="Male") ? "Nam" : (item.Gender == "Female") ? "Nữ" : "Khác";
                     worksheet.Cells[row, 4].Value = item.BirthDay + "/" + item.BirthMonth + "/" + item.BirthYear;
                     worksheet.Cells[row, 5].Value = item.Phone;
                     worksheet.Cells[row, 6].Value = address;
