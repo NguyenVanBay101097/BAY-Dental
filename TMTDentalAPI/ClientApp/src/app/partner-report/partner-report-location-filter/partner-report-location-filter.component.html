@@ -1,0 +1,15 @@
+<div [formGroup]="formGroup" style="display: flex;">
+    <kendo-combobox style="flex: 1" [data]="dataResultCities" [textField]="'name'" [filterable]="true"
+        [placeholder]="'Tỉnh/Thành phố'" [filterable]="true" (filterChange)="handleCityFilter($event)" #cityCbx
+        (valueChange)="handleCityChange($event)" formControlName="city" [valueField]="'code'">
+    </kendo-combobox>
+    <kendo-combobox style="flex: 1" [data]="dataResultDistricts" [textField]="'name'"
+        [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'"
+        (filterChange)="handleDistrictFilter($event)" [filterable]="true" #districtCbx
+        (valueChange)="handleDistrictChange($event)" formControlName="district" [valueField]="'code'">
+    </kendo-combobox>
+    <kendo-combobox style="flex: 1" [data]="dataResultWards" [textField]="'name'" [disableControl]="isDisabledWards"
+        [placeholder]="'Phường/Xã'" [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx
+        (valueChange)="handleWardChange($event)" formControlName="ward" [valueField]="'code'">
+    </kendo-combobox>
+</div>

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationCore.Interfaces
+namespace Infrastructure.Services
 {
     public interface IUploadService
     {
-        Task<string> UploadBinaryAsync(string base64, string fileName = "");
+        Task<UploadResult> UploadBinaryAsync(string base64, string fileName);
     }
 }

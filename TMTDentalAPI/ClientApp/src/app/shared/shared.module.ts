@@ -28,6 +28,9 @@ import { TaiDateRangeFilterDropdownComponent } from './tai-date-range-filter-dro
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TmtOptionSelectDropdownComponent } from './tmt-option-select-dropdown/tmt-option-select-dropdown.component';
 import { TaiDateRangeSimpleDropdownComponent } from './tai-date-range-simple-dropdown/tai-date-range-simple-dropdown.component';
+import { HeaderNotificationComponent } from './header-notification/header-notification.component';
+import { MomentModule } from 'ngx-moment';
+import { HeaderAppointmentComponent } from './header-appointment/header-appointment.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +52,9 @@ import { TaiDateRangeSimpleDropdownComponent } from './tai-date-range-simple-dro
     TaiProductListSelectableComponent,
     TaiDateRangeFilterDropdownComponent,
     TmtOptionSelectDropdownComponent,
-    TaiDateRangeSimpleDropdownComponent
+    TaiDateRangeSimpleDropdownComponent,
+    HeaderNotificationComponent,
+    HeaderAppointmentComponent
   ],
   exports: [
     HeaderComponent,
@@ -68,7 +73,9 @@ import { TaiDateRangeSimpleDropdownComponent } from './tai-date-range-simple-dro
     TaiProductListSelectableComponent,
     TaiDateRangeFilterDropdownComponent,
     TmtOptionSelectDropdownComponent,
-    TaiDateRangeSimpleDropdownComponent
+    TaiDateRangeSimpleDropdownComponent,
+    HeaderNotificationComponent,
+    HeaderAppointmentComponent
   ],
   imports: [
     CommonModule,
@@ -79,7 +86,12 @@ import { TaiDateRangeSimpleDropdownComponent } from './tai-date-range-simple-dro
     ReactiveFormsModule,
     MyCustomKendoModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    MomentModule.forRoot({
+      relativeTimeThresholdOptions: {
+        'm': 59
+      }
+    })
   ],
   providers: [NavSidebarService, AppLoadingService],
   entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent],

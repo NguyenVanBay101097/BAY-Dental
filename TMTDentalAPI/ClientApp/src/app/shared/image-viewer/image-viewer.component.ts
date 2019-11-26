@@ -26,8 +26,8 @@ export class ImageViewerComponent implements OnInit {
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
-    this.imageApi = environment.apiDomain + 'api/Web/Image';
-    this.imageDownloadApi = environment.apiDomain + 'api/Web/Content';
+    this.imageApi = environment.uploadDomain + 'api/Web/Image';
+    this.imageDownloadApi = environment.uploadDomain + 'api/Web/Content';
   }
 
   showPrevious() {

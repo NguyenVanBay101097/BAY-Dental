@@ -1,9 +1,11 @@
 ﻿using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,14 +14,15 @@ namespace Infrastructure.Services
 {
     public class UploadService: IUploadService
     {
-        private const string _IMAGE_SERVER = "https://statics.tpos.dev/upload/image";
+        private readonly string _serverUploadApi;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public UploadService(IHttpContextAccessor httpContextAccessor)
+        public UploadService(IHttpContextAccessor httpContextAccessor, IConfiguration config)
         {
             _httpContextAccessor = httpContextAccessor;
+            _serverUploadApi = config.GetValue<string>("ServerUploadApi");
         }
 
-        public async Task<string> UploadBinaryAsync(string base64, string fileName = "")
+        public async Task<UploadResult> UploadBinaryAsync(string base64, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
                 fileName = Path.GetRandomFileName();
@@ -55,7 +58,7 @@ namespace Infrastructure.Services
 
                         formData.Add(fileStreamContent, "files", fileName);
 
-                        var response = client.PostAsync(_IMAGE_SERVER, formData).Result;
+                        var response = client.PostAsync(_serverUploadApi, formData).Result;
                         if (!response.IsSuccessStatusCode)
                         {
                             return null;
@@ -64,8 +67,8 @@ namespace Infrastructure.Services
                         var stringMessage = await response.Content.ReadAsStringAsync();
                         if (!string.IsNullOrEmpty(stringMessage))
                         {
-                            var result = JsonConvert.DeserializeObject<Dictionary<string, string>>(stringMessage);
-                            return result["fileUrl"];
+                            var result = JsonConvert.DeserializeObject<IEnumerable<UploadResult>>(stringMessage);
+                            return result.FirstOrDefault();
                         }
 
                         return null;
@@ -73,5 +76,13 @@ namespace Infrastructure.Services
                 }
             }
         }
+    }
+
+    public class UploadResult
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public long FileSize { get; set; }
+        public string MineType { get; set; }
     }
 }

@@ -49,5 +49,7 @@ namespace ApplicationCore.Entities
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+
+        public ICollection<AppointmentMailMessageRel> AppointmentMailMessageRels { get; set; } = new List<AppointmentMailMessageRel>();
     }
 }

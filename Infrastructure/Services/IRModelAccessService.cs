@@ -43,7 +43,8 @@ namespace Infrastructure.Services
             "ToothCategory",
             "Tooth",
             "ProductPricelistItem",
-            "SaleOrderLine"
+            "SaleOrderLine",
+            "MailMessage"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,

@@ -106,7 +106,10 @@ namespace Infrastructure.Data
         public DbSet<ResPartnerBank> ResPartnerBanks { get; set; }
         public DbSet<MailMessage> MailMessages { get; set; }
         public DbSet<MailTrackingValue> MailTrackingValues { get; set; }
-        
+        public DbSet<MailMessageResPartnerRel> MailMessageResPartnerRels { get; set; }
+        public DbSet<MailNotification> MailNotifications { get; set; }
+        public DbSet<AppointmentMailMessageRel> AppointmentMailMessageRels { get; set; }
+
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -196,6 +199,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ResPartnerBankConfiguration());
             builder.ApplyConfiguration(new MailMessageConfiguration());
             builder.ApplyConfiguration(new MailTrackingValueConfiguration());
+            builder.ApplyConfiguration(new MailMessageResPartnerRelConfiguration());
+            builder.ApplyConfiguration(new MailNotificationConfiguration());
+            builder.ApplyConfiguration(new AppointmentMailMessageRelConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

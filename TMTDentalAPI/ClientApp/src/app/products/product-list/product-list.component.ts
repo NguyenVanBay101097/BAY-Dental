@@ -219,7 +219,7 @@ export class ProductListComponent implements OnInit {
       var productDefaultVal = new Product();
       productDefaultVal.type = 'consu';
       productDefaultVal.saleOK = false;
-      productDefaultVal.purchaseOK = false;
+      productDefaultVal.purchaseOK = true;
       productDefaultVal.keToaOK = true;
       modalRef.componentInstance.productDefaultVal = productDefaultVal;
     } else {

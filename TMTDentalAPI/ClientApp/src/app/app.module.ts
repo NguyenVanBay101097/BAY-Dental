@@ -72,6 +72,10 @@ import { HotkeyModule } from 'angular2-hotkeys';
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
 import { SaleReportModule } from './sale-report/sale-report.module';
+import { MomentModule } from 'ngx-moment';
+import { MailMessagesModule } from './mail-messages/mail-messages.module';
+import 'moment/locale/vi';
+import { PartnerReportModule } from './partner-report/partner-report.module';
 import { ResBanksModule } from './res-banks/res-banks.module';
 import { ResPartnerBanksModule } from './res-partner-banks/res-partner-banks.module';
 
@@ -150,6 +154,13 @@ registerLocaleData(localeVi, 'vi');
     HotkeyModule.forRoot(),
     RealRevenueReportModule,
     SaleReportModule,
+    MomentModule.forRoot({
+      relativeTimeThresholdOptions: {
+        'm': 59
+      }
+    }),
+    MailMessagesModule,
+    PartnerReportModule,
     ResBanksModule,
     ResPartnerBanksModule
   ],

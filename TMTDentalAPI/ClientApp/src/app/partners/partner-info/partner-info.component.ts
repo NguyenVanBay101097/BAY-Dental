@@ -24,6 +24,8 @@ export class PartnerInfoComponent implements OnInit {
 
   address: string;
 
+  @Output() updateChange = new EventEmitter<any>();
+
   ngOnInit() {
     if (this.partnerId) {
       this.getPartnerInfo();
@@ -112,7 +114,7 @@ export class PartnerInfoComponent implements OnInit {
     modalRef.result.then(
       rs => {
         this.getPartnerInfo();
-        this.createNewEvent.next();
+        this.updateChange.emit(null);
       },
       er => { }
     )
@@ -131,6 +133,7 @@ export class PartnerInfoComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        this.updateChange.emit(null);
       }, () => {
       });
     });

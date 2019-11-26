@@ -45,6 +45,33 @@ export class SaleOrderLinePaged {
     dateOrderTo: string;
 }
 
+export class PartnerReportLocationCitySearch {
+    cityCode: string;
+    districtCode: string;
+    wardCode: string;
+}
+
+export class PartnerReportLocationCity {
+    cityCode: string;
+    cityName: string;
+    total: number;
+    percentage: number;
+}
+
+export class PartnerReportLocationDistrict {
+    districtCode: string;
+    districtName: string;
+    total: number;
+    percentage: number;
+}
+
+export class PartnerReportLocationWard {
+    wardCode: string;
+    wardName: string;
+    total: number;
+    percentage: number;
+}
+
 export class ImportExcelDirect {
     isCustomer: boolean;
     isCreateNew: boolean;
@@ -102,6 +129,18 @@ export class PartnerService {
 
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
+    reportLocationCity(val: PartnerReportLocationCitySearch): Observable<PartnerReportLocationCity[]> {
+        return this.http.post<PartnerReportLocationCity[]>(this.baseApi + this.apiUrl + '/ReportLocationCity', val);
+    }
+
+    reportLocationDistrict(val: PartnerReportLocationCity): Observable<PartnerReportLocationDistrict[]> {
+        return this.http.post<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationDistrict', val);
+    }
+
+    reportLocationWard(val: PartnerReportLocationDistrict): Observable<PartnerReportLocationWard[]> {
+        return this.http.post<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationWard', val);
     }
 
     deleteCustomer(id) {

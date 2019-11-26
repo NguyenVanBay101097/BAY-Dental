@@ -1,0 +1,21 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="districtName" title="Quận/Huyện">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.districtName ? dataItem.districtName : 'Chưa xác định'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="total" class="text-right" title="Số khách hàng" footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.total | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="percentage" title="Phần trăm">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.percentage | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <div *kendoGridDetailTemplate="let dataItem">
+        <app-partner-report-ward [item]="dataItem"></app-partner-report-ward>
+    </div>
+</kendo-grid>

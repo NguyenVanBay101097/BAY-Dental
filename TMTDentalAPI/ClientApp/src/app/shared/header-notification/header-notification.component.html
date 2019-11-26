@@ -1,0 +1,28 @@
+<a class="nav-link dropdown-toggle" data-toggle="dropdown" id="bd-notification" href="#" role="button"
+    (click)="resetMessageCount()" aria-haspopup="true" aria-expanded="false" title="Notifications">
+    <i aria-label="Messages" class="fa fa-comments" role="img"></i>
+    <span class="o_notification_counter badge badge-pill">{{messageCount | number}}</span>
+</a>
+
+<div class="o_mail_systray_dropdown dropdown-menu dropdown-menu-right" aria-labelledby="bd-notification">
+    <div class="o_mail_systray_dropdown_items">
+        <div class="o_mail_preview o_preview_unread" *ngFor="let message of messages"
+            (click)="notificationClick(message)">
+            <!-- <div class="o_mail_preview_image ">
+            </div> -->
+            <div class="o_preview_info">
+                <div class="o_preview_title">
+                    <span class="o_preview_name">
+                        {{message.subject}}
+                    </span>
+                    <span class="o_last_message_date">{{message.date | amTimeAgo}}</span>
+                </div>
+                <div class="o_last_message_preview">
+                    <span [innerHTML]="message.body"></span>
+                </div>
+                <!-- <small class="o_last_message_date text-muted">{{message.date | amTimeAgo}}</small> -->
+                <!-- <span class="o_discuss_icon o_mail_preview_mark_as_read fa fa-check" title="Mark as Read"></span> -->
+            </div>
+        </div>
+    </div>
+</div>
