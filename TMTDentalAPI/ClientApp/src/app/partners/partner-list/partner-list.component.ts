@@ -54,9 +54,6 @@ export class PartnerListComponent implements OnInit {
   // })
   closeResult: string;
 
-  excel = [];
-  ids = [];
-
   constructor(
     private service: PartnerService, private windowService: WindowService,
     private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal,
@@ -107,11 +104,6 @@ export class PartnerListComponent implements OnInit {
       this.loading = false;
 
       console.log(rs2);
-      this.ids = [];
-      rs2.data.forEach(row => {
-        this.ids.push(row.id);
-      });
-      this.xlsxExport();
     }, er => {
       this.loading = true;
       console.log(er);
@@ -325,52 +317,6 @@ export class PartnerListComponent implements OnInit {
         this.getPartnersList();
       },
       er => { }
-    )
-  }
-
-
-  //=================== CLIENT Excel export ============================
-  exportAsXLSX(): void {
-    this.service.exportAsExcelFile(this.excel, 'Thông tin Đối tác');
-  }
-
-  xlsxExport() {
-    this.service.getPartnerDisplaysByIds(this.ids).subscribe(
-      rs => {
-        console.log(rs);
-        this.excel = [];
-        rs.forEach(item => {
-          if (item.customer) {
-            this.excel.push(
-              {
-                "Tên KH": item.name,
-                "Mã KH": item.ref,
-                "Giới tính": this.getGender(item.gender),
-                "Ngày sinh": this.getBirth(item),
-                "SĐT": item.phone,
-                "Địa chỉ": this.getAddress(item),
-                "Tiền căn": this.getHistories(item),
-                "Nghề nghiệp": item.jobTitle,
-                "Email": item.email,
-                "Ghi chú": item.comment
-              }
-            )
-          } else if (item.supplier) {
-            this.excel.push(
-              {
-                "Tên NCC": item.name,
-                "Mã NCC": item.ref,
-                "SĐT": item.phone,
-                "Fax": item.fax,
-                "Địa chỉ": item.street,
-                "Email": item.email,
-                "Ghi chú": item.comment
-              }
-            )
-          }
-
-        });
-      }
     )
   }
 
