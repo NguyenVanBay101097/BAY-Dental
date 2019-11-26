@@ -151,13 +151,13 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<bool> Reconcile(IList<AccountMoveLine> moveLines, long? writeoffJournalId = null, long? writeoffAccountId = null,
+        public async Task<bool> Reconcile(IList<AccountMoveLine> self, long? writeoffJournalId = null, long? writeoffAccountId = null,
          string type = "auto", DateTime? dateP = null)
         {
             var companyIds = new HashSet<Guid>();
             var allAccounts = new HashSet<Guid>();
             var partners = new HashSet<Guid?>();
-            foreach (var line in moveLines)
+            foreach (var line in self)
             {
                 companyIds.Add(line.Company.Id);
                 allAccounts.Add(line.Account.Id);
@@ -174,49 +174,134 @@ namespace Infrastructure.Services
             if (partners.Count > 1)
                 throw new Exception("Tất cả bút toán không cùng thuộc một đối tác!");
 
-            await AutoReconcileLines(moveLines);
+            await AutoReconcileLines(self);
+
+            await CheckFullReconcile(self);
             return true;
         }
 
-        private async Task AutoReconcileLines(IList<AccountMoveLine> moveLines)
+        private async Task CheckFullReconcile(IList<AccountMoveLine> self)
         {
-            if (!moveLines.Any())
-                return;
-
-            var pairRes = _GetPairToReconcile(moveLines);
-            var smDebitMove = pairRes.Debit;
-            var smCreditMove = pairRes.Credit;
-
-            if (smCreditMove == null || smDebitMove == null)
-                return;
-
-            var amountReconcile = Math.Min(smDebitMove.AmountResidual, -smCreditMove.AmountResidual);
-            if (amountReconcile == smDebitMove.AmountResidual)
-                moveLines.Remove(smDebitMove);
-            if (amountReconcile == -smCreditMove.AmountResidual)
-                moveLines.Remove(smCreditMove);
-
-            var amountReconcile2 = Math.Min(smDebitMove.AmountResidual, -smCreditMove.AmountResidual);
-            var partialRecObj = GetService<IAccountPartialReconcileService>();
-
-            await partialRecObj.CreateAsync(new List<AccountPartialReconcile>()
+            //Get first all aml involved
+            var partRecObj = GetService<IAccountPartialReconcileService>();
+            var selfIds = self.Select(x => x.Id).ToList();
+            var todo = await partRecObj.SearchQuery(x => selfIds.Contains(x.DebitMoveId) || selfIds.Contains(x.CreditMoveId))
+                .Include(x => x.DebitMove).Include(x => x.CreditMove).ToListAsync();
+            var amls = self.Distinct().ToList();
+            var seen = new List<Guid>();
+            var partial_recs = new List<AccountPartialReconcile>();
+            while (todo.Any())
             {
-                new AccountPartialReconcile
+                var aml_tmps = todo.Select(x => x.DebitMove).Union(todo.Select(x => x.CreditMove)).Distinct().ToList();
+                amls = amls.Union(aml_tmps).ToList();
+                seen = seen.Union(todo.Select(x => x.Id)).Distinct().ToList();
+                partial_recs = partial_recs.Union(todo).ToList();
+
+                todo = await partRecObj.SearchQuery(x => (selfIds.Contains(x.DebitMoveId) || selfIds.Contains(x.CreditMoveId)) &&
+                !seen.Contains(x.Id))
+              .Include(x => x.DebitMove).Include(x => x.CreditMove).ToListAsync();
+            }
+
+            decimal total_debit = 0;
+            decimal total_credit = 0;
+            foreach (var aml in amls)
+            {
+                total_debit += aml.Debit;
+                total_credit += aml.Credit;
+            }
+
+            if (total_debit == total_credit)
+            {
+                var fullRecObj = GetService<IAccountFullReconcileService>();
+                var fullRec = new AccountFullReconcile();
+                fullRec.PartialReconciles = partial_recs;
+                fullRec.ReconciledLines = amls;
+                await fullRecObj.CreateAsync(fullRec);
+            }
+        }
+
+        private async Task<IList<AccountMoveLine>> AutoReconcileLines(IList<AccountMoveLine> self)
+        {
+            // Create list of debit and list of credit move ordered by date-currency
+            var debit_moves = self.Where(x => x.Debit != 0).ToList();
+            var credit_moves = self.Where(x => x.Credit != 0).ToList();
+            debit_moves = debit_moves.OrderBy(x => x.Date).ToList();
+            credit_moves = credit_moves.OrderBy(x => x.Date).ToList();
+
+            return await _ReconcileLines(debit_moves, credit_moves);
+
+            //if (!self.Any())
+            //    return;
+
+            //var pairRes = _GetPairToReconcile(self);
+            //var smDebitMove = pairRes.Debit;
+            //var smCreditMove = pairRes.Credit;
+
+            //if (smCreditMove == null || smDebitMove == null)
+            //    return;
+
+            //var amountReconcile = Math.Min(smDebitMove.AmountResidual, -smCreditMove.AmountResidual);
+            //if (amountReconcile == smDebitMove.AmountResidual)
+            //    self.Remove(smDebitMove);
+            //if (amountReconcile == -smCreditMove.AmountResidual)
+            //    self.Remove(smCreditMove);
+
+            //var amountReconcile2 = Math.Min(smDebitMove.AmountResidual, -smCreditMove.AmountResidual);
+            //var partialRecObj = GetService<IAccountPartialReconcileService>();
+
+            //await partialRecObj.CreateAsync(new List<AccountPartialReconcile>()
+            //{
+            //    new AccountPartialReconcile
+            //    {
+            //        DebitMove = smDebitMove,
+            //        DebitMoveId = smDebitMove.Id,
+            //        CreditMove = smCreditMove,
+            //        CreditMoveId = smCreditMove.Id,
+            //        Amount = amountReconcile2,
+            //        CompanyId = smDebitMove.CompanyId,
+            //        Company = smDebitMove.Company,
+            //    }
+            //});
+
+            ////matched_debit_ids, matched_credit_ids thay đổi update residual 
+            //_AmountResidual(new List<AccountMoveLine>() { smDebitMove, smCreditMove });
+
+            //await AutoReconcileLines(self);
+        }
+
+        private async Task<IList<AccountMoveLine>> _ReconcileLines(List<AccountMoveLine> debit_moves, List<AccountMoveLine> credit_moves)
+        {
+            var to_create = new List<AccountPartialReconcile>();
+            while(debit_moves.Any() && credit_moves.Any())
+            {
+                var debit_move = debit_moves[0];
+                var credit_move = credit_moves[0];
+                var temp_amount_residual = Math.Min(debit_move.AmountResidual, -credit_move.AmountResidual);
+                var amount_reconcile = Math.Min(debit_move.AmountResidual, -credit_move.AmountResidual);
+
+                if (amount_reconcile == debit_move.AmountResidual)
+                    debit_moves.Remove(debit_move);
+                else
+                    debit_moves[0].AmountResidual -= temp_amount_residual;
+
+                if (amount_reconcile == -credit_move.AmountResidual)
+                    credit_moves.Remove(credit_move);
+                else
+                    credit_moves[0].AmountResidual += temp_amount_residual;
+
+                to_create.Add(new AccountPartialReconcile
                 {
-                    DebitMove = smDebitMove,
-                    DebitMoveId = smDebitMove.Id,
-                    CreditMove = smCreditMove,
-                    CreditMoveId = smCreditMove.Id,
-                    Amount = amountReconcile2,
-                    CompanyId = smDebitMove.CompanyId,
-                    Company = smDebitMove.Company,
-                }
-            });
+                    DebitMoveId = debit_move.Id,
+                    CreditMoveId = credit_move.Id,
+                    Amount = amount_reconcile,
+                    CompanyId = debit_move.CompanyId
+                });
+            }
 
-            //matched_debit_ids, matched_credit_ids thay đổi update residual 
-            _AmountResidual(new List<AccountMoveLine>() { smDebitMove, smCreditMove });
+            var partRecObj = GetService<IAccountPartialReconcileService>();
+            await partRecObj.CreateAsync(to_create);
 
-            await AutoReconcileLines(moveLines);
+            return debit_moves.Concat(credit_moves).ToList();
         }
 
         private PairToReconcileRes _GetPairToReconcile(IEnumerable<AccountMoveLine> moveLines)

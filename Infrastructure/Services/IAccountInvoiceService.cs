@@ -36,5 +36,8 @@ namespace Infrastructure.Services
         void _ComputeAmount(IEnumerable<AccountInvoice> self);
         IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<Guid> ids);
         IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<Guid> ids);
+
+        IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<AccountInvoice> self);
+        IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<AccountInvoice> self);
     }
 }

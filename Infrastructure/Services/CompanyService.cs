@@ -911,6 +911,7 @@ namespace Infrastructure.Services
                     {
                         Model = record.model,
                         Name = record.name,
+                        Transient = record.transient
                     };
                     dict.Add(record.id, model);
                 }
@@ -952,6 +953,7 @@ namespace Infrastructure.Services
         public string model { get; set; }
 
         public string name { get; set; }
+        public bool transient { get; set; }
     }
 
     public class IRModelAccessCsvLine

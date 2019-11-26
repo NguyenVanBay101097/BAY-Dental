@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
@@ -22,6 +24,25 @@ namespace Infrastructure.Services
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _cache = cache;
+        }
+
+        protected string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+        }
+
+        public async Task<ApplicationUser> GetCurrentUser()
+        {
+            var userId = UserId;
+            if (string.IsNullOrEmpty(userId))
+                return null;
+            return await _userManager.FindByIdAsync(userId);
         }
 
         public IQueryable<ApplicationUser> GetQueryById(string id)

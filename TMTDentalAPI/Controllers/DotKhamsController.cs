@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
@@ -30,6 +31,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IDotKhamStepService _dotKhamStepService;
         private readonly IIrAttachmentService _attachmentService;
         private readonly ILaboOrderService _laboOrderService;
+        private readonly IUploadService _uploadService;
 
         public DotKhamsController(IDotKhamService dotKhamService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IToaThuocService toaThuocService,
@@ -38,7 +40,8 @@ namespace TMTDentalAPI.Controllers
             IIRModelAccessService modelAccessService,
             IDotKhamStepService dotKhamStepService,
             IIrAttachmentService attachmentService,
-            ILaboOrderService laboOrderService)
+            ILaboOrderService laboOrderService,
+            IUploadService uploadService)
         {
             _dotKhamService = dotKhamService;
             _mapper = mapper;
@@ -50,6 +53,7 @@ namespace TMTDentalAPI.Controllers
             _dotKhamStepService = dotKhamStepService;
             _attachmentService = attachmentService;
             _laboOrderService = laboOrderService;
+            _uploadService = uploadService;
         }
 
         [HttpGet]
@@ -238,29 +242,43 @@ namespace TMTDentalAPI.Controllers
         {
             if (files == null || files.Count == 0)
                 return BadRequest();
-            _modelAccessService.Check("DotKham", "Write");
             var list = new List<IrAttachment>();
+            var tasks = new List<Task<UploadResult>>();
             foreach (var file in files)
             {
-                var attachment = new IrAttachment
-                {
-                    Name = file.FileName,
-                    DatasFname = file.FileName,
-                    ResId = id,
-                    ResModel = "dotkham"
-                };
-
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
-                    attachment.DbDatas = memoryStream.ToArray();
+                    tasks.Add(HandleUploadAsync(Convert.ToBase64String(memoryStream.ToArray()), file.FileName));
                 }
+            }
 
-                await _attachmentService.CreateAsync(attachment);
+            var result = await Task.WhenAll(tasks);
+            foreach(var item in result)
+            {
+                if (item == null)
+                    throw new Exception("Hình không hợp lệ hoặc vượt quá kích thước cho phép.");
+                var attachment = new IrAttachment()
+                {
+                    ResModel = "dotkham",
+                    ResId = id,
+                    Name = item.Name,
+                    Type = "upload",
+                    UploadId = item.Id,
+                    MineType = item.MineType,
+                };
+
                 list.Add(attachment);
             }
 
+            await _attachmentService.CreateAsync(list);
+
             return Ok(list);
+        }
+
+        private async Task<UploadResult> HandleUploadAsync(string base64, string fileName)
+        {
+            return await _uploadService.UploadBinaryAsync(base64, fileName: fileName);
         }
     }
 }

@@ -1,0 +1,49 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Báo cáo khách hàng theo khu vực
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <app-partner-report-location-filter (filterChange)="onFilterChange($event)">
+            </app-partner-report-location-filter>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="cityName" title="Tỉnh/Thành phố">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.cityName ? dataItem.cityName : 'Chưa xác định'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="total" class="text-right" title="Số khách hàng"
+            footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.total | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['total']">
+                {{total["total"].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="percentage" title="Phần trăm">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.percentage | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-partner-report-district [item]="dataItem"></app-partner-report-district>
+        </div>
+    </kendo-grid>
+</div>

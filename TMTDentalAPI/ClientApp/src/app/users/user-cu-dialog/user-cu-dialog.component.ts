@@ -29,7 +29,7 @@ export class UserCuDialogComponent implements OnInit {
       passWord: null,
       email: null,
       companyId: null,
-      company: null,
+      company: [null, Validators.required],
       companies: [[]]
     });
 
@@ -72,6 +72,7 @@ export class UserCuDialogComponent implements OnInit {
 
   getBodyData() {
     var data = this.userForm.value;
+    data.companyId = data.company.id;
     return data;
   }
 

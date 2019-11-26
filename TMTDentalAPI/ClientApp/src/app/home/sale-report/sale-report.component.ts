@@ -66,7 +66,6 @@ export class SaleReportComponent implements OnInit {
   }
 
   public labelContent = (e: any) => {
-    console.log(formatNumber(e.value, 'vi-VN'));
     return formatNumber(e.value, 'vi-VN');
   };
 }

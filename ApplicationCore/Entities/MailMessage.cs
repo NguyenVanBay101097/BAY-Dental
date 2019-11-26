@@ -49,6 +49,10 @@ namespace ApplicationCore.Entities
         public Guid? AuthorId { get; set; }
         public Partner Author { get; set; }
 
+        public ICollection<MailMessageResPartnerRel> Recipients { get; set; } = new List<MailMessageResPartnerRel>();
+
+        public ICollection<MailNotification> Notifications { get; set; } = new List<MailNotification>();
+
         public ICollection<MailTrackingValue> TrackingValues { get; set; } = new List<MailTrackingValue>();
     }
 }

@@ -85,6 +85,10 @@ export class AppointmentService {
     return this.http.post<PagedResult2<AppointmentBasic>>(this.baseApi + "api/Appointments/SearchReadByDate", val);
   }
 
+  checkForthcoming() {
+    return this.http.get(this.baseApi + "api/Appointments/CheckForthcoming");
+  }
+
   getBasic(id): Observable<AppointmentBasic> {
     return this.http.get<AppointmentBasic>(this.baseApi + "api/Appointments/" + id + '/GetBasic');
   }
