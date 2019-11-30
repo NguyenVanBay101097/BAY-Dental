@@ -77,6 +77,11 @@ namespace Infrastructure.Services
             };
         }
 
+
+        public async Task ComputeProductPricelist(Guid id)
+        {
+
+        }
         public async Task<Partner> GetPartnerForDisplayAsync(Guid id)
         {
             return await SearchQuery(x => x.Id == id)

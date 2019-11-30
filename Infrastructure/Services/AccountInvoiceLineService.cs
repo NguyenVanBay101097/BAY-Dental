@@ -117,12 +117,12 @@ namespace Infrastructure.Services
             }
             else
             {
-                var productObj = GetService<IProductService>();
-                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.Categ).FirstOrDefaultAsync();
-                res.Name = product.Name;
-                var computePrice = await productObj._ComputeProductPrice(new List<Product>() { product },val.PartnerId);
-                res.PriceUnit = computePrice[product.Id];
-                res.UoMId = product.UOMId;
+                //var productObj = GetService<IProductService>();
+                //var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.Categ).FirstOrDefaultAsync();
+                //res.Name = product.Name;
+                //var computePrice = await productObj._ComputeProductPrice(new List<Product>() { product },val.PartnerId);
+                //res.PriceUnit = computePrice[product.Id];
+                //res.UoMId = product.UOMId;
             }
 
             return res;

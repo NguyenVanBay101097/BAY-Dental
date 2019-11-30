@@ -64,6 +64,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// fixed: Giá cố định
         /// percentage: Giảm phần trăm
+        /// fixed_amount: Giảm tiền
         /// </summary>
         public string ComputePrice { get; set; }
 
@@ -71,10 +72,15 @@ namespace ApplicationCore.Entities
 
         public decimal? PercentPrice { get; set; }
 
+        public decimal? FixedAmountPrice { get; set; }
+
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
         public Guid? PartnerCategId { get; set; }
         public PartnerCategory PartnerCateg { get; set; }
+
+        public Guid? CardTypeId { get; set; }
+        public CardType CardType { get; set; }
     }
 }

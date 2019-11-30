@@ -26,6 +26,14 @@ namespace Infrastructure.EntityConfigurations
             .HasForeignKey(x => x.PriceListId)
             .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(x => x.CardType)
+                .WithMany()
+                .HasForeignKey(x => x.CardTypeId);
+
+            builder.HasOne(x => x.PartnerCateg)
+               .WithMany()
+               .HasForeignKey(x => x.PartnerCategId);
+
             builder.HasOne(x => x.Company)
                 .WithMany()
                 .HasForeignKey(x => x.CompanyId);

@@ -45,10 +45,10 @@
                         (click)="actionConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="getState == 'sale' || getState=='done'"
+                    <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="getState == 'sale' || getState =='done'"
                         (click)="actionSaleOrderPayment()">
                         Thanh toán
-                    </button>
+                    </button> -->
                     <button type="button" class="btn btn-primary btn-sm"
                         *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateDotKham()">
                         Tạo đợt khám
@@ -117,12 +117,55 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [class.d-none]="saleOrder.state != 'draft'"
                                         [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx
-                                        formControlName="partner" [valueField]="'id'">
+                                        formControlName="partner" [valueField]="'id'"
+                                        (valueChange)="onChangePartner($event)">
                                     </kendo-combobox>
                                     <span
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.partner ? saleOrder.partner.name : ''}}</span>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bảng giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPricelists"
+                                        [class.d-none]="saleOrder.state != 'draft'" [textField]="'name'"
+                                        [filterable]="true" #pricelistCbx formControlName="pricelist"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <span
+                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.pricelist ? saleOrder.pricelist.name : ''}}</span>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Thẻ thành viên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="input-group mb-1" [class.d-none]="saleOrder.state != 'draft'">
+                                        <input type="text" class="form-control" placeholder="Quét mã vạch"
+                                            [(ngModel)]="searchCardBarcode" [ngModelOptions]="{standalone: true}"
+                                            (keydown.enter)="searchCard()" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                (click)="searchCard()" title="Search"><i
+                                                    class="fas fa-search"></i></button>
+                                        </div>
+                                    </div>
+
+                                    <span *ngIf="cardValue" class="badge badge-pill badge-secondary">
+                                        <span class="o_badge_text">{{cardValue.name}} </span>
+                                        <span class="fa fa-times o_badge_remove" style="cursor: pointer;"
+                                            [class.d-none]="saleOrder.state != 'draft'" title="Xóa"
+                                            (click)="removeCard()"></span>
+                                    </span>
+                                </td>
+                            </tr> -->
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -171,10 +214,10 @@
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
                                 aria-controls="profile" aria-selected="false">Đợt khám</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
                                 aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
-                        </li>
+                        </li> -->
                     </ul>
 
                     <!-- Tab panes -->
@@ -242,7 +285,7 @@
                                                 class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
                                         </td>
                                     </tr>
-                                    <tr *ngIf="saleOrder.state != 'draft'">
+                                    <!-- <tr *ngIf="saleOrder.state != 'draft'">
                                         <td colspan="1" class="o_td_label pb-0">
                                             <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
                                                 Còn nợ
@@ -252,7 +295,7 @@
                                             <span
                                                 class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{(getResidual ? getResidual : 0)| number}}</span>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                             </table>
                             <div class="clearfix"></div>
@@ -277,7 +320,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                        <!-- <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="payment-tab">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -296,7 +339,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ namespace Infrastructure.Services
             switch (rule.Code)
             {
                 case "product.product_pricelist_item_comp_rule":
-                    return new InitialSpecification<ProductPricelistItem>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<ProductPricelistItem>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }

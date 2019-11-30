@@ -23,6 +23,9 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-
 import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
 import { AccountPaymentBasic, AccountPaymentPaged } from 'src/app/account-payments/account-payment.service';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
+import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.service';
+import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
+import { PriceListService } from 'src/app/price-list/price-list.service';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -37,18 +40,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   id: string;
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
+  filteredPricelists: ProductPriceListBasic[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
 
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
+
+  searchCardBarcode: string;
+
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
-    private router: Router, private notificationService: NotificationService) {
+    private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
+    private pricelistService: PriceListService) {
   }
 
   ngOnInit() {
@@ -61,7 +70,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       userId: null,
       amountTotal: 0,
       state: null,
-      residual: null
+      residual: null,
+      card: null,
+      pricelist: [null, Validators.required]
     });
     this.routeActive();
     this.partnerCbx.filterChange.asObservable().pipe(
@@ -81,11 +92,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.filteredUsers = result;
       this.userCbx.loading = false;
     });
+
+    this.pricelistCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.pricelistCbx.loading = true)),
+      switchMap(value => this.searchPricelists(value))
+    ).subscribe(result => {
+      this.filteredPricelists = result.items;
+      this.pricelistCbx.loading = false;
+    });
+
     // this.getAccountPayments();
-    this.getAccountPaymentReconcicles();
+    // this.getAccountPaymentReconcicles();
     this.loadPartners();
     this.loadUsers();
     this.loadDotKhamList();
+    this.loadPricelists();
   }
 
   routeActive() {
@@ -127,10 +149,47 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  get cardValue() {
+    return this.formGroup.get('card').value;
+  }
+
   loadPartners() {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
     });
+  }
+
+  loadPricelists() {
+    this.searchPricelists().subscribe(result => {
+      this.filteredPricelists = _.unionBy(this.filteredPricelists, result.items, 'id');
+    });
+  }
+
+  searchCard() {
+    var barcode = this.searchCardBarcode;
+    var val = new CardCardPaged();
+    val.limit = 1;
+    val.barcode = barcode;
+    val.state = "in_use";
+    val.isExpired = false;
+    this.cardCardService.getPaged(val).subscribe(result => {
+      if (result.items.length) {
+        this.formGroup.get('card').patchValue(result.items[0]);
+        this.searchCardBarcode = '';
+      } else {
+        this.notificationService.show({
+          content: 'Không tìm thấy thẻ thành viên hoặc thẻ thành viên không còn khả dụng.',
+          hideAfter: 3000,
+          position: { horizontal: 'right', vertical: 'bottom' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+      }
+    });
+  }
+
+  removeCard() {
+    this.formGroup.get('card').patchValue(null);
   }
 
   loadUsers() {
@@ -150,6 +209,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var val = new UserPaged();
     val.search = filter;
     return this.userService.autocompleteSimple(val);
+  }
+
+  searchPricelists(filter?: string) {
+    var val = new ProductPricelistPaged();
+    val.search = filter || '';
+    return this.pricelistService.loadPriceListList(val);
   }
 
   createNew() {
@@ -228,7 +293,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.partnerId = val.partner.id;
+    val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
+    val.cardId = val.card ? val.card.id : null;
     this.saleOrderService.create(val).subscribe(result => {
       this.saleOrderService.actionConfirm([result.id]).subscribe(() => {
         this.router.navigate(['/sale-orders/edit/' + result.id]);
@@ -243,11 +310,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    console.log(this.formGroup.value);
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.partnerId = val.partner.id;
+    val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
+    val.cardId = val.card ? val.card.id : null;
     if (this.id) {
       this.saleOrderService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
@@ -262,6 +330,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     } else {
       this.saleOrderService.create(val).subscribe(result => {
         this.router.navigate(['/sale-orders/edit/' + result.id]);
+      });
+    }
+  }
+
+  onChangePartner(value) {
+    if (value) {
+      this.saleOrderService.onChangePartner({ partnerId: value.id }).subscribe(result => {
+        this.formGroup.patchValue(result);
       });
     }
   }
@@ -300,13 +376,21 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   showAddLineModal() {
     var partner = this.formGroup.get('partner').value;
     if (!partner) {
-      alert('Vui lòng chọn khách hàng');
+      this.notificationService.show({
+        content: 'Vui lòng chọn khách hàng',
+        hideAfter: 3000,
+        position: { horizontal: 'right', vertical: 'bottom' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
       return false;
     }
 
     let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
-    modalRef.componentInstance.partnerId = partner.Id;
+    modalRef.componentInstance.partnerId = partner.id;
+    var pricelist = this.formGroup.get('pricelist').value;
+    modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
       let line = result as any;
@@ -329,6 +413,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.line = line.value;
     modalRef.componentInstance.partnerId = partner.Id;
+    var pricelist = this.formGroup.get('pricelist').value;
+    modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
       var a = result as any;

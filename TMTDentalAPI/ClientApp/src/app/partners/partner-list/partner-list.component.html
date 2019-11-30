@@ -106,6 +106,10 @@
             <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment_{{dataItem.id}}" role="tab"
               aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" id="card-tab" data-toggle="tab" href="#card_{{dataItem.id}}" role="tab"
+              aria-controls="card" aria-selected="false">Thẻ thành viên</a>
+          </li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="info_{{dataItem.id}}" role="tabpanel" aria-labelledby="info-tab">
@@ -127,6 +131,11 @@
           <div class="tab-pane fade" id="payment_{{dataItem.id}}" role="tabpanel" aria-labelledby="payment-tab">
             <div style="padding:10px;">
               <app-partner-payments [partnerId]="dataItem.id"></app-partner-payments>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="card_{{dataItem.id}}" role="tabpanel" aria-labelledby="card-tab">
+            <div style="padding:10px;">
+              <app-partner-cards-tab-pane [partner]="dataItem"></app-partner-cards-tab-pane>
             </div>
           </div>
         </div>

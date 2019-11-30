@@ -78,6 +78,9 @@ import 'moment/locale/vi';
 import { PartnerReportModule } from './partner-report/partner-report.module';
 import { ResBanksModule } from './res-banks/res-banks.module';
 import { ResPartnerBanksModule } from './res-partner-banks/res-partner-banks.module';
+import { CardTypesModule } from './card-types/card-types.module';
+import { CardCardsModule } from './card-cards/card-cards.module';
+import { SaleSettingsModule } from './sale-settings/sale-settings.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -162,7 +165,10 @@ registerLocaleData(localeVi, 'vi');
     MailMessagesModule,
     PartnerReportModule,
     ResBanksModule,
-    ResPartnerBanksModule
+    ResPartnerBanksModule,
+    CardTypesModule,
+    CardCardsModule,
+    SaleSettingsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

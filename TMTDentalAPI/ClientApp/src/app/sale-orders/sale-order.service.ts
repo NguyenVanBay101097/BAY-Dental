@@ -63,6 +63,10 @@ export class SaleOrderService {
         return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet');
     }
 
+    onChangePartner(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/OnChangePartner', val);
+    }
+
     actionConfirm(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionConfirm', ids);
     }

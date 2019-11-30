@@ -184,6 +184,10 @@ namespace TMTDentalAPI
             services.AddScoped<IAppointmentHubService, AppointmentHubService>();
             services.AddScoped<IResBankService, ResBankService>();
             services.AddScoped<IResPartnerBankService, ResPartnerBankService>();
+            services.AddScoped<ICardTypeService, CardTypeService>();
+            services.AddScoped<ICardCardService, CardCardService>();
+            services.AddScoped<ISaleSettingsService, SaleSettingsService>();
+            services.AddScoped<ICardHistoryService, CardHistoryService>();
 
             services.AddMemoryCache();
 
@@ -246,6 +250,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MailMessageProfile());
                 mc.AddProfile(new ResBankProfile());
                 mc.AddProfile(new ResPartnerBankProfile());
+                mc.AddProfile(new CardTypeProfile());
+                mc.AddProfile(new CardCardProfile());
+                mc.AddProfile(new SaleSettingsProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

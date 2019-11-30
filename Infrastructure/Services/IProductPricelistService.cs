@@ -12,7 +12,8 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<ProductPricelistBasic>> GetPagedResultAsync(ProductPricelistPaged val);
         Task<ProductPricelist> GetPriceListForUpdate(Guid id);
-        Task<IDictionary<Guid, ComputePriceRuleResValue>> _ComputePriceRule(IEnumerable<ProductQtyByPartner> products_qty_partner,
+        Task<IDictionary<Guid, ComputePriceRuleResValue>> _ComputePriceRule(ProductPricelist self, IEnumerable<ProductQtyByPartner> products_qty_partner,
              DateTime? date = null);
+        Task<ProductPricelistBasic> GetBasic(Guid id);
     }
 }

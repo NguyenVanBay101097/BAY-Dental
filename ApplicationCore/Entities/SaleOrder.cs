@@ -62,5 +62,14 @@ namespace ApplicationCore.Entities
         public string InvoiceStatus { get; set; }
 
         public decimal? Residual { get; set; }
+
+        /// <summary>
+        /// Ghi nhận lại sale order có sử dụng thẻ thành viên
+        /// </summary>
+        public Guid? CardId { get; set; }
+        public CardCard Card { get; set; }
+
+        public Guid? PricelistId { get; set; }
+        public ProductPricelist Pricelist { get; set; }
     }
 }

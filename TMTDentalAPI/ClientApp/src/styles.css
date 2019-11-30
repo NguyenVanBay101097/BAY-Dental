@@ -437,11 +437,11 @@
   border-color: #333!important;
 }
 
-.ng-valid[required], .ng-valid.required  {
-  border: 1px solid #42A948; /* green */
-}
+/* .ng-valid[required], .ng-valid.required  {
+  border: 1px solid #42A948;
+} */
 
-input.ng-invalid:not(form)  {
+input.ng-invalid:not(form), select.ng-invalid  {
   border: 1px solid #dc3545; /* red */
 }
 
