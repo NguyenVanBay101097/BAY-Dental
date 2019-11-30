@@ -357,6 +357,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool>("Active");
 
+                    b.Property<Guid?>("BankAccountId");
+
                     b.Property<string>("Code")
                         .IsRequired();
 
@@ -389,6 +391,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("WriteById");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankAccountId");
 
                     b.HasIndex("CompanyId");
 
@@ -868,6 +872,126 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("MailMessageId");
 
                     b.ToTable("AppointmentMailMessageRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CardCard", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime?>("ActivatedDate");
+
+                    b.Property<string>("Barcode");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("ExpiredDate");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<Guid?>("PartnerId");
+
+                    b.Property<decimal?>("PointInPeriod");
+
+                    b.Property<string>("State");
+
+                    b.Property<decimal?>("TotalPoint");
+
+                    b.Property<Guid>("TypeId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("TypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("CardCards");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CardHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("CardId");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("EndDate");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<decimal?>("PointInPeriod");
+
+                    b.Property<DateTime?>("StartDate");
+
+                    b.Property<decimal?>("TotalPoint");
+
+                    b.Property<Guid>("TypeId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("TypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("CardHistories");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CardType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal?>("BasicPoint");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<decimal>("Discount");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<int>("NbPeriod");
+
+                    b.Property<string>("Period");
+
+                    b.Property<Guid?>("PricelistId");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PricelistId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("CardTypes");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Company", b =>
@@ -2075,6 +2199,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool>("Active");
 
+                    b.Property<Guid?>("CardTypeId");
+
                     b.Property<Guid?>("CompanyId");
 
                     b.Property<string>("CreatedById");
@@ -2098,6 +2224,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CardTypeId");
+
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
@@ -2118,6 +2246,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Base");
 
+                    b.Property<Guid?>("CardTypeId");
+
                     b.Property<Guid?>("CategId");
 
                     b.Property<Guid?>("CompanyId");
@@ -2131,6 +2261,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateEnd");
 
                     b.Property<DateTime?>("DateStart");
+
+                    b.Property<decimal?>("FixedAmountPrice");
 
                     b.Property<decimal?>("FixedPrice");
 
@@ -2161,6 +2293,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("WriteById");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CardTypeId");
 
                     b.HasIndex("CategId");
 
@@ -2351,6 +2485,35 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PurchaseOrderLines");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("BIC");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ResBanks");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ResCompanyUsersRel", b =>
                 {
                     b.Property<Guid>("CompanyId");
@@ -2400,6 +2563,45 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ResGroupsUsersRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResPartnerBank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired();
+
+                    b.Property<Guid>("BankId");
+
+                    b.Property<Guid?>("CompanyId");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<Guid>("PartnerId");
+
+                    b.Property<int>("Sequence");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ResPartnerBanks");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Routing", b =>
@@ -2490,6 +2692,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<decimal?>("AmountUntaxed");
 
+                    b.Property<Guid?>("CardId");
+
                     b.Property<Guid>("CompanyId");
 
                     b.Property<string>("CreatedById");
@@ -2509,6 +2713,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("PartnerId");
 
+                    b.Property<Guid?>("PricelistId");
+
                     b.Property<decimal?>("Residual");
 
                     b.Property<string>("State");
@@ -2519,11 +2725,15 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CardId");
+
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("PartnerId");
+
+                    b.HasIndex("PricelistId");
 
                     b.HasIndex("UserId");
 
@@ -2635,6 +2845,30 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ToothId");
 
                     b.ToTable("SaleOrderLineToothRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<decimal?>("PointExchangeRate");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("SaleSettings");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.StockLocation", b =>
@@ -3519,6 +3753,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountJournal", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.ResPartnerBank", "BankAccount")
+                        .WithMany()
+                        .HasForeignKey("BankAccountId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -3792,6 +4030,63 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("MailMessageId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CardCard", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId");
+
+                    b.HasOne("ApplicationCore.Entities.CardType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CardHistory", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.CardCard", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.CardType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CardType", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ProductPricelist", "Pricelist")
+                        .WithMany()
+                        .HasForeignKey("PricelistId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Company", b =>
@@ -4360,6 +4655,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.ProductPricelist", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.CardType", "CardType")
+                        .WithMany()
+                        .HasForeignKey("CardTypeId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
@@ -4379,6 +4678,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.ProductPricelistItem", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.CardType", "CardType")
+                        .WithMany()
+                        .HasForeignKey("CardTypeId");
+
                     b.HasOne("ApplicationCore.Entities.ProductCategory", "Categ")
                         .WithMany()
                         .HasForeignKey("CategId")
@@ -4492,6 +4795,17 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ResCompanyUsersRel", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -4527,6 +4841,32 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("ResGroupsUsersRels")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResPartnerBank", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ResBank", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Routing", b =>
@@ -4580,6 +4920,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrder", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.CardCard", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -4593,6 +4937,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ProductPricelist", "Pricelist")
+                        .WithMany()
+                        .HasForeignKey("PricelistId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()
@@ -4667,6 +5015,17 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ToothId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleSettings", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.StockLocation", b =>

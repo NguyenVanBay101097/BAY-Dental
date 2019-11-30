@@ -13,8 +13,6 @@ import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { AccountPaymentBasic } from '../account-payments/account-payment.service';
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
 import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
-import * as FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
 
 export class PartnerFilter {
     search: string;
@@ -309,26 +307,6 @@ export class PartnerService {
 
     getPurchaseOrderByPartner(paged): Observable<PagedResult2<PurchaseOrderBasic>> {
         return this.http.get<PagedResult2<PurchaseOrderBasic>>(this.baseApi + 'api/PurchaseOrders', { params: paged });
-    }
-
-    exportAsExcelFile(json: any[], excelFileName: string): void {
-        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
-        const workbook: XLSX.WorkBook = { Sheets: { 'Đối tác': worksheet }, SheetNames: ['Đối tác'], };
-        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        var wscols = [
-            { wch: 6 },
-            { wpx: 50 }
-        ];
-        worksheet["!cols"] = wscols;
-
-        this.saveAsExcelFile(excelBuffer, excelFileName);
-    }
-
-    saveAsExcelFile(buffer: any, fileName: string): void {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        const EXCEL_EXTENSION = '.xlsx';
-        const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
-        FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
     }
 
     excelServerExport(paged) {

@@ -331,7 +331,6 @@ export class PartnerListComponent implements OnInit {
 
   //=================== CLIENT Excel export ============================
   exportAsXLSX(): void {
-    this.service.exportAsExcelFile(this.excel, 'Thông tin Đối tác');
   }
 
   xlsxExport() {

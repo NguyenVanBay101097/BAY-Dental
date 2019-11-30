@@ -45,9 +45,15 @@ namespace Infrastructure.Services
                 var productObj = GetService<IProductService>();
                 var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value).Include(x => x.Categ).FirstOrDefaultAsync();
                 res.Name = product.Name;
-                var computePrice = await productObj._ComputeProductPrice(new List<Product>() { product }, val.PartnerId);
-                res.PriceUnit = computePrice[product.Id];
-
+                if (val.PricelistId.HasValue)
+                {
+                    var computePrice = await productObj._ComputeProductPrice(new List<Product>() { product }, val.PricelistId.Value, partnerId: val.PartnerId);
+                    res.PriceUnit = computePrice[product.Id];
+                }
+                else
+                {
+                    res.PriceUnit = product.ListPrice;
+                }
             }
 
             return res;

@@ -68,8 +68,10 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
         { name: 'Labo', link: '/product-labos' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
-        { name: 'Ngân hàng', link: '/res-banks' },
-        { name: 'Tài khoản ngân hàng', link: '/res-partner-banks' },
+        // { name: 'Ngân hàng', link: '/res-banks' },
+        // { name: 'Tài khoản ngân hàng', link: '/res-partner-banks' },
+        { name: 'Thẻ thành viên', link: '/card-cards' },
+        { name: 'Loại thẻ thành viên', link: '/card-types' },
       ]
     },
     {
@@ -80,6 +82,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
         { name: 'Bảng giá', link: '/price-list-list' },
+        { name: 'Cấu hình bán hàng', link: '/sale-settings' },
       ]
     },
     {

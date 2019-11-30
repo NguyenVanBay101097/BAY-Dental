@@ -23,14 +23,19 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IDotKhamService _dotKhamService;
+        private readonly ICardCardService _cardService;
+        private readonly IProductPricelistService _pricelistService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService)
+            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
+            ICardCardService cardService, IProductPricelistService pricelistService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _dotKhamService = dotKhamService;
+            _cardService = cardService;
+            _pricelistService = pricelistService;
         }
 
         [HttpGet]
@@ -145,6 +150,25 @@ namespace TMTDentalAPI.Controllers
             await _saleOrderService.Unlink(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> OnChangePartner(SaleOrderOnChangePartner val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var res = new SaleOrderOnChangePartnerResult();
+            if (val.PartnerId.HasValue)
+            {
+                var card = await _cardService.GetValidCard(val.PartnerId.Value);
+                if (card.Type.PricelistId.HasValue)
+                {
+                    var pricelist = await _pricelistService.GetBasic(card.Type.PricelistId.Value);
+                    res.Pricelist = pricelist;
+                }
+            }
+          
+            return Ok(res);
         }
 
         [HttpGet("{id}/[action]")]

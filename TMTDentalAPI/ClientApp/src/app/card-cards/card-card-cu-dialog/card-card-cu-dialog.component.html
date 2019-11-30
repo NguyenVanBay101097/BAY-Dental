@@ -1,0 +1,153 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{getTitle()}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onClose()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(card.state) !== -1"
+                        (click)="buttonConfirm()">
+                        Xác nhận
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['draft', 'confirmed'].indexOf(card.state) !== -1" (click)="buttonActive()">
+                        Cấp thẻ
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['draft', 'confirmed'].indexOf(card.state) !== -1 && id" (click)="buttonCancel()">
+                        Hủy bỏ
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['cancelled'].indexOf(card.state) !== -1 && id" (click)="buttonReset()">
+                        Reset
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id" (click)="buttonUpgrade()">
+                        Nâng cấp
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id" (click)="buttonLock()">
+                        Khóa thẻ
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['locked'].indexOf(card.state) !== -1 && id" (click)="buttonUnlock()">
+                        Mở khóa
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="card.state !== 'in_use'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': card.state === 'in_use', 'btn-secondary': card.state !== 'in_use'}"
+                        type="button">
+                        Đang sử dụng
+                    </button>
+                    <button [disabled]="card.state !== 'confirmed'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': card.state === 'confirmed', 'btn-secondary': card.state !== 'confirmed'}"
+                        type="button">
+                        Chờ cấp thẻ
+                    </button>
+                    <button [disabled]="card.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': card.state === 'draft', 'btn-secondary': card.state !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                    <button [disabled]="card.state !== 'cancelled'" class="btn o_arrow_button disabled"
+                        *ngIf="card.state == 'cancelled'"
+                        [ngClass]="{'btn-primary': card.state === 'cancelled', 'btn-secondary': card.state !== 'cancelled'}"
+                        type="button">
+                        Đã hủy
+                    </button>
+                    <button [disabled]="card.state !== 'locked'" class="btn o_arrow_button disabled"
+                        *ngIf="card.state === 'locked'"
+                        [ngClass]="{'btn-primary': card.state === 'locked', 'btn-secondary': card.state !== 'locked'}"
+                        type="button">
+                        Đã khóa
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span>{{card.name}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="['draft'].indexOf(card.state) == -1" ngbAutofocus #partnerCbx
+                                        formControlName="partner" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Loại thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredTypes" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="['draft'].indexOf(card.state) == -1" #typeCbx
+                                        formControlName="type" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Mã vạch
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="barcode"
+                                        [disableControl]="['draft'].indexOf(card.state) == -1"
+                                        placeholder="Để trống sẽ tự động phát sinh" />
+                                </td>
+                            </tr>
+                            <tr *ngIf="card.activatedDate">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày cấp thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{card.activatedDate | date: 'shortDate'}}
+                                </td>
+                            </tr>
+                            <tr *ngIf="card.expiredDate">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày hết hạn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{card.expiredDate | date: 'shortDate'}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
+</footer>

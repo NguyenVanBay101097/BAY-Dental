@@ -194,8 +194,9 @@ namespace Infrastructure.Services
 
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
+            var cardObj = GetService<ICardCardService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines)
+                .Include(x => x.OrderLines).Include(x => x.Card).Include(x => x.Card.Type)
                 .ToListAsync();
 
             foreach (var sale in self)
@@ -206,6 +207,14 @@ namespace Infrastructure.Services
                 }
 
                 sale.State = "done";
+
+                var card = await cardObj.GetValidCard(sale.PartnerId);
+                if (card == null)
+                    continue;
+                var points = await cardObj.ConvertAmountToPoint(sale.AmountTotal);
+                card.TotalPoint = (card.TotalPoint ?? 0) + points;
+                card.PointInPeriod = (card.PointInPeriod ?? 0) + points;
+                await cardObj.UpdateAsync(card);
             }
 
             await UpdateAsync(self);
@@ -216,6 +225,7 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
+                .Include(x => x.Pricelist)
                 .Include(x => x.User)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
@@ -625,6 +635,22 @@ namespace Infrastructure.Services
                 order.Residual = residual;
                 Update(order);
             }            
+        }
+
+        public async Task _UpdateLoyaltyPoint(IEnumerable<SaleOrder> self)
+        {
+            foreach(var order in self)
+            {
+                if (order.State != "done")
+                    continue;
+                if (order.Card == null)
+                    continue;
+                var cardObj = GetService<ICardCardService>();
+                var card = order.Card;
+                var points = await cardObj.ConvertAmountToPoint(order.AmountTotal);
+                card.TotalPoint += points;
+                await cardObj.UpdateAsync(card);
+            }
         }
     }
 }

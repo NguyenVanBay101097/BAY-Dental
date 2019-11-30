@@ -392,6 +392,7 @@ namespace Infrastructure.Services
 
 
         public async Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self,
+            Guid pricelistId,
             Guid? partnerId = null, decimal quantity = 1,
             DateTime? date = null)
         {
@@ -402,6 +403,7 @@ namespace Infrastructure.Services
             }
 
             var plobj = GetService<IProductPricelistService>();
+            var pricelist = await plobj.GetByIdAsync(pricelistId);
             var qtys = new List<ProductQtyByPartner>();
             foreach (var product in self)
             {
@@ -409,10 +411,10 @@ namespace Infrastructure.Services
                 {
                     Product = product,
                     Quantity = quantity,
-                    PartnerId = partnerId
+                    PartnerId = partnerId,
                 });
             }
-            var prices = await plobj._ComputePriceRule(qtys, date: date);
+            var prices = await plobj._ComputePriceRule(pricelist, qtys, date: date);
             foreach (var product in self)
             {
                 if (prices.ContainsKey(product.Id))

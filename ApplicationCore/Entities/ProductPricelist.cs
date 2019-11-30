@@ -35,5 +35,8 @@ namespace ApplicationCore.Entities
 
         public Guid? PartnerCategId { get; set; }
         public PartnerCategory PartnerCateg { get; set; }
+
+        public Guid? CardTypeId { get; set; }
+        public CardType CardType { get; set; }
     }
 }

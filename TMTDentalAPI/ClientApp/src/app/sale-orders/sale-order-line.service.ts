@@ -5,6 +5,7 @@ import { Injectable, Inject } from '@angular/core';
 export class SaleOrderLineOnChangeProduct {
     productId: string;
     partnerId: string;
+    pricelistId: string;
 }
 
 export class SaleOrderLineOnChangeProductResult {

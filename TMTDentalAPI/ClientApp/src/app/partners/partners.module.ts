@@ -23,19 +23,23 @@ import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-in
 import { PartnerImportComponent } from './partner-import/partner-import.component';
 import { PartnerPaymentsComponent } from './partner-payments/partner-payments.component';
 import { PurchaseOrderRefundComponent } from './purchase-order-refund/purchase-order-refund.component';
+import { PartnerCardsTabPaneComponent } from './partner-cards-tab-pane/partner-cards-tab-pane.component';
+import { CardCardsModule } from '../card-cards/card-cards.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
     PartnerCustomerListComponent, PartnerCustomerListDetailComponent, PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent, PartnerHistoryComponent, PartnerDetailListComponent, PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent, PurchaseOrderRefundComponent],
+    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent, PurchaseOrderRefundComponent, PartnerCardsTabPaneComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    MatStepperModule
+    MatStepperModule,
+    SharedModule
   ],
   entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent, PartnerImportComponent],
   providers: [

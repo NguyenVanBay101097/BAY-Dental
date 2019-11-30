@@ -49,7 +49,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IDictionary<Guid, ComputePriceRuleResValue>> _ComputePriceRule(IEnumerable<ProductQtyByPartner> products_qty_partner,
+        public async Task<IDictionary<Guid, ComputePriceRuleResValue>> _ComputePriceRule(ProductPricelist self, IEnumerable<ProductQtyByPartner> products_qty_partner,
              DateTime? date = null)
         {
             if (!date.HasValue)
@@ -74,13 +74,15 @@ namespace Infrastructure.Services
 
             var prod_ids = products.Select(x => x.Id).ToList();
 
-            var items = await _ComputePriceRuleGetItems(date.Value, prod_ids, categ_ids);
+            var items = await _ComputePriceRuleGetItems(self, date.Value, productIds: prod_ids, categIds: categ_ids);
+
             var results = new Dictionary<Guid, ComputePriceRuleResValue>();
             foreach (var productByQtyByPartner in products_qty_partner)
             {
                 var product = productByQtyByPartner.Product;
                 var qty = productByQtyByPartner.Quantity;
                 var partnerId = productByQtyByPartner.PartnerId;
+                var cardId = productByQtyByPartner.CardId;
 
                 var qty_in_product_uom = qty;
                 results.Add(product.Id, new ComputePriceRuleResValue());
@@ -92,17 +94,6 @@ namespace Infrastructure.Services
                         continue;
                     if (rule.ProductId.HasValue && product.Id != rule.ProductId.Value)
                         continue;
-                    
-                    if (partnerId.HasValue)
-                    {
-                        var partnerObj = GetService<IPartnerService>();
-                        var partnerById = await partnerObj.GetPartnerForDisplayAsync(partnerId ?? Guid.Empty);
-
-                        if (rule.PartnerCategId.HasValue && 
-                            !partnerById.PartnerPartnerCategoryRels.Any(x => x.CategoryId== rule.PartnerCategId && x.PartnerId == partnerId))
-                            continue;
-                    }
-                    
 
                     if (rule.Categ != null)
                     {
@@ -130,6 +121,10 @@ namespace Infrastructure.Services
                         {
                             price = price - (price * (rule.PercentPrice ?? 0) / 100);
                         }
+                        else if (rule.ComputePrice == "fixed_amount")
+                        {
+                            price = price - (rule.FixedAmountPrice ?? 0);
+                        }
 
                         suitable_rule = rule;
                     }
@@ -148,10 +143,10 @@ namespace Infrastructure.Services
             return results;
         }
 
-        public async Task<IList<ProductPricelistItem>> _ComputePriceRuleGetItems(DateTime date, IEnumerable<Guid> productIds, IEnumerable<Guid> categIds)
+        public async Task<IList<ProductPricelistItem>> _ComputePriceRuleGetItems(ProductPricelist self, DateTime date, IEnumerable<Guid> productIds = null, IEnumerable<Guid> categIds = null)
         {
             var itemObj = GetService<IProductPricelistItemService>();
-            var items = await itemObj.SearchQuery(x =>
+            var items = await itemObj.SearchQuery(x => x.PriceListId == self.Id &&
                 (!x.ProductId.HasValue || productIds.Contains(x.ProductId.Value)) &&
                 (!x.CategId.HasValue || categIds.Contains(x.CategId.Value)) &&
                 (!x.DateStart.HasValue || x.DateStart <= date) &&
@@ -160,13 +155,21 @@ namespace Infrastructure.Services
             return items;
         }
 
+        public async Task<ProductPricelistBasic> GetBasic(Guid id)
+        {
+            return await SearchQuery(x => x.Id == id).Select(x => new ProductPricelistBasic {
+                Id = x.Id,
+                Name = x.Name
+            }).FirstOrDefaultAsync();
+        }
+
         public override ISpecification<ProductPricelist> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
             switch (rule.Code)
             {
                 case "product.product_pricelist_comp_rule":
-                    return new InitialSpecification<ProductPricelist>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<ProductPricelist>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }
@@ -178,6 +181,7 @@ namespace Infrastructure.Services
         public Product Product { get; set; }
         public Guid? PartnerId { get; set; }
         public decimal Quantity { get; set; }
+        public Guid? CardId { get; set; }
     }
 
     public class ComputePriceRuleResValue

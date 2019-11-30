@@ -29,6 +29,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
   teethSelected: ToothDisplay[] = [];
 
   partnerId: string;
+  pricelistId: string;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     public activeModal: NgbActiveModal, private saleLineService: SaleOrderLineService,
@@ -188,6 +189,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
       var val = new SaleOrderLineOnChangeProduct();
       val.productId = value.id;
       val.partnerId = this.partnerId;
+      val.pricelistId = this.pricelistId;
       this.saleLineService.onChangeProduct(val).subscribe(result => {
         this.saleLineForm.patchValue(result);
       });

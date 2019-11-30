@@ -9,5 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
 
         public Guid? PartnerId { get; set; }
+
+        public Guid? PricelistId { get; set; }
     }
 }

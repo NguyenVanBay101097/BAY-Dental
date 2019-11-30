@@ -183,7 +183,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
   transAppliedOn(str: string) {
     switch (str) {
       case "3_global":
-        return 'Tất cả';
+        return 'Tất cả dịch vụ';
       case "2_product_category":
         return 'Nhóm dịch vụ';
       case "0_product_variant":

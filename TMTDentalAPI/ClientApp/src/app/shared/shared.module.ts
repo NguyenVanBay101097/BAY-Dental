@@ -31,6 +31,7 @@ import { TaiDateRangeSimpleDropdownComponent } from './tai-date-range-simple-dro
 import { HeaderNotificationComponent } from './header-notification/header-notification.component';
 import { MomentModule } from 'ngx-moment';
 import { HeaderAppointmentComponent } from './header-appointment/header-appointment.component';
+import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card-card-grid.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { HeaderAppointmentComponent } from './header-appointment/header-appointm
     TmtOptionSelectDropdownComponent,
     TaiDateRangeSimpleDropdownComponent,
     HeaderNotificationComponent,
-    HeaderAppointmentComponent
+    HeaderAppointmentComponent,
+    SharedCardCardGridComponent
   ],
   exports: [
     HeaderComponent,
@@ -75,7 +77,8 @@ import { HeaderAppointmentComponent } from './header-appointment/header-appointm
     TmtOptionSelectDropdownComponent,
     TaiDateRangeSimpleDropdownComponent,
     HeaderNotificationComponent,
-    HeaderAppointmentComponent
+    HeaderAppointmentComponent,
+    SharedCardCardGridComponent
   ],
   imports: [
     CommonModule,

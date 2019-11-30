@@ -44,7 +44,8 @@ namespace Infrastructure.Services
             "Tooth",
             "ProductPricelistItem",
             "SaleOrderLine",
-            "MailMessage"
+            "MailMessage",
+            "CardHistory"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,
