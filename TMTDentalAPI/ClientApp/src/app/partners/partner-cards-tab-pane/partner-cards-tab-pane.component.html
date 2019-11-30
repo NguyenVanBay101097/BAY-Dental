@@ -4,7 +4,7 @@
     </button>
     <div>
         <app-shared-card-card-grid [gridData]="gridData" [limit]="limit" [skip]="skip" [loading]="loading"
-            (editClick)="onEditClick($event)" (deleteClick)="onDeleteClick($event)">
+            (editClick)="onEditClick($event)" (deleteClick)="onDeleteClick($event)" (pageClick)="onPageClick($event)">
         </app-shared-card-card-grid>
     </div>
 </div>

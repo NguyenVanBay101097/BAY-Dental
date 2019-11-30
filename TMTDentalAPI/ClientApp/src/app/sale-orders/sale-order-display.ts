@@ -1,6 +1,7 @@
 import { UserSimple } from '../users/user-simple';
 import { SaleOrderLineDisplay } from './sale-order-line-display';
 import { PartnerSimple } from '../partners/partner-simple';
+import { ProductPriceListBasic } from '../price-list/price-list';
 
 export class SaleOrderDisplay {
     id: string;
@@ -14,4 +15,5 @@ export class SaleOrderDisplay {
     residual: number;
     orderLines: SaleOrderLineDisplay[];
     name: string;
+    pricelist: ProductPriceListBasic;
 }

@@ -16,6 +16,7 @@ export class AppointmentBasic {
     note: string;
     partnerName: string;
     doctorName: string;
+    partnerPhone: string;
 }
 
 export class AppointmentDisplay extends AppointmentBasic {

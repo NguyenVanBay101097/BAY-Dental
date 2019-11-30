@@ -14,6 +14,7 @@ export class SharedCardCardGridComponent implements OnInit {
   @Input() loading = false;
   @Output() editClick = new EventEmitter<any>();
   @Output() deleteClick = new EventEmitter<any>();
+  @Output() pageClick = new EventEmitter<any>();
 
   constructor() { }
 
@@ -41,6 +42,10 @@ export class SharedCardCardGridComponent implements OnInit {
 
   deleteItem(item) {
     this.deleteClick.emit(item);
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.pageClick.emit(event);
   }
 }
 

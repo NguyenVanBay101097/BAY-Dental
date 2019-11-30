@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiDomain: '/'
+  apiDomain: '/',
+  uploadDomain: 'https://localhost:44324/',
 };

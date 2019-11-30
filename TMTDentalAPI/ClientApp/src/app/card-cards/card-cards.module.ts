@@ -6,12 +6,11 @@ import { CardCardCuDialogComponent } from './card-card-cu-dialog/card-card-cu-di
 import { CardCardService } from './card-card.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { CardCardGridComponent } from './card-card-grid/card-card-grid.component';
 import { SharedModule } from '../shared/shared.module';
 import { CardCardListComponent } from './card-card-list/card-card-list.component';
 
 @NgModule({
-  declarations: [CardCardCuDialogComponent, CardCardGridComponent, CardCardListComponent],
+  declarations: [CardCardCuDialogComponent, CardCardListComponent],
   imports: [
     CommonModule,
     CardCardsRoutingModule,
@@ -21,7 +20,6 @@ import { CardCardListComponent } from './card-card-list/card-card-list.component
     SharedModule
   ],
   exports: [
-    CardCardGridComponent
   ],
   entryComponents: [
     CardCardCuDialogComponent

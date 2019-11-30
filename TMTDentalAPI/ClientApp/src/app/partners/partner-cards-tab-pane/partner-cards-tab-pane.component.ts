@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { PartnerBasic, PartnerSimple } from '../partner-simple';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CardCardCuDialogComponent } from 'src/app/card-cards/card-card-cu-dialog/card-card-cu-dialog.component';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { CardCardPaged, CardCardService } from 'src/app/card-cards/card-card.service';
 import { map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -57,6 +57,11 @@ export class PartnerCardsTabPaneComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  onPageClick(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
   }
 
   onEditClick(item) {

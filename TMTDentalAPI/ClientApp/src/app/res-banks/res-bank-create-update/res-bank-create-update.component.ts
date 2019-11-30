@@ -16,7 +16,7 @@ export class ResBankCreateUpdateComponent implements OnInit {
   formBank: FormGroup;
   title: string;
   isChange = false;
-  constructor(private fb: FormBuilder, private activeModal: NgbActiveModal, private service: ResBankService) { }
+  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, private service: ResBankService) { }
 
   ngOnInit() {
     this.formBank = this.fb.group({

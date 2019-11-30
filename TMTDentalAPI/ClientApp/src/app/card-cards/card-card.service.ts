@@ -26,6 +26,8 @@ export class CardCardDisplay {
     state: string;
     partner: PartnerSimple;
     type: CardTypeBasic;
+    activatedDate: string;
+    expiredDate: string;
 }
 
 @Injectable()

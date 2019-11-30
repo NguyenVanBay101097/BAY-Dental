@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
+import { ProductPriceListBasic } from '../price-list/price-list';
 
 export class CardTypePaged {
     limit: number;
@@ -17,6 +18,7 @@ export class CardTypeBasic {
 export class CardTypeDisplay {
     id: string;
     name: string;
+    pricelist: ProductPriceListBasic;
 }
 
 @Injectable()
