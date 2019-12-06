@@ -316,14 +316,6 @@ a {
      float: right;
  }
 
- .o_form_view .o_group .o_group_col_4 {
-  display: inline-block;
-  width: 33%;
-  vertical-align: top;
-}
-.o_form_view .o_grid_group{
-    /* height: 250px; */
-}
 .o_form_view .o_grid_group .o_grid_col_left{
     display: inline-block;
     vertical-align: top;

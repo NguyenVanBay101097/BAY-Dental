@@ -1,0 +1,30 @@
+<header class="modal-header">
+    <h4 class="modal-title">Nhập mã khuyến mãi hoặc coupon<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label o_required_modifier">Mã</label>
+                        </td>
+                        <td style="width: 100%;">
+                            <input class="form-control" formControlName="couponCode" required />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Áp dụng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

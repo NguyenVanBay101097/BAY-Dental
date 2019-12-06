@@ -62,7 +62,7 @@ export class PriceListListComponent implements OnInit {
 
   deletePriceList(id) {
     const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa khách hàng',
+      title: 'Xóa bảng giá',
       content: 'Bạn chắc chắn muốn xóa bảng giá này ?',
       width: 450,
       height: 200,
@@ -92,10 +92,10 @@ export class PriceListListComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/price-list/create']);
+    this.router.navigate(['/pricelists/create']);
   }
 
   editItem(id) {
-    this.router.navigate(['/price-list/edit/' + id]);
+    this.router.navigate(['/pricelists/edit/' + id]);
   }
 }

@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,13 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public void ComputeAmount(ICollection<SaleOrderLine> self)
+        public override async Task<IEnumerable<SaleOrderLine>> CreateAsync(IEnumerable<SaleOrderLine> entities)
+        {
+            ComputeAmount(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        public void ComputeAmount(IEnumerable<SaleOrderLine> self)
         {
             if (self == null)
                 return;
@@ -47,8 +54,26 @@ namespace Infrastructure.Services
                 res.Name = product.Name;
                 if (val.PricelistId.HasValue)
                 {
+                    var pricelistObj = GetService<IProductPricelistService>();
+                    var pricelist = await pricelistObj.GetByIdAsync(val.PricelistId.Value);
+
                     var computePrice = await productObj._ComputeProductPrice(new List<Product>() { product }, val.PricelistId.Value, partnerId: val.PartnerId);
-                    res.PriceUnit = computePrice[product.Id];
+                    var price = computePrice[product.Id];
+                    res.PriceUnit = price;
+
+                    //tính giá của sản phẩm trước khi áp dụng bảng giá
+                    if (pricelist.DiscountPolicy == "without_discount")
+                    {
+                        var new_list_price = product.ListPrice;
+                        res.PriceUnit = new_list_price;
+                        if (new_list_price != 0)
+                        {
+                            var discount = (new_list_price - price) / new_list_price * 100;
+                            //discount làm tròn 2 chữ số thập phân
+                            if ((discount > 0 && new_list_price > 0) || (discount < 0 && new_list_price < 0))
+                                res.Discount = (decimal)FloatUtils.FloatRound((double)discount, precisionDigits: 2);
+                        }
+                    }
                 }
                 else
                 {
@@ -178,6 +203,27 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).ToListAsync();
+            if (self.Any(x => x.State != "draft" && x.State != "cancel"))
+                throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
+
+            var coupons = self.Where(x => x.Coupon != null).Select(x => x.Coupon).Distinct().ToList();
+            if (coupons.Any())
+            {
+                var couponObj = GetService<ISaleCouponService>();
+                foreach(var coupon in coupons)
+                {
+                    coupon.SaleOrder = null;
+                    coupon.State = "new";
+                }
+                await couponObj.UpdateAsync(coupons);
+            }
+
+            await DeleteAsync(self);
         }
     }
 }

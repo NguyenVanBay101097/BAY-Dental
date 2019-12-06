@@ -90,7 +90,7 @@ namespace Infrastructure.Services
                   }).ToListAsync();
                 foreach (var item in result)
                 {
-                    item.Name = $"Quý {item.QuarterOfYear}, {item.Year}";
+                    item.Name = $"Quý {item.QuarterOfYear + 1}, {item.Year}";
                 }
                 return result;
             }

@@ -230,7 +230,7 @@ namespace Infrastructure.Services
         public async Task<CardCard> GetValidCard(Guid partnerId)
         {
             var card = await _GetCard(partnerId);
-            if (IsExpired(card))
+            if (card == null || IsExpired(card))
                 return null;
             return card;
         }

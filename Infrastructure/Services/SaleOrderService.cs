@@ -115,7 +115,7 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await query.Select(x => new SaleOrderBasic
+            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderBasic
             {
                 Id = x.Id,
                 AmountTotal = x.AmountTotal,
@@ -220,6 +220,292 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public async Task ApplyCoupon(SaleOrderApplyCoupon val)
+        {
+            var couponCode = val.CouponCode;
+            var self = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.OrderLines).Include("OrderLines.Product").FirstOrDefaultAsync();
+
+            var couponObj = GetService<ISaleCouponService>();
+            var soLineObj = GetService<ISaleOrderLineService>();
+            var ruleObj = GetService<ISaleCouponProgramService>();
+
+            var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
+                .Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
+            if (coupon == null)
+                throw new Exception("Mã coupon " + couponCode + " không tồn tại");
+
+            if (!coupon.Program.Active)
+                throw new Exception("Chương trình coupon cho " + couponCode + " đã hết khả dụng.");
+
+            var date = DateTime.Today;
+            if (coupon.DateExpired.HasValue && date > coupon.DateExpired)
+                throw new Exception("Mã coupon " + couponCode + " đã hết hạn sử dụng");
+
+            if (coupon.State == "used" || coupon.State == "expired")
+                throw new Exception("Mã coupon " + couponCode + " đã được sử dụng hoặc hết hạn sử dụng.");
+
+            if (coupon.PartnerId.HasValue && coupon.PartnerId != self.PartnerId)
+                throw new Exception("Mã coupon " + couponCode + " chỉ có thể sử dụng cho khách hàng " + coupon.Partner.Name);
+
+            var rule = coupon.Program;
+            decimal total_amount = 0;
+            decimal total_qty = 0;
+            if (rule.ProgramType == "coupon_program")
+            {
+                //Kiểm tra điều kiện để áp dụng coupon nếu nó thuộc một chương trình coupon
+                var product_list = new List<ApplyPromotionProductListItem>();
+                foreach (var line in self.OrderLines)
+                {
+                    if (line.PromotionProgramId.HasValue)
+                        continue;
+                    var qty = line.ProductUOMQty;
+                    var price_unit = line.PriceUnit * (1 - line.Discount / 100);
+                    var amount = price_unit * line.ProductUOMQty; //chưa bao gồm thuế
+                    var item = product_list.FirstOrDefault(x => x.Product.Id == line.Product.Id);
+                    if (item != null)
+                    {
+                        item.Qty += qty;
+                        item.Amount += amount;
+                    }
+                    else
+                    {
+                        product_list.Add(new ApplyPromotionProductListItem
+                        {
+                            Product = line.Product,
+                            Qty = qty,
+                            Amount = amount
+                        });
+                    }
+                }
+
+                var min_quantity = rule.RuleMinQuantity ?? 0;
+                var min_amount = rule.RuleMinimumAmount ?? 0;
+
+                foreach (var item in product_list)
+                {
+                    total_qty += item.Qty;
+                    total_amount += item.Amount;
+                }
+
+                if (total_qty < min_quantity)
+                {
+                    throw new Exception("Bạn cần mua số lượng tối thiểu là " + min_quantity + ". Chương trình coupon: " + rule.Name);
+                }
+
+                if (total_amount < min_amount)
+                    throw new Exception("Bạn cần mua số tiền tối thiểu là " + min_amount.ToString("n0") + ". Chương trình coupon: " + rule.Name);
+            }
+
+            await ruleObj.Apply(rule, self, total_amount, total_qty, coupon: coupon);
+
+            coupon.SaleOrderId = self.Id;
+            coupon.State = "used";
+            await couponObj.UpdateAsync(coupon);
+
+            _AmountAll(self);
+            await UpdateAsync(self);
+        }
+
+        public async Task ApplyPromotion(Guid id)
+        {
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
+                .Include("OrderLines.Product").FirstOrDefaultAsync();
+            var soLineObj = GetService<ISaleOrderLineService>();
+            var couponObj = GetService<SaleCouponService>();
+            var product_list = new List<ApplyPromotionProductListItem>();
+            var ruleObj = GetService<IPromotionRuleService>();
+            var programObj = GetService<IPromotionProgramService>();
+            var coupons = new List<SaleCoupon>();
+
+            //tạo product list
+            foreach (var line in self.OrderLines)
+            {
+                if (line.PromotionProgramId.HasValue || line.PromotionId.HasValue)
+                    continue;
+
+                var qty = line.ProductUOMQty;
+                var amount = line.PriceSubTotal; //chưa bao gồm thuế
+                var item = product_list.FirstOrDefault(x => x.Product.Id == line.Product.Id);
+                if (item != null)
+                {
+                    item.Qty += qty;
+                    item.Amount += amount;
+                }
+                else
+                {
+                    product_list.Add(new ApplyPromotionProductListItem
+                    {
+                        Product = line.Product,
+                        Qty = qty,
+                        Amount = amount
+                    });
+                }
+            }
+
+            //tìm tất cả nhóm sản phẩm và sản phẩm trong order
+            var products = self.OrderLines.Select(x => x.Product).Distinct().ToList();
+            var categ_ids = new HashSet<Guid>();
+            foreach (var p in products)
+            {
+                var categ = p.Categ;
+                while (categ != null)
+                {
+                    categ_ids.Add(categ.Id);
+                    categ = categ.Parent;
+                }
+            }
+
+            var prod_ids = products.Select(x => x.Id).ToList();
+
+            var date = DateTime.Today;
+            var programs = await programObj.SearchQuery(x => x.Active &&
+            (!x.DateFrom.HasValue || x.DateFrom <= date) &&
+            (!x.DateTo.HasValue || x.DateTo >= date)).Select(x => new PromotionProgramDisplay
+            {
+                Id = x.Id,
+                OrderCount = x.SaleLines.Select(s => s.Order).Distinct().Count(),
+                MaximumUseNumber = x.MaximumUseNumber ?? 0,
+            }).ToListAsync();
+
+            foreach(var program in programs)
+            {
+                if (program.MaximumUseNumber > 0 && program.MaximumUseNumber <= program.OrderCount)
+                    continue;
+                //tìm rules có thể áp dụng
+                var rules = await ruleObj.SearchQuery(x => x.ProgramId == program.Id).Select(x => new SaleOrderSearchPromotionRuleItem
+                {
+                    Id = x.Id,
+                    DiscountApplyOn = x.DiscountApplyOn,
+                    DiscountProductItems = x.RuleProductRels.Select(s => new PromotionRuleDiscountProductItem {
+                        ProductId = s.ProductId,
+                        DiscountLineProductId = s.DiscountLineProductId,
+                        DiscountLineProductUOMId = s.DiscountLineProduct.UOMId
+                    }),
+                    DiscountCategoryItems = x.RuleCategoryRels.Select(s => new PromotionRuleDiscountCategoryItem {
+                        CategId = s.CategId,
+                        DiscountLineProductId = s.DiscountLineProductId,
+                        DiscountLineProductUOMId = s.DiscountLineProduct.UOMId
+                    }),
+                    MinQuantity = x.MinQuantity ?? 0,
+                    DiscountType = x.DiscountType,
+                    DiscountFixedAmount = x.DiscountFixedAmount ?? 0,
+                    DiscountPercentage = x.DiscountPercentage ?? 0,
+                    ProgramId = x.ProgramId,
+                    ProgramName = x.Program.Name,
+                    DiscountLineProductId = x.DiscountLineProductId,
+                    DiscountLineProductUOMId = x.DiscountLineProduct.UOMId
+                }).ToListAsync();
+
+                foreach (var rule in rules)
+                {
+                    var min_quantity = rule.MinQuantity; //số lượng này nên product
+                    var dict = new Dictionary<Guid, PromotionQtyAmountDictValue>();
+                    if (rule.DiscountApplyOn == "0_product_variant")
+                    {
+                        foreach (var item in product_list)
+                        {
+                            if (!rule.DiscountProductItems.Any(x => x.ProductId == item.Product.Id))
+                                continue;
+                            if (item.Qty < min_quantity)
+                                continue;
+                            await UpdateDiscountLine(rule, self, item.Amount, productId: item.Product.Id);
+                        }
+                    }
+                    else if (rule.DiscountApplyOn == "2_product_category")
+                    {
+                        decimal total_amount = 0;
+                        foreach (var item in product_list)
+                        {
+                            var categId = item.Product.CategId;
+                            if (!rule.DiscountCategoryItems.Any(x => x.CategId == categId))
+                                continue;
+                            if (item.Qty < min_quantity)
+                                continue;
+
+                            if (dict.ContainsKey(categId))
+                                dict.Add(categId, new PromotionQtyAmountDictValue());
+
+                            total_amount += item.Amount;
+                            await UpdateDiscountLine(rule, self, total_amount, categId: categId);
+                        }
+                    }
+                    else
+                    {
+                        decimal total_amount = 0;
+                        foreach (var item in product_list)
+                        {
+                            if (item.Qty < min_quantity)
+                                continue;
+
+                            total_amount += item.Amount;
+                            await UpdateDiscountLine(rule, self, total_amount);
+                        }
+                    }
+                }
+            }
+
+            _AmountAll(self);
+            await UpdateAsync(self);
+        }
+
+        public async Task UpdateDiscountLine(SaleOrderSearchPromotionRuleItem rule, SaleOrder order, decimal amount_total, decimal qty = 1,
+            Guid? productId = null, Guid? categId = null)
+        {
+            Guid? discountProductId = null;
+            Guid? discountProductUOMId = null;
+            if (rule.DiscountApplyOn == "0_product_variant" && productId.HasValue)
+            {
+                var discountProductItem = rule.DiscountProductItems.FirstOrDefault(x => x.ProductId == productId);
+                discountProductId = discountProductItem.DiscountLineProductId;
+                discountProductUOMId = discountProductItem.DiscountLineProductUOMId;
+            }
+            else if (rule.DiscountApplyOn == "2_product_category" && categId.HasValue)
+            {
+                var discountProductItem = rule.DiscountCategoryItems.FirstOrDefault(x => x.CategId == categId);
+                discountProductId = discountProductItem.DiscountLineProductId;
+                discountProductUOMId = discountProductItem.DiscountLineProductUOMId;
+            }
+            else
+            {
+                discountProductId = rule.DiscountLineProductId;
+                discountProductUOMId = rule.DiscountLineProductUOMId;
+            }
+           
+            var soLineObj = GetService<ISaleOrderLineService>();
+            decimal price_unit = 0;
+            if (rule.DiscountType == "percentage")
+                price_unit = Math.Round(amount_total * rule.DiscountPercentage / 100);
+            else if (rule.DiscountType == "fixed_amount")
+                price_unit = rule.DiscountFixedAmount;
+
+            var promo_line = order.OrderLines.Where(x => x.PromotionId == rule.ProgramId && x.ProductId == discountProductId).FirstOrDefault();
+            if (promo_line != null)
+            {
+                promo_line.ProductUOMQty = qty;
+                promo_line.PriceUnit = -price_unit;
+                soLineObj.ComputeAmount(new List<SaleOrderLine>() { promo_line });
+            }
+            else
+            {
+                await soLineObj.CreateAsync(PrepareDiscountLine(rule, order, discountProductId.Value, discountProductUOMId.Value, price_unit, qty: qty));
+            }
+        }
+
+        private SaleOrderLine PrepareDiscountLine(SaleOrderSearchPromotionRuleItem rule, SaleOrder order, Guid productId, Guid uomId, decimal discount_amount, decimal qty = 1)
+        {
+            return new SaleOrderLine
+            {
+                Name = $"Chiết khấu: {rule.ProgramName}",
+                Order = order,
+                OrderId = order.Id,
+                ProductUOMQty = qty,
+                ProductId = productId,
+                ProductUOMId = uomId,
+                PriceUnit = -discount_amount,
+                PromotionId = rule.ProgramId,
+            };
+        }
 
         public async Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id)
         {
@@ -652,5 +938,42 @@ namespace Infrastructure.Services
                 await cardObj.UpdateAsync(card);
             }
         }
+    }
+
+    public class SaleOrderSearchPromotionRuleItem
+    {
+        public Guid Id { get; set; }
+        public string DiscountApplyOn { get; set; }
+        public IEnumerable<PromotionRuleDiscountProductItem> DiscountProductItems { get; set; }
+        public IEnumerable<PromotionRuleDiscountCategoryItem> DiscountCategoryItems { get; set; }
+        public decimal MinQuantity { get; set; }
+        public string DiscountType { get; set; }
+        public decimal DiscountFixedAmount { get; set; }
+        public decimal DiscountPercentage { get; set; }
+        public string ProgramName { get; set; }
+        public Guid ProgramId { get; set; }
+
+        public Guid? DiscountLineProductId { get; set; }
+        public Guid? DiscountLineProductUOMId { get; set; }
+    }
+
+    public class PromotionRuleDiscountProductItem
+    {
+        public Guid ProductId { get; set; }
+        public Guid? DiscountLineProductId { get; set; }
+        public Guid? DiscountLineProductUOMId { get; set; }
+    }
+
+    public class PromotionRuleDiscountCategoryItem
+    {
+        public Guid CategId { get; set; }
+        public Guid? DiscountLineProductId { get; set; }
+        public Guid? DiscountLineProductUOMId { get; set; }
+    }
+
+    public class PromotionQtyAmountDictValue
+    {
+        public decimal Qty { get; set; }
+        public decimal Amount { get; set; }
     }
 }

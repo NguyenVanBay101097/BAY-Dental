@@ -1,0 +1,148 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/promotion-programs']">
+                    Chương trình khuyến mãi
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{program.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên chương trình</label>
+                    <h1>
+                        <input type="text" class="form-control" required formControlName="name" />
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày bắt đầu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateFromObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày kết thúc
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateToObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Áp dụng cho
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                            formControlName="maximumUseNumber" style="width: 100px;margin-right: 10px;">
+                                        </kendo-numerictextbox>
+                                        <span> Đơn hàng đầu tiên</span>
+                                    </div>
+                                    <span class="text-muted">Nếu 0, không giới hạn</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Áp dụng chi nhánh
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'"
+                                        formControlName="companies">
+                                    </kendo-multiselect>
+                                    <span class="text-muted">Để trống, áp dụng tất cả chi nhánh</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <div class="o_horizontal_separator">
+                        Điều kiện và phần thưởng
+                    </div>
+                    <div class="o_form_field o_form_field_one2many o_view_manager_content">
+                        <div>
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-sm btn-secondary" (click)="addRule()">Thêm</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="o_list_view table table-condensed table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Áp dụng trên</th>
+                                            <th>Số lượng tối thiểu</th>
+                                            <th>Phần thưởng</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="rules">
+                                        <ng-container *ngFor="let line of rules.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td>{{ getRuleApplyDisplay(line) }}</td>
+                                                <td>{{ line.get('minQuantity').value | number }}</td>
+                                                <td>{{getRuleDiscountDisplay(line)}}</td>
+                                                <td class="text-right">
+                                                    <div>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                            (click)="editRule(line)">
+                                                            <span class="k-icon k-i-edit"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                            (click)="deleteRule(i)">
+                                                            <span class="k-icon k-i-delete"></span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

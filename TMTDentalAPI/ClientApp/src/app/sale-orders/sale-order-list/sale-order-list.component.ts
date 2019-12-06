@@ -149,11 +149,11 @@ export class SaleOrderListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/sale-orders/create']);
+    this.router.navigate(['/sale-orders/form']);
   }
 
   editItem(item: SaleOrderBasic) {
-    this.router.navigate(['/sale-orders/edit/', item.id]);
+    this.router.navigate(['/sale-orders/form'], { queryParams: { id: item.id } });
   }
 
   deleteItem(item) {

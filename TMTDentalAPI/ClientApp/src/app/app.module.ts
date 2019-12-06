@@ -81,6 +81,8 @@ import { ResPartnerBanksModule } from './res-partner-banks/res-partner-banks.mod
 import { CardTypesModule } from './card-types/card-types.module';
 import { CardCardsModule } from './card-cards/card-cards.module';
 import { SaleSettingsModule } from './sale-settings/sale-settings.module';
+import { SaleCouponPromotionModule } from './sale-coupon-promotion/sale-coupon-promotion.module';
+import { PromotionProgramsModule } from './promotion-programs/promotion-programs.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -168,7 +170,9 @@ registerLocaleData(localeVi, 'vi');
     ResPartnerBanksModule,
     CardTypesModule,
     CardCardsModule,
-    SaleSettingsModule
+    SaleSettingsModule,
+    SaleCouponPromotionModule,
+    PromotionProgramsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

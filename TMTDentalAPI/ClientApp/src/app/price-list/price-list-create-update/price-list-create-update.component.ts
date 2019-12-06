@@ -17,6 +17,7 @@ import { ProductPriceListItemSave, ProductPriceListSave } from '../price-list';
 import { FlexAlignStyleBuilder } from '@angular/flex-layout';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Observable } from 'rxjs';
+import { CompanyPaged, CompanyService, CompanyBasic } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-price-list-create-update',
@@ -50,8 +51,11 @@ export class PriceListCreateUpdateComponent implements OnInit {
 
   optionData = [];
 
+  listCompanies: CompanyBasic[] = [];
+
   constructor(private fb: FormBuilder, private service: PriceListService, private notificationService: NotificationService,
-    private dialogService: DialogService, private route: ActivatedRoute, private router: Router, private intlService: IntlService) { }
+    private dialogService: DialogService, private route: ActivatedRoute, private router: Router, private intlService: IntlService,
+    private companyService: CompanyService) { }
 
 
   ngOnInit() {
@@ -63,7 +67,9 @@ export class PriceListCreateUpdateComponent implements OnInit {
       dateEnd: null,
       dateEndObj: [null, Validators.required],
       partnerCateg: null,
-      items: this.fb.array([])
+      company: null,
+      items: this.fb.array([]),
+      discountPolicy: ['with_discount']
     })
 
     this.formItem = this.fb.group({
@@ -78,8 +84,16 @@ export class PriceListCreateUpdateComponent implements OnInit {
     this.getActiveRoute();
     this.maxDateStart = this.formPrice.get('dateEndObj').value;
     this.minDateEnd = this.formPrice.get('dateStartObj').value;
-    this.loadPartnerCategories();
+    // this.loadPartnerCategories();
+    this.loadListCompanies();
+  }
 
+
+  loadListCompanies() {
+    var val = new CompanyPaged();
+    this.companyService.getPaged(val).subscribe(result => {
+      this.listCompanies = result.items;
+    });
   }
 
   getActiveRoute() {
@@ -122,7 +136,8 @@ export class PriceListCreateUpdateComponent implements OnInit {
     var val = this.formPrice.value;
     val.dateStart = this.intlService.formatDate(val.dateStartObj, 'g', 'en-US');
     val.dateEnd = this.intlService.formatDate(val.dateEndObj, 'g', 'en-US');
-    val.partnerCategId = val.partnerCateg ? val.partnerCateg.id : '';
+    val.partnerCategId = val.partnerCateg ? val.partnerCateg.id : null;
+    val.companyId = val.company ? val.company.id : null;
     this.items.forEach(e => {
       e.dateStart = val.dateStart;
       e.dateEnd = val.dateEnd;
@@ -132,7 +147,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
     if (this.id) {
       this.service.updatePriceList(val, this.id).subscribe(
         rs => {
-          this.router.navigate(['/price-list/edit/' + this.id]);
+          this.router.navigate(['/pricelists/edit/' + this.id]);
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -145,7 +160,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
     } else {
       this.service.createPriceList(val).subscribe(
         rs => {
-          this.router.navigate(['/price-list/edit/' + rs.id]);
+          this.router.navigate(['/pricelists/edit/' + rs.id]);
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -261,7 +276,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
   }
 
   exit() {
-    this.router.navigate(['/price-list-list']);
+    this.router.navigate(['/pricelists']);
   }
 
 

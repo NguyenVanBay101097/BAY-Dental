@@ -1,0 +1,35 @@
+<header class="modal-header">
+    <h4 class="modal-title">Số lượng coupon được khởi tạo<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Số lượng coupon
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="number">
+                                </kendo-numerictextbox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Khởi tạo</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

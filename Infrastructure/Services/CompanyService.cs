@@ -552,6 +552,7 @@ namespace Infrastructure.Services
             var product_category_dict = new Dictionary<string, ProductCategory>();
             var product_uom_categ_dict = new Dictionary<string, UoMCategory>();
             var product_uom_dict = new Dictionary<string, UoM>();
+            var product_pricelist_dict = new Dictionary<string, ProductPricelist>();
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\product_data.xml");
             XmlDocument doc = new XmlDocument();
             doc.Load(file_path);
@@ -637,6 +638,26 @@ namespace Infrastructure.Services
 
                     product_uom_dict.Add(id, uom);
                 }
+                else if (model == "product.pricelist")
+                {
+                    var pricelist = new ProductPricelist();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+                            pricelist.Name = field.InnerText;
+                        }
+                        else if (field_name == "sequence")
+                        {
+                            pricelist.Sequence = XmlConvert.ToInt32(field.InnerText);
+                        }
+                    }
+
+                    product_pricelist_dict.Add(id, pricelist);
+                }
             }
 
             var productCategoryObj = GetService<IProductCategoryService>();
@@ -647,6 +668,9 @@ namespace Infrastructure.Services
 
             var productUOMObj = GetService<IUoMService>();
             await productUOMObj.CreateAsync(product_uom_dict.Values);
+
+            var pricelistObj = GetService<IProductPricelistService>();
+            await pricelistObj.CreateAsync(product_pricelist_dict.Values);
 
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(product_uom_dict, "uom"));

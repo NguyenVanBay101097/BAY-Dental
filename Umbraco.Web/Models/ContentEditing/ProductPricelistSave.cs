@@ -22,5 +22,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PartnerCategId { get; set; }
         public PartnerCategoryBasic PartnerCateg { get; set; }
+
+        public string DiscountPolicy { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public CompanyBasic Company { get; set; }
     }
 }

@@ -43,6 +43,7 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id && x.Active)
                 .Include(x => x.Items)
+                .Include(x => x.Company)
                 .Include("Items.Product")
                 .Include("Items.Categ")
                 .Include("Items.PartnerCateg")

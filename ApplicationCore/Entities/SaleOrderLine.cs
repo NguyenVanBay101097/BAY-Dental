@@ -75,5 +75,20 @@ namespace ApplicationCore.Entities
         public ICollection<DotKhamStep> DotKhamSteps { get; set; } = new List<DotKhamStep>();
 
         public int? Sequence { get; set; }
+
+        /// <summary>
+        /// Dùng cho chương trình coupon
+        /// </summary>
+        public Guid? PromotionProgramId { get; set; }
+        public SaleCouponProgram PromotionProgram { get; set; }
+
+        /// <summary>
+        /// Dùng cho trường hợp chương trình khuyến mãi
+        /// </summary>
+        public Guid? PromotionId { get; set; }
+        public PromotionProgram Promotion { get; set; }
+
+        public Guid? CouponId { get; set; }
+        public SaleCoupon Coupon { get; set; }
     }
 }

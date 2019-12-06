@@ -2,10 +2,11 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/price-list-list">Bảng giá</a>
+                <a routerLink="/pricelists">Bảng giá</a>
             </li>
             <li class="active">
                 <span>{{priceListName}}</span>
+                <span *ngIf="!id">Mới</span>
             </li>
         </ol>
         <div class="o_cp_left">
@@ -51,14 +52,39 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Ngày bắt đầu
+                                        Chi nhánh
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div>
-                                        <kendo-datepicker formControlName="dateStartObj" [max]="maxDateStart"
-                                            format="dd/MM/yyyy HH:mm" (valueChange)="changeDateStart($event)">
-                                        </kendo-datepicker>
+                                    <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
+                                        formControlName="company" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Chính sách chiết khấu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_radio o_vertical o_field_widget">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                formControlName="discountPolicy" id="radio71_with_discount"
+                                                value="with_discount">
+                                            <label class="form-check-label" for="radio71_with_discount">
+                                                Giá bao gồm chiết khấu
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                formControlName="discountPolicy" id="radio71_without_discount"
+                                                value="without_discount">
+                                            <label class="form-check-label" for="radio71_without_discount">
+                                                Hiển thị giá và chiết khấu riêng
+                                            </label>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -66,7 +92,7 @@
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Nhóm khách hàng
@@ -79,6 +105,20 @@
                                         </kendo-combobox>
                                     </div>
                                 </td>
+                            </tr> -->
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày bắt đầu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-datepicker formControlName="dateStartObj" [max]="maxDateStart"
+                                            (valueChange)="changeDateStart($event)">
+                                        </kendo-datepicker>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -89,7 +129,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div>
                                         <kendo-datepicker formControlName="dateEndObj" [min]="minDateEnd"
-                                            format="dd/MM/yyyy HH:mm" (valueChange)="changeDateEnd($event)">
+                                            (valueChange)="changeDateEnd($event)">
                                         </kendo-datepicker>
                                     </div>
                                 </td>

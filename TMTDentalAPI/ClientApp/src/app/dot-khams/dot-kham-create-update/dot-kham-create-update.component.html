@@ -90,8 +90,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="dotKham.saleOrder && id"
-                                        [routerLink]="['/sale-orders/edit/', dotKham.saleOrder.id]">{{dotKham.saleOrder.name}}</a>
+                                    <a *ngIf="dotKham.saleOrder && id" [routerLink]="['/sale-orders/form']"
+                                        [queryParams]="{id: dotKham.saleOrder.id}">{{dotKham.saleOrder.name}}</a>
                                     <!-- <div [hidden]="id">
                                         <kendo-combobox formControlName="invoice" [allowCustom]="false"
                                             [filterable]="true" [data]="customerInvoicesList" #invoiceCbx

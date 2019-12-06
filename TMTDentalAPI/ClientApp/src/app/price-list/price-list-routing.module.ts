@@ -5,15 +5,15 @@ import { PriceListCreateUpdateComponent } from './price-list-create-update/price
 
 const routes: Routes = [
   {
-    path: 'price-list-list',
+    path: 'pricelists',
     component: PriceListListComponent
   },
   {
-    path: 'price-list/create',
+    path: 'pricelists/create',
     component: PriceListCreateUpdateComponent
   },
   {
-    path: 'price-list/edit/:id',
+    path: 'pricelists/edit/:id',
     component: PriceListCreateUpdateComponent
   }
 ];

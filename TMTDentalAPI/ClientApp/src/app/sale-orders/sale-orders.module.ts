@@ -11,9 +11,10 @@ import { SaleOrderListComponent } from './sale-order-list/sale-order-list.compon
 import { SaleOrderLineService } from './sale-order-line.service';
 import { SaleOrderCreateDotKhamDialogComponent } from './sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { SharedModule } from '../shared/shared.module';
+import { SaleOrderApplyCouponDialogComponent } from './sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent],
+  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,
@@ -28,7 +29,8 @@ import { SharedModule } from '../shared/shared.module';
   ],
   entryComponents: [
     SaleOrderLineDialogComponent,
-    SaleOrderCreateDotKhamDialogComponent
+    SaleOrderCreateDotKhamDialogComponent,
+    SaleOrderApplyCouponDialogComponent
   ]
 })
 export class SaleOrdersModule { }

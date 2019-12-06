@@ -169,7 +169,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   getPriceSubTotal() {
-    return (this.getPriceUnit() * (1 - this.getDiscount() / 100)) * this.getQuantity();
+    var subtotal = (this.getPriceUnit() * (1 - this.getDiscount() / 100)) * this.getQuantity();
+    return subtotal;
   }
 
   getPriceUnit() {

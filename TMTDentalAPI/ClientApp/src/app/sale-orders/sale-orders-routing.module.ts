@@ -9,13 +9,9 @@ const routes: Routes = [
     component: SaleOrderListComponent
   },
   {
-    path: 'sale-orders/create',
+    path: 'sale-orders/form',
     component: SaleOrderCreateUpdateComponent
   },
-  {
-    path: 'sale-orders/edit/:id',
-    component: SaleOrderCreateUpdateComponent
-  }
 ];
 
 @NgModule({

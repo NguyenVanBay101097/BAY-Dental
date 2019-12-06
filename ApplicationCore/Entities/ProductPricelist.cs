@@ -10,6 +10,7 @@ namespace ApplicationCore.Entities
         {
             Active = true;
             Sequence = 16;
+            DiscountPolicy = "with_discount";
         }
 
         public string Name { get; set; }
@@ -38,5 +39,11 @@ namespace ApplicationCore.Entities
 
         public Guid? CardTypeId { get; set; }
         public CardType CardType { get; set; }
+
+        /// <summary>
+        /// with_discount: Giá đã bao gồm chiết khấu
+        /// without_discount: Hiện giá và chiết khấu cho khách hàng
+        /// </summary>
+        public string DiscountPolicy { get; set; }
     }
 }

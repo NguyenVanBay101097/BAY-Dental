@@ -390,6 +390,16 @@ namespace ApplicationCore.Utilities
             return new string(buffer);
         }
 
+        public static string RandomStringDigit(int size)
+        {
+            var builder = new StringBuilder();
+            for (var i = 0; i < size; i++)
+            {
+                builder.Append(_rng.Next(0, 10));
+            }
+            return builder.ToString();
+        }
+
         /// <summary>
         /// Returns the number of occurances of one string within another
         /// </summary>

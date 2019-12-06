@@ -1,0 +1,155 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/coupon-programs']">
+                    Chương trình coupon
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{program.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" name="315" class="btn btn-secondary btn-sm" (click)="generateCoupons()">
+                        <span>Khởi tạo Coupon</span>
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_not_full oe_button_box">
+                    <button type="button" class="btn oe_stat_button" (click)="viewCoupons()">
+                        <i class="fas o_button_icon fa-ticket-alt"></i>
+                        <div name="coupon_count" class="o_field_widget o_stat_info o_readonly_modifier">
+                            <span class="o_stat_value">{{(program.couponCount || 0) | number}}</span>
+                            <span class="o_stat_text">Coupon</span>
+                        </div>
+                    </button><button type="button" class="btn oe_stat_button">
+                        <i class="fas o_button_icon fa-dollar-sign"></i>
+                        <div name="order_count" class="o_field_widget o_stat_info o_readonly_modifier">
+                            <span class="o_stat_value">0</span>
+                            <span class="o_stat_text">Đơn hàng</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên chương trình</label>
+                    <h1>
+                        <input type="text" class="form-control" required formControlName="name" />
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2" style="width: 100%;">
+                                    <div class="o_horizontal_separator">Điều kiện</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tiền mua tối thiểu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="ruleMinimumAmount">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2" style="width: 100%;">
+                                    <div class="o_horizontal_separator">Giá trị</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Thời hạn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'" class="mr-2"
+                                            formControlName="validityDuration">
+                                        </kendo-numerictextbox>
+                                        <span> Ngày</span>
+                                    </div>
+                                    <span class="text-muted">Nếu 0, sử dụng vô thời hạn</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2" style="width: 100%;">
+                                    <div class="o_horizontal_separator">
+                                        Phần thưởng
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Chiết khấu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="discountType">
+                                            <option value="percentage">Phần trăm</option>
+                                            <option value="fixed_amount">Giảm tiền</option>
+                                        </select>
+                                        <kendo-numerictextbox [class.d-none]="discountType != 'percentage'" [min]="0"
+                                            [format]="'n0'" formControlName="discountPercentage">
+                                        </kendo-numerictextbox>
+                                        <span [class.d-none]="discountType != 'percentage'">%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="discountType != 'fixed_amount'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tiền giảm
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="discountFixedAmount">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

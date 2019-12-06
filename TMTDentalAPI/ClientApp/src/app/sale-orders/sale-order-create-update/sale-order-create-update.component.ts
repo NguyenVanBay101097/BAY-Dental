@@ -26,6 +26,7 @@ import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.ser
 import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.service';
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
+import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -111,7 +112,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   routeActive() {
-    this.route.paramMap.pipe(
+    this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
         this.id = params.get("id");
         // this.getAccountPayments(this.id);
@@ -188,6 +189,78 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
+  showApplyCouponDialog() {
+    if (this.id) {
+      let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.orderId = this.id;
+      modalRef.result.then(() => {
+        this.loadRecord();
+      }, () => {
+      });
+    } else {
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
+      this.createRecord().subscribe(result => {
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
+
+        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.orderId = result.id;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
+      });
+    }
+  }
+
+  applyPromotion() {
+    if (this.id) {
+      this.saveRecord().subscribe(() => {
+        this.saleOrderService.applyPromotion(this.id).subscribe(() => {
+          this.loadRecord();
+        });
+      });
+    } else {
+      this.createRecord().subscribe((result) => {
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
+
+        this.saleOrderService.applyPromotion(result.id).subscribe(() => {
+          this.loadRecord();
+        });
+      });
+    }
+  }
+
+  createRecord() {
+    var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.partnerId = val.partner.id;
+    val.pricelistId = val.pricelist.id;
+    val.userId = val.user ? val.user.id : null;
+    val.cardId = val.card ? val.card.id : null;
+    return this.saleOrderService.create(val);
+  }
+
+  saveRecord() {
+    var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.partnerId = val.partner.id;
+    val.pricelistId = val.pricelist.id;
+    val.userId = val.user ? val.user.id : null;
+    val.cardId = val.card ? val.card.id : null;
+    return this.saleOrderService.update(this.id, val);
+  }
+
   removeCard() {
     this.formGroup.get('card').patchValue(null);
   }
@@ -218,7 +291,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/sale-orders/create']);
+    this.router.navigate(['/sale-orders/form']);
   }
 
   actionConfirm() {
@@ -298,9 +371,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.cardId = val.card ? val.card.id : null;
     this.saleOrderService.create(val).subscribe(result => {
       this.saleOrderService.actionConfirm([result.id]).subscribe(() => {
-        this.router.navigate(['/sale-orders/edit/' + result.id]);
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
       }, () => {
-        this.router.navigate(['/sale-orders/edit/' + result.id]);
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
       });
     });
   }
@@ -329,7 +402,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.saleOrderService.create(val).subscribe(result => {
-        this.router.navigate(['/sale-orders/edit/' + result.id]);
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
       });
     }
   }

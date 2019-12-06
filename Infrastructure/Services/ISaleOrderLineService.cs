@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface ISaleOrderLineService: IBaseService<SaleOrderLine>
     {
-        void ComputeAmount(ICollection<SaleOrderLine> orderLines);
+        void ComputeAmount(IEnumerable<SaleOrderLine> orderLines);
 
         /// <summary>
         /// Cập nhật 1 số thông tin từ sale order vào sale order line như company, salesman...
@@ -24,5 +24,6 @@ namespace Infrastructure.Services
         void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines);
         AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
         Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

@@ -9,5 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceUnit { get; set; }
 
         public string Name { get; set; }
+
+        public decimal Discount { get; set; }
     }
 }

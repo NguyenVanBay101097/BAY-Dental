@@ -53,7 +53,6 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             var pricelist = _mapper.Map<ProductPricelist>(val);
             SaveItems(val, pricelist);
-            pricelist.CompanyId = CompanyId;
             await _pricelistService.CreateAsync(pricelist);
 
             var basic = _mapper.Map<ProductPricelistBasic>(pricelist);

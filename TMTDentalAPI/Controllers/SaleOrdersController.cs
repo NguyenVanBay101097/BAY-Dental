@@ -10,14 +10,14 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
-    public class SaleOrdersController : ControllerBase
+    public class SaleOrdersController : BaseApiController
     {
         private readonly ISaleOrderService _saleOrderService;
         private readonly IMapper _mapper;
@@ -25,10 +25,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IDotKhamService _dotKhamService;
         private readonly ICardCardService _cardService;
         private readonly IProductPricelistService _pricelistService;
+        private readonly ISaleOrderLineService _saleLineService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
-            ICardCardService cardService, IProductPricelistService pricelistService)
+            ICardCardService cardService, IProductPricelistService pricelistService,
+            ISaleOrderLineService saleLineService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
             _dotKhamService = dotKhamService;
             _cardService = cardService;
             _pricelistService = pricelistService;
+            _saleLineService = saleLineService;
         }
 
         [HttpGet]
@@ -71,7 +74,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var order = _mapper.Map<SaleOrder>(val);
-            SaveOrderLines(val, order);
+            await SaveOrderLines(val, order);
             await _saleOrderService.CreateOrderAsync(order);
 
             val.Id = order.Id;
@@ -89,7 +92,7 @@ namespace TMTDentalAPI.Controllers
 
             order = _mapper.Map(val, order);
 
-            SaveOrderLines(val, order);
+            await SaveOrderLines(val, order);
 
             await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.UpdateOrderAsync(order);
@@ -142,6 +145,28 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyCoupon(SaleOrderApplyCoupon val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ApplyCoupon(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ApplyPromotion(Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ApplyPromotion(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null || !ModelState.IsValid)
@@ -160,12 +185,20 @@ namespace TMTDentalAPI.Controllers
             var res = new SaleOrderOnChangePartnerResult();
             if (val.PartnerId.HasValue)
             {
-                var card = await _cardService.GetValidCard(val.PartnerId.Value);
-                if (card.Type.PricelistId.HasValue)
+                //tìm bảng giá mặc định
+                var pricelist = await _pricelistService.SearchQuery(x => !x.CompanyId.HasValue, orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+                if (pricelist == null)
                 {
-                    var pricelist = await _pricelistService.GetBasic(card.Type.PricelistId.Value);
-                    res.Pricelist = pricelist;
+                    var companyId = CompanyId;
+                    pricelist = await _pricelistService.SearchQuery(x => x.CompanyId == companyId, orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
                 }
+
+                if (pricelist != null)
+                    res.Pricelist = _mapper.Map<ProductPricelistBasic>(pricelist);
+
+                var card = await _cardService.GetValidCard(val.PartnerId.Value);
+                if (card != null && card.Type.PricelistId.HasValue)
+                    res.Pricelist = await _pricelistService.GetBasic(card.Type.PricelistId.Value);
             }
           
             return Ok(res);
@@ -179,7 +212,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        private void SaveOrderLines(SaleOrderDisplay val, SaleOrder order)
+        private async Task SaveOrderLines(SaleOrderDisplay val, SaleOrder order)
         {
             var existLines = order.OrderLines.ToList();
             var lineToRemoves = new List<SaleOrderLine>();
@@ -199,12 +232,8 @@ namespace TMTDentalAPI.Controllers
                     lineToRemoves.Add(existLine);
             }
 
-            foreach (var line in lineToRemoves)
-            {
-                if (line.State != "draft")
-                    continue;
-                order.OrderLines.Remove(line);
-            }
+            if (lineToRemoves.Any())
+                await _saleLineService.Unlink(lineToRemoves.Select(x => x.Id).ToList());
 
             //Cập nhật sequence cho tất cả các line của val
             int sequence = 0;

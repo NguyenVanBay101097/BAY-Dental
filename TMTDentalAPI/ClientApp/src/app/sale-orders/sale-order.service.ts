@@ -79,6 +79,14 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
+    applyCoupon(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyCoupon', data);
+    }
+
+    applyPromotion(id: string) {
+        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/ApplyPromotion', {});
+    }
+
     unlink(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
     }

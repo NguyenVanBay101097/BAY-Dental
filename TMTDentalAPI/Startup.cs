@@ -188,6 +188,10 @@ namespace TMTDentalAPI
             services.AddScoped<ICardCardService, CardCardService>();
             services.AddScoped<ISaleSettingsService, SaleSettingsService>();
             services.AddScoped<ICardHistoryService, CardHistoryService>();
+            services.AddScoped<ISaleCouponProgramService, SaleCouponProgramService>();
+            services.AddScoped<ISaleCouponService, SaleCouponService>();
+            services.AddScoped<IPromotionProgramService, PromotionProgramService>();
+            services.AddScoped<IPromotionRuleService, PromotionRuleService>();
 
             services.AddMemoryCache();
 
@@ -253,6 +257,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new CardTypeProfile());
                 mc.AddProfile(new CardCardProfile());
                 mc.AddProfile(new SaleSettingsProfile());
+                mc.AddProfile(new SaleCouponProgramProfile());
+                mc.AddProfile(new SaleCouponProfile());
+                mc.AddProfile(new PromotionProgramProfile());
+                mc.AddProfile(new PromotionRuleProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

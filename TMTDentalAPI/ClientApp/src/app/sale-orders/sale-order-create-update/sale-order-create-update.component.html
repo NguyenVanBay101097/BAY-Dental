@@ -272,32 +272,50 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
-                                <tbody>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
-                                            <label class="o_form_label oe_subtotal_footer_separator">
-                                                Tổng tiền
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 50%;">
-                                            <span
-                                                class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
-                                        </td>
-                                    </tr>
-                                    <!-- <tr *ngIf="saleOrder.state != 'draft'">
-                                        <td colspan="1" class="o_td_label pb-0">
-                                            <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
-                                                Còn nợ
-                                            </label>
-                                        </td>
-                                        <td colspan="1" class="text-right">
-                                            <span
-                                                class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{(getResidual ? getResidual : 0)| number}}</span>
-                                        </td>
-                                    </tr> -->
-                                </tbody>
-                            </table>
+                            <div class="oe_right">
+                                <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
+                                    (click)="showApplyCouponDialog()"
+                                    *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
+                                    <span>Coupon</span>
+                                </button>
+                                <button type="button" name="recompute_coupon_lines"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    help="When clicked, the content of the order will be checked to detect (and apply) possible promotion programs."
+                                    *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1"
+                                    (click)="applyPromotion()">
+                                    <span>Khuyến mãi</span>
+                                </button>
+                            </div>
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_8">
+                                </table>
+                                <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
+                                                <label class="o_form_label oe_subtotal_footer_separator">
+                                                    Tổng tiền
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 50%;">
+                                                <span
+                                                    class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                            </td>
+                                        </tr>
+                                        <!-- <tr *ngIf="saleOrder.state != 'draft'">
+                                                <td colspan="1" class="o_td_label pb-0">
+                                                    <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                                        Còn nợ
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" class="text-right">
+                                                    <span
+                                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{(getResidual ? getResidual : 0)| number}}</span>
+                                                </td>
+                                            </tr> -->
+                                    </tbody>
+                                </table>
+                            </div>
                             <div class="clearfix"></div>
                         </div>
                         <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">

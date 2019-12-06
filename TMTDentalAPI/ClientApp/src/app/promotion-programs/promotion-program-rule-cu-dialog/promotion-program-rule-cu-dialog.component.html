@@ -1,0 +1,135 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số lượng mua tối thiểu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="minQuantity">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Chiết khấu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="discountType">
+                                            <option value="percentage">Phần trăm</option>
+                                            <option value="fixed_amount">Giảm tiền</option>
+                                        </select>
+                                        <kendo-numerictextbox [class.d-none]="discountType != 'percentage'" [min]="0"
+                                            [format]="'n0'" formControlName="discountPercentage">
+                                        </kendo-numerictextbox>
+                                        <span [class.d-none]="discountType != 'percentage'">%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="discountType != 'fixed_amount'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tiền giảm
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="discountFixedAmount">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Áp dụng chiết khấu trên</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_radio o_vertical o_field_widget">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                formControlName="discountApplyOn" id="radio71_3_global"
+                                                value="3_global">
+                                            <label class="form-check-label" for="radio71_3_global">
+                                                Tất cả dịch vụ
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                formControlName="discountApplyOn" id="radio71_2_product_category"
+                                                value="2_product_category">
+                                            <label class="form-check-label" for="radio71_2_product_category">
+                                                Trên vài nhóm dịch vụ
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                formControlName="discountApplyOn" id="radio71_0_product_variant"
+                                                value="0_product_variant">
+                                            <label class="form-check-label" for="radio71_0_product_variant">
+                                                Trên vài dịch vụ
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="discountApplyOn != '2_product_category'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhóm dịch vụ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listCategories" [textField]="'name'" [valueField]="'id'"
+                                        formControlName="categories">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="discountApplyOn != '0_product_variant'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Dịch vụ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listProducts" [filterable]="true" #productMultiSelect
+                                        [textField]="'name'" [valueField]="'id'" formControlName="products">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

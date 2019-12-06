@@ -113,6 +113,13 @@ namespace Infrastructure.Data
         public DbSet<CardCard> CardCards { get; set; }
         public DbSet<SaleSettings> SaleSettings { get; set; }
         public DbSet<CardHistory> CardHistories { get; set; }
+        public DbSet<SaleCouponProgram> SaleCouponPrograms { get; set; }
+        public DbSet<SaleCoupon> SaleCoupons { get; set; }
+        public DbSet<PromotionProgram> PromotionPrograms { get; set; }
+        public DbSet<PromotionRule> PromotionRules { get; set; }
+        public DbSet<PromotionProgramCompanyRel> PromotionProgramCompanyRels { get; set; }
+        public DbSet<PromotionRuleProductCategoryRel> PromotionRuleProductCategoryRels { get; set; }
+        public DbSet<PromotionRuleProductRel> PromotionRuleProductRels { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -208,6 +215,13 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new CardTypeConfiguration());
             builder.ApplyConfiguration(new CardCardConfiguration());
             builder.ApplyConfiguration(new CardHistoryConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramConfiguration());
+            builder.ApplyConfiguration(new SaleCouponConfiguration());
+            builder.ApplyConfiguration(new PromotionProgramConfiguration());
+            builder.ApplyConfiguration(new PromotionRuleConfiguration());
+            builder.ApplyConfiguration(new PromotionProgramCompanyRelConfiguration());
+            builder.ApplyConfiguration(new PromotionRuleProductCategoryRelConfiguration());
+            builder.ApplyConfiguration(new PromotionRuleProductRelConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

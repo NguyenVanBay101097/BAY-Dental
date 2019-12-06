@@ -72,6 +72,8 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Tài khoản ngân hàng', link: '/res-partner-banks' },
         { name: 'Thẻ thành viên', link: '/card-cards' },
         { name: 'Loại thẻ thành viên', link: '/card-types' },
+        { name: 'Chương trình coupon', link: '/coupon-programs' },
+        { name: 'Chương trình khuyến mãi', link: '/promotion-programs' },
       ]
     },
     {
@@ -81,7 +83,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
-        { name: 'Bảng giá', link: '/price-list-list' },
+        { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình bán hàng', link: '/sale-settings' },
       ]
     },
