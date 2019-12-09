@@ -169,7 +169,7 @@ registerLocaleData(localeVi, 'vi');
     PartnerReportModule,
     ResBanksModule,
     ResPartnerBanksModule,
-    JournalReportsModule
+    JournalReportsModule,
     CardTypesModule,
     CardCardsModule,
     SaleSettingsModule,
