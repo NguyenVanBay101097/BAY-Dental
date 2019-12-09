@@ -8,10 +8,8 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <!-- <input type="text" class="o_searchview_input"
-                    placeholder="Theo số tài khoản, mã, tên ngân hàng hoặc chủ sở hữu"
-                    [(ngModel)]="searchNumberPartnerBank"
-                    (ngModelChange)="this.searchNumberPartnerBankUpdate.next($event)" /> -->
+                <input type="text" class="o_searchview_input" placeholder="Theo số tài khoản, mã, tên ngân hàng"
+                    [(ngModel)]="searchName" (ngModelChange)="this.searchNameUpdate.next($event)" />
             </div>
         </div>
         <div class="o_cp_left">
@@ -32,14 +30,26 @@
 <div class="o_content">
     <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
         (pageChange)="pageChange($event)" [loading]="loading">
-        <kendo-grid-column field="bic" title="Mã Ngân hàng" width="100"></kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên tài khoản">
+            <ng-template></ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column title="Số tài khoản" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.bankAccount ? dataItem.bankAccount.accountNumber : '' }}
+            </ng-template>
+        </kendo-grid-column>
 
-        <kendo-grid-command-column title="Thao tác" width="150">
+        <kendo-grid-column title="Ngân hàng" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.bankAccount ? dataItem.bankAccount.bank.name : ''}}
+            </ng-template>
+        </kendo-grid-column> -->
+
+        <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="openModal(dataItem.id)" class="btn btn-success btn-sm"><i title="Sửa"
                         class="fas fa-edit"></i></button>
-                <button title="Xóa" (click)="deleteBank(dataItem.id,$event)" class="btn btn-danger btn-sm mr5"><i
+                <button title="Xóa" (click)="deactive(dataItem.id)" class="btn btn-danger btn-sm mr5"><i
                         class="fas fa-times"></i></button>
             </ng-template>
         </kendo-grid-command-column>

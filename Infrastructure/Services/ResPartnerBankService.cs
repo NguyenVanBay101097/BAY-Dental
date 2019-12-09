@@ -35,7 +35,7 @@ namespace Infrastructure.Services
             if (paged.BankId.HasValue)
                 query = query.Where(x => x.BankId.Equals(paged.BankId));
 
-            var items = await query.OrderBy(x => x.DateCreated).ToListAsync();
+            var items = await query.Include(x=>x.Bank).OrderBy(x => x.DateCreated).ToListAsync();
 
             var totalItems = await query.CountAsync();
 
@@ -43,6 +43,29 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<ResPartnerBankBasic>>(items)
             };
+        }
+
+
+        public override async Task<ResPartnerBank> CreateAsync(ResPartnerBank entity)
+        {
+            var bankAccount = SearchQuery(x => x.AccountNumber.Equals(entity.AccountNumber) && x.BankId.Equals(entity.BankId))
+                .Include(x=>x.Bank).FirstOrDefault();
+            if (bankAccount != null)
+                throw new Exception("Tài khoản này đã tồn tại");      
+
+            return await base.CreateAsync(entity);
+        }
+
+        public IEnumerable<ResBankSimple> SearchPartnerBankCbx(ResPartnerBankPaged val)
+        {
+            var rpBank = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                rpBank = rpBank.Where(x => x.AccountNumber.Contains(val.Search) && x.Bank.Name.Contains(val.Search));
+
+            rpBank = rpBank.Include(x => x.Bank).OrderBy(x=>x.Bank.Name);
+
+            return _mapper.Map<IEnumerable<ResBankSimple>>(rpBank);
         }
     }
 }

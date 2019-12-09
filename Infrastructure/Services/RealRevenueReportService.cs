@@ -81,7 +81,7 @@ namespace Infrastructure.Services
                   .Select(x => new RealRevenueReportItem
                   {
                       Year = x.Key.Year,
-                      Date = new DateTime(x.Key.Year, x.Key.QuarterOfYear * 3 + 1, 1),
+                      Date = new DateTime(x.Key.Year, x.Key.QuarterOfYear * 3, 1),
                       QuarterOfYear = x.Key.QuarterOfYear,
                       Debit = x.Sum(s => s.Debit),
                       Credit = x.Sum(s => s.Credit),

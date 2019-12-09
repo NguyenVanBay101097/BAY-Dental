@@ -11,15 +11,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public string AccountNumber { get; set; }
 
         public Guid BankId { get; set; }
-        public ResBankBasic Bank { get; set; }
+        public ResBankSimple Bank { get; set; }
     }
 
     public class ResPartnerBankDisplay
     {
+        public Guid Id { get; set; }
         public string AccountNumber { get; set; }
 
         public Guid BankId { get; set; }
-        public ResBankBasic Bank { get; set; }
+        public ResBankSimple Bank { get; set; }
+
+        public Guid? PartnerId { get; set; }
+        public PartnerSimple Partner { get; set; }
     }
 
     public class ResPartnerBankPaged

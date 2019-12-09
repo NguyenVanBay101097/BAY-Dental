@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class AccountJournal: BaseEntity
     {
+        public AccountJournal()
+        {
+            Active = true;
+        }
+
         public string Name { get; set; }
         public string Code { get; set; }
         public bool Active { get; set; }

@@ -83,6 +83,7 @@ import { CardCardsModule } from './card-cards/card-cards.module';
 import { SaleSettingsModule } from './sale-settings/sale-settings.module';
 import { SaleCouponPromotionModule } from './sale-coupon-promotion/sale-coupon-promotion.module';
 import { PromotionProgramsModule } from './promotion-programs/promotion-programs.module';
+import { JournalReportsModule } from './journal-reports/journal-reports.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -93,7 +94,7 @@ registerLocaleData(localeVi, 'vi');
 @NgModule({
   declarations: [
     AppComponent,
-    PrintLayoutComponent,
+    PrintLayoutComponent
   ],
   imports: [
     BrowserModule,
@@ -168,6 +169,7 @@ registerLocaleData(localeVi, 'vi');
     PartnerReportModule,
     ResBanksModule,
     ResPartnerBanksModule,
+    JournalReportsModule
     CardTypesModule,
     CardCardsModule,
     SaleSettingsModule,

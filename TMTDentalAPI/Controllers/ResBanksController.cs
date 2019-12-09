@@ -71,5 +71,12 @@ namespace TMTDentalAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Autocomplete([FromQuery]ResPartnerBankPaged val)
+        {
+            var res = await _resBankService.AutocompleteAsync(val);
+            return Ok(res);
+        }
     }
 }

@@ -37,5 +37,23 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<ResBankBasic>>(items)
             };
         }
+
+        public async Task<IEnumerable<ResBankSimple>> AutocompleteAsync(ResPartnerBankPaged val)
+        {
+            var rpBank = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                rpBank = rpBank.Where(x => x.Name.Contains(val.Search) && x.BIC.Contains(val.Search));
+
+            var items = await rpBank.Skip(val.Offset).Take(val.Limit)
+                .Select(x=> new ResBankSimple
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            return items;
+        }
     }
 }

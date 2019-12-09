@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     public interface IResBankService : IBaseService<ResBank>
     {
         Task<PagedResult2<ResBankBasic>> GetPagedResultAsync(ResBankPaged paged);
+        Task<IEnumerable<ResBankSimple>> AutocompleteAsync(ResPartnerBankPaged val);
     }
 }

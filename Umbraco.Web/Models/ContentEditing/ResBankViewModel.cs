@@ -11,6 +11,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string BIC { get; set; }
     }
 
+    public class ResBankSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class ResBankPaged
     {
         public ResBankPaged()

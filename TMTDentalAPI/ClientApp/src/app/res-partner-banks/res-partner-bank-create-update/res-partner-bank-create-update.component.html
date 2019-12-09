@@ -1,1 +1,80 @@
-<p>res-partner-bank-create-update works!</p>
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="formPartnerBank">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                        <tbody>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name">
+                                </td>
+                            </tr> -->
+                            <tr hidden=true>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" formControlName="type"
+                                            (change)="changeMethod($event.target.value)" type="radio" id="cash"
+                                            value="cash">
+                                        <label class="form-check-label" for="cash">Tiền mặt</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" formControlName="type" type="radio" id="bank"
+                                            (change)="changeMethod($event.target.value)" value="bank">
+                                        <label class="form-check-label" for="bank">Ngân hàng</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tài khoản
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="accountNumber"
+                                        [readonly]="getType()=='cash'">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngân hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="form-control" [data]="banks" formControlName="bank"
+                                        [disabled]="getType()=='cash'" [valueField]="'id'" [textField]="'name'"
+                                        [filterable]="true" (filterChange)="filterBank($event)">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formPartnerBank.valid"
+        (click)="createUpdateBankAccount()"><i class="fas fa-save"></i>&nbsp;Lưu</button>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="activeModal.dismiss()"><i
+            class="fas fa-window-close"></i>&nbsp;Đóng</button>
+
+</div>
