@@ -78,6 +78,7 @@ import 'moment/locale/vi';
 import { PartnerReportModule } from './partner-report/partner-report.module';
 import { ResBanksModule } from './res-banks/res-banks.module';
 import { ResPartnerBanksModule } from './res-partner-banks/res-partner-banks.module';
+import { JournalReportsModule } from './journal-reports/journal-reports.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -88,7 +89,7 @@ registerLocaleData(localeVi, 'vi');
 @NgModule({
   declarations: [
     AppComponent,
-    PrintLayoutComponent,
+    PrintLayoutComponent
   ],
   imports: [
     BrowserModule,
@@ -162,7 +163,8 @@ registerLocaleData(localeVi, 'vi');
     MailMessagesModule,
     PartnerReportModule,
     ResBanksModule,
-    ResPartnerBanksModule
+    ResPartnerBanksModule,
+    JournalReportsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

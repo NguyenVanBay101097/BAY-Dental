@@ -8,6 +8,8 @@ export class AccountJournalSimple {
 }
 
 export class AccountJournalFilter {
+    offset: number;
+    limit: number;
     search: string;
     type: string;
 }

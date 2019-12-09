@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,10 +16,13 @@ namespace Infrastructure.Services
 {
     public class AccountJournalService : BaseService<AccountJournal>, IAccountJournalService
     {
+        private readonly IMapper _mapper;
 
-        public AccountJournalService(IAsyncRepository<AccountJournal> repository, IHttpContextAccessor httpContextAccessor)
+        public AccountJournalService(IAsyncRepository<AccountJournal> repository, IHttpContextAccessor httpContextAccessor, 
+            IMapper mapper)
         : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public async Task<AccountJournal> GetJournalByTypeAndCompany(string type, Guid companyId)
@@ -41,6 +45,200 @@ namespace Infrastructure.Services
             }
 
             return await base.CreateAsync(self);
+        }
+
+        public async Task CreateJournals(IEnumerable<AccountJournalSave> vals)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+
+            foreach (var val in vals)
+            {
+                var journal = new AccountJournal();
+
+                if (val.Type == "bank" && !journal.BankAccountId.HasValue && !string.IsNullOrEmpty(val.AccountNumber))
+                {
+                    var partnerBank = await SetPartnerBankAsync(val.AccountNumber, val.BankId);
+                    journal.BankAccountId = partnerBank.Id;
+                }
+
+                if (string.IsNullOrEmpty(journal.Code))
+                {
+                    //hàm phát sinh code kiểu bank hoặc cash
+                    journal.Code = await GenerateNextCodeBankCashAsync(val.Type);
+                    if (string.IsNullOrEmpty(journal.Code))
+                        throw new Exception("Không thể phát sinh code");
+                }
+                var name = "";
+                if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue && string.IsNullOrEmpty(val.Name) && val.Type=="bank")
+                    name = await GetBankAccountNameAsync(val.AccountNumber, val.BankId);
+                else
+                    name = val.Name;
+                if (!journal.DefaultDebitAccountId.HasValue || !journal.DefaultCreditAccountId.HasValue)
+                {                    
+                    var account = await PrepareAccountLiquidityAsync(val.Type, name);
+                    var entityAccount = await accountObj.CreateAsync(account);
+                    journal.DefaultCreditAccountId = entityAccount.Id;
+                    journal.DefaultDebitAccountId = entityAccount.Id;
+                }
+
+                journal.Name = name;
+                journal.Type = val.Type;
+                journal.CompanyId = CompanyId;   
+                //tạo sequence
+                var seq = await _CreateSequence(journal);
+                journal.SequenceId = seq.Id;
+
+                if (journal.DedicatedRefund && (journal.Type == "sale" || journal.Type == "purchase"))
+                {
+                    var refund_seq = await _CreateSequence(journal, refund: true);
+                    journal.RefundSequenceId = refund_seq.Id;
+                }
+                await base.CreateAsync(journal);
+            }
+        }
+
+        public async Task UpdateJournalSave(Guid id, AccountJournalSave val)
+        {
+            var resPnBankObj = GetService<IResPartnerBankService>();
+            var accountObj = GetService<IAccountAccountService>();
+
+            var journal = SearchQuery(x => x.Id.Equals(id))
+                .Include(x => x.BankAccount)
+                .ThenInclude(x => x.Bank)
+                .FirstOrDefault();
+            var resPartnerBank = await resPnBankObj.SearchQuery(x => x.Id == journal.BankAccountId).FirstOrDefaultAsync();
+            if (val.Type != journal.Type)
+            {
+                journal.Code = await GenerateNextCodeBankCashAsync(val.Type);
+                
+
+                if (val.Type == "cash")
+                {
+                    await resPnBankObj.DeleteAsync(resPartnerBank);
+                    journal.BankAccountId = null;
+                } else if (val.Type == "bank")
+                {
+                    var rpb = await SetPartnerBankAsync(val.AccountNumber, val.BankId);
+                    journal.BankAccountId = rpb.Id;
+                    resPartnerBank = rpb;
+                }
+            }
+
+            if (val.BankId.HasValue && resPartnerBank!=null && !string.IsNullOrEmpty(val.AccountNumber))
+            {
+                resPartnerBank.BankId = val.BankId ?? Guid.Empty;
+                resPartnerBank.AccountNumber = val.AccountNumber;
+                if (resPartnerBank.BankId != Guid.Empty)
+                    await resPnBankObj.UpdateAsync(resPartnerBank);
+            }
+
+            var name = "";
+            if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue)
+                name = await GetBankAccountNameAsync(val.AccountNumber, val.BankId);
+            else
+                name = val.Name;
+
+            journal.Name = name;
+            
+
+            if(journal.DefaultDebitAccountId.HasValue && journal.DefaultCreditAccountId.HasValue)
+            {
+                var account = await accountObj.SearchQuery(x => x.Id == journal.DefaultDebitAccountId && x.Id == journal.DefaultCreditAccountId)
+                    .FirstOrDefaultAsync();
+                account.Name = name;
+                if (journal.Type != val.Type)
+                {
+                    journal.Type = val.Type;
+                    var accountPrepared = await PrepareAccountLiquidityAsync(val.Type, name);
+                    account.Code = accountPrepared.Code;
+                }
+                    
+
+                await accountObj.UpdateAsync(account);
+            }                        
+
+            await UpdateAsync(journal);
+        }
+
+        private async Task<string> GetBankAccountNameAsync(string accountNumber, Guid? bankId)
+        {
+            var bankObj = GetService<IResBankService>();
+            var bank = await bankObj.SearchQuery(x => x.Id.Equals(bankId)).FirstOrDefaultAsync();
+            return string.Format("{0} - {1}", bank.Name, accountNumber); 
+        }
+
+        private async Task<ResPartnerBank> SetPartnerBankAsync(string accountNumber, Guid? bankId)
+        {
+            var companyObj = GetService<ICompanyService>();
+            var resPnBankObj = GetService<IResPartnerBankService>();
+
+            var company = companyObj.SearchQuery(x => x.Id.Equals(CompanyId)).FirstOrDefault();
+            var partnerBank = new ResPartnerBankDisplay
+            {
+                AccountNumber = accountNumber,
+                BankId = bankId ?? Guid.Empty,
+                PartnerId = company.PartnerId
+            };
+            var pb = _mapper.Map<ResPartnerBank>(partnerBank);
+            await resPnBankObj.CreateAsync(pb);
+
+            return pb;
+        }
+
+        private async Task<AccountAccount> PrepareAccountLiquidityAsync(string type, string name)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+            var typeObj = GetService<IAccountAccountTypeService>();
+
+            var prefix = type == "bank" ? "1112." : "1111.";
+            var matchedCodes = await accountObj.SearchQuery(x => x.Code.Contains(prefix)).OrderBy(x => x.Code).ToListAsync();
+
+            var count = 1;
+            string codeTemplate = $"{prefix}{count}";
+            while (true)
+            {
+                codeTemplate = $"{prefix}{count}";
+                if (!matchedCodes.Any(x => x.Code.Equals(codeTemplate)))
+                {
+                    break;
+                }
+                count++;
+            }
+
+            var accountType = await typeObj.SearchQuery(x => x.Type.Equals("liquidity") && x.Name.ToLower().Contains(type)).FirstOrDefaultAsync();
+
+
+            var account = new AccountAccount
+            {
+                Name = name,
+                Code = codeTemplate,
+                UserTypeId = accountType.Id,
+                CompanyId = CompanyId,
+                InternalType = accountType.Type
+            };
+            
+
+            return account;
+
+        }
+
+        private async Task<string> GenerateNextCodeBankCashAsync(string type)
+        {
+            var prefix = type == "bank" ? "BNK" : "CSH";
+            var matchedCodes = await SearchQuery(x => x.Code.Contains(prefix)).OrderBy(x => x.Code).ToListAsync();
+
+            var count = 1;
+            string codeTemplate = $"{prefix}{count}";
+                while (matchedCodes.Count > 0)
+                {
+                    codeTemplate = $"{prefix}{count}";
+                    if (!matchedCodes.Any(x => x.Code.Equals(codeTemplate)))
+                    {
+                        break;
+                    }
+                    count++;
+                }
+            return codeTemplate;
         }
 
         private async Task<IRSequence> _CreateSequence(AccountJournal journal, bool refund = false)
@@ -79,7 +277,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<AccountJournalSimple>> GetAutocomplete(AccountJournalFilter val)
         {
             var types = val.Type.Split(',');
-            var query = SearchQuery(domain: x => string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search), orderBy: x => x.OrderBy(s => s.Code));
+            var query = SearchQuery(domain: x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search)) && x.Active, orderBy: x => x.OrderBy(s => s.Code));
             if (types.Any())
                 query = query.Where(x => types.Contains(x.Type));
 
@@ -90,6 +288,30 @@ namespace Infrastructure.Services
                 }).ToListAsync();
             return items;
         }
+
+        public async Task<PagedResult2<AccountJournalBasic>> GetBankCashJournals(AccountJournalFilter val)
+        {
+            var types = val.Type.Split(',');
+            var query = SearchQuery(x => x.Type == "bank" && x.Active);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.BankAccount.Bank.BIC.Contains(val.Search));
+            if (types.Any())
+                query = query.Where(x => types.Contains(x.Type));
+
+            var res = await query
+                .Include(x => x.BankAccount)
+                .ThenInclude(x=>x.Bank)
+                .OrderBy(x => x.Code)
+                .ToListAsync();
+            var items = _mapper.Map<List<AccountJournalBasic>>(res);
+            var totalItems = query.Count();
+
+            return new PagedResult2<AccountJournalBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
 
         public override ISpecification<AccountJournal> RuleDomainGet(IRRule rule)
         {

@@ -29,6 +29,8 @@ namespace ApplicationCore.Entities
         /// 3_global: Áp dụng tất cả dịch vụ
         /// 2_product_category: Áp dụng trên 1 nhóm dịch vụ cụ thể
         /// 0_product_variant: Áp dụng trên 1 dịch vụ cụ thể
+        /// 
+        /// 4_product_combo : Áp dụng trên combo dịch vụ
         /// </summary>
         public string AppliedOn { get; set; }
 

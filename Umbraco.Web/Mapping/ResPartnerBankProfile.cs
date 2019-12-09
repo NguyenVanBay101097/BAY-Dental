@@ -13,6 +13,12 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<ResPartnerBank, ResPartnerBankBasic>();
             CreateMap<ResPartnerBankBasic, ResPartnerBank>();
+
+            CreateMap<ResPartnerBank,ResPartnerBankDisplay>();
+            CreateMap<ResPartnerBankDisplay, ResPartnerBank>()
+                .ForMember(x => x.Bank, x => x.Ignore())
+                .ForMember(x=>x.Company, x=>x.Ignore())
+                .ForMember(x=>x.Partner, x=>x.Ignore());
         }
     }
 }

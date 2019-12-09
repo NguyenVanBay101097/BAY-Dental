@@ -94,7 +94,7 @@ export class ResBankListComponent implements OnInit {
   deleteBank(id, event) {
     event.stopPropagation();
     const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa đối tác',
+      title: 'Xóa ngân hàng',
       content: 'Bạn chắc chắn muốn xóa?',
       width: 450,
       height: 200,

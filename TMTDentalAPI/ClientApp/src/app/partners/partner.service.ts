@@ -81,7 +81,6 @@ export class PartnerService {
     apiAccountInvoiceUrl = 'api/accountinvoices';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-
     autocomplete(filter: string, customer: boolean)
         : Observable<PartnerSimple[]> {
         let params = new HttpParams()
@@ -107,7 +106,6 @@ export class PartnerService {
         : Observable<PartnerSimple[]> {
         return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + "/autocompletesimple", val);
     }
-
 
     createUpdateCustomer(cust: PartnerDisplay, id: string) {
         if (id == null) {

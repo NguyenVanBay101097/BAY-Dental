@@ -1,0 +1,86 @@
+<div kendoDialogContainer></div>
+
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Báo cáo thu chi</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Theo tên sổ thu chi" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <!-- <div class="o_cp_buttons">
+                <div class="btn-group mr-2" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of groups"
+                        [class.active]="item.value == groupBy" (click)="setGroupBy(item.value)">{{item.text}}</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div> -->
+            <div class="o_cp_buttons">
+                <div class="btn-group mr-2" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of filters"
+                        [class.active]="item.value == filter" (click)="changeFilter(item.value)">{{item.text}}</button>
+                </div>
+                <!-- <div class="form-group">
+                    <select class="form-control" (change)="changeFilter($event.target.value)">
+                        <option *ngFor="let i of filters" [value]="i.value">{{i.text}}</option>
+                    </select>
+                </div> -->
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="d-flex">
+                <div class="btn-group mr-2" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of group2s"
+                        [class.active]="item.value == groupBy2" (click)="setGroupBy2(item.value)">{{item.text}}</button>
+                </div>
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
+        (pageChange)="pageChange($event)" [loading]="loading" [selectable]="{mode : 'single'}"
+        (cellClick)="cellClick($event)" [kendoGridSelectBy]="'name'">
+        <kendo-grid-column field="name" title="Sổ nhật ký" footerClass="text-right font-weight-bold">
+        </kendo-grid-column>
+        <kendo-grid-column title="Thu" class="text-right" footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.debitSum | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['debitSum']">
+                {{total['debitSum'].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Chi" class="text-right" footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.creditSum | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['creditSum']">
+                {{total['creditSum'].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Cân đối" class="text-right" footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.balanceSum | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['balanceSum']">
+                {{total['balanceSum'].sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <div>
+            <div *kendoGridDetailTemplate="let dataItem">
+                <app-journal-report-detail [item]="itemMap(dataItem)">
+                </app-journal-report-detail>
+            </div>
+        </div>
+    </kendo-grid>
+</div>
+<div class="k-overlay" *ngIf="this.windowOpened"></div>

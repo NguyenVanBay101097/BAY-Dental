@@ -14,6 +14,10 @@ namespace Umbraco.Web.Mapping
             CreateMap<ResBank,ResBankBasic>();
             CreateMap<ResBankBasic, ResBank>()
                 .ForMember(x=>x.Id, x=>x.Ignore());
+
+            CreateMap<ResBank, ResBankSimple>();
+            CreateMap<ResBankSimple, ResBank>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

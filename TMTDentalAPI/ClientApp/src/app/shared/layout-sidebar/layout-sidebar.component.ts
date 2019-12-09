@@ -93,6 +93,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Thống kê khoản thu', link: '/real-revenue-report' },
         { name: 'Thống kê điều trị', link: '/sale-report' },
         { name: 'Khách hàng theo khu vực', link: '/partner-report-location' },
+        { name: 'Thống kê tài khoản ngân hàng', link: '/journal-reports' },
       ]
     },
   ];
