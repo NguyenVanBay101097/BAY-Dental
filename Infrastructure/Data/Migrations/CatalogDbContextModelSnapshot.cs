@@ -15,7 +15,7 @@ namespace Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -357,8 +357,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<Guid?>("BankAccountId");
-
                     b.Property<string>("Code")
                         .IsRequired();
 
@@ -391,8 +389,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("WriteById");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BankAccountId");
 
                     b.HasIndex("CompanyId");
 
@@ -2355,35 +2351,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PurchaseOrderLines");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("BIC");
-
-                    b.Property<string>("CreatedById");
-
-                    b.Property<DateTime?>("DateCreated");
-
-                    b.Property<DateTime?>("LastUpdated");
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.Property<string>("WriteById");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("ResBanks");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ResCompanyUsersRel", b =>
                 {
                     b.Property<Guid>("CompanyId");
@@ -2433,45 +2400,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ResGroupsUsersRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ResPartnerBank", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AccountNumber")
-                        .IsRequired();
-
-                    b.Property<Guid>("BankId");
-
-                    b.Property<Guid?>("CompanyId");
-
-                    b.Property<string>("CreatedById");
-
-                    b.Property<DateTime?>("DateCreated");
-
-                    b.Property<DateTime?>("LastUpdated");
-
-                    b.Property<Guid>("PartnerId");
-
-                    b.Property<int>("Sequence");
-
-                    b.Property<string>("WriteById");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PartnerId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("ResPartnerBanks");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Routing", b =>
@@ -3591,10 +3519,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountJournal", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.ResPartnerBank", "BankAccount")
-                        .WithMany()
-                        .HasForeignKey("BankAccountId");
-
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -4568,17 +4492,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ResCompanyUsersRel", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -4614,32 +4527,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("ResGroupsUsersRels")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ResPartnerBank", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ResBank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Routing", b =>
