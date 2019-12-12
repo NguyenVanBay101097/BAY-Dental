@@ -41,8 +41,8 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> UpdateJournalSave(Guid id, AccountJournalSave val)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(Guid id, AccountJournalSave val)
         {
             await _accountJournalService.UpdateJournalSave(id,val);
             return NoContent();

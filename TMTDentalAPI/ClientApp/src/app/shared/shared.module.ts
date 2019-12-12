@@ -32,6 +32,7 @@ import { HeaderNotificationComponent } from './header-notification/header-notifi
 import { MomentModule } from 'ngx-moment';
 import { HeaderAppointmentComponent } from './header-appointment/header-appointment.component';
 import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card-card-grid.component';
+import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card
     TaiDateRangeSimpleDropdownComponent,
     HeaderNotificationComponent,
     HeaderAppointmentComponent,
-    SharedCardCardGridComponent
+    SharedCardCardGridComponent,
+    UserProfileEditComponent
   ],
   exports: [
     HeaderComponent,
@@ -78,7 +80,8 @@ import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card
     TaiDateRangeSimpleDropdownComponent,
     HeaderNotificationComponent,
     HeaderAppointmentComponent,
-    SharedCardCardGridComponent
+    SharedCardCardGridComponent,
+    UserProfileEditComponent
   ],
   imports: [
     CommonModule,
@@ -97,6 +100,6 @@ import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card
     })
   ],
   providers: [NavSidebarService, AppLoadingService],
-  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent],
+  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent, UserProfileEditComponent],
 })
 export class SharedModule { }

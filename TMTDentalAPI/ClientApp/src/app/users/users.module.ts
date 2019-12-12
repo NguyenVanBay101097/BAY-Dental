@@ -7,6 +7,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserCuDialogComponent } from './user-cu-dialog/user-cu-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [UserListComponent, UserCuDialogComponent],
@@ -14,7 +15,8 @@ import { UserCuDialogComponent } from './user-cu-dialog/user-cu-dialog.component
     CommonModule,
     UsersRoutingModule,
     MyCustomKendoModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ],
   providers: [
     UserService

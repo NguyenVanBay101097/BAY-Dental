@@ -30,16 +30,18 @@ export class UserCuDialogComponent implements OnInit {
       email: null,
       companyId: null,
       company: [null, Validators.required],
-      companies: [[]]
+      companies: [[]],
+      avatar: null
     });
+    setTimeout(() => {
+      if (this.id) {
+        this.userService.get(this.id).subscribe(result => this.userForm.patchValue(result));
+      } else {
+        this.userService.defaultGet().subscribe(result => this.userForm.patchValue(result));
+      }
 
-    if (this.id) {
-      this.userService.get(this.id).subscribe(result => this.userForm.patchValue(result));
-    } else {
-      this.userService.defaultGet().subscribe(result => this.userForm.patchValue(result));
-    }
-
-    this.loadListCompanies();
+      this.loadListCompanies();
+    });
   }
 
   loadListCompanies() {

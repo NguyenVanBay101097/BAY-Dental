@@ -36,6 +36,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanyBasic Company { get; set; }
 
         public IEnumerable<CompanyBasic> Companies { get; set; } = new List<CompanyBasic>();
+
+        public string Avatar { get; set; }
     }
 
     public class ApplicationUserPaged

@@ -442,3 +442,7 @@ a {
 .q-button-group{
     padding: 5px;
 }
+
+.q_form_wrapper{
+    margin-left: 100px;
+}

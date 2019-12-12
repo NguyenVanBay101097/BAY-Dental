@@ -328,7 +328,7 @@ export class PartnerListComponent implements OnInit {
     paged.supplier = this.querySupplier;
     this.service.excelServerExport(paged).subscribe(
       rs => {
-        let filename = 'file word';
+        let filename = 'ExportedExcelFile';
         let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         console.log(rs);
 

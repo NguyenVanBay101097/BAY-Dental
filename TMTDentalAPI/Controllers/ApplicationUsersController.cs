@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -25,10 +27,11 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IUserService _userService;
+        private readonly IUploadService _uploadService;
         public ApplicationUsersController(UserManager<ApplicationUser> userManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
-            IIRModelAccessService modelAccessService,
-            IUserService userService)
+            IIRModelAccessService modelAccessService, IUserService userService,
+            IUploadService uploadService)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -36,6 +39,7 @@ namespace TMTDentalAPI.Controllers
             _partnerService = partnerService;
             _modelAccessService = modelAccessService;
             _userService = userService;
+            _uploadService = uploadService;
         }
 
         [HttpGet]
@@ -61,12 +65,15 @@ namespace TMTDentalAPI.Controllers
         {
             _modelAccessService.Check("ResUser", "Read");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
-                .Include("ResCompanyUsersRels.Company").FirstOrDefaultAsync();
+                .Include("ResCompanyUsersRels.Company").Include(x=>x.Partner).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<ApplicationUserDisplay>(user));
+            var res = _mapper.Map<ApplicationUserDisplay>(user);
+            res.Avatar = user.Partner.Avatar;
+            res.Email = user.Partner.Email;
+            return Ok(res);
         }
 
         [HttpPost]
@@ -83,6 +90,8 @@ namespace TMTDentalAPI.Controllers
                 CompanyId = val.CompanyId,
                 Customer = false
             };
+
+            await SaveAvatar(partner, val);
 
             await _partnerService.CreateAsync(partner);
 
@@ -133,6 +142,7 @@ namespace TMTDentalAPI.Controllers
             var partner = user.Partner;
             partner.Name = val.Name;
             partner.Email = val.Email;
+            await SaveAvatar(partner, val);
             await _partnerService.UpdateAsync(partner);
 
             _unitOfWork.Commit();
@@ -230,6 +240,21 @@ namespace TMTDentalAPI.Controllers
             _userService.ClearRuleCache(new List<string>() { user.Id });
 
             return NoContent();
+        }
+
+        private async Task SaveAvatar(Partner partner, ApplicationUserDisplay val)
+        {
+            if (!string.IsNullOrEmpty(val.Avatar) && ImageHelper.IsBase64String(val.Avatar))
+            {
+                var fileName = Path.GetRandomFileName() + "." + ImageHelper.GetImageExtension(val.Avatar);
+                var uploadResult = await _uploadService.UploadBinaryAsync(val.Avatar, fileName: fileName);
+                if (uploadResult != null)
+                    partner.Avatar = uploadResult.Id;
+            }
+            else if (string.IsNullOrEmpty(val.Avatar))
+            {
+                partner.Avatar = null;
+            }
         }
     }
 }

@@ -106,56 +106,53 @@ namespace Infrastructure.Services
                 .Include(x => x.BankAccount)
                 .ThenInclude(x => x.Bank)
                 .FirstOrDefault();
-            var resPartnerBank = await resPnBankObj.SearchQuery(x => x.Id == journal.BankAccountId).FirstOrDefaultAsync();
-            if (val.Type != journal.Type)
-            {
-                journal.Code = await GenerateNextCodeBankCashAsync(val.Type);
+
+            if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue)
+                journal.Name = await GetBankAccountNameAsync(val.AccountNumber, val.BankId);
+
+            //var resPartnerBank = await resPnBankObj.SearchQuery(x => x.Id == journal.BankAccountId).FirstOrDefaultAsync();
+            //journal.Type là bank hoặc cash va journal.Code dang null thì
+            //neu val.Type != journal.Type và journal.Type là bank hoac cash
+            //if (val.Type != journal.Type)
+            //{
+            //    journal.Code = await GenerateNextCodeBankCashAsync(val.Type);
                 
 
-                if (val.Type == "cash")
-                {
-                    await resPnBankObj.DeleteAsync(resPartnerBank);
-                    journal.BankAccountId = null;
-                } else if (val.Type == "bank")
-                {
-                    var rpb = await SetPartnerBankAsync(val.AccountNumber, val.BankId);
-                    journal.BankAccountId = rpb.Id;
-                    resPartnerBank = rpb;
-                }
-            }
+            //    if (val.Type == "cash")
+            //    {
+            //        await resPnBankObj.DeleteAsync(resPartnerBank);
+            //        journal.BankAccountId = null;
+            //    } else if (val.Type == "bank")
+            //    {
+            //        var rpb = await SetPartnerBankAsync(val.AccountNumber, val.BankId);
+            //        journal.BankAccountId = rpb.Id;
+            //        resPartnerBank = rpb;
+            //    }
+            //}
 
-            if (val.BankId.HasValue && resPartnerBank!=null && !string.IsNullOrEmpty(val.AccountNumber))
-            {
-                resPartnerBank.BankId = val.BankId ?? Guid.Empty;
-                resPartnerBank.AccountNumber = val.AccountNumber;
-                if (resPartnerBank.BankId != Guid.Empty)
-                    await resPnBankObj.UpdateAsync(resPartnerBank);
-            }
+            //if (val.BankId.HasValue && resPartnerBank!=null && !string.IsNullOrEmpty(val.AccountNumber))
+            //{
+            //    resPartnerBank.BankId = val.BankId ?? Guid.Empty;
+            //    resPartnerBank.AccountNumber = val.AccountNumber;
+            //    if (resPartnerBank.BankId != Guid.Empty)
+            //        await resPnBankObj.UpdateAsync(resPartnerBank);
+            //}
 
-            var name = "";
-            if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue)
-                name = await GetBankAccountNameAsync(val.AccountNumber, val.BankId);
-            else
-                name = val.Name;
-
-            journal.Name = name;
-            
-
-            if(journal.DefaultDebitAccountId.HasValue && journal.DefaultCreditAccountId.HasValue)
-            {
-                var account = await accountObj.SearchQuery(x => x.Id == journal.DefaultDebitAccountId && x.Id == journal.DefaultCreditAccountId)
-                    .FirstOrDefaultAsync();
-                account.Name = name;
-                if (journal.Type != val.Type)
-                {
-                    journal.Type = val.Type;
-                    var accountPrepared = await PrepareAccountLiquidityAsync(val.Type, name);
-                    account.Code = accountPrepared.Code;
-                }
+            //if(journal.DefaultDebitAccountId.HasValue && journal.DefaultCreditAccountId.HasValue)
+            //{
+            //    var account = await accountObj.SearchQuery(x => x.Id == journal.DefaultDebitAccountId && x.Id == journal.DefaultCreditAccountId)
+            //        .FirstOrDefaultAsync();
+            //    account.Name = name;
+            //    if (journal.Type != val.Type)
+            //    {
+            //        journal.Type = val.Type;
+            //        var accountPrepared = await PrepareAccountLiquidityAsync(val.Type, name);
+            //        account.Code = accountPrepared.Code;
+            //    }
                     
 
-                await accountObj.UpdateAsync(account);
-            }                        
+            //    await accountObj.UpdateAsync(account);
+            //}                        
 
             await UpdateAsync(journal);
         }

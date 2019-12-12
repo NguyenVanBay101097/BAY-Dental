@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,10 +34,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IMailSender _mailSender;
         private readonly IAsyncRepository<UserRefreshToken> _userRefreshTokenRepository;
 
+        private readonly CatalogDbContext _context;
+
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
-            IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository)
+            IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository, 
+            CatalogDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -44,6 +48,7 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
             _mailSender = mailSender;
             _userRefreshTokenRepository = userRefreshTokenRepository;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -64,6 +69,8 @@ namespace TMTDentalAPI.Controllers
                     var refreshToken = await GenerateRefreshToken(user);
                     var roles = new List<string>();
 
+                    var partner = _context.Partners.Where(x => x.Id == user.PartnerId).FirstOrDefault();
+
                     _authenticationResult = new LoggedInViewModel
                     {
                         Succeeded = true,
@@ -76,7 +83,8 @@ namespace TMTDentalAPI.Controllers
                             UserName = user.UserName,
                             Phone = user.PhoneNumber,
                             Email = user.Email,
-                            Name = user.Name
+                            Name = user.Name,
+                            Avatar = partner.Avatar
                         }
                     };
                 }
@@ -268,5 +276,24 @@ namespace TMTDentalAPI.Controllers
             await _userManager.UpdateAsync(user);
             return refreshToken;
         }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetUserInfo(string id)
+        {
+            var entity = await _userManager.Users.Where(x => x.Id == id).Include(x=>x.Partner).FirstOrDefaultAsync();
+            var user = new UserInfo
+            {
+                Name = entity.Name,
+                Avatar = entity.Partner.Avatar
+            };
+
+            return Ok(user);
+        }
+    }
+
+    class UserInfo
+    {
+        public string Avatar { get; set; }
+        public string Name { get; set; }
     }
 }

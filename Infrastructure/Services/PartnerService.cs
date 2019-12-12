@@ -17,7 +17,9 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
 using NPOI.XSSF.UserModel;
@@ -29,11 +31,14 @@ namespace Infrastructure.Services
     public class PartnerService : BaseService<Partner>, IPartnerService
     {
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
+
         public PartnerService(IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper, UserManager<ApplicationUser> userManager)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public async Task<PagedResult2<Partner>> GetPagedResultAsync(int offset, int limit, string search = "", string searchBy = "", bool? customer = null)
@@ -245,16 +250,27 @@ namespace Infrastructure.Services
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);
-            if (!string.IsNullOrWhiteSpace(entity.Ref))
-            {
-                var partner = SearchQuery(x => x.Ref == entity.Ref && x.Id != entity.Id).FirstOrDefault();
-                if (partner != null)
-                    throw new Exception("Mã này đã tồn tại !");
-            }
-            else {
-                throw new Exception("Vui lòng nhập mã !");
-            }
+            CheckUniqueRef(entity);
+            
             return base.UpdateAsync(entity);
+        }
+
+        private async Task CheckUniqueRef(Partner partner)
+        {
+            //kiem tra ma khach hang la duy nhat
+            if (partner.Customer || partner.Supplier)
+            {
+                if (!string.IsNullOrWhiteSpace(partner.Ref))
+                {
+                    var entity = SearchQuery(x => x.Ref == partner.Ref && x.Id != partner.Id).FirstOrDefault();
+                    if (entity != null)
+                        throw new Exception("Mã này đã tồn tại !");
+                }
+                else
+                {
+                    throw new Exception("Vui lòng nhập mã !");
+                }
+            }
         }
 
         public async Task<IEnumerable<PartnerSimple>> SearchAutocomplete(string filter = "", bool? customer = null)

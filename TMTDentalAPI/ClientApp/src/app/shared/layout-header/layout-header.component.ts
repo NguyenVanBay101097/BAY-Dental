@@ -6,6 +6,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { Router } from '@angular/router';
 import { CompanyBasic } from 'src/app/companies/company.service';
 import { UserChangeCurrentCompanyVM, UserService } from 'src/app/users/user.service';
+import { environment } from 'src/environments/environment';
+import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit.component';
 
 @Component({
   selector: 'app-layout-header',
@@ -52,5 +54,30 @@ export class LayoutHeaderComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['login']);
+  }
+
+  getAvatarImgSource(obj: string) {
+    if (obj)
+      return environment.uploadDomain + 'api/Web/Image/' + obj;
+    else
+      return '/assets/images/user_avatar.png';
+  }
+
+  editProfile(item) {
+    let modalRef = this.modalService.open(UserProfileEditComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa thông tin';
+    modalRef.componentInstance.id = item.id;
+
+    modalRef.result.then(() => {
+      this.authService.getUserInfo(item.id).subscribe(
+        rs => {
+          var user_info = JSON.parse(localStorage.getItem('user_info'));
+          user_info.name = rs.name;
+          user_info.avatar = rs.avatar;
+          localStorage.setItem('user_info', JSON.stringify(user_info));
+        }
+      )
+    }, () => {
+    });
   }
 }

@@ -102,4 +102,27 @@ export class CardCardListComponent implements OnInit {
       });
     });
   }
+
+  exportExcelFile() {
+    var paged = new CardCardPaged();
+    paged.search = this.search || '';
+    paged.state = this.stateFilter;
+    this.cardCardService.excelServerExport(paged).subscribe(
+      rs => {
+        let filename = 'ExportedExcelFile';
+        let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        console.log(rs);
+
+        let data = window.URL.createObjectURL(newBlob);
+        let link = document.createElement('a');
+        link.href = data;
+        link.download = filename;
+        link.click();
+        setTimeout(() => {
+          // For Firefox it is necessary to delay revoking the ObjectURL
+          window.URL.revokeObjectURL(data);
+        }, 100);
+      }
+    );
+  }
 }

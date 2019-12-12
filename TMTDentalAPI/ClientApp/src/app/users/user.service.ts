@@ -16,6 +16,7 @@ export class UserDisplay {
     userName: string;
     passWord: string;
     email: string;
+    avatar: string;
 }
 
 export class UserPaging {

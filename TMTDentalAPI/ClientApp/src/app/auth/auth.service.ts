@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 
 import { Observable, of, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { tap, delay, catchError, retry, switchMap, map } from 'rxjs/operators';
@@ -8,6 +8,11 @@ import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { debug } from 'util';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
+export class UserInfo {
+    avatar: string;
+    name: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -15,8 +20,13 @@ export class AuthService {
     private currentUserSubject: BehaviorSubject<UserViewModel>;
     public currentUser: Observable<UserViewModel>;
 
-    constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient) {
-        this.currentUserSubject = new BehaviorSubject<UserViewModel>(JSON.parse(localStorage.getItem('user_info')));
+    constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_API') private baseApi: string) {
+        var user_info = localStorage.getItem('user_info');
+        if (typeof user_info != 'string') {
+            localStorage.removeItem('user_info');
+        }
+        console.log(user_info);
+        this.currentUserSubject = new BehaviorSubject<UserViewModel>(null);
         this.currentUser = this.currentUserSubject.asObservable();
     }
     isLoggedIn = false;
@@ -113,10 +123,19 @@ export class AuthService {
     }
 
     get userInfo() {
-        return JSON.parse(localStorage.getItem('user_info'));
+        try {
+            var a = JSON.parse(localStorage.getItem('user_info'));
+            return a;
+        } catch (e) {
+            return null; // error in the above string (in this case, yes)!
+        }
     }
 
     isAuthenticated() {
         return !this.jwtHelper.isTokenExpired();
+    }
+
+    getUserInfo(id): Observable<UserInfo> {
+        return this.http.get<UserInfo>(this.baseApi + 'api/Account/GetUserInfo/' + id);
     }
 }

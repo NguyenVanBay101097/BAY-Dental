@@ -83,4 +83,8 @@ export class CardCardService {
         return this.http.post(this.baseApi + this.apiUrl + '/ButtonUpgradeCard', ids);
     }
 
+    excelServerExport(paged) {
+        return this.http.get(this.baseApi + this.apiUrl + '/ExportExcelFile', { responseType: 'blob', params: paged });
+    }
+
 }

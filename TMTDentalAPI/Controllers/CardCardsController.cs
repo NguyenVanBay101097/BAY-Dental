@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -9,6 +10,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -149,6 +151,60 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcelFile([FromQuery]CardCardPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var cards = await _cardCardService.GetPagedResultAsync(val);
+            var sheetName = "Thông tin thẻ thành viên";
+            byte[] fileContent;
+
+            var stateDict = new Dictionary<string, string>()
+            {
+                {"draft","Nháp"},
+                {"confirmed","Chờ cấp thẻ"},
+                {"in_use","Đang sử dụng"},
+                {"locked","Đã khóa"},
+                {"cancelled","Đã hủy"}
+            };
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Số thẻ";
+                worksheet.Cells[1, 2].Value = "Mã vạch";
+                worksheet.Cells[1, 3].Value = "Loại thẻ";
+                worksheet.Cells[1, 4].Value = "Khách hàng";
+                worksheet.Cells[1, 5].Value = "Điểm tích lũy";
+                worksheet.Cells[1, 6].Value = "Trạng thái";
+                var items = cards.Items.ToList();
+                for (int row = 2; row < items.Count + 2; row++)
+                {
+                    var item = items[row - 2];
+                    var self = await _cardCardService.GetByIdAsync(item.Id);
+                    var selfDisplay = _mapper.Map<CardCardDisplay>(self);
+                    
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.Barcode;
+                    worksheet.Cells[row, 3].Value = item.TypeName;
+                    worksheet.Cells[row, 4].Value = item.PartnerName;
+                    worksheet.Cells[row, 5].Value = item.TotalPoint;
+                    worksheet.Cells[row, 6].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                }
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }

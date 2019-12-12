@@ -19,8 +19,6 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   constructor(private fb: FormBuilder, private service: EmployeeService,
     private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, private modalService: NgbModal, private intlService: IntlService) { }
   empId: string;
-  isDoctor: boolean;
-  isAssistant: boolean;
 
   isChange: boolean = false;
   formCreate: FormGroup;
@@ -40,7 +38,9 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       email: null,
       birthDay: null,
       birthDayObj: null,
-      category: [null]
+      category: [null],
+      isDoctor: null,
+      isAssistant: null
     });
     this.loadAutocompleteTypes(null);
     this.getEmployeeInfo();
@@ -51,8 +51,6 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       this.service.getEmployee(this.empId).subscribe(
         rs => {
           this.formCreate.patchValue(rs);
-          this.isDoctor = rs.isDoctor;
-          this.isAssistant = rs.isAssistant;
           let birthDay = this.intlService.parseDate(rs.birthDay);
           this.formCreate.get('birthDayObj').patchValue(birthDay);
         },
@@ -68,10 +66,6 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     //this.assignValue();
     var value = this.formCreate.value;
     value.categoryId = value.category ? value.category.id : null;
-    if (!this.empId) {
-      value.isDoctor = this.isDoctor;
-      value.isAssistant = this.isAssistant;
-    }
     value.birthDay = this.intlService.formatDate(value.birthDayObj, 'd', 'en-US');
     this.isChange = true;
     this.service.createUpdateEmployee(value, this.empId).subscribe(
