@@ -41,6 +41,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class EmployeeDisplay
     {
+        public EmployeeDisplay()
+        {
+            IsDoctor = false;
+            IsAssistant = false;
+        }
         public Guid Id { get; set; }
 
         public string Name { get; set; }
@@ -72,12 +77,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Là bác sĩ
         /// </summary>
-        public bool IsDoctor { get; set; }
+        public bool? IsDoctor { get; set; }
 
         /// <summary>
         /// Là phụ tá
         /// </summary>
-        public bool IsAssistant { get; set; }
+        public bool? IsAssistant { get; set; }
     }
 
     public class EmployeePaged

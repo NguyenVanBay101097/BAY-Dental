@@ -5,7 +5,7 @@
     </button>
 </div> -->
 <header class="modal-header">
-    <h4 class="modal-title">{{windowTitle()}}<span class="o_subtitle text-muted small"></span></h4>
+    <h5 class="modal-title">{{windowTitle()}}<span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
@@ -21,9 +21,9 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
-                    <label *ngIf="queryCustomer" class="o_form_label oe_edit_only required-label">Tên khách
+                    <label *ngIf="queryCustomer" class="o_form_label oe_edit_only">Tên khách
                         hàng</label>
-                    <label *ngIf="!queryCustomer" class="o_form_label oe_edit_only required-label">Tên NCC</label>
+                    <label *ngIf="!queryCustomer" class="o_form_label oe_edit_only">Tên NCC</label>
                     <h1>
                         <input class="form-control" formControlName="name">
                     </h1>
@@ -64,12 +64,11 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_left">
-                                    <label class="o_form_label">Số điện
+                                    <label class="o_form_label">Điện
                                         thoại</label>
                                 </td>
                                 <td colspan="1" style="width:100%" class="o_td_control_left">
-                                    <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="12"
-                                        formControlName="phone" />
+                                    <input class="form-control" formControlName="phone" />
                                 </td>
                             </tr>
                             <tr>
@@ -119,8 +118,8 @@
                                 <td colspan="1" style="width:100%" class="o_td_control_right">
                                     <div class="input-group">
                                         <input class="form-control" formControlName="street" />
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-light" [disabled]="!formCreate.get('street').value"
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary" title="Kiểm tra địa chỉ"
                                                 (click)="checkAddressApi()">
                                                 <i class="fas fa-map-marker-alt"></i>
                                             </button>
@@ -446,11 +445,11 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!formCreate.valid"
+    <button type="button" class="btn btn-primary btn-sm" [disabled]="!formCreate.valid"
         (click)="createNewCustomer()">&nbsp;Lưu</button>
     <!-- <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow(null)"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button> -->
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeModal(null)">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="closeModal(null)">
         Đóng</button>
 
     <button type="button" hidden class="btn btn-primary btn-sm mr-2" *ngIf="cusId==null" (click)="createNewAndMore()"><i

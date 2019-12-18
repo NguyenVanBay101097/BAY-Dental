@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { HistoriesCreateUpdateComponent } from '../histories-create-update/histories-create-update.component';
 import { HistoryPaged } from '../history';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-histories-list',
@@ -25,14 +26,10 @@ export class HistoriesListComponent implements OnInit {
   skip = 0;
   pageSize = 20;
 
-  formFilter: FormGroup;
   search: string;
   searchUpdate = new Subject<string>();
 
   ngOnInit() {
-    this.formFilter = this.fb.group({
-      search: null
-    });
     this.getList();
     this.searchChange();
   }
@@ -40,9 +37,9 @@ export class HistoriesListComponent implements OnInit {
   getList() {
     this.loading = true;
     var paged = new HistoryPaged();
-    paged = this.formFilter.value;
     paged.limit = this.pageSize;
     paged.offset = this.skip;
+    paged.search = this.search || '';
 
     this.service.getList(paged).pipe(
       map(rs1 => (<GridDataResult>{
@@ -88,28 +85,14 @@ export class HistoriesListComponent implements OnInit {
   }
 
   delete(id) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa tiểu sử',
-      content: 'Bạn chắc chắn muốn xóa tiểu sử này ?',
-      width: 450,
-      height: 200,
-      minWidth: 250,
-      actions: [
-        { text: 'Hủy', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ]
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa tiểu sử';
+    modalRef.result.then(() => {
+      this.service.delete(id).subscribe(
+        () => { this.getList(); }
+      );
+    }, () => {
     });
-    dialogRef.result.subscribe(
-      rs => {
-        if (!(rs instanceof DialogCloseResult)) {
-          if (rs['value']) {
-            this.service.delete(id).subscribe(
-              () => { this.getList(); }
-            );
-          }
-        }
-      }
-    )
   }
 
 }

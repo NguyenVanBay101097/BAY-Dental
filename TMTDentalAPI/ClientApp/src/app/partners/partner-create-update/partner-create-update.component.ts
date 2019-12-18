@@ -456,6 +456,9 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
   checkAddressApi() {
     var address = this.getStreet.value;
+    if (!address) {
+      return false;
+    }
     this.service.checkAddressApi(address).subscribe(
       rs => {
         this.checkedText = this.getStreet.value;

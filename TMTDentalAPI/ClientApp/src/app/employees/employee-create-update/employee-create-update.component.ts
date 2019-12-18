@@ -39,8 +39,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       birthDay: null,
       birthDayObj: null,
       category: [null],
-      isDoctor: null,
-      isAssistant: null
+      isDoctor: false,
+      isAssistant: false
     });
     this.loadAutocompleteTypes(null);
     this.getEmployeeInfo();

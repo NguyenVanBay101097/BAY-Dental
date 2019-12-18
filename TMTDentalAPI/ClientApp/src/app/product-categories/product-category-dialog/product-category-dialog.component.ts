@@ -42,26 +42,29 @@ export class ProductCategoryDialogComponent implements OnInit {
       productCateg: false,
       medicineCateg: false,
     });
-    if (this.id) {
-      this.productCategoryService.get(this.id).subscribe((result) => {
-        this.myform.patchValue(result);
-        if (result.parent) {
-          this.filterdCategories = _.unionBy(this.filterdCategories, [result.parent], 'id');
-        }
+
+    setTimeout(() => {
+      if (this.id) {
+        this.productCategoryService.get(this.id).subscribe((result) => {
+          this.myform.patchValue(result);
+          if (result.parent) {
+            this.filterdCategories = _.unionBy(this.filterdCategories, [result.parent], 'id');
+          }
+        });
+      } else if (this.defaultCateg) {
+        this.myform.patchValue(this.defaultCateg);
+      }
+
+      this.searchCategories().subscribe(result => (this.filterdCategories = result));
+
+      this.categCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.categCbx.loading = true)),
+        switchMap(value => this.searchCategories(value))
+      ).subscribe(result => {
+        this.filterdCategories = result;
+        this.categCbx.loading = false;
       });
-    } else if (this.defaultCateg) {
-      this.myform.patchValue(this.defaultCateg);
-    }
-
-    this.searchCategories().subscribe(result => (this.filterdCategories = result));
-
-    this.categCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap(value => this.searchCategories(value))
-    ).subscribe(result => {
-      this.filterdCategories = result;
-      this.categCbx.loading = false;
     });
   }
 

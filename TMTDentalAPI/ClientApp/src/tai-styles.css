@@ -25,6 +25,21 @@ a {
     padding: 0;
 }
 
+.modal.o_technical_modal .modal-content .modal-footer {
+    flex-wrap: wrap;
+    text-align: left;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+    .modal.o_technical_modal .modal-dialog .modal-content .modal-header, .modal.o_technical_modal .modal-dialog .modal-content .modal-footer {
+        -webkit-box-flex: 0;
+        -webkit-flex: 0 0 auto;
+        flex: 0 0 auto;
+    }
+}
+
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
     padding: 0px 15px 15px 0px;

@@ -8,6 +8,7 @@ import { EmployeeCategoryPaged, EmployeeCategoryBasic } from '../emp-category';
 import { EmpCategoryService } from '../emp-category.service';
 import { EmpCategoriesCreateUpdateComponent } from '../emp-categories-create-update/emp-categories-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-emp-categories-list',
@@ -91,28 +92,13 @@ export class EmpCategoriesListComponent implements OnInit {
   }
 
   deleteCategEmployee(id) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa nhóm nhân viên',
-      content: 'Bạn chắc chắn muốn xóa nhóm nhân viên này ?',
-      width: 450,
-      height: 200,
-      minWidth: 250,
-      actions: [
-        { text: 'Hủy', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ]
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa nhóm nhân viên';
+    modalRef.result.then(() => {
+      this.service.deleteCategEmployee(id).subscribe(
+        () => { this.getCategEmployeesList(); }
+      );
+    }, () => {
     });
-    dialogRef.result.subscribe(
-      rs => {
-        if (!(rs instanceof DialogCloseResult)) {
-          if (rs['value']) {
-            this.service.deleteCategEmployee(id).subscribe(
-              () => { this.getCategEmployeesList(); }
-            );
-          }
-        }
-      }
-    )
   }
-
 }

@@ -88,13 +88,15 @@ export class ProductDialogComponent implements OnInit {
       purchasePrice: 0,
     });
 
-    this.default();
+    setTimeout(() => {
+      this.default();
 
-    this.searchCategories('').subscribe(result => {
-      this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
+      this.searchCategories('').subscribe(result => {
+        this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
+      });
+
+      this.categCbxFilterChange();
     });
-
-    this.categCbxFilterChange();
   }
 
   default() {

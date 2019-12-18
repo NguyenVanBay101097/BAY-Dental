@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
@@ -126,7 +126,7 @@
                         </div>
 
                         <div class="tab-pane" id="step" role="tabpanel" aria-labelledby="step-tab">
-                            <table class="o_group o_inner_group o_group_col_6">
+                            <!-- <table class="o_group o_inner_group o_group_col_6">
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
@@ -145,7 +145,22 @@
                                                 (click)="createTempProductStepList()">Thêm</button></td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> -->
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" formControlName="stepName"
+                                            placeholder="Nhập tên công đoạn sau đó nhấn enter"
+                                            (keydown)="onKeyDownStepName($event)" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                (click)="createTempProductStepList()">Thêm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+
                             <table *ngIf="stepList.length>0" class="o_group o_inner_group o_group_col_6">
                                 <tr class="row">
                                     <th class="col">Thứ tự</th>
@@ -170,6 +185,11 @@
                                                 (change)="changeCheckbox(i.order)" />
                                         </td>
                                         <td colspan="1" class="col">
+                                            <button type="button" [disabled]=" disableButton(i.order,true)"
+                                                class="btn btn-light btn-sm mr-2"
+                                                (click)="editStepOrCancel(i.order, i.name)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
                                             <button type="button" class="btn btn-light btn-sm mr-2"
                                                 (click)="removeStepListItem(i.order)"
                                                 [disabled]=" disableButton(i.order,false)">
@@ -183,11 +203,6 @@
                                                 type="button" class="btn btn-light btn-sm mr-2" (click)="moveDown(i.order)">
                                                 <i class="fas fa-caret-down"></i>
                                             </button> -->
-                                            <button type="button" [disabled]=" disableButton(i.order,true)"
-                                                class="btn btn-light btn-sm mr-2"
-                                                (click)="editStepOrCancel(i.order, i.name)">
-                                                <i class="fas fa-pen"></i>
-                                            </button>
                                         </td>
                                     </tr>
                                 </div>

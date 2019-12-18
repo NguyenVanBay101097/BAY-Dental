@@ -1,13 +1,13 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryDisplay } from '../product-category.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { ProductCategoryDialogComponent } from '../product-category-dialog/product-category-dialog.component';
 import { ProductCategory } from '../product-category';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-product-category-list',
@@ -30,7 +30,7 @@ export class ProductCategoryListComponent implements OnInit {
   type: string;
 
   constructor(private productCategoryService: ProductCategoryService,
-    private modalService: NgbModal, private dialogService: DialogService,
+    private modalService: NgbModal,
     private route: ActivatedRoute) {
   }
 
@@ -90,7 +90,7 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.getTypeTitle();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
@@ -100,7 +100,7 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   editItem(item: ProductCategory) {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.getTypeTitle();
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
@@ -111,31 +111,15 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: "Xóa: " + this.getTypeTitle(),
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
-
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        console.log('close');
-      } else {
-        console.log('action', result);
-        if (result['value']) {
-          this.productCategoryService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-            console.log(err);
-          });
-        }
-      }
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa: ' + this.getTypeTitle();
+    modalRef.result.then(() => {
+      this.productCategoryService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
     });
   }
 }
