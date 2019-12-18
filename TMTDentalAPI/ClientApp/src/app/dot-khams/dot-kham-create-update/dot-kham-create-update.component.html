@@ -319,12 +319,22 @@
                                         <tr>
                                             <th>Dịch vụ</th>
                                             <th>Công đoạn</th>
-                                            <th>Đợt khám</th>
-                                            <th>Hoàn tất</th>
+                                            <th>
+                                                <div
+                                                    class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                                    <input type="checkbox" id="o_field_input_28_all"
+                                                        [checked]="computeIsDoneAll()"
+                                                        (change)="toggleIsDoneAll($event)" class="custom-control-input">
+                                                    <label for="o_field_input_28_all" class="custom-control-label">​
+                                                        Hoàn thành
+                                                    </label>
+                                                </div>
+                                            </th>
+                                            <!-- <th>Hoàn tất</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let step of dotKhamStepList">
+                                        <tr *ngFor="let step of dotKhamStepList;let i = index">
                                             <td>
                                                 {{step.product.name}}
                                             </td>
@@ -332,10 +342,18 @@
                                                 {{step.name}}
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-secondary"
-                                                    (click)="assignDotKham(step)">{{step.dotKham ? step.dotKham.name : 'Chưa khám'}}</button>
+                                                <div
+                                                    class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                                    <input type="checkbox" [checked]="step.isDone"
+                                                        (change)="toggleIsDone(step, $event)"
+                                                        [id]="'o_field_input_28' + i" class="custom-control-input">
+                                                    <label [for]="'o_field_input_28' + i"
+                                                        class="custom-control-label">​</label>
+                                                </div>
+                                                <!-- <button class="btn btn-sm btn-secondary"
+                                                    (click)="assignDotKham(step)">{{step.dotKham ? step.dotKham.name : 'Chưa khám'}}</button> -->
                                             </td>
-                                            <td>
+                                            <!-- <td>
                                                 <button *ngIf="step.dotKham" class="btn btn-sm btn-secondary"
                                                     (click)="toggleIsDone(step)">
                                                     <span *ngIf="step.isDone === false">Chưa xong</span>
@@ -344,7 +362,7 @@
                                                 <button *ngIf="!step.dotKham" class="btn btn-sm btn-secondary">
                                                     Chưa khám
                                                 </button>
-                                            </td>
+                                            </td> -->
                                         </tr>
                                     </tbody>
                                 </table>

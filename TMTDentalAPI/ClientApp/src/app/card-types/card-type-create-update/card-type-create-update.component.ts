@@ -44,16 +44,16 @@ export class CardTypeCreateUpdateComponent implements OnInit {
       this.loadRecord();
     }
 
-    this.pricelistCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.pricelistCbx.loading = true)),
-      switchMap(value => this.searchPricelists(value))
-    ).subscribe(result => {
-      this.filteredPricelists = result.items;
-      this.pricelistCbx.loading = false;
-    });
+    // this.pricelistCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.pricelistCbx.loading = true)),
+    //   switchMap(value => this.searchPricelists(value))
+    // ).subscribe(result => {
+    //   this.filteredPricelists = result.items;
+    //   this.pricelistCbx.loading = false;
+    // });
 
-    this.loadPricelists();
+    // this.loadPricelists();
   }
 
   loadPricelists() {

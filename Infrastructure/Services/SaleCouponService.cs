@@ -21,6 +21,18 @@ namespace Infrastructure.Services
         {
         }
 
+        public override ISpecification<SaleCoupon> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "sale_coupon.sale_coupon_comp_rule":
+                    return new InitialSpecification<SaleCoupon>(x => !x.Program.CompanyId.HasValue || x.Program.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
+
         public async Task<PagedResult2<SaleCouponBasic>> GetPagedResultAsync(SaleCouponPaged val)
         {
             ISpecification<SaleCoupon> spec = new InitialSpecification<SaleCoupon>(x => true);

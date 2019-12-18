@@ -32,6 +32,7 @@ import { HeaderNotificationComponent } from './header-notification/header-notifi
 import { MomentModule } from 'ngx-moment';
 import { HeaderAppointmentComponent } from './header-appointment/header-appointment.component';
 import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card-card-grid.component';
+import { HasGroupsDirective } from './has-groups-directive';
 import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.component';
 
 @NgModule({
@@ -58,6 +59,7 @@ import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.
     HeaderNotificationComponent,
     HeaderAppointmentComponent,
     SharedCardCardGridComponent,
+    HasGroupsDirective,
     UserProfileEditComponent
   ],
   exports: [
@@ -81,6 +83,7 @@ import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.
     HeaderNotificationComponent,
     HeaderAppointmentComponent,
     SharedCardCardGridComponent,
+    HasGroupsDirective,
     UserProfileEditComponent
   ],
   imports: [

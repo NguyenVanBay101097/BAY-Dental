@@ -17,6 +17,7 @@ export class SaleOrderPaged {
     dateOrderFrom: string;
     dateOrderTo: string;
     state: string;
+    isQuotation: boolean;
 }
 
 export class AccountPaymentFilter {
@@ -59,8 +60,8 @@ export class SaleOrderService {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
     }
 
-    defaultGet(): Observable<SaleOrderDisplay> {
-        return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet');
+    defaultGet(p?: any): Observable<SaleOrderDisplay> {
+        return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', { params: new HttpParams({ fromObject: p || {} }) });
     }
 
     onChangePartner(val: any) {
@@ -69,6 +70,14 @@ export class SaleOrderService {
 
     actionConfirm(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionConfirm', ids);
+    }
+
+    actionConvertToOrder(id: string) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + '/ActionConvertToOrder', {});
+    }
+
+    actionInvoiceCreateV2(id: string) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + '/ActionInvoiceCreateV2', {});
     }
 
     actionCancel(ids: string[]) {

@@ -6,6 +6,12 @@ export class DotKhamStepAssignDotKhamVM {
     dotKhamId: string;
 }
 
+export class DotKhamStepSetDone {
+    ids: string[];
+    dotKhamId: string;
+    isDone: boolean;
+}
+
 @Injectable()
 export class DotKhamStepService {
     apiUrl = 'api/DotKhamSteps';
@@ -15,7 +21,7 @@ export class DotKhamStepService {
         return this.http.post(this.baseApi + this.apiUrl + `/AssignDotKham`, val);
     }
 
-    toggleIsDone(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + `/ToggleIsDone`, ids);
+    toggleIsDone(val: DotKhamStepSetDone) {
+        return this.http.post(this.baseApi + this.apiUrl + `/ToggleIsDone`, val);
     }
 }

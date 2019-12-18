@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         void ClearSecurityCache(IEnumerable<string> ids);
         void ClearRuleCache(IEnumerable<string> ids);
         Task<ApplicationUser> GetCurrentUser();
+        Task<List<string>> GetGroups();
     }
 }

@@ -63,6 +63,10 @@ export class AuthService {
         return this.authResource.resetPassword(val);
     }
 
+    getGroups() {
+        return this.authResource.getGroups();
+    }
+
     refresh(): Observable<RefreshResponseViewModel> {
         var refreshToken = this.getRefreshToken();
         var val = new RefreshViewModel();

@@ -250,27 +250,16 @@ namespace Infrastructure.Services
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);
-            CheckUniqueRef(entity);
-            
+            //if (!string.IsNullOrWhiteSpace(entity.Ref))
+            //{
+            //    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Id != entity.Id).FirstOrDefault();
+            //    if (partner != null)
+            //        throw new Exception("Mã này đã tồn tại !");
+            //}
+            //else {
+            //    throw new Exception("Vui lòng nhập mã !");
+            //}
             return base.UpdateAsync(entity);
-        }
-
-        private async Task CheckUniqueRef(Partner partner)
-        {
-            //kiem tra ma khach hang la duy nhat
-            if (partner.Customer || partner.Supplier)
-            {
-                if (!string.IsNullOrWhiteSpace(partner.Ref))
-                {
-                    var entity = SearchQuery(x => x.Ref == partner.Ref && x.Id != partner.Id).FirstOrDefault();
-                    if (entity != null)
-                        throw new Exception("Mã này đã tồn tại !");
-                }
-                else
-                {
-                    throw new Exception("Vui lòng nhập mã !");
-                }
-            }
         }
 
         public async Task<IEnumerable<PartnerSimple>> SearchAutocomplete(string filter = "", bool? customer = null)
@@ -287,8 +276,12 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val)
         {
-            var partners = await GetQueryPaged(val).ToListAsync();
-            return _mapper.Map<IEnumerable<PartnerSimple>>(partners);
+            var partners = await GetQueryPaged(val).Select(x => new PartnerSimple {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Name = x.Name
+            }).ToListAsync();
+            return partners;
         }
 
         public IQueryable<Partner> GetQueryPaged(PartnerPaged val)

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class SaleSettings: BaseEntity
+    public class SaleSettings : BaseEntity
     {
         /// <summary>
         /// Số tiền mua hàng để được 1 điểm

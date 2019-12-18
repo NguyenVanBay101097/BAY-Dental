@@ -1437,7 +1437,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<Guid?>("ResId");
+                    b.Property<string>("ResId");
 
                     b.Property<string>("WriteById");
 
@@ -1592,6 +1592,71 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("IrAttachments");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.IrConfigParameter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<string>("Key")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Value")
+                        .IsRequired();
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("IrConfigParameters");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.IrModuleCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<string>("Description");
+
+                    b.Property<bool?>("Exclusive");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<Guid?>("ParentId");
+
+                    b.Property<int?>("Sequence");
+
+                    b.Property<bool?>("Visible");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("IrModuleCategories");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.LaboOrder", b =>
@@ -2649,10 +2714,46 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ResCompanyUsersRels");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ResConfigSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("CompanyId");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<bool?>("GroupDiscountPerSOLine");
+
+                    b.Property<bool?>("GroupLoyaltyCard");
+
+                    b.Property<bool?>("GroupSaleCouponPromotion");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<decimal?>("LoyaltyPointExchangeRate");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ResConfigSettings");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("CategoryId");
 
                     b.Property<string>("CreatedById");
 
@@ -2667,11 +2768,26 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("WriteById");
 
                     b.ToTable("ResGroups");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResGroupImpliedRel", b =>
+                {
+                    b.Property<Guid>("GId");
+
+                    b.Property<Guid>("HId");
+
+                    b.HasKey("GId", "HId");
+
+                    b.HasIndex("HId");
+
+                    b.ToTable("ResGroupImpliedRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ResGroupsUsersRel", b =>
@@ -2926,6 +3042,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("InvoiceStatus");
 
+                    b.Property<bool?>("IsQuotation");
+
                     b.Property<DateTime?>("LastUpdated");
 
                     b.Property<string>("Name")
@@ -2933,13 +3051,19 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Note");
 
+                    b.Property<Guid?>("OrderId");
+
                     b.Property<Guid>("PartnerId");
 
                     b.Property<Guid?>("PricelistId");
 
+                    b.Property<Guid?>("QuoteId");
+
                     b.Property<decimal?>("Residual");
 
                     b.Property<string>("State");
+
+                    b.Property<string>("Type");
 
                     b.Property<string>("UserId");
 
@@ -2953,9 +3077,13 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("OrderId");
+
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("PricelistId");
+
+                    b.HasIndex("QuoteId");
 
                     b.HasIndex("UserId");
 
@@ -2968,6 +3096,10 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<decimal?>("AmountInvoiced");
+
+                    b.Property<decimal?>("AmountToInvoice");
 
                     b.Property<Guid?>("CompanyId");
 
@@ -4601,6 +4733,32 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.IrConfigParameter", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.IrModuleCategory", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.IrModuleCategory", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.LaboOrder", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -5131,8 +5289,13 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.ResConfigSettings", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -5140,6 +5303,35 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResGroup", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.IrModuleCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResGroupImpliedRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ResGroup", "G")
+                        .WithMany("ImpliedRels")
+                        .HasForeignKey("GId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ResGroup", "H")
+                        .WithMany()
+                        .HasForeignKey("HId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ResGroupsUsersRel", b =>
@@ -5292,6 +5484,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId")
@@ -5300,6 +5496,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ProductPricelist", "Pricelist")
                         .WithMany()
                         .HasForeignKey("PricelistId");
+
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "Quote")
+                        .WithMany()
+                        .HasForeignKey("QuoteId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()

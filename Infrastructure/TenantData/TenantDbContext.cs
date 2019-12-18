@@ -33,5 +33,10 @@ namespace Infrastructure.TenantData
         {
             return this.SaveChangesAsync();
         }
+
+        public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
+        {
+            return Database.ExecuteSqlCommandAsync(sql, parameters);
+        }
     }
 }

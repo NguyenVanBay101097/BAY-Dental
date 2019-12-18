@@ -45,7 +45,11 @@ namespace Infrastructure.Services
             "ProductPricelistItem",
             "SaleOrderLine",
             "MailMessage",
-            "CardHistory"
+            "CardHistory",
+            "IRModelData",
+            "LaboOrderLine",
+            "PromotionRule",
+            "IrConfigParameter"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,

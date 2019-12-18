@@ -28,7 +28,7 @@ namespace Infrastructure.Services
                 CompanyId = wh.CompanyId,
                 Name = wh.Code,
                 Usage = "view",
-                ParentLocationId = objectReference.ResId,
+                ParentLocationId = Guid.Parse(objectReference.ResId),
             };
 
             await locationObj.CreateAsync(viewLocation);

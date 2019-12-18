@@ -25,5 +25,6 @@ namespace Infrastructure.Services
         AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
         Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val);
         Task Unlink(IEnumerable<Guid> ids);
+        Task _UpdateInvoiceQty(IEnumerable<Guid> ids);
     }
 }

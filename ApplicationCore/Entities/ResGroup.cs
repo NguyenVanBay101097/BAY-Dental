@@ -13,5 +13,10 @@ namespace ApplicationCore.Entities
         public ICollection<IRModelAccess> ModelAccesses { get; set; } = new List<IRModelAccess>();
 
         public ICollection<RuleGroupRel> RuleGroupRels { get; set; } = new List<RuleGroupRel>();
+
+        public ICollection<ResGroupImpliedRel> ImpliedRels { get; set; } = new List<ResGroupImpliedRel>();
+
+        public Guid? CategoryId { get; set; }
+        public IrModuleCategory Category { get; set; }
     }
 }

@@ -18,8 +18,8 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Điều trị',
       icon: 'fas fa-medkit',
       children: [
-        // { name: 'Phiếu điều trị', link: '/customer-invoices' },
         { name: 'Phiếu điều trị', link: '/sale-orders' },
+        { name: 'Phiếu tư vấn', link: '/sale-quotations' },
         { name: 'Đợt khám', link: '/dot-khams' },
         { name: 'Lịch hẹn', link: '/appointments/kanban' },
       ]
@@ -84,7 +84,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
         { name: 'Bảng giá', link: '/pricelists' },
-        { name: 'Cấu hình bán hàng', link: '/sale-settings' },
+        { name: 'Cấu hình chung', link: '/config-settings' },
       ]
     },
     {

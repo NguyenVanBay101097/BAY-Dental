@@ -232,7 +232,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           // }
           // this.state = this.formCreate.get('state').value;
           // this.availableEdit(rs.state.toString());
-          console.log(rs.state);
         },
         er => {
           console.log(er);

@@ -1,5 +1,7 @@
-﻿using ApplicationCore.Interfaces;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -83,12 +85,6 @@ namespace Infrastructure.Caches
             {
                 Remove(key);
             }
-        }
-
-        public void Clear()
-        {
-            foreach (var cacheEntry in this._cacheEntries.Keys.ToList())
-                this._cache.Remove(cacheEntry);
         }
 
         public IEnumerator<KeyValuePair<object, object>> GetEnumerator()

@@ -40,6 +40,12 @@ export class ResGroupListComponent implements OnInit {
 
   }
 
+  resetData() {
+    this.resGroupService.resetSecurityData().subscribe(() => {
+      this.loadDataFromApi();
+    });
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = new ResGroupPaged();

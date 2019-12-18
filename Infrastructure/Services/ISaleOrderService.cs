@@ -14,12 +14,12 @@ namespace Infrastructure.Services
         Task<SaleOrder> CreateOrderAsync(SaleOrder order);
         Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id);
         Task<SaleOrder> GetSaleOrderWithLines(Guid id);
-        Task UpdateOrderAsync(SaleOrder order);
+        Task UpdateOrderAsync(Guid id, SaleOrderSave val);
         Task<SaleOrder> GetSaleOrderByIdAsync(Guid id);
         Task UnlinkSaleOrderAsync(SaleOrder order);
 
         Task<SaleOrderLineDisplay> DefaultLineGet(SaleOrderLineDefaultGet val);
-        Task<SaleOrderDisplay> DefaultGet();
+        Task<SaleOrderDisplay> DefaultGet(SaleOrderDefaultGet val);
         Task<PagedResult2<SaleOrderBasic>> GetPagedResultAsync(SaleOrderPaged val);
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
@@ -30,5 +30,8 @@ namespace Infrastructure.Services
         void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
         Task ApplyCoupon(SaleOrderApplyCoupon val);
         Task ApplyPromotion(Guid id);
+
+        Task ActionConvertToOrder(Guid id);
+        Task<IEnumerable<AccountInvoice>> ActionInvoiceCreateV2(Guid id);
     }
 }

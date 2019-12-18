@@ -4,6 +4,7 @@ import { HistorySimple } from '../history/history';
 export class PartnerSimple {
     id: string;
     name: string;
+    displayName: string;
 }
 
 export class PartnerSimpleContact {

@@ -83,6 +83,7 @@ import { CardCardsModule } from './card-cards/card-cards.module';
 import { SaleSettingsModule } from './sale-settings/sale-settings.module';
 import { SaleCouponPromotionModule } from './sale-coupon-promotion/sale-coupon-promotion.module';
 import { PromotionProgramsModule } from './promotion-programs/promotion-programs.module';
+import { ResConfigSettingsModule } from './res-config-settings/res-config-settings.module';
 import { JournalReportsModule } from './journal-reports/journal-reports.module';
 
 export function tokenGetter() {
@@ -174,7 +175,8 @@ registerLocaleData(localeVi, 'vi');
     CardCardsModule,
     SaleSettingsModule,
     SaleCouponPromotionModule,
-    PromotionProgramsModule
+    PromotionProgramsModule,
+    ResConfigSettingsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

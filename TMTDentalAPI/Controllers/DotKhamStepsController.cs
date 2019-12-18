@@ -145,12 +145,12 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ToggleIsDone(IEnumerable<Guid> ids)
+        public async Task<IActionResult> ToggleIsDone(DotKhamStepSetDone val)
         {
-            if (ids == null || !ModelState.IsValid)
+            if (val == null || !ModelState.IsValid)
                 return BadRequest();
 
-            await _dotKhamStepService.ToggleIsDone(ids);
+            await _dotKhamStepService.ToggleIsDone(val);
             return NoContent();
         }
     }

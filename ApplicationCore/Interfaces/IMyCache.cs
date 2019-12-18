@@ -7,10 +7,6 @@ namespace ApplicationCore.Interfaces
 {
     public interface IMyCache : IMemoryCache
     {
-        /// <summary>
-        /// Clears all cache entries.
-        /// </summary>
-        void Clear();
         void RemoveByPattern(string pattern);
     }
 }

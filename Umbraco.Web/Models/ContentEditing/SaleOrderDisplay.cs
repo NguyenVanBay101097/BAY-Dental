@@ -54,5 +54,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PricelistId { get; set; }
         public ProductPricelistBasic Pricelist { get; set; }
+
+        public bool? IsQuotation { get; set; }
+
+        public SaleOrderBasic Quote { get; set; }
+
+        public SaleOrderBasic Order { get; set; }
+
+        public string InvoiceStatus { get; set; }
     }
 }

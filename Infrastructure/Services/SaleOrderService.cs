@@ -33,8 +33,18 @@ namespace Infrastructure.Services
         {
             if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
             {
-                var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-                order.Name = await sequenceService.NextByCode("sale.order");
+                var sequenceService = GetService<IIRSequenceService>();
+                if (order.IsQuotation == true)
+                {
+                    order.Name = await sequenceService.NextByCode("sale.quotation");
+                    if (string.IsNullOrEmpty(order.Name))
+                    {
+                        await InsertSaleQuotationSequence();
+                        order.Name = await sequenceService.NextByCode("sale.quotation");
+                    }
+                }
+                else
+                    order.Name = await sequenceService.NextByCode("sale.order");
             }
 
             var saleLineService = (ISaleOrderLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderLineService));
@@ -47,6 +57,18 @@ namespace Infrastructure.Services
             _AmountAll(order);
 
             return await CreateAsync(order);
+        }
+
+        private async Task InsertSaleQuotationSequence()
+        {
+            var sequenceObj = GetService<IIRSequenceService>();
+            await sequenceObj.CreateAsync(new IRSequence
+            {
+                Name = "Sale Quotation",
+                Prefix = "SQ",
+                Code = "sale.quotation",
+                Padding = 5
+            });
         }
 
         private void _AmountAll(SaleOrder order)
@@ -113,6 +135,9 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => states.Contains(x.State)));
             }
 
+            if (val.IsQuotation.HasValue)
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderBasic
@@ -121,7 +146,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.AmountTotal,
                 DateOrder = x.DateOrder,
                 Name = x.Name,
-                PartnerName = x.Partner.Name,
+                PartnerName = x.Partner.DisplayName,
                 State = x.State,
                 Residual = x.Residual,
                 UserName = x.User != null ? x.User.Name : string.Empty
@@ -189,6 +214,38 @@ namespace Infrastructure.Services
                 _GetInvoiced(new List<SaleOrder>() { sale });
             }
 
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionConvertToOrder(Guid id)
+        {
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineToothRels").FirstOrDefaultAsync();
+            if (self.IsQuotation != true)
+                throw new Exception("Chỉ có phiếu tư vấn mới có thể tạo phiếu điều trị");
+            var seqObj = GetService<IIRSequenceService>();
+            var order = new SaleOrder(self);
+            order.Name = await seqObj.NextByCode("sale.order");
+            order.QuoteId = id;
+
+            foreach(var line in self.OrderLines)
+            {
+                var l = new SaleOrderLine(line);
+                l.OrderId = order.Id;
+                foreach(var rel in line.SaleOrderLineToothRels)
+                {
+                    var r = new SaleOrderLineToothRel
+                    {
+                        ToothId = rel.ToothId
+                    };
+                    l.SaleOrderLineToothRels.Add(r);
+                }
+                order.OrderLines.Add(l);
+            }
+
+            await CreateAsync(order);
+
+            self.OrderId = order.Id;
             await UpdateAsync(self);
         }
 
@@ -304,6 +361,7 @@ namespace Infrastructure.Services
             await couponObj.UpdateAsync(coupon);
 
             _AmountAll(self);
+            _GetInvoiced(new List<SaleOrder>() { self });
             await UpdateAsync(self);
         }
 
@@ -437,15 +495,16 @@ namespace Infrastructure.Services
                         {
                             if (item.Qty < min_quantity)
                                 continue;
-
                             total_amount += item.Amount;
-                            await UpdateDiscountLine(rule, self, total_amount);
                         }
+
+                        await UpdateDiscountLine(rule, self, total_amount);
                     }
                 }
             }
 
             _AmountAll(self);
+            _GetInvoiced(new List<SaleOrder>() { self });
             await UpdateAsync(self);
         }
 
@@ -485,6 +544,9 @@ namespace Infrastructure.Services
                 promo_line.ProductUOMQty = qty;
                 promo_line.PriceUnit = -price_unit;
                 soLineObj.ComputeAmount(new List<SaleOrderLine>() { promo_line });
+                await soLineObj._UpdateInvoiceQty(new List<Guid>() { promo_line.Id });
+                soLineObj._GetToInvoiceQty(new List<SaleOrderLine>() { promo_line });
+                soLineObj._ComputeInvoiceStatus(new List<SaleOrderLine>() { promo_line });
             }
             else
             {
@@ -511,6 +573,8 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
+                .Include(x => x.Order)
+                .Include(x => x.Quote)
                 .Include(x => x.Pricelist)
                 .Include(x => x.User)
                 .Include(x => x.OrderLines)
@@ -530,8 +594,13 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task UpdateOrderAsync(SaleOrder order)
+        public async Task UpdateOrderAsync(Guid id, SaleOrderSave val)
         {
+            var order = await GetSaleOrderWithLines(id);
+            order = _mapper.Map(val, order);
+
+            await SaveOrderLines(val, order);
+
             var saleLineObj = GetService<ISaleOrderLineService>();
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
             saleLineObj.ComputeAmount(order.OrderLines);
@@ -556,24 +625,194 @@ namespace Infrastructure.Services
 
             await UpdateAsync(order);
 
-            if (order.InvoiceStatus == "to invoice")
-            {
-                var self = new List<SaleOrder>() { order };
-                var invoices = await ActionInvoiceCreate(self);
-                var invObj = GetService<IAccountInvoiceService>();
-                await invObj.ActionInvoiceOpen(invoices.Select(x => x.Id).ToList());
+            var self = new List<SaleOrder>() { order };
+            await _GenerateDotKhamSteps(self);
 
-                foreach (var saleOrder in self)
+            //if (order.InvoiceStatus == "to_invoice" && order.State == "sale")
+            //{
+            //    var invs = await ActionInvoiceCreateV2(order);
+            //    var invObj = GetService<IAccountInvoiceService>();
+            //    await invObj.ActionInvoiceOpen(invs.Select(x => x.Id).ToList());
+
+            //    saleLineObj._GetInvoiceQty(lines);
+            //    saleLineObj._GetToInvoiceQty(lines);
+            //    saleLineObj._ComputeInvoiceStatus(lines);
+            //    await saleLineObj.UpdateAsync(lines);
+
+            //    _AmountAll(order);
+            //    _GetInvoiced(new List<SaleOrder>() { order });
+            //    await UpdateAsync(order);
+
+            //    ////Những dòng tăng số lượng sẽ tạo hóa đơn tăng doanh thu
+            //    ////Những dòng giảm số lượng sẽ tạo hóa đơn giảm doanh thu
+            //    //var increaseLines = new List<SaleOrderLine>();
+            //    //var decreaseLines = new List<SaleOrderLine>();
+            //    //foreach (var line in order.OrderLines)
+            //    //{
+            //    //    var qtyInvoiced = line.QtyInvoiced ?? 0;
+            //    //    var priceUnit = line.PriceUnit;
+            //    //    var qtyToInvoice = line.ProductUOMQty - qtyInvoiced;
+            //    //    if (qtyToInvoice > 0 && priceUnit > 0)
+            //    //        increaseLines.Add(line);
+            //    //    if (qtyToInvoice > 0 && priceUnit < 0)
+            //    //        decreaseLines.Add(line);
+            //    //    if (qtyToInvoice < 0 && priceUnit > 0)
+            //    //        decreaseLines.Add(line);
+            //    //    if (qtyToInvoice < 0 && priceUnit < 0)
+            //    //        increaseLines.Add(line);
+            //    //}
+
+            //    //var invObj = GetService<IAccountInvoiceService>();
+            //    //bool updateFlag = false;
+            //    //if (increaseLines.Any())
+            //    //{
+            //    //    var increaseInv = await CreateInvoice(increaseLines, order, type: "out_invoice");
+            //    //    await invObj.ActionInvoiceOpen(new List<Guid>() { increaseInv.Id });
+
+            //    //    saleLineObj._GetInvoiceQty(increaseLines);
+            //    //    saleLineObj._GetToInvoiceQty(increaseLines);
+            //    //    saleLineObj._ComputeInvoiceStatus(increaseLines);
+            //    //    await saleLineObj.UpdateAsync(increaseLines);
+
+            //    //    updateFlag = true;
+            //    //}
+
+            //    //if (decreaseLines.Any())
+            //    //{
+            //    //    var decreaseInv = await CreateInvoice(decreaseLines, order, type: "out_refund");
+            //    //    await invObj.ActionInvoiceOpen(new List<Guid>() { decreaseInv.Id });
+
+            //    //    saleLineObj._GetInvoiceQty(decreaseLines);
+            //    //    saleLineObj._GetToInvoiceQty(decreaseLines);
+            //    //    saleLineObj._ComputeInvoiceStatus(decreaseLines);
+            //    //    await saleLineObj.UpdateAsync(decreaseLines);
+
+            //    //    updateFlag = true;
+            //    //}
+
+            //    //if (updateFlag)
+            //    //{
+            //    //    var self = new List<SaleOrder>() { order };
+            //    //    foreach (var saleOrder in self)
+            //    //    {
+            //    //        saleLineObj._GetInvoiceQty(saleOrder.OrderLines);
+            //    //        saleLineObj._GetToInvoiceQty(saleOrder.OrderLines);
+            //    //        saleLineObj._ComputeInvoiceStatus(saleOrder.OrderLines);
+            //    //    }
+
+            //    //    _GetInvoiced(self);
+            //    //    await UpdateAsync(self);
+
+            //    //    await _GenerateDotKhamSteps(self);
+            //    //}
+            //}
+        }
+
+        private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
+        {
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var invLineObj = GetService<IAccountInvoiceLineService>();
+            var invObj = GetService<IAccountInvoiceService>();
+
+            var companyId = CompanyId;
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = journalObj.SearchQuery(x => x.Type == "sale" && x.CompanyId == companyId)
+                .Include(x => x.DefaultCreditAccount).Include(x => x.DefaultDebitAccount).FirstOrDefault();
+            if (journal == null)
+                throw new Exception("Vui lòng tạo nhật ký bán hàng cho công ty này.");
+
+            var inv = await PrepareInvoice(order, journal);
+            inv.Type = type;
+            await invObj.CreateAsync(inv);
+
+            var sign = type == "out_invoice" ? 1 : -1;
+            var invLines = new List<AccountInvoiceLine>();
+            foreach (var line in order.OrderLines)
+            {
+                var qtyInvoiced = line.QtyInvoiced ?? 0;
+                var qtyToInvoice = (line.ProductUOMQty - qtyInvoiced) * sign;
+                if (qtyToInvoice == 0)
+                    continue;
+
+                var invLine = saleLineObj._PrepareInvoiceLine(line, qtyToInvoice, journal.DefaultCreditAccount);
+                invLine.InvoiceId = inv.Id;
+                invLine.Invoice = inv;
+                invLine.SaleLines.Add(new SaleOrderLineInvoiceRel { OrderLineId = line.Id });
+                invLines.Add(invLine);
+            }
+
+            if (invLines.Any())
+            {
+                await invLineObj.CreateAsync(invLines);
+                invObj._ComputeAmount(inv);
+                await invObj.UpdateAsync(inv);
+            }
+            else
+            {
+                throw new Exception("Không có dòng nào có thể tạo hóa đơn");
+            }
+
+            return inv;
+        }
+
+        private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
+        {
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var existLines = order.OrderLines.ToList();
+            var lineToRemoves = new List<SaleOrderLine>();
+            foreach (var existLine in existLines)
+            {
+                bool found = false;
+                foreach (var item in val.OrderLines)
                 {
-                    saleLineObj._GetInvoiceQty(saleOrder.OrderLines);
-                    saleLineObj._GetToInvoiceQty(saleOrder.OrderLines);
-                    saleLineObj._ComputeInvoiceStatus(saleOrder.OrderLines);
+                    if (item.Id == existLine.Id)
+                    {
+                        found = true;
+                        break;
+                    }
                 }
 
-                _GetInvoiced(self);
-                await UpdateAsync(self);
+                if (!found)
+                    lineToRemoves.Add(existLine);
+            }
 
-                await _GenerateDotKhamSteps(self);
+            if (lineToRemoves.Any())
+                await saleLineObj.Unlink(lineToRemoves.Select(x => x.Id).ToList());
+
+            //Cập nhật sequence cho tất cả các line của val
+            int sequence = 0;
+            foreach (var line in val.OrderLines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var saleLine = _mapper.Map<SaleOrderLine>(line);
+                    saleLine.Sequence = sequence++;
+                    foreach (var toothId in line.ToothIds)
+                    {
+                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
+                    order.OrderLines.Add(saleLine);
+                }
+                else
+                {
+                    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                    if (saleLine != null)
+                    {
+                        _mapper.Map(line, saleLine);
+                        saleLine.Sequence = sequence++;
+                        saleLine.SaleOrderLineToothRels.Clear();
+                        foreach (var toothId in line.ToothIds)
+                        {
+                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
+                    }
+                }
             }
         }
 
@@ -591,9 +830,18 @@ namespace Infrastructure.Services
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
-                {
                     throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp hoặc hủy bỏ");
-                }
+                if (order.IsQuotation == true && order.OrderId.HasValue)
+                    throw new Exception("Bạn không thể xóa phiếu tư vấn đã tạo phiếu điều trị");
+            }
+
+            var quotationIds = self.Where(x => x.QuoteId.HasValue).Select(x => x.QuoteId.Value).Distinct().ToList();
+            if (quotationIds.Any())
+            {
+                var quotations = await SearchQuery(x => quotationIds.Contains(x.Id)).ToListAsync();
+                foreach (var quote in quotations)
+                    quote.QuoteId = null;
+                await UpdateAsync(quotations);
             }
 
             var dkStepObj = GetService<IDotKhamStepService>();
@@ -626,7 +874,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<SaleOrderDisplay> DefaultGet()
+        public async Task<SaleOrderDisplay> DefaultGet(SaleOrderDefaultGet val)
         {
             var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
             var user = await userManager.FindByIdAsync(UserId);
@@ -634,6 +882,8 @@ namespace Infrastructure.Services
             res.CompanyId = CompanyId;
             res.UserId = UserId;
             res.User = _mapper.Map<ApplicationUserSimple>(user);
+            if (val.IsQuotation.HasValue)
+                res.IsQuotation = val.IsQuotation;
             return res;
         }
 
@@ -704,6 +954,15 @@ namespace Infrastructure.Services
                 {
                     if (!line.ProductId.HasValue || line.Product == null)
                         continue;
+                    if (!(line.Product.SaleOK == true && line.Product.Type2 == "service"))
+                        continue;
+                    //nếu số lượng bằng 0, nếu có steps thì remove
+                    if (line.ProductUOMQty == 0 && line.DotKhamSteps.Any())
+                    {
+                        await dotKhamStepService.Unlink(line.DotKhamSteps);
+                        continue;
+                    }
+
                     if (line.DotKhamSteps.Any())
                         continue;
 
@@ -815,6 +1074,78 @@ namespace Infrastructure.Services
                 if (!invoice.InvoiceLines.Any())
                     throw new Exception("Không có dòng nào có thể tạo hóa đơn");
             }
+
+            return invoices.Values.ToList();
+        }
+
+        public async Task<IEnumerable<AccountInvoice>> ActionInvoiceCreateV2(Guid id)
+        {
+            var order = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
+                .FirstOrDefaultAsync();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var invLineObj = GetService<IAccountInvoiceLineService>();
+            var invObj = GetService<IAccountInvoiceService>();
+
+            var companyId = CompanyId;
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = journalObj.SearchQuery(x => x.Type == "sale" && x.CompanyId == companyId)
+                .Include(x => x.DefaultCreditAccount).Include(x => x.DefaultDebitAccount).FirstOrDefault();
+            if (journal == null)
+                throw new Exception("Vui lòng tạo nhật ký bán hàng cho công ty này.");
+
+            var invoices = new Dictionary<string, AccountInvoice>();
+            var orderToUpdate = new HashSet<SaleOrder>();
+
+            var invLines = new List<AccountInvoiceLine>();
+            foreach (var line in order.OrderLines)
+            {
+                var amountToInvoice = line.AmountToInvoice ?? 0;
+                var qtyToInvoice = line.QtyToInvoice ?? 0;
+                if (amountToInvoice == 0)
+                    continue;
+                var invType = amountToInvoice > 0 ? "out_invoice" : "out_refund";
+                var sign = amountToInvoice > 0 ? 1 : -1;
+                if (!invoices.ContainsKey(invType))
+                {
+                    var inv = await PrepareInvoice(order, journal);
+                    inv.Type = invType;
+                    await invObj.CreateAsync(inv);
+                    invoices.Add(invType, inv);
+                }
+
+                var invLine = saleLineObj._PrepareInvoiceLine(line, Math.Abs(qtyToInvoice), journal.DefaultCreditAccount);
+                invLine.PriceUnit *= sign;
+                if (qtyToInvoice == 0)
+                {
+                    invLine.Quantity = 1;
+                    invLine.PriceUnit = amountToInvoice * sign;
+                    invLine.Discount = 0;
+                }
+                invLine.InvoiceId = invoices[invType].Id;
+                invLine.Invoice = invoices[invType];
+                invLine.SaleLines.Add(new SaleOrderLineInvoiceRel { OrderLineId = line.Id });
+                invLines.Add(invLine);
+            }
+
+            if (invLines.Any())
+            {
+                await invLineObj.CreateAsync(invLines);
+                var invs = invoices.Values;
+                invObj._ComputeAmount(invs);
+                await invObj.UpdateAsync(invs);
+            }
+
+            await invObj.ActionInvoiceOpen(invoices.Values.Select(x => x.Id).ToList());
+
+            await saleLineObj._UpdateInvoiceQty(order.OrderLines.Select(x => x.Id).ToList());
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            await saleLineObj.UpdateAsync(order.OrderLines);
+
+            var self = new List<SaleOrder>() { order };
+            _GetInvoiced(self);
+            _ComputeResidual(self);
+            await UpdateAsync(self);
 
             return invoices.Values.ToList();
         }

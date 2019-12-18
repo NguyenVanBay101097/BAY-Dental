@@ -70,6 +70,18 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public override ISpecification<PromotionProgram> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "sale.promotion_program_comp_rule":
+                    return new InitialSpecification<PromotionProgram>(x => !x.ProgramCompanyRels.Any() || x.ProgramCompanyRels.Any(s => s.CompanyId == companyId));
+                default:
+                    return null;
+            }
+        }
+
         public async Task UpdateProgram(Guid id, PromotionProgramSave val)
         {
             var program = await SearchQuery(x => x.Id == id)

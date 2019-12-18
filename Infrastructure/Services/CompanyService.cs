@@ -90,7 +90,10 @@ namespace Infrastructure.Services
 
             await InsertModuleDentalData();
 
-            await InsertSecurityData();
+            //await InsertSecurityData();
+
+            var groupObj = GetService<IResGroupService>();
+            await groupObj.ResetSecurityData();
         }
 
 
@@ -798,7 +801,7 @@ namespace Infrastructure.Services
                     Module = tmps[0],
                     Name = tmps[1],
                     Model = model,
-                    ResId = item.Value.Id
+                    ResId = item.Value.Id.ToString()
                 });
             }
 

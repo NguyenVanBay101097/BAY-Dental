@@ -45,6 +45,10 @@
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Số điểm cơ bản
+                                        <i class="fas fa-question-circle text-primary" placement="top"
+                                            triggers="mouseenter:mouseleave"
+                                            ngbPopover="Số điểm cơ bản cần có để được loại thẻ thành viên này."
+                                            popoverTitle="Số điểm cơ bản"></i>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -60,6 +64,10 @@
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Chiết khấu %
+                                        <i class="fas fa-question-circle text-primary" placement="bottom"
+                                            triggers="mouseenter:mouseleave"
+                                            ngbPopover="Chiết khấu % tất cả dịch vụ với loại thẻ thành viên này."
+                                            popoverTitle="Chiết khấu %"></i>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -67,23 +75,17 @@
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr *ngIf="cardType.pricelist">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Bảng giá
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-combobox [data]="filteredPricelists" [textField]="'name'"
-                                            [filterable]="true" #pricelistCbx formControlName="pricelist"
-                                            [valueField]="'id'">
-                                        </kendo-combobox>
-                                        <a *ngIf="cardType.pricelist" class="btn btn-sm btn-light"
-                                            [routerLink]="['/pricelists/edit/', cardType.pricelist.id]">
-                                            <i class="far fa-edit"></i>
-                                        </a>
-                                    </div>
+                                    <a *ngIf="cardType.pricelist"
+                                        [routerLink]="['/pricelists/edit/', cardType.pricelist.id]">
+                                        {{cardType.pricelist.name}}
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -102,7 +104,7 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Hình thức
+                                        Theo
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">

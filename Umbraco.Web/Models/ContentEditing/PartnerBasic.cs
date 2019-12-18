@@ -27,6 +27,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Công nợ
         /// </summary>
         public decimal Debt { get; set; }
+
+        public string DisplayName { get; set; }
     }
 
     public class PartnerPaged

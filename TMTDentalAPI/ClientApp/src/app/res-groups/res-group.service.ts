@@ -75,4 +75,8 @@ export class ResGroupService {
         return this.http.post<ResGroupDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', {});
     }
 
+    resetSecurityData() {
+        return this.http.post(this.baseApi + this.apiUrl + '/ResetSecurityData', {});
+    }
+
 }

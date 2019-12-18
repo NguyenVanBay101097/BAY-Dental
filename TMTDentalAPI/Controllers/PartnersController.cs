@@ -93,8 +93,8 @@ namespace TMTDentalAPI.Controllers
             FixCityName(partner);
             await _partnerService.CreateAsync(partner);
 
-            val.Id = partner.Id;
-            return CreatedAtAction(nameof(Get), new { id = partner.Id }, val);
+            var basic = _mapper.Map<PartnerBasic>(partner);
+            return Ok(basic);
         }
 
         private void FixCityName(Partner partner)

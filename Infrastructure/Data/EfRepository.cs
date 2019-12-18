@@ -204,5 +204,10 @@ namespace Infrastructure.Data
             var query = GetQuery(spec);
             return await query.ToListAsync();
         }
+
+        public Task<int> ExcuteSqlCommandAsync(string sql, params object[] parameters)
+        {
+            return _dbContext.ExecuteSqlCommandAsync(sql, parameters);
+        }
     }
 }

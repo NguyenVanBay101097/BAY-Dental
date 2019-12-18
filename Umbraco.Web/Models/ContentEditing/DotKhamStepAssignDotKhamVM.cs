@@ -9,4 +9,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> Ids { get; set; } = new List<Guid>();
         public Guid DotKhamId { get; set; }
     }
+
+    public class DotKhamStepSetDone
+    {
+        public IEnumerable<Guid> Ids { get; set; } = new List<Guid>();
+        public Guid DotKhamId { get; set; }
+        public bool IsDone { get; set; }
+    }
 }

@@ -7,8 +7,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PartnerSimple
     {
         public Guid Id { get; set; }
-
         public string Name { get; set; }
+        public string DisplayName { get; set; }
     }
 
     public class PartnerSimpleContact

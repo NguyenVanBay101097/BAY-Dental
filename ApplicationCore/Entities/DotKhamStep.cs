@@ -8,7 +8,7 @@ namespace ApplicationCore.Entities
     {
         public DotKhamStep()
         {
-            State = "draft";
+            State = "confirmed";
             IsInclude = true;
             IsDone = false;
         }

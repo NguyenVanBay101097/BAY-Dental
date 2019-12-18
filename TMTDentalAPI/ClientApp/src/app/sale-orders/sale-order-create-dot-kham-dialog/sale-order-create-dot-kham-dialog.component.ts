@@ -43,35 +43,37 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       this.doctorCbx.focus();
     }, 200);
 
-    this.getDoctorList();
-    this.getAssistantList();
 
-    this.doctorCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.doctorCbx.loading = true)),
-      switchMap(value => this.searchDoctors(value))
-    ).subscribe(result => {
-      this.filteredDoctors = result;
-      this.doctorCbx.loading = false;
+    setTimeout(() => {
+      this.getDoctorList();
+      this.getAssistantList();
+
+      this.doctorCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.doctorCbx.loading = true)),
+        switchMap(value => this.searchDoctors(value))
+      ).subscribe(result => {
+        this.filteredDoctors = result;
+        this.doctorCbx.loading = false;
+      });
+
+      this.assistantCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.assistantCbx.loading = true)),
+        switchMap(value => this.searchAssistants(value))
+      ).subscribe(result => {
+        this.filteredAssistants = result;
+        this.assistantCbx.loading = false;
+      });
+
+      this.getDefault();
     });
-
-    this.assistantCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.assistantCbx.loading = true)),
-      switchMap(value => this.searchAssistants(value))
-    ).subscribe(result => {
-      this.filteredAssistants = result;
-      this.assistantCbx.loading = false;
-    });
-
-    this.getDefault();
   }
 
   getDefault() {
     var val = new DotKhamDefaultGet();
     val.saleOrderId = this.saleOrderId;
     this.dotKhamService.defaultGet(val).subscribe(result => {
-      console.log(result);
       this.dotKhamForm.patchValue(result);
       let date = new Date(result.date);
       this.dotKhamForm.get('dateObj').patchValue(date);

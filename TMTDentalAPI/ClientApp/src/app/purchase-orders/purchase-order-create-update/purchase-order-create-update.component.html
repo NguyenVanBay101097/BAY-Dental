@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="dropdown">
+            <!-- <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                     Thao tác
@@ -31,7 +31,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a *ngIf="id" class="dropdown-item" (click)="printpurchaseOrder()">In phiếu</a>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -48,10 +48,10 @@
                         (click)="buttonConfirm()">
                         Xác nhận
                     </button>
-                    <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
+                    <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy đơn
-                    </button>
+                    </button> -->
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="purchaseOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
@@ -108,9 +108,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker *ngIf="purchaseOrder.state == 'draft'"
-                                        formControlName="dateOrderObj">
-                                    </kendo-datetimepicker>
+                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
+                                        *ngIf="purchaseOrder.state == 'draft'" formControlName="dateOrderObj">
+                                    </kendo-datepicker>
                                     <span
                                         *ngIf="purchaseOrder.state != 'draft'">{{purchaseOrder.dateOrder | date: 'short'}}</span>
                                 </td>

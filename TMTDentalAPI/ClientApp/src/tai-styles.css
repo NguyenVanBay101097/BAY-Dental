@@ -993,3 +993,78 @@ td.oe_form_group_cell_label label {
     padding-bottom: 24px;
     padding-left: 16px;
 }
+
+.o_form_view.o_form_nosheet.o_base_settings {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+    padding: 0px;
+}
+
+.o_base_settings .o_setting_container {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.o_base_settings .o_setting_container .settings {
+    position: relative;
+    flex: 1 1 100%;
+    background-color: white;
+    overflow: auto;
+}
+
+.o_settings_container {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+    flex: 0 1 auto;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+}
+
+.mt16 {
+    margin-top: 16px !important;
+}
+
+.o_base_settings .o_setting_container .settings > .app_settings_block .o_settings_container {
+    max-width: 992px;
+    padding: 0 16px;
+}
+
+@media (min-width: 1200px) {
+    .o_base_settings .o_setting_container .settings > .app_settings_block .o_settings_container {
+        padding-left: 32px;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-lg-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+.o_settings_container .o_setting_box {
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+.o_settings_container .o_setting_box .o_setting_left_pane {
+    width: 24px;
+    float: left;
+}
+
+.o_settings_container .o_setting_box .o_setting_right_pane {
+    margin-left: 30px;
+    border-left: 1px solid #bbbbbb;
+    padding-left: 10px;
+}

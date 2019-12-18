@@ -2,6 +2,7 @@ import { UserSimple } from '../users/user-simple';
 import { SaleOrderLineDisplay } from './sale-order-line-display';
 import { PartnerSimple } from '../partners/partner-simple';
 import { ProductPriceListBasic } from '../price-list/price-list';
+import { SaleOrderBasic } from './sale-order-basic';
 
 export class SaleOrderDisplay {
     id: string;
@@ -16,4 +17,7 @@ export class SaleOrderDisplay {
     orderLines: SaleOrderLineDisplay[];
     name: string;
     pricelist: ProductPriceListBasic;
+    invoiceStatus: string;
+    quote: SaleOrderBasic;
+    order: SaleOrderBasic;
 }

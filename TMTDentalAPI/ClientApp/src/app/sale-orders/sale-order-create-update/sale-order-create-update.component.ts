@@ -27,6 +27,8 @@ import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.ser
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
+import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -54,6 +56,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   searchCardBarcode: string;
 
+  type: string;
+
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
@@ -73,7 +77,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       state: null,
       residual: null,
       card: null,
-      pricelist: [null, Validators.required]
+      pricelist: [null, Validators.required],
     });
     this.routeActive();
     this.partnerCbx.filterChange.asObservable().pipe(
@@ -115,11 +119,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
         this.id = params.get("id");
+        this.type = params.get('type');
         // this.getAccountPayments(this.id);
         if (this.id) {
           return this.saleOrderService.get(this.id);
         } else {
-          return this.saleOrderService.defaultGet();
+          return this.saleOrderService.defaultGet({ type: this.type });
         }
       })).subscribe(result => {
 
@@ -140,6 +145,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           control.push(g);
         });
       });
+  }
+
+  quickCreateCustomer() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm khách hàng';
+
+    modalRef.result.then(result => {
+      var p = new PartnerSimple();
+      p.id = result.id;
+      p.name = result.name;
+      p.displayName = result.displayName;
+      this.formGroup.get('partner').patchValue(p);
+      this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
+      this.onChangePartner(p);
+    }, () => {
+    });
   }
 
   loadDotKhamList() {
@@ -248,6 +269,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
+    val.orderLines.forEach(line => {
+      line.toothIds = line.teeth.map(x => x.id);
+    });
     return this.saleOrderService.create(val);
   }
 
@@ -258,6 +282,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
+    val.orderLines.forEach(line => {
+      line.toothIds = line.teeth.map(x => x.id);
+    });
     return this.saleOrderService.update(this.id, val);
   }
 
@@ -297,6 +324,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionConfirm() {
     if (this.id) {
       this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+
+  actionInvoiceCreateV2() {
+    if (this.id) {
+      this.saleOrderService.actionInvoiceCreateV2(this.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Cập nhật thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadRecord();
       });
     }
@@ -369,6 +412,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
+    val.orderLines.forEach(line => {
+      line.toothIds = line.teeth.map(x => x.id);
+    });
     this.saleOrderService.create(val).subscribe(result => {
       this.saleOrderService.actionConfirm([result.id]).subscribe(() => {
         this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
@@ -389,6 +435,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
+    val.orderLines.forEach(line => {
+      line.toothIds = line.teeth.map(x => x.id);
+    });
     if (this.id) {
       this.saleOrderService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
@@ -398,6 +447,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        this.loadRecord();
+      }, () => {
         this.loadRecord();
       });
     } else {

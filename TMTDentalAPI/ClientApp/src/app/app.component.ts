@@ -11,12 +11,15 @@ import { PrintService } from './print.service';
 export class AppComponent {
   title = 'tmt-dental';
   constructor(public authService: AuthService, private router: Router, public printService: PrintService) {
-
+    this.loadGroups();
   }
 
-  onPrintInvoice() {
-    const invoiceIds = ['101', '102'];
-    this.printService
-      .printDocument('invoice', invoiceIds);
+  loadGroups() {
+    var groups = localStorage.getItem('groups');
+    if (!groups && this.authService.isAuthenticated()) {
+      this.authService.getGroups().subscribe(result => {
+        localStorage.setItem('groups', JSON.stringify(result));
+      });
+    }
   }
 }

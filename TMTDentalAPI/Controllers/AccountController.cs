@@ -33,14 +33,15 @@ namespace TMTDentalAPI.Controllers
         private readonly AppTenant _tenant;
         private readonly IMailSender _mailSender;
         private readonly IAsyncRepository<UserRefreshToken> _userRefreshTokenRepository;
+        private readonly IUserService _userService;
 
         private readonly CatalogDbContext _context;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
-            IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository, 
-            CatalogDbContext context)
+            IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository,
+            IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -48,7 +49,7 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
             _mailSender = mailSender;
             _userRefreshTokenRepository = userRefreshTokenRepository;
-            _context = context;
+            _userService = userService;
         }
 
         [AllowAnonymous]
@@ -217,6 +218,13 @@ namespace TMTDentalAPI.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetGroups()
+        {
+            var res = await _userService.GetGroups();
+            return Ok(res);
         }
 
         private string GenerateToken(ApplicationUser user, DateTime expires, IList<string> roles = null)

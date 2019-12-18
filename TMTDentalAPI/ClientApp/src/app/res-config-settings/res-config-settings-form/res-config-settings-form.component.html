@@ -1,0 +1,86 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Cấu hình</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <button type="button" class="btn btn-sm btn-primary" (click)="onSave()">
+                <span>Áp dụng</span>
+            </button>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_form_view oe_form_configuration o_base_settings o_form_nosheet o_form_editable"
+        [formGroup]="formGroup">
+        <div class="o_setting_container">
+            <div class="settings">
+                <div class="app_settings_block">
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="group_discount_per_so_line">
+                                    <input type="checkbox" id="o_field_input_27"
+                                        formControlName="groupDiscountPerSOLine" class="custom-control-input">
+                                    <label for="o_field_input_27" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_27">Chiết khấu</label>
+                                <div class="text-muted">
+                                    Hiển thị chiết khấu trên chi tiết bán hàng
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="module_sale_coupon">
+                                    <input type="checkbox" id="checkbox-975" formControlName="groupSaleCouponPromotion"
+                                        class="custom-control-input">
+                                    <label for="checkbox-975" class="custom-control-label">​</label></div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_705">Coupon
+                                    &amp; Khuyến mãi&nbsp;
+                                </label>
+                                <div class="text-muted" id="sale_coupon">
+                                    Quản lý chương trình coupon &amp; khuyến mãi
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="group_discount_per_so_line">
+                                    <input type="checkbox" id="o_field_input_28" formControlName="groupLoyaltyCard"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_28" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_28">Thẻ thành viên</label>
+                                <div class="text-muted">
+                                    Quản lý thẻ thành viên, áp dụng bảng giá thẻ thành viên
+                                </div>
+                                <div *ngIf="groupLoyaltyCard == true">
+                                    <label>Số tiền trên 1 điểm</label>
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="loyaltyPointExchangeRate">
+                                    </kendo-numerictextbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
