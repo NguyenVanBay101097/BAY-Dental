@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,26 +32,38 @@ namespace Infrastructure.Services
         {
             var data = await GetObjectReference(reference);
 
-            if (data != null && (data.ResId.HasValue))
+            if (data != null && !string.IsNullOrEmpty(data.ResId))
             {
                 switch (data.Model)
                 {
                     case "res.groups":
                         {
                             var service = GetService<IResGroupService>();
-                            var group = await service.GetByIdAsync(data.ResId.Value);
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
+                    case "res.users":
+                        {
+                            var service = GetService<UserManager<ApplicationUser>>();
+                            var group = await service.FindByIdAsync(data.ResId);
+                            return (T)(object)group;
+                        }
+                    case "ir.module.category":
+                        {
+                            var service = GetService<IIrModuleCategoryService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
                     case "account.account.type":
                         {
                             var service = GetService<IAccountAccountTypeService>();
-                            var group = await service.GetByIdAsync(data.ResId.Value);
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
                     case "stock.location":
                         {
                             var service = GetService<IStockLocationService>();
-                            var group = await service.GetByIdAsync(data.ResId.Value);
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
                     default:

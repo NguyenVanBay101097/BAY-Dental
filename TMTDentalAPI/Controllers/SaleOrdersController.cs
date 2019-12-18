@@ -68,7 +68,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SaleOrderDisplay val)
+        public async Task<IActionResult> Create(SaleOrderSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
@@ -77,25 +77,18 @@ namespace TMTDentalAPI.Controllers
             await SaveOrderLines(val, order);
             await _saleOrderService.CreateOrderAsync(order);
 
-            val.Id = order.Id;
-            return CreatedAtAction(nameof(Get), new { id = order.Id }, val);
+            var basic = _mapper.Map<SaleOrderBasic>(order);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, SaleOrderDisplay val)
+        public async Task<IActionResult> Update(Guid id, SaleOrderSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var order = await _saleOrderService.GetSaleOrderWithLines(id);
-            if (order == null)
-                return NotFound();
-
-            order = _mapper.Map(val, order);
-
-            await SaveOrderLines(val, order);
-
+       
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.UpdateOrderAsync(order);
+            await _saleOrderService.UpdateOrderAsync(id, val);
             _unitOfWork.Commit();
 
             return NoContent();
@@ -113,9 +106,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("DefaultGet")]
-        public async Task<IActionResult> DefaultGet()
+        public async Task<IActionResult> DefaultGet([FromQuery]SaleOrderDefaultGet val)
         {
-            var res = await _saleOrderService.DefaultGet();
+            var res = await _saleOrderService.DefaultGet(val);
             return Ok(res);
         }
 
@@ -143,6 +136,25 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ActionConvertToOrder(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionConvertToOrder(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ActionInvoiceCreateV2(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionInvoiceCreateV2(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
 
         [HttpPost("[action]")]
         public async Task<IActionResult> ApplyCoupon(SaleOrderApplyCoupon val)
@@ -212,7 +224,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        private async Task SaveOrderLines(SaleOrderDisplay val, SaleOrder order)
+        private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
         {
             var existLines = order.OrderLines.ToList();
             var lineToRemoves = new List<SaleOrderLine>();
@@ -239,19 +251,15 @@ namespace TMTDentalAPI.Controllers
             int sequence = 0;
             foreach (var line in val.OrderLines)
             {
-                line.Sequence = sequence++;
-            }
-
-            foreach (var line in val.OrderLines)
-            {
                 if (line.Id == Guid.Empty)
                 {
                     var saleLine = _mapper.Map<SaleOrderLine>(line);
-                    foreach (var tooth in line.Teeth)
+                    saleLine.Sequence = sequence++;
+                    foreach (var toothId in line.ToothIds)
                     {
                         saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
                         {
-                            ToothId = tooth.Id
+                            ToothId = toothId
                         });
                     }
                     order.OrderLines.Add(saleLine);
@@ -262,12 +270,13 @@ namespace TMTDentalAPI.Controllers
                     if (saleLine != null)
                     {
                         _mapper.Map(line, saleLine);
+                        saleLine.Sequence = sequence++;
                         saleLine.SaleOrderLineToothRels.Clear();
-                        foreach (var tooth in line.Teeth)
+                        foreach (var toothId in line.ToothIds)
                         {
                             saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
                             {
-                                ToothId = tooth.Id
+                                ToothId = toothId
                             });
                         }
                     }

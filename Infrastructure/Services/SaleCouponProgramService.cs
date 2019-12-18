@@ -48,6 +48,18 @@ namespace Infrastructure.Services
             };
         }
 
+        public override ISpecification<SaleCouponProgram> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "sale_coupon.sale_coupon_program_comp_rule":
+                    return new InitialSpecification<SaleCouponProgram>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
+
         public async Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val)
         {
             var program = _mapper.Map<SaleCouponProgram>(val);

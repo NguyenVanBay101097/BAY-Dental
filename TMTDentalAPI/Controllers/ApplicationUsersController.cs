@@ -96,7 +96,12 @@ namespace TMTDentalAPI.Controllers
 
             var result = await _userManager.CreateAsync(user, val.Password);
             if (!result.Succeeded)
-                throw new Exception("fail create user");
+            {
+                if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
+                    throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
+                else
+                    throw new Exception("Lỗi chưa xác định, vui lòng liên hệ với người quản trị phần mềm");
+            }
 
             _unitOfWork.Commit();
 

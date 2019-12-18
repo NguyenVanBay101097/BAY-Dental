@@ -7,6 +7,7 @@ import { CardTypeService } from './card-type.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { CardTypeCreateUpdateComponent } from './card-type-create-update/card-type-create-update.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [CardTypeListComponent, CardTypeCreateUpdateComponent],
@@ -15,7 +16,8 @@ import { CardTypeCreateUpdateComponent } from './card-type-create-update/card-ty
     CardTypesRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
+    NgbModule
   ],
   providers: [
     CardTypeService

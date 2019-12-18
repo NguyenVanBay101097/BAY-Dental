@@ -32,6 +32,7 @@ import { HeaderNotificationComponent } from './header-notification/header-notifi
 import { MomentModule } from 'ngx-moment';
 import { HeaderAppointmentComponent } from './header-appointment/header-appointment.component';
 import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card-card-grid.component';
+import { HasGroupsDirective } from './has-groups-directive';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card
     TaiDateRangeSimpleDropdownComponent,
     HeaderNotificationComponent,
     HeaderAppointmentComponent,
-    SharedCardCardGridComponent
+    SharedCardCardGridComponent,
+    HasGroupsDirective
   ],
   exports: [
     HeaderComponent,
@@ -78,7 +80,8 @@ import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card
     TaiDateRangeSimpleDropdownComponent,
     HeaderNotificationComponent,
     HeaderAppointmentComponent,
-    SharedCardCardGridComponent
+    SharedCardCardGridComponent,
+    HasGroupsDirective
   ],
   imports: [
     CommonModule,

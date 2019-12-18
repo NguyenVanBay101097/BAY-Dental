@@ -5,7 +5,7 @@ using System.Text;
 namespace ApplicationCore.Entities
 {
     /// <summary>
-    /// Phiếu điều trị / phiếu bán hàng
+    /// Phiếu điều trị / phiếu tư vấn
     /// </summary>
     public class SaleOrder: BaseEntity
     {
@@ -14,6 +14,25 @@ namespace ApplicationCore.Entities
             State = "draft";
             DateOrder = DateTime.Now;
             Name = "/";
+            IsQuotation = false;
+        }
+
+        public SaleOrder(SaleOrder order)
+        {
+            PartnerId = order.PartnerId;
+            AmountUntaxed = order.AmountUntaxed;
+            AmountTax = order.AmountTax;
+            AmountTotal = order.AmountTotal;
+            Note = order.Note;
+            CompanyId = order.CompanyId;
+            UserId = order.UserId;
+            InvoiceStatus = order.InvoiceStatus;
+            Residual = order.Residual;
+            PricelistId = order.PricelistId;
+            State = "draft";
+            DateOrder = DateTime.Now;
+            Name = "/";
+            IsQuotation = false;
         }
 
         /// <summary>
@@ -71,5 +90,27 @@ namespace ApplicationCore.Entities
 
         public Guid? PricelistId { get; set; }
         public ProductPricelist Pricelist { get; set; }
+
+        /// <summary>
+        /// Phân loại phiếu tư vấn và phiếu điều trị: quotation, sale_order
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Là phiếu tư vấn
+        /// </summary>
+        public bool? IsQuotation { get; set; }
+
+        /// <summary>
+        /// Cho phiếu điều trị tham chiếu đến phiếu tư vấn
+        /// </summary>
+        public Guid? QuoteId { get; set; }
+        public SaleOrder Quote { get; set; }
+
+        /// <summary>
+        /// Cho phiếu tư vấn tham chiếu đến phiếu điều trị
+        /// </summary>
+        public Guid? OrderId { get; set; }
+        public SaleOrder Order { get; set; }
     }
 }

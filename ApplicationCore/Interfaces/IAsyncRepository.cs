@@ -25,5 +25,6 @@ namespace ApplicationCore.Interfaces
         Task DeleteAsync(T entity);
         Task DeleteAsync(IEnumerable<T> entities);
         Task<int> CountAsync(ISpecification<T> spec);
+        Task<int> ExcuteSqlCommandAsync(string sql, params object[] parameters);
     }
 }

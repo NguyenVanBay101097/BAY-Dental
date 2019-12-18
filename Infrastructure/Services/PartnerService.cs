@@ -245,15 +245,15 @@ namespace Infrastructure.Services
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);
-            if (!string.IsNullOrWhiteSpace(entity.Ref))
-            {
-                var partner = SearchQuery(x => x.Ref == entity.Ref && x.Id != entity.Id).FirstOrDefault();
-                if (partner != null)
-                    throw new Exception("Mã này đã tồn tại !");
-            }
-            else {
-                throw new Exception("Vui lòng nhập mã !");
-            }
+            //if (!string.IsNullOrWhiteSpace(entity.Ref))
+            //{
+            //    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Id != entity.Id).FirstOrDefault();
+            //    if (partner != null)
+            //        throw new Exception("Mã này đã tồn tại !");
+            //}
+            //else {
+            //    throw new Exception("Vui lòng nhập mã !");
+            //}
             return base.UpdateAsync(entity);
         }
 
@@ -271,8 +271,12 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val)
         {
-            var partners = await GetQueryPaged(val).ToListAsync();
-            return _mapper.Map<IEnumerable<PartnerSimple>>(partners);
+            var partners = await GetQueryPaged(val).Select(x => new PartnerSimple {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Name = x.Name
+            }).ToListAsync();
+            return partners;
         }
 
         public IQueryable<Partner> GetQueryPaged(PartnerPaged val)

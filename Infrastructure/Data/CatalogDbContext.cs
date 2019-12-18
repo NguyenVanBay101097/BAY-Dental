@@ -120,6 +120,11 @@ namespace Infrastructure.Data
         public DbSet<PromotionProgramCompanyRel> PromotionProgramCompanyRels { get; set; }
         public DbSet<PromotionRuleProductCategoryRel> PromotionRuleProductCategoryRels { get; set; }
         public DbSet<PromotionRuleProductRel> PromotionRuleProductRels { get; set; }
+        public DbSet<ResGroupImpliedRel> ResGroupImpliedRels { get; set; }
+        public DbSet<ResConfigSettings> ResConfigSettings { get; set; }
+        public DbSet<IrModuleCategory> IrModuleCategories { get; set; }
+        public DbSet<IrConfigParameter> IrConfigParameters { get; set; }
+        
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -222,6 +227,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PromotionProgramCompanyRelConfiguration());
             builder.ApplyConfiguration(new PromotionRuleProductCategoryRelConfiguration());
             builder.ApplyConfiguration(new PromotionRuleProductRelConfiguration());
+            builder.ApplyConfiguration(new ResGroupImpliedRelConfiguration());
+            builder.ApplyConfiguration(new ResConfigSettingsConfiguration());
+            builder.ApplyConfiguration(new IrModuleCategoryConfiguration());
+            builder.ApplyConfiguration(new IrConfigParameterConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
@@ -247,6 +256,11 @@ namespace Infrastructure.Data
             //optionsBuilder.UseSqlServer(defaultConnectionString);
 
             base.OnConfiguring(optionsBuilder);
+        }
+
+        public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
+        {
+            return Database.ExecuteSqlCommandAsync(sql, parameters);
         }
     }
 }

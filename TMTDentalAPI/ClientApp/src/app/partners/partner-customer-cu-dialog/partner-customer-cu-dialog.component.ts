@@ -5,6 +5,7 @@ import { PartnerCategorySimple } from '../partner-simple';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from '../partner.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-partner-customer-cu-dialog',
@@ -17,6 +18,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
+  title: string;
 
   dataSourceCities: Array<{ code: string, name: string }>;
   dataSourceDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;
@@ -33,7 +35,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   yearList: number[] = [];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService, private windowRef: WindowRef) { }
+    private partnerService: PartnerService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -56,26 +58,28 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       customer: true,
     });
 
-    if (this.id) {
-      this.partnerService.getPartner(this.id).subscribe(result => {
-        this.formGroup.patchValue(result);
-        if (result.city && result.city.code) {
-          this.handleCityChange(result.city);
-        }
-        if (result.district && result.district.code) {
-          this.handleDistrictChange(result.district);
-        }
-        if (result.ward && result.ward.code) {
-          this.handleWardChange(result.ward);
-        }
-      });
-    }
+    setTimeout(() => {
+      if (this.id) {
+        this.partnerService.getPartner(this.id).subscribe(result => {
+          this.formGroup.patchValue(result);
+          if (result.city && result.city.code) {
+            this.handleCityChange(result.city);
+          }
+          if (result.district && result.district.code) {
+            this.handleDistrictChange(result.district);
+          }
+          if (result.ward && result.ward.code) {
+            this.handleWardChange(result.ward);
+          }
+        });
+      }
 
-    this.dayList = this.birthInit(1, 31);
-    this.monthList = this.birthInit(1, 12);
-    this.yearList = this.birthInit(1900, new Date().getFullYear());
-    this.loadSourceCities();
-    this.loadCategoriesList();
+      this.dayList = this.birthInit(1, 31);
+      this.monthList = this.birthInit(1, 12);
+      this.yearList = this.birthInit(1900, new Date().getFullYear());
+      this.loadSourceCities();
+      this.loadCategoriesList();
+    });
   }
 
   loadSourceCities() {
@@ -187,17 +191,17 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     if (this.id) {
       var val = this.formGroup.value;
       this.partnerService.update(this.id, val).subscribe(() => {
-        this.windowRef.close(true);
+        this.activeModal.close(true);
       });
     } else {
       var val = this.formGroup.value;
       this.partnerService.create(val).subscribe(result => {
-        this.windowRef.close(result);
+        this.activeModal.close(result);
       });
     }
   }
 
   onCancel() {
-    this.windowRef.close();
+    this.activeModal.dismiss();
   }
 }

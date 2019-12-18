@@ -72,14 +72,12 @@ namespace Infrastructure.Services
             var pricelist = new ProductPricelist()
             {
                 Name = $"Bảng giá loại thẻ {cardType.Name}",
-                CardTypeId = cardType.Id,
             };
             pricelist.Items.Add(new ProductPricelistItem
             {
                 AppliedOn = "3_global",
                 ComputePrice = "percentage",
                 PercentPrice = cardType.Discount,
-                CardTypeId = cardType.Id,
             });
             return await pricelistObj.CreateAsync(pricelist);
         }

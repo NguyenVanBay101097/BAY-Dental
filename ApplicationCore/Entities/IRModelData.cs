@@ -8,7 +8,7 @@ namespace ApplicationCore.Entities
     {
         public string Name { get; set; }
 
-        public Guid? ResId { get; set; }
+        public string ResId { get; set; }
 
         public string Model { get; set; }
 

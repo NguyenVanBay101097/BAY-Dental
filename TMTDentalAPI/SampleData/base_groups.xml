@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record model="res.groups" id="group_user">
+      <field name="name">Internal User</field>
+      <field name="category_id" ref="module_category_user_type" />
+      <field name="users" eval="base.user_root"/>
+    </record>
+  </data>
+</odoo>
+

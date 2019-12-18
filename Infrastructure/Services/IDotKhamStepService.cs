@@ -12,6 +12,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<DotKhamStep>> GetVisibleSteps(Guid dotKhamId, string show = "dotkham");
         Task<IEnumerable<IEnumerable<DotKhamStep>>> GetVisibleSteps2(Guid dotKhamId, string show = "dotkham");
         Task AssignDotKham(DotKhamStepAssignDotKhamVM val);
-        Task ToggleIsDone(IEnumerable<Guid> ids);
+        Task ToggleIsDone(DotKhamStepSetDone val);
+        Task Unlink(IEnumerable<DotKhamStep> self);
     }
 }

@@ -65,6 +65,7 @@ export class DotKhamStepDisplay {
     productId: string;
     dotKhamId: string;
     invoicesId: string;
+    isDone: boolean;
 }
 
 export class DotKhamStepSave {

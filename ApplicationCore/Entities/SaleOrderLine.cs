@@ -15,6 +15,29 @@ namespace ApplicationCore.Entities
             InvoiceStatus = "no";
         }
 
+        public SaleOrderLine(SaleOrderLine line)
+        {
+            State = "draft";
+            InvoiceStatus = "no";
+            PriceUnit = line.PriceUnit;
+            ProductUOMQty = line.ProductUOMQty;
+            Name = line.Name;
+            OrderPartnerId = line.OrderPartnerId;
+            OrderId = line.OrderId;
+            ProductUOMId = line.ProductUOMId;
+            Discount = line.Discount;
+            ProductId = line.ProductId;
+            CompanyId = line.CompanyId;
+            PriceSubTotal = line.PriceSubTotal;
+            PriceTax = line.PriceTax;
+            PriceTotal = line.PriceTotal;
+            SalesmanId = line.SalesmanId;
+            Note = line.Note;
+            ToothCategoryId = line.ToothCategoryId;
+            Diagnostic = line.Diagnostic;
+            Sequence = line.Sequence;
+        }
+
         public decimal PriceUnit { get; set; }
 
         public decimal ProductUOMQty { get; set; }
@@ -59,6 +82,13 @@ namespace ApplicationCore.Entities
         public decimal? QtyToInvoice { get; set; }
 
         public decimal? QtyInvoiced { get; set; }
+
+        /// <summary>
+        /// Dùng để xử lý trường hợp khuyến mãi
+        /// </summary>
+        public decimal? AmountToInvoice { get; set; }
+
+        public decimal? AmountInvoiced { get; set; }
 
         public ICollection<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; } = new List<SaleOrderLineInvoiceRel>();
 

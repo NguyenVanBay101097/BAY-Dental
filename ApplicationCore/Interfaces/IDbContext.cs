@@ -25,5 +25,7 @@ namespace ApplicationCore.Interfaces
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
         EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
+
+        Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
     }
 }

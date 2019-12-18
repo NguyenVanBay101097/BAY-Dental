@@ -119,6 +119,7 @@ export class SaleOrderListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.isQuotation = false;
     if (this.dateOrderFrom) {
       val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
     }

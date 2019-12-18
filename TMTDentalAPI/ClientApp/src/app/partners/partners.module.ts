@@ -41,7 +41,7 @@ import { SharedModule } from '../shared/shared.module';
     MatStepperModule,
     SharedModule
   ],
-  entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent, PartnerImportComponent],
+  entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent, PartnerImportComponent, PartnerCustomerCuDialogComponent],
   providers: [
     PartnerService
   ]

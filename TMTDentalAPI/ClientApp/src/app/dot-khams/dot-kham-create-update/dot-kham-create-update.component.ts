@@ -36,7 +36,7 @@ import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
-import { DotKhamStepService, DotKhamStepAssignDotKhamVM } from '../dot-kham-step.service';
+import { DotKhamStepService, DotKhamStepAssignDotKhamVM, DotKhamStepSetDone } from '../dot-kham-step.service';
 import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
 import { environment } from 'src/environments/environment';
 
@@ -252,9 +252,36 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
   }
 
-  toggleIsDone(step: DotKhamStepDisplay) {
-    this.dotKhamStepService.toggleIsDone([step.id]).subscribe(() => {
-      this.loadDotKhamStepList();
+  toggleIsDone(step: DotKhamStepDisplay, event) {
+    var val = new DotKhamStepSetDone();
+    val.ids = [step.id];
+    val.dotKhamId = this.id;
+    val.isDone = event.target.checked;
+    this.dotKhamStepService.toggleIsDone(val).subscribe(() => {
+      step.isDone = event.target.checked;
+    }, () => {
+      step.isDone = !event.target.checked;
+    });
+  }
+
+  computeIsDoneAll() {
+    var notDone = _.find(this.dotKhamStepList, o => !o.isDone);
+    if (notDone) {
+      return false;
+    }
+    return true;
+  }
+
+  toggleIsDoneAll(event) {
+    var val = new DotKhamStepSetDone();
+    val.ids = this.dotKhamStepList.map(x => x.id);
+    val.dotKhamId = this.id;
+    val.isDone = event.target.checked;
+    this.dotKhamStepService.toggleIsDone(val).subscribe(() => {
+      this.dotKhamStepList.forEach(step => {
+        step.isDone = event.target.checked;
+      });
+    }, () => {
     });
   }
 

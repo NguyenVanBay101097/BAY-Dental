@@ -12,5 +12,10 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<ResGroupBasic>> GetPagedResultAsync(ResGroupPaged val);
         Task<ResGroupDisplay> DefaultGet();
+        void Write(IEnumerable<ResGroup> groups, List<ResGroup> implied_ids);
+        Task<ResGroup> InsertGroupUserIfNotExist();
+        Task AddAllImpliedGroupsToAllUser(IEnumerable<ResGroup> self);
+        Task<ResGroup> InsertSettingGroupIfNotExist(string reference, string name);
+        Task ResetSecurityData();
     }
 }

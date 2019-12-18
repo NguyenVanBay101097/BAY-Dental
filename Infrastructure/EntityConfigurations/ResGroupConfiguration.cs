@@ -13,6 +13,11 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.Property(x => x.Name).IsRequired();
 
+            builder.HasOne(x => x.Category)
+                .WithMany()
+                .HasForeignKey(x => x.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);

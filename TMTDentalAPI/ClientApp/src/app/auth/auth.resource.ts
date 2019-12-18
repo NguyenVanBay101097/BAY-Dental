@@ -93,6 +93,10 @@ export class AuthResource {
         return this.http.post(this.baseApi + 'api/Account/ChangePassword', val);
     }
 
+    getGroups() {
+        return this.http.get(this.baseApi + 'api/Account/GetGroups');
+    }
+
     logout(): void {
         this.isLoggedIn = false;
     }

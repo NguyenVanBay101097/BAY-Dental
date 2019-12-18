@@ -103,6 +103,8 @@ namespace Infrastructure.Services
 
         public virtual async Task<TEntity> GetByIdAsync(object id)
         {
+            if (id is string)
+                id = Guid.Parse(id.ToString());
             return await _repository.GetByIdAsync(id);
         }
 
@@ -224,11 +226,9 @@ namespace Infrastructure.Services
             var cache = GetService<IMyCache>();
             var userObj = GetService<IUserService>();
             var key = string.Format(DOMAIN_RULE_CACHE_KEY, UserId, model_name, mode);
-
             var tenant = _httpContextAccessor.HttpContext.GetTenant<AppTenant>();
             if (tenant != null)
                 key = tenant.Hostname + "-" + key;
-
             var res = cache.GetOrCreate(key, entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);
@@ -363,6 +363,11 @@ namespace Infrastructure.Services
         public virtual ISpecification<TEntity> RuleDomainGet(IRRule rule)
         {
             return null;
+        }
+
+        public Task<int> ExcuteSqlCommandAsync(string sql, params object[] parameters)
+        {
+            return _repository.ExcuteSqlCommandAsync(sql, parameters);
         }
     }
 }

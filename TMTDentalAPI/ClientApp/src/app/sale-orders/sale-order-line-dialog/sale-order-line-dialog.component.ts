@@ -46,6 +46,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
       priceSubTotal: 1,
       diagnostic: null,
       toothCategory: null,
+      state: 'draft'
     });
 
     setTimeout(() => {

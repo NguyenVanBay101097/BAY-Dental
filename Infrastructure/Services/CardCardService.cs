@@ -29,14 +29,21 @@ namespace Infrastructure.Services
 
         public async Task<decimal?> ConvertAmountToPoint(decimal? amount)
         {
-            var saleSettingsObj = GetService<ISaleSettingsService>();
-            var saleSettings = await saleSettingsObj.GetSettings();
-            var prate = saleSettings.PointExchangeRate ?? 1;
+            var prate = await GetLoyaltyPointExchangeRate();
             if (prate < 0 || !amount.HasValue)
                 return 0;
             var points = (amount ?? 0) / prate;
             var res = FloatUtils.FloatRound((double)points, precisionRounding: 1);
             return (decimal)res;
+        }
+
+        public async Task<decimal> GetLoyaltyPointExchangeRate()
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("loyalty.point_exchange_rate");
+            if (!string.IsNullOrEmpty(value))
+                return Convert.ToDecimal(value);
+            return 1;
         }
 
         public async Task<PagedResult2<CardCardBasic>> GetPagedResultAsync(CardCardPaged val)

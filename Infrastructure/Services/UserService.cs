@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,22 @@ namespace Infrastructure.Services
         //            return null;
         //    }
         //}
+
+        protected T GetService<T>()
+        {
+            return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+        }
+
+        public async Task<List<string>> GetGroups()
+        {
+            var userId = UserId;
+            var groupIds = await _userManager.Users.Where(x => x.Id == userId).SelectMany(x => x.ResGroupsUsersRels)
+                .Select(x => x.GroupId.ToString()).ToListAsync();
+            var irModelDataObj = GetService<IIRModelDataService>();
+            var res = await irModelDataObj.SearchQuery(x => x.Model == "res.groups" && groupIds.Contains(x.ResId))
+                .Select(x => x.Module + "." + x.Name).ToListAsync();
+            return res;
+        }
 
         public void ClearSecurityCache(IEnumerable<string> ids)
         {

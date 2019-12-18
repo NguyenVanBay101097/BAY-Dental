@@ -7,6 +7,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,16 +24,18 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IMyCache _cache;
         private readonly IUserService _userService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
         public ResGroupsController(IResGroupService resGroupService,
             IMapper mapper, IIRModelAccessService modelAccessService,
-            IMyCache cache, IUserService userService)
+            IMyCache cache, IUserService userService, IUnitOfWorkAsync unitOfWork)
         {
             _resGroupService = resGroupService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
             _cache = cache;
             _userService = userService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -132,12 +135,14 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult ClearCache()
+        public async Task<IActionResult> ResetSecurityData()
         {
-            _modelAccessService.Check("ResGroup", "Write");
-            _cache.Clear();
-            return Ok(true);
+            await _unitOfWork.BeginTransactionAsync();
+            await _resGroupService.ResetSecurityData();
+            _unitOfWork.Commit();
+            return NoContent();
         }
+
 
         private void SaveAccesses(ResGroupDisplay val, ResGroup group)
         {

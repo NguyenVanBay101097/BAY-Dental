@@ -3,14 +3,17 @@
   <data>
     <record model="res.groups" id="group_user">
       <field name="name">Lễ tân</field>
+      <field name="implied_ids" eval="base.group_user"/>
     </record>
 
     <record model="res.groups" id="group_manager">
       <field name="name">Bác sĩ</field>
+      <field name="implied_ids" eval="base.group_user"/>
     </record>
 
     <record model="res.groups" id="group_admin">
       <field name="name">Chủ chi nhánh</field>
+      <field name="implied_ids" eval="base.group_user"/>
     </record>
   </data>
   <data noupdate="1">
@@ -168,6 +171,30 @@
     <record model="ir.rule" id="base.employee_comp_rule">
       <field name="name">Employee multi-company</field>
       <field name="model_id" ref="base.model_employee"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.promotion_program_comp_rule">
+      <field name="name">Promotion program multi-company</field>
+      <field name="model_id" ref="sale.model_promotion_program"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.promotion_rule_comp_rule">
+      <field name="name">Promotion rule multi-company</field>
+      <field name="model_id" ref="sale.model_promotion_rule"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale_coupon.sale_coupon_program_comp_rule">
+      <field name="name">Coupon program multi-company</field>
+      <field name="model_id" ref="sale_coupon.model_sale_coupon_program"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale_coupon.sale_coupon_comp_rule">
+      <field name="name">Coupon multi-company</field>
+      <field name="model_id" ref="sale_coupon.model_sale_coupon"/>
       <field name="global" eval="True"/>
     </record>
   </data>

@@ -51,5 +51,7 @@ namespace Infrastructure.Services
         IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters);
 
         EntityEntry<T> GetEntry(T entity);
+
+        Task<int> ExcuteSqlCommandAsync(string sql, params object[] parameters);
     }
 }

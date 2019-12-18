@@ -120,7 +120,7 @@ export class PromotionProgramCreateUpdateComponent implements OnInit {
     } else if (val.discountApplyOn == '0_product_variant') {
       return 'Vài dịch vụ: ' + val.products.map(x => x.name).join(', ');
     } else {
-      return 'Tất cả dịch vụ';
+      return 'Tổng tiền';
     }
   }
 

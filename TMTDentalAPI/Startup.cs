@@ -192,6 +192,9 @@ namespace TMTDentalAPI
             services.AddScoped<ISaleCouponService, SaleCouponService>();
             services.AddScoped<IPromotionProgramService, PromotionProgramService>();
             services.AddScoped<IPromotionRuleService, PromotionRuleService>();
+            services.AddScoped<IResConfigSettingsService, ResConfigSettingsService>();
+            services.AddScoped<IIrModuleCategoryService, IrModuleCategoryService>();
+            services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
 
             services.AddMemoryCache();
 
@@ -261,6 +264,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleCouponProfile());
                 mc.AddProfile(new PromotionProgramProfile());
                 mc.AddProfile(new PromotionRuleProfile());
+                mc.AddProfile(new ResConfigSettingsProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

@@ -87,19 +87,28 @@ namespace Infrastructure.Services
             await UpdateAsync(steps);
         }
 
-        public async Task ToggleIsDone(IEnumerable<Guid> ids)
+        public async Task ToggleIsDone(DotKhamStepSetDone val)
         {
-            var steps = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrder).ToListAsync();
+            var steps = await SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
             foreach (var step in steps)
             {
-                if (step.SaleOrder != null && (step.SaleOrder.State == "done" || step.SaleOrder.State == "cancel"))
-                    continue;
-                if (!step.DotKhamId.HasValue)
-                    continue;
-                step.IsDone = !step.IsDone;
+                //if (step.SaleOrder != null && (step.SaleOrder.State == "done" || step.SaleOrder.State == "cancel"))
+                //    continue;
+                step.IsDone = val.IsDone;
+                if (val.IsDone)
+                    step.DotKhamId = val.DotKhamId;
+                else
+                    step.DotKhamId = null;
             }
 
             await UpdateAsync(steps);
+        }
+
+        public async Task Unlink(IEnumerable<DotKhamStep> self)
+        {
+            if (self.Any(x => x.IsDone))
+                throw new Exception("Không thể xóa chi tiết khám đã hoàn thành");
+            await DeleteAsync(self);
         }
     }
 }

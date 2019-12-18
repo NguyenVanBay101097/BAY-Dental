@@ -26,7 +26,11 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<SaleOrderLine>> CreateAsync(IEnumerable<SaleOrderLine> entities)
         {
+            UpdateProps(entities);
             ComputeAmount(entities);
+            _GetInvoiceQty(entities);
+            _GetToInvoiceQty(entities);
+            _ComputeInvoiceStatus(entities);
             return await base.CreateAsync(entities);
         }
 
@@ -84,6 +88,21 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public void UpdateProps(IEnumerable<SaleOrderLine> self)
+        {
+            foreach (var line in self)
+            {
+                var order = line.Order;
+                if (order == null)
+                    continue;
+                line.SalesmanId = order.UserId;
+                line.OrderPartnerId = order.PartnerId;
+                line.CompanyId = order.CompanyId;
+                line.Order = order;
+                line.State = order.State;
+            }
+        }
+
         public void UpdateOrderInfo(ICollection<SaleOrderLine> self, SaleOrder order)
         {
             if (self == null)
@@ -106,9 +125,13 @@ namespace Infrastructure.Services
                 if (line.Order.State == "sale" || line.Order.State == "done")
                 {
                     line.QtyToInvoice = line.ProductUOMQty - (line.QtyInvoiced ?? 0);
+                    line.AmountToInvoice = line.PriceTotal - (line.AmountInvoiced ?? 0);
                 }
                 else
+                {
                     line.QtyToInvoice = 0;
+                    line.AmountToInvoice = 0;
+                }
             }
         }
 
@@ -117,6 +140,7 @@ namespace Infrastructure.Services
             foreach (var line in lines)
             {
                 decimal qtyInvoiced = 0;
+                decimal amountInvoiced = 0;
                 foreach (var rel in line.SaleOrderLineInvoiceRels)
                 {
                     var invoice = rel.InvoiceLine.Invoice;
@@ -124,14 +148,29 @@ namespace Infrastructure.Services
                     if (invoice.State != "cancel")
                     {
                         if (invoice.Type == "out_invoice")
+                        {
                             qtyInvoiced += invoiceLine.Quantity;
+                            amountInvoiced += invoiceLine.PriceSubTotal;
+                        }
                         else if (invoice.Type == "out_refund")
+                        {
                             qtyInvoiced -= invoiceLine.Quantity;
+                            amountInvoiced -= invoiceLine.PriceSubTotal;
+                        }
                     }
                 }
 
                 line.QtyInvoiced = qtyInvoiced;
+                line.AmountInvoiced = amountInvoiced;
             }
+        }
+
+        public async Task _UpdateInvoiceQty(IEnumerable<Guid> ids)
+        {
+            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrderLineInvoiceRels)
+                .Include("SaleOrderLineInvoiceRels.InvoiceLine").Include("SaleOrderLineInvoiceRels.InvoiceLine.Invoice").ToListAsync();
+            _GetInvoiceQty(lines);
+            await UpdateAsync(lines);
         }
 
         public void _ComputeInvoiceStatus(IEnumerable<SaleOrderLine> lines)
@@ -140,9 +179,9 @@ namespace Infrastructure.Services
             {
                 if (line.State != "sale" && line.State != "done")
                     line.InvoiceStatus = "no";
-                else if ((line.QtyToInvoice ?? 0) != 0)
+                else if (line.AmountToInvoice != 0)
                     line.InvoiceStatus = "to invoice";
-                else if ((line.QtyInvoiced ?? 0) >= line.ProductUOMQty)
+                else if (line.AmountToInvoice == 0)
                     line.InvoiceStatus = "invoiced";
                 else
                     line.InvoiceStatus = "no";
