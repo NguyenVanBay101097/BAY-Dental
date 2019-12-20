@@ -78,6 +78,47 @@
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <h2>Đa chi nhánh</h2>
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                        name="group_multi_company">
+                                        <input type="checkbox" id="o_field_input_867"
+                                            formControlName="groupMultiCompany" class="custom-control-input">
+                                        <label for="o_field_input_867" class="custom-control-label">​</label>
+                                    </div>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label class="o_form_label" for="o_field_input_867">Đa chi nhánh</label>
+                                    <div class="text-muted">
+                                        Quản lý đa chi nhánh
+                                    </div>
+                                    <div class="content-group" [class.d-none]="groupMultiCompany == false">
+                                        <div id="company_share_partner">
+                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline"
+                                                name="company_share_partner">
+                                                <input type="checkbox" id="o_field_input_869"
+                                                    formControlName="companySharePartner" class="custom-control-input">
+                                                <label for="o_field_input_869" class="custom-control-label">​</label>
+                                            </div>
+                                            <label class="o_form_label o_light_label" for="o_field_input_869">Dùng chung
+                                                danh sách đối tác</label>
+                                        </div>
+                                        <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline"
+                                            name="company_share_product">
+                                            <input type="checkbox" id="o_field_input_871" class="custom-control-input"
+                                                formControlName="companyShareProduct">
+                                            <label for="o_field_input_871" class="custom-control-label">​</label>
+                                        </div>
+                                        <label class="o_form_label o_light_label" for="o_field_input_871">Dùng chung
+                                            danh sách sản phẩm</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

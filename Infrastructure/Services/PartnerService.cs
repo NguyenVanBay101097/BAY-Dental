@@ -41,6 +41,17 @@ namespace Infrastructure.Services
             _userManager = userManager;
         }
 
+        public override ISpecification<Partner> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "base.res_partner_rule":
+                    return new InitialSpecification<Partner>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
+        }
+
         public async Task<PagedResult2<Partner>> GetPagedResultAsync(int offset, int limit, string search = "", string searchBy = "", bool? customer = null)
         {
             //Tìm kiếm partner search theo tên hoặc mã khách hàng, hoặc theo số điện thoại
@@ -276,7 +287,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val)
         {
-            var partners = await GetQueryPaged(val).Select(x => new PartnerSimple {
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimple {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
                 Name = x.Name
@@ -298,7 +309,7 @@ namespace Infrastructure.Services
                 || x.Ref.Contains(val.SearchNamePhoneRef) || x.Phone.Contains(val.SearchNamePhoneRef));
 
             //query = query.Skip(val.Offset).Take(val.Limit);
-            query = query.OrderByDescending(s => s.DateCreated);
+            query = query.OrderBy(s => s.Name);
             return query;
         }
 

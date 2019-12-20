@@ -1,6 +1,9 @@
+<div class="mb-2">
+    <button type="button" class="btn btn-secondary btn-sm">Thêm</button>
+</div>
+
 <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="gridLoading">
-    <!--[selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)"-->
     <kendo-grid-column field="name" title="Số phiếu" width="140px">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             <a class="text-primary" [routerLink]="['/sale-orders/edit/', dataItem.id]">
@@ -13,11 +16,6 @@
             {{dataItem.dateOrder | date : 'shortDate' }}
         </ng-template>
     </kendo-grid-column>
-    <!-- <kendo-grid-column title="Nợ">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.residual | number}}
-        </ng-template>
-    </kendo-grid-column> -->
     <kendo-grid-column title="Tổng tiền">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.amountTotal | number}}
@@ -38,7 +36,4 @@
             {{dataItem.customerName}}--{{dataItem.partnerName}}
         </ng-template>
     </kendo-grid-column> -->
-
-    <kendo-grid-messages pagerItems="dòng" noRecords="Không có hóa đơn nào" pagerOf="/">
-    </kendo-grid-messages>
 </kendo-grid>

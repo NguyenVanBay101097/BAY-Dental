@@ -26,12 +26,14 @@ import { PurchaseOrderRefundComponent } from './purchase-order-refund/purchase-o
 import { PartnerCardsTabPaneComponent } from './partner-cards-tab-pane/partner-cards-tab-pane.component';
 import { CardCardsModule } from '../card-cards/card-cards.module';
 import { SharedModule } from '../shared/shared.module';
+import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
+import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
     PartnerCustomerListComponent, PartnerCustomerListDetailComponent, PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent, PartnerHistoryComponent, PartnerDetailListComponent, PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent, PurchaseOrderRefundComponent, PartnerCardsTabPaneComponent],
+    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent, PurchaseOrderRefundComponent, PartnerCardsTabPaneComponent, PartnerTabSaleOrderListComponent, PartnerSearchDialogComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
@@ -41,7 +43,13 @@ import { SharedModule } from '../shared/shared.module';
     MatStepperModule,
     SharedModule
   ],
-  entryComponents: [PartnerCreateUpdateComponent, DotKhamCreateUpdateComponent, PartnerImportComponent, PartnerCustomerCuDialogComponent],
+  entryComponents: [
+    PartnerCreateUpdateComponent,
+    DotKhamCreateUpdateComponent,
+    PartnerImportComponent,
+    PartnerCustomerCuDialogComponent,
+    PartnerSearchDialogComponent
+  ],
   providers: [
     PartnerService
   ]

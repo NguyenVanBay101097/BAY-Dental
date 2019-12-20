@@ -12,6 +12,20 @@ namespace ApplicationCore.Entities
             IsInclude = true;
             IsDone = false;
         }
+
+        public DotKhamStep(DotKhamStep step)
+        {
+            State = "confirmed";
+            IsInclude = true;
+            IsDone = false;
+            Name = step.Name;
+            ProductId = step.ProductId;
+            DotKhamId = step.DotKhamId;
+            SaleLineId = step.SaleLineId;
+            SaleOrderId = step.SaleOrderId;
+            Order = step.Order;
+        }
+
         public string Name { get; set; }
 
         public Guid ProductId { get; set; }

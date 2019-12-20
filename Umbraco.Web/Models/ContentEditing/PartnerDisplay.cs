@@ -52,19 +52,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Barcode { get; set; }
 
         /// <summary>
-        /// Giới tính
-        /// ('male', 'Male')
-        /// ('female', 'Female')
-        /// ('other', 'Other')
-        /// </summary>
-        public string Gender { get; set; }
-
-        /// <summary>
-        /// Năm sinh
-        /// </summary>
-        public int? BirthYear { get; set; }
-
-        /// <summary>
         /// Tháng sinh
         /// </summary>
         public int? BirthMonth { get; set; }
@@ -128,5 +115,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Fax { get; set; }
 
+        public Guid? CompanyId { get; set; }
     }
 }

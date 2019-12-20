@@ -1,0 +1,8 @@
+<div class="mb-2">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="addSOBtnClick()">Thêm</button>
+</div>
+
+<app-shared-sale-order-grid [gridData]="gridData" [limit]="limit" [skip]="skip" [loading]="loading"
+    [hiddenSelectAll]="true" [hiddenColumnPartner]="true" (pageChange)="pageChange($event)"
+    (editBtnClick)="editBtnClick($event)" (deleteBtnClick)="deleteBtnClick($event)">
+</app-shared-sale-order-grid>

@@ -15,13 +15,15 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
     },
     {
+      name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
+    },
+    {
       name: 'Điều trị',
       icon: 'fas fa-medkit',
       children: [
         { name: 'Phiếu điều trị', link: '/sale-orders' },
         { name: 'Phiếu tư vấn', link: '/sale-quotations' },
-        { name: 'Đợt khám', link: '/dot-khams' },
-        { name: 'Lịch hẹn', link: '/appointments/kanban' },
+        // { name: 'Đợt khám', link: '/dot-khams' },
       ]
     },
     {

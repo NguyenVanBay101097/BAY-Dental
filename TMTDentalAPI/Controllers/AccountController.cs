@@ -66,11 +66,9 @@ namespace TMTDentalAPI.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(model.UserName);
+                    var user = await _userManager.Users.Where(x => x.UserName == model.UserName).Include(x => x.Partner).FirstOrDefaultAsync();
                     var refreshToken = await GenerateRefreshToken(user);
                     var roles = new List<string>();
-
-                    var partner = _context.Partners.Where(x => x.Id == user.PartnerId).FirstOrDefault();
 
                     _authenticationResult = new LoggedInViewModel
                     {
@@ -85,7 +83,7 @@ namespace TMTDentalAPI.Controllers
                             Phone = user.PhoneNumber,
                             Email = user.Email,
                             Name = user.Name,
-                            Avatar = partner.Avatar
+                            Avatar = user.Partner.Avatar
                         }
                     };
                 }

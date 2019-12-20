@@ -117,17 +117,26 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <kendo-combobox [class.d-none]="saleOrder.state != 'draft'"
-                                            [data]="filteredPartners" [textField]="'displayName'" [filterable]="true"
+                                            [data]="filteredPartners" [textField]="'name'" [filterable]="true"
                                             #partnerCbx formControlName="partner" [valueField]="'id'"
                                             (valueChange)="onChangePartner($event)">
                                         </kendo-combobox>
-                                        <button [class.d-none]="saleOrder.state != 'draft'" type="button"
-                                            class="btn btn-outline-secondary" (click)="quickCreateCustomer()">
+                                        <a [class.d-none]="saleOrder.state != 'draft'" title="Sửa khách hàng"
+                                            class="pl-2 py-1" type="button" *ngIf="partner"
+                                            (click)="updateCustomerModal()">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        <a [class.d-none]="saleOrder.state != 'draft'" type="button"
+                                            title="Thêm khách hàng" class="pl-2 py-1" (click)="quickCreateCustomer()">
                                             <i class="fas fa-plus"></i>
-                                        </button>
+                                        </a>
+                                        <a [class.d-none]="saleOrder.state != 'draft'" title="Tìm khách hàng"
+                                            class="pl-2 py-1" type="button" (click)="searchCustomerDialog()">
+                                            <i class="fas fa-search"></i>
+                                        </a>
                                     </div>
-                                    <span
-                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.partner ? saleOrder.partner.name : ''}}</span>
+                                    <a class="text-primary" (click)="updateCustomerModal()"
+                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.partner ? saleOrder.partner.name : ''}}</a>
                                 </td>
                             </tr>
                             <tr>
@@ -283,12 +292,12 @@
                                 <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
                                     <tbody>
                                         <tr>
-                                            <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
+                                            <td colspan="1" class="o_td_label pb-0">
                                                 <label class="o_form_label oe_subtotal_footer_separator">
                                                     Tổng tiền
                                                 </label>
                                             </td>
-                                            <td colspan="1" style="width: 50%;">
+                                            <td colspan="1">
                                                 <span
                                                     class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
                                             </td>

@@ -12,7 +12,8 @@ import { ResConfigSettingsService } from '../res-config-settings.service';
 })
 export class ResConfigSettingsFormComponent implements OnInit {
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService) { }
+  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService) {
+  }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -20,6 +21,9 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupLoyaltyCard: false,
       groupSaleCouponPromotion: false,
       loyaltyPointExchangeRate: 0,
+      groupMultiCompany: false,
+      companySharePartner: false,
+      companyShareProduct: false,
     });
 
     this.configSettingsService.defaultGet().subscribe(result => {
@@ -39,5 +43,9 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
   get groupLoyaltyCard() {
     return this.formGroup.get('groupLoyaltyCard').value;
+  }
+
+  get groupMultiCompany() {
+    return this.formGroup.get('groupMultiCompany').value;
   }
 }

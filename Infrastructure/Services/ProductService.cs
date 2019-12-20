@@ -35,6 +35,17 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
+        public override ISpecification<Product> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "product.product_comp_rule":
+                    return new InitialSpecification<Product>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
+        }
+
         public async Task<PagedResult<Product>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
         {
             Expression<Func<Product, object>> sort = null;

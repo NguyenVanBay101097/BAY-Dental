@@ -1083,3 +1083,51 @@ td.oe_form_group_cell_label label {
     border-left: 1px solid #bbbbbb;
     padding-left: 10px;
 }
+
+.o_base_settings .o_setting_container .settings > .app_settings_block h2 {
+    margin-bottom: 0;
+    padding: 0.25rem 16px;
+    background-color: #e9ecef;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+@media (min-width: 1200px) {
+    .o_base_settings .o_setting_container .settings > .app_settings_block h2 {
+        padding-left: 32px;
+    }
+}
+
+
+.o_base_settings .o_setting_container .settings > .app_settings_block h2:first-of-type {
+    margin-top: 10px !important;
+}
+
+.o_field_widget, .o_field_widget input.o_input {
+    display: inline-block;
+    text-align: inherit;
+}
+
+.o_form_view .oe_inline, .o_form_view .oe_left, .o_form_view .oe_right, .o_form_view .o_group.o_inner_group.oe_subtotal_footer {
+    width: auto !important;
+}
+
+.o_form_view .o_field_widget {
+    margin-bottom: 5px;
+}
+
+.o_form_view .o_field_boolean {
+    margin-right: 5px;
+}
+
+.o_settings_container .o_setting_box .o_setting_right_pane .o_field_widget {
+    width: 50%;
+    -webkit-box-flex: 0;
+
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+.o_settings_container .o_form_label.o_light_label, .o_settings_container .o_light_label .o_form_label {
+    font-weight: normal;
+}

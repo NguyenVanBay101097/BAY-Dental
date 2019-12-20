@@ -146,7 +146,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.AmountTotal,
                 DateOrder = x.DateOrder,
                 Name = x.Name,
-                PartnerName = x.Partner.DisplayName,
+                PartnerName = x.Partner.Name,
                 State = x.State,
                 Residual = x.Residual,
                 UserName = x.User != null ? x.User.Name : string.Empty
@@ -884,6 +884,13 @@ namespace Infrastructure.Services
             res.User = _mapper.Map<ApplicationUserSimple>(user);
             if (val.IsQuotation.HasValue)
                 res.IsQuotation = val.IsQuotation;
+            if (val.PartnerId.HasValue)
+            {
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(val.PartnerId);
+                res.PartnerId = partner.Id;
+                res.Partner = _mapper.Map<PartnerSimple>(partner);
+            }
             return res;
         }
 

@@ -102,7 +102,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public SaleOrderBasic SaleOrder { get; set; }
 
         public Guid? AppointmentId { get; set; }
-        public AppointmentPatch Appointment { get; set; }
+        public AppointmentBasic Appointment { get; set; }
 
         public string State { get; set; }
 

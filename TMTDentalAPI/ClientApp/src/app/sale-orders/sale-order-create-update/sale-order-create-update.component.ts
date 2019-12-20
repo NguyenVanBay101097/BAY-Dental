@@ -29,6 +29,7 @@ import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -41,6 +42,7 @@ import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-custo
 export class SaleOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
+  partnerId: string;
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
@@ -119,12 +121,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
         this.id = params.get("id");
-        this.type = params.get('type');
-        // this.getAccountPayments(this.id);
+        this.partnerId = params.get("partner_id");
         if (this.id) {
           return this.saleOrderService.get(this.id);
         } else {
-          return this.saleOrderService.defaultGet({ type: this.type });
+          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
 
@@ -137,6 +138,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
         }
 
+        if (result.partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+          this.onChangePartner(result.partner);
+        }
+
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -145,6 +151,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           control.push(g);
         });
       });
+  }
+
+  get partner() {
+    return this.formGroup.get('partner').value;
   }
 
   quickCreateCustomer() {
@@ -159,6 +169,32 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.formGroup.get('partner').patchValue(p);
       this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
       this.onChangePartner(p);
+    }, () => {
+    });
+  }
+
+  updateCustomerModal() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa khách hàng';
+    modalRef.componentInstance.id = this.partner.id;
+
+    modalRef.result.then(() => {
+    }, () => {
+    });
+  }
+
+  searchCustomerDialog() {
+    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Tìm khách hàng';
+    modalRef.componentInstance.domain = { customer: true };
+
+    modalRef.result.then(result => {
+      if (result.length) {
+        var p = result[0].dataItem;
+        this.formGroup.get('partner').patchValue(p);
+        this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
+        this.onChangePartner(p);
+      }
     }, () => {
     });
   }

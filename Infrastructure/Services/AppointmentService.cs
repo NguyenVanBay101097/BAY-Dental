@@ -239,8 +239,8 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
+                query = query.Where(x => x.Name.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
                 || x.Partner.Ref.Contains(val.Search));
 
             if (val.Date.HasValue)

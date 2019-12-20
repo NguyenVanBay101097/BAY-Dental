@@ -14,6 +14,8 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
+import { Router } from '@angular/router';
 
 class DatePickerLimit {
   min: Date;
@@ -57,7 +59,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private service: AppointmentService, private employeeService: EmployeeService,
     private partnerService: PartnerService, private intlService: IntlService,
-    private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal) { }
+    private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal,
+    private router: Router) { }
 
   formCreate: FormGroup;
 
@@ -127,6 +130,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     )
   }
 
+  searchCustomerDialog() {
+    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Tìm khách hàng';
+    modalRef.componentInstance.domain = { customer: true };
+
+    modalRef.result.then(result => {
+      if (result.length) {
+        var p = result[0].dataItem;
+        this.formCreate.get('partner').patchValue(p);
+        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [p], 'id');
+      }
+    }, () => {
+    });
+  }
+
   getCustomerList() {
     var partnerPaged = new PartnerPaged();
     partnerPaged.employee = false;
@@ -164,6 +182,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.doctorCbx.loading = false;
       }
     )
+  }
+
+  createSaleOrder() {
+    if (this.appointId) {
+      var partner = this.formCreate.get('partner').value;
+      if (partner) {
+        this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
+        this.activeModal.close();
+      }
+    }
   }
 
   searchCustomers(search) {

@@ -14,5 +14,7 @@ namespace Infrastructure.Services
         Task AssignDotKham(DotKhamStepAssignDotKhamVM val);
         Task ToggleIsDone(DotKhamStepSetDone val);
         Task Unlink(IEnumerable<DotKhamStep> self);
+        Task<DotKhamStep> CloneInsert(DotKhamStepCloneInsert val);
+        Task<DotKhamStepDisplay> GetDisplay(Guid id);
     }
 }

@@ -85,6 +85,7 @@ export class StockPickingCreateUpdateComponent implements OnInit {
     }
 
     this.loadPickingType();
+
   }
 
   loadFilteredPartners() {

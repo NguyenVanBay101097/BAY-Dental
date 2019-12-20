@@ -6,6 +6,17 @@
       <field name="category_id" ref="module_category_user_type" />
       <field name="users" eval="base.user_root"/>
     </record>
+
+    <record model="res.groups" id="group_system">
+      <field name="name">Settings</field>
+      <field name="users" eval="base.user_root"/>
+    </record>
+
+    <record model="res.groups" id="group_multi_company">
+      <field name="name">Multi Companies</field>
+      <field name="category_id" ref="module_category_usability" />
+      <field name="users" eval="base.user_root"/>
+    </record>
   </data>
 </odoo>
 

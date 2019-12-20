@@ -22,5 +22,16 @@ namespace Umbraco.Web.Models.ContentEditing
         [DbColumn("config_parameter", "loyalty.point_exchange_rate")]
         [DbColumn("field_type", "decimal")]
         public decimal? LoyaltyPointExchangeRate { get; set; }
+
+        [DbColumn("implied_group", "base.group_multi_company")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupMultiCompany { get; set; }
+
+        /// <summary>
+        /// Share product to all companies
+        /// </summary>
+        public bool? CompanyShareProduct { get; set; }
+
+        public bool? CompanySharePartner { get; set; }
     }
 }

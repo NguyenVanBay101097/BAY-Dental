@@ -80,6 +80,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public IActionResult DefaultGet(PartnerDefaultGet val)
+        {
+            var res = new PartnerDisplay();
+            res.CompanyId = CompanyId;
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(PartnerDisplay val)
         {

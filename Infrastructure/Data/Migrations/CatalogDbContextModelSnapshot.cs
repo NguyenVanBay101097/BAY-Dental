@@ -2721,6 +2721,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("CompanyId");
 
+                    b.Property<bool?>("CompanySharePartner");
+
+                    b.Property<bool?>("CompanyShareProduct");
+
                     b.Property<string>("CreatedById");
 
                     b.Property<DateTime?>("DateCreated");
@@ -2728,6 +2732,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool?>("GroupDiscountPerSOLine");
 
                     b.Property<bool?>("GroupLoyaltyCard");
+
+                    b.Property<bool?>("GroupMultiCompany");
 
                     b.Property<bool?>("GroupSaleCouponPromotion");
 

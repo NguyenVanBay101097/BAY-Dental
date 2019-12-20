@@ -42,6 +42,12 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "ir.rule":
+                        {
+                            var service = GetService<IIRRuleService>();
+                            var group = await service.GetByIdAsync(data.ResId);
+                            return (T)(object)group;
+                        }
                     case "res.users":
                         {
                             var service = GetService<UserManager<ApplicationUser>>();

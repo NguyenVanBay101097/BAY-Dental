@@ -81,7 +81,7 @@
 }
 
 .o_form_view .o_group.o_inner_group > tbody > tr > td {
-  padding: 0 45px 0 0;
+  padding: 0 45px 7px 0;
 }
 
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
@@ -94,6 +94,7 @@
   /* margin: 0 5px 0 0; */
   /* font-size: 1.08333333rem;
   line-height: 1.5; */
+  margin: 0 5px 0 0;
   font-weight: 600;
 }
 

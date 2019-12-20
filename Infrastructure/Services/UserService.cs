@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +18,17 @@ namespace Infrastructure.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly CatalogDbContext _dbContext;
         private readonly IMyCache _cache;
+
         public UserService(UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor,
-            IMyCache cache)
+            IMyCache cache, CatalogDbContext dbContext)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _cache = cache;
+            _dbContext = dbContext;
         }
 
         protected string UserId
@@ -96,6 +100,17 @@ namespace Infrastructure.Services
             {
                 _cache.RemoveByPattern(string.Format("{0}ir.rule-{1}", tenant != null ? tenant.Hostname + "-" : "", id));
             }
+        }
+
+        public async Task<bool> HasGroup(string group_ext_id)
+        {
+            var uid = UserId;
+            var tmp = group_ext_id.Split(".");
+            var module = tmp[0];
+            var name = tmp[1];
+            var result = await _dbContext.ResGroupsUsersRels.FromSql("SELECT * FROM ResGroupsUsersRels " +
+                                        "WHERE UserId = @p0 and GroupId in (SELECT ResId FROM IRModelDatas WHERE Module = @p1 and Name = @p2)", uid, module, name).ToListAsync();
+            return result.Count > 0;
         }
     }
 }

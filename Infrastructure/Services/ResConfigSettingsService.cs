@@ -61,16 +61,42 @@ namespace Infrastructure.Services
                 }
             }
 
+            await GetDefaultOtherFields(res, classified.Others);
             return res;
+        }
+
+        private async Task GetDefaultOtherFields<T>(T self, IList<string> fields)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            foreach (var field in fields)
+            {
+                if (field == "CompanyShareProduct")
+                {
+                    var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
+                    var productRule = await modelDataObj.GetRef<IRRule>("product.product_comp_rule");
+                    self.GetType().GetProperty(field).SetValue(self, !productRule.Active);
+                }
+
+                if (field == "CompanySharePartner")
+                {
+                    var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
+                    var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
+                    self.GetType().GetProperty(field).SetValue(self, !partnerRule.Active);
+                }
+            }
         }
 
         public virtual async Task Excute<T>(T self)
         {
+            var userObj = GetService<IUserService>();
+            if (!await userObj.HasGroup("base.group_system"))
+                throw new Exception("Chỉ có admin mới được thay đổi thiết lập");
+
             var groupObj = GetService<IResGroupService>();
-            await groupObj.InsertGroupUserIfNotExist();
-            await groupObj.InsertSettingGroupIfNotExist("sale.group_discount_per_so_line", "Discount on lines");
-            await groupObj.InsertSettingGroupIfNotExist("sale.group_sale_coupon_promotion", "Coupon Promotion Programs");
-            await groupObj.InsertSettingGroupIfNotExist("sale.group_loyalty_card", "Loyalty Card");
+            //await groupObj.InsertGroupUserIfNotExist();
+            //await groupObj.InsertSettingGroupIfNotExist("sale.group_discount_per_so_line", "Discount on lines");
+            //await groupObj.InsertSettingGroupIfNotExist("sale.group_sale_coupon_promotion", "Coupon Promotion Programs");
+            //await groupObj.InsertSettingGroupIfNotExist("sale.group_loyalty_card", "Loyalty Card");
 
             //var user = UserSessionCtx.User;
             //if (!user.HasGroup("base.group_system"))
@@ -145,11 +171,31 @@ namespace Infrastructure.Services
             }
 
             //other fields
-            SetDefaultOtherFields(self);
+            await SetDefaultOtherFields(self, classified.Others);
         }
 
-        public virtual void SetDefaultOtherFields<T>(T self)
+        public async Task SetDefaultOtherFields<T>(T self, IList<string> fields)
         {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var ruleObj = GetService<IIRRuleService>();
+            foreach (var field in fields)
+            {
+                if (field == "CompanyShareProduct")
+                {
+                    var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
+                    var productRule = await modelDataObj.GetRef<IRRule>("product.product_comp_rule");
+                    productRule.Active = !value;
+                    await ruleObj.UpdateAsync(productRule);
+                }
+
+                if (field == "CompanySharePartner")
+                {
+                    var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
+                    var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
+                    partnerRule.Active = !value;
+                    await ruleObj.UpdateAsync(partnerRule);
+                }
+            }
         }
 
         private async Task<GetClassifiedFieldsRes> _GetClassifiedFields<T>()
@@ -213,7 +259,8 @@ namespace Infrastructure.Services
             {
                 Groups = groups,
                 Defaults = defaults,
-                Configs = configs
+                Configs = configs,
+                Others = others
             };
         }
 
@@ -224,6 +271,8 @@ namespace Infrastructure.Services
             public IList<GetClassifiedFieldsDefault> Defaults { get; set; }
 
             public IList<GetClassifiedFieldsConfig> Configs { get; set; }
+
+            public IList<string> Others { get; set; }
         }
 
         public class GetClassifiedFieldsGroup

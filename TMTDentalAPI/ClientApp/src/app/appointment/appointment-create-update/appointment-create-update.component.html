@@ -9,6 +9,15 @@
     <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
         <input formControlName="companyId" hidden />
         <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar" *ngIf="appointId">
+                <div class="o_statusbar_buttons">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="createSaleOrder()">
+                        Tạo phiếu điều trị
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                </div>
+            </div>
             <div class="o_form_sheet">
                 <!-- <div *ngIf="appointId">
                 <button *ngIf="!(state=='done')" class="btn btn-light btn-sm mr-2" (click)="doneAppointment()">Hoàn
@@ -37,10 +46,18 @@
                                             [valueField]="'id'" [textField]="'name'"
                                             [readonly]="partnerAvailble() || dotKhamId">
                                         </kendo-combobox>
-                                        <button [disabled]="appointId" class="btn btn-sm btn-light"
+                                        <a type="button" title="Thêm khách hàng" class="pl-2 py-1"
+                                            (click)="quickCreateCustomerModal()">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                        <a title="Tìm khách hàng" class="pl-2 py-1" type="button"
+                                            (click)="searchCustomerDialog()">
+                                            <i class="fas fa-search"></i>
+                                        </a>
+                                        <!-- <button [disabled]="appointId" class="btn btn-sm btn-light"
                                             (click)="quickCreateCustomerModal()">
                                             <span class="k-icon k-i-plus"></span>
-                                        </button>
+                                        </button> -->
                                     </div>
                                 </td>
                             </tr>
@@ -82,7 +99,7 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_right">
-                                    <label class="o_form_label">Ngày</label>
+                                    <label class="o_form_label">Ngày hẹn</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" class="o_td_control_right">
                                     <!-- <kendo-datepicker [min]="dateLimit.min" [max]="dateLimit.max"

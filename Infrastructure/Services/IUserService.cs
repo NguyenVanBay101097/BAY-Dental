@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         void ClearRuleCache(IEnumerable<string> ids);
         Task<ApplicationUser> GetCurrentUser();
         Task<List<string>> GetGroups();
+        Task<bool> HasGroup(string group_ext_id);
     }
 }

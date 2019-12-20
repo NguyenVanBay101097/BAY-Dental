@@ -15,6 +15,21 @@
       <field name="name">Chủ chi nhánh</field>
       <field name="implied_ids" eval="base.group_user"/>
     </record>
+
+    <record model="res.groups" id="sale.group_discount_per_so_line">
+      <field name="name">Discount on lines</field>
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
+    <record model="res.groups" id="sale.group_sale_coupon_promotion">
+      <field name="name">Coupon Promotion Programs</field>
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
+    <record model="res.groups" id="sale.group_loyalty_card">
+      <field name="name">Loyalty Card</field>
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
   </data>
   <data noupdate="1">
     <record id="account.account_move_comp_rule" model="ir.rule">
@@ -98,6 +113,13 @@
     <record id="product.product_comp_rule" model="ir.rule">
       <field name="name">Product multi-company</field>
       <field name="model_id" ref="product.model_product_product"/>
+      <field name="global" eval="True"/>
+      <field name="active" eval="False"/>
+    </record>
+
+    <record model="ir.rule" id="base.res_partner_rule">
+      <field name="name">res.partner company</field>
+      <field name="model_id" ref="base.model_res_partner"/>
       <field name="global" eval="True"/>
       <field name="active" eval="False"/>
     </record>

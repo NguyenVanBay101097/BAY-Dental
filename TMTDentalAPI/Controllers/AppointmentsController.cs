@@ -27,14 +27,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IMailMessageService _mailMessageService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly INotificationHubService _notificationHubService;
-        private readonly IAppointmentHubService _appointmentHubService;
+        private readonly IDotKhamService _dotKhamService;
 
         public AppointmentsController(IAppointmentService appointmentService,
             IMapper mapper, UserManager<ApplicationUser> userManager,
             IMailMessageService mailMessageService,
             IUnitOfWorkAsync unitOfWork,
             INotificationHubService notificationHubService,
-            IAppointmentHubService appointmentHubService)
+            IDotKhamService dotKhamService)
         {
             _appointmentService = appointmentService;
             _mapper = mapper;
@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Controllers
             _mailMessageService = mailMessageService;
             _unitOfWork = unitOfWork;
             _notificationHubService = notificationHubService;
-            _appointmentHubService = appointmentHubService;
+            _dotKhamService = dotKhamService;
         }
 
         [HttpGet]
@@ -136,10 +136,22 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var category = await _appointmentService.GetByIdAsync(id);
-            if (category == null)
+            var appointment = await _appointmentService.GetByIdAsync(id);
+            if (appointment == null)
                 return NotFound();
-            await _appointmentService.DeleteAsync(category);
+
+            if (appointment.State != "cancel")
+                throw new Exception("Bạn chỉ có thể xóa lịch hẹn ở trạng thái hủy bỏ");
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            var dks = await _dotKhamService.SearchQuery(x => x.AppointmentId == id).ToListAsync();
+            foreach (var dk in dks)
+                dk.AppointmentId = null;
+            await _dotKhamService.UpdateAsync(dks);
+
+            await _appointmentService.DeleteAsync(appointment);
+            _unitOfWork.Commit();
 
             return NoContent();
         }

@@ -8,8 +8,9 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, khách hàng, SĐT..." type="text"
-                        [(ngModel)]="search" (ngModelChange)="appointmentVMService.searchSubject.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
+                        type="text" [(ngModel)]="search"
+                        (ngModelChange)="appointmentVMService.searchSubject.next($event)">
                 </div>
                 <!-- <div class="o_searchview_advance">
                     <button class="btn btn-secondary btn-sm rounded-0" type="button"

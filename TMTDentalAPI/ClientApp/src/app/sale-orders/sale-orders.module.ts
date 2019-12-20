@@ -29,6 +29,8 @@ import { SaleQuotationCreateUpdateComponent } from './sale-quotation-create-upda
     SaleOrderService,
     SaleOrderLineService
   ],
+  exports: [
+  ],
   entryComponents: [
     SaleOrderLineDialogComponent,
     SaleOrderCreateDotKhamDialogComponent,

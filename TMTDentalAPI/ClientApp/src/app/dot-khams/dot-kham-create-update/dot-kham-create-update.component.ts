@@ -39,6 +39,9 @@ import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.c
 import { DotKhamStepService, DotKhamStepAssignDotKhamVM, DotKhamStepSetDone } from '../dot-kham-step.service';
 import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
 import { environment } from 'src/environments/environment';
+import { Operation } from 'fast-json-patch';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+declare var $: any;
 
 @Component({
   selector: 'app-dot-kham-create-update',
@@ -98,6 +101,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   webImageApi: string;
   webContentApi: string;
+
+  editingStep: DotKhamStepDisplay;
 
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
@@ -169,6 +174,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     this.webContentApi = environment.uploadDomain + 'api/Web/Content';
   }
 
+  setEditingStep(step: DotKhamStepDisplay) {
+    this.editingStep = step;
+  }
+
   getActiveRoute() {
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
@@ -194,6 +203,21 @@ export class DotKhamCreateUpdateComponent implements OnInit {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
         }
       });
+  }
+
+  updateStepName(event, step: DotKhamStepDisplay) {
+    var name = event.target.value;
+    if (!name) {
+      alert('Tên công đoạn không được trống');
+      return false;
+    }
+    var patch: Operation[] = [
+      { op: "replace", path: "/name", value: name },
+    ];
+    this.dotKhamStepService.patch(step.id, patch).subscribe(() => {
+      step.name = name;
+      this.editingStep = null;
+    });
   }
 
   loadDataFromHistory() {
@@ -241,6 +265,24 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         this.toaThuocs = result;
       })
     }
+  }
+
+  copyInsert(step: DotKhamStepDisplay, cloneInsert: string, index) {
+    this.dotKhamStepService.cloneInsert({ id: step.id, cloneInsert: cloneInsert }).subscribe(result => {
+      if (cloneInsert == 'up') {
+        this.dotKhamStepList.splice(index, 0, result);
+      } else {
+        this.dotKhamStepList.splice(index + 1, 0, result);
+      }
+
+      this.editingStep = result;
+      setTimeout(() => {
+        $('#table_details .updateStepName').focus();
+        setTimeout(() => {
+          $('#table_details .updateStepName').select();
+        }, 70);
+      }, 70);
+    });
   }
 
   assignDotKham(step: DotKhamStepDisplay) {
@@ -386,6 +428,17 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         }
       }
     )
+  }
+
+  deleteStep(step: DotKhamStepDisplay, index) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa công đoạn';
+    modalRef.result.then(() => {
+      this.dotKhamStepService.delete(step.id).subscribe(() => {
+        this.dotKhamStepList.splice(index, 1);
+      });
+    }, () => {
+    });
   }
 
   actionCreateLabo() {
@@ -1004,6 +1057,20 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       },
       er => { }
     )
+  }
+
+  updateAppointmentModal(id) {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.appointId = id;
+    modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+    });
   }
 
   get getAppointState() {

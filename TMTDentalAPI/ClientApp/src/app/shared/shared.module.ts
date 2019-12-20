@@ -34,6 +34,8 @@ import { HeaderAppointmentComponent } from './header-appointment/header-appointm
 import { SharedCardCardGridComponent } from './shared-card-card-grid/shared-card-card-grid.component';
 import { HasGroupsDirective } from './has-groups-directive';
 import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.component';
+import { SharedSaleOrderGridComponent } from './shared-sale-order-grid/shared-sale-order-grid.component';
+import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner-grid.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,9 @@ import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.
     HeaderAppointmentComponent,
     SharedCardCardGridComponent,
     HasGroupsDirective,
-    UserProfileEditComponent
+    UserProfileEditComponent,
+    SharedSaleOrderGridComponent,
+    SharedPartnerGridComponent
   ],
   exports: [
     HeaderComponent,
@@ -84,7 +88,9 @@ import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.
     HeaderAppointmentComponent,
     SharedCardCardGridComponent,
     HasGroupsDirective,
-    UserProfileEditComponent
+    UserProfileEditComponent,
+    SharedSaleOrderGridComponent,
+    SharedPartnerGridComponent
   ],
   imports: [
     CommonModule,
