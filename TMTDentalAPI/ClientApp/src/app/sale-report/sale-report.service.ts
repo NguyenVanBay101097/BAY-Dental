@@ -22,7 +22,26 @@ export class SaleReportSearch {
     dateTo: string;
     groupBy: string;
     search: string;
+    isQuotation: boolean;
+    state: string;
 }
+
+export class SaleReportPartnerSearch {
+    state: string;
+    partnerDisplay: string;
+    monthsFrom: number;
+    monthsTo: number;
+    search: string;
+}
+
+
+export class SaleReportPartnerItem {
+    partnerName: string;
+    partnerPhone: number;
+    orderCount: number;
+    lastDateOrder: string;
+}
+
 
 @Injectable()
 export class SaleReportService {
@@ -35,5 +54,9 @@ export class SaleReportService {
 
     getReportDetail(val: SaleReportItem): Observable<SaleReportItemDetail[]> {
         return this.http.post<SaleReportItemDetail[]>(this.baseApi + this.apiUrl + "/GetReportDetail", val);
+    }
+
+    getReportPartner(val: SaleReportPartnerSearch): Observable<SaleReportPartnerItem[]> {
+        return this.http.post<SaleReportPartnerItem[]>(this.baseApi + this.apiUrl + "/GetReportPartner", val);
     }
 }

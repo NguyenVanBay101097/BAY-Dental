@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService, ProductImportExcelViewModel } from '../product.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-import-excel-dialog',
@@ -9,7 +10,10 @@ import { WindowRef } from '@progress/kendo-angular-dialog';
 })
 export class ProductImportExcelDialogComponent implements OnInit {
   fileBase64 = '';
-  constructor(private productService: ProductService, private window: WindowRef) { }
+  type: string;
+  type2: string;
+  errors: string[];
+  constructor(private productService: ProductService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
   }
@@ -24,12 +28,18 @@ export class ProductImportExcelDialogComponent implements OnInit {
     }
     var val = new ProductImportExcelViewModel();
     val.fileBase64 = this.fileBase64;
-    this.productService.importExcel(val).subscribe(() => {
-      this.window.close(true);
+    val.type = this.type;
+    val.type2 = this.type2;
+    this.productService.importExcel(val).subscribe((result: any) => {
+      if (result.success) {
+        this.activeModal.close(true);
+      } else {
+        this.errors = result.errors;
+      }
     });
   }
 
   onCancel() {
-    this.window.close();
+    this.activeModal.dismiss();
   }
 }

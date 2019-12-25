@@ -158,13 +158,14 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   loadFilteredProducts() {
-    this.searchProducts().subscribe(result => this.filteredProducts = result);
+    this.searchProducts().subscribe(result => {
+      this.filteredProducts = _.unionBy(this.filteredProducts, result, 'id');
+    });
   }
 
   searchProducts(search?: string) {
     var val = new ProductFilter();
     val.saleOK = true;
-    val.type = 'service';
     val.search = search;
     return this.productService.autocomplete2(val);
   }

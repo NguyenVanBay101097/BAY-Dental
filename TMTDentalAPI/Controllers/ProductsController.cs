@@ -28,12 +28,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IProductStepService _productStepService;
+        private readonly IUoMService _uomService;
 
         public ProductsController(IProductService productService, IMapper mapper,
             IApplicationRoleFunctionService roleFunctionService,
             IProductCategoryService productCategoryService,
             IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService,
-            IProductStepService productStepService)
+            IProductStepService productStepService, IUoMService uomService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -42,6 +43,7 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _modelAccessService = modelAccessService;
             _productStepService = productStepService;
+            _uomService = uomService;
         }
 
         [HttpGet]
@@ -239,11 +241,9 @@ namespace TMTDentalAPI.Controllers
 
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductImportExcelRow>();
-            var typeDict = new Dictionary<string, string>()
-            {
-                {"Không quản lý tồn kho", "consu"},
-                {"Quản lý tồn kho", "product"}
-            };
+            var categDict = new Dictionary<string, ProductCategory>();
+            var errors = new List<string>();
+            await _unitOfWork.BeginTransactionAsync();
 
             using (var stream = new MemoryStream(fileData))
             {
@@ -252,61 +252,70 @@ namespace TMTDentalAPI.Controllers
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     for(var row = 2; row <= worksheet.Dimension.Rows; row++)
                     {
+                        var errs = new List<string>();
                         var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        var categName = Convert.ToString(worksheet.Cells[row, 5].Value);
-                        var type = Convert.ToString(worksheet.Cells[row, 4].Value);
+                        var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
+
+                        if (string.IsNullOrEmpty(name))
+                            errs.Add("Tên sản phẩm là bắt buộc");
+                        if (string.IsNullOrEmpty(categName))
+                            errs.Add("Nhóm sản phẩm là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+                      
+                        if (!categDict.ContainsKey(categName))
+                        {
+                            var categ = await _productCategoryService.SearchQuery(x => x.Name == categName && x.Type == val.Type2).FirstOrDefaultAsync();
+                            if (categ == null)
+                                categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = val.Type2 });
+                            categDict.Add(categName, categ);
+                        }
+
                         var item = new ProductImportExcelRow
                         {
                             Name = name,
                             SaleOK = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
-                            KeToaOK = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
-                            Type = typeDict.ContainsKey(type) ? typeDict[type] : "consu",
+                            PurchaseOK = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                             CategName = categName,
-                            DefaultCode = Convert.ToString(worksheet.Cells[row, 6].Value),
-                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
-                            StandardPrice = Convert.ToDouble(worksheet.Cells[row, 8].Value),
+                            DefaultCode = Convert.ToString(worksheet.Cells[row, 5].Value),
+                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
                         };
                         data.Add(item);
                     }
                 }
             }
 
-            //tạo product category nếu chưa có trong database
-            var categNames = data.Select(x => x.CategName).Distinct().ToList();
-            var categsToAdd = new List<ProductCategory>();
-            var categDict = new Dictionary<string, Guid>();
-            await _unitOfWork.BeginTransactionAsync();
-            foreach(var categName in categNames)
-            {
-                var categ = await _productCategoryService.CreateCategByCompleteName(categName);
-                categDict.Add(categName, categ.Id);
-            }
+            if (errors.Any())
+                return Ok(new { success = false, errors });
 
-            //tạo product
-            var vals = new List<ProductDisplay>();
-            var defaultVal = await _productService.DefaultGet();
+            var vals = new List<Product>();
+            var uom = await _uomService.DefaultUOM();
             foreach (var item in data)
             {
-                var pd = new ProductDisplay();
-                pd.CompanyId = defaultVal.CompanyId;
-                pd.UOMId = defaultVal.UOMId;
-                pd.UOMPOId = defaultVal.UOMPOId;
+                var pd = new Product();
+                pd.CompanyId = CompanyId;
+                pd.UOMId = uom.Id;
+                pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
                 pd.SaleOK = item.SaleOK;
-                pd.KeToaOK = item.KeToaOK;
-                pd.Type = item.Type;
-                pd.CategId = categDict[item.CategName];
+                pd.PurchaseOK = item.PurchaseOK;
+                pd.Type = val.Type;
+                pd.Type2 = val.Type2;
+                pd.CategId = categDict[item.CategName].Id;
                 pd.DefaultCode = item.DefaultCode;
                 pd.ListPrice = item.ListPrice;
-                pd.StandardPrice = item.StandardPrice;
                 vals.Add(pd);
             }
 
-            await _productService.CreateProduct(vals);
+            await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
 
-            return NoContent();
+            return Ok(new { success = true });
         }
     }
 }

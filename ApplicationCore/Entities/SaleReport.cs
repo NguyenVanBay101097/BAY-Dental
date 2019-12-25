@@ -28,5 +28,6 @@ namespace ApplicationCore.Entities
         public ProductCategory Categ { get; set; }
         public int Nbr { get; set; }
         public string State { get; set; }
+        public bool? IsQuotation { get; set; }
     }
 }

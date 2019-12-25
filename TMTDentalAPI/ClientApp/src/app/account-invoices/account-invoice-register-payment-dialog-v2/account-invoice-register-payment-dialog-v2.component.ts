@@ -56,14 +56,17 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     });
   }
 
-  loadFilteredJournals(search?: string) {
+  loadFilteredJournals() {
+    this.searchJournals().subscribe(result => {
+      this.filteredJournals = result;
+    })
+  }
+
+  searchJournals(search?: string) {
     var val = new AccountJournalFilter();
     val.type = 'bank,cash';
-    val.search = search;
-    this.accountJournalService.autocomplete(val).subscribe(result => {
-      this.filteredJournals = result;
-    });
-
+    val.search = search || '';
+    return this.accountJournalService.autocomplete(val);
   }
 
   save() {

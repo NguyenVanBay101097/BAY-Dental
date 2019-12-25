@@ -53,6 +53,8 @@ export class ProductPaging2 {
 
 export class ProductImportExcelViewModel {
     fileBase64: string;
+    type: string;
+    type2: string;
 }
 
 export class ProductLaboBasic {

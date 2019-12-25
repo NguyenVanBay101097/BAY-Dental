@@ -29,9 +29,10 @@ export class SaleReportOverviewComponent implements OnInit {
   groupBy2 = "month";
   search: string;
   searchUpdate = new Subject<string>();
+  isQuotation = false;
 
   groups: { text: string, value: string }[] = [
-    { text: 'Ngày điều trị', value: 'date' },
+    { text: 'Ngày', value: 'date' },
     { text: 'Khách hàng', value: 'customer' },
     { text: 'Nhân viên', value: 'user' },
     { text: 'Dịch vụ', value: 'product' },
@@ -80,6 +81,9 @@ export class SaleReportOverviewComponent implements OnInit {
 
   loadDataFromApi() {
     var val = new SaleReportSearch();
+    val.isQuotation = this.isQuotation;
+    val.state = "sale,done";
+
     if (this.dateFrom) {
       val.dateFrom = this.intlService.formatDate(this.dateFrom, 'd', 'en-US');
     }

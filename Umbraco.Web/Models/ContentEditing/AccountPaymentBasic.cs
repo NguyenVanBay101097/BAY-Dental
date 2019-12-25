@@ -19,5 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public decimal Amount { get; set; }
+
+        public string Communication { get; set; }
     }
 }

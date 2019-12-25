@@ -19,6 +19,7 @@ export class PartnerSearchDialogComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
+  title: string;
 
   constructor(private partnerService: PartnerService, public activeModal: NgbActiveModal) { }
 

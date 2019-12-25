@@ -95,8 +95,7 @@ namespace Infrastructure.Services
         {
             //thời gian, tiền thực thu, doanh thu, còn nợ
             var companyId = CompanyId;
-            var states = new string[] { "draft", "cancel" };
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId && !states.Contains(x.State));
+            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
@@ -109,7 +108,18 @@ namespace Infrastructure.Services
             }
 
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+
+            if (val.IsQuotation.HasValue)
+            {
+                if (val.IsQuotation.Value)
+                    query = query.Where(x => x.IsQuotation == val.IsQuotation);
+                else
+                    query = query.Where(x => !x.IsQuotation.HasValue || x.IsQuotation == val.IsQuotation);
+            }
 
             if (val.GroupBy == "customer")
             {
@@ -127,7 +137,8 @@ namespace Infrastructure.Services
                       Name = x.Key.PartnerName,
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
-                      GroupBy = val.GroupBy
+                      GroupBy = val.GroupBy,
+                      IsQuotation = val.IsQuotation
                   }).ToListAsync();
                 return result;
             }
@@ -146,7 +157,8 @@ namespace Infrastructure.Services
                       Name = x.Key.UserName,
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
-                      GroupBy = val.GroupBy
+                      GroupBy = val.GroupBy,
+                      IsQuotation = val.IsQuotation
                   }).ToListAsync();
                 return result;
             }
@@ -166,7 +178,8 @@ namespace Infrastructure.Services
                       Name = x.Key.ProductName,
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
-                      GroupBy = val.GroupBy
+                      GroupBy = val.GroupBy,
+                      IsQuotation = val.IsQuotation
                   }).ToListAsync();
                 return result;
             }
@@ -182,7 +195,8 @@ namespace Infrastructure.Services
                       QuarterOfYear = x.Key.QuarterOfYear,
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
-                      GroupBy = val.GroupBy
+                      GroupBy = val.GroupBy,
+                      IsQuotation = val.IsQuotation
                   }).ToListAsync();
                 foreach (var item in result)
                 {
@@ -202,7 +216,8 @@ namespace Infrastructure.Services
                       Date = new DateTime(x.Key.Year, x.Key.Month, 1),
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
-                      GroupBy = val.GroupBy
+                      GroupBy = val.GroupBy,
+                      IsQuotation = val.IsQuotation
                   }).ToListAsync();
                 foreach (var item in result)
                 {
@@ -223,7 +238,8 @@ namespace Infrastructure.Services
                       WeekOfYear = x.Key.WeekOfYear,
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
-                      GroupBy = val.GroupBy
+                      GroupBy = val.GroupBy,
+                      IsQuotation = val.IsQuotation
                   }).ToList();
                 foreach (var item in result)
                 {
@@ -244,7 +260,8 @@ namespace Infrastructure.Services
                        Date = new DateTime(x.Key.Year, x.Key.Month, x.Key.Day),
                        ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                        PriceTotal = x.Sum(s => s.PriceTotal),
-                       GroupBy = val.GroupBy
+                       GroupBy = val.GroupBy,
+                       IsQuotation = val.IsQuotation
                    }).ToListAsync();
                 foreach (var item in result)
                 {
@@ -267,8 +284,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val)
         {
             var companyId = CompanyId;
-            var states = new string[] { "draft", "cancel" };
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId && !states.Contains(x.State));
+            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
@@ -281,7 +297,18 @@ namespace Infrastructure.Services
             }
 
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+
+            if (val.IsQuotation.HasValue)
+            {
+                if (val.IsQuotation.Value)
+                    query = query.Where(x => x.IsQuotation == val.IsQuotation);
+                else
+                    query = query.Where(x => !x.IsQuotation.HasValue || x.IsQuotation == val.IsQuotation);
+            }
 
             if (val.GroupBy == "customer")
                 query = query.Where(x => x.PartnerId == val.PartnerId);
@@ -322,6 +349,58 @@ namespace Infrastructure.Services
                 ProductName = x.Product.Name,
                 ProductUOMQty = x.ProductUOMQty
             }).ToListAsync();
+            return result;
+        }
+
+        public async Task<IEnumerable<SaleReportPartnerItem>> GetReportPartner(SaleReportPartnerSearch val)
+        {
+            //Thông kê tình hình điều trị của khách hàng, tính số phiếu điều trị, lần cuối điều trị, để từ đó lọc những khách hàng mới hay cũ
+
+            var companyId = CompanyId;
+            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
+            query = query.Where(x => !x.IsQuotation.HasValue || x.IsQuotation == false);
+            var query2 = query.GroupBy(x => new
+            {
+                PartnerName = x.Partner.Name,
+                PartnerPhone = x.Partner.Phone,
+            }).Select(x => new SaleReportPartnerItem
+            {
+                PartnerName = x.Key.PartnerName,
+                PartnerPhone = x.Key.PartnerPhone,
+                OrderCount = x.Count(),
+                LastDateOrder = x.Max(s => s.Date)
+            });
+
+            var now = DateTime.Now;
+            if (val.MonthsFrom.HasValue)
+            {
+                var dateFrom = now.AddMonths(-val.MonthsFrom.Value);
+                query2 = query2.Where(x => x.LastDateOrder <= dateFrom);
+            }
+
+            if (val.MonthsTo.HasValue)
+            {
+                var dateTo = now.AddMonths(-val.MonthsTo.Value);
+                query2 = query2.Where(x => x.LastDateOrder >= dateTo);
+            }
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query2 = query2.Where(x => x.PartnerName.Contains(val.Search) || x.PartnerPhone.Contains(val.Search));
+            }
+
+            var list = await query2.ToListAsync();
+
+            var result = new List<SaleReportPartnerItem>();
+            foreach(var item in list)
+            {
+                if (val.PartnerDisplay == "new" && item.OrderCount != 1)
+                    continue;
+                if (val.PartnerDisplay == "old" && item.OrderCount == 1)
+                    continue;
+                result.Add(item);
+            }
+
             return result;
         }
     }

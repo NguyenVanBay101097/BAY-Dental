@@ -21,5 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo{ get; set; }
 
         public string State { get; set; }
+
+        public bool? IsQuotation { get; set; }
     }
 }

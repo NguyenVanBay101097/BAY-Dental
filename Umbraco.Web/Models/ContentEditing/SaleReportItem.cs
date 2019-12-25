@@ -20,5 +20,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public string UserId { get; set; }
         public Guid? ProductId { get; set; }
+        public bool? IsQuotation { get; set; }
     }
 }

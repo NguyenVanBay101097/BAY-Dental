@@ -16,6 +16,12 @@ export class BinaryFileInputComponent implements OnInit {
 
   onChange(ev) {
     var inputFile = ev.target;
+
+    var fileName = inputFile.files[0].name;
+    var nextSibling = ev.target.nextElementSibling
+    nextSibling.innerText = fileName
+
+    var inputFile = ev.target;
     if (inputFile.files && inputFile.files[0]) {
       var file = inputFile.files[0];
       if (file.size > this.maxUploadSize) {

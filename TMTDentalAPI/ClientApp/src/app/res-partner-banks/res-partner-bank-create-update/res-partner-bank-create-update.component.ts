@@ -21,7 +21,7 @@ export class ResPartnerBankCreateUpdateComponent implements OnInit {
   search = "";
 
   banks: ResBankSimple[];
-  constructor(private fb: FormBuilder, private activeModal: NgbActiveModal, private service: ResPartnerBankService) { }
+  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, private service: ResPartnerBankService) { }
 
   ngOnInit() {
     this.formPartnerBank = this.fb.group({

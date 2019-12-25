@@ -32,6 +32,13 @@
                 <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
                     (searchChange)="onSearchDateChange($event)">
                 </app-tai-date-range-filter-dropdown>
+                <div class="ml-2">
+                    <div class="custom-control custom-checkbox pt-1">
+                        <input type="checkbox" [(ngModel)]="isQuotation" (ngModelChange)="loadDataFromApi()"
+                            class="custom-control-input" id="customCheck1">
+                        <label class="custom-control-label" for="customCheck1">Phiếu tư vấn</label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

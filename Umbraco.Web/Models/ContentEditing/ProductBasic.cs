@@ -139,6 +139,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ProductImportExcelViewModel
     {
         public string FileBase64 { get; set; }
+        public string Type { get; set; }
+        public string Type2 { get; set; }
     }
 
     public class ProductImportExcelRow
@@ -147,16 +149,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool SaleOK { get; set; }
 
-        public bool KeToaOK { get; set; }
-
-        public string Type { get; set; }
+        public bool PurchaseOK { get; set; }
 
         public string CategName { get; set; }
 
         public string DefaultCode { get; set; }
 
         public decimal ListPrice { get; set; }
-
-        public double StandardPrice { get; set; }
     }
 }

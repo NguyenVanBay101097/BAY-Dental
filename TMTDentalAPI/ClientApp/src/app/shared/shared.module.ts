@@ -36,6 +36,7 @@ import { HasGroupsDirective } from './has-groups-directive';
 import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.component';
 import { SharedSaleOrderGridComponent } from './shared-sale-order-grid/shared-sale-order-grid.component';
 import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner-grid.component';
+import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-demo-data-dialog.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner
     HasGroupsDirective,
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
-    SharedPartnerGridComponent
+    SharedPartnerGridComponent,
+    SharedDemoDataDialogComponent
   ],
   exports: [
     HeaderComponent,
@@ -90,7 +92,8 @@ import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner
     HasGroupsDirective,
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
-    SharedPartnerGridComponent
+    SharedPartnerGridComponent,
+    SharedDemoDataDialogComponent
   ],
   imports: [
     CommonModule,
@@ -109,6 +112,9 @@ import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner
     })
   ],
   providers: [NavSidebarService, AppLoadingService],
-  entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent, UserProfileEditComponent],
+  entryComponents: [
+    ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent, UserProfileEditComponent,
+    SharedDemoDataDialogComponent
+  ],
 })
 export class SharedModule { }

@@ -22,6 +22,9 @@
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" accesskey="a"
                         (click)="createItem()">Thêm</button>
+                    <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
+                        <i class="fas fa-upload"></i> Import
+                    </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -40,7 +43,7 @@
             <div>
                 <kendo-combobox [data]="filteredCategs" [placeholder]="getCategTitle()" [filterable]="true"
                     (valueChange)="onCategChange($event)" [textField]="'completeName'" #categCbx
-                    [(ngModel)]="searchCateg" [valueField]="'id'">
+                    [(ngModel)]="searchCateg" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
             </div>
         </div>
@@ -51,23 +54,24 @@
     <div>
         <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)">
-            <kendo-grid-column field="name" title="Tên {{getTypeLabel()}}">
+            <kendo-grid-column field="name" title="Tên {{getTypeLabel()}}" width="250">
             </kendo-grid-column>
-            <kendo-grid-column field="defaultCode" title="Mã {{getTypeLabel()}}">
+            <kendo-grid-column field="defaultCode" title="Mã {{getTypeLabel()}}" width="100">
             </kendo-grid-column>
-            <kendo-grid-column field="categName" title="Nhóm {{getTypeLabel()}}">
+            <kendo-grid-column field="categName" title="Nhóm {{getTypeLabel()}}" width="150">
             </kendo-grid-column>
-            <kendo-grid-column field="listPrice" class="text-right" title="Giá bán">
+            <kendo-grid-column field="listPrice" class="text-right" title="Giá bán" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.listPrice | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="qtyAvailable" *ngIf="type == 'product'" class="text-right" title="Tồn kho">
+            <kendo-grid-column field="qtyAvailable" *ngIf="type == 'product'" class="text-right" title="Tồn kho"
+                width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="id">
+            <kendo-grid-column field="id" width="100">
                 <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                     Thao tác
                 </ng-template>
@@ -81,8 +85,3 @@
         </kendo-grid>
     </div>
 </div>
-
-<app-product-advance-search #advanceFilter [filteredCategs]="filteredCategs" [categType]="type"
-    (searchChange)="onAdvanceSearchChange($event)">
-</app-product-advance-search>
-<div kendoDialogContainer></div>

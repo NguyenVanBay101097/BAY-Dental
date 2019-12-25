@@ -140,7 +140,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          this.onChangePartner(result.partner);
+        }
+
+        if (result.pricelist) {
+          this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
         }
 
         const control = this.formGroup.get('orderLines') as FormArray;

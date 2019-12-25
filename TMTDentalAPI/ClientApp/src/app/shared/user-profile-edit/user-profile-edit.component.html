@@ -7,7 +7,7 @@
     <form class="o_form_view" [formGroup]="editForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <p class="text-danger" *ngIf="error">{{error}}</p>
+                <!-- <p class="text-danger" *ngIf="error">{{error}}</p> -->
                 <div>
                     <app-field-binary-image-simple formControlName="avatar" [imgSource]="editForm.get('avatar').value">
                     </app-field-binary-image-simple>

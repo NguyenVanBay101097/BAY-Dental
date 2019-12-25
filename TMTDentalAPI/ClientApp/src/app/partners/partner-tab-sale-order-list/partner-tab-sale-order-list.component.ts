@@ -5,6 +5,8 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-partner-tab-sale-order-list',
@@ -18,7 +20,8 @@ export class PartnerTabSaleOrderListComponent implements OnInit {
   skip = 0;
   loading = false;
 
-  constructor(private saleOrderService: SaleOrderService, private router: Router) { }
+  constructor(private saleOrderService: SaleOrderService, private router: Router,
+    private modalService: NgbModal) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -55,6 +58,14 @@ export class PartnerTabSaleOrderListComponent implements OnInit {
   }
 
   deleteBtnClick(item: SaleOrderBasic) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.saleOrderService.unlink([item.id]).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    });
   }
 
   addSOBtnClick() {

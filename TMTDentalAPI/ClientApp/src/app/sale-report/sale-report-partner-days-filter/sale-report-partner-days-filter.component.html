@@ -1,0 +1,41 @@
+<div ngbDropdown #myDrop="ngbDropdown">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+        <i class="fas fa-filter"></i>
+        {{title}}:
+        <span *ngIf="monthsFrom && monthsTo">{{monthsFrom | number}} tháng tới {{monthsTo | number}} tháng</span>
+        <span *ngIf="monthsFrom && !monthsTo">{{monthsFrom | number}} tháng tới ...</span>
+        <span *ngIf="!monthsFrom && monthsTo">... tới {{monthsTo | number}} tháng</span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
+        <button class="dropdown-item" *ngFor="let option of quickOptions" type="button"
+            (click)="quickOptionClick(option)">{{option.text}}</button>
+        <div class="dropdown-divider"></div>
+        <div class="px-4" [formGroup]="formGroup">
+            <div class="form-group">
+                <label>Từ</label>
+                <div>
+                    <kendo-numerictextbox formControlName="monthsFrom" format="'n0'">
+                    </kendo-numerictextbox> Tháng
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Đến</label>
+                <div>
+                    <kendo-numerictextbox formControlName="monthsTo" format="'n0'">
+                    </kendo-numerictextbox> Tháng
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                    Áp dụng
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear()">
+                    Hủy lọc
+                </button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="myDrop.toggle()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
