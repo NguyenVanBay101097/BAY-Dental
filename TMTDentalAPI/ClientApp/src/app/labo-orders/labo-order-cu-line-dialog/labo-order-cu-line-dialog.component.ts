@@ -164,8 +164,8 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
 
   searchProducts(search?: string) {
     var val = new ProductFilter();
-    val.type2 = 'labo';
-    val.search = search;
+    val.isLabo = true;
+    val.search = search || '';
     return this.productService.autocomplete2(val);
   }
 

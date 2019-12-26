@@ -18,6 +18,7 @@ export class ProductFilter {
     offset: number;
     type: string;
     type2: string;
+    isLabo: boolean;
 }
 
 export class ProductPaged {

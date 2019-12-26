@@ -79,7 +79,7 @@ export class ProductCategoryListComponent implements OnInit {
   getTypeTitle() {
     switch (this.type) {
       case 'service':
-        return 'Nhóm dịch vụ điều trị';
+        return 'Nhóm dịch vụ';
       case 'product':
         return 'Nhóm vật tư';
       case 'medicine':

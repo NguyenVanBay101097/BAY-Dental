@@ -28,6 +28,18 @@
                                 Có thể mua
                             </label>
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isLabo" id="isLabo">
+                            <label class="form-check-label" for="isLabo">
+                                Có thể đặt labo
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="keToaOK" id="keToaOK">
+                            <label class="form-check-label" for="keToaOK">
+                                Có thể kê toa thuốc
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -48,20 +60,21 @@
                             <div class="o_group">
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
-                                        <!-- <tr>
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label o_form_label_help">
-                                                    Loại sản phẩm
+                                                    Loại
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <select class="form-control" formControlName="type" (change)="changeType()">
+                                                <select class="form-control" formControlName="type"
+                                                    (change)="changeType()">
                                                     <option value="product">Có quản lý tồn kho</option>
                                                     <option value="consu">Không quản lý tồn kho</option>
                                                     <option value="service">Dịch vụ</option>
                                                 </select>
                                             </td>
-                                        </tr> -->
+                                        </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
@@ -96,7 +109,7 @@
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
-                                        <tr *ngIf="saleOK == true">
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Giá bán
@@ -108,7 +121,7 @@
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="purchaseOK">
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Giá mua
