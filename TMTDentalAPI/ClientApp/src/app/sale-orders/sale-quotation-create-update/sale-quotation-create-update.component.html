@@ -33,7 +33,7 @@
                         class="btn btn-primary btn-sm" (click)="actionConvertToOrder()">
                         Tạo phiếu điều trị
                     </button>
-                    <button *ngIf="['draft'].indexOf(saleOrder.state) !== -1" type="button"
+                    <button *ngIf="id && ['draft'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="actionDone()">
                         Khóa
                     </button>

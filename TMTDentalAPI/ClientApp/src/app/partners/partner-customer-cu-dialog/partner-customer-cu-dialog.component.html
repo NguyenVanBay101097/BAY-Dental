@@ -19,10 +19,19 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Điện thoại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="phone" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Mã khách hàng</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="ref" />
+                                    <input class="form-control" formControlName="ref"
+                                        placeholder="Để trống sẽ tự động phát sinh" />
                                 </td>
                             </tr>
                             <tr>
@@ -49,14 +58,6 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Điện thoại</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="phone" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Email</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -71,6 +72,14 @@
                                     <kendo-multiselect class="form-control" [data]="categoriesList" [textField]="'name'"
                                         [valueField]="'id'" formControlName="categories">
                                     </kendo-multiselect>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nghề nghiệp</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="jobTitle" />
                                 </td>
                             </tr>
                         </tbody>
@@ -115,22 +124,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Nghề nghiệp</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="jobTitle" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Tiểu sử bệnh</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="medicalHistory" />
-                                </td>
-                            </tr>
-                            <tr>
                                 <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
                                         chú</label></td>
                                 <td colspan="1" style="width: 100%;">
@@ -139,6 +132,50 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#medical_history"
+                                role="tab" aria-controls="home" aria-selected="true">Tiểu sử bệnh</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="medical_history" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Tiểu sử bệnh</label>
+                                            </td>
+                                            <td colspan="1" style="width:100%">
+                                                <div *ngFor="let i of historiesList" class="checkbox">
+                                                    <label><input type="checkbox" [checked]="checked(i)"
+                                                            (change)="checkboxChange(i,$event.target.checked)" />
+                                                        {{i.name}}
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Tiểu sử khác</label>
+                                            </td>
+                                            <td colspan="1" style="width:100%">
+                                                <textarea class="form-control"
+                                                    formControlName="medicalHistory"></textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

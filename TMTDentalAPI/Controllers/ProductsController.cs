@@ -245,6 +245,13 @@ namespace TMTDentalAPI.Controllers
             var errors = new List<string>();
             await _unitOfWork.BeginTransactionAsync();
 
+            var typeDict = new Dictionary<string, string>()
+            {
+                { "Dịch vụ", "service" },
+                { "Có quản lý tồn kho", "product" },
+                { "Không quản lý tồn kho", "consu" }
+            };
+
             using (var stream = new MemoryStream(fileData))
             {
                 using (ExcelPackage package = new ExcelPackage(stream))
@@ -254,10 +261,15 @@ namespace TMTDentalAPI.Controllers
                     {
                         var errs = new List<string>();
                         var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                        var categName = Convert.ToString(worksheet.Cells[row, 7].Value);
+                        var type = Convert.ToString(worksheet.Cells[row, 6].Value);
 
                         if (string.IsNullOrEmpty(name))
                             errs.Add("Tên sản phẩm là bắt buộc");
+                        if (string.IsNullOrEmpty(type))
+                            errs.Add("Loại sản phẩm là bắt buộc");
+                        if (!string.IsNullOrEmpty(type) && !typeDict.ContainsKey(type))
+                            errs.Add($"Loại sản phẩm là không hợp lệ. Giá trị cho phép là {string.Join(", ", typeDict.Keys.ToArray())}");
                         if (string.IsNullOrEmpty(categName))
                             errs.Add("Nhóm sản phẩm là bắt buộc");
 
@@ -280,9 +292,13 @@ namespace TMTDentalAPI.Controllers
                             Name = name,
                             SaleOK = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
                             PurchaseOK = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
+                            IsLabo = Convert.ToBoolean(worksheet.Cells[row, 4].Value),
+                            KeToaOK = Convert.ToBoolean(worksheet.Cells[row, 5].Value),
+                            Type = type,
                             CategName = categName,
-                            DefaultCode = Convert.ToString(worksheet.Cells[row, 5].Value),
-                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                            DefaultCode = Convert.ToString(worksheet.Cells[row, 8].Value),
+                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 9].Value),
+                            PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 10].Value),
                         };
                         data.Add(item);
                     }
@@ -301,13 +317,16 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uom.Id;
                 pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
-                pd.SaleOK = item.SaleOK;
-                pd.PurchaseOK = item.PurchaseOK;
-                pd.Type = val.Type;
+                pd.SaleOK = item.SaleOK ?? false;
+                pd.PurchaseOK = item.PurchaseOK ?? false;
+                pd.IsLabo = item.IsLabo ?? false;
+                pd.KeToaOK = item.KeToaOK ?? false;
+                pd.Type = item.Type;
                 pd.Type2 = val.Type2;
                 pd.CategId = categDict[item.CategName].Id;
                 pd.DefaultCode = item.DefaultCode;
-                pd.ListPrice = item.ListPrice;
+                pd.ListPrice = item.ListPrice ?? 0;
+                pd.PurchasePrice = item.PurchasePrice ?? 0;
                 vals.Add(pd);
             }
 

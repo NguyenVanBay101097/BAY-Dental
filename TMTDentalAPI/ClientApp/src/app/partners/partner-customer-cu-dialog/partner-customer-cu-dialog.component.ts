@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { PartnerCategorySimple } from '../partner-simple';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from '../partner.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { HistorySimple } from 'src/app/history/history';
 
 @Component({
   selector: 'app-partner-customer-cu-dialog',
@@ -34,6 +35,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   monthList: number[] = [];
   yearList: number[] = [];
 
+  historiesList: HistorySimple[] = [];
+
   constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
     private partnerService: PartnerService, public activeModal: NgbActiveModal) { }
 
@@ -56,6 +59,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       comment: null,
       jobTitle: null,
       customer: true,
+      histories: this.fb.array([]),
     });
 
     setTimeout(() => {
@@ -71,6 +75,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           if (result.ward && result.ward.code) {
             this.handleWardChange(result.ward);
           }
+
+          if (result.histories.length) {
+            debugger;
+            result.histories.forEach(history => {
+              var histories = this.formGroup.get('histories') as FormArray;
+              histories.push(this.fb.group(history));
+            });
+          }
         });
       }
 
@@ -79,7 +91,42 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.yearList = this.birthInit(1900, new Date().getFullYear());
       this.loadSourceCities();
       this.loadCategoriesList();
+      this.loadHistoriesList();
     });
+  }
+
+  loadHistoriesList() {
+    this.partnerService.getHistories().subscribe(result => {
+      this.historiesList = result;
+    });
+  }
+
+  checked(item: HistorySimple) {
+    var histories = this.formGroup.get('histories') as FormArray;
+    for (var i = 0; i < histories.controls.length; i++) {
+      var control = histories.controls[i];
+      if (control.value.id == item.id) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  checkboxChange(hist: HistorySimple, isCheck: boolean) {
+    var histories = this.formGroup.get('histories') as FormArray;
+
+    if (isCheck) {
+      let index = histories.controls.findIndex(x => x.value.id == hist.id);
+      if (index == -1) {
+        histories.push(this.fb.group(hist));
+      }
+    } else {
+      let index = histories.controls.findIndex(x => x.value.id == hist.id);
+      if (index != -1) {
+        histories.removeAt(index);
+      }
+    }
   }
 
   loadSourceCities() {

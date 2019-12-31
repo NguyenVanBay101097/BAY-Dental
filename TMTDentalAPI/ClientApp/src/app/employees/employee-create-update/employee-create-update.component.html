@@ -12,6 +12,21 @@
                     <h1>
                         <input class="form-control" formControlName="name">
                     </h1>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isDoctor" id="isDoctor">
+                            <label class="form-check-label" for="isDoctor">
+                                Bác sĩ
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isAssistant"
+                                id="isAssistant">
+                            <label class="form-check-label" for="isAssistant">
+                                Phụ tá
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="o_notebook">
                     <div class="tab-content" id="myTabContent">
@@ -21,10 +36,10 @@
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
                                         <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_left">
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Mã </label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                            <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="ref" />
                                             </td>
                                         </tr>
@@ -42,38 +57,21 @@
                                         </td>
                                     </tr> -->
                                         <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_left">
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Số điện thoại</label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                            <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" (input)="onlyGetNumbers('phone')"
                                                     maxlength="11" formControlName="phone" />
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_left">
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Ngày sinh</label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
-                                                <kendo-datepicker formControlName="birthDayObj" [format]="'dd/MM/yyyy'">
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="birthDayObj">
                                                 </kendo-datepicker>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_left">
-                                                <label class="o_form_label">Vai trò</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_left">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" id="isDoctorCb"
-                                                        formControlName="isDoctor">
-                                                    <label class="form-check-label" for="isDoctorCb">Bác sĩ</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" id="isAssistantCb"
-                                                        formControlName="isAssistant">
-                                                    <label class="form-check-label" for="isAssistantCb">Phụ tá</label>
-                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -81,42 +79,26 @@
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
                                         <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Địa chỉ</label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                            <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="address" />
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">CMND</label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                            <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="identityCard" />
                                             </td>
                                         </tr>
-                                        <!-- <tr hidden>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Bác sĩ/Phụ tá</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <div class="radio">
-                                                <label><input type="checkbox" formControlName="isDoctor"
-                                                        (change)="check()">Bác
-                                                    sĩ</label>
-                                            </div>
-                                            <div class="radio">
-                                                <label><input type="checkbox" formControlName="isAssistant"
-                                                        (change)="check()">Phụ tá</label>
-                                            </div>
-                                        </td>
-                                    </tr> -->
-                                        <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                        <!-- <tr>
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Nhóm</label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                            <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
                                                     <kendo-combobox formControlName="category" [data]="categoriesList"
                                                         [filterable]="true"
@@ -128,12 +110,12 @@
                                                     </a>
                                                 </div>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                         <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_right">
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Email</label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                            <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="email" />
                                             </td>
                                         </tr>

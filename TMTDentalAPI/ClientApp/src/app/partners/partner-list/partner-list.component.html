@@ -112,7 +112,8 @@
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="info_{{dataItem.id}}" role="tabpanel" aria-labelledby="info-tab">
+          <div class="tab-pane  py-2 fade show active" id="info_{{dataItem.id}}" role="tabpanel"
+            aria-labelledby="info-tab">
             <div>
               <app-partner-info [partnerId]="dataItem.id" (updateChange)="onUpdateChange()"></app-partner-info>
             </div>
@@ -120,7 +121,6 @@
           <div class="tab-pane fade" id="invoice_{{dataItem.id}}" role="tabpanel" aria-labelledby="invoice-tab">
             <div style="padding:10px;">
               <app-partner-tab-sale-order-list [item]="dataItem"></app-partner-tab-sale-order-list>
-              <!-- <app-partner-detail-list [id]="dataItem.id" [isCustomer]="true"></app-partner-detail-list> -->
             </div>
           </div>
           <div class="tab-pane fade" id="invoice-line_{{dataItem.id}}" role="tabpanel"
@@ -169,7 +169,8 @@
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="info_{{dataItem.id}}" role="tabpanel" aria-labelledby="info-tab">
+          <div class="tab-pane py-2 fade show active" id="info_{{dataItem.id}}" role="tabpanel"
+            aria-labelledby="info-tab">
             <div>
               <app-partner-info (createNewEvent)="getPartnersList()" [partnerId]="dataItem.id"></app-partner-info>
             </div>

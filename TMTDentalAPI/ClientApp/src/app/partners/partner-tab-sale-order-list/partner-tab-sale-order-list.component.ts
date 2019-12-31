@@ -16,7 +16,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 export class PartnerTabSaleOrderListComponent implements OnInit {
   @Input() item: PartnerBasic;
   gridData: GridDataResult;
-  limit = 10;
+  limit = 5;
   skip = 0;
   loading = false;
 

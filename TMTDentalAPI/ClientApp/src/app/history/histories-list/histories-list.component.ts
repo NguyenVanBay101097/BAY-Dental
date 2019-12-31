@@ -86,7 +86,7 @@ export class HistoriesListComponent implements OnInit {
 
   delete(id) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa tiểu sử';
+    modalRef.componentInstance.title = 'Xóa tiểu sử bệnh';
     modalRef.result.then(() => {
       this.service.delete(id).subscribe(
         () => { this.getList(); }

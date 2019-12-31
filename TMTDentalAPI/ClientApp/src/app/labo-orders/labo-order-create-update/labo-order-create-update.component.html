@@ -64,11 +64,11 @@
                     </button> -->
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
+                    <!-- <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': laboOrder.state === 'done', 'btn-secondary': laboOrder.state !== 'done'}"
                         type="button">
                         Đã khóa
-                    </button>
+                    </button> -->
                     <button [disabled]="laboOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': laboOrder.state === 'purchase', 'btn-secondary': laboOrder.state !== 'purchase'}"
                         type="button">
@@ -133,9 +133,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="laboOrder.state != 'draft'"
-                                        formControlName="dateOrderObj">
-                                    </kendo-datetimepicker>
+                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
+                                        [class.d-none]="laboOrder.state != 'draft'" formControlName="dateOrderObj">
+                                    </kendo-datepicker>
                                     <span
                                         [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.dateOrder | date: 'short'}}</span>
                                 </td>
@@ -147,9 +147,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="laboOrder.state != 'draft'"
-                                        formControlName="datePlannedObj">
-                                    </kendo-datetimepicker>
+                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
+                                        [class.d-none]="laboOrder.state != 'draft'" formControlName="datePlannedObj">
+                                    </kendo-datepicker>
                                     <span
                                         [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.datePlanned | date: 'short'}}</span>
                                 </td>

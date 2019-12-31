@@ -147,14 +147,22 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
 
-        public bool SaleOK { get; set; }
+        public bool? SaleOK { get; set; }
 
-        public bool PurchaseOK { get; set; }
+        public bool? PurchaseOK { get; set; }
+
+        public bool? KeToaOK { get; set; }
+
+        public bool? IsLabo { get; set; }
+
+        public string Type { get; set; }
 
         public string CategName { get; set; }
 
         public string DefaultCode { get; set; }
 
-        public decimal ListPrice { get; set; }
+        public decimal? ListPrice { get; set; }
+
+        public decimal? PurchasePrice { get; set; }
     }
 }

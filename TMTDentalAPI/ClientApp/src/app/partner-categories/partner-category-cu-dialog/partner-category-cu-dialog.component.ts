@@ -45,14 +45,14 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
       });
     }
 
-    this.categCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap(value => this.searchCategories(value))
-    ).subscribe(result => {
-      this.filterdCategories = result;
-      this.categCbx.loading = false;
-    });
+    // this.categCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.categCbx.loading = true)),
+    //   switchMap(value => this.searchCategories(value))
+    // ).subscribe(result => {
+    //   this.filterdCategories = result;
+    //   this.categCbx.loading = false;
+    // });
   }
 
   searchCategories(q?: string): Observable<PartnerCategoryBasic[]> {

@@ -140,6 +140,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+          if (!this.id) {
+            this.onChangePartner(result.partner);
+          }
         }
 
         if (result.pricelist) {

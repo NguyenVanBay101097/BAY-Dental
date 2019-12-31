@@ -37,7 +37,7 @@ export class SaleQuotationListComponent implements OnInit {
 
   stateFilterOptions: TmtOptionSelect[] = [
     { text: 'Tất cả', value: '' },
-    { text: 'Hoàn thành', value: 'done' },
+    { text: 'Đã khóa', value: 'done' },
     { text: 'Hủy bỏ', value: 'cancel' },
     { text: 'Mới', value: 'draft' }
   ];
@@ -61,7 +61,7 @@ export class SaleQuotationListComponent implements OnInit {
   stateGet(state) {
     switch (state) {
       case 'done':
-        return 'Hoàn thành';
+        return 'Đã khóa';
       case 'cancel':
         return 'Đã hủy';
       default:

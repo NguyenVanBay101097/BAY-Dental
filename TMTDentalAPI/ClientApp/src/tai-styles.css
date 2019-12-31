@@ -42,7 +42,7 @@ a {
 
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
-    padding: 0px 15px 15px 0px;
+    padding: 0px 15px 0px 0px;
     min-width: 150px;
 }
 
@@ -1130,4 +1130,21 @@ td.oe_form_group_cell_label label {
 
 .o_settings_container .o_form_label.o_light_label, .o_settings_container .o_light_label .o_form_label {
     font-weight: normal;
+}
+
+.k-grid .o_form_view .o_group.o_inner_group > tbody > tr > td {
+    border-width: 0;
+}
+
+.k-grid .o_form_view .o_group.o_inner_group > tbody > tr:hover {
+    background-color: unset;
+}
+
+.k-grid-content .o_form_view .o_group.o_inner_group {
+    table-layout: auto;
+}
+
+.o_form_container {
+    width: 100%;
+    max-width: 992px;
 }

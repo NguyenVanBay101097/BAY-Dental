@@ -13,6 +13,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
   type: string;
   type2: string;
   errors: string[];
+  title: string;
   constructor(private productService: ProductService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {

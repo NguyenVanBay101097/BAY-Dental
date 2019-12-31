@@ -137,7 +137,7 @@ export class EmployeeListComponent implements OnInit {
 
   createEmployee() {
     const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm nhân viên thường';
+    modalRef.componentInstance.title = 'Thêm người làm';
     modalRef.result.then(() => {
       this.getEmployeesList();
     });
@@ -145,7 +145,7 @@ export class EmployeeListComponent implements OnInit {
 
   editEmployee(item: EmployeeBasic) {
     const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa nhân viên';
+    modalRef.componentInstance.title = 'Sửa người làm';
     modalRef.componentInstance.empId = item.id;
     modalRef.result.then(() => {
       this.getEmployeesList();

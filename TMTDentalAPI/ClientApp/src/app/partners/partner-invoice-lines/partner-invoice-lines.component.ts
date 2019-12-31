@@ -17,7 +17,7 @@ export class PartnerInvoiceLinesComponent implements OnInit {
   gridView: GridDataResult;
   loading = false;
   skip = 0;
-  pageSize = 20;
+  pageSize = 5;
   gridLoading = false;
 
   ngOnInit() {
