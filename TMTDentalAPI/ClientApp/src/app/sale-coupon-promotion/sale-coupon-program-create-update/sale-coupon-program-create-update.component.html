@@ -69,6 +69,21 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
+                                        Số lượng
+                                        <i class="fas fa-question-circle text-primary" placement="bottom"
+                                            triggers="mouseenter:mouseleave"
+                                            ngbPopover="Số lượng mua tối thiểu để được phần thưởng"
+                                            popoverTitle="Số lượng tối thiểu"></i>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="ruleMinQuantity">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
                                         Tiền mua tối thiểu
                                     </label>
                                 </td>
@@ -106,19 +121,61 @@
                     </table>
                 </div>
                 <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <div class="o_horizontal_separator">Phần thưởng</div>
+                    <!-- <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <td colspan="2" style="width: 100%;">
-                                    <div class="o_horizontal_separator">
-                                        Phần thưởng
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Phần thưởng</label></td>
+                                <td style="width: 100%;">
+                                    <div class="o_field_radio o_vertical o_field_widget">
+                                        <div class="custom-control custom-radio o_radio_item">
+                                            <input formControlName="rewardType" type="radio"
+                                                class="custom-control-input o_radio_input" checked="true"
+                                                data-value="discount" data-index="0" id="radio139_discount">
+                                            <label class="custom-control-label o_form_label"
+                                                for="radio139_discount">Chiết khấu</label>
+                                        </div>
+
+                                        <div class="custom-control custom-radio o_radio_item">
+                                            <input formControlName="rewardType" type="radio"
+                                                class="custom-control-input o_radio_input" data-value="product"
+                                                data-index="1" id="radio139_product">
+                                            <label class="custom-control-label o_form_label" for="radio139_product">Miễn
+                                                phí dịch vụ</label>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                        </tbody>
+                    </table> -->
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr [class.d-none]="['discount', 'free_shipping'].indexOf(rewardType) !== -1">
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_required_modifier">Dịch vụ miễn phí</label>
+                                </td>
+                                <td style="width: 100%;">
+                                    <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
+                                        #productCbx formControlName="rewardProduct" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr
+                                [class.d-none]="['discount', 'free_shipping'].indexOf(rewardType) !== -1 || rewardProduct == null">
+                                <td class=" o_td_label">
+                                    <label class="o_form_label">Số lượng</label>
+                                </td>
+                                <td style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="rewardProductQuantity">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Chiết khấu
+                                        Áp dụng chiết khấu
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -134,7 +191,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr [class.d-none]="discountType != 'fixed_amount'">
+                            <tr [class.d-none]="rewardType != 'discount' || discountType != 'fixed_amount'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Tiền giảm
@@ -146,6 +203,51 @@
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
+                            <tr
+                                [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1 || discountType != 'percentage'">
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Chiết khấu trên</label></td>
+                                <td style="width: 100%;">
+                                    <div class="o_field_radio o_vertical o_field_widget">
+                                        <div class="custom-control custom-radio o_radio_item">
+                                            <input type="radio" formControlName="discountApplyOn"
+                                                class="custom-control-input o_radio_input" id="radio151_on_order"
+                                                value="on_order">
+                                            <label class="custom-control-label o_form_label"
+                                                for="radio151_on_order">Trên đơn hàng</label>
+                                        </div>
+
+                                        <div class="custom-control custom-radio o_radio_item">
+                                            <input type="radio" formControlName="discountApplyOn"
+                                                class="custom-control-input o_radio_input" value="specific_products"
+                                                id="radio151_specific_products">
+                                            <label class="custom-control-label o_form_label"
+                                                for="radio151_specific_products">Trên vài dịch vụ cụ thể</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr
+                                [class.d-none]="discountApplyOn != 'specific_products' || discountType != 'percentage' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Dịch vụ</label></td>
+                                <td style="width: 100%;">
+                                    <kendo-multiselect [data]="listProducts" [filterable]="true" #productMultiSelect
+                                        [textField]="'name'" [valueField]="'id'"
+                                        formControlName="discountSpecificProducts">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                            <!-- <tr
+                                [class.d-none]="discountType != 'percentage' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Tiền chiết khấu tối đa</label></td>
+                                <td style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="discountMaxAmount">
+                                    </kendo-numerictextbox>
+                                    <span class="text-muted">Nếu 0, không giới hạn</span>
+                                </td>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>

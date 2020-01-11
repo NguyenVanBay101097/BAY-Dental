@@ -246,20 +246,40 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).ToListAsync();
+            var couponObj = GetService<ISaleCouponService>();
+            var saleObj = GetService<ISaleOrderService>();
+            var programObj = GetService<ISaleCouponProgramService>();
+
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon)
+                .Include(x => x.Order).Include("Order.AppliedCoupons").Include("Order.AppliedCoupons.Program")
+                .Include("Order.NoCodePromoPrograms").ToListAsync();
+
             if (self.Any(x => x.State != "draft" && x.State != "cancel"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
-            var coupons = self.Where(x => x.Coupon != null).Select(x => x.Coupon).Distinct().ToList();
-            if (coupons.Any())
+            foreach(var line in self.Where(x => x.IsRewardLine))
             {
-                var couponObj = GetService<ISaleCouponService>();
-                foreach(var coupon in coupons)
+                var coupons_to_reactivate = line.Order.AppliedCoupons.Where(x => x.Program.DiscountLineProductId == line.ProductId).ToList();
+                foreach (var coupon in coupons_to_reactivate)
                 {
-                    coupon.SaleOrder = null;
                     coupon.State = "new";
+                    line.Order.AppliedCoupons.Remove(coupon);
                 }
-                await couponObj.UpdateAsync(coupons);
+
+                await couponObj.UpdateAsync(coupons_to_reactivate);
+
+                var related_program = await programObj.SearchQuery(x => x.DiscountLineProductId == line.ProductId).ToListAsync();
+                if (related_program.Any())
+                {
+                    foreach(var program in related_program)
+                    {
+                        if (line.Order.NoCodePromoPrograms.Any(x => x.ProgramId == program.Id))
+                            line.Order.NoCodePromoPrograms.Remove(line.Order.NoCodePromoPrograms.FirstOrDefault(x => x.ProgramId == program.Id));
+                        if (program.Id == line.Order.CodePromoProgramId)
+                            line.Order.CodePromoProgramId = null;
+                    }
+                }
+                await saleObj.UpdateAsync(line.Order);
             }
 
             await DeleteAsync(self);

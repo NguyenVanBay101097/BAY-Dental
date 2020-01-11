@@ -37,6 +37,8 @@ import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.
 import { SharedSaleOrderGridComponent } from './shared-sale-order-grid/shared-sale-order-grid.component';
 import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner-grid.component';
 import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-demo-data-dialog.component';
+import { SharedErrorDialogComponent } from './shared-error-dialog/shared-error-dialog.component';
+import { AppSharedShowErrorService } from './shared-show-error.service';
 
 @NgModule({
   declarations: [
@@ -66,7 +68,8 @@ import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
-    SharedDemoDataDialogComponent
+    SharedDemoDataDialogComponent,
+    SharedErrorDialogComponent
   ],
   exports: [
     HeaderComponent,
@@ -93,7 +96,8 @@ import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
-    SharedDemoDataDialogComponent
+    SharedDemoDataDialogComponent,
+    SharedErrorDialogComponent
   ],
   imports: [
     CommonModule,
@@ -111,10 +115,10 @@ import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-
       }
     })
   ],
-  providers: [NavSidebarService, AppLoadingService],
+  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService],
   entryComponents: [
     ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent, UserProfileEditComponent,
-    SharedDemoDataDialogComponent
+    SharedDemoDataDialogComponent, SharedErrorDialogComponent
   ],
 })
 export class SharedModule { }

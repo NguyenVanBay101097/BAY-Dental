@@ -85,7 +85,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
-        { name: 'Bảng giá', link: '/pricelists' },
+        // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
       ]
     },

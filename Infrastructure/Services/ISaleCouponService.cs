@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task UpdateDateExpired(IEnumerable<SaleCoupon> self);
         Task<PagedResult2<SaleCouponBasic>> GetPagedResultAsync(SaleCouponPaged val);
         Task<SaleCouponDisplay> GetDisplay(Guid id);
+        Task<CheckPromoCodeMessage> _CheckCouponCode(SaleCoupon self, SaleOrder order);
     }
 }

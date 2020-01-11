@@ -112,5 +112,13 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? OrderId { get; set; }
         public SaleOrder Order { get; set; }
+
+        public ICollection<SaleOrderNoCodePromoProgram> NoCodePromoPrograms { get; set; } = new List<SaleOrderNoCodePromoProgram>();
+        public Guid? CodePromoProgramId { get; set; }
+        public SaleCouponProgram CodePromoProgram { get; set; }
+
+        public ICollection<SaleCoupon> AppliedCoupons { get; set; } = new List<SaleCoupon>();
+
+        public ICollection<SaleCoupon> GeneratedCoupons { get; set; } = new List<SaleCoupon>();
     }
 }

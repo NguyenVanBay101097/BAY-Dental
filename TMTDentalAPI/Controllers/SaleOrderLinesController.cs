@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
@@ -17,11 +18,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper)
+        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,
+            IUnitOfWorkAsync unitOfWork)
         {
             _saleLineService = saleLineService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("OnChangeProduct")]

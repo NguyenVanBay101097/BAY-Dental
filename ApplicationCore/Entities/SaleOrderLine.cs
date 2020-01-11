@@ -120,5 +120,7 @@ namespace ApplicationCore.Entities
 
         public Guid? CouponId { get; set; }
         public SaleCoupon Coupon { get; set; }
+
+        public bool IsRewardLine { get; set; }
     }
 }

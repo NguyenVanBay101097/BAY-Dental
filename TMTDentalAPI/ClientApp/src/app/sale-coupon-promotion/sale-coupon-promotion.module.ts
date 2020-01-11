@@ -10,15 +10,20 @@ import { SaleCouponProgramCreateUpdateComponent } from './sale-coupon-program-cr
 import { SaleCouponProgramGenerateCouponsDialogComponent } from './sale-coupon-program-generate-coupons-dialog/sale-coupon-program-generate-coupons-dialog.component';
 import { SaleCouponListComponent } from './sale-coupon-list/sale-coupon-list.component';
 import { SaleCouponService } from './sale-coupon.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SalePromotionProgramListComponent } from './sale-promotion-program-list/sale-promotion-program-list.component';
+import { SalePromotionProgramCreateUpdateComponent } from './sale-promotion-program-create-update/sale-promotion-program-create-update.component';
+import { SaleCouponProgramFilterActiveComponent } from './sale-coupon-program-filter-active/sale-coupon-program-filter-active.component';
 
 @NgModule({
-  declarations: [SaleCouponProgramListComponent, SaleCouponProgramCreateUpdateComponent, SaleCouponProgramGenerateCouponsDialogComponent, SaleCouponListComponent],
+  declarations: [SaleCouponProgramListComponent, SaleCouponProgramCreateUpdateComponent, SaleCouponProgramGenerateCouponsDialogComponent, SaleCouponListComponent, SalePromotionProgramListComponent, SalePromotionProgramCreateUpdateComponent, SaleCouponProgramFilterActiveComponent],
   imports: [
     CommonModule,
     SaleCouponPromotionRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
+    NgbModule
   ],
   providers: [
     SaleCouponProgramService,

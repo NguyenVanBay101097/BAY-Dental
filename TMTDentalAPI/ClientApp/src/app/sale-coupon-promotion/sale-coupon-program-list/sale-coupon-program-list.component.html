@@ -19,17 +19,39 @@
                 </div>
             </div>
             <div class="o_cp_sidebar">
+                <div class="btn-group">
+                    <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                            Thao tác
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" (click)="actionArchive()">Đóng chương trình</button>
+                            <button class="dropdown-item" (click)="actionUnArchive()">Mở chương trình</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="o_cp_right">
+            <app-sale-coupon-program-filter-active [value]="filterActive" (valueChange)="filterActiveChange($event)">
+            </app-sale-coupon-program-filter-active>
         </div>
     </div>
 </div>
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+        (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+        <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="name" title="Tên chương trình">
+        </kendo-grid-column>
+        <kendo-grid-column field="active" title="Hoạt động">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" [checked]="dataItem.active" disabled>
+                    <label class="custom-control-label">​</label></div>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

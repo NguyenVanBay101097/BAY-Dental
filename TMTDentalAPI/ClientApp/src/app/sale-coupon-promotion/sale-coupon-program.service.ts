@@ -4,12 +4,14 @@ import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
 import { CardTypeBasic } from '../card-types/card-type.service';
+import { ProductSimple } from '../products/product-simple';
 
 export class SaleCouponProgramPaged {
     limit: number;
     offset: number;
     search: string;
     programType: string;
+    active: boolean;
 }
 
 export class SaleCouponProgramBasic {
@@ -21,6 +23,10 @@ export class SaleCouponProgramDisplay {
     id: string;
     name: string;
     couponCount: number;
+    orderCount: number;
+    rewardProduct: ProductSimple;
+    ruleDateFrom: string;
+    ruleDateTo: string;
 }
 
 export class SaleCouponProgramSave {
@@ -59,6 +65,14 @@ export class SaleCouponProgramService {
 
     toggleActive(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + "/ToggleActive", ids);
+    }
+
+    actionArchive(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionArchive", ids);
+    }
+
+    actionUnArchive(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionUnArchive", ids);
     }
 
     generateCoupons(data: any) {

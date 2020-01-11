@@ -30,6 +30,7 @@ import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-
 import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -64,7 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService) {
+    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService) {
   }
 
   ngOnInit() {
@@ -100,21 +101,21 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.userCbx.loading = false;
     });
 
-    this.pricelistCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.pricelistCbx.loading = true)),
-      switchMap(value => this.searchPricelists(value))
-    ).subscribe(result => {
-      this.filteredPricelists = result.items;
-      this.pricelistCbx.loading = false;
-    });
+    // this.pricelistCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.pricelistCbx.loading = true)),
+    //   switchMap(value => this.searchPricelists(value))
+    // ).subscribe(result => {
+    //   this.filteredPricelists = result.items;
+    //   this.pricelistCbx.loading = false;
+    // });
 
     // this.getAccountPayments();
     // this.getAccountPaymentReconcicles();
     this.loadPartners();
     this.loadUsers();
     this.loadDotKhamList();
-    this.loadPricelists();
+    // this.loadPricelists();
   }
 
   routeActive() {
@@ -145,9 +146,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           }
         }
 
-        if (result.pricelist) {
-          this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
-        }
+        // if (result.pricelist) {
+        //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
+        // }
 
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
@@ -254,12 +255,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   showApplyCouponDialog() {
     if (this.id) {
-      let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.orderId = this.id;
-      modalRef.result.then(() => {
-        this.loadRecord();
-      }, () => {
-      });
+      if (this.formGroup.dirty) {
+        this.saveRecord().subscribe(() => {
+          this.formGroup.markAsPristine();
+          let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          modalRef.componentInstance.orderId = this.id;
+          modalRef.result.then(() => {
+            this.loadRecord();
+          }, () => {
+          });
+        })
+      } else {
+        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.orderId = this.id;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
+      }
     } else {
       if (!this.formGroup.valid) {
         return false;
@@ -282,13 +295,101 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  getCouponLines() {
+    var lines = this.orderLines.value;
+    var list = [];
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if (line.couponId) {
+        list.push(line);
+      }
+    }
+
+    return list;
+  }
+
+  getPromotionLines() {
+    var lines = this.orderLines.value;
+    var list = [];
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if (line.promotionId) {
+        list.push(line);
+      }
+    }
+
+    return list;
+  }
+
+  getTotalDiscountCoupon() {
+    var total = 0;
+    var lines = this.getCouponLines();
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      total = total + line.priceSubTotal;
+    }
+
+    return total;
+  }
+
+  getTotalDiscountPromotion() {
+    var total = 0;
+    var lines = this.getPromotionLines();
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      total = total + line.priceSubTotal;
+    }
+
+    return total;
+  }
+
+  isCouponLine(line: FormControl) {
+    var c = line.get('couponId');
+    if (c) {
+      return c.value != null;
+    }
+    return false;
+  }
+
+  isPromotionLine(line: FormControl) {
+    var c = line.get('promotionId');
+    if (c) {
+      return c.value != null;
+    }
+    return false;
+  }
+
+  deleteCouponLine(line) {
+    var index = _.findIndex(this.orderLines.controls, o => o.get('id').value == line.id);
+    if (index != -1) {
+      this.orderLines.removeAt(index);
+
+      this.saveRecord().subscribe(() => {
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+  }
+
   applyPromotion() {
     if (this.id) {
-      this.saveRecord().subscribe(() => {
+      if (this.formGroup.dirty) {
+        this.saveRecord().subscribe(() => {
+          this.formGroup.markAsPristine();
+          this.saleOrderService.applyPromotion(this.id).subscribe(() => {
+            this.loadRecord();
+          }, (error) => {
+            this.errorService.show(error);
+          });
+        });
+      } else {
         this.saleOrderService.applyPromotion(this.id).subscribe(() => {
           this.loadRecord();
+        }, (error) => {
+          this.errorService.show(error);
         });
-      });
+      }
     } else {
       this.createRecord().subscribe((result) => {
         this.router.navigate(['/sale-orders/form'], {
@@ -365,9 +466,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionConfirm() {
     if (this.id) {
-      this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
-        this.loadRecord();
-      });
+      if (this.formGroup.dirty) {
+        this.saveRecord().subscribe(() => {
+          this.formGroup.markAsPristine();
+          this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
+            this.loadRecord();
+          });
+        });
+      } else {
+        this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
+          this.loadRecord();
+        });
+      }
     }
   }
 
@@ -434,7 +544,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Khóa phiếu điều trị';
-      modalRef.componentInstance.body = 'Khi khóa phiếu điều trị bạn sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
+      modalRef.componentInstance.body = 'Khi khóa phiếu điều trị sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
       modalRef.result.then(() => {
         this.saleOrderService.actionDone([this.id]).subscribe(() => {
           this.loadRecord();
@@ -545,7 +655,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.notificationService.show({
         content: 'Vui lòng chọn khách hàng',
         hideAfter: 3000,
-        position: { horizontal: 'right', vertical: 'bottom' },
+        position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
         type: { style: 'error', icon: true }
       });
@@ -562,6 +672,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
+      this.orderLines.markAsDirty();
       this.computeAmountTotal();
     }, () => {
     });
@@ -587,6 +698,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       line.patchValue(result);
       line.setControl('teeth', this.fb.array(a.teeth || []));
       this.computeAmountTotal();
+
+      this.orderLines.markAsDirty();
     }, () => {
     });
   }
@@ -599,6 +712,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   deleteLine(index: number) {
     this.orderLines.removeAt(index);
     this.computeAmountTotal();
+
+    this.orderLines.markAsDirty();
   }
 
   get getAmountTotal() {

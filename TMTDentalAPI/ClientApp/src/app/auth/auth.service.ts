@@ -136,7 +136,7 @@ export class AuthService {
     }
 
     isAuthenticated() {
-        return !this.jwtHelper.isTokenExpired();
+        return localStorage.getItem('access_token') != null;
     }
 
     getUserInfo(id): Observable<UserInfo> {

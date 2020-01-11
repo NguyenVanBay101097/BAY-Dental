@@ -7,12 +7,15 @@ import { map, catchError, finalize } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AppLoadingService } from './shared/app-loading.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SharedErrorDialogComponent } from './shared/shared-error-dialog/shared-error-dialog.component';
 
 
 @Injectable()
 export class HttpHandleErrorInterceptor implements HttpInterceptor {
 
-    constructor(private notificationService: NotificationService, private router: Router, private loadingService: AppLoadingService) { }
+    constructor(private notificationService: NotificationService, private router: Router, private loadingService: AppLoadingService,
+        private modalService: NgbModal) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler) {
         this.loadingService.setLoading(true);
@@ -42,10 +45,12 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                     message = error.message;
                 }
 
+                // let modalRef = this.modalService.open(SharedErrorDialogComponent, { windowClass: 'o_technical_modal' });
+                // modalRef.componentInstance.body = message;
                 this.notificationService.show({
                     content: message,
                     hideAfter: 3000,
-                    position: { horizontal: 'right', vertical: 'bottom' },
+                    position: { horizontal: 'center', vertical: 'top' },
                     animation: { type: 'fade', duration: 400 },
                     type: { style: 'error', icon: true }
                 });

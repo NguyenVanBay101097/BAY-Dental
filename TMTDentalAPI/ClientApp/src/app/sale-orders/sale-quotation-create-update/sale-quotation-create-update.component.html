@@ -9,18 +9,6 @@
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-                        Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
-                        Thêm mới</button>
-                </div>
-            </div>
-        </div>
-        <div class="o_cp_right">
-        </div>
     </div>
 </div>
 
@@ -33,10 +21,15 @@
                         class="btn btn-primary btn-sm" (click)="actionConvertToOrder()">
                         Tạo phiếu điều trị
                     </button>
+                    <button type="button" *ngIf="['draft'].indexOf(saleOrder.state) !== -1"
+                        class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu</button>
                     <button *ngIf="id && ['draft'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="actionDone()">
                         Khóa
                     </button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
@@ -82,7 +75,7 @@
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.partner ? saleOrder.partner.name : ''}}</span>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Bảng giá
@@ -97,7 +90,7 @@
                                     <span
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.pricelist ? saleOrder.pricelist.name : ''}}</span>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr *ngIf="saleOrder.order">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">

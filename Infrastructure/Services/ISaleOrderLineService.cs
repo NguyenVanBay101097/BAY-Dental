@@ -26,5 +26,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val);
         Task Unlink(IEnumerable<Guid> ids);
         Task _UpdateInvoiceQty(IEnumerable<Guid> ids);
+        void UpdateProps(IEnumerable<SaleOrderLine> self);
     }
 }

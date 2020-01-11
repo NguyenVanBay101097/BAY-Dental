@@ -30,13 +30,11 @@ export class AppointmentKanbanComponent implements OnInit {
       this.dateFrom = new Date(result.dateFrom.toDateString());
       this.dateTo = new Date(result.dateTo.toDateString());
       this.dateList = this.getDateList();
-      console.log('load data date range');
       this.loadData();
     });
 
     this.appointmentVMService.state$.subscribe(state => {
       this.state = state;
-      console.log('load data state');
       this.loadData();
     });
 
@@ -53,7 +51,6 @@ export class AppointmentKanbanComponent implements OnInit {
       distinctUntilChanged()
     ).subscribe(search => {
       this.search = search;
-      console.log('load data search');
       this.loadData();
     });
   }

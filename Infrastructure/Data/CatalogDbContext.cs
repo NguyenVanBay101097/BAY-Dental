@@ -124,6 +124,8 @@ namespace Infrastructure.Data
         public DbSet<ResConfigSettings> ResConfigSettings { get; set; }
         public DbSet<IrModuleCategory> IrModuleCategories { get; set; }
         public DbSet<IrConfigParameter> IrConfigParameters { get; set; }
+        public DbSet<SaleCouponProgramProductRel> SaleCouponProgramProductRels { get; set; }
+        public DbSet<SaleOrderNoCodePromoProgram> SaleOrderNoCodePromoPrograms { get; set; }
         
 
         public DbQuery<StockHistory> StockHistories { get; set; }
@@ -231,6 +233,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ResConfigSettingsConfiguration());
             builder.ApplyConfiguration(new IrModuleCategoryConfiguration());
             builder.ApplyConfiguration(new IrConfigParameterConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramProductRelConfiguration());
+            builder.ApplyConfiguration(new SaleOrderNoCodePromoProgramConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

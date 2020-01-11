@@ -39,6 +39,11 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.UserId);
 
+            builder.HasOne(x => x.CodePromoProgram)
+            .WithMany()
+            .HasForeignKey(x => x.CodePromoProgramId)
+            .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasOne(x => x.Card)
                .WithMany()
                .HasForeignKey(x => x.CardId);

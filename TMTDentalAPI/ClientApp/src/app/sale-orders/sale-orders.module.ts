@@ -14,6 +14,7 @@ import { SharedModule } from '../shared/shared.module';
 import { SaleOrderApplyCouponDialogComponent } from './sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { SaleQuotationListComponent } from './sale-quotation-list/sale-quotation-list.component';
 import { SaleQuotationCreateUpdateComponent } from './sale-quotation-create-update/sale-quotation-create-update.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent],
@@ -23,7 +24,8 @@ import { SaleQuotationCreateUpdateComponent } from './sale-quotation-create-upda
     ReactiveFormsModule,
     MyCustomKendoModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    NgbModule
   ],
   providers: [
     SaleOrderService,

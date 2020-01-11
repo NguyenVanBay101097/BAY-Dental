@@ -2983,6 +2983,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("DateCreated");
 
+                    b.Property<string>("DiscountApplyOn");
+
                     b.Property<decimal?>("DiscountFixedAmount");
 
                     b.Property<Guid?>("DiscountLineProductId");
@@ -2995,6 +2997,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("LastUpdated");
 
+                    b.Property<int?>("MaximumUseNumber");
+
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -3002,11 +3006,27 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("PromoApplicability");
 
+                    b.Property<string>("PromoCode");
+
+                    b.Property<string>("PromoCodeUsage");
+
+                    b.Property<string>("RewardDescription");
+
+                    b.Property<Guid?>("RewardProductId");
+
+                    b.Property<int?>("RewardProductQuantity");
+
                     b.Property<string>("RewardType");
 
-                    b.Property<decimal?>("RuleMinQuantity");
+                    b.Property<DateTime?>("RuleDateFrom");
+
+                    b.Property<DateTime?>("RuleDateTo");
+
+                    b.Property<int?>("RuleMinQuantity");
 
                     b.Property<decimal?>("RuleMinimumAmount");
+
+                    b.Property<int?>("Sequence");
 
                     b.Property<int?>("ValidityDuration");
 
@@ -3020,9 +3040,24 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("DiscountLineProductId");
 
+                    b.HasIndex("RewardProductId");
+
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleCouponPrograms");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramProductRel", b =>
+                {
+                    b.Property<Guid>("ProgramId");
+
+                    b.Property<Guid>("ProductId");
+
+                    b.HasKey("ProgramId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("SaleCouponProgramProductRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrder", b =>
@@ -3037,6 +3072,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("AmountUntaxed");
 
                     b.Property<Guid?>("CardId");
+
+                    b.Property<Guid?>("CodePromoProgramId");
 
                     b.Property<Guid>("CompanyId");
 
@@ -3079,6 +3116,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CardId");
 
+                    b.HasIndex("CodePromoProgramId");
+
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
@@ -3120,6 +3159,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Discount");
 
                     b.Property<string>("InvoiceStatus");
+
+                    b.Property<bool>("IsRewardLine");
 
                     b.Property<DateTime?>("LastUpdated");
 
@@ -3217,6 +3258,19 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ToothId");
 
                     b.ToTable("SaleOrderLineToothRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderNoCodePromoProgram", b =>
+                {
+                    b.Property<Guid>("OrderId");
+
+                    b.Property<Guid>("ProgramId");
+
+                    b.HasKey("OrderId", "ProgramId");
+
+                    b.HasIndex("ProgramId");
+
+                    b.ToTable("SaleOrderNoCodePromoPrograms");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleSettings", b =>
@@ -5435,7 +5489,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "Order")
-                        .WithMany()
+                        .WithMany("GeneratedCoupons")
                         .HasForeignKey("OrderId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
@@ -5448,7 +5502,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany()
+                        .WithMany("AppliedCoupons")
                         .HasForeignKey("SaleOrderId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
@@ -5470,9 +5524,26 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("DiscountLineProductId");
 
+                    b.HasOne("ApplicationCore.Entities.Product", "RewardProduct")
+                        .WithMany()
+                        .HasForeignKey("RewardProductId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramProductRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "Program")
+                        .WithMany("DiscountSpecificProducts")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrder", b =>
@@ -5480,6 +5551,11 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.CardCard", "Card")
                         .WithMany()
                         .HasForeignKey("CardId");
+
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "CodePromoProgram")
+                        .WithMany()
+                        .HasForeignKey("CodePromoProgramId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
@@ -5591,6 +5667,19 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
                         .WithMany()
                         .HasForeignKey("ToothId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderNoCodePromoProgram", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "Order")
+                        .WithMany("NoCodePromoPrograms")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

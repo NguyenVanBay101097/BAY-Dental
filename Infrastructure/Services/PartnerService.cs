@@ -174,7 +174,7 @@ namespace Infrastructure.Services
                 }
                 else if (i.Supplier)
                 {
-                    p.Debt = -creditDebitDict[p.Id].Debit;
+                    p.Debt = creditDebitDict[p.Id].Debit;
                 }
             }
             return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)

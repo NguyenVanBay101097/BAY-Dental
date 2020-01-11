@@ -79,7 +79,7 @@ export class PartnerCreateUpdateComponent implements OnInit {
 
       street: null,
       comment: null,
-      gender: 'Male',
+      gender: 'male',
       histories: this.fb.array([]),
       medicalHistory: null,
 

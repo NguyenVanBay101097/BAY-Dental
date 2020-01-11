@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { PriceListService } from 'src/app/price-list/price-list.service';
@@ -10,6 +10,8 @@ import * as _ from 'lodash';
 import { SaleCouponProgramDisplay, SaleCouponProgramService } from '../sale-coupon-program.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponProgramGenerateCouponsDialogComponent } from '../sale-coupon-program-generate-coupons-dialog/sale-coupon-program-generate-coupons-dialog.component';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
 
 @Component({
   selector: 'app-sale-coupon-program-create-update',
@@ -24,12 +26,15 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
   id: string;
   program: SaleCouponProgramDisplay = new SaleCouponProgramDisplay();
 
-  filteredPricelists: ProductPriceListBasic[];
-  @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
+  filteredProducts: ProductSimple[];
+  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
+
+  listProducts: ProductSimple[];
+  @ViewChild('productMultiSelect', { static: true }) productMultiSelect: MultiSelectComponent;
 
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private productService: ProductService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -38,8 +43,17 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
       discountType: 'percentage',
       discountPercentage: 0,
       discountFixedAmount: 0,
-      validityDuration: 0,
-      programType: null
+      validityDuration: 1,
+      programType: 'coupon_program',
+      rewardProduct: null,
+      rewardType: 'discount',
+      ruleMinQuantity: 1,
+      discountApplyOn: 'on_order',
+      discountSpecificProducts: null,
+      companyId: null,
+      discountMaxAmount: 0,
+      rewardProductQuantity: 1,
+      promoApplicability: 'on_current_order'
     });
 
     this.route.queryParamMap.subscribe(params => {
@@ -53,29 +67,63 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
           discountType: 'percentage',
           discountPercentage: 0,
           discountFixedAmount: 0,
-          validityDuration: 0,
-          programType: null
+          validityDuration: 1,
+          programType: 'coupon_program',
+          rewardProduct: null,
+          rewardType: 'discount',
+          ruleMinQuantity: 1,
+          discountApplyOn: 'on_order',
+          discountSpecificProducts: null,
+          companyId: null,
+          discountMaxAmount: 0,
+          rewardProductQuantity: 1,
+          promoApplicability: 'on_current_order'
         });
 
         this.program = new SaleCouponProgramDisplay();
       }
     });
 
-    // this.id = this.route.snapshot.paramMap.get('id');
-    // if (this.id) {
-    //   this.loadRecord();
-    // }
+    this.productCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.productCbx.loading = true)),
+      switchMap(value => this.searchProducts(value))
+    ).subscribe(result => {
+      this.filteredProducts = result;
+      this.productCbx.loading = false;
+    });
 
-    // this.pricelistCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.pricelistCbx.loading = true)),
-    //   switchMap(value => this.searchPricelists(value))
-    // ).subscribe(result => {
-    //   this.filteredPricelists = result.items;
-    //   this.pricelistCbx.loading = false;
-    // });
+    this.loadFilteredProducts();
 
-    // this.loadPricelists();
+    this.loadListProducts();
+
+    this.productMultiSelect.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.productMultiSelect.loading = true)),
+      switchMap(value => this.searchProducts(value))
+    ).subscribe(result => {
+      this.listProducts = result;
+      this.productMultiSelect.loading = false;
+    });
+  }
+
+  loadFilteredProducts() {
+    this.searchProducts().subscribe(result => {
+      this.filteredProducts = _.unionBy(this.filteredProducts, result, 'id');
+    });
+  }
+
+  loadListProducts() {
+    this.searchProducts().subscribe(result => {
+      this.listProducts = _.unionBy(this.listProducts, result, 'id');
+    });
+  }
+
+  searchProducts(search?: string) {
+    var val = new ProductFilter();
+    val.saleOK = true;
+    val.search = search;
+    return this.productService.autocomplete2(val);
   }
 
   viewCoupons() {
@@ -84,6 +132,18 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
 
   get discountType() {
     return this.formGroup.get('discountType').value;
+  }
+
+  get rewardProduct() {
+    return this.formGroup.get('rewardProduct').value;
+  }
+
+  get rewardType() {
+    return this.formGroup.get('rewardType').value;
+  }
+
+  get discountApplyOn() {
+    return this.formGroup.get('discountApplyOn').value;
   }
 
   generateCoupons() {
@@ -118,6 +178,9 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
     this.programService.get(this.id).subscribe(result => {
       this.program = result;
       this.formGroup.patchValue(result);
+      if (result.rewardProduct) {
+        this.filteredProducts = _.unionBy(this.filteredProducts, [result.rewardProduct], 'id');
+      }
     });
   }
 
@@ -131,6 +194,36 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
     }
 
     var value = this.formGroup.value;
+    if (value.rewardType == 'product' && value.rewardProduct == null) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn dịch vụ miễn phí',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
+
+    if (value.rewardType == 'discount' && value.discountApplyOn == 'specific_products' &&
+      (value.discountSpecificProducts == null || value.discountSpecificProducts.length == 0)) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn dịch vụ chiết khấu',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
+
+    value.rewardProductId = value.rewardProduct ? value.rewardProduct.id : null;
+    value.discountSpecificProductIds = value.discountSpecificProducts ? value.discountSpecificProducts.map(x => x.id) : [];
+    value.ruleMinimumAmount = value.ruleMinimumAmount || 0;
+    value.ruleMinQuantity = value.ruleMinQuantity || 0;
+    value.validityDuration = value.validityDuration || 0;
+    value.rewardProductQuantity = value.rewardProductQuantity || 0;
+
     if (this.id) {
       this.programService.update(this.id, value).subscribe(() => {
         this.notificationService.show({

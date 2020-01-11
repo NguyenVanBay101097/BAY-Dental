@@ -173,7 +173,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ApplyPromotion(id);
+            await _saleOrderService.RecomputeCouponLines(new List<Guid>() { id });
             _unitOfWork.Commit();
             return NoContent();
         }

@@ -23,6 +23,7 @@ export class SaleCouponProgramListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
+  filterActive = true;
 
   constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute,
     private router: Router, private modalService: NgbModal) { }
@@ -49,12 +50,19 @@ export class SaleCouponProgramListComponent implements OnInit {
     }
   }
 
+  filterActiveChange(active) {
+    this.filterActive = active;
+    this.loadDataFromApi();
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = new SaleCouponProgramPaged();
+    val.programType = 'coupon_program';
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.active = this.filterActive;
 
     this.programService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -88,10 +96,34 @@ export class SaleCouponProgramListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa chương trình coupon';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
-      this.programService.toggleActive([item.id]).subscribe(() => {
+      this.programService.unlink([item.id]).subscribe(() => {
         this.loadDataFromApi();
+        this.selectedIds = [];
       });
     });
+  }
+
+  actionArchive() {
+    if (this.selectedIds.length) {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Đóng chương trình';
+      modalRef.componentInstance.body = 'Bạn chắc chắn muốn đóng chương trình?';
+      modalRef.result.then(() => {
+        this.programService.actionArchive(this.selectedIds).subscribe(() => {
+          this.loadDataFromApi();
+          this.selectedIds = [];
+        });
+      });
+    }
+  }
+
+  actionUnArchive() {
+    if (this.selectedIds.length) {
+      this.programService.actionUnArchive(this.selectedIds).subscribe(() => {
+        this.loadDataFromApi();
+        this.selectedIds = [];
+      });
+    }
   }
 }
 

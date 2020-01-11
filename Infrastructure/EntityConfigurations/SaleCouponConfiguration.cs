@@ -14,11 +14,11 @@ namespace Infrastructure.EntityConfigurations
             builder.Property(x => x.Code).IsRequired();
 
             builder.HasOne(x => x.SaleOrder)
-               .WithMany()
+               .WithMany(x => x.AppliedCoupons)
                .HasForeignKey(x => x.SaleOrderId);
 
             builder.HasOne(x => x.Order)
-              .WithMany()
+              .WithMany(x => x.GeneratedCoupons)
               .HasForeignKey(x => x.OrderId);
 
             builder.HasOne(x => x.Program)

@@ -45,9 +45,9 @@
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Số điểm cơ bản
-                                        <i class="fas fa-question-circle text-primary" placement="top"
+                                        <i class="fas fa-question-circle text-primary" placement="bottom"
                                             triggers="mouseenter:mouseleave"
-                                            ngbPopover="Số điểm cơ bản cần có để được loại thẻ thành viên này."
+                                            ngbPopover="Số điểm cơ bản cần có để đạt loại thẻ thành viên này."
                                             popoverTitle="Số điểm cơ bản"></i>
                                     </label>
                                 </td>
@@ -75,7 +75,7 @@
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
-                            <tr *ngIf="cardType.pricelist">
+                            <!-- <tr *ngIf="cardType.pricelist">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Bảng giá
@@ -87,7 +87,7 @@
                                         {{cardType.pricelist.name}}
                                     </a>
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>

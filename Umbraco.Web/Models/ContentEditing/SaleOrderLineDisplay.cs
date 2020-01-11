@@ -46,5 +46,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public int? Sequence { get; set; }
+
+        public Guid? PromotionProgramId { get; set; }
+
+        public Guid? PromotionId { get; set; }
+
+        public Guid? CouponId { get; set; }
+
     }
 }

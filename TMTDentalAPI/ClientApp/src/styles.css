@@ -87,7 +87,7 @@
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
   /* width: 0%; */
   min-width: 150px;
-  max-width: 150px;
+  /* max-width: 150px; */
 }
 
 .o_form_view .o_form_label {
@@ -178,6 +178,16 @@
   display: flex;
   justify-content: space-between;
 }
+
+@media (min-width: 576px) {
+  .o_control_panel .o_cp_left .o_cp_sidebar {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    padding-right: 25px;
+  }
+}
+
 
 .o_cp_right {
   width: 50%;
@@ -405,7 +415,7 @@
 
 .o_form_view .o_group.o_inner_group.oe_subtotal_footer .oe_subtotal_footer_separator {
     font-weight: 600;
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 .o_form_view .o_group.o_inner_group.oe_subtotal_footer > tbody > tr > td .o_field_widget {
@@ -522,13 +532,11 @@ input.ng-invalid:not(form), select.ng-invalid  {
 
 .o_form_view .o_form_statusbar > .o_statusbar_buttons > .btn {
   min-height: 25px;
-  margin: 4px 3px 4px 0;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  margin: 4px 4px 4px 0;
 }
 
 .o_form_view .o_form_statusbar > .o_statusbar_status > .o_arrow_button {
-  min-height: 33px;
+  min-height: 39px;
   font-size: 11px;
   font-weight: bold;
   position: relative;
@@ -547,10 +555,10 @@ input.ng-invalid:not(form), select.ng-invalid  {
   left: auto;
   bottom: auto;
   right: -10px;
-  border-top: 16px solid transparent;
-  border-bottom: 17px solid transparent;
+  border-top: 18px solid transparent;
+  border-bottom: 21px solid transparent;
   border-right: none;
-  border-left: 11px solid white;
+  border-left: 10px solid white;
   transition: border 0.2s ease 0s;
 }
 

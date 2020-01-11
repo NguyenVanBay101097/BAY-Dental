@@ -21,6 +21,10 @@ namespace Infrastructure.EntityConfigurations
               .WithMany()
               .HasForeignKey(x => x.DiscountLineProductId);
 
+            builder.HasOne(x => x.RewardProduct)
+                .WithMany()
+                .HasForeignKey(x => x.RewardProductId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

@@ -1,5 +1,5 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel o_breadcrumb_full">
+    <div class="o_control_panel">
         <ol class="breadcrumb">
             <li>
                 <a routerLink="/labo-orders">Phiếu Labo</a>
@@ -9,17 +9,7 @@
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-                        Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
-                        Thêm mới</button>
-                </div>
-            </div>
-        </div>
-        <div class="o_cp_right">
+        <div class="o_cp_right mt-0">
             <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
@@ -45,23 +35,15 @@
                         (click)="buttonConfirm()">
                         Xác nhận
                     </button>
+                    <button type="button" class="btn btn-secondary btn-sm" *ngIf="laboOrder.state == 'draft'"
+                        (click)="onSave()">
+                        Lưu nháp</button>
                     <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy phiếu
                     </button>
-                    <!-- <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['draft', 'cancel'].indexOf(getInvState) === -1" (click)="actionCreateDotKham()">
-                        Tạo đợt khám
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="actionInvoicePayment()">
-                        Thanh toán
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
-                        Hủy phiếu
-                    </button>
-                    <button type="button" class="btn btn-sm btn-primary" (click)="actionCancelDraft()">
-                        Chuyển thành nháp
-                    </button> -->
+                    <button type="button" class="btn btn-light btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <!-- <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
@@ -218,12 +200,12 @@
                             <table class="o_group o_inner_group oe_subtotal_footer oe_right">
                                 <tbody>
                                     <tr>
-                                        <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
+                                        <td colspan="1" class="o_td_label pb-0">
                                             <label class="o_form_label oe_subtotal_footer_separator">
                                                 Tổng tiền
                                             </label>
                                         </td>
-                                        <td colspan="1" style="width: 50%;">
+                                        <td colspan="1">
                                             <span
                                                 class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{laboOrder.amountTotal | number}}</span>
                                         </td>

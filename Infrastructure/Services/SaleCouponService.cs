@@ -82,9 +82,16 @@ namespace Infrastructure.Services
 
         public override async Task<SaleCoupon> CreateAsync(SaleCoupon self)
         {
+            if (string.IsNullOrEmpty(self.Code))
+                self.Code = _GenerateCode();
             await CheckCode(self);
             _ComputeDateExpired(self);
             return await base.CreateAsync(self);
+        }
+
+        private string _GenerateCode()
+        {
+            return StringUtils.RandomStringDigit(13);
         }
 
         public async Task UpdateDateExpired(IEnumerable<SaleCoupon> self)
@@ -100,8 +107,38 @@ namespace Infrastructure.Services
                 return;
             if (count > 3)
                 throw new Exception("Phát sinh mã coupon không thành công, thử lại sau");
-            self.Code = StringUtils.RandomStringDigit(20);
+            self.Code = StringUtils.RandomStringDigit(13);
             await CheckCode(self, count + 1);
+        }
+
+        public async Task<CheckPromoCodeMessage> _CheckCouponCode(SaleCoupon self, SaleOrder order)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleObj = GetService<ISaleOrderService>();
+            var programObj = GetService<ISaleCouponProgramService>();
+            var applicable_programs = await saleObj._GetApplicablePrograms(order);
+            var states = new string[] { "used", "expired" };
+            if (states.Contains(self.State) || (self.DateExpired.HasValue && self.DateExpired < order.DateOrder.Date))
+                message.Error = $"Coupon {self.Code} đã được sử dụng hoặc hết hạn";
+            else if (self.Program.ProgramType == "coupon_program" && !programObj._FilterOnMinimumAmount(self.Program, order).Any())
+                message.Error = $"Nên mua hàng tối thiểu  {self.Program.RuleMinimumAmount} để có thể nhận thưởng";
+            else if (!self.Program.Active)
+                message.Error = $"Chương trình coupon với mã {self.Code} đang ở trạng thái dự thảo hoặc đã kết thúc.";
+            else if (self.PartnerId.HasValue && self.PartnerId != order.PartnerId)
+                message.Error = $"Khách hàng không hợp lệ.";
+            else if (order.AppliedCoupons.Select(x => x.Program).Contains(self.Program))
+                message.Error = "Một coupon đã được áp dụng";
+            else if (programObj._IsGlobalDiscountProgram(self.Program) && saleObj._IsGlobalDiscountAlreadyApplied(order))
+                message.Error = "Chiết khấu tổng không thể cộng dồn.";
+            else if (self.Program.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self.Program))
+                message.Error = "Sản phẩm phần thưởng nên có trong chi tiết đơn hàng để áp dụng giảm giá.";
+            else
+            {
+                if (!applicable_programs.Contains(self.Program) && self.Program.PromoApplicability == "on_current_order")
+                    message.Error = "Không đạt điều kiện nào để có thể nhận thưởng!";
+            }
+
+            return message;
         }
 
         public void _ComputeDateExpired(SaleCoupon self)

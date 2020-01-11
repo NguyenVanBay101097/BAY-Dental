@@ -59,6 +59,17 @@ namespace Infrastructure.Services
             return await CreateAsync(order);
         }
 
+        public IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self)
+        {
+            return self.OrderLines.Where(x => x.IsRewardLine);
+        }
+
+        public bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program)
+        {
+            return self.OrderLines.Where(x => x.ProductId == program.RewardProductId &&
+            x.ProductUOMQty >= program.RewardProductQuantity).Any();
+        }
+
         private async Task InsertSaleQuotationSequence()
         {
             var sequenceObj = GetService<IIRSequenceService>();
@@ -280,89 +291,334 @@ namespace Infrastructure.Services
         public async Task ApplyCoupon(SaleOrderApplyCoupon val)
         {
             var couponCode = val.CouponCode;
-            var self = await SearchQuery(x => x.Id == val.Id)
-                .Include(x => x.OrderLines).Include("OrderLines.Product").FirstOrDefaultAsync();
-
+            var programObj = GetService<ISaleCouponProgramService>();
             var couponObj = GetService<ISaleCouponService>();
-            var soLineObj = GetService<ISaleOrderLineService>();
-            var ruleObj = GetService<ISaleCouponProgramService>();
+            var order = await SearchQuery(x => x.Id == val.Id)
+             .Include(x => x.OrderLines).Include("OrderLines.Product")
+             .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+             .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
+             .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program").FirstOrDefaultAsync();
 
-            var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
-                .Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
-            if (coupon == null)
-                throw new Exception("Mã coupon " + couponCode + " không tồn tại");
-
-            if (!coupon.Program.Active)
-                throw new Exception("Chương trình coupon cho " + couponCode + " đã hết khả dụng.");
-
-            var date = DateTime.Today;
-            if (coupon.DateExpired.HasValue && date > coupon.DateExpired)
-                throw new Exception("Mã coupon " + couponCode + " đã hết hạn sử dụng");
-
-            if (coupon.State == "used" || coupon.State == "expired")
-                throw new Exception("Mã coupon " + couponCode + " đã được sử dụng hoặc hết hạn sử dụng.");
-
-            if (coupon.PartnerId.HasValue && coupon.PartnerId != self.PartnerId)
-                throw new Exception("Mã coupon " + couponCode + " chỉ có thể sử dụng cho khách hàng " + coupon.Partner.Name);
-
-            var rule = coupon.Program;
-            decimal total_amount = 0;
-            decimal total_qty = 0;
-            if (rule.ProgramType == "coupon_program")
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            if (program != null)
             {
-                //Kiểm tra điều kiện để áp dụng coupon nếu nó thuộc một chương trình coupon
-                var product_list = new List<ApplyPromotionProductListItem>();
-                foreach (var line in self.OrderLines)
+                var error_status = await programObj._CheckPromoCode(program, order, couponCode);
+                if (string.IsNullOrEmpty(error_status.Error))
                 {
-                    if (line.PromotionProgramId.HasValue)
-                        continue;
-                    var qty = line.ProductUOMQty;
-                    var price_unit = line.PriceUnit * (1 - line.Discount / 100);
-                    var amount = price_unit * line.ProductUOMQty; //chưa bao gồm thuế
-                    var item = product_list.FirstOrDefault(x => x.Product.Id == line.Product.Id);
-                    if (item != null)
+                    if (program.PromoApplicability == "on_next_order")
                     {
-                        item.Qty += qty;
-                        item.Amount += amount;
+                        // # Avoid creating the coupon if it already exist
+                        var discount_line_product_ids = order.GeneratedCoupons.Where(x => x.State == "new" || x.State == "reserved").Select(x => x.Program.DiscountLineProductId);
+                        if (!discount_line_product_ids.Contains(program.DiscountLineProductId))
+                        {
+                            var coupon = await _CreateRewardCoupon(order, program);
+                        }
                     }
                     else
                     {
-                        product_list.Add(new ApplyPromotionProductListItem
-                        {
-                            Product = line.Product,
-                            Qty = qty,
-                            Amount = amount
-                        });
+                        await _CreateRewardLine(order, program);
+                        order.CodePromoProgramId = program.Id;
+                        await UpdateAsync(order);
                     }
                 }
-
-                var min_quantity = rule.RuleMinQuantity ?? 0;
-                var min_amount = rule.RuleMinimumAmount ?? 0;
-
-                foreach (var item in product_list)
-                {
-                    total_qty += item.Qty;
-                    total_amount += item.Amount;
-                }
-
-                if (total_qty < min_quantity)
-                {
-                    throw new Exception("Bạn cần mua số lượng tối thiểu là " + min_quantity + ". Chương trình coupon: " + rule.Name);
-                }
-
-                if (total_amount < min_amount)
-                    throw new Exception("Bạn cần mua số tiền tối thiểu là " + min_amount.ToString("n0") + ". Chương trình coupon: " + rule.Name);
+                else
+                    throw new Exception(error_status.Error);
             }
+            else
+            {
+                var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
+             .Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
 
-            await ruleObj.Apply(rule, self, total_amount, total_qty, coupon: coupon);
+                if (coupon != null)
+                {
+                    var error_status = await couponObj._CheckCouponCode(coupon, order);
+                    if (string.IsNullOrEmpty(error_status.Error))
+                    {
+                        await _CreateRewardLine(order, coupon.Program);
 
-            coupon.SaleOrderId = self.Id;
-            coupon.State = "used";
-            await couponObj.UpdateAsync(coupon);
+                        order.AppliedCoupons.Add(coupon);
+                        await UpdateAsync(order);
+
+                        coupon.State = "used";
+                        await couponObj.UpdateAsync(coupon);
+                    }
+                    else
+                        throw new Exception(error_status.Error);
+                }
+                else
+                    throw new Exception($"Mã {couponCode} không có giá trị");
+            }
+        }
+
+        private async Task _CreateRewardLine(SaleOrder self, SaleCouponProgram program)
+        {
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var lines = _GetRewardLineValues(self, program);
+            foreach (var line in lines)
+                line.Order = self;
+
+            saleLineObj.UpdateProps(lines);
+            saleLineObj.ComputeAmount(lines);
+
+            foreach (var line in lines)
+                self.OrderLines.Add(line);
 
             _AmountAll(self);
-            _GetInvoiced(new List<SaleOrder>() { self });
             await UpdateAsync(self);
+        }
+
+        private IEnumerable<SaleOrderLine> _GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
+        {
+            if (program.RewardType == "discount")
+                return _GetRewardValuesDiscount(self, program);
+            else if (program.RewardType == "product")
+                return new List<SaleOrderLine>() { _GetRewardValuesProduct(self, program) };
+            return new List<SaleOrderLine>();
+        }
+
+        private SaleOrderLine _GetRewardValuesProduct(SaleOrder self, SaleCouponProgram program)
+        {
+            var line = self.OrderLines.Where(x => program.RewardProductId == x.ProductId).First();
+            var price_unit = line.PriceUnit * (1 - line.Discount / 100);
+            var order_lines = self.OrderLines.Except(_GetRewardLines(self));
+            var max_product_qty = order_lines.Any() ? order_lines.Sum(x => x.ProductUOMQty) : 1;
+            var reward_product_qty = Math.Min(max_product_qty, self.OrderLines.Where(x => program.RewardProductId == x.ProductId).Select(x => x.ProductUOMQty).Min());
+            //Remove needed quantity from reward quantity if same reward and rule product
+            var reward_qty = Math.Min(((int)(max_product_qty / (program.RuleMinQuantity ?? 1)) * (program.RewardProductQuantity ?? 1)), reward_product_qty);
+
+            var productObj = GetService<IProductService>();
+            if (program.RewardProduct == null)
+                program.RewardProduct = productObj.GetById(program.RewardProductId);
+
+            if (program.DiscountLineProduct == null)
+                program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
+
+            return new SaleOrderLine()
+            {
+                ProductId = program.DiscountLineProductId,
+                PriceUnit = -price_unit,
+                ProductUOMQty = reward_qty,
+                IsRewardLine = true,
+                Name = $"Dịch vụ miễn phí - {program.RewardProduct.Name}",
+                ProductUOMId = program.DiscountLineProduct.UOMId
+            };
+        }
+
+        public async Task _RemoveInvalidRewardLines(SaleOrder self)
+        {
+            /*
+            Find programs & coupons that are not applicable anymore.
+            It will then unlink the related reward order lines.
+            It will also unset the order's fields that are storing
+            the applied coupons & programs.
+            Note: It will also remove a reward line coming from an archive program.
+             */
+            var programObj = GetService<ISaleCouponProgramService>();
+            var couponObj = GetService<ISaleCouponService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var order = self;
+            var applicable_programs = (await _GetApplicableNoCodePromoProgram(order)).Union(await _GetApplicablePrograms(self))
+                .Union(_GetValidAppliedCouponProgram(self));
+            applicable_programs = programObj._KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(applicable_programs);
+            var applied_programs = _GetAppliedProgramsWithRewardsOnCurrentOrder(order).Concat(_GetAppliedProgramsWithRewardsOnNextOrder(order));
+            var programs_to_remove = applied_programs.Where(x => !applicable_programs.Contains(x)).ToList();
+            var programs_to_remove_ids = programs_to_remove.Select(x => x.Id).ToList();
+            var products_to_remove_ids = programs_to_remove.Select(x => x.DiscountLineProductId.Value);
+
+            var applied_programs_discount_line_product_ids = applied_programs.Select(x => x.DiscountLineProductId.Value);
+            //delete reward line coming from an archived coupon (it will never be updated/removed when recomputing the order)
+            var invalid_lines = order.OrderLines.Where(x => x.IsRewardLine && !applied_programs_discount_line_product_ids.Contains(x.ProductId.Value));
+
+            //Invalid generated coupon for which we are not eligible anymore ('expired' since it is specific to this SO and we may again met the requirements)
+            var invalid_coupons = self.GeneratedCoupons.Where(x => products_to_remove_ids.Contains(x.Program.DiscountLineProductId.Value)).ToList();
+            foreach (var coupon in invalid_coupons)
+                coupon.State = "expired";
+            await couponObj.UpdateAsync(invalid_coupons);
+
+            //Reset applied coupons for which we are not eligible anymore ('valid' so it can be use on another )
+            var coupons_to_remove = self.AppliedCoupons.Where(x => programs_to_remove_ids.Contains(x.Program.Id)).ToList();
+            foreach (var coupon in coupons_to_remove)
+                coupon.State = "new";
+            await couponObj.UpdateAsync(coupons_to_remove);
+
+            //Unbind promotion and coupon programs which requirements are not met anymore
+            if (programs_to_remove.Any())
+            {
+                foreach(var program in programs_to_remove)
+                {
+                    var rel = order.NoCodePromoPrograms.FirstOrDefault(x => x.ProgramId == program.Id);
+                    if (rel != null)
+                        order.NoCodePromoPrograms.Remove(rel);
+
+                    if (program.Id == order.CodePromoProgramId)
+                        order.CodePromoProgramId = null;
+                }
+            }
+
+            if (coupons_to_remove.Any())
+            {
+                foreach (var coupon in coupons_to_remove)
+                {
+                    order.AppliedCoupons.Remove(coupon);
+                }
+            }
+
+            await UpdateAsync(order);
+
+            //Remove their reward lines
+            invalid_lines = invalid_lines.Union(order.OrderLines.Where(x => products_to_remove_ids.Contains(x.ProductId.Value)));
+            await saleLineObj.Unlink(invalid_lines.Select(x => x.Id).ToList());
+        }
+
+        public IEnumerable<SaleCouponProgram> _GetAppliedProgramsWithRewardsOnCurrentOrder(SaleOrder self)
+        {
+            /*
+            # Need to add filter on current order. Indeed, it has always been calculating reward line even if on next order (which is useless and do calculation for nothing)
+            # This problem could not be noticed since it would only update or delete existing lines related to that program, it would not find the line to update since not in the order
+            # But now if we dont find the reward line in the order, we add it (since we can now have multiple line per  program in case of discount on different vat), thus the bug
+            # mentionned ahead will be seen now
+            */
+            var programs = self.NoCodePromoPrograms.Select(x => x.Program).Where(x => x.PromoApplicability == "on_current_order")
+                .Concat(self.AppliedCoupons.Select(x => x.Program));
+            if (self.CodePromoProgram != null && self.CodePromoProgram.PromoApplicability == "on_current_order")
+                programs = programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
+            return programs;
+        }
+
+        public IEnumerable<SaleCouponProgram> _GetAppliedProgramsWithRewardsOnNextOrder(SaleOrder self)
+        {
+            var programs = self.NoCodePromoPrograms.Select(x => x.Program).Where(x => x.PromoApplicability == "on_next_order");
+            if (self.CodePromoProgram != null && self.CodePromoProgram.PromoApplicability == "on_next_order")
+                programs = programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
+            return programs;
+        }
+
+        public IEnumerable<SaleCouponProgram> _GetValidAppliedCouponProgram(SaleOrder self)
+        {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var programs = self.AppliedCoupons.Select(x => x.Program).Where(x => x.PromoApplicability == "on_next_order");
+            programs = programObj._FilterProgramsFromCommonRules(programs, self, true);
+            programs = programs.Concat(programObj._FilterProgramsFromCommonRules(self.AppliedCoupons.Select(x => x.Program).Where(x => x.PromoApplicability == "on_current_order"), self));
+            return programs;
+        }
+
+        public async Task<IEnumerable<SaleCouponProgram>> _GetApplicableNoCodePromoProgram(SaleOrder self)
+        {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var programs = await programObj.SearchQuery(x => x.PromoCodeUsage == "no_code_needed")
+                .Include(x => x.DiscountSpecificProducts).ToListAsync();
+            programs = programObj._FilterProgramsFromCommonRules(programs, self).ToList();
+            return programs;
+        }
+
+        public async Task<IEnumerable<SaleCouponProgram>> _GetApplicablePrograms(SaleOrder self)
+        {
+            //This method is used to return the valid applicable programs on given order.
+            //param: order - The sale order for which method will get applicable programs.
+            var programObj = GetService<ISaleCouponProgramService>();
+            var programs = (await programObj.SearchQuery().Include(x => x.DiscountSpecificProducts).ToListAsync()).AsEnumerable();
+            programs = programObj._FilterProgramsFromCommonRules(programs, self);
+            //if (self.CodePromoProgram != null && !string.IsNullOrEmpty(self.CodePromoProgram.PromoCode))
+            //    programs = programObj._FilterPromoProgramsWithCode(programs, self.CodePromoProgram.PromoCode);
+            return programs;
+        }
+
+       
+
+        public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
+        {
+            var applied_programs = self.NoCodePromoPrograms.Select(x => x.Program)
+                .Concat(self.AppliedCoupons.Select(x => x.Program));
+            if (self.CodePromoProgram != null)
+                applied_programs = applied_programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
+            var programObj = GetService<ISaleCouponProgramService>();
+            return applied_programs.Where(x => programObj._IsGlobalDiscountProgram(x)).Any();
+        }
+
+        public void GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
+        {
+
+        }
+
+        public IList<SaleOrderLine> _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
+        {
+            if (program.DiscountLineProduct == null)
+            {
+                var productObj = GetService<IProductService>();
+                program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
+            }
+
+            if (program.DiscountType == "fixed_amount")
+            {
+                return new List<SaleOrderLine>()
+                {
+                    new SaleOrderLine()
+                    {
+                        Name = $"Chiết khấu: " + program.Name,
+                        ProductId = program.DiscountLineProductId,
+                        PriceUnit = -_GetRewardValuesDiscountFixedAmount(self, program),
+                        ProductUOMQty = 1,
+                        ProductUOMId = program.DiscountLineProduct.UOMId,
+                        IsRewardLine = true,
+                    }
+                };
+            }
+
+            var programObj = GetService<ISaleCouponProgramService>();
+            var rewards = new List<SaleOrderLine>();
+            var lines = _GetPaidOrderLines(self);
+            if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
+            {
+                if (program.DiscountApplyOn == "specific_products")
+                {
+                    var discount_specific_product_ids = program.DiscountSpecificProducts.Select(x => x.ProductId).ToList();
+                    //We should not exclude reward line that offer this product since we need to offer only the discount on the real paid product (regular product - free product)
+                    var free_product_lines = programObj.SearchQuery(x => x.RewardType == "product" && discount_specific_product_ids.Contains(x.RewardProductId.Value)).Select(x => x.DiscountLineProductId.Value).ToList();
+                    var tmp = discount_specific_product_ids.Union(free_product_lines);
+                    lines = lines.Where(x => tmp.Contains(x.ProductId.Value)).ToList();
+                }
+
+                var total_discount_amount = 0M;
+                foreach(var line in lines)
+                {
+                    var discount_line_amount = _GetRewardValuesDiscountPercentagePerLine(self, program, line);
+                    if (discount_line_amount > 0)
+                        total_discount_amount += discount_line_amount;
+                }
+
+                rewards.Add(new SaleOrderLine
+                {
+                    Name = $"Chiết khấu: {program.Name}",
+                    ProductId = program.DiscountLineProductId,
+                    PriceUnit = -total_discount_amount,
+                    ProductUOMQty = 1,
+                    ProductUOMId = program.DiscountLineProduct.UOMId,
+                    IsRewardLine = true,
+                });
+            }
+
+            return rewards;
+        }
+
+        private decimal _GetRewardValuesDiscountPercentagePerLine(SaleOrder self, SaleCouponProgram program, SaleOrderLine line)
+        {
+            var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
+                ((program.DiscountPercentage ?? 0) / 100);
+            return discount_amount;
+        }
+
+        private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
+        {
+            var total_amount = _GetPaidOrderLines(self).Sum(x => x.PriceTotal);
+            var fixed_amount = program.DiscountFixedAmount ?? 0;
+            if (total_amount < fixed_amount)
+                return total_amount;
+            return fixed_amount;
+        }
+
+        private IList<SaleOrderLine> _GetPaidOrderLines(SaleOrder self)
+        {
+            return self.OrderLines.Where(x => !x.IsRewardLine).ToList();
         }
 
         public async Task ApplyPromotion(Guid id)
@@ -848,6 +1104,18 @@ namespace Infrastructure.Services
             var dkSteps = await dkStepObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
             await dkStepObj.DeleteAsync(dkSteps);
 
+            var couponObj = GetService<ISaleCouponService>();
+            var coupons = await couponObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
+            if (coupons.Any())
+            {
+                foreach(var coupon in coupons)
+                {
+                    coupon.SaleOrderId = null;
+                    coupon.State = "new";
+                }
+                await couponObj.UpdateAsync(coupons);
+            }
+
             await DeleteAsync(self);
         }
 
@@ -1183,6 +1451,131 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task RecomputeCouponLines(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
+                .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+                .Include(x => x.CodePromoProgram).ToListAsync();
+            foreach(var order in self)
+            {
+                await _RemoveInvalidRewardLines(order);
+                await _CreateNewNoCodePromoRewardLines(order);
+                await _UpdateExistingRewardLines(order);
+            }
+        }
+
+        public async Task _CreateNewNoCodePromoRewardLines(SaleOrder self)
+        {
+            //Apply new programs that are applicable
+            var programObj = GetService<ISaleCouponProgramService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var order = self;
+            var programs = await _GetApplicableNoCodePromoProgram(self);
+            programs = programObj._KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(programs);
+            var line_product_ids = self.OrderLines.Select(x => x.ProductId).ToList();
+            foreach(var program in programs)
+            {
+                var error_status = await programObj._CheckPromoCode(program, order, "");
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                    if (program.PromoApplicability == "on_next_order")
+                        await _CreateRewardCoupon(order, program);
+                    else if (!line_product_ids.Contains(program.DiscountLineProductId))
+                    {
+                        var values = _GetRewardLineValues(self, program);
+                        foreach (var value in values)
+                            value.Order = self;
+
+                        saleLineObj.UpdateProps(values);
+                        saleLineObj.ComputeAmount(values);
+                        foreach (var value in values)
+                        {
+                            self.OrderLines.Add(value);
+                        }
+                    }
+
+                    order.NoCodePromoPrograms.Add(new SaleOrderNoCodePromoProgram { ProgramId = program.Id });
+                }
+            }
+
+            _AmountAll(order);
+            await UpdateAsync(order);
+        }
+
+        public async Task _UpdateExistingRewardLines(SaleOrder self)
+        {
+            void UpdateLine(SaleOrder o, IEnumerable<SaleOrderLine> lines, SaleOrderLine value) {
+                if (value != null && value.PriceUnit != 0 && value.ProductUOMQty != 0)
+                {
+                    foreach(var line in lines)
+                    {
+                        line.PriceUnit = value.PriceUnit;
+                        line.ProductUOMQty = value.ProductUOMQty;
+                    }
+                }
+            }
+
+            //Update values for already applied rewards
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var order = self;
+            var applied_programs = _GetAppliedProgramsWithRewardsOnCurrentOrder(self);
+            foreach(var program in applied_programs)
+            {
+                var values = _GetRewardLineValues(order, program);
+                var lines = order.OrderLines.Where(x => x.ProductId == program.DiscountLineProductId);
+                if (program.RewardType == "discount" && program.DiscountType == "percentage")
+                {
+                    foreach(var value in values)
+                    {
+                        foreach(var line in lines)
+                        {
+                            UpdateLine(order, new List<SaleOrderLine>() { line }, value);
+                        }
+                    }
+                }
+                else
+                {
+                    UpdateLine(order, lines, values.FirstOrDefault());
+                }
+
+                saleLineObj.ComputeAmount(lines);
+                await saleLineObj.UpdateAsync(lines);
+            }
+
+            _AmountAll(order);
+            await UpdateAsync(order);
+        }
+
+        private async Task<SaleCoupon> _CreateRewardCoupon(SaleOrder self, SaleCouponProgram program)
+        {
+            //if there is already a coupon that was set as expired, reactivate that one instead of creating a new one
+            var couponObj = GetService<ISaleCouponService>();
+            var coupon = await couponObj.SearchQuery(x => x.ProgramId == program.Id && x.State == "expired" && x.PartnerId == self.PartnerId &&
+            x.OrderId == self.Id && x.Program.DiscountLineProductId == program.DiscountLineProductId).FirstOrDefaultAsync();
+            if (coupon != null)
+            {
+                coupon.State = "reserved";
+                await couponObj.UpdateAsync(coupon);
+            }
+            else
+            {
+                coupon = await couponObj.CreateAsync(new SaleCoupon()
+                {
+                    ProgramId = program.Id,
+                    State = "reserved",
+                    PartnerId = self.PartnerId,
+                    OrderId = self.Id,
+                });
+            }
+
+            self.GeneratedCoupons.Add(coupon);
+            await UpdateAsync(self);
+
+            return coupon;
         }
 
         public async Task<AccountInvoice> PrepareInvoice(SaleOrder order, AccountJournal journal)

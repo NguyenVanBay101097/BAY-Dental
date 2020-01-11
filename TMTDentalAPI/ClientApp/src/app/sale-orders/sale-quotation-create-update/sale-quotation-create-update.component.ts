@@ -88,18 +88,18 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       this.userCbx.loading = false;
     });
 
-    this.pricelistCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.pricelistCbx.loading = true)),
-      switchMap(value => this.searchPricelists(value))
-    ).subscribe(result => {
-      this.filteredPricelists = result.items;
-      this.pricelistCbx.loading = false;
-    });
+    // this.pricelistCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.pricelistCbx.loading = true)),
+    //   switchMap(value => this.searchPricelists(value))
+    // ).subscribe(result => {
+    //   this.filteredPricelists = result.items;
+    //   this.pricelistCbx.loading = false;
+    // });
 
     this.loadPartners();
     this.loadUsers();
-    this.loadPricelists();
+    // this.loadPricelists();
   }
 
   routeActive() {
