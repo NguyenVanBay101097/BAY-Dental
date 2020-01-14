@@ -6,5 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class LaboOrderDefaultGet
     {
+        public Guid? DotKhamId { get; set; }
     }
 }

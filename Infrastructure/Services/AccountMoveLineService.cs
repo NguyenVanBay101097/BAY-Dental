@@ -354,6 +354,17 @@ namespace Infrastructure.Services
             {
                 await invObj.UpdatePayments(invoiceIds);
                 await invObj.UpdateResidual(invoiceIds);
+
+                //Tìm sale orders để tính lại residual
+             
+                var saleLineObj = GetService<ISaleOrderLineService>();
+                var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.Invoice.Id)))
+                    .Select(x => x.OrderId).Distinct().ToListAsync();
+                if (saleOrderIds.Any())
+                {
+                    var saleObj = GetService<ISaleOrderService>();
+                    await saleObj.RecomputeResidual(saleOrderIds);
+                }
             }
         }
 

@@ -108,6 +108,57 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(IEnumerable<Guid> ids)
+        {
+            var invoices = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.PaymentMoveLines)
+                .Include("PaymentMoveLines.MoveLine")
+                .Include("PaymentMoveLines.MoveLine.Move")
+                .Include("PaymentMoveLines.MoveLine.Journal")
+                .Include("PaymentMoveLines.MoveLine.MatchedDebits")
+                .Include("PaymentMoveLines.MoveLine.MatchedCredits")
+                .Include(x => x.Move).Include("Move.Lines")
+                .ToListAsync();
+
+            var res = new List<PaymentInfoContent>();
+            foreach(var invoice in invoices)
+            {
+                foreach (var rel in invoice.PaymentMoveLines)
+                {
+                    var payment = rel.MoveLine;
+                    decimal amount = 0;
+                    if (invoice.Type == "out_invoice" || invoice.Type == "in_refund")
+                    {
+                        amount = payment.MatchedDebits.Where(x => invoice.Move.Lines.Contains(x.DebitMove)).Sum(x => x.Amount);
+                    }
+                    else if (invoice.Type == "in_invoice" || invoice.Type == "out_refund")
+                    {
+                        amount = payment.MatchedCredits.Where(x => invoice.Move.Lines.Contains(x.CreditMove)).Sum(x => x.Amount);
+                    }
+
+                    if (amount == 0)
+                        continue;
+
+                    var paymentRef = payment.Move.Name;
+                    if (!string.IsNullOrEmpty(payment.Move.Ref))
+                        paymentRef += " (" + payment.Move.Ref + ")";
+
+                    res.Add(new PaymentInfoContent
+                    {
+                        Name = payment.Name,
+                        JournalName = payment.Journal.Name,
+                        Amount = amount,
+                        Date = payment.Date,
+                        Ref = paymentRef,
+                        PaymentId = payment.Id,
+                        MoveId = payment.MoveId,
+                        AccountPaymentId = payment.PaymentId,
+                    });
+                }
+            }
+
+            return res;
+        }
+
         public async Task<IEnumerable<PaymentInfoContent>> _GetSaleOrderPaymentInfoJson(Guid id)
         {
             var orderObj = GetService<ISaleOrderService>();
@@ -752,10 +803,18 @@ namespace Infrastructure.Services
 
             //update invoices lại
             _ComputeResidual(invoices);
-            var orderObj = GetService<ISaleOrderService>();
-            orderObj._ComputeResidual(invoices);
             _ComputePayments(invoices);
             await UpdateAsync(invoices);
+            
+            //update sale order residual
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.Invoice.Id)))
+                .Select(x => x.OrderId).Distinct().ToListAsync();
+            if (saleOrderIds.Any())
+            {
+                var saleObj = GetService<ISaleOrderService>();
+                await saleObj.RecomputeResidual(saleOrderIds);
+            }
         }
 
         public async Task UpdatePayments(IEnumerable<Guid> ids)
@@ -766,7 +825,7 @@ namespace Infrastructure.Services
 
         public IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<Guid> ids)
         {
-            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).Include("Move.Lines")
+            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).Include(x => x.PaymentMoveLines).Include("Move.Lines")
                 .Include("Move.Lines.MatchedCredits").Include("Move.Lines.MatchedDebits").ToList();
             return _ComputePayments(self);
         }

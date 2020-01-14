@@ -3,36 +3,33 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponService, SaleCouponPaged, SaleCouponBasic } from '../sale-coupon.service';
 import { SaleCouponProgramBasic, SaleCouponProgramService, SaleCouponProgramPaged } from '../sale-coupon-program.service';
 
 @Component({
-  selector: 'app-sale-coupon-list',
-  templateUrl: './sale-coupon-list.component.html',
-  styleUrls: ['./sale-coupon-list.component.css'],
-  host: {
-    class: 'o_action o_view_controller'
-  }
+  selector: 'app-sale-coupon-list-dialog',
+  templateUrl: './sale-coupon-list-dialog.component.html',
+  styleUrls: ['./sale-coupon-list-dialog.component.css']
 })
-export class SaleCouponListComponent implements OnInit {
+export class SaleCouponListDialogComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 20;
+  limit = 10;
   skip = 0;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  selectedIds: string[] = [];
   programId: string;
+  title = 'Coupon';
 
-  constructor(private couponService: SaleCouponService, private route: ActivatedRoute,
-    private router: Router, private programService: SaleCouponProgramService) { }
+  constructor(private couponService: SaleCouponService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
-    this.route.queryParamMap.subscribe(params => {
-      this.programId = params.get('program_id');
+
+    setTimeout(() => {
       this.loadDataFromApi();
     });
+
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -84,20 +81,29 @@ export class SaleCouponListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  createItem() {
-    var queryParams = this.route.snapshot.queryParams;
-    this.router.navigate(['/coupon-programs/form'], { queryParams: queryParams });
-  }
+  exportFile() {
+    var val = new SaleCouponPaged();
+    val.search = this.search || '';
+    if (this.programId) {
+      val.programId = this.programId;
+    }
+    this.couponService.exportFile(val).subscribe(result => {
+      let filename = 'danh_sach_coupon';
+      let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 
-  editItem(item: SaleCouponBasic) {
-    var queryParams = this.route.snapshot.queryParams;
-    queryParams.id = item.id;
-    this.router.navigate(['/coupon-programs/form'], { queryParams: queryParams });
-  }
-
-  deleteItem(item) {
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement('a');
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 }
+
 
 
 

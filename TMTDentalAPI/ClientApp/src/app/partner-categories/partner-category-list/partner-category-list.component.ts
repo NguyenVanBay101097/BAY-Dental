@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PartnerCategoryService, PartnerCategoryPaged, PartnerCategoryBasic } from '../partner-category.service';
 import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-partner-category-list',
@@ -86,31 +87,15 @@ export class PartnerCategoryListComponent implements OnInit {
   }
 
   deleteItem(item: PartnerCategoryBasic) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa nhóm khách hàng',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
-
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        console.log('close');
-      } else {
-        console.log('action', result);
-        if (result['value']) {
-          this.partnerCategoryService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-            console.log(err);
-          });
-        }
-      }
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa: Nhóm khách hàng';
+    modalRef.result.then(() => {
+      this.partnerCategoryService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
     });
   }
 }

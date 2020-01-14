@@ -188,8 +188,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     if (this.appointId) {
       var partner = this.formCreate.get('partner').value;
       if (partner) {
+        this.activeModal.dismiss();
         this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
-        this.activeModal.close();
       }
     }
   }

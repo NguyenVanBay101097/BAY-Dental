@@ -223,6 +223,17 @@ namespace Infrastructure.Services
                 invObj._ComputeResidual(invoices_to_update);
                 invObj._ComputePayments(invoices_to_update);
                 await invObj.UpdateAsync(invoices_to_update);
+
+                //update sale order residual
+                var invoiceIds = invoices_to_update.Select(x => x.Id).ToList();
+                var saleLineObj = GetService<ISaleOrderLineService>();
+                var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.Invoice.Id)))
+                    .Select(x => x.OrderId).Distinct().ToListAsync();
+                if (saleOrderIds.Any())
+                {
+                    var saleObj = GetService<ISaleOrderService>();
+                    await saleObj.RecomputeResidual(saleOrderIds);
+                }
             }
         }
 

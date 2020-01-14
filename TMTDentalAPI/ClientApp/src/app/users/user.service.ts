@@ -17,6 +17,8 @@ export class UserDisplay {
     passWord: string;
     email: string;
     avatar: string;
+    company: CompanyBasic;
+    companies: CompanyBasic[];
 }
 
 export class UserPaging {

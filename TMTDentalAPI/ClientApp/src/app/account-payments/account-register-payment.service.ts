@@ -31,6 +31,10 @@ export class AccountRegisterPaymentService {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + this.apiUrl + "/defaultget", val);
     }
 
+    saleOrdersDefaultGet(ids: string[]): Observable<AccountRegisterPaymentDisplay> {
+        return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + this.apiUrl + "/SaleOrdersDefaultGet", ids);
+    }
+
     create(val: AccountRegisterPaymentDisplay): Observable<AccountRegisterPaymentDisplay> {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + this.apiUrl, val);
     }

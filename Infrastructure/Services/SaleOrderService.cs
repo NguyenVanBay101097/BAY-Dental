@@ -54,6 +54,7 @@ namespace Infrastructure.Services
             saleLineService._GetToInvoiceQty(order.OrderLines);
             saleLineService._ComputeInvoiceStatus(order.OrderLines);
 
+            _ComputeResidual(new List<SaleOrder>() { order });
             _AmountAll(order);
 
             return await CreateAsync(order);
@@ -62,6 +63,16 @@ namespace Infrastructure.Services
         public IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self)
         {
             return self.OrderLines.Where(x => x.IsRewardLine);
+        }
+
+        public async Task RecomputeResidual(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines).Include("OrderLines.SaleOrderLineInvoiceRels")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice").ToListAsync();
+            _ComputeResidual(self);
+            await UpdateAsync(self);
         }
 
         public bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program)
@@ -150,19 +161,7 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderBasic
-            {
-                Id = x.Id,
-                AmountTotal = x.AmountTotal,
-                DateOrder = x.DateOrder,
-                Name = x.Name,
-                PartnerName = x.Partner.Name,
-                State = x.State,
-                Residual = x.Residual,
-                UserName = x.User != null ? x.User.Name : string.Empty
-            }).ToListAsync();
-
+            var items = await _mapper.ProjectTo<SaleOrderBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<SaleOrderBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -1217,6 +1216,26 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             await _GenerateDotKhamSteps(self);
+        }
+
+        public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
+        {
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
+              .Include("OrderLines.SaleOrderLineInvoiceRels")
+              .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine").FirstOrDefaultAsync();
+            var invoiceIds = self.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Where(x => x.InvoiceLine.InvoiceId.HasValue).Select(x => x.InvoiceLine.InvoiceId.Value).ToList();
+            var invoiceObj = GetService<IAccountInvoiceService>();
+            var paymentInfos = await invoiceObj._GetPaymentInfoJson(invoiceIds);
+            var dict = new Dictionary<Guid, PaymentInfoContent>();
+            foreach(var paymentInfo in paymentInfos)
+            {
+                if (!dict.ContainsKey(paymentInfo.PaymentId))
+                    dict.Add(paymentInfo.PaymentId, paymentInfo);
+                else
+                    dict[paymentInfo.PaymentId].Amount += paymentInfo.Amount;
+            }
+
+            return dict.Values;
         }
 
         private async Task _GenerateDotKhamSteps(IEnumerable<SaleOrder> self)

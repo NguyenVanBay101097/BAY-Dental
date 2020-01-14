@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -317,6 +318,7 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uom.Id;
                 pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
+                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = item.SaleOK ?? false;
                 pd.PurchaseOK = item.PurchaseOK ?? false;
                 pd.IsLabo = item.IsLabo ?? false;

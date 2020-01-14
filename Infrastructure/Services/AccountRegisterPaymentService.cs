@@ -14,7 +14,7 @@ namespace Infrastructure.Services
     public class AccountRegisterPaymentService : BaseService<AccountRegisterPayment>, IAccountRegisterPaymentService
     {
         public AccountRegisterPaymentService(IAsyncRepository<AccountRegisterPayment> repository, IHttpContextAccessor httpContextAccessor)
-            :base(repository, httpContextAccessor)
+            : base(repository, httpContextAccessor)
         {
         }
 
@@ -54,8 +54,8 @@ namespace Infrastructure.Services
             if (invoices.Any(x => x.PartnerId != invoices[0].PartnerId))
                 throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
             var dict = MAP_INVOICE_TYPE_PAYMENT_SIGN;
-            if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
-                throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
+            //if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
+            //    throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
             //if (invoices.Any(x => x.CurrencyId != invoices[0].CurrencyId))
             //    throw new Exception("Các hóa đơn phải có chung tiền tệ");
 
@@ -75,23 +75,23 @@ namespace Infrastructure.Services
             return rec;
         }
 
-        public async Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> order_ids)
+        public async Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> saleOrderIds)
         {
             var orderObj = GetService<ISaleOrderService>();
-            var orders = await orderObj.SearchQuery(x => order_ids.Contains(x.Id))
+            var orders = await orderObj.SearchQuery(x => saleOrderIds.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.SaleOrderLineInvoiceRels")
                 .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
                 .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
-                .OrderBy(x=>x.DateCreated)
+                .OrderBy(x => x.DateCreated)
                 .Distinct()
                 .ToListAsync();
 
             var invoice_ids = orders.SelectMany(x => x.OrderLines).SelectMany(x => x.SaleOrderLineInvoiceRels)
                 .Select(x => x.InvoiceLine).Select(x => x.Invoice.Id).Distinct();
-            
+
             if (invoice_ids == null || invoice_ids.Count() == 0)
-                throw new Exception("Phải chọn tối thiểu 1 hóa đơn để thanh toán");
+                throw new Exception("Không có gì để thanh toán");
             var invoiceService = (IAccountInvoiceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountInvoiceService));
             var invoices = await invoiceService.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
             if (invoices.Any(x => x.State != "open" && x.State != "paid"))
@@ -99,8 +99,8 @@ namespace Infrastructure.Services
             if (invoices.Any(x => x.PartnerId != invoices[0].PartnerId))
                 throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
             var dict = MAP_INVOICE_TYPE_PAYMENT_SIGN;
-            if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
-                throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
+            //if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
+            //    throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
 
             var total_amount = invoices.Sum(x => x.Residual * dict[x.Type]);
             var communication = string.Join(" ", orders.Select(x => x.Name).Distinct());
@@ -161,11 +161,11 @@ namespace Infrastructure.Services
                 {
                     InvoiceId = rel.InvoiceId,
                     Invoice = rel.Invoice,
-                    Payment= res,
+                    Payment = res,
                     PaymentId = res.Id
                 });
             }
-               
+
             return res;
         }
     }

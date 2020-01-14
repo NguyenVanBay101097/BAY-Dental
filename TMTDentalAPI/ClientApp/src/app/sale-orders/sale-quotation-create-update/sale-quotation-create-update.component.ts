@@ -27,6 +27,8 @@ import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.ser
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 
 @Component({
   selector: 'app-sale-quotation-create-update',
@@ -130,6 +132,52 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
           control.push(g);
         });
       });
+  }
+
+  get partner() {
+    return this.formGroup.get('partner').value;
+  }
+
+  updateCustomerModal() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa khách hàng';
+    modalRef.componentInstance.id = this.partner.id;
+
+    modalRef.result.then(() => {
+    }, () => {
+    });
+  }
+
+  quickCreateCustomer() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm khách hàng';
+
+    modalRef.result.then(result => {
+      var p = new PartnerSimple();
+      p.id = result.id;
+      p.name = result.name;
+      p.displayName = result.displayName;
+      this.formGroup.get('partner').patchValue(p);
+      this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
+      this.onChangePartner(p);
+    }, () => {
+    });
+  }
+
+  searchCustomerDialog() {
+    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Tìm khách hàng';
+    modalRef.componentInstance.domain = { customer: true };
+
+    modalRef.result.then(result => {
+      if (result.length) {
+        var p = result[0].dataItem;
+        this.formGroup.get('partner').patchValue(p);
+        this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
+        this.onChangePartner(p);
+      }
+    }, () => {
+    });
   }
 
   loadPartners() {

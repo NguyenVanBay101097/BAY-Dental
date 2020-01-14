@@ -4,7 +4,7 @@ import { SaleReportTopServicesCs, SaleReportTopServicesFilter } from '../sale-re
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { formatNumber } from '@angular/common';
-import { SaleReportItem, SaleReportService, SaleReportSearch } from 'src/app/sale-report/sale-report.service';
+import { SaleReportItem, SaleReportService, SaleReportSearch, SaleReportTopSaleProductSearch } from 'src/app/sale-report/sale-report.service';
 import { TaiDateRange } from 'src/app/core/tai-date-range';
 
 @Component({
@@ -21,7 +21,7 @@ export class SaleReportComponent implements OnInit {
   options: TaiDateRange[] = [];
   optionSelected: TaiDateRange;
   items: SaleReportItem[] = [];
-  fieldDisplay = 'productUOMQty';
+  topBy = 'quantity';
 
   constructor(private saleReportService: SaleReportService, private intlService: IntlService) { }
 
@@ -45,6 +45,13 @@ export class SaleReportComponent implements OnInit {
     }
   }
 
+  getFieldDisplay() {
+    if (this.topBy == 'amount') {
+      return 'priceTotal';
+    }
+    return 'productUOMQty';
+  }
+
   getLastMonthEnd() {
     var lastMonthStart = this.getLastMonthStart();
     return new Date(lastMonthStart.getFullYear(), lastMonthStart.getMonth() + 1, 0);
@@ -56,11 +63,11 @@ export class SaleReportComponent implements OnInit {
   }
 
   loadData() {
-    var val = new SaleReportSearch();
+    var val = new SaleReportTopSaleProductSearch();
     val.dateFrom = this.intlService.formatDate(this.optionSelected.dateFrom, 'd', 'en-US');
     val.dateTo = this.intlService.formatDate(this.optionSelected.dateTo, 'd', 'en-US');
-    val.groupBy = "product";
-    this.saleReportService.getReport(val).subscribe(result => {
+    val.topBy = this.topBy;
+    this.saleReportService.getTopSaleProduct(val).subscribe(result => {
       this.items = result;
     });
   }

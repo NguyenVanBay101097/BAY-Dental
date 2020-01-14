@@ -103,6 +103,22 @@ export class SaleCouponProgramListComponent implements OnInit {
     });
   }
 
+  unlink() {
+    if (this.selectedIds.length == 0) {
+      return false;
+    }
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa chương trình coupon';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.programService.unlink(this.selectedIds).subscribe(() => {
+        this.loadDataFromApi();
+        this.selectedIds = [];
+      });
+    });
+  }
+
   actionArchive() {
     if (this.selectedIds.length) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });

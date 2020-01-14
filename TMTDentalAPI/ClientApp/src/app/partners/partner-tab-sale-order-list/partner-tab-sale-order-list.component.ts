@@ -54,7 +54,7 @@ export class PartnerTabSaleOrderListComponent implements OnInit {
   }
 
   editBtnClick(item: SaleOrderBasic) {
-    window.open(`/sale-orders/form?id=${item.id}`, '_blank');
+    this.router.navigate(['/sale-orders/form'], { queryParams: { id: item.id } });
   }
 
   deleteBtnClick(item: SaleOrderBasic) {

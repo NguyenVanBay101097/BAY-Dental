@@ -35,9 +35,8 @@
                         (click)="buttonConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-secondary btn-sm" *ngIf="laboOrder.state == 'draft'"
-                        (click)="onSave()">
-                        Lưu nháp</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="onSave()">
+                        Lưu</button>
                     <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy phiếu
@@ -91,6 +90,21 @@
                                     </kendo-combobox>
                                     <span
                                         [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [class.d-none]="laboOrder.state != 'draft'"
+                                        [data]="filteredCustomers" [textField]="'name'" [filterable]="true" #customerCbx
+                                        formControlName="customer" [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <span
+                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.customer ? laboOrder.customer.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr *ngIf="laboOrder.dotKham">

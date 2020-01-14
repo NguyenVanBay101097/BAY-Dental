@@ -121,7 +121,7 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.DotKham)
+                .Include(x => x.DotKham).Include(x => x.Customer)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
                 .Include("OrderLines.ToothCategory")
@@ -136,12 +136,6 @@ namespace Infrastructure.Services
         {
             var labo = _mapper.Map<LaboOrder>(val);
             labo.CompanyId = CompanyId;
-            if (val.DotKhamId.HasValue)
-            {
-                var dotKhamObj = GetService<IDotKhamService>();
-                var dotKham = await dotKhamObj.GetByIdAsync(val.DotKhamId.Value);
-                labo.CustomerId = dotKham.PartnerId;
-            }
             SaveOrderLines(val, labo);
 
             var lbLineObj = GetService<ILaboOrderLineService>();
@@ -301,9 +295,18 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public LaboOrderDisplay DefaultGet(LaboOrderDefaultGet val)
+        public async Task<LaboOrderDisplay> DefaultGet(LaboOrderDefaultGet val)
         {
             var res = new LaboOrderDisplay();
+            if (val.DotKhamId.HasValue)
+            {
+                var dkObj = GetService<IDotKhamService>();
+                var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner).FirstOrDefaultAsync();
+                if (dk != null)
+                    res.Customer = _mapper.Map<PartnerSimple>(dk.Partner);
+                res.CustomerId = dk.PartnerId;
+                res.DotKhamId = dk.Id;
+            }
             return res;
         }
 

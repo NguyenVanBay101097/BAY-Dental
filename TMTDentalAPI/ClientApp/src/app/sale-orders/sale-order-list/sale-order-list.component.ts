@@ -168,13 +168,11 @@ export class SaleOrderListComponent implements OnInit {
     });
   }
 
-  payOrders() {
+  actionPayment() {
     if (this.selectedIds.length == 0) {
       return false;
     }
-    var val = new AccountRegisterPaymentDefaultGet();
-    val.invoiceIds = this.selectedIds;
-    this.saleOrderService.defaultOrderGet(val).subscribe(rs2 => {
+    this.registerPaymentService.saleOrdersDefaultGet(this.selectedIds).subscribe(rs2 => {
       if (rs2.amount > 0) {
         let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
@@ -183,19 +181,18 @@ export class SaleOrderListComponent implements OnInit {
           this.notificationService.show({
             content: 'Thanh toán thành công',
             hideAfter: 3000,
-            position: { horizontal: 'right', vertical: 'bottom' },
+            position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
           this.loadDataFromApi();
         }, () => {
-
         });
       } else {
         this.notificationService.show({
-          content: 'Không còn hóa đơn nào để thanh toán',
+          content: 'Không có gì để thanh toán',
           hideAfter: 3000,
-          position: { horizontal: 'right', vertical: 'bottom' },
+          position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },
           type: { style: 'error', icon: true }
         });

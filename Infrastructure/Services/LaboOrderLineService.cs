@@ -62,7 +62,7 @@ namespace Infrastructure.Services
                 x.Customer.NameNoSign.Contains(val.Search) ||
                 x.Customer.Phone.Contains(val.Search));
 
-            var items = await query.Skip(val.Offset).Take(val.Limit)
+            var items = await query.OrderByDescending(x => x.Order.DateCreated).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new LaboOrderLineBasic {
                     Id = x.Id,
                     Name = x.Name,

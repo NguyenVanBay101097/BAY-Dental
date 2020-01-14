@@ -178,6 +178,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPayments(Guid id)
+        {
+            var res = await _saleOrderService._GetPaymentInfoJson(id);
+            return Ok(res);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {

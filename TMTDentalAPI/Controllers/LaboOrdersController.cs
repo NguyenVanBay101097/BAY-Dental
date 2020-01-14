@@ -79,9 +79,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult DefaultGet(LaboOrderDefaultGet val)
+        public async Task<IActionResult> DefaultGet(LaboOrderDefaultGet val)
         {
-            var res = _laboOrderService.DefaultGet(val);
+            var res = await _laboOrderService.DefaultGet(val);
             return Ok(res);
         }
 

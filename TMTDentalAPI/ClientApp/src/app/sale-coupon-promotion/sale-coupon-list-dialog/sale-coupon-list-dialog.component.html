@@ -1,0 +1,37 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="p-3">
+        <div class="mb-2">
+            <input type="text" class="form-control" placeholder="Tìm kiếm" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)" />
+        </div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="code" title="Mã coupon">
+            </kendo-grid-column>
+            <kendo-grid-column field="dateExpired" title="Ngày hết hạn">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.dateExpired | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="programName" title="Tên chương trình">
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{stateGet(dataItem.state)}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="exportFile()">Xuất
+        file</button>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+</div>

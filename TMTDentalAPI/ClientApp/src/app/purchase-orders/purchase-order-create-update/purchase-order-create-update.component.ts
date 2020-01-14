@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { ProductBasic2, ProductService, ProductPaged } from 'src/app/products/product.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +13,6 @@ import { PurchaseOrderLineService, PurchaseOrderLineOnChangeProduct } from '../p
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
-import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 declare var $: any;
 
 @Component({
@@ -33,6 +32,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
+
 
   productList: ProductBasic2[] = [];
   productSearch: string;
@@ -42,12 +43,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   constructor(private fb: FormBuilder, private productService: ProductService, private route: ActivatedRoute,
     private purchaseOrderService: PurchaseOrderService, private partnerService: PartnerService,
     private purchaseLineService: PurchaseOrderLineService, private intlService: IntlService, private notificationService: NotificationService,
-    private router: Router, private hotkeysService: HotkeysService) {
-
-    this.hotkeysService.add(new Hotkey('f2', (event: KeyboardEvent): boolean => {
-      this.focusProductSearchInput();
-      return false; // Prevent bubbling
-    }));
+    private router: Router) {
   }
 
   ngOnInit() {

@@ -1,24 +1,3 @@
-<!-- <div kendoWindowContainer></div> -->
-<div kendoDialogContainer></div>
-<!-- <div class="d-flex o_control_panel o_breadcrumb_full">
-  <div class="d-flex flex-fill justify-content-between">
-    <div class="flex-fill">
-      <h2 class="mb-0" *ngIf="this.queryCustomer"> Khách hàng</h2>
-      <h2 class="mb-0" *ngIf="!this.queryCustomer"> Nhà cung cấp</h2>
-    </div>
-    <div class="flex-fill">
-      <div class="o_cp_buttons">
-        <div class="o_form_buttons_view">
-          <button type="button" (click)="openWindow()"><i
-              class="fas fa-plus"></i>&nbsp;Thêm mới</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="flex-fill o_cp_right">
-  </div>
-</div> -->
-
 <div class="o_cp_controller">
   <div class="o_control_panel">
     <ol class="breadcrumb">
@@ -34,14 +13,9 @@
     <div class="o_cp_left">
       <div class="o_cp_buttons">
         <div class="o_form_buttons_view">
-          <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">
-            <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
-          <button type="button" class="btn btn-info btn-sm" (click)="importFromExcel(true)">
-            <i class="fas fa-upload"></i>&nbsp;Thêm mới từ Excel</button>
-          <button type="button" class="btn btn-info btn-sm" (click)="importFromExcel(false)">
-            <i class="fas fa-upload"></i>&nbsp;Cập nhật từ Excel</button>
-          <button type="button" class="btn btn-light btn-sm" (click)="exportExcelFile()">
-            <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="openModal(null)">Thêm</button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="importFromExcel(true)">Thêm từ excel</button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="exportExcelFile()">Xuất excel</button>
         </div>
       </div>
       <div class="o_cp_sidebar">
@@ -50,30 +24,6 @@
   </div>
 </div>
 
-<!-- 
-<div class="">
-  <div class="accordion" id="accordionExample">
-    <div [formGroup]="formFilter">
-      <div class="card">
-        <div class="card-header" id="headingOne">
-          <h2 class="mb-0">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
-              aria-expanded="true" aria-controls="collapseOne">
-              Tìm kiếm
-            </button>
-          </h2>
-        </div>
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-          <div class="card-body">
-            <div class="form-group">
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
 <div class="o_content">
   <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
     (pageChange)="pageChange($event)" [loading]="loading" [selectable]="{mode : 'single'}"
@@ -82,7 +32,7 @@
     <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
     <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column field="address" title="Địa chỉ" width="250"></kendo-grid-column>
-    <kendo-grid-column field="debt" title="Nợ hiện tại" width="120" class="text-right">
+    <kendo-grid-column field="debt" title="Nợ hiện tại" width="100" class="text-right">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.debt | number}}
       </ng-template>
@@ -155,14 +105,14 @@
             <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info_{{dataItem.id}}" role="tab"
               aria-controls="info" aria-selected="true">Thông tin</a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo_{{dataItem.id}}" role="tab"
               aria-controls="labo" aria-selected="false">Phiếu labo</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="order-refund-tab" data-toggle="tab" href="#order-refund_{{dataItem.id}}" role="tab"
               aria-controls="order-refund" aria-selected="false">Lịch sử mua - trả hàng</a>
-          </li>
+          </li> -->
           <li class="nav-item">
             <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment_{{dataItem.id}}" role="tab"
               aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
@@ -175,7 +125,7 @@
               <app-partner-info (createNewEvent)="getPartnersList()" [partnerId]="dataItem.id"></app-partner-info>
             </div>
           </div>
-          <div class="tab-pane fade" id="labo_{{dataItem.id}}" role="tabpanel" aria-labelledby="labo-tab">
+          <!-- <div class="tab-pane fade" id="labo_{{dataItem.id}}" role="tabpanel" aria-labelledby="labo-tab">
             <div style="padding:10px;">
               <app-partner-detail-list [id]="dataItem.id" [isSupplier]="true"></app-partner-detail-list>
             </div>
@@ -185,7 +135,7 @@
             <div style="padding:10px;">
               <app-purchase-order-refund [id]="dataItem.id"></app-purchase-order-refund>
             </div>
-          </div>
+          </div> -->
           <div class="tab-pane fade" id="payment_{{dataItem.id}}" role="tabpanel" aria-labelledby="payment-tab">
             <div style="padding:10px;">
               <app-partner-payments [partnerId]="dataItem.id"></app-partner-payments>
@@ -196,17 +146,12 @@
     </div>
     <!-- -----------------------------------------------END----------------------------------------------- -->
 
-    <kendo-grid-command-column title="Thao tác" width="150">
+    <kendo-grid-command-column title="Thao tác" width="80">
       <ng-template kendoGridCellTemplate let-dataItem>
-        <!-- <button title="Thanh toán" kendoButton (click)="registerPayment(dataItem.id)" class="btn btn-primary btn-sm"><i
-            class="fas fa-file-invoice-dollar"></i></button> -->
-
-        <button title="Xóa" (click)="deleteCustomer(dataItem.id,$event)" class="btn btn-danger btn-sm mr5"><i
+        <button title="Sửa" (click)="openModal(partnerId)" class="btn btn-success btn-sm mr-1"><i
+            class="fas fa-edit"></i></button>
+        <button title="Xóa" (click)="deleteCustomer(dataItem.id,$event)" class="btn btn-danger btn-sm"><i
             class="far fa-trash-alt"></i></button>
-
-        <!-- <button kendoButton style="color: white" class="btn btn-info btn-sm" *ngIf="queryCustomer"
-          [routerLink]="['/partners/history/'+dataItem.id]"><i title="Lịch sử điều trị"
-            class="fas fa-notes-medical"></i></button> -->
       </ng-template>
     </kendo-grid-command-column>
   </kendo-grid>

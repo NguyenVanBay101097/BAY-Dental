@@ -773,8 +773,8 @@ namespace Infrastructure.Services
                 var dict = await RunTaskAsync(strs: adList.Distinct().ToList());
                 var genderDict = new Dictionary<string, string>()
                 {
-                    { "nam","Male" },
-                    { "nữ","Female" }
+                    { "nam","male" },
+                    { "nữ","female" }
                 };
 
                 for (var row = 2; row <= worksheet.Dimension.Rows; row++)

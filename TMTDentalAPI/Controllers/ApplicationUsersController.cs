@@ -28,10 +28,11 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IUserService _userService;
         private readonly IUploadService _uploadService;
+        private readonly ICompanyService _companyService;
         public ApplicationUsersController(UserManager<ApplicationUser> userManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             IIRModelAccessService modelAccessService, IUserService userService,
-            IUploadService uploadService)
+            IUploadService uploadService, ICompanyService companyService)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -40,6 +41,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _userService = userService;
             _uploadService = uploadService;
+            _companyService = companyService;
         }
 
         [HttpGet]
@@ -170,7 +172,9 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("Autocomplete")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
-            var res = await _userManager.Users.Where(x => string.IsNullOrEmpty(filter) || x.Name.Contains(filter))
+            var companyId = CompanyId;
+            var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(filter) || x.Name.Contains(filter))
+            && x.CompanyId == companyId)
                 .Select(x => new ApplicationUserSimple {
                     Id = x.Id,
                     Name = x.Name
@@ -182,7 +186,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("AutocompleteUser")]
         public async Task<IActionResult> AutocompleteUser(ApplicationUserPaged user)
         {
-            var res = await _userManager.Users.Where(x => string.IsNullOrEmpty(user.SearchNameUserName) || x.Name.Contains(user.SearchNameUserName))
+            var companyId = CompanyId;
+            var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(user.SearchNameUserName) || x.Name.Contains(user.SearchNameUserName)) &&
+            x.CompanyId == companyId)
                 .Select(x => new ApplicationUserSimple
                 {
                     Id = x.Id,
@@ -196,8 +202,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("AutocompleteSimple")]
         public async Task<IActionResult> AutocompleteSimple(ApplicationUserPaged val)
         {
-            var res = await _userManager.Users.Where(x => string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-            x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search))
+            var companyId = CompanyId;
+            var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
+            x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search)) && x.CompanyId == companyId)
                 .OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new ApplicationUserSimple
                 {
@@ -208,10 +215,14 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("DefaultGet")]
-        public IActionResult DefaultGet()
+        public async Task<IActionResult> DefaultGet()
         {
             var res = new ApplicationUserDisplay();
             res.CompanyId = CompanyId;
+            var company = await _companyService.GetByIdAsync(CompanyId);
+            var companyBasic = _mapper.Map<CompanyBasic>(company);
+            res.Company = companyBasic;
+            res.Companies = new List<CompanyBasic>() { companyBasic };
             return Ok(res);
         }
 

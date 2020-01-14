@@ -11,7 +11,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { LaboOrderDisplay, LaboOrderService } from '../labo-order.service';
+import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from '../labo-order.service';
 import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 declare var $: any;
 
@@ -28,7 +28,9 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   id: string;
   dotKhamId: string;
   filteredPartners: PartnerSimple[];
+  filteredCustomers: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
   laboOrderPrint: any;
 
@@ -41,9 +43,12 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
+      customer: null,
       dateOrderObj: [null, Validators.required],
       datePlannedObj: null,
       orderLines: this.fb.array([]),
+      customerId: null,
+      dotKhamId: null
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
@@ -53,12 +58,21 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
       this.loadRecord();
     } else {
       setTimeout(() => {
-        this.laboOrderService.defaultGet({}).subscribe(result => {
+        var df = new LaboOrderDefaultGet();
+        if (this.dotKhamId) {
+          df.dotKhamId = this.dotKhamId;
+        }
+
+        this.laboOrderService.defaultGet(df).subscribe(result => {
           this.laboOrder = result;
           this.formGroup.patchValue(result);
 
           let dateOrder = new Date(result.dateOrder);
           this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+          if (result.customer) {
+            this.filteredCustomers = _.unionBy(this.filteredCustomers, [result.customer], 'id');
+          }
 
           const control = this.formGroup.get('orderLines') as FormArray;
           control.clear();
@@ -80,12 +94,28 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
       this.partnerCbx.loading = false;
     });
 
+    this.customerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.customerCbx.loading = true)),
+      switchMap(value => this.searchCustomers(value))
+    ).subscribe(result => {
+      this.filteredCustomers = result;
+      this.customerCbx.loading = false;
+    });
+
     this.loadPartners();
+    this.loadCustomers();
   }
 
   loadPartners() {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
+    });
+  }
+
+  loadCustomers() {
+    this.searchCustomers().subscribe(result => {
+      this.filteredCustomers = _.unionBy(this.filteredCustomers, result, 'id');
     });
   }
 
@@ -140,6 +170,13 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     return this.partnerService.getAutocompleteSimple(val);
   }
 
+  searchCustomers(filter?: string) {
+    var val = new PartnerPaged();
+    val.customer = true;
+    val.searchNamePhoneRef = filter;
+    return this.partnerService.getAutocompleteSimple(val);
+  }
+
   createNew() {
     this.router.navigate(['/labo-orders/create']);
   }
@@ -153,7 +190,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'g', 'en-US') : null;
     val.partnerId = val.partner.id;
-    val.dotKhamId = this.dotKhamId;
+    val.customerId = val.customer ? val.customer.id : null;
     this.laboOrderService.create(val).subscribe(result => {
       this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
         this.router.navigate(['/labo-orders/edit/' + result.id]);
@@ -180,7 +217,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'g', 'en-US') : null;
     val.partnerId = val.partner.id;
-    val.dotKhamId = this.dotKhamId;
+    val.customerId = val.customer ? val.customer.id : null;
     if (this.id) {
       this.laboOrderService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
@@ -210,6 +247,14 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
         if (result.datePlanned) {
           let datePlanned = this.intlService.parseDate(result.datePlanned);
           this.formGroup.get('datePlannedObj').patchValue(datePlanned);
+        }
+
+        if (result.partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        }
+
+        if (result.customer) {
+          this.filteredCustomers = _.unionBy(this.filteredCustomers, [result.customer], 'id');
         }
 
         let control = this.formGroup.get('orderLines') as FormArray;

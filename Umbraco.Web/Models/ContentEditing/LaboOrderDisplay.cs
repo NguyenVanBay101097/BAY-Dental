@@ -42,5 +42,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? DotKhamId { get; set; }
         public DotKhamSimple DotKham { get; set; }
+
+        public Guid? CustomerId { get; set; }
+        public PartnerSimple Customer { get; set; }
     }
 }

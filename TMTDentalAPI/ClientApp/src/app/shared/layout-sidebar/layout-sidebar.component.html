@@ -17,7 +17,7 @@
                     </span>
                 </a>
                 <ul class="nav flex-column nav-sub dk" *ngIf="item.children.length">
-                    <li *ngFor="let child of item.children">
+                    <li *ngFor="let child of item.children" hasGroups [groups]="child.groups">
                         <a class="nav-link" [routerLink]="child.link" [queryParams]="child.params"
                             routerLinkActive="active">{{child.name}}</a>
                     </li>

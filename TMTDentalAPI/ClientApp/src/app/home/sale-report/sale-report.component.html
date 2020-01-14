@@ -2,9 +2,9 @@
     <div class="card-header">
         <div class="d-flex align-items-center">
             <span class="mr-2 fw500">Top dịch vụ theo</span>
-            <select [(ngModel)]="fieldDisplay" class="o-select-custom mr-2">
-                <option value="productUOMQty">Số lượng</option>
-                <option value="priceTotal">Tổng tiền</option>
+            <select [(ngModel)]="topBy" (ngModelChange)="loadData()" class="o-select-custom mr-2">
+                <option value="quantity">Số lượng</option>
+                <option value="amount">Tổng tiền</option>
             </select>
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle bg-white btn-sm" type="button" id="dropdownMenu2"
@@ -21,7 +21,7 @@
     <div class="card-body">
         <kendo-chart [seriesColors]="['pink']" style="height: 350px">
             <kendo-chart-series>
-                <kendo-chart-series-item type="bar" [data]="items" [field]="fieldDisplay" categoryField="name">
+                <kendo-chart-series-item type="bar" [data]="items" [field]="getFieldDisplay()" categoryField="name">
                 </kendo-chart-series-item>
             </kendo-chart-series>
             <kendo-chart-tooltip>

@@ -1070,6 +1070,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
+    }, () => {
     });
   }
 

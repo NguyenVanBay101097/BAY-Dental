@@ -45,6 +45,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       note: null,
       warrantyCode: null,
       warrantyPeriodObj: null,
+      state: 'draft'
     });
 
     setTimeout(() => {

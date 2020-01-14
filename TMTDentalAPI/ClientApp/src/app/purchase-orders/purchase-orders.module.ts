@@ -18,7 +18,7 @@ import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order
     FormsModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
-    SharedModule
+    SharedModule,
   ],
   providers: [
     PurchaseOrderService,

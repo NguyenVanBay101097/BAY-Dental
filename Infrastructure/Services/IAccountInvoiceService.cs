@@ -39,5 +39,6 @@ namespace Infrastructure.Services
 
         IEnumerable<AccountInvoice> _ComputeResidual(IEnumerable<AccountInvoice> self);
         IEnumerable<AccountInvoice> _ComputePayments(IEnumerable<AccountInvoice> self);
+        Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(IEnumerable<Guid> ids);
     }
 }

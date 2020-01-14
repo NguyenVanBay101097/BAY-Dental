@@ -34,6 +34,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetTopSaleProduct(SaleReportTopSaleProductSearch val)
+        {
+            var res = await _saleReportService.GetTopSaleProduct(val);
+            return Ok(res);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> GetReportDetail(SaleReportItem val)
         {

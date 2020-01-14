@@ -4,6 +4,7 @@ import { UserService } from '../user.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyBasic, CompanySimple, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -35,9 +36,27 @@ export class UserCuDialogComponent implements OnInit {
     });
     setTimeout(() => {
       if (this.id) {
-        this.userService.get(this.id).subscribe(result => this.userForm.patchValue(result));
+        this.userService.get(this.id).subscribe(result => {
+          this.userForm.patchValue(result);
+          if (result.company) {
+            this.listCompanies = _.unionBy(this.listCompanies, [result.company], 'id');
+          }
+
+          if (result.companies) {
+            this.listCompanies = _.unionBy(this.listCompanies, result.companies, 'id');
+          }
+        });
       } else {
-        this.userService.defaultGet().subscribe(result => this.userForm.patchValue(result));
+        this.userService.defaultGet().subscribe(result => {
+          this.userForm.patchValue(result);
+          if (result.company) {
+            this.listCompanies = _.unionBy(this.listCompanies, [result.company], 'id');
+          }
+
+          if (result.companies) {
+            this.listCompanies = _.unionBy(this.listCompanies, result.companies, 'id');
+          }
+        });
       }
 
       this.loadListCompanies();
@@ -47,7 +66,7 @@ export class UserCuDialogComponent implements OnInit {
   loadListCompanies() {
     var val = new CompanyPaged();
     this.companyService.getPaged(val).subscribe(result => {
-      this.listCompanies = result.items;
+      this.listCompanies = _.unionBy(this.listCompanies, result.items, 'id');
     });
   }
 

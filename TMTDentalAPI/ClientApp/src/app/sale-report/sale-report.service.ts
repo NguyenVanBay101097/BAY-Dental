@@ -42,6 +42,12 @@ export class SaleReportPartnerItem {
     lastDateOrder: string;
 }
 
+export class SaleReportTopSaleProductSearch {
+    dateFrom: string;
+    dateTo: string;
+    topBy: string;
+}
+
 
 @Injectable()
 export class SaleReportService {
@@ -50,6 +56,10 @@ export class SaleReportService {
 
     getReport(val: SaleReportSearch): Observable<SaleReportItem[]> {
         return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);
+    }
+
+    getTopSaleProduct(val: SaleReportTopSaleProductSearch): Observable<SaleReportItem[]> {
+        return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetTopSaleProduct", val);
     }
 
     getReportDetail(val: SaleReportItem): Observable<SaleReportItemDetail[]> {

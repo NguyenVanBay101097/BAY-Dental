@@ -39,6 +39,10 @@ a {
     justify-content: flex-start;
 }
 
+.modal-footer > :not(:last-child) {
+    margin-right: .25rem;
+}
+
 @media (min-width: 768px) {
     .modal.o_technical_modal .modal-dialog .modal-content .modal-header, .modal.o_technical_modal .modal-dialog .modal-content .modal-footer {
         -webkit-box-flex: 0;

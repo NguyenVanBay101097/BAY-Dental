@@ -20,8 +20,8 @@ import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
-import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
-import { AccountPaymentBasic, AccountPaymentPaged } from 'src/app/account-payments/account-payment.service';
+import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
+import { AccountPaymentBasic, AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
 import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.service';
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
@@ -65,7 +65,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService) {
+    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
+    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService) {
   }
 
   ngOnInit() {
@@ -110,11 +111,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //   this.pricelistCbx.loading = false;
     // });
 
-    // this.getAccountPayments();
+
     // this.getAccountPaymentReconcicles();
     this.loadPartners();
     this.loadUsers();
     this.loadDotKhamList();
+    this.loadPayments();
     // this.loadPricelists();
   }
 
@@ -626,6 +628,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
+        if (result.partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        }
+
         let control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -750,51 +756,59 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionSaleOrderPayment() {
-    var val = new AccountRegisterPaymentDefaultGet();
-    val.invoiceIds = [this.id];
-    this.saleOrderService.defaultOrderGet(val).subscribe(rs2 => {
-      if (this.id) {
+    if (this.id) {
+      this.registerPaymentService.saleOrdersDefaultGet([this.id]).subscribe(rs2 => {
         if (rs2.amount > 0) {
           let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
           modalRef.componentInstance.title = 'Thanh toán';
-          rs2.communication = this.saleOrder.name;
           modalRef.componentInstance.defaultVal = rs2;
           modalRef.result.then(() => {
             this.notificationService.show({
               content: 'Thanh toán thành công',
               hideAfter: 3000,
-              position: { horizontal: 'right', vertical: 'bottom' },
+              position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
               type: { style: 'success', icon: true }
             });
-            this.routeActive();
-            this.getAccountPayments();
+
+            this.loadRecord();
+            this.loadPayments();
           }, () => {
 
           });
         } else {
           this.notificationService.show({
-            content: 'Không còn hóa đơn nào để thanh toán',
+            content: 'Phiếu điều trị đã thanh toán đủ',
             hideAfter: 3000,
-            position: { horizontal: 'right', vertical: 'bottom' },
+            position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
             type: { style: 'error', icon: true }
           });
         }
-      }
-    })
+      })
+    }
   }
 
-  getAccountPayments() {
+  loadPayments() {
     if (this.id) {
-      var val = new AccountPaymentFilter;
-      val.saleOrderId = this.id;
-      this.saleOrderService.getPaymentBasicList(val).subscribe(
-        rs => {
-          this.payments = rs;
-        }
-      )
+      this.saleOrderService.getPayments(this.id).subscribe(result => {
+        this.paymentsInfo = result;
+      });
     }
+  }
+
+  deletePayment(payment) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa thanh toán';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.paymentService.actionCancel([payment.accountPaymentId]).subscribe(() => {
+        this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
+          this.loadRecord();
+          this.loadPayments();
+        });
+      });
+    });
   }
 
   getAccountPaymentReconcicles() {

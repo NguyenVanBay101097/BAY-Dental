@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponProgramGenerateCouponsDialogComponent } from '../sale-coupon-program-generate-coupons-dialog/sale-coupon-program-generate-coupons-dialog.component';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { SaleCouponListDialogComponent } from '../sale-coupon-list-dialog/sale-coupon-list-dialog.component';
 
 @Component({
   selector: 'app-sale-coupon-program-create-update',
@@ -127,7 +128,13 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
   }
 
   viewCoupons() {
-    this.router.navigate(['/coupons'], { queryParams: { program_id: this.id } });
+    if (this.id) {
+      let modalRef = this.modalService.open(SaleCouponListDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.programId = this.id;
+      modalRef.result.then(() => {
+      }, () => {
+      });
+    }
   }
 
   get discountType() {

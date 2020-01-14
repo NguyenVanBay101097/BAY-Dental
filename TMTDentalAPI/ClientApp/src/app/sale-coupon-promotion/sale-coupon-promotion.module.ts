@@ -14,9 +14,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SalePromotionProgramListComponent } from './sale-promotion-program-list/sale-promotion-program-list.component';
 import { SalePromotionProgramCreateUpdateComponent } from './sale-promotion-program-create-update/sale-promotion-program-create-update.component';
 import { SaleCouponProgramFilterActiveComponent } from './sale-coupon-program-filter-active/sale-coupon-program-filter-active.component';
+import { SaleCouponListDialogComponent } from './sale-coupon-list-dialog/sale-coupon-list-dialog.component';
 
 @NgModule({
-  declarations: [SaleCouponProgramListComponent, SaleCouponProgramCreateUpdateComponent, SaleCouponProgramGenerateCouponsDialogComponent, SaleCouponListComponent, SalePromotionProgramListComponent, SalePromotionProgramCreateUpdateComponent, SaleCouponProgramFilterActiveComponent],
+  declarations: [SaleCouponProgramListComponent, SaleCouponProgramCreateUpdateComponent, SaleCouponProgramGenerateCouponsDialogComponent, SaleCouponListComponent, SalePromotionProgramListComponent, SalePromotionProgramCreateUpdateComponent, SaleCouponProgramFilterActiveComponent, SaleCouponListDialogComponent],
   imports: [
     CommonModule,
     SaleCouponPromotionRoutingModule,
@@ -30,7 +31,8 @@ import { SaleCouponProgramFilterActiveComponent } from './sale-coupon-program-fi
     SaleCouponService
   ],
   entryComponents: [
-    SaleCouponProgramGenerateCouponsDialogComponent
+    SaleCouponProgramGenerateCouponsDialogComponent,
+    SaleCouponListDialogComponent
   ]
 })
 export class SaleCouponPromotionModule { }

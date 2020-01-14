@@ -26,8 +26,9 @@ namespace Infrastructure.EntityConfigurations
              .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.FullReconcile)
-           .WithMany(x => x.PartialReconciles)
-           .HasForeignKey(x => x.FullReconcileId);
+               .WithMany(x => x.PartialReconciles)
+               .HasForeignKey(x => x.FullReconcileId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.CreatedBy)
           .WithMany()

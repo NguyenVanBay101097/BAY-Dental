@@ -176,7 +176,7 @@ registerLocaleData(localeVi, 'vi');
     SaleSettingsModule,
     SaleCouponPromotionModule,
     PromotionProgramsModule,
-    ResConfigSettingsModule
+    ResConfigSettingsModule,
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

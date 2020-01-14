@@ -9,6 +9,7 @@
 
     <record model="res.groups" id="group_system">
       <field name="name">Settings</field>
+      <field name="category_id" ref="module_category_administration"/>
       <field name="users" eval="base.user_root"/>
     </record>
 

@@ -34,6 +34,8 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.ProgramType == val.ProgramType));
             if (val.Active.HasValue)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Active == val.Active));
+            if (val.Ids != null)
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => val.Ids.Contains(x.Id)));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenBy(s => s.RewardType));
             var items = await _mapper.ProjectTo<SaleCouponProgramBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();

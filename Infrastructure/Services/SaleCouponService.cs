@@ -123,7 +123,7 @@ namespace Infrastructure.Services
             else if (self.Program.ProgramType == "coupon_program" && !programObj._FilterOnMinimumAmount(self.Program, order).Any())
                 message.Error = $"Nên mua hàng tối thiểu  {self.Program.RuleMinimumAmount} để có thể nhận thưởng";
             else if (!self.Program.Active)
-                message.Error = $"Chương trình coupon với mã {self.Code} đang ở trạng thái dự thảo hoặc đã kết thúc.";
+                message.Error = $"Chương trình coupon với mã {self.Code} đang ở trạng thái dự thảo hoặc đã đóng.";
             else if (self.PartnerId.HasValue && self.PartnerId != order.PartnerId)
                 message.Error = $"Khách hàng không hợp lệ.";
             else if (order.AppliedCoupons.Select(x => x.Program).Contains(self.Program))

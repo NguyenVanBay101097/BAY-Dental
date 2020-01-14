@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class LayoutSidebarComponent implements OnInit {
   activeIndex = -1;
   folded = false;
-  menuItems: { name: string, icon?: string, link?: string, children?: { name: string, link?: string, params?: Object }[] }[] = [
+  menuItems: { name: string, icon?: string, link?: string, children?: { name: string, link?: string, params?: Object, groups?: string }[] }[] = [
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
     },
@@ -72,10 +72,10 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Tiểu sử bệnh', link: '/histories' },
         // { name: 'Ngân hàng', link: '/res-banks' },
         // { name: 'Tài khoản ngân hàng', link: '/res-partner-banks' },
-        { name: 'Thẻ thành viên', link: '/card-cards' },
-        { name: 'Loại thẻ thành viên', link: '/card-types' },
-        { name: 'Chương trình coupon', link: '/coupon-programs' },
-        { name: 'Chương trình khuyến mãi', link: '/promotion-programs' },
+        { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
+        { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
+        { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
       ]
     },
     {

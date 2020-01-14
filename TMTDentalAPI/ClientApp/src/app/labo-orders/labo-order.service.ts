@@ -26,6 +26,10 @@ export class LaboOrderBasic {
     amountTotal: string;
 }
 
+export class LaboOrderDefaultGet {
+    dotKhamId: string;
+}
+
 export class LaboOrderDisplay {
     id: string;
     name: string;
@@ -33,6 +37,7 @@ export class LaboOrderDisplay {
     partnerRef: string;
     partnerId: string;
     partner: PartnerSimple;
+    customer: PartnerSimple;
     dateOrder: string;
     amountTotal: number;
     datePlanned: string;

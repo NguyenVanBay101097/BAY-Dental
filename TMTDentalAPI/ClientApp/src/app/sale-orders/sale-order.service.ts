@@ -127,4 +127,8 @@ export class SaleOrderService {
     getAccountPaymentReconcicles(id): Observable<PaymentInfoContent[]> {
         return this.http.get<PaymentInfoContent[]>(this.baseApi + `api/AccountInvoices/${id}/GetSaleOrderPaymentInfoJson`);
     }
+
+    getPayments(id): Observable<PaymentInfoContent[]> {
+        return this.http.get<PaymentInfoContent[]>(this.baseApi + this.apiUrl + `/${id}/GetPayments`);
+    }
 }

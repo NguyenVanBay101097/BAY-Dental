@@ -51,4 +51,8 @@ export class SaleCouponService {
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
+
+    exportFile(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ExportFile', val, { responseType: 'blob' });
+    }
 }

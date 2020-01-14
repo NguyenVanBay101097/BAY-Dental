@@ -38,5 +38,7 @@ namespace Infrastructure.Services
         IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self);
         Task<IEnumerable<SaleCouponProgram>> _GetApplicablePrograms(SaleOrder self);
         Task RecomputeCouponLines(IEnumerable<Guid> ids);
+        Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id);
+        Task RecomputeResidual(IEnumerable<Guid> ids);
     }
 }
