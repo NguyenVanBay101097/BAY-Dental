@@ -162,5 +162,7 @@ namespace ApplicationCore.Entities
         /// Ảnh chân dung
         /// </summary>
         public string Avatar { get; set; }
+
+        public string ZaloId { get; set; }
     }
 }

@@ -25,6 +25,8 @@ using MyERP.Utilities;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
+using ZaloDotNetSDK;
+using ZaloDotNetSDK.oa;
 
 namespace Infrastructure.Services
 {
@@ -607,6 +609,24 @@ namespace Infrastructure.Services
             //        File.Delete(returnPath);
             //        throw ex;
             //    }
+        }
+
+        public async Task UpdateCustomersZaloId()
+        {
+            var zaloClient = new ZaloClient("RxC96qeACInljWWLIGqx8cco21fIPdylTQiu72baILzTdW5cE5zUC1Y22a5uNNeo5RapMJPLR2flaISS4YzzM4RSDmag6dPnQTSTGXzjAtPCXHm60tbaPY-ZLoPB66Tb5FS6A5TBLaSLz0KsHIemRpBLGI540MnpOzaF4HK2F4anqMKkTsa7NLMoRMagSZKD2x0DO5TVE3WEk0fsAb5QMd6I3dPJKbP0Vh86U3bOFp4PwrXVUHeGRGJWVpjm3GbW0TLX6LKV0czvqreT7mjlVHMB00595Zih");
+            var partners = await SearchQuery(x => x.Customer && !string.IsNullOrEmpty(x.Phone)).ToListAsync();
+            foreach(var partner in partners)
+            {
+                var phone = partner.Phone;
+                if (phone.StartsWith("0"))
+                    phone = "84" + phone.Substring(1);
+                var profile = zaloClient.getProfileOfFollower(phone).ToObject<GetProfileOfFollowerResponse>();
+                if (profile.error != 0)
+                    continue;
+                partner.ZaloId = profile.data.user_id.ToString();
+            }
+
+            await UpdateAsync(partners);
         }
 
         public async Task ImportExcel2(IFormFile file, Ex_ImportExcelDirect dir)

@@ -45,10 +45,10 @@ export class PartnerDisplay extends PartnerBasic {
     source: string;
     note: string;
     email: string;
-
     cityName: string;
     districtName: string;
     wardName: string;
+    zaloId: string;
 }
 
 export class PartnerCategorySimple {

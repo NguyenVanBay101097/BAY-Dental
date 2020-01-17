@@ -340,6 +340,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateCustomersZaloId()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerService.UpdateCustomersZaloId();
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
 
         [HttpPost("[action]")]
         public async Task<IEnumerable<PartnerDisplay>> GetPartnerDisplaysByIds(IEnumerable<Guid> ids)

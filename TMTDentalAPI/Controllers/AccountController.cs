@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
+using Hangfire;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -132,6 +134,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public IActionResult AddJob()
+        {
+            var random = StringUtils.RandomString(6);
+            var host = _tenant.Hostname;
+            //RecurringJob.AddOrUpdate(() => Console.WriteLine(random), "0 0 */1 * *");
+            RecurringJob.AddOrUpdate($"{host}-birthday", () => _userService.TestJobFunc(random, host), Cron.Minutely);
+            //BackgroundJob.Enqueue(() => Console.WriteLine("Fire-and-forget!"));
+            return Ok(true);
+        }
 
         [AllowAnonymous]
         [HttpPost("ForgotPassword")]

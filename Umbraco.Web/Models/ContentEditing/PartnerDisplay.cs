@@ -116,5 +116,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Fax { get; set; }
 
         public Guid? CompanyId { get; set; }
+
+        public string ZaloId { get; set; }
     }
 }

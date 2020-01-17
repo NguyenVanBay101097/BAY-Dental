@@ -55,7 +55,7 @@ export class PartnerListComponent implements OnInit {
   closeResult: string;
 
   constructor(
-    private service: PartnerService, private windowService: WindowService,
+    private partnerService: PartnerService, private windowService: WindowService,
     private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal,
     private notificationService: NotificationService) { }
 
@@ -94,7 +94,7 @@ export class PartnerListComponent implements OnInit {
     pnPaged.searchNamePhoneRef = this.searchNamePhoneRef || '';
     pnPaged.customer = this.queryCustomer;
     pnPaged.supplier = this.querySupplier;
-    this.service.getPartnerPaged(pnPaged).pipe(
+    this.partnerService.getPartnerPaged(pnPaged).pipe(
       map(rs1 => (<GridDataResult>{
         data: rs1.items,
         total: rs1.totalItems
@@ -131,6 +131,18 @@ export class PartnerListComponent implements OnInit {
     this.getPartnersList();
   }
 
+  updateCustomersZaloId() {
+    this.partnerService.updateCustomersZaloId().subscribe(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+    });
+  }
+
   // getQuery() {
   //   this.param = new HttpParams()
   //     .set('employee', this.formFilter.get('employee').value == true ? 'true' : 'false')
@@ -144,7 +156,7 @@ export class PartnerListComponent implements OnInit {
   //   if (this.formFilter.get('searchNameRef').value == null) {
   //     this.param = this.param.delete('searchNameRef');
   //   };
-  //   this.service.getPartnerList(this.param).subscribe(
+  //   this.partnerService.getPartnerList(this.param).subscribe(
   //     rs => {
   //       this.gridView = {
   //         data: orderBy((rs['items'] as PartnerDisplay[]), this.sort).slice(this.skip, this.skip + this.pageSize),
@@ -238,7 +250,7 @@ export class PartnerListComponent implements OnInit {
       rs => {
         if (!(rs instanceof DialogCloseResult)) {
           if (rs['value']) {
-            this.service.deleteCustomer(id).subscribe(
+            this.partnerService.deleteCustomer(id).subscribe(
               () => { this.getPartnersList(); }
             );
           }
@@ -326,7 +338,7 @@ export class PartnerListComponent implements OnInit {
     paged.searchNamePhoneRef = this.searchNamePhoneRef || '';
     paged.customer = this.queryCustomer;
     paged.supplier = this.querySupplier;
-    this.service.excelServerExport(paged).subscribe(
+    this.partnerService.excelServerExport(paged).subscribe(
       rs => {
         let filename = 'ExportedExcelFile';
         let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
@@ -346,7 +358,7 @@ export class PartnerListComponent implements OnInit {
   }
 
   registerPayment(id: string) {
-    this.service.getDefaultRegisterPayment(id).subscribe(result => {
+    this.partnerService.getDefaultRegisterPayment(id).subscribe(result => {
       let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thanh toán';
       modalRef.componentInstance.defaultVal = result;

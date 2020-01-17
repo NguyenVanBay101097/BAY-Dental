@@ -104,7 +104,6 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   editAppointment(appointment: AppointmentBasic) {
-    debugger;
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
@@ -118,7 +117,6 @@ export class AppointmentKanbanComponent implements OnInit {
           }
         }
       }, () => {
-        debugger;
       });
     });
   }

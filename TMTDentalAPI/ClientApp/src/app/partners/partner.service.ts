@@ -139,6 +139,10 @@ export class PartnerService {
         return this.http.post<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationWard', val);
     }
 
+    updateCustomersZaloId() {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateCustomersZaloId', {});
+    }
+
     deleteCustomer(id) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }

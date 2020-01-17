@@ -1,12 +1,14 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using Dapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -111,6 +113,23 @@ namespace Infrastructure.Services
             var result = await _dbContext.ResGroupsUsersRels.FromSql("SELECT * FROM ResGroupsUsersRels " +
                                         "WHERE UserId = @p0 and GroupId in (SELECT ResId FROM IRModelDatas WHERE Module = @p1 and Name = @p2)", uid, module, name).ToListAsync();
             return result.Count > 0;
+        }
+
+        public void TestJobFunc(string s, string tenant_id)
+        {
+            using (var conn = new SqlConnection($"Server=.\\SQLEXPRESS;User Id=sa;Password=123123;Initial Catalog=TMTDentalCatalogDb__{tenant_id};"))
+            {
+                try
+                {
+                    conn.Open();
+                    var orderIds = conn.Query<int>(
+                        @"SELECT COUNT(*) from Partners");
+                }
+                catch (SqlException exception)
+                {
+                }
+            }
+                Console.WriteLine(s);
         }
     }
 }

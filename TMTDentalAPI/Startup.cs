@@ -8,6 +8,8 @@ using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Middlewares;
 using AutoMapper;
+using Hangfire;
+using Hangfire.SqlServer;
 using IdentityServer4.Services;
 using Infrastructure.Caches;
 using Infrastructure.Data;
@@ -34,6 +36,7 @@ using TMTDentalAPI.Hubs;
 using TMTDentalAPI.Middlewares;
 using TMTDentalAPI.Services;
 using Umbraco.Web.Mapping;
+using TMTDentalAPI.JobFilters;
 
 namespace TMTDentalAPI
 {
@@ -64,6 +67,8 @@ namespace TMTDentalAPI
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
 
             services.Configure<SendGridConfig>(Configuration.GetSection("SendGrid"));
+
+            services.Configure<ZaloAuthConfig>(Configuration.GetSection("ZaloAuthConfig"));
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -197,6 +202,7 @@ namespace TMTDentalAPI
             services.AddScoped<IResConfigSettingsService, ResConfigSettingsService>();
             services.AddScoped<IIrModuleCategoryService, IrModuleCategoryService>();
             services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
+            services.AddScoped<IZaloOAConfigService, ZaloOAConfigService>();
 
             services.AddMemoryCache();
 
@@ -268,6 +274,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PromotionRuleProfile());
                 mc.AddProfile(new ResConfigSettingsProfile());
                 mc.AddProfile(new AccountMoveLineProfile());
+                mc.AddProfile(new ZaloOAConfigProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -287,6 +294,30 @@ namespace TMTDentalAPI
             });
             services.AddCors();
             services.AddMemoryCache();
+
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                }));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer(option => {
+                option.FilterProvider = new ServerFilterProvider();
+            });
+
+            GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
+            GlobalJobFilters.Filters.Add(new ServerTenantFilter());
+            GlobalJobFilters.Filters.Add(new ClientTenantFilter());
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 

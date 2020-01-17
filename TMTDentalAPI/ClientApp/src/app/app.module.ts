@@ -85,6 +85,7 @@ import { SaleCouponPromotionModule } from './sale-coupon-promotion/sale-coupon-p
 import { PromotionProgramsModule } from './promotion-programs/promotion-programs.module';
 import { ResConfigSettingsModule } from './res-config-settings/res-config-settings.module';
 import { JournalReportsModule } from './journal-reports/journal-reports.module';
+import { ZaloOaConfigModule } from './zalo-oa-config/zalo-oa-config.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -177,6 +178,7 @@ registerLocaleData(localeVi, 'vi');
     SaleCouponPromotionModule,
     PromotionProgramsModule,
     ResConfigSettingsModule,
+    ZaloOaConfigModule,
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

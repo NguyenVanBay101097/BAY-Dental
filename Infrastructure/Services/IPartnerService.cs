@@ -34,5 +34,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationDistrict(PartnerReportLocationCity val);
         Task<IEnumerable<PartnerReportLocationWard>> ReportLocationWard(PartnerReportLocationDistrict val);
         IQueryable<Partner> GetQueryPaged(PartnerPaged val);
+        Task UpdateCustomersZaloId();
     }
 }

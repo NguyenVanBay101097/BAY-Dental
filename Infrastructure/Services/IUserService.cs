@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task<ApplicationUser> GetCurrentUser();
         Task<List<string>> GetGroups();
         Task<bool> HasGroup(string group_ext_id);
+        void TestJobFunc(string s, string tenant_id);
     }
 }
