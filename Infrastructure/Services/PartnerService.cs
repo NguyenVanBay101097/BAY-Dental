@@ -17,6 +17,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Dapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -95,11 +96,6 @@ namespace Infrastructure.Services
             };
         }
 
-
-        public async Task ComputeProductPricelist(Guid id)
-        {
-
-        }
         public async Task<Partner> GetPartnerForDisplayAsync(Guid id)
         {
             return await SearchQuery(x => x.Id == id)
@@ -613,14 +609,23 @@ namespace Infrastructure.Services
 
         public async Task UpdateCustomersZaloId()
         {
-            var zaloClient = new ZaloClient("RxC96qeACInljWWLIGqx8cco21fIPdylTQiu72baILzTdW5cE5zUC1Y22a5uNNeo5RapMJPLR2flaISS4YzzM4RSDmag6dPnQTSTGXzjAtPCXHm60tbaPY-ZLoPB66Tb5FS6A5TBLaSLz0KsHIemRpBLGI540MnpOzaF4HK2F4anqMKkTsa7NLMoRMagSZKD2x0DO5TVE3WEk0fsAb5QMd6I3dPJKbP0Vh86U3bOFp4PwrXVUHeGRGJWVpjm3GbW0TLX6LKV0czvqreT7mjlVHMB00595Zih");
+            var zaloConfigObj = GetService<IZaloOAConfigService>();
+            var config = await zaloConfigObj.SearchQuery().FirstOrDefaultAsync();
+            if (config == null)
+                throw new Exception("Bạn cần kết nối 1 tài khoản zalo official account");
+
+            var zaloClient = new ZaloClient(config.AccessToken);
             var partners = await SearchQuery(x => x.Customer && !string.IsNullOrEmpty(x.Phone)).ToListAsync();
-            foreach(var partner in partners)
+            var phones = partners.Select(x => x.Phone).Distinct().ToList();
+            var checkPhoneResult = await Task.WhenAll(phones.Select(x => _CheckZaloPhoneProfile(zaloClient, x)));
+            var checkPhoneDict = checkPhoneResult.ToDictionary(x => x.Phone, x => x.Profile);
+
+            foreach (var partner in partners)
             {
                 var phone = partner.Phone;
                 if (phone.StartsWith("0"))
                     phone = "84" + phone.Substring(1);
-                var profile = zaloClient.getProfileOfFollower(phone).ToObject<GetProfileOfFollowerResponse>();
+                var profile = checkPhoneDict[phone];
                 if (profile.error != 0)
                     continue;
                 partner.ZaloId = profile.data.user_id.ToString();
@@ -628,6 +633,19 @@ namespace Infrastructure.Services
 
             await UpdateAsync(partners);
         }
+
+        public Task<CheckZaloPhoneProfile> _CheckZaloPhoneProfile(ZaloClient zaloClient, string phone)
+        {
+            return Task.Run(() =>
+            {
+                if (phone.StartsWith("0"))
+                    phone = "84" + phone.Substring(1);
+                var profile = zaloClient.getProfileOfFollower(phone).ToObject<GetProfileOfFollowerResponse>();
+                return new CheckZaloPhoneProfile { Phone = phone, Profile = profile };
+            });
+        }
+
+
 
         public async Task ImportExcel2(IFormFile file, Ex_ImportExcelDirect dir)
         {
@@ -1028,5 +1046,11 @@ namespace Infrastructure.Services
     {
         public bool IsCustomer { get; set; }
         public bool IsCreateNew { get; set; }
+    }
+
+    public class CheckZaloPhoneProfile
+    {
+        public string Phone { get; set; }
+        public GetProfileOfFollowerResponse Profile { get; set; }
     }
 }

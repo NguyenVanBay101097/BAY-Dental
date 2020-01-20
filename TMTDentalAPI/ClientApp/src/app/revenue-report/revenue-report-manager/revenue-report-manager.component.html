@@ -1,0 +1,88 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê doanh thu
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownAppointmentState"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Theo {{getTitle()}}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownAppointmentState">
+                        <button class="dropdown-item" *ngFor="let item of groups" type="button"
+                            (click)="setGroupBy(item.value)">
+                            <span>{{item.text}}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="btn-group o_search_options">
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+            </div>
+            <nav aria-label="View switcher" class="btn-group o_cp_switch_buttons" role="toolbar">
+                <button accesskey="l" (click)="setViewType('list')" [class.active]="viewType == 'list'"
+                    class="btn btn-sm btn-secondary o_cp_switch_list" title="Danh sách" type="button">
+                    <i class="fas fa-list-ul"></i>
+                </button>
+                <button (click)="setViewType('graph')" [class.active]="viewType == 'graph'" aria-label="View graph"
+                    class="btn btn-sm btn-secondary o_cp_switch_graph" title="Biểu đồ" type="button">
+                    <i class="fas fa-chart-bar"></i>
+                </button>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="px-3 py-2">
+        <div class="text-muted font-weight-bold">Tổng doanh thu</div>
+        <h4 class="text-success">{{reportResult.balance | number}}</h4>
+    </div>
+    <div>
+        <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true"
+            [loading]="loading" (pageChange)="pageChange($event)">
+            <kendo-grid-column field="name" [title]="getTitle()">
+            </kendo-grid-column>
+            <kendo-grid-column field="priceTotal" class="text-right" title="Tổng doanh thu"
+                footerClass="text-right font-weight-bold">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.balance | number}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+
+        <kendo-chart *ngIf="viewType == 'graph'">
+            <kendo-chart-tooltip>
+                <ng-template kendoChartSeriesTooltipTemplate let-value="value">
+                    {{value | number}}
+                </ng-template>
+            </kendo-chart-tooltip>
+            <kendo-chart-series>
+                <kendo-chart-series-item type="column" [data]="reportResult.details" field="balance"
+                    categoryField="name" [spacing]="0">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.balance | number}}
+                    </ng-template>
+                </kendo-chart-series-item>
+            </kendo-chart-series>
+        </kendo-chart>
+    </div>
+</div>

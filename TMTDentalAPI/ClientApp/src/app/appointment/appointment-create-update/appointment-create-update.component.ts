@@ -16,6 +16,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { Router } from '@angular/router';
+import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 class DatePickerLimit {
   min: Date;
@@ -150,11 +151,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     partnerPaged.employee = false;
     partnerPaged.customer = true;
     partnerPaged.supplier = false;
-    partnerPaged.limit = this.limit;
-    partnerPaged.offset = this.skip;
+    partnerPaged.limit = 10;
+    partnerPaged.offset = 0;
     this.partnerService.autocompletePartner(partnerPaged).subscribe(
       rs => {
-        this.customerSimpleFilter = rs as PartnerSimple[];
+        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
       }
     )
   }
@@ -186,10 +187,35 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   createSaleOrder() {
     if (this.appointId) {
-      var partner = this.formCreate.get('partner').value;
-      if (partner) {
-        this.activeModal.dismiss();
-        this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
+      if (this.formCreate.dirty) {
+        if (!this.formCreate.valid) {
+          return false;
+        }
+
+        var appoint = this.formCreate.value;
+        appoint.partnerId = appoint.partner ? appoint.partner.id : null;
+        appoint.userId = appoint.user ? appoint.user.id : null;
+        appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
+        appoint.date = this.intlService.formatDate(appoint.dateObj, 'g', 'en-US');
+
+        this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
+          rs => {
+            var partner = this.formCreate.get('partner').value;
+            if (partner) {
+              this.activeModal.dismiss();
+              this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
+            }
+          },
+          er => {
+            console.log(er);
+          },
+        )
+      } else {
+        var partner = this.formCreate.get('partner').value;
+        if (partner) {
+          this.activeModal.dismiss();
+          this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
+        }
       }
     }
   }
@@ -320,6 +346,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     )
   }
 
+  get partner() {
+    return this.formCreate.get('partner').value;
+  }
+
+  updateCustomerModal() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa khách hàng';
+    modalRef.componentInstance.id = this.partner.id;
+
+    modalRef.result.then(() => {
+    }, () => {
+    });
+  }
+
+
   closeModal(rs) {
     if (this.isChange) {
       if (rs) {
@@ -405,9 +446,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
             let date = new Date(rs.date);
             this.formCreate.get('dateObj').patchValue(date);
           }
-          // if (rs.user) {
-          //   this.employeeSimpleFilter = _.unionBy(this.employeeSimpleFilter, [rs.user], 'id');
-          // }
+
+          if (rs.partner) {
+            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+          }
+
+          if (rs.doctor) {
+            this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [rs.doctor], 'id');
+          }
         }
       )
     }

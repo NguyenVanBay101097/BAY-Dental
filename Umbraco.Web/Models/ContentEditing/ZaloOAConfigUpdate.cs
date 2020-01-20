@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class ZaloOAConfig: BaseEntity
+    public class ZaloOAConfigUpdate
     {
-        public string Name { get; set; }
-        public string AccessToken { get; set; }
-        public string Avatar { get; set; }
-
         /// <summary>
         /// Tự động gửi tin nhắn chúc mừng sinh nhật
         /// </summary>

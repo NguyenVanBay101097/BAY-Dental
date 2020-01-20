@@ -36,6 +36,8 @@ namespace TMTDentalAPI.Controllers
         private readonly IMailSender _mailSender;
         private readonly IAsyncRepository<UserRefreshToken> _userRefreshTokenRepository;
         private readonly IUserService _userService;
+        private readonly IPartnerService _partnerService;
+        private readonly BirthdayMessageJobService _birthdayMessageJobService;
 
         private readonly CatalogDbContext _context;
 
@@ -43,7 +45,7 @@ namespace TMTDentalAPI.Controllers
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
             IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository,
-            IUserService userService)
+            IUserService userService, IPartnerService partnerService, BirthdayMessageJobService birthdayMessageJobService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -52,6 +54,8 @@ namespace TMTDentalAPI.Controllers
             _mailSender = mailSender;
             _userRefreshTokenRepository = userRefreshTokenRepository;
             _userService = userService;
+            _partnerService = partnerService;
+            _birthdayMessageJobService = birthdayMessageJobService;
         }
 
         [AllowAnonymous]
@@ -138,11 +142,8 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public IActionResult AddJob()
         {
-            var random = StringUtils.RandomString(6);
             var host = _tenant.Hostname;
-            //RecurringJob.AddOrUpdate(() => Console.WriteLine(random), "0 0 */1 * *");
-            RecurringJob.AddOrUpdate($"{host}-birthday", () => _userService.TestJobFunc(random, host), Cron.Minutely);
-            //BackgroundJob.Enqueue(() => Console.WriteLine("Fire-and-forget!"));
+            RecurringJob.AddOrUpdate($"{host}-birthday", () => _birthdayMessageJobService.SendMessage(host), Cron.Minutely);
             return Ok(true);
         }
 

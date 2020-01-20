@@ -6,8 +6,8 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, nhà cung cấp, SĐT"
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, labo, khách hàng" type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -34,8 +34,11 @@
         </div>
         <div class="o_cp_right">
             <div class="o_search_options">
-                <app-tai-date-range-filter-dropdown title="Ngày" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
+                <app-tai-date-range-filter-dropdown title="Ngày gửi" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
                     (searchChange)="onDateSearchChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="datePlannedFrom"
+                    [dateTo]="datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
                 <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
@@ -49,26 +52,33 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-        <kendo-grid-column field="name" title="Số phiếu">
+        <kendo-grid-column field="name" title="Số phiếu" width="80">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Nhà cung cấp">
+        <kendo-grid-column field="partnerName" title="Labo" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="dateOrder" title="Ngày gửi">
+        <kendo-grid-column field="customerName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.dateOrder | date : 'short'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
+        <kendo-grid-column field="datePlanned" title="Ngày nhận" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateOrder | date : 'short'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountTotal | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="Trạng thái">
+        <kendo-grid-column field="state" title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id">
+        <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

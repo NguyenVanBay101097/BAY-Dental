@@ -4,19 +4,20 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class RealRevenueReportItem
+    public class RealRevenueReportResult
     {
-        public string Name { get; set; }
-        public DateTime? Date { get; set; }
         public decimal? Debit { get; set; }
         public decimal? Credit { get; set; }
         public decimal? Balance { get; set; }
 
-        public int? Year { get; set; }
-        public int? WeekOfYear { get; set; }
-        public int? QuarterOfYear { get; set; }
+        public IEnumerable<RealRevenueReportItem> Items { get; set; } = new List<RealRevenueReportItem>();
+    }
 
-        public string GroupBy { get; set; }
-        public Guid? PartnerId { get; set; }
+    public class RealRevenueReportItem
+    {
+        public string Name { get; set; }
+        public decimal? Debit { get; set; }
+        public decimal? Credit { get; set; }
+        public decimal? Balance { get; set; }
     }
 }

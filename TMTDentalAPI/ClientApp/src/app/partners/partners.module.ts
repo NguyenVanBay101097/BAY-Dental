@@ -48,7 +48,8 @@ import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-se
     DotKhamCreateUpdateComponent,
     PartnerImportComponent,
     PartnerCustomerCuDialogComponent,
-    PartnerSearchDialogComponent
+    PartnerSearchDialogComponent,
+    PartnerSupplierCuDialogComponent
   ],
   providers: [
     PartnerService

@@ -1,5 +1,5 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel">
+    <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
                 <a routerLink="/labo-orders">Phiếu Labo</a>
@@ -9,8 +9,18 @@
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
-        <div class="o_cp_right mt-0">
-            <div class="dropdown">
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <!-- <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                     Thao tác
@@ -18,7 +28,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a *ngIf="id" class="dropdown-item" (click)="printLaboOrder()">In phiếu</a>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -35,14 +45,10 @@
                         (click)="buttonConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="onSave()">
-                        Lưu</button>
                     <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy phiếu
                     </button>
-                    <button type="button" class="btn btn-light btn-sm" (click)="createNew()" *ngIf="id">
-                        Thêm mới</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <!-- <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
@@ -80,16 +86,27 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Nhà cung cấp
+                                        Labo
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="laboOrder.state != 'draft'"
-                                        [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx
-                                        formControlName="partner" [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <span
-                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}</span>
+                                    <div class="d-flex">
+                                        <kendo-combobox [class.d-none]="laboOrder.state != 'draft'"
+                                            [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                            #partnerCbx formControlName="partner" [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo"
+                                            class="pl-2 py-1" type="button" *ngIf="partner"
+                                            (click)="updateSupplierModal()">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        <a [class.d-none]="laboOrder.state != 'draft'" type="button" title="Thêm labo"
+                                            class="pl-2 py-1" (click)="quickCreateSupplier()">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    <a class="text-primary" (click)="updateSupplierModal()"
+                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}</a>
                                 </td>
                             </tr>
                             <tr>
@@ -174,7 +191,7 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Loại labo</th>
+                                            <th>Loại phục hình</th>
                                             <th>Răng</th>
                                             <th class="text-right">Số lượng</th>
                                             <th class="text-right">Đơn giá</th>

@@ -6,6 +6,11 @@ export class ZaloOAConfigSave {
     accessToken: string;
 }
 
+export class ZaloOAConfigUpdate {
+    autoSendBirthdayMessage: boolean;
+    birthdayMessageContent: string;
+}
+
 export class ZaloOAConfigBasic {
     id: string;
     name: string;
@@ -23,6 +28,10 @@ export class ZaloOAConfigService {
 
     create(val: ZaloOAConfigSave): Observable<ZaloOAConfigBasic> {
         return this.http.post<ZaloOAConfigBasic>(this.baseApi + this.apiUrl, val);
+    }
+
+    update(id: string, val: ZaloOAConfigUpdate) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
     remove() {

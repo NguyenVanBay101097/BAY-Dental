@@ -181,7 +181,7 @@ namespace Infrastructure.Services
         public async Task CheckExisted(CardCard self)
         {
             //Kiểm tra xem đã có thẻ nào đã được cấp cho khách hàng hay chưa? nếu có thì báo lỗi
-            var states = new string[] { "draft", "confirmed", "canceled" };
+            var states = new string[] { "draft", "confirmed", "cancelled" };
             var existed = await SearchQuery(x => x.Id != self.Id && !states.Contains(x.State) && x.PartnerId == self.PartnerId).FirstOrDefaultAsync();
             if (existed != null)
                 throw new Exception($"Thẻ thành viên với số {existed.Name} đã được cấp cho khách hàng này");
@@ -190,9 +190,10 @@ namespace Infrastructure.Services
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var states = new string[] { "draft", "cancelled" };
             foreach(var card in self)
             {
-                if (card.State != "draft" && card.State != "cancel")
+                if (!states.Contains(card.State))
                     throw new Exception("Chỉ có thể xóa thẻ thành viên ở trạng thái nháp hoặc hủy bỏ");
             }
             await DeleteAsync(self);

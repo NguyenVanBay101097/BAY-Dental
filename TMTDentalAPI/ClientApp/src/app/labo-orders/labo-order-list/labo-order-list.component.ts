@@ -29,6 +29,8 @@ export class LaboOrderListComponent implements OnInit {
 
   dateOrderFrom: Date;
   dateOrderTo: Date;
+  datePlannedFrom: Date;
+  datePlannedTo: Date;
   stateFilter: string;
 
   stateFilterOptions: TmtOptionSelect[] = [
@@ -56,6 +58,12 @@ export class LaboOrderListComponent implements OnInit {
   onDateSearchChange(data) {
     this.dateOrderFrom = data.dateFrom;
     this.dateOrderTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
+  onDatePlannedSearchChange(data) {
+    this.datePlannedFrom = data.dateFrom;
+    this.datePlannedTo = data.dateTo;
     this.loadDataFromApi();
   }
 
@@ -106,6 +114,14 @@ export class LaboOrderListComponent implements OnInit {
     if (this.dateOrderTo) {
       val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
     }
+
+    if (this.datePlannedFrom) {
+      val.datePlannedFrom = this.intlService.formatDate(this.datePlannedFrom, 'd', 'en-US');
+    }
+    if (this.datePlannedTo) {
+      val.datePlannedTo = this.intlService.formatDate(this.datePlannedTo, 'd', 'en-US');
+    }
+
     if (this.stateFilter) {
       val.state = this.stateFilter;
     }
@@ -140,7 +156,7 @@ export class LaboOrderListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
+    modalRef.componentInstance.title = 'Xóa phiếu labo';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {

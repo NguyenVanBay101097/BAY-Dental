@@ -19,7 +19,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Histories, x => x.MapFrom(s => s.PartnerHistoryRels));
             CreateMap<PartnerDisplay, Partner>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Employees, x => x.Ignore());
+                .ForMember(x => x.Employees, x => x.Ignore())
+                .ForMember(x => x.ZaloId, x => x.Ignore());
 
             CreateMap<Partner, PartnerSimple>();
             CreateMap<Partner, PartnerInfoViewModel>();

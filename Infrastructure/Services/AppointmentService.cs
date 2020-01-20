@@ -140,12 +140,18 @@ namespace Infrastructure.Services
             if (val.DotKhamId.HasValue)
             {
                 var dkObj = GetService<IDotKhamService>();
-                var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner).FirstOrDefaultAsync();
+                var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner)
+                    .Include(x => x.Doctor).FirstOrDefaultAsync();
                 res.DotKhamId = dk.Id;
                 if (dk.PartnerId.HasValue)
                     res.PartnerId = dk.PartnerId.Value;
                 if (dk.Partner != null)
                     res.Partner = _mapper.Map<PartnerSimple>(dk.Partner);
+                if (dk.Doctor != null)
+                {
+                    res.DoctorId = dk.Doctor.Id;
+                    res.Doctor = _mapper.Map<EmployeeSimple>(dk.Doctor);
+                }
             }
 
             return res;

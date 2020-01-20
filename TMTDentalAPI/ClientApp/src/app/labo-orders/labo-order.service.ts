@@ -13,6 +13,8 @@ export class LaboOrderPaged {
     partnerId: string;
     dateOrderFrom: string;
     dateOrderTo: string;
+    datePlannedFrom: string;
+    datePlannedTo: string;
     state: string;
 }
 

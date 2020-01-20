@@ -203,6 +203,8 @@ namespace TMTDentalAPI
             services.AddScoped<IIrModuleCategoryService, IrModuleCategoryService>();
             services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
             services.AddScoped<IZaloOAConfigService, ZaloOAConfigService>();
+            services.AddScoped(typeof(BirthdayMessageJobService));
+            services.AddScoped<IRevenueReportService, RevenueReportService>();
 
             services.AddMemoryCache();
 

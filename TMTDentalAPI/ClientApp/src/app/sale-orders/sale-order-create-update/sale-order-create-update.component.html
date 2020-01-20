@@ -1,5 +1,5 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel">
+    <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
                 <a routerLink="/sale-orders">Phiếu điều trị</a>
@@ -9,7 +9,18 @@
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
-        <div class="o_cp_right mt-0">
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['done', 'cancel'].indexOf(saleOrder.state) == -1" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
             <div class="dropdown" *ngIf="id">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false" type="button" id="dropdownMenuButton">
@@ -37,9 +48,6 @@
                         (click)="actionConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="['done', 'cancel'].indexOf(saleOrder.state) == -1"
-                        class="btn btn-secondary btn-sm" (click)="onSave()">
-                        Lưu</button>
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
                         (click)="actionInvoiceCreateV2()">
                         Cập nhật công nợ
@@ -56,8 +64,6 @@
                         (click)="actionDone()">
                         Khóa
                     </button>
-                    <button type="button" class="btn btn-sm btn-light" *ngIf="id" (click)="createNew()">Thêm
-                        mới</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"

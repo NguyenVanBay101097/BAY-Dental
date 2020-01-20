@@ -105,6 +105,11 @@ export class SaleOrderLineDialogComponent implements OnInit {
     } else {
       this.teethSelected.push(tooth);
     }
+
+    //update quantity combobox
+    if (this.teethSelected.length > 0) {
+      this.saleLineForm.get('productUOMQty').setValue(this.teethSelected.length);
+    }
   }
 
   getSelectedIndex(tooth: ToothDisplay) {

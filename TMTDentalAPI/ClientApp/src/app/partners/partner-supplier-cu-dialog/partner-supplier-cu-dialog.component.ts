@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { PartnerCategorySimple } from '../partner-simple';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from '../partner.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { HistorySimple } from 'src/app/history/history';
 
 @Component({
   selector: 'app-partner-supplier-cu-dialog',
@@ -17,6 +19,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
+  title: string;
 
   dataSourceCities: Array<{ code: string, name: string }>;
   dataSourceDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;
@@ -26,53 +29,48 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
   dataResultDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;
   dataResultWards: Array<{ code: string, name: string, districtCode: string, districtName: string, cityCode: string, cityName: string }>;
 
-  categoriesList: PartnerCategorySimple[] = [];
-
-  dayList: number[] = [];
-  monthList: number[] = [];
-  yearList: number[] = [];
-
   constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService, private windowRef: WindowRef) { }
+    private partnerService: PartnerService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
-      gender: 'male',
-      ref: null,
-      medicalHistory: null,
-      birthDay: null,
-      birthMonth: null,
-      birthYear: null,
       street: null,
       city: null,
       district: null,
       ward: null,
       email: null,
       phone: null,
-      categories: null,
       comment: null,
-      jobTitle: null,
-      customer: false,
-      supplier: true
+      supplier: true,
     });
 
-    if (this.id) {
-      this.partnerService.getPartner(this.id).subscribe(result => {
-        this.formGroup.patchValue(result);
-        if (result.city && result.city.code) {
-          this.handleCityChange(result.city);
-        }
-        if (result.district && result.district.code) {
-          this.handleDistrictChange(result.district);
-        }
-        if (result.ward && result.ward.code) {
-          this.handleWardChange(result.ward);
-        }
-      });
-    }
+    setTimeout(() => {
+      if (this.id) {
+        this.partnerService.getPartner(this.id).subscribe(result => {
+          this.formGroup.patchValue(result);
+          if (result.city && result.city.code) {
+            this.handleCityChange(result.city);
+          }
+          if (result.district && result.district.code) {
+            this.handleDistrictChange(result.district);
+          }
+          if (result.ward && result.ward.code) {
+            this.handleWardChange(result.ward);
+          }
 
-    this.loadSourceCities();
+          if (result.histories.length) {
+            debugger;
+            result.histories.forEach(history => {
+              var histories = this.formGroup.get('histories') as FormArray;
+              histories.push(this.fb.group(history));
+            });
+          }
+        });
+      }
+
+      this.loadSourceCities();
+    });
   }
 
   loadSourceCities() {
@@ -156,46 +154,26 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
     this.formGroup.get('ward').setValue(value);
   }
 
-  loadCategoriesList() {
-    this.searchCategories().subscribe(result => {
-      this.categoriesList = result;
-    });
-  }
-
-  searchCategories(q?: string) {
-    var val = new PartnerCategoryPaged();
-    val.search = q;
-    return this.partnerCategoryService.autocomplete(val);
-  }
-
-  birthInit(begin: number, end: number) {
-    var list = new Array();
-    for (let i = begin; i <= end; i++) {
-      list.push(i);
-    }
-    return list;
-  }
-
   onSave() {
     if (!this.formGroup.valid) {
-      return;
+      return false;
     }
 
     if (this.id) {
       var val = this.formGroup.value;
       this.partnerService.update(this.id, val).subscribe(() => {
-        this.windowRef.close(true);
+        this.activeModal.close(true);
       });
     } else {
       var val = this.formGroup.value;
       this.partnerService.create(val).subscribe(result => {
-        this.windowRef.close(result);
+        this.activeModal.close(result);
       });
     }
   }
 
   onCancel() {
-    this.windowRef.close();
+    this.activeModal.dismiss();
   }
 }
 

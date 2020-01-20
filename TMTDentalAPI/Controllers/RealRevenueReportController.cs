@@ -25,12 +25,5 @@ namespace TMTDentalAPI.Controllers
             var res = await _realRevenueReportService.GetReport(val);
             return Ok(res);
         }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetReportDetail(RealRevenueReportItem val)
-        {
-            var res = await _realRevenueReportService.GetReportDetail(val);
-            return Ok(res);
-        }
     }
 }

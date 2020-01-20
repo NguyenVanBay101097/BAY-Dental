@@ -13,6 +13,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from '../labo-order.service';
 import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
+import { PartnerSupplierCuDialogComponent } from 'src/app/partners/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 declare var $: any;
 
 @Component({
@@ -207,6 +208,36 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
       });
     }
   }
+
+  get partner() {
+    return this.formGroup.get('partner').value;
+  }
+
+  updateSupplierModal() {
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: Labo';
+    modalRef.componentInstance.id = this.partner.id;
+
+    modalRef.result.then(() => {
+    }, () => {
+    });
+  }
+
+  quickCreateSupplier() {
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Labo';
+
+    modalRef.result.then(result => {
+      var p = new PartnerSimple();
+      p.id = result.id;
+      p.name = result.name;
+      p.displayName = result.displayName;
+      this.formGroup.get('partner').patchValue(p);
+      this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
+    }, () => {
+    });
+  }
+
 
   onSave() {
     if (!this.formGroup.valid) {

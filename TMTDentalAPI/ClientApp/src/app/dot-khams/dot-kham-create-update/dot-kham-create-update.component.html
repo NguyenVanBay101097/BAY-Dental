@@ -30,19 +30,6 @@
                     <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
                         (click)="actionCreateLabo()">
                         <i class="fas fa-tooth"></i> Tạo labo</button>
-                    <!-- <button *ngIf="id" title="Lịch hẹn" [disabled]="invoiceState=='cancel'" type="button"
-                        class="btn btn-light btn-sm"
-                        [style.background-color]="getAppointState ? getAppointState.color : ''"
-                        [style.color]="getAppointState ? 'white' : ''" (click)="appointmentCreateModal()">
-                        <i class="far fa-calendar-alt"></i>&nbsp;
-                        <span *ngIf="getAppointment">{{getAppointState ? getAppointState.text : ''}} :
-                            {{getAppointment.date | date : 'short'}}</span>
-                        <span *ngIf="!getAppointment">Hẹn tái khám</span>
-                    </button> -->
-
-                    <!-- <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
-                        (click)="actionCreateAppointment()">
-                        <i class="fas fa-calendar-alt"></i> Hẹn tái khám</button> -->
                 </div>
             </div>
             <div class="o_cp_sidebar">

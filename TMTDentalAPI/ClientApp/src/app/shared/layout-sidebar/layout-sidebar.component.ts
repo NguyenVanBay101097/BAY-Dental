@@ -35,20 +35,20 @@ export class LayoutSidebarComponent implements OnInit {
       ]
     },
     {
-      name: 'Kho',
-      icon: 'fas fa-th',
-      children: [
-        { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
-        { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
-      ],
-    },
-    {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
       children: [
         { name: 'Mua hàng', link: '/purchase-orders', params: { type: 'order' } },
         { name: 'Trả hàng', link: '/purchase-orders', params: { type: 'refund' } },
       ]
+    },
+    {
+      name: 'Kho',
+      icon: 'fas fa-th',
+      children: [
+        { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
+        { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
+      ],
     },
     {
       name: 'Danh mục',
@@ -97,7 +97,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         // { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
-        { name: 'Thống kê khoản thu', link: '/real-revenue-report' },
+        { name: 'Thống kê doanh thu', link: '/revenue-report' },
+        { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
         { name: 'Thống kê điều trị', link: '/sale-report' },
         { name: 'Khách hàng theo khu vực', link: '/partner-report-location' },
         { name: 'Báo cáo thu chi', link: '/journal-reports' },

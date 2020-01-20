@@ -9,6 +9,7 @@ import { CardTypeBasic, CardTypePaged, CardTypeService } from 'src/app/card-type
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-card-card-cu-dialog',
@@ -31,7 +32,7 @@ export class CardCardCuDialogComponent implements OnInit {
   isChanged = false;
 
   constructor(private fb: FormBuilder, private cardCardService: CardCardService, private partnerService: PartnerService,
-    private cardTypeService: CardTypeService, public activeModal: NgbActiveModal) { }
+    private cardTypeService: CardTypeService, public activeModal: NgbActiveModal, private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.card = new CardCardDisplay();
@@ -110,6 +111,8 @@ export class CardCardCuDialogComponent implements OnInit {
       this.saveIfDirty().subscribe(() => {
         this.cardCardService.buttonActive([this.id]).pipe(finalize(() => this.loadRecord())).subscribe(() => {
           this.isChanged = true;
+        }, err => {
+          this.errorService.show(err);
         });
       });
     } else {
@@ -117,6 +120,8 @@ export class CardCardCuDialogComponent implements OnInit {
         this.id = result.id;
         this.cardCardService.buttonActive([result.id]).pipe(finalize(() => this.loadRecord())).subscribe(() => {
           this.isChanged = true;
+        }, err => {
+          this.errorService.show(err);
         });
       });
     }

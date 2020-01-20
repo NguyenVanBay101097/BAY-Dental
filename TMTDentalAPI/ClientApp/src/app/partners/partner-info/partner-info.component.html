@@ -123,7 +123,7 @@
                             <span class="o_field_char o_field_widget">{{partner.jobTitle}} &nbsp;</span>
                         </td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="partner.zaloId">
                         <td class="o_td_label">
                             <label class="o_form_label">
                                 Zalo Id

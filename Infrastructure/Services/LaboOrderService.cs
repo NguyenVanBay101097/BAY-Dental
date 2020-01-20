@@ -32,7 +32,10 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
+                x.Partner.Phone.Contains(val.Search) ||
+                x.Customer.Name.Contains(val.Search) ||
+                x.Customer.NameNoSign.Contains(val.Search) ||
+                x.Customer.Phone.Contains(val.Search)));
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
 
@@ -46,6 +49,18 @@ namespace Infrastructure.Services
                 var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder <= dateTo));
             }
+
+            if (val.DatePlannedFrom.HasValue)
+            {
+                var dateFrom = val.DatePlannedFrom.Value.AbsoluteBeginOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned >= dateFrom));
+            }
+            if (val.DatePlannedTo.HasValue)
+            {
+                var dateTo = val.DatePlannedTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= dateTo));
+            }
+
             if (!string.IsNullOrEmpty(val.State))
             {
                 var states = val.State.Split(",");
@@ -54,16 +69,7 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await query.Select(x => new LaboOrderBasic
-            {
-                Id = x.Id,
-                AmountTotal = x.AmountTotal,
-                DateOrder = x.DateOrder,
-                Name = x.Name,
-                PartnerName = x.Partner.Name,
-                State = x.State,
-                CustomerName = x.Customer.Name
-            }).ToListAsync();
+            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)

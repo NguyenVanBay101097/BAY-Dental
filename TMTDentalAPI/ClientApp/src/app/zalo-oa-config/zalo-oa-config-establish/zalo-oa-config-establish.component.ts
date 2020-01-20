@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ZaloOAConfigService, ZaloOAConfigSave, ZaloOAConfigBasic } from '../zalo-oa-config.service';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-zalo-oa-config-establish',
@@ -12,15 +14,31 @@ import { ZaloOAConfigService, ZaloOAConfigSave, ZaloOAConfigBasic } from '../zal
 export class ZaloOaConfigEstablishComponent implements OnInit {
 
   config: ZaloOAConfigBasic;
-  constructor(private zaloOAConfigService: ZaloOAConfigService) { }
+  formGroup: FormGroup;
+
+  constructor(private fb: FormBuilder, private zaloOAConfigService: ZaloOAConfigService,
+    private notificationService: NotificationService) {
+  }
 
   ngOnInit() {
+    this.formGroup = this.fb.group({
+      autoSendBirthdayMessage: false,
+      birthdayMessageContent: null
+    });
+
     this.loadConfig();
+  }
+
+  get autoSendBirthdayMessage() {
+    return this.formGroup.get('autoSendBirthdayMessage').value;
   }
 
   loadConfig() {
     this.zaloOAConfigService.get().subscribe(result => {
       this.config = result;
+      if (this.config) {
+        this.formGroup.patchValue(this.config);
+      }
     });
   }
 
@@ -47,5 +65,21 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
     const y = win.top.outerHeight / 2 + win.top.screenY - (h / 2);
     const x = win.top.outerWidth / 2 + win.top.screenX - (w / 2);
     return win.open(url, title, 'toolbar=no, status=no, menubar=no, scrollbars=no, resizable=no, width=' + w + ', height=' + h + ', top=' + y + ', left=' + x);
+  }
+
+  onSave() {
+    if (this.config) {
+      var val = this.formGroup.value;
+      this.zaloOAConfigService.update(this.config.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      });
+    }
+
   }
 }

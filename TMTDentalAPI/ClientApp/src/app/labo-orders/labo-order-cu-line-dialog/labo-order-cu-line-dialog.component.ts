@@ -103,6 +103,11 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     } else {
       this.teethSelected.push(tooth);
     }
+
+    //update quantity combobox
+    if (this.teethSelected.length > 0) {
+      this.formGroup.get('productQty').setValue(this.teethSelected.length);
+    }
   }
 
   getSelectedIndex(tooth: ToothDisplay) {

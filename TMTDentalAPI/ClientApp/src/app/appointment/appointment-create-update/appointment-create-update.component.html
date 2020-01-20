@@ -19,14 +19,6 @@
                 </div>
             </div>
             <div class="o_form_sheet">
-                <!-- <div *ngIf="appointId">
-                <button *ngIf="!(state=='done')" class="btn btn-light btn-sm mr-2" (click)="doneAppointment()">Hoàn
-                    tất</button>
-                <button *ngIf="!(state=='waiting')" class="btn btn-primary btn-sm mr-2"
-                    (click)="waitingAppointment()">Đang chờ</button>
-                <button *ngIf="!(state=='cancel')" class="btn btn-danger btn-sm mr-2" (click)="cancelAppointment()">Hủy
-                    hẹn</button>
-            </div> -->
                 <div class="oe_title">
                     <h1>
                         <span>{{formCreate.get('name').value}}</span>
@@ -46,6 +38,10 @@
                                             [valueField]="'id'" [textField]="'name'"
                                             [readonly]="partnerAvailble() || dotKhamId">
                                         </kendo-combobox>
+                                        <a title="Sửa khách hàng" class="pl-2 py-1" type="button" *ngIf="partner"
+                                            (click)="updateCustomerModal()">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
                                         <a type="button" title="Thêm khách hàng" class="pl-2 py-1"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus"></i>
@@ -77,20 +73,11 @@
                                     <label class="o_form_label">Trạng thái</label>
                                 </td>
                                 <td>
-                                    <!-- <kendo-combobox formControlName="stateObj" [data]="stateFilter"
-                                        [valueField]="'value'" [textField]="'text'" (valueChange)="changeState($event)"
-                                        [itemDisabled]="itemDisabled">
-                                    </kendo-combobox> -->
                                     <select class="form-control" formControlName="state">
                                         <option value="confirmed">Đang hẹn</option>
                                         <option value="done">Đã tới</option>
                                         <option value="cancel">Đã hủy</option>
                                     </select>
-                                    <!-- <label><input type="radio" formControlName="state" value="confirmed" /></label>
-        <label><input type="radio" formControlName="state" value="waiting" /></label>
-        <label><input type="radio" formControlName="state" value="done" /></label>
-        <label><input type="radio" formControlName="state" value="expired" /></label>
-        <label><input type="radio" formControlName="state" value="cancel" /></label> -->
                                 </td>
                             </tr>
                         </tbody>
@@ -102,10 +89,10 @@
                                     <label class="o_form_label">Ngày hẹn</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="dateObj">
-                                    </kendo-datepicker>
-                                    <!-- <kendo-datetimepicker [steps]="{hour: 1, minute: 5}" formControlName="dateObj">
-                                    </kendo-datetimepicker> -->
+                                    <!-- <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="dateObj">
+                                    </kendo-datepicker> -->
+                                    <kendo-datetimepicker [steps]="{hour: 1, minute: 5}" formControlName="dateObj">
+                                    </kendo-datetimepicker>
                                 </td>
                             </tr>
                             <tr>

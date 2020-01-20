@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public ZaloOAConfigProfile()
         {
             CreateMap<ZaloOAConfig, ZaloOAConfigBasic>();
+            CreateMap<ZaloOAConfigUpdate, ZaloOAConfig>();
         }
     }
 }

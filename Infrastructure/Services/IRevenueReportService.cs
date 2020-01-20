@@ -6,8 +6,8 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IRealRevenueReportService
+    public interface IRevenueReportService
     {
-        Task<RealRevenueReportResult> GetReport(RealRevenueReportSearch val);
+        Task<RevenueReportResult> GetReport(RevenueReportSearch val);
     }
 }
