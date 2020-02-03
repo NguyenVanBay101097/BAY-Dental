@@ -1,9 +1,157 @@
-<app-product-service-form [formGroup]="formGroup" #productForm>
-</app-product-service-form>
-<div>
-    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s"
-        [disabled]="!formGroup.valid">
-        <i class="far fa-save"></i> Lưu</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">
-        <i class="fas fa-times"></i> Đóng</button>
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="productForm" #form="ngForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên dịch vụ</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
+                    </h1>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isLabo" id="isLabo">
+                            <label class="form-check-label" for="isLabo">
+                                Có thể đặt labo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
+                                aria-controls="home" aria-selected="true">Thông tin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab"
+                                aria-controls="profile" aria-selected="false">Công đoạn</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Nhóm dịch vụ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filterdCategories"
+                                                        [textField]="'completeName'" [filterable]="true" #categCbx
+                                                        formControlName="categ" [valueField]="'id'"
+                                                        (filterChange)="categCbxFilterChange2($event)"
+                                                        [loading]="categCbxLoading">
+                                                    </kendo-combobox>
+                                                    <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
+                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã dịch vụ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="defaultCode" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá bán
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="listPrice">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="step" role="tabpanel" aria-labelledby="step-tab">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" formControlName="stepName"
+                                            placeholder="Nhập tên công đoạn sau đó nhấn enter"
+                                            (keydown)="onKeyDownStepName($event)" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                (click)="createTempProductStepList()">Thêm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+
+                            <table *ngIf="stepList.length>0" class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên công đoạn</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let i of stepList;let idx = index">
+                                        <td>
+                                            {{idx + 1}}
+                                        </td>
+                                        <td #stepName>
+                                            <span *ngIf="showInput(i.order)">{{i.name}}</span>
+                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit"
+                                                (ngSubmit)="submitStepName(i.order)">
+                                                <input type="text" formControlName="name" />
+                                            </form>
+                                        </td>
+                                        <td colspan="1">
+                                            <button type="button" [disabled]=" disableButton(i.order,true)"
+                                                class="btn btn-light btn-sm mr-2"
+                                                (click)="editStepOrCancel(i.order, i.name)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-light btn-sm mr-2"
+                                                (click)="removeStepListItem(i.order)"
+                                                [disabled]=" disableButton(i.order,false)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

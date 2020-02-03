@@ -14,7 +14,7 @@ namespace Infrastructure.EntityConfigurations
             builder.Property(x => x.Name).IsRequired();
 
             builder.HasOne(x => x.Product)
-            .WithMany()
+            .WithMany(x => x.Steps)
             .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.CreatedBy)

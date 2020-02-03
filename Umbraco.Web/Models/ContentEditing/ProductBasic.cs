@@ -143,6 +143,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type2 { get; set; }
     }
 
+    public class ProductImportExcelBaseViewModel
+    {
+        public string FileBase64 { get; set; }
+    }
+
     public class ProductImportExcelRow
     {
         public string Name { get; set; }
@@ -162,6 +167,41 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DefaultCode { get; set; }
 
         public decimal? ListPrice { get; set; }
+
+        public decimal? PurchasePrice { get; set; }
+    }
+
+    public class ProductServiceImportExcelRow
+    {
+        public string Name { get; set; }
+
+        public bool? IsLabo { get; set; }
+
+        public string CategName { get; set; }
+
+        public string DefaultCode { get; set; }
+
+        public decimal? ListPrice { get; set; }
+
+        public string Steps { get; set; }
+    }
+
+    public class ProductMedicineImportExcelRow
+    {
+        public string Name { get; set; }
+
+        public string CategName { get; set; }
+    }
+
+    public class ProductProductImportExcelRow
+    {
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public string CategName { get; set; }
+
+        public string DefaultCode { get; set; }
 
         public decimal? PurchasePrice { get; set; }
     }

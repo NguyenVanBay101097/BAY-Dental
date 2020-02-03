@@ -39,6 +39,6 @@ namespace Umbraco.Web.Models.ContentEditing
     //ProductDisplay + DS các step
     public class ProductDisplayAndStep : ProductDisplay
     {
-        public List<ProductStepDisplay> stepList { get; set; }
+        public List<ProductStepDisplay> stepList { get; set; } = new List<ProductStepDisplay>();
     }
 }

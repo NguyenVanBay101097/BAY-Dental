@@ -1,42 +1,69 @@
-import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductPaged, ProductBasic2 } from '../product.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
+import { ProductService, ProductPaged } from '../product.service';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
-import { ProductServiceCuDialogComponent } from '../product-service-cu-dialog/product-service-cu-dialog.component';
 import { Product } from '../product';
-import { ProductAdvanceFilter } from '../product-advance-filter/product-advance-filter.component';
-import { ProductMedicineCuDialogComponent } from '../product-medicine-cu-dialog/product-medicine-cu-dialog.component';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ProductServiceCuDialogComponent } from '../product-service-cu-dialog/product-service-cu-dialog.component';
+import { ProductServiceImportDialogComponent } from '../product-service-import-dialog/product-service-import-dialog.component';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
 
 @Component({
   selector: 'app-product-product-list',
   templateUrl: './product-product-list.component.html',
-  styleUrls: ['./product-product-list.component.css']
+  styleUrls: ['./product-product-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class ProductProductListComponent implements OnInit {
-  constructor(private productService: ProductService, private windowService: WindowService, private dialogService: DialogService) { }
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
   loading = false;
+  opened = false;
+  title = 'Vật tư';
 
   search: string;
-  searchCategId: string;
+  searchCateg: ProductCategoryBasic;
+  filteredCategs: ProductCategoryBasic[];
   searchUpdate = new Subject<string>();
+  @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
-  opened = false;
+  constructor(private productService: ProductService, public intl: IntlService, private productCategoryService: ProductCategoryService,
+    private route: ActivatedRoute, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(() => {
+      .subscribe(value => {
         this.loadDataFromApi();
       });
 
+    this.categCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.categCbx.loading = true)),
+      switchMap(value => this.searchCategories(value))
+    ).subscribe(result => {
+      this.filteredCategs = result;
+      this.categCbx.loading = false;
+    });
+
+    this.loadDataFromApi();
+    this.loadFilteredCategs();
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
     this.loadDataFromApi();
   }
 
@@ -46,8 +73,8 @@ export class ProductProductListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.type = 'product';
-    val.categId = this.searchCategId || '';
+    val.categId = this.searchCateg ? this.searchCateg.id : '';
+    val.type2 = 'product';
 
     this.productService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -63,82 +90,65 @@ export class ProductProductListComponent implements OnInit {
     })
   }
 
-  onPageChange(event: PageChangeEvent) {
-    this.skip = event.skip;
+  loadFilteredCategs() {
+    this.searchCategories().subscribe(result => this.filteredCategs = result);
+  }
+
+  onCategChange(value) {
+    this.searchCateg = value;
     this.loadDataFromApi();
+  }
+
+  searchCategories(search?: string) {
+    var val = new ProductCategoryPaged();
+    val.search = search;
+    val.type = 'product';
+    return this.productCategoryService.autocomplete(val);
+  }
+
+  importFromExcel() {
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Import excel';
+    modalRef.componentInstance.type = 'product';
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm vật tư',
-      content: ProductProductCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
+    let modalRef = this.modalService.open(ProductProductCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
+  }
 
-    this.opened = true;
+  editItem(item: Product) {
+    let modalRef = this.modalService.open(ProductProductCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: ' + this.title;
+    modalRef.componentInstance.id = item.id;
 
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa: ' + this.title;
+
+    modalRef.result.then(() => {
+      this.productService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
-      }
-    });
-  }
-
-  editItem(item: ProductBasic2) {
-    const windowRef = this.windowService.open({
-      title: `Sửa vật tư`,
-      content: ProductProductCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
-    });
-  }
-
-  onFilterChange(filter: ProductAdvanceFilter) {
-    this.searchCategId = filter.categId;
-    this.loadDataFromApi();
-  }
-
-  deleteItem(item: ProductBasic2) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa vật tư',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
-
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        console.log('close');
-      } else {
-        console.log('action', result);
-        if (result['value']) {
-          this.productService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-            console.log(err);
-          });
-        }
-      }
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
     });
   }
 }
+
 

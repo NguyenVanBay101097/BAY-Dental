@@ -29,13 +29,7 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Import</button>
-    <a *ngIf="type == 'service'" download href="/assets/files/MauFileDichVu.xlsx" class="btn btn-sm btn-light">
-        Tải file mẫu
-    </a>
-    <a *ngIf="type == 'medicine'" download href="/assets/files/MauFileThuoc.xlsx" class="btn btn-sm btn-light">
-        Tải file mẫu
-    </a>
-    <a *ngIf="type == 'product'" download href="/assets/files/MauFileVatTu.xlsx" class="btn btn-sm btn-light">
+    <a download href="/assets/files/MauFileDichVu.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
     <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>

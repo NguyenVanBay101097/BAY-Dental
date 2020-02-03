@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel } from '../product.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-product-import-excel-dialog',
-  templateUrl: './product-import-excel-dialog.component.html',
-  styleUrls: ['./product-import-excel-dialog.component.css']
+  selector: 'app-product-service-import-dialog',
+  templateUrl: './product-service-import-dialog.component.html',
+  styleUrls: ['./product-service-import-dialog.component.css']
 })
-export class ProductImportExcelDialogComponent implements OnInit {
+export class ProductServiceImportDialogComponent implements OnInit {
   fileBase64 = '';
   type: string;
+  type2: string;
   errors: string[];
   title: string;
   constructor(private productService: ProductService, public activeModal: NgbActiveModal) { }
@@ -28,7 +28,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
     }
     var val = new ProductImportExcelBaseViewModel();
     val.fileBase64 = this.fileBase64;
-    this.actionImport(val).subscribe((result: any) => {
+    this.productService.importService(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
       } else {
@@ -37,19 +37,8 @@ export class ProductImportExcelDialogComponent implements OnInit {
     });
   }
 
-  actionImport(val: any) {
-    if (this.type == 'service') {
-      return this.productService.importService(val);
-    } else if (this.type == 'medicine') {
-      return this.productService.importMedicine(val);
-    } else if (this.type == 'product') {
-      return this.productService.importProduct(val);
-    } else {
-
-    }
-  }
-
   onCancel() {
     this.activeModal.dismiss();
   }
 }
+

@@ -89,6 +89,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<ProductPriceHistory> PriceHistories { get; set; } = new List<ProductPriceHistory>();
 
+        public ICollection<ProductStep> Steps { get; set; } = new List<ProductStep>();
+
         public bool IsLabo { get; set; }
 
         /// <summary>

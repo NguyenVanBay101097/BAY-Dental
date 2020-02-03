@@ -58,6 +58,10 @@ export class ProductImportExcelViewModel {
     type2: string;
 }
 
+export class ProductImportExcelBaseViewModel {
+    fileBase64: string;
+}
+
 export class ProductLaboBasic {
     id: string;
     name: string;
@@ -137,6 +141,18 @@ export class ProductService {
 
     importExcel(val: ProductImportExcelViewModel) {
         return this.http.post(this.baseApi + this.apiUrl + "/ImportExcel", val);
+    }
+
+    importService(val: ProductImportExcelBaseViewModel) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ImportService", val);
+    }
+
+    importMedicine(val: ProductImportExcelBaseViewModel) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ImportMedicine", val);
+    }
+
+    importProduct(val: ProductImportExcelBaseViewModel) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ImportProduct", val);
     }
 
     getLaboPaged(val: any): Observable<PagedResult2<ProductLaboBasic>> {

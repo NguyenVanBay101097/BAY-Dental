@@ -29,9 +29,10 @@ import { ProductStepFormComponent } from './product-step-form/product-step-form.
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ProductAdvanceSearchComponent } from './product-advance-search/product-advance-search.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProductServiceImportDialogComponent } from './product-service-import-dialog/product-service-import-dialog.component';
 
 @NgModule({
-  declarations: [ProductListComponent, ProductDialogComponent, ProductImportExcelDialogComponent, ProductSearchListComponent, ProductGridComponent, ProductServiceListComponent, ProductServiceFormComponent, ProductServiceCuDialogComponent, ProductAdvanceFilterComponent, ProductMedicineListComponent, ProductMedicineCuDialogComponent, ProductMedicineFormComponent, ProductLaboFormComponent, ProductLaboCuDialogComponent, ProductLaboListComponent, ProductProductListComponent, ProductProductCuDialogComponent, ProductProductFormComponent, ProductStepCuDialogComponent, ProductStepFormComponent, ProductAdvanceSearchComponent],
+  declarations: [ProductListComponent, ProductDialogComponent, ProductImportExcelDialogComponent, ProductSearchListComponent, ProductGridComponent, ProductServiceListComponent, ProductServiceFormComponent, ProductServiceCuDialogComponent, ProductAdvanceFilterComponent, ProductMedicineListComponent, ProductMedicineCuDialogComponent, ProductMedicineFormComponent, ProductLaboFormComponent, ProductLaboCuDialogComponent, ProductLaboListComponent, ProductProductListComponent, ProductProductCuDialogComponent, ProductProductFormComponent, ProductStepCuDialogComponent, ProductStepFormComponent, ProductAdvanceSearchComponent, ProductServiceImportDialogComponent],
   imports: [
     CommonModule,
     ProductsRoutingModule,
@@ -49,6 +50,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ProductService
   ],
   entryComponents: [ProductDialogComponent, ProductImportExcelDialogComponent, ProductServiceCuDialogComponent, ProductMedicineCuDialogComponent,
-    ProductLaboCuDialogComponent, ProductProductCuDialogComponent, ProductStepCuDialogComponent],
+    ProductLaboCuDialogComponent, ProductProductCuDialogComponent, ProductStepCuDialogComponent,
+    ProductServiceImportDialogComponent
+  ],
 })
 export class ProductsModule { }

@@ -1,129 +1,160 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Product } from '../product';
+import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProductService } from '../product.service';
+import { Product } from '../product';
+import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
+import { ProductCategory } from 'src/app/product-categories/product-category';
+import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { debug } from 'util';
-import { ProductMedicineFormComponent } from '../product-medicine-form/product-medicine-form.component';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { Observable, Subject } from 'rxjs';
 import { ProductCategoryDialogComponent } from 'src/app/product-categories/product-category-dialog/product-category-dialog.component';
-import { ProductCategoryDisplay, ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import * as _ from 'lodash';
+import { ProductStepDisplay } from '../product-step';
+import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-product-cu-dialog',
   templateUrl: './product-product-cu-dialog.component.html',
   styleUrls: ['./product-product-cu-dialog.component.css']
 })
-export class ProductProductCuDialogComponent implements OnInit {
-  opened = false;
-  formGroup: FormGroup;
-  filteredCategories: ProductCategoryBasic[] = [];
-  id: string;
-  @ViewChild('productForm', { static: true }) productForm: ProductMedicineFormComponent;
 
-  constructor(private productService: ProductService, public window: WindowRef, private fb: FormBuilder,
-    private windowService: WindowService, private productCategoryService: ProductCategoryService) {
-    this.formGroup = this.fb.group({
+export class ProductProductCuDialogComponent implements OnInit {
+  title: string;
+  id: string;
+  productForm: FormGroup;
+  filterdCategories: ProductCategoryBasic[] = [];
+  opened = false;
+  @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+
+  constructor(private fb: FormBuilder, private productService: ProductService,
+    private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
+    private modalService: NgbModal) {
+  }
+
+  ngOnInit() {
+    this.productForm = this.fb.group({
       name: ['', Validators.required],
       saleOK: false,
-      purchaseOK: false,
+      purchaseOK: true,
       categ: [null, Validators.required],
       uomId: null,
       uompoId: null,
       type: 'consu',
+      type2: 'product',
       listPrice: 1,
       standardPrice: 0,
       companyId: null,
       defaultCode: '',
-      keToaOK: false,
-      description: null
+      keToaNote: null,
+      keToaOK: true,
+      isLabo: false,
+      purchasePrice: 0,
+    });
+
+    setTimeout(() => {
+      this.default();
+
+      this.searchCategories('').subscribe(result => {
+        this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
+      });
+
+      this.categCbxFilterChange();
     });
   }
 
-  ngOnInit() {
+  default() {
     if (this.id) {
       this.productService.get(this.id).subscribe(result => {
-        if (result.categ) {
-          this.filteredCategories = _.unionBy(this.filteredCategories, [result.categ as ProductCategoryBasic], 'id');
-        }
-
-        this.formGroup.patchValue(result);
+        this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+        this.productForm.patchValue(result);
       });
     } else {
       this.productService.defaultGet().subscribe(result => {
-        this.formGroup.patchValue(result);
-        //cập nhật 1 số trường cho phù hợp khi tạo 1 dịch vụ
-        this.formGroup.get('purchaseOK').patchValue(false);
-        this.formGroup.get('saleOK').patchValue(false);
-        this.formGroup.get('keToaOK').patchValue(false);
-        this.formGroup.get('type').patchValue('product');
+        if (result.categ) {
+          this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+        }
+        this.productForm.patchValue(result);
+        this.productForm.get('type').setValue('consu');
+        this.productForm.get('type2').setValue('product');
+        this.productForm.get('saleOK').setValue(false);
+        this.productForm.get('purchaseOK').setValue(true);
+        this.productForm.get('purchasePrice').setValue(0);
       });
     }
-
-    this.loadFilteredCategories();
   }
 
-  onFilterChangeCateg(value) {
-    this.searchCategories(value).subscribe(result => this.filteredCategories = result);
+  categCbxFilterChange() {
+    this.categCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.categCbx.loading = true)),
+      switchMap(value => this.searchCategories(value))
+    ).subscribe(result => {
+      this.filterdCategories = result;
+      this.categCbx.loading = false;
+    });
   }
 
   searchCategories(q?: string) {
     var val = new ProductCategoryPaged();
-    val.search = q;
-    val.productCateg = true;
-    val.limit = 20;
+    val.search = q || '';
+    val.type = 'product';
     return this.productCategoryService.autocomplete(val);
   }
 
-  loadFilteredCategories() {
-    this.searchCategories().subscribe(result => this.filteredCategories = result);
+  quickCreateCateg() {
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm nhóm vật tư';
+    modalRef.componentInstance.type = 'product';
+    modalRef.result.then(result => {
+      this.filterdCategories.push(result as ProductCategoryBasic);
+      this.productForm.patchValue({ categ: result });
+    }, () => {
+    });
   }
 
   onSave() {
-    if (!this.formGroup.valid) {
+    if (!this.productForm.valid) {
       return;
     }
 
-    var val = this.formGroup.value;
-    val.categId = val.categ.id;
+    this.saveOrUpdate().subscribe(result => {
+      if (result) {
+        this.activeModal.close(result);
+      } else {
+        this.activeModal.close(true);
+      }
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  saveOrUpdate() {
+    var data = this.getBodyData();
     if (this.id) {
-      this.productService.update(this.id, val).subscribe(() => {
-        this.window.close(true);
-      });
+      return this.productService.updateWithSteps(this.id, data);
     } else {
-      return this.productService.create(val).subscribe(result => {
-        this.window.close(result);
-      });;
+      return this.productService.createWithSteps(data);
     }
   }
 
-  onCancel() {
-    this.window.close();
+  getBodyData() {
+    var data = this.productForm.value;
+    data.categId = data.categ.id;
+    return data;
   }
 
-  onBtnCreateCategClick() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm nhóm vật tư',
-      content: ProductCategoryDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    const instance = windowRef.content.instance;
-    let defaultCateg = new ProductCategoryDisplay();
-    defaultCateg.productCateg = true;
-    instance.defaultCateg = defaultCateg;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.filteredCategories.push(result as ProductCategoryBasic);
-        this.formGroup.patchValue({ categ: result });
-      }
-    });
+  onCancel() {
+    this.activeModal.dismiss();
   }
 }
+
+
+
+
+
 
 
