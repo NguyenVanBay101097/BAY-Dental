@@ -403,6 +403,21 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<bool> CheckHasPromotionCanApply(Guid id)
+        {
+            var self = await SearchQuery(x => x.Id == id)
+              .Include(x => x.OrderLines)
+              .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
+              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+              .Include(x => x.CodePromoProgram).FirstOrDefaultAsync();
+            var programObj = GetService<ISaleCouponProgramService>();
+            var programs = await _GetApplicableNoCodePromoProgram(self);
+            programs = programObj._KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(programs);
+
+            var applied_programs = _GetAppliedProgramsWithRewardsOnCurrentOrder(self).Concat(_GetAppliedProgramsWithRewardsOnNextOrder(self));
+            return programs.Any(x => !applied_programs.Contains(x));
+        }
+
         public async Task _RemoveInvalidRewardLines(SaleOrder self)
         {
             /*

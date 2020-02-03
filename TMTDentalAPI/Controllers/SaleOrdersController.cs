@@ -112,6 +112,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> CheckPromotion(Guid id)
+        {
+            //Kiem tra co chuong trinh khuyen mai nao co the ap dung cho don hang nay khong?
+            var res = await _saleOrderService.CheckHasPromotionCanApply(id);
+            return Ok(res);
+        }
+
         [HttpPost("DefaultGetInvoice")]
         public IActionResult DefaultGetInvoice(List<Guid> ids)
         {

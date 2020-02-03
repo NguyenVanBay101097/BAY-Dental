@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { GridDataResult, PageChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';

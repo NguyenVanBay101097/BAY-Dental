@@ -22,19 +22,21 @@
                 </div>
             </div>
             <div class="o_cp_sidebar">
+                <div class="btn-group">
+                    <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                            Thao tác
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" (click)="unlink()">Xóa</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="o_cp_right">
             <div class="o_search_options">
-                <div class="dropdown" *ngIf="selectedIds.length">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false" type="button" id="dropdownMenuButton">
-                        Thao tác
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <button class="dropdown-item" (click)="unlink()">Xóa</button>
-                    </div>
-                </div>
                 <app-tai-date-range-filter-dropdown title="Ngày" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
                     (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>

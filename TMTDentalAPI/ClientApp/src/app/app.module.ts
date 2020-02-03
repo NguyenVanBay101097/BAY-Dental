@@ -68,7 +68,6 @@ import { PriceListModule } from './price-list/price-list.module';
 import { LaboOrdersModule } from './labo-orders/labo-orders.module';
 import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 
-import { HotkeyModule } from 'angular2-hotkeys';
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
 import { SaleReportModule } from './sale-report/sale-report.module';
@@ -160,7 +159,6 @@ registerLocaleData(localeVi, 'vi');
     PriceListModule,
     LaboOrdersModule,
     PurchaseOrdersModule,
-    HotkeyModule.forRoot(),
     RealRevenueReportModule,
     SaleReportModule,
     MomentModule.forRoot({

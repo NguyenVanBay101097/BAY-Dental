@@ -50,33 +50,33 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-        <kendo-grid-column field="name" title="Số phiếu">
+        <kendo-grid-column field="name" title="Số phiếu" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng">
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
         </kendo-grid-column>
-        <kendo-grid-column field="dateOrder" title="Ngày điều trị">
+        <kendo-grid-column field="dateOrder" title="Ngày điều trị" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.dateOrder | date : 'short'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="userName" title="Nhân viên">
+        <kendo-grid-column field="userName" title="Nhân viên" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
+        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountTotal | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Còn nợ" class="text-right">
+        <kendo-grid-column title="Còn nợ" class="text-right" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.residual | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="Trạng thái">
+        <kendo-grid-column field="state" title="Trạng thái" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id">
+        <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

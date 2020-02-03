@@ -17,6 +17,7 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { Router } from '@angular/router';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 
 class DatePickerLimit {
   min: Date;
@@ -142,6 +143,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formCreate.get('partner').patchValue(p);
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [p], 'id');
       }
+    }, () => {
+    });
+  }
+
+  createDoctorDialog() {
+    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm bác sĩ';
+    modalRef.componentInstance.isDoctor = true;
+
+    modalRef.result.then(result => {
+      var p = new EmployeeSimple();
+      p.id = result.id;
+      p.name = result.name;
+      this.formCreate.get('doctor').patchValue(p);
+      this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [p], 'id');
     }, () => {
     });
   }

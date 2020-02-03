@@ -12,9 +12,10 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                         Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
                         Thêm mới</button>
                 </div>
             </div>
@@ -184,8 +185,8 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div class="mb-2" *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1">
-                                <button type="button" class="btn btn-secondary btn-sm"
-                                    (click)="showAddLineModal()">Thêm</button>
+                                <button type="button" class="btn btn-secondary btn-sm" (click)="showAddLineModal()"
+                                    accesskey="a">Thêm</button>
                             </div>
                             <div>
                                 <table class="table table-sm">

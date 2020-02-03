@@ -20,6 +20,10 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredDoctors" ngbAutofocus [textField]="'name'"
                                         [filterable]="true" #doctorCbx formControlName="doctor" [valueField]="'id'">
+                                        <ng-template kendoDropDownListNoDataTemplate>
+                                            <a class="btn btn-light btn-sm" (click)="createDoctorDialog()">Thêm bác
+                                                sĩ</a>
+                                        </ng-template>
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -32,6 +36,10 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredAssistants" [textField]="'name'" [filterable]="true"
                                         #assistantCbx formControlName="assistant" [valueField]="'id'">
+                                        <ng-template kendoDropDownListNoDataTemplate>
+                                            <a class="btn btn-light btn-sm" (click)="createAssistantDialog()">Thêm phụ
+                                                tá</a>
+                                        </ng-template>
                                     </kendo-combobox>
                                 </td>
                             </tr>

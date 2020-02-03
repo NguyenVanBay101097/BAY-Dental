@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
+import { debounceTime, switchMap, tap, map, mergeMap } from 'rxjs/operators';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { UserService, UserPaged } from 'src/app/users/user.service';
@@ -31,6 +31,8 @@ import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-up
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { from, of, Observable } from 'rxjs';
+import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confirm-dialog-v2.component';
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -159,6 +161,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           g.setControl('teeth', this.fb.array(line.teeth));
           control.push(g);
         });
+
+        this.formGroup.markAsPristine();
       });
   }
 
@@ -259,7 +263,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          this.formGroup.markAsPristine();
           let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
           modalRef.componentInstance.orderId = this.id;
           modalRef.result.then(() => {
@@ -378,7 +381,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          this.formGroup.markAsPristine();
           this.saleOrderService.applyPromotion(this.id).subscribe(() => {
             this.loadRecord();
           }, (error) => {
@@ -467,22 +469,56 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionConfirm() {
-    if (this.id) {
-      if (this.formGroup.dirty) {
-        this.saveRecord().subscribe(() => {
-          this.formGroup.markAsPristine();
-          this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
-            this.loadRecord();
-          });
-        });
-      } else {
-        this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
-          this.loadRecord();
-        });
-      }
+    if (!this.formGroup.valid) {
+      return false;
     }
-  }
 
+    if (!this.id) {
+      return false;
+    }
+
+    of(this.formGroup.dirty)
+      .pipe(
+        mergeMap(r => {
+          if (r) {
+            var val = this.getFormDataSave();
+            return this.saleOrderService.update(this.id, val);
+          } else {
+            return of(true);
+          }
+        }),
+        mergeMap(() => {
+          if (this.isTurnOnSalePromotion()) {
+            return this.saleOrderService.checkPromotion(this.id);
+          } else {
+            return of(false);
+          }
+        }),
+        mergeMap(r => {
+          if (r) {
+            let modalRef = this.modalService.open(ConfirmDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+            modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
+            modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
+            return from(modalRef.result);
+          } else {
+            return of(r);
+          }
+        }),
+        mergeMap(r => {
+          if (r) {
+            return this.saleOrderService.applyPromotion(this.id)
+          } else {
+            return of(true);
+          }
+        }),
+        mergeMap(() => {
+          return this.saleOrderService.actionConfirm([this.id]);
+        }),
+      )
+      .subscribe(() => {
+        this.loadRecord();
+      })
+  }
 
   actionInvoiceCreateV2() {
     if (this.id) {
@@ -555,11 +591,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  onSaveConfirm() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
+  getFormDataSave() {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
     val.partnerId = val.partner.id;
@@ -569,13 +601,91 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
     });
-    this.saleOrderService.create(val).subscribe(result => {
-      this.saleOrderService.actionConfirm([result.id]).subscribe(() => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
-      }, () => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+    return val;
+  }
+
+  onSaveConfirm() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var val = this.getFormDataSave();
+    this.saleOrderService.create(val)
+      .pipe(
+        mergeMap(result => {
+          this.id = result.id;
+          if (this.isTurnOnSalePromotion()) {
+            return this.saleOrderService.checkPromotion(result.id);
+          } else {
+            return of(false);
+          }
+        }),
+        mergeMap(r => {
+          if (r) {
+            let modalRef = this.modalService.open(ConfirmDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+            modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
+            modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
+            return from(modalRef.result);
+          } else {
+            return of(r);
+          }
+        }),
+        mergeMap(r => {
+          if (r) {
+            return this.saleOrderService.applyPromotion(this.id)
+              .pipe(
+                mergeMap(() => this.saleOrderService.actionConfirm([this.id]))
+              );
+          } else {
+            return this.saleOrderService.actionConfirm([this.id]);
+          }
+        })
+      )
+      .subscribe(r => {
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
+      });
+  }
+
+  checkPromotion(id) {
+    this.saleOrderService.checkPromotion(id).subscribe(result => {
+      if (result) {
+        this.showConfirmApplyPromotion(id);
+      } else {
+      }
+    });
+  }
+
+  showConfirmApplyPromotion(id) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
+    modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
+    modalRef.result.then(() => {
+      this.saleOrderService.applyPromotion(id).subscribe(() => {
+        this.saleOrderService.actionConfirm([id]).subscribe(() => {
+          this.loadRecord();
+        });
+      });
+    }, () => {
+      this.saleOrderService.actionConfirm([id]).subscribe(() => {
+        this.loadRecord();
       });
     });
+  }
+
+  confirmOrder(id) {
+    return this.saleOrderService.actionConfirm(id);
+  }
+
+  isTurnOnSalePromotion() {
+    var groups = [];
+    if (localStorage.getItem('groups')) {
+      groups = JSON.parse(localStorage.getItem('groups'));
+    }
+
+    var arr = ['sale.group_sale_coupon_promotion'];
+    var intersect = _.intersection(groups, arr);
+    var res = intersect.length == arr.length;
+    return res;
   }
 
   onSave() {
@@ -639,6 +749,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           g.setControl('teeth', this.fb.array(line.teeth));
           control.push(g);
         });
+
+        this.formGroup.markAsPristine();
       });
     }
   }

@@ -9,7 +9,8 @@
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" accesskey="s"
                         (click)="onSaveOrUpdate()">Lưu</button>
-                    <a [routerLink]="['/outgoing-pickings/create']" *ngIf="id" class="btn btn-secondary btn-sm">Thêm
+                    <a [routerLink]="['/outgoing-pickings/create']" accesskey="c" *ngIf="id"
+                        class="btn btn-secondary btn-sm">Thêm
                         mới</a>
                 </div>
             </div>

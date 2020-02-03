@@ -535,7 +535,7 @@ export class AppointmentListComponent implements OnInit {
   }
 
   deleteAppointment2(id) {
-    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
     modalRef.result.then(() => {

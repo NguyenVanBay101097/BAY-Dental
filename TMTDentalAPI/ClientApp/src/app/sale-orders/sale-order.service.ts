@@ -76,6 +76,10 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + "/" + id + '/ActionConvertToOrder', {});
     }
 
+    checkPromotion(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/CheckPromotion');
+    }
+
     actionInvoiceCreateV2(id: string) {
         return this.http.post(this.baseApi + this.apiUrl + "/" + id + '/ActionInvoiceCreateV2', {});
     }

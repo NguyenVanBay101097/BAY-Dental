@@ -39,6 +39,7 @@ import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner
 import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-demo-data-dialog.component';
 import { SharedErrorDialogComponent } from './shared-error-dialog/shared-error-dialog.component';
 import { AppSharedShowErrorService } from './shared-show-error.service';
+import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { AppSharedShowErrorService } from './shared-show-error.service';
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
     SharedDemoDataDialogComponent,
-    SharedErrorDialogComponent
+    SharedErrorDialogComponent,
+    ConfirmDialogV2Component
   ],
   exports: [
     HeaderComponent,
@@ -97,7 +99,8 @@ import { AppSharedShowErrorService } from './shared-show-error.service';
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
     SharedDemoDataDialogComponent,
-    SharedErrorDialogComponent
+    SharedErrorDialogComponent,
+    ConfirmDialogV2Component
   ],
   imports: [
     CommonModule,
@@ -118,7 +121,7 @@ import { AppSharedShowErrorService } from './shared-show-error.service';
   providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService],
   entryComponents: [
     ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent, UserProfileEditComponent,
-    SharedDemoDataDialogComponent, SharedErrorDialogComponent
+    SharedDemoDataDialogComponent, SharedErrorDialogComponent, ConfirmDialogV2Component
   ],
 })
 export class SharedModule { }

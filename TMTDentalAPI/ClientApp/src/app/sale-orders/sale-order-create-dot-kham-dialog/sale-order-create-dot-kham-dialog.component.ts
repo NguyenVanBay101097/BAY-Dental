@@ -7,7 +7,9 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { DotKhamDefaultGet } from 'src/app/dot-khams/dot-khams';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-sale-order-create-dot-kham-dialog',
@@ -25,7 +27,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   title: string;
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
-    private employeeService: EmployeeService, public activeModal: NgbActiveModal) { }
+    private employeeService: EmployeeService, public activeModal: NgbActiveModal, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
@@ -77,6 +79,36 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       this.dotKhamForm.patchValue(result);
       let date = new Date(result.date);
       this.dotKhamForm.get('dateObj').patchValue(date);
+    });
+  }
+
+  createDoctorDialog() {
+    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm bác sĩ';
+    modalRef.componentInstance.isDoctor = true;
+
+    modalRef.result.then(result => {
+      var p = new EmployeeSimple();
+      p.id = result.id;
+      p.name = result.name;
+      this.dotKhamForm.get('doctor').patchValue(p);
+      this.filteredDoctors = _.unionBy(this.filteredDoctors, [p], 'id');
+    }, () => {
+    });
+  }
+
+  createAssistantDialog() {
+    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm phụ tá';
+    modalRef.componentInstance.isAssistant = true;
+
+    modalRef.result.then(result => {
+      var p = new EmployeeSimple();
+      p.id = result.id;
+      p.name = result.name;
+      this.dotKhamForm.get('assistant').patchValue(p);
+      this.filteredAssistants = _.unionBy(this.filteredAssistants, [p], 'id');
+    }, () => {
     });
   }
 
@@ -143,14 +175,14 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   getDoctorList() {
     this.searchDoctors().subscribe(
       rs => {
-        this.filteredDoctors = rs;
+        this.filteredDoctors = _.unionBy(this.filteredDoctors, rs, 'id');
       });
   }
 
   getAssistantList() {
     this.searchAssistants().subscribe(
       rs => {
-        this.filteredAssistants = rs;
+        this.filteredAssistants = _.unionBy(this.filteredAssistants, rs, 'id');
       });
   }
 }

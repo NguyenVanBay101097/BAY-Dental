@@ -40,5 +40,6 @@ namespace Infrastructure.Services
         Task RecomputeCouponLines(IEnumerable<Guid> ids);
         Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id);
         Task RecomputeResidual(IEnumerable<Guid> ids);
+        Task<bool> CheckHasPromotionCanApply(Guid id);
     }
 }

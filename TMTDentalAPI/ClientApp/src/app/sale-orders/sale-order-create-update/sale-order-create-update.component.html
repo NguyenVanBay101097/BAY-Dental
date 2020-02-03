@@ -12,10 +12,11 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm"
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
                         *ngIf="['done', 'cancel'].indexOf(saleOrder.state) == -1" (click)="onSave()">
                         Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
                         Thêm mới</button>
                 </div>
             </div>
@@ -41,11 +42,12 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                    <button type="button" accesskey="1" *ngIf="!id" class="btn btn-primary btn-sm"
+                        (click)="onSaveConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="id && saleOrder.state == 'draft'" class="btn btn-primary btn-sm"
-                        (click)="actionConfirm()">
+                    <button type="button" accesskey="1" *ngIf="id && saleOrder.state == 'draft'"
+                        class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
                     </button>
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
@@ -63,6 +65,9 @@
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionDone()">
                         Khóa
+                    </button>
+                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                        In phiếu
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -214,7 +219,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div class="mb-2" *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1">
-                                <button type="button" class="btn btn-secondary btn-sm"
+                                <button type="button" accesskey="A" class="btn btn-secondary btn-sm"
                                     (click)="showAddLineModal()">Thêm</button>
                             </div>
                             <div>
@@ -263,13 +268,13 @@
                                 </table>
                             </div>
                             <div class="oe_right">
-                                <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
-                                    (click)="showApplyCouponDialog()"
+                                <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                                    class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCouponDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
                                     <span>Áp dụng coupon</span>
                                 </button>
-                                <button type="button" name="recompute_coupon_lines" placement="bottom"
-                                    triggers="mouseenter:mouseleave"
+                                <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                                    name="recompute_coupon_lines" placement="bottom" triggers="mouseenter:mouseleave"
                                     ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
                                     popoverTitle="Cập nhật khuyến mãi" class="btn btn-sm btn-outline-secondary"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1"

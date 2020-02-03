@@ -43,19 +43,6 @@
                                                 <input class="form-control" formControlName="ref" />
                                             </td>
                                         </tr>
-                                        <!-- <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Giới tính</label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <input type="radio" class="radio-gender-male" value="Male"
-                                                formControlName="gender" /> Nam
-                                            <input type="radio" class="radio-gender-female" value="Female"
-                                                formControlName="gender" /> Nữ
-                                            <input type="radio" class="radio-gender-other" value="Other"
-                                                formControlName="gender" /> Khác
-                                        </td>
-                                    </tr> -->
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Số điện thoại</label>
@@ -94,23 +81,6 @@
                                                 <input class="form-control" formControlName="identityCard" />
                                             </td>
                                         </tr>
-                                        <!-- <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Nhóm</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <div class="d-flex">
-                                                    <kendo-combobox formControlName="category" [data]="categoriesList"
-                                                        [filterable]="true"
-                                                        (filterChange)="loadAutocompleteTypes($event)"
-                                                        [textField]="'name'" [valueField]="'id'">
-                                                    </kendo-combobox>
-                                                    <a class="btn btn-sm btn-light" (click)="quickCreateCategory()">
-                                                        <span class="k-icon k-i-plus"></span>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr> -->
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Email</label>
@@ -130,7 +100,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" [disabled]="!formCreate.valid"
+    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="!formCreate.valid"
         (click)="createUpdateEmployee()">Lưu</button>
-    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Đóng</button>
+    <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>

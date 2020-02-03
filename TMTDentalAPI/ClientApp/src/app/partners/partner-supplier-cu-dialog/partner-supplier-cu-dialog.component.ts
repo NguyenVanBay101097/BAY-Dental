@@ -43,6 +43,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       phone: null,
       comment: null,
       supplier: true,
+      customer: false,
     });
 
     setTimeout(() => {

@@ -46,14 +46,6 @@
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus"></i>
                                         </a>
-                                        <a title="Tìm khách hàng" class="pl-2 py-1" type="button"
-                                            (click)="searchCustomerDialog()">
-                                            <i class="fas fa-search"></i>
-                                        </a>
-                                        <!-- <button [disabled]="appointId" class="btn btn-sm btn-light"
-                                            (click)="quickCreateCustomerModal()">
-                                            <span class="k-icon k-i-plus"></span>
-                                        </button> -->
                                     </div>
                                 </td>
                             </tr>
@@ -65,6 +57,10 @@
                                     <kendo-combobox formControlName="doctor" [filterable]="true"
                                         [data]="doctorSimpleFilter" #doctorCbx [valueField]="'id'" [textField]="'name'"
                                         [readonly]="doctorAvailble()">
+                                        <ng-template kendoDropDownListNoDataTemplate>
+                                            <a class="btn btn-light btn-sm" (click)="createDoctorDialog()">Thêm bác
+                                                sĩ '{{doctorCbx.text}}'</a>
+                                        </ng-template>
                                     </kendo-combobox>
                                 </td>
                             </tr>

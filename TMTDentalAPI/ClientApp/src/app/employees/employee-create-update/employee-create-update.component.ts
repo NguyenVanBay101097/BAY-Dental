@@ -24,6 +24,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   formCreate: FormGroup;
   windowOpened: boolean = false;
   title = 'Nhân viên';
+  isDoctor: boolean;
+  isAssistant: boolean;
 
   categoriesList: EmployeeCategoryBasic[] = [];
   categoriesList2: EmployeeCategoryDisplay[] = [];
@@ -39,11 +41,14 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       birthDay: null,
       birthDayObj: null,
       category: [null],
-      isDoctor: false,
-      isAssistant: false
+      isDoctor: this.isDoctor || false,
+      isAssistant: this.isAssistant || false
     });
-    this.loadAutocompleteTypes(null);
-    this.getEmployeeInfo();
+
+    setTimeout(() => {
+      this.loadAutocompleteTypes(null);
+      this.getEmployeeInfo();
+    });
   }
 
   getEmployeeInfo() {
@@ -70,7 +75,11 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     this.isChange = true;
     this.service.createUpdateEmployee(value, this.empId).subscribe(
       rs => {
-        this.closeModal();
+        if (this.empId) {
+          this.activeModal.close(true);
+        } else {
+          this.activeModal.close(rs);
+        }
       },
       er => {
         console.log(er);
