@@ -30,6 +30,7 @@ export class SaleReportOverviewComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   isQuotation = false;
+  viewType = 'list';
 
   groups: { text: string, value: string }[] = [
     { text: 'Ngày', value: 'date' },
@@ -77,6 +78,10 @@ export class SaleReportOverviewComponent implements OnInit {
   getTitle() {
     var item = _.find(this.groups, o => o.value == this.groupBy);
     return item.text;
+  }
+
+  setViewType(type) {
+    this.viewType = type;
   }
 
   loadDataFromApi() {

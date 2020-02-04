@@ -42,11 +42,12 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()"
+                        accesskey="1">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="id && purchaseOrder.state == 'draft'" class="btn btn-primary btn-sm"
-                        (click)="buttonConfirm()">
+                    <button type="button" accesskey="1" *ngIf="id && purchaseOrder.state == 'draft'"
+                        class="btn btn-primary btn-sm" (click)="buttonConfirm()">
                         Xác nhận
                     </button>
                     <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"

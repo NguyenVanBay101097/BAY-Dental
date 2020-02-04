@@ -46,10 +46,8 @@ purchase.model_purchase_order_line,PurchaseOrderLine,Purchase Order Line,1
 mail.model_mail_message,MailMessage,Mail Message,1
 loyalty_card.model_card_card,CardCard,Thẻ thành viên,0
 loyalty_card.model_card_type,CardType,Loại thẻ thành viên,0
-sale_coupon.model_sale_coupon_program,SaleCouponProgram,Chương trình coupon,0
+sale_coupon.model_sale_coupon_program,SaleCouponProgram,Chương trình khuyến mãi/coupon,0
 sale_coupon.model_sale_coupon,SaleCoupon,Coupon,0
-sale.model_promotion_program,PromotionProgram,Chương trình khuyến mãi,0
-sale.model_promotion_rule,PromotionRule,Promotion Rule,1
 base.model_res_config_settings,ResConfigSettings,Cấu hình chung,0
 
 

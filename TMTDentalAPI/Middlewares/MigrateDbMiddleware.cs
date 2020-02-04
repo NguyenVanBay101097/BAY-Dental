@@ -27,15 +27,15 @@ namespace TMTDentalAPI.Middlewares
             var tenant = context.GetTenant<AppTenant>();
             if (tenant != null)
             {
-                //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
-                //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
-                //{
-                //    var now = DateTime.Now;
-                //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
-                //    {
-                //        await HandleExpiredAsync(context);
-                //    }
-                //}
+                Microsoft.Extensions.Primitives.StringValues skipCheck = "";
+                if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
+                {
+                    var now = DateTime.Now;
+                    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
+                    {
+                        await HandleExpiredAsync(context);
+                    }
+                }
 
                 var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
                 var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
@@ -49,12 +49,12 @@ namespace TMTDentalAPI.Middlewares
 
         private static Task HandleExpiredAsync(HttpContext context)
         {
-            var code = HttpStatusCode.Gone; // 410
+            var code = HttpStatusCode.PaymentRequired; // 402
 
             //if (ex is MyNotFoundException) code = HttpStatusCode.NotFound;
             //else if (ex is MyUnauthorizedException) code = HttpStatusCode.Unauthorized;
             //else if (ex is MyException) code = HttpStatusCode.BadRequest;
-            var result = JsonConvert.SerializeObject(new { error = "Tai khoan cua ban da het han." });
+            var result = JsonConvert.SerializeObject(new { error = "Tài khoản của bạn đã hết hạn!" });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);

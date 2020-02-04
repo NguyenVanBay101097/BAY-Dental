@@ -68,6 +68,7 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             _modelAccessService.Check("ResGroup", "Create");
+            await _unitOfWork.BeginTransactionAsync();
             var group = _mapper.Map<ResGroup>(val);
             SaveAccesses(val, group);
 
@@ -78,7 +79,10 @@ namespace TMTDentalAPI.Controllers
             SaveUsers(val, group);
             await _resGroupService.CreateAsync(group);
 
+            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { group });
+
             _userService.ClearSecurityCache(refreshCacheUserIds);
+            _unitOfWork.Commit();
 
             val.Id = group.Id;
             return Ok(val);
@@ -95,6 +99,8 @@ namespace TMTDentalAPI.Controllers
             if (group == null)
                 return NotFound();
 
+            await _unitOfWork.BeginTransactionAsync();
+
             group = _mapper.Map(val, group);
             SaveAccesses(val, group);
 
@@ -105,7 +111,11 @@ namespace TMTDentalAPI.Controllers
             SaveUsers(val, group);
             await _resGroupService.UpdateAsync(group);
 
+            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { group });
+
             _userService.ClearSecurityCache(refreshCacheUserIds);
+
+            _unitOfWork.Commit();
 
             return NoContent();
         }
