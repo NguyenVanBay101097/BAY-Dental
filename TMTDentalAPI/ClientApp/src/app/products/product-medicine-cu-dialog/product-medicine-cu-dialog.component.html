@@ -38,9 +38,7 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox [data]="filterdCategories"
                                                         [textField]="'completeName'" [filterable]="true" #categCbx
-                                                        formControlName="categ" [valueField]="'id'"
-                                                        (filterChange)="categCbxFilterChange2($event)"
-                                                        [loading]="categCbxLoading">
+                                                        formControlName="categ" [valueField]="'id'">
                                                     </kendo-combobox>
                                                     <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
