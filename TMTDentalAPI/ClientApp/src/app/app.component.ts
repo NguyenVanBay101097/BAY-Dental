@@ -69,14 +69,13 @@ export class AppComponent {
   }
 
   loadGroups() {
-    // var groups = localStorage.getItem('groups');
-    // if (!groups && this.authService.isAuthenticated()) {
-    //   this.authService.getGroups().subscribe(result => {
-    //     localStorage.setItem('groups', JSON.stringify(result));
-    //   });
-    // }
-    this.authService.getGroups().subscribe(result => {
-      localStorage.setItem('groups', JSON.stringify(result));
+    this.authService.currentUser.subscribe(user => {
+      if (user) {
+        this.authService.getGroups().subscribe(result => {
+          console.log('groups: ', result);
+          localStorage.setItem('groups', JSON.stringify(result));
+        });
+      }
     });
   }
 }

@@ -108,8 +108,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
     private partnerService: PartnerService, private accountInvoiceService: AccountInvoiceService,
     private userService: UserService, private notificationService: NotificationService,
-    // private dotKhamLineService: DotKhamLineService, private dotKhamLineOperationService: DotKhamLineOperationService,
-    // private windowService: WindowService,
     private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
     private toaThuocService: ToaThuocService, private appointmentService: AppointmentService, private productService: ProductService,
     private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal,

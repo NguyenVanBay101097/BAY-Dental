@@ -21,6 +21,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Ngay het han
         /// </summary>
-        //public DateTime? DateExpired { get; set; }
+        public DateTime? DateExpired { get; set; }
     }
 }

@@ -528,7 +528,6 @@ namespace Infrastructure.Services
                 throw new Exception("Không tìm thấy địa điểm nhà cung cấp");
 
             var locationDest = _GetDestinationLocation(order);
-
             var res = new StockPicking
             {
                 PickingTypeId = order.PickingTypeId,
@@ -542,6 +541,7 @@ namespace Infrastructure.Services
             {
                 res.LocationId = locationDest.Id;
                 res.LocationDestId = location.Id;
+                res.PickingTypeId = order.PickingType.ReturnPickingTypeId.Value;
             }
             else
             {

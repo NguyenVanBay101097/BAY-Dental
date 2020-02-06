@@ -9,13 +9,14 @@ import { Router } from '@angular/router';
 import { AppLoadingService } from './shared/app-loading.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedErrorDialogComponent } from './shared/shared-error-dialog/shared-error-dialog.component';
+import { AuthService } from './auth/auth.service';
 
 
 @Injectable()
 export class HttpHandleErrorInterceptor implements HttpInterceptor {
 
     constructor(private notificationService: NotificationService, private router: Router, private loadingService: AppLoadingService,
-        private modalService: NgbModal) { }
+        private modalService: NgbModal, private authService: AuthService) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler) {
         this.loadingService.setLoading(true);
@@ -28,6 +29,9 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
             catchError((error: HttpErrorResponse) => {
                 if (error.status === 401) {
                     this.router.navigate(['login']);
+                } else if (error.status === 402) {
+                    this.authService.logout();
+                    this.router.navigate(['expired']);
                 }
 
                 let message = '';

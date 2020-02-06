@@ -118,7 +118,7 @@ namespace TMTDentalAdmin.Controllers
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
             var tenant = await _tenantService.GetByIdAsync(val.Id);
-            //tenant.DateExpired = val.DateExpired;
+            tenant.DateExpired = val.DateExpired;
             await _tenantService.UpdateAsync(tenant);
 
             using (HttpClient client = new HttpClient())

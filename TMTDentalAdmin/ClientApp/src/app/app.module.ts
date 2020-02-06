@@ -24,6 +24,7 @@ import { IntlModule } from '@progress/kendo-angular-intl';
 import '@progress/kendo-angular-intl/locales/vi/all';
 import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
 import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
+import { AuthGuard } from './auth/auth.guard';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -46,7 +47,7 @@ registerLocaleData(localeVi, 'vi');
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'register', component: TrialRegistrationComponent },
       { path: 'register-success', component: TrialRegistrationSuccessComponent },
     ]),

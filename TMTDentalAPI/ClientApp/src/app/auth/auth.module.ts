@@ -8,9 +8,10 @@ import { SharedModule } from '@progress/kendo-angular-dropdowns';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ExpireComponent } from './expire/expire.component';
 
 @NgModule({
-  declarations: [LoginComponent, ForgotPasswordComponent, ResetPasswordComponent],
+  declarations: [LoginComponent, ForgotPasswordComponent, ResetPasswordComponent, ExpireComponent],
   imports: [
     CommonModule,
     AuthRoutingModule,

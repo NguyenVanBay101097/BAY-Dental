@@ -50,7 +50,7 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
     this.quickOptions = [
       { text: 'Hôm nay', dateFrom: this.today, dateTo: this.today },
       { text: 'Hôm qua', dateFrom: this.yesterday, dateTo: this.yesterday },
-      { text: 'Tuần ngày', dateFrom: this.weekStart, dateTo: this.weekEnd },
+      { text: 'Tuần này', dateFrom: this.weekStart, dateTo: this.weekEnd },
       { text: 'Tháng này', dateFrom: this.monthStart, dateTo: this.monthEnd },
       { text: 'Năm này', dateFrom: this.yearStart, dateTo: this.yearEnd }
     ];

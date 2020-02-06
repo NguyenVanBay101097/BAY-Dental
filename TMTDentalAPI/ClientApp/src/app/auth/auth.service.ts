@@ -25,7 +25,6 @@ export class AuthService {
         if (typeof user_info != 'string') {
             localStorage.removeItem('user_info');
         }
-        console.log(user_info);
         this.currentUserSubject = new BehaviorSubject<UserViewModel>(null);
         this.currentUser = this.currentUserSubject.asObservable();
     }

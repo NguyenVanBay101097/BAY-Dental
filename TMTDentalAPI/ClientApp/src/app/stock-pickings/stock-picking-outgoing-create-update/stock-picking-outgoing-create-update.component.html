@@ -27,8 +27,8 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(picking.state) !== -1"
-                        (click)="actionDone()">
+                    <button type="button" accesskey="1" class="btn btn-primary btn-sm"
+                        *ngIf="['draft'].indexOf(picking.state) !== -1" (click)="actionDone()">
                         Hoàn thành
                     </button>
                 </div>

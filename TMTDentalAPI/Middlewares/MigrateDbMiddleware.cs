@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using HtmlAgilityPack;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -27,15 +29,15 @@ namespace TMTDentalAPI.Middlewares
             var tenant = context.GetTenant<AppTenant>();
             if (tenant != null)
             {
-                //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
-                //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
-                //{
-                //    var now = DateTime.Now;
-                //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
-                //    {
-                //        await HandleExpiredAsync(context);
-                //    }
-                //}
+                Microsoft.Extensions.Primitives.StringValues skipCheck = "";
+                if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
+                {
+                    var now = DateTime.Now;
+                    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
+                    {
+                        await HandleExpiredAsync(context);
+                    }
+                }
 
                 var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
                 var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
@@ -49,15 +51,17 @@ namespace TMTDentalAPI.Middlewares
 
         private static Task HandleExpiredAsync(HttpContext context)
         {
-            var code = HttpStatusCode.Gone; // 410
-
-            //if (ex is MyNotFoundException) code = HttpStatusCode.NotFound;
-            //else if (ex is MyUnauthorizedException) code = HttpStatusCode.Unauthorized;
-            //else if (ex is MyException) code = HttpStatusCode.BadRequest;
-            var result = JsonConvert.SerializeObject(new { error = "Tai khoan cua ban da het han." });
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)code;
-            return context.Response.WriteAsync(result);
+            return context.Response.WriteHtmlAsync("<html>" +
+                "<head>" +
+                    "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">" +
+                "</head>" +
+                "<body>" +
+                    "<div class=\"jumbotron\">" +
+                        "<h1 class=\"display-4\">Hết hạn!</h1>" +
+                        "<p class=\"lead\">Ứng dụng đã hết hạn, vui lòng liên hệ hotline <strong>0908075455</strong> để được hỗ trợ.</p>" +
+                    "</div>" +
+                "</body>" +
+                "</html>");
         }
     }
 }
