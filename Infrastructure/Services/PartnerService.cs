@@ -137,7 +137,6 @@ namespace Infrastructure.Services
             }
         }
 
-
         public async Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val)
         {
             var query = GetQueryPaged(val);
