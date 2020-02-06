@@ -14,6 +14,7 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { saveAs } from '@progress/kendo-drawing/pdf';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -235,28 +236,17 @@ export class PartnerListComponent implements OnInit {
 
   deleteCustomer(id, event) {
     event.stopPropagation();
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa đối tác',
-      content: 'Bạn chắc chắn muốn xóa?',
-      width: 450,
-      height: 200,
-      minWidth: 250,
-      actions: [
-        { text: 'Hủy', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ]
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa ' + (this.queryCustomer ? 'khách hàng' : 'nhà cung cấp');
+
+    modalRef.result.then(() => {
+      this.partnerService.deleteCustomer(id).subscribe(() => {
+        this.routingChange();
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
     });
-    dialogRef.result.subscribe(
-      rs => {
-        if (!(rs instanceof DialogCloseResult)) {
-          if (rs['value']) {
-            this.partnerService.deleteCustomer(id).subscribe(
-              () => { this.getPartnersList(); }
-            );
-          }
-        }
-      }
-    )
   }
 
   getGender(g: string) {

@@ -95,10 +95,12 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var partner = _mapper.Map<Partner>(val);
+            CityDistrictWardPrepare(partner, val);
+
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             SaveCategories(val, partner);
             SaveHistories(val, partner);
-            FixCityName(partner);
+            //FixCityName(partner);
             await _partnerService.CreateAsync(partner);
 
             var basic = _mapper.Map<PartnerBasic>(partner);
@@ -122,18 +124,13 @@ namespace TMTDentalAPI.Controllers
 
             partner = _mapper.Map(val, partner);
 
-            partner.CityCode = val.City != null ? val.City.Code : string.Empty;
-            partner.CityName = val.City != null ? val.City.Name : string.Empty;
-            partner.DistrictCode = val.District != null ? val.District.Code : string.Empty;
-            partner.DistrictName = val.District != null ? val.District.Name : string.Empty;
-            partner.WardCode = val.Ward != null ? val.Ward.Code : string.Empty;
-            partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
+            CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             partner.EmployeeId = val.EmployeeId;
             SaveCategories(val, partner);
             SaveHistories(val, partner);
-            FixCityName(partner);
+            //FixCityName(partner);
             await _partnerService.UpdateAsync(partner);
 
             return NoContent();
@@ -419,6 +416,16 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        private void CityDistrictWardPrepare(Partner partner, PartnerDisplay val)
+        {
+            partner.CityCode = val.City != null ? val.City.Code : string.Empty;
+            partner.CityName = val.City != null ? val.City.Name : string.Empty;
+            partner.DistrictCode = val.District != null ? val.District.Code : string.Empty;
+            partner.DistrictName = val.District != null ? val.District.Name : string.Empty;
+            partner.WardCode = val.Ward != null ? val.Ward.Code : string.Empty;
+            partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
         }
     }
 }

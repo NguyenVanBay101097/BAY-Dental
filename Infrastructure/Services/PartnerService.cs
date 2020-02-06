@@ -865,7 +865,7 @@ namespace Infrastructure.Services
                     if (dict.ContainsKey(address.ToLower()))
                     {
                         item.Street = dict[address.ToLower()].ShortAddress;
-                        item.CityName = dict[address.ToLower()].CityName;
+                        item.CityName = dict[address.ToLower()].CityName.Replace("TP","Thành phố");
                         item.CityCode = dict[address.ToLower()].CityCode;
                         item.DistrictName = dict[address.ToLower()].DistrictName;
                         item.DistrictCode = dict[address.ToLower()].DistrictCode;
