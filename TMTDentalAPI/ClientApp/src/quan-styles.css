@@ -446,3 +446,14 @@ a {
 .q_form_wrapper{
     margin-left: 100px;
 }
+
+#t-dental_logo{
+    max-width: 100%;
+    width: 125px;
+}
+
+.navbar-brand{
+    width : 10%;
+    height: auto;
+    display: block;
+}
