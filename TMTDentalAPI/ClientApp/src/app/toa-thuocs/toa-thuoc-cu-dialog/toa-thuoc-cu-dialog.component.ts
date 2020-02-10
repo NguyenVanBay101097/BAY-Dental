@@ -85,10 +85,8 @@ export class ToaThuocCuDialogComponent implements OnInit {
       var val = new ToaThuocLineDefaultGet();
       val.productId = value.id;
       this.toaThuocService.lineDefaultGet(val).subscribe(result => {
-        console.log(result);
         var lines = this.toaThuocForm.get('lines') as FormArray;
         lines.push(this.fb.group(result));
-        console.log(this.productCbx);
         this.productCbx.reset();
       });
     }
@@ -155,7 +153,6 @@ export class ToaThuocCuDialogComponent implements OnInit {
   loadRecord() {
     if (this.id) {
       this.toaThuocService.get(this.id).subscribe(result => {
-        console.log(result);
         this.toaThuocForm.patchValue(result);
         let date = new Date(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
@@ -176,7 +173,6 @@ export class ToaThuocCuDialogComponent implements OnInit {
     var val = this.toaThuocForm.value;
     val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
     val.lines = this.lines;
-    console.log(val);
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
@@ -184,6 +180,25 @@ export class ToaThuocCuDialogComponent implements OnInit {
     } else {
       this.toaThuocService.create(val).subscribe(result => {
         this.activeModal.close(result);
+      });
+    }
+  }
+
+  onSaveAndPrint() {
+    if (!this.toaThuocForm.valid) {
+      return;
+    }
+
+    var val = this.toaThuocForm.value;
+    val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+    val.lines = this.lines;
+    if (this.id) {
+      this.toaThuocService.update(this.id, val).subscribe(() => {
+        this.activeModal.close(true);
+      });
+    } else {
+      this.toaThuocService.create(val).subscribe(result => {
+        this.activeModal.close({ toaThuoc: result, print: true });
       });
     }
   }
@@ -224,7 +239,6 @@ export class ToaThuocCuDialogComponent implements OnInit {
     if (this.id) {
       var val = this.toaThuocForm.value;
       val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
-      console.log(val);
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
       });

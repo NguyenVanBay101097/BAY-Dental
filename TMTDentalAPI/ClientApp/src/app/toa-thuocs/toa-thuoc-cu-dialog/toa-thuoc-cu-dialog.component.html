@@ -13,7 +13,7 @@
                         <span>{{toaThuocForm.get('name').value || 'Mới'}}</span>
                     </h1>
                 </div>
-                <div class="o_group">
+                <div class="o_group mb-0">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -85,6 +85,7 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSaveAndPrint()">Lưu và in</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
         accesskey="q">Đóng</button>
 </footer>

@@ -201,7 +201,7 @@ namespace Infrastructure.Services
             {
                 var productObj = GetService<IProductService>();
                 var product = await productObj.GetByIdAsync(val.ProductId.Value);
-                res.PriceUnit = product.PurchasePrice ?? 0;
+                res.PriceUnit = product.LaboPrice ?? 0;
                 res.Name = product.Name;
             }
 

@@ -58,6 +58,10 @@
                         *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateDotKham()">
                         Tạo đợt khám
                     </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateLabo()">
+                        Tạo phiếu labo
+                    </button>
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
                         Hủy phiếu
@@ -210,6 +214,10 @@
                                 aria-controls="profile" aria-selected="false">Đợt khám</a>
                         </li>
                         <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
+                            <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo" role="tab"
+                                aria-controls="labo" aria-selected="false">Phiếu labo</a>
+                        </li>
+                        <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                             <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
                                 aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
                         </li>
@@ -332,6 +340,32 @@
                                         </td>
                                         <td>{{ dk.date | date : 'short' }}</td>
                                         <td>{{ dk.user ? dk.user.name : '' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
+                            aria-labelledby="labo-tab">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Số phiếu</th>
+                                        <th>Labo</th>
+                                        <th>Ngày gửi</th>
+                                        <th>Ngày nhận</th>
+                                        <th>Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let lb of laboOrders">
+                                        <td>
+                                            <a [routerLink]="['/labo-orders/form']"
+                                                [queryParams]="{id: lb.id}">{{lb.name}}</a>
+                                        </td>
+                                        <td>{{ lb.partnerName }}</td>
+                                        <td>{{ lb.dateOrder | date: 'short' }}</td>
+                                        <td>{{ lb.datePlanned | date: 'short' }}</td>
+                                        <td>{{ lb.amountTotal | number }}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -213,8 +213,42 @@ namespace Infrastructure.Services
         {
             var product = _mapper.Map<Product>(val);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-            var companyId = CompanyId;
+            if (!product.CompanyId.HasValue)
+                product.CompanyId = CompanyId;
+            if (val.StepList.Any())
+            {
+                var order = 1;
+                foreach (var step in val.StepList)
+                {
+                    product.Steps.Add(new ProductStep
+                    {
+                        Order = order++,
+                        Name = step.Name
+                    });
+                }
+            }
+
+            //_SetStandardPrice(product, val.StandardPrice);
+
             return await CreateAsync(product);
+        }
+
+        public void _SetStandardPrice(Product self, double value)
+        {
+            //Store the standard price change in order to be able to retrieve the cost of a product for a given date'''
+            var list = new List<Product>() { self };
+            var propertyObj = GetService<IIRPropertyService>();
+
+            //Store the standard price change in order to be able to retrieve the cost of a product for a given date'''
+            propertyObj.set_multi("standard_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)value));
+
+            var priceHistoryObj = GetService<IProductPriceHistoryService>();
+            priceHistoryObj.Create(new ProductPriceHistory
+            {
+                ProductId = self.Id,
+                Cost = value,
+                CompanyId = CompanyId
+            });
         }
 
         public async Task<Product> CreateProduct(ProductLaboSave val)
@@ -272,42 +306,60 @@ namespace Infrastructure.Services
 
         public async Task UpdateProduct(Guid id, ProductDisplay val)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels).FirstOrDefaultAsync();
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).FirstOrDefaultAsync();
             var companyId = CompanyId;
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
-            if (product.ProductCompanyRels == null)
+            SaveProductSteps(product, val.StepList);
+            //_SetStandardPrice(product, val.StandardPrice);
+            await UpdateAsync(product);
+        }
+
+        private void SaveProductSteps(Product product, IEnumerable<ProductStepDisplay> val)
+        {
+            var existLines = product.Steps.ToList();
+            var lineToRemoves = new List<ProductStep>();
+            foreach (var existLine in existLines)
             {
-                product.ProductCompanyRels = new List<ProductCompanyRel>()
+                bool found = false;
+                foreach (var item in val)
                 {
-                    new ProductCompanyRel
+                    if (item.Id == existLine.Id)
                     {
-                        CompanyId = companyId,
-                        ProductId = product.Id,
-                        StandardPrice = (double)val.StandardPrice
+                        found = true;
+                        break;
                     }
-                };
+                }
+
+                if (!found)
+                    lineToRemoves.Add(existLine);
             }
-            else
+
+            foreach (var line in lineToRemoves)
+                product.Steps.Remove(line);
+
+            int sequence = 1;
+            foreach (var line in val)
             {
-                var pcRel = product.ProductCompanyRels.Where(x => x.CompanyId == companyId).FirstOrDefault();
-                if (pcRel == null)
+                if (line.Id == Guid.Empty)
                 {
-                    product.ProductCompanyRels.Add(new ProductCompanyRel
+                    product.Steps.Add(new ProductStep
                     {
-                        CompanyId = companyId,
-                        ProductId = product.Id,
-                        StandardPrice = (double)val.StandardPrice
+                        Order = sequence++,
+                        Name = line.Name
                     });
                 }
                 else
                 {
-                    pcRel.StandardPrice = (double)val.StandardPrice;
+                    var sl = product.Steps.SingleOrDefault(c => c.Id == line.Id);
+                    if (sl != null)
+                    {
+                        sl.Order = sequence++;
+                        sl.Name = line.Name;
+                    }
                 }
             }
-
-            await UpdateAsync(product);
         }
 
         public async Task UpdateProduct(Guid id, ProductLaboSave val)
@@ -326,14 +378,16 @@ namespace Infrastructure.Services
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO).FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
-            var companyId = CompanyId;
-            var pcRel = product.ProductCompanyRels.FirstOrDefault(x => x.CompanyId == companyId);
-            if (pcRel != null)
-            {
-                res.StandardPrice = pcRel.StandardPrice;
-            }
 
+            //res.StandardPrice = _GetStandardPrice(product);
             return res;
+        }
+
+        public double _GetStandardPrice(Product self)
+        {
+            var propertyObj = GetService<IIRPropertyService>();
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{self.Id.ToString()}");
+            return Convert.ToDouble(val);
         }
 
         public async Task<double> GetStandardPrice(Guid id)

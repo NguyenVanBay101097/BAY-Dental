@@ -135,9 +135,9 @@ export class ProductProductCuDialogComponent implements OnInit {
   saveOrUpdate() {
     var data = this.getBodyData();
     if (this.id) {
-      return this.productService.updateWithSteps(this.id, data);
+      return this.productService.update(this.id, data);
     } else {
-      return this.productService.createWithSteps(data);
+      return this.productService.create(data);
     }
   }
 

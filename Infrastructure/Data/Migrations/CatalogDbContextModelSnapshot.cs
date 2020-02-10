@@ -1450,6 +1450,92 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("IRModelDatas");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.IRModelField", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<Guid>("IRModelId");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Model")
+                        .IsRequired();
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Relation");
+
+                    b.Property<string>("TType")
+                        .IsRequired();
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("IRModelId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("IRModelFields");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.IRProperty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("CompanyId");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DateCreated");
+
+                    b.Property<Guid>("FieldId");
+
+                    b.Property<DateTime?>("LastUpdated");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("ResId");
+
+                    b.Property<string>("Type")
+                        .IsRequired();
+
+                    b.Property<byte[]>("ValueBinary");
+
+                    b.Property<DateTime?>("ValueDateTime");
+
+                    b.Property<double?>("ValueFloat");
+
+                    b.Property<int?>("ValueInteger");
+
+                    b.Property<string>("ValueReference");
+
+                    b.Property<string>("ValueText");
+
+                    b.Property<string>("WriteById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FieldId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("IRProperties");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.IRRule", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1689,6 +1775,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("PartnerRef");
 
+                    b.Property<Guid?>("SaleOrderId");
+
                     b.Property<string>("State");
 
                     b.Property<string>("UserId");
@@ -1706,6 +1794,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("DotKhamId");
 
                     b.HasIndex("PartnerId");
+
+                    b.HasIndex("SaleOrderId");
 
                     b.HasIndex("UserId");
 
@@ -2115,6 +2205,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("KeToaNote");
 
                     b.Property<bool>("KeToaOK");
+
+                    b.Property<decimal?>("LaboPrice");
 
                     b.Property<DateTime?>("LastUpdated");
 
@@ -4783,6 +4875,42 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.IRModelField", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.IRModel", "IRModel")
+                        .WithMany()
+                        .HasForeignKey("IRModelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.IRProperty", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.IRModelField", "Field")
+                        .WithMany()
+                        .HasForeignKey("FieldId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.IRRule", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -4878,6 +5006,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
+                        .WithMany()
+                        .HasForeignKey("SaleOrderId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()
@@ -5209,7 +5341,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("Steps")
                         .HasForeignKey("ProductId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")

@@ -105,5 +105,10 @@ namespace ApplicationCore.Entities
         /// Giá mua
         /// </summary>
         public decimal? PurchasePrice { get; set; }
+
+        /// <summary>
+        /// Giá đặt mua labo
+        /// </summary>
+        public decimal? LaboPrice { get; set; }
     }
 }

@@ -5,6 +5,7 @@ import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
 import { LaboOrderLineDisplay } from '../labo-order-lines/labo-order-line.service';
 import { DotKhamBasic } from '../dot-khams/dot-khams';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 
 export class LaboOrderPaged {
     limit: number;
@@ -16,6 +17,7 @@ export class LaboOrderPaged {
     datePlannedFrom: string;
     datePlannedTo: string;
     state: string;
+    saleOrderId: string;
 }
 
 export class LaboOrderBasic {
@@ -26,10 +28,13 @@ export class LaboOrderBasic {
     dateOrder: string;
     state: string;
     amountTotal: string;
+    saleOrderId: string;
+    saleOrderName: string;
 }
 
 export class LaboOrderDefaultGet {
     dotKhamId: string;
+    saleOrderId: string;
 }
 
 export class LaboOrderDisplay {
@@ -39,7 +44,7 @@ export class LaboOrderDisplay {
     partnerRef: string;
     partnerId: string;
     partner: PartnerSimple;
-    customer: PartnerSimple;
+    saleOrder: SaleOrderBasic;
     dateOrder: string;
     amountTotal: number;
     datePlanned: string;

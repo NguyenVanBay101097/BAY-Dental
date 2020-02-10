@@ -135,9 +135,9 @@ namespace Infrastructure.Data
             return entities;
         }
 
-        public IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters)
+        public IEnumerable<T> SqlQuery(string sql, params object[] parameters)
         {
-            throw new NotImplementedException();
+            return _dbContext.Set<T>().FromSql(sql, parameters).ToList();
         }
 
         public async Task UpdateAsync(IEnumerable<T> entities)

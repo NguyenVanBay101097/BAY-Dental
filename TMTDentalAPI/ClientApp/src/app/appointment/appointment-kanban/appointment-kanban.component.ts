@@ -116,8 +116,8 @@ export class AppointmentKanbanComponent implements OnInit {
             this.appointmentByDate[key][index] = item;
           }
         }
-      }, () => {
       });
+    }, () => {
     });
   }
 

@@ -147,11 +147,11 @@ export class LaboOrderListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/labo-orders/create']);
+    this.router.navigate(['/labo-orders/form']);
   }
 
   editItem(item: LaboOrderBasic) {
-    this.router.navigate(['/labo-orders/edit/', item.id]);
+    this.router.navigate(['/labo-orders/form'], { queryParams: { id: item.id } });
   }
 
   deleteItem(item) {

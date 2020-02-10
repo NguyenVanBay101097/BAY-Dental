@@ -26,10 +26,10 @@
                         Xác nhận</button>
                     <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
                         (click)="actionCreateToaThuoc()">
-                        <i class="fas fa-pills"></i> Kê toa </button>
-                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                        <i class="fas fa-pills"></i> Kê toa thuốc</button>
+                    <!-- <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
                         (click)="actionCreateLabo()">
-                        <i class="fas fa-tooth"></i> Tạo labo</button>
+                        <i class="fas fa-tooth"></i> Tạo labo</button> -->
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -199,10 +199,10 @@
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
                                 aria-controls="profile" aria-selected="false">Toa thuốc</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo" role="tab"
                                 aria-controls="labo" aria-selected="false">Labo</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" id="image-tab" data-toggle="tab" href="#image" role="tab"
                                 aria-controls="image" aria-selected="false">Hình ảnh</a>
@@ -419,7 +419,7 @@
                                                 <button [disabled]="invoiceState=='cancel'" type="button"
                                                     class="btn btn-icon btn-sm btn-light mr-1" title="In toa thuốc"
                                                     (click)="printToaThuoc(line)">
-                                                    <i class="fas fa-print"></i>
+                                                    <i class="fas fa-print"></i> In
                                                 </button>
                                             </td>
                                         </tr>
@@ -427,7 +427,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="tab-pane" id="labo" role="tabpanel" aria-labelledby="labo-tab">
+                        <!-- <div class="tab-pane" id="labo" role="tabpanel" aria-labelledby="labo-tab">
                             <div>
                                 <table class="table table-sm">
                                     <thead>
@@ -449,7 +449,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="tab-pane" id="image" role="tabpanel" aria-labelledby="image-tab">
                             <div class="o_chatter oe_chatter">
                                 <div class="o_mail_chatter_attachments">

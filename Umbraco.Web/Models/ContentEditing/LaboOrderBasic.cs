@@ -14,5 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public decimal AmountTotal { get; set; }
         public DateTime? DatePlanned { get; set; }
+        public string SaleOrderName { get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 }

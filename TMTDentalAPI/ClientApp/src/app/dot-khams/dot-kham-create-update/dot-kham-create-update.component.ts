@@ -585,7 +585,11 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Kê toa thuốc';
       modalRef.componentInstance.dotKhamId = this.id;
 
-      modalRef.result.then(() => {
+      modalRef.result.then(result => {
+        if (result.toaThuoc && result.print) {
+          this.printToaThuoc(result.toaThuoc);
+        }
+
         this.loadToaThuocs();
       }, () => {
       });

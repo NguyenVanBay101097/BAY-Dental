@@ -4,10 +4,9 @@ import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { HttpParams } from '@angular/common/http';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-partner-supplier-list',
@@ -19,13 +18,11 @@ export class PartnerSupplierListComponent implements OnInit {
   limit = 20;
   skip = 0;
   loading = false;
-  opened = false;
 
-  searchNameRef: string;
-  searchPhone: string;
+  search: string;
   searchUpdate = new Subject<string>();
-  constructor(private partnerService: PartnerService, private windowService: WindowService,
-    private dialogService: DialogService) { }
+  title = 'Nhà cung cấp';
+  constructor(private partnerService: PartnerService, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -44,18 +41,14 @@ export class PartnerSupplierListComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.loading = true;
-    var params = new HttpParams().set('limit', this.limit.toString())
-      .set('offset', this.skip.toString())
-      .set('supplier', 'true');
-    if (this.searchNameRef) {
-      params = params.append('searchNameRef', this.searchNameRef);
-    }
-    if (this.searchPhone) {
-      params = params.append('searchPhone', this.searchPhone);
-    }
+    var val = new PartnerPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.supplier = true;
+    val.searchNamePhoneRef = this.search || '';
 
-    this.partnerService.getPaged(params).pipe(
+    this.loading = true;
+    this.partnerService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -70,67 +63,36 @@ export class PartnerSupplierListComponent implements OnInit {
   }
 
   createItem() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm nhà cung cấp',
-      content: PartnerSupplierCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   editItem(item: PartnerBasic) {
-    const windowRef = this.windowService.open({
-      title: `Sửa nhà cung cấp`,
-      content: PartnerSupplierCuDialogComponent,
-      resizable: false,
-      autoFocusedElement: '[name="name"]',
-    });
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: ' + this.title;
+    modalRef.componentInstance.id = item.id;
 
-    const instance = windowRef.content.instance;
-    instance.id = item.id;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (!(result instanceof WindowCloseResult)) {
-        this.loadDataFromApi();
-      }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
     });
   }
 
   deleteItem(item: PartnerBasic) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa nhà cung cấp',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa: ' + this.title;
 
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-      } else {
-        if (result['value']) {
-          this.partnerService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-          });
-        }
-      }
+    modalRef.result.then(() => {
+      this.partnerService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
     });
   }
 }

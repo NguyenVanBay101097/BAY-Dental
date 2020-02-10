@@ -48,5 +48,8 @@ namespace ApplicationCore.Entities
 
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrder SaleOrder { get; set; }
     }
 }

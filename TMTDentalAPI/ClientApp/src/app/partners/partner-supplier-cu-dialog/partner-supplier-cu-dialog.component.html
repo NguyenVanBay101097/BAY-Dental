@@ -74,15 +74,15 @@
                                         </div>
                                         <div class="mb-2">
                                             <kendo-combobox [data]="dataResultDistricts" [textField]="'name'"
-                                                [disabled]="isDisabledDistricts" [placeholder]="'Quận/Huyện'"
+                                                [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'"
                                                 (filterChange)="handleDistrictFilter($event)" [filterable]="true"
                                                 #districtCbx (valueChange)="handleDistrictChange($event)"
                                                 formControlName="district" [valueField]="'code'">
                                             </kendo-combobox>
                                         </div>
                                         <kendo-combobox [data]="dataResultWards" [textField]="'name'"
-                                            [disabled]="isDisabledWards" [placeholder]="'Phường/Xã'" [filterable]="true"
-                                            (filterChange)="handleWardFilter($event)" #wardCbx
+                                            [disableControl]="isDisabledWards" [placeholder]="'Phường/Xã'"
+                                            [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx
                                             (valueChange)="handleWardChange($event)" formControlName="ward"
                                             [valueField]="'code'">
                                         </kendo-combobox>

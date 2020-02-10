@@ -15,9 +15,10 @@ import { SaleOrderApplyCouponDialogComponent } from './sale-order-apply-coupon-d
 import { SaleQuotationListComponent } from './sale-quotation-list/sale-quotation-list.component';
 import { SaleQuotationCreateUpdateComponent } from './sale-quotation-create-update/sale-quotation-create-update.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SaleOrderCreateLaboOrderDialogComponent } from './sale-order-create-labo-order-dialog/sale-order-create-labo-order-dialog.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent],
+  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,

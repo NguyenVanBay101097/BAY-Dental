@@ -127,7 +127,8 @@ namespace Infrastructure.Data
         public DbSet<SaleCouponProgramProductRel> SaleCouponProgramProductRels { get; set; }
         public DbSet<SaleOrderNoCodePromoProgram> SaleOrderNoCodePromoPrograms { get; set; }
         public DbSet<ZaloOAConfig> ZaloOAConfigs { get; set; }
-
+        public DbSet<IRModelField> IRModelFields { get; set; }
+        public DbSet<IRProperty> IRProperties { get; set; }
 
         public DbQuery<StockHistory> StockHistories { get; set; }
         public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -237,6 +238,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleCouponProgramProductRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderNoCodePromoProgramConfiguration());
             builder.ApplyConfiguration(new ZaloOAConfigConfiguration());
+            builder.ApplyConfiguration(new IRModelFieldConfiguration());
+            builder.ApplyConfiguration(new IRPropertyConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

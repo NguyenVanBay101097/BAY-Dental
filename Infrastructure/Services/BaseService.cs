@@ -158,9 +158,9 @@ namespace Infrastructure.Services
             return entities;
         }
 
-        public IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters)
+        public IEnumerable<TEntity> SqlQuery(string sql, params object[] parameters)
         {
-            return _repository.SqlQuery<TElement>(sql, parameters);
+            return _repository.SqlQuery(sql, parameters);
         }
 
         public virtual async Task UpdateAsync(IEnumerable<TEntity> entities)

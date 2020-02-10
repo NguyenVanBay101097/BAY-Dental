@@ -6,8 +6,8 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, labo, khách hàng" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, labo, phiếu điều trị"
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -56,7 +56,11 @@
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Labo" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="customerName" title="Khách hàng" width="150">
+        <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders/form']"
+                    [queryParams]="{id: dataItem.saleOrderId}">{{dataItem.saleOrderName}}</a>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

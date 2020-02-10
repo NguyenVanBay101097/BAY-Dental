@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { PartnerListComponent } from './partner-list/partner-list.component';
 import { PartnerCustomerListComponent } from './partner-customer-list/partner-customer-list.component';
 import { PartnerHistoryComponent } from './partner-history/partner-history.component';
+import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 
 const routes: Routes = [
   {
@@ -10,6 +11,9 @@ const routes: Routes = [
   },
   {
     path: 'customers', component: PartnerCustomerListComponent
+  },
+  {
+    path: 'suppliers', component: PartnerSupplierListComponent
   },
   {
     path: 'partners/history/:id',

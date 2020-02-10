@@ -14,11 +14,11 @@ export class HeaderAppointmentComponent implements OnInit {
   constructor(private appointmentService: AppointmentService, private intlService: IntlService) { }
 
   ngOnInit() {
-    interval(60 * 1000)
-      .pipe(
-        flatMap(() => this.appointmentService.checkForthcoming())
-      )
-      .subscribe(() => {
-      });
+    // interval(60 * 1000)
+    //   .pipe(
+    //     flatMap(() => this.appointmentService.checkForthcoming())
+    //   )
+    //   .subscribe(() => {
+    //   });
   }
 }

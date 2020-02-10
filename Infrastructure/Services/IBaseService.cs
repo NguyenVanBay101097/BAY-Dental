@@ -48,7 +48,7 @@ namespace Infrastructure.Services
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
         Task<int> CountAsync(ISpecification<T> spec);
 
-        IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters);
+        IEnumerable<T> SqlQuery(string sql, params object[] parameters);
 
         EntityEntry<T> GetEntry(T entity);
 
