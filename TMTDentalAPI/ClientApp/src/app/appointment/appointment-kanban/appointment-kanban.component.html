@@ -33,11 +33,28 @@
                             <div class="o_kanban_record_description" *ngIf="appointment.note">{{appointment.note}}
                             </div>
                         </div>
-                        <div>
+                        <div class="dropdown" ngbDropdown (click)="$event.stopPropagation()">
+                            <button class="btn dropdown-toggle o-no-caret" type="button" id="dropdownMenuBtn"
+                                aria-expanded="false" data-toggle="dropdown" aria-haspopup="true" ngbDropdownToggle>
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuBtn" ngbDropdownMenu>
+                                <a ngbDropdownItem class="dropdown-item" (click)="getPreviousDotKham(appointment.id)">
+                                    Xem đợt khám trước
+                                </a>
+                                <a ngbDropdownItem class="dropdown-item" (click)="createDotKham(appointment.id)">
+                                    Tạo đợt khám mới
+                                </a>
+                                <a ngbDropdownItem class="dropdown-item" (click)="deleteAppointment(appointment)">
+                                    Xóa lịch hẹn này
+                                </a>
+                            </div>
+                        </div>
+                        <!-- <div>
                             <a (click)="deleteAppointment(appointment);$event.stopPropagation();">
                                 <i class="fas fa-times"></i>
                             </a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

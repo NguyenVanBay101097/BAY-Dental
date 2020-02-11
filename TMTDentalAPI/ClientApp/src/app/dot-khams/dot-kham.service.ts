@@ -9,7 +9,7 @@ import { ToaThuocBasic } from '../toa-thuocs/toa-thuoc.service';
 import { DotKhamLineDisplay, DotKhamLineBasic } from './dot-kham-line.service';
 import { LaboOrderLineBasic } from '../labo-order-lines/labo-order-line.service';
 import { AccountInvoiceCbx } from '../account-invoices/account-invoice.service';
-import { DotKhamPaging, DotKhamDefaultGet, DotKhamDisplay, DotKhamStepDisplay, DotKhamPatch } from './dot-khams';
+import { DotKhamPaging, DotKhamDefaultGet, DotKhamDisplay, DotKhamStepDisplay, DotKhamPatch, DotkhamEntitySearchBy } from './dot-khams';
 import { AppointmentDisplay } from '../appointment/appointment';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from '../shared/shared';
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
@@ -126,6 +126,10 @@ export class DotKhamService {
 
     deleteAttachment(id) {
         return this.http.delete(this.baseApi + this.irApiUrl + '/' + id);
+    }
+
+    getSearchedDotKham(search: DotkhamEntitySearchBy): Observable<DotKhamDisplay> {
+        return this.http.post<DotKhamDisplay>(this.baseApi + this.apiUrl + '/GetSearchedDotKham', search);
     }
 
 }

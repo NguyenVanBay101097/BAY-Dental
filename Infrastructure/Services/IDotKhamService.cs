@@ -18,5 +18,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<AccountInvoiceCbx>> GetCustomerInvoices(Guid customerId);
         Task<IEnumerable<DotKham>> GetDotKhamsForSaleOrder(Guid saleOrderId);
         Task ActionCancel(IEnumerable<Guid> ids);
+        Task<DotKhamDisplay> GetSearchedDotKham(DotKhamEntitySearchBy search);
     }
 }

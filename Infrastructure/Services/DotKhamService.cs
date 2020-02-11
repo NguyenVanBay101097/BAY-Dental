@@ -182,5 +182,24 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        public async Task<DotKhamDisplay> GetSearchedDotKham(DotKhamEntitySearchBy search)
+        {
+            var appointmentService = GetService<IAppointmentService>();
+            ISpecification<DotKham> spec = new InitialSpecification<DotKham>(x => true);
+            if (search.AppointmentId != Guid.Empty)
+                spec = spec.And(new InitialSpecification<DotKham>(x => x.AppointmentId.Equals(search.AppointmentId)));
+
+            var res = await SearchQuery(spec.AsExpression()).FirstOrDefaultAsync();
+            var dotKham = _mapper.Map<DotKhamDisplay>(res);
+
+            return dotKham;
+        }
+    }
+
+    //Tiêu chuẩn tìm kiếm để trả về 1 đợt khám duy nhất
+    public class DotKhamEntitySearchBy
+    {
+        public Guid AppointmentId { get; set; }
     }
 }

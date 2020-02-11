@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { AppointmentService } from '../appointment.service';
 import { forkJoin } from 'rxjs';
@@ -6,10 +6,16 @@ import { AppointmentSearchByDate, AppointmentBasic } from '../appointment';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PagedResult2 } from 'src/app/core/paged-result-2';
 import * as _ from 'lodash';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
+import { DotkhamEntitySearchBy } from 'src/app/dot-khams/dot-khams';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Router } from '@angular/router';
+import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { ToggleType } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -17,15 +23,18 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./appointment-kanban.component.css']
 })
 export class AppointmentKanbanComponent implements OnInit {
+  @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
   dateFrom: Date;
   dateTo: Date;
   state: string;
   search: string;
+  showDropdown = false;
   dateList: Date[];
   today = new Date();
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
   constructor(private appointmentVMService: AppointmentVMService, private appointmentService: AppointmentService,
-    private intlService: IntlService, private modalService: NgbModal) {
+    private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
+    private notificationService: NotificationService, private router: Router) {
     this.appointmentVMService.dateRange$.subscribe(result => {
       this.dateFrom = new Date(result.dateFrom.toDateString());
       this.dateTo = new Date(result.dateTo.toDateString());
@@ -168,6 +177,52 @@ export class AppointmentKanbanComponent implements OnInit {
       list.push(date);
     }
     return list;
+  }
+
+  getPreviousDotKham(id) {
+    var search = new DotkhamEntitySearchBy;
+    search.appointmentId = id;
+    this.dotkhamService.getSearchedDotKham(search).subscribe(
+      rs => {
+        this.router.navigate(['/dot-khams/edit/' + rs.id]);
+      },
+      er => {
+        this.notificationService.show({
+          content: 'Không có đợt khám nào',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+      }
+    )
+  }
+
+  createDotKham(id) {
+    var search = new DotkhamEntitySearchBy;
+    search.appointmentId = id;
+    this.dotkhamService.getSearchedDotKham(search).subscribe(
+      rs => {
+        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Tạo đợt khám';
+        modalRef.componentInstance.saleOrderId = rs.saleOrderId;
+
+        modalRef.result.then(result => {
+          if (result.view) {
+            this.router.navigate(['/dot-khams/edit/', result.result.id]);
+          } else {
+            this.loadData();
+          }
+        }, () => {
+        });
+      }
+    )
+  }
+
+  dropDownToggle(event: Event) {
+    console.log(event);
+    event.stopPropagation();
+    this.dropdownMenuBtn.dropdown();
   }
 
 }
