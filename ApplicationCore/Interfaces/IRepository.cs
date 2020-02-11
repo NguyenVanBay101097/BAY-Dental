@@ -40,7 +40,7 @@ namespace ApplicationCore.Interfaces
             int offSet = 0,
             int limit = int.MaxValue);
 
-        IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters);
+        IEnumerable<T> SqlQuery(string sql, params object[] parameters);
 
         EntityEntry<T> GetEntry(T entity);
 

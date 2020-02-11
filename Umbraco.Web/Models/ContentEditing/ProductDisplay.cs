@@ -12,6 +12,8 @@ namespace Umbraco.Web.Models.ContentEditing
             Active = true;
             SaleOK = true;
             PurchaseOK = true;
+            LaboPrice = 0;
+            PurchasePrice = 0;
         }
 
         /// <summary>
@@ -34,11 +36,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type2 { get; set; }
 
         public decimal? PurchasePrice { get; set; }
-    }
 
-    //ProductDisplay + DS các step
-    public class ProductDisplayAndStep : ProductDisplay
-    {
-        public List<ProductStepDisplay> stepList { get; set; } = new List<ProductStepDisplay>();
+        public decimal? LaboPrice { get; set; }
+
+        public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
     }
 }

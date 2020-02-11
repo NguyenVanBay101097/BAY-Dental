@@ -69,6 +69,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       type2: 'service',
       listPrice: 1,
       standardPrice: 0,
+      laboPrice: 0,
       companyId: null,
       defaultCode: '',
       keToaNote: null,
@@ -187,13 +188,16 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
   }
 
+  get isLabo() {
+    return this.productForm.get('isLabo').value;
+  }
+
   saveOrUpdate() {
     var data = this.getBodyData();
     if (this.id) {
-      return this.productService.updateWithSteps(this.id, data);
+      return this.productService.update(this.id, data);
     } else {
-      // return this.productService.create(data);
-      return this.productService.createWithSteps(data);
+      return this.productService.create(data);
     }
   }
 

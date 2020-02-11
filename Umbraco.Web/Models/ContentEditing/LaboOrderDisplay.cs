@@ -45,5 +45,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CustomerId { get; set; }
         public PartnerSimple Customer { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrderBasic SaleOrder { get; set; }
     }
 }

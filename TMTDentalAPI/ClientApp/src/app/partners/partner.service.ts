@@ -199,8 +199,8 @@ export class PartnerService {
         return this.http.post(this.baseApi + this.apiUrl + "/UploadImage/" + id, formData);
     }
 
-    getPaged(params?: HttpParams): Observable<PagedResult2<PartnerBasic>> {
-        return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl + "", { params: params });
+    getPaged(val?: any): Observable<PagedResult2<PartnerBasic>> {
+        return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl + "", { params: new HttpParams({ fromObject: val }) });
     }
 
     getInfo(id: string): Observable<PartnerInfoViewModel> {

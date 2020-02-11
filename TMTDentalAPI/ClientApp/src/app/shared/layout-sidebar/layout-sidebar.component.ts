@@ -27,13 +27,19 @@ export class LayoutSidebarComponent implements OnInit {
       ]
     },
     {
-      name: 'Quản lý labo',
+      name: 'Phiếu labo',
       icon: 'fas fa-tooth',
-      children: [
-        { name: 'Phiếu Labo', link: '/labo-orders' },
-        { name: 'Báo cáo labo', link: '/labo-order-lines' },
-      ]
+      link: '/labo-orders',
+      children: []
     },
+    // {
+    //   name: 'Quản lý labo',
+    //   icon: 'fas fa-tooth',
+    //   children: [
+    //     { name: 'Phiếu Labo', link: '/labo-orders' },
+    //     { name: 'Báo cáo labo', link: '/labo-order-lines' },
+    //   ]
+    // },
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
@@ -57,7 +63,7 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Thanh toán điều trị', link: '/accountpayments', params: { partner_type: 'customer' } },
         { name: 'Khách hàng', link: '/partners', params: { customer: true } },
         { name: 'Nhóm khách hàng', link: '/partner-categories' },
-        { name: 'Nhà cung cấp', link: '/partners', params: { supplier: true } },
+        { name: 'Nhà cung cấp', link: '/suppliers' },
         { name: 'Nhân viên', link: '/employees' },
         // { name: 'Nhóm nhân viên', link: '/employee-categories' },
         // { name: 'Sản phẩm', link: '/products' },

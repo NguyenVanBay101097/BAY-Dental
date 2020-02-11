@@ -418,6 +418,35 @@ namespace Infrastructure.Services
             return programs.Any(x => !applied_programs.Contains(x));
         }
 
+        public async Task CreateLaboOrder(SaleOrderCreateLaboOrderVM val)
+        {
+            var self = await SearchQuery(x => x.Id == val.OrderId).FirstOrDefaultAsync();
+
+            var laboOrder = new LaboOrder
+            {
+                PartnerId = val.PartnerId,
+                SaleOrderId = val.OrderId,
+            };
+
+            var productIds = self.OrderLines.Where(x => x.Product.IsLabo).Select(x => x.Product.Id).Distinct().ToList();
+            var productObj = GetService<IProductService>();
+
+            var loLines = new List<LaboOrderLine>();
+            foreach(var line in self.OrderLines)
+            {
+                if (!line.Product.IsLabo)
+                    continue;
+
+                var loLine = new LaboOrderLine()
+                {
+                    Name = line.Product.Name,
+                    ProductId = line.ProductId,
+                    ProductQty = line.ProductUOMQty,
+                    PartnerId = laboOrder.PartnerId,
+                };
+            }
+        }
+
         public async Task _RemoveInvalidRewardLines(SaleOrder self)
         {
             /*

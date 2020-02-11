@@ -33,11 +33,12 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search) ||
-                x.Customer.Name.Contains(val.Search) ||
-                x.Customer.NameNoSign.Contains(val.Search) ||
-                x.Customer.Phone.Contains(val.Search)));
+                x.SaleOrder.Name.Contains(val.Search)));
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
+
+            if (val.SaleOrderId.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderId == val.SaleOrderId));
 
             if (val.DateOrderFrom.HasValue)
             {
@@ -127,7 +128,7 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.DotKham).Include(x => x.Customer)
+                .Include(x => x.DotKham).Include(x => x.Customer).Include(x => x.SaleOrder)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
                 .Include("OrderLines.ToothCategory")
@@ -312,6 +313,14 @@ namespace Infrastructure.Services
                     res.Customer = _mapper.Map<PartnerSimple>(dk.Partner);
                 res.CustomerId = dk.PartnerId;
                 res.DotKhamId = dk.Id;
+            }
+
+            if (val.SaleOrderId.HasValue)
+            {
+                var saleObj = GetService<ISaleOrderService>();
+                var order = await saleObj.GetByIdAsync(val.SaleOrderId);
+                if (order != null)
+                    res.SaleOrder = _mapper.Map<SaleOrderBasic>(order);
             }
             return res;
         }

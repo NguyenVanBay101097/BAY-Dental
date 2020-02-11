@@ -114,16 +114,17 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Khách hàng
+                                        Phiếu điều trị
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [class.d-none]="laboOrder.state != 'draft'"
-                                        [data]="filteredCustomers" [textField]="'name'" [filterable]="true" #customerCbx
-                                        formControlName="customer" [valueField]="'id'">
+                                        [data]="filteredSaleOrders" [textField]="'name'" [filterable]="true"
+                                        #saleOrderCbx formControlName="saleOrder" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <span
-                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.customer ? laboOrder.customer.name : ''}}</span>
+                                    <a *ngIf="laboOrder.saleOrder" [routerLink]="['/sale-orders/form']"
+                                        [queryParams]="{id: laboOrder.saleOrder.id}"
+                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
                                 </td>
                             </tr>
                             <tr *ngIf="laboOrder.dotKham">

@@ -172,15 +172,8 @@ export class ProductService {
     }
 
     //==============================PHẦN CÔNG ĐOẠN - STEP=====================================//
-    createWithSteps(product: ProductDisplayAndStep) {
-        return this.http.post(this.baseApi + this.apiUrl + "/CreateWithSteps", product);
-    }
 
     getStepByProductId(id): Observable<ProductStepDisplay[]> {
         return this.http.get<ProductStepDisplay[]>(this.baseApi + "api/ProductSteps/" + id);
-    }
-
-    updateWithSteps(id: string, product: ProductDisplayAndStep) {
-        return this.http.post(this.baseApi + this.apiUrl + "/UpdateWithSteps/" + id, product);
     }
 }

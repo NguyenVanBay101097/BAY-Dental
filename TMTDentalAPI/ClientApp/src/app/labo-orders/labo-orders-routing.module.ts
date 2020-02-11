@@ -9,13 +9,9 @@ const routes: Routes = [
     component: LaboOrderListComponent
   },
   {
-    path: 'labo-orders/create',
+    path: 'labo-orders/form',
     component: LaboOrderCreateUpdateComponent
   },
-  {
-    path: 'labo-orders/edit/:id',
-    component: LaboOrderCreateUpdateComponent
-  }
 ];
 
 @NgModule({

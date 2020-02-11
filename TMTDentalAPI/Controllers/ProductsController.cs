@@ -74,34 +74,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(val);
         }
 
-        [HttpPost("CreateWithSteps")]
-        public async Task<IActionResult> CreateWithSteps(ProductDisplayAndStep pd)
-        {
-            if (null == pd || !ModelState.IsValid)
-                return BadRequest();
-
-            var val = _mapper.Map<ProductDisplay>(pd);
-            var list = pd.stepList;
-            
-            var product = await _productService.CreateProduct(val);
-
-            if (list.Count() > 0)
-            {
-                foreach (var item in list)
-                {
-                    if (item != null)
-                    {
-                        item.ProductId = product.Id;
-                        var productStep = _mapper.Map<ProductStep>(item);
-
-                        await _productStepService.CreateAsync(productStep);
-                    }
-                }
-            }        
-            
-            return Ok(val);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ProductDisplay val)
         {
@@ -146,43 +118,6 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _productService.GetLaboPagedResultAsync(val);
             return Ok(result);
-        }
-
-        [HttpPost("UpdateWithSteps/{id}")]
-        public async Task<IActionResult> UpdateWithSteps(Guid id, ProductDisplayAndStep val)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            await _productService.UpdateProduct(id, val);
-
-            //Thêm - cập nhật công đoạn
-            var list = val.stepList;
-            foreach (var item in list)
-            {
-                var pdStep = await _productStepService.GetByIdAsync(item.Id);
-                if (pdStep == null)
-                {
-                    item.ProductId = id;
-                    pdStep = _mapper.Map(item, pdStep);
-                    await _productStepService.CreateAsync(pdStep);
-                }
-                else
-                {
-                    pdStep = _mapper.Map(item, pdStep);
-                    await _productStepService.UpdateAsync(pdStep);
-                }
-            }
-
-            //Xóa công đoạn
-            var res = _productStepService.GetByProductId(id).Where(x=>!list.Any(y=>y.Id==x.Id || x.Name==y.Name));
-            foreach(var item in res)
-            {
-                var pdStep = await _productStepService.GetByIdAsync(item.Id);
-                await _productStepService.DeleteAsync(pdStep);
-            }
-
-
-            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -391,6 +326,7 @@ namespace TMTDentalAPI.Controllers
                             DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
                             ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                             Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
+                            LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
                         };
                         data.Add(item);
                     }
@@ -418,6 +354,7 @@ namespace TMTDentalAPI.Controllers
                 pd.CategId = categDict[item.CategName].Id;
                 pd.DefaultCode = item.DefaultCode;
                 pd.ListPrice = item.ListPrice ?? 0;
+                pd.LaboPrice = item.LaboPrice ?? 0;
                 pd.PurchasePrice = 0;
                 vals.Add(pd);
 

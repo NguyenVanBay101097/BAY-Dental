@@ -1,12 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { PartnerCategorySimple } from '../partner-simple';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from '../partner.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { HistorySimple } from 'src/app/history/history';
 
 @Component({
   selector: 'app-partner-supplier-cu-dialog',
@@ -44,6 +41,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       comment: null,
       supplier: true,
       customer: false,
+      ref: null,
     });
 
     setTimeout(() => {

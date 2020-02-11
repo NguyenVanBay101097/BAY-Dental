@@ -33,6 +33,8 @@ import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-di
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { from, of, Observable } from 'rxjs';
 import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confirm-dialog-v2.component';
+import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
+declare var $: any;
 
 @Component({
   selector: 'app-sale-order-create-update',
@@ -55,6 +57,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
+  laboOrders: LaboOrderBasic[] = [];
 
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
@@ -68,7 +71,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
-    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService) {
+    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
+    private laboOrderService: LaboOrderService) {
   }
 
   ngOnInit() {
@@ -118,6 +122,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadPartners();
     this.loadUsers();
     this.loadDotKhamList();
+    this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
   }
@@ -216,6 +221,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       return this.saleOrderService.getDotKhamList(this.id).subscribe(result => {
         this.dotKhams = result;
+      });
+    }
+  }
+
+  loadLaboOrderList() {
+    if (this.id) {
+      var val = new LaboOrderPaged();
+      val.saleOrderId = this.id;
+      return this.laboOrderService.getPaged(val).subscribe(result => {
+        this.laboOrders = result.items;
       });
     }
   }
@@ -466,6 +481,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   createNew() {
     this.router.navigate(['/sale-orders/form']);
+    $('#myTab a[href="#home"]').tab('show');
   }
 
   actionConfirm() {
@@ -550,6 +566,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         }
       }, () => {
       });
+    }
+  }
+
+  actionCreateLabo() {
+    if (this.id) {
+      this.router.navigate(['/labo-orders/form'], { queryParams: { sale_order_id: this.id } });
     }
   }
 

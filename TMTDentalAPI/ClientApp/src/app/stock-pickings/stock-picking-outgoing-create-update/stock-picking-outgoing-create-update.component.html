@@ -113,7 +113,7 @@
                                         <td class="align-middle">{{ i + 1 }}</td>
                                         <td class="align-middle">{{ line.get('product').value.name}}</td>
                                         <td class="align-middle text-right">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                            <kendo-numerictextbox [min]="0" [format]="'n2'"
                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
                                                 formControlName="productUOMQty" style="width: 80px;" [spinners]="false">
                                             </kendo-numerictextbox>
