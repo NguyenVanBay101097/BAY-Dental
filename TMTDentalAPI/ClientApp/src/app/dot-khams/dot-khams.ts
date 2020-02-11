@@ -46,6 +46,7 @@ export class DotKhamDisplay {
     state: string;
     companyId: string;
     lines: [];
+    saleOrderId: string;
     saleOrder: SaleOrderBasic;
 }
 
@@ -76,5 +77,9 @@ export class DotKhamStepSave {
 
 export class DotKhamPatch {
     dotKhamId: string;
+    appointmentId: string;
+}
+
+export class DotkhamEntitySearchBy {
     appointmentId: string;
 }

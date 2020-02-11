@@ -280,5 +280,15 @@ namespace TMTDentalAPI.Controllers
         {
             return await _uploadService.UploadBinaryAsync(base64, fileName: fileName);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSearchedDotKham(DotKhamEntitySearchBy search)
+        {
+            var res = await _dotKhamService.GetSearchedDotKham(search);
+
+            return Ok(res);
+        }
+
+
     }
 }

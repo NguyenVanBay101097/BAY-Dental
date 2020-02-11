@@ -457,3 +457,7 @@ a {
     height: auto;
     display: block;
 }
+
+.o_kanban_record_top>.dropdown>.btn.dropdown-toggle.o-no-caret{
+    padding: 0px;
+}
