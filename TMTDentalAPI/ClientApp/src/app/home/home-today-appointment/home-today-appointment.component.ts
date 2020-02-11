@@ -27,8 +27,8 @@ export class HomeTodayAppointmentComponent implements OnInit {
 
     var obs = states.map(state => {
       var val = new AppointmentPaged();
-      val.dateTimeFrom = this.intlService.formatDate(this.today, 'd', 'en-US');
-      val.dateTimeTo = this.intlService.formatDate(this.today, 'd', 'en-US');
+      val.dateTimeFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.dateTimeTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
       val.state = state;
       return this.appointmentService.getPaged(val);
     });

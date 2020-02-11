@@ -64,8 +64,8 @@ export class SaleReportComponent implements OnInit {
 
   loadData() {
     var val = new SaleReportTopSaleProductSearch();
-    val.dateFrom = this.intlService.formatDate(this.optionSelected.dateFrom, 'd', 'en-US');
-    val.dateTo = this.intlService.formatDate(this.optionSelected.dateTo, 'd', 'en-US');
+    val.dateFrom = this.intlService.formatDate(this.optionSelected.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.optionSelected.dateTo, 'yyyy-MM-dd');
     val.topBy = this.topBy;
     this.saleReportService.getTopSaleProduct(val).subscribe(result => {
       this.items = result;

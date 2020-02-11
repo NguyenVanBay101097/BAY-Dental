@@ -38,8 +38,8 @@ export class HomeBusinessSituationComponent implements OnInit {
 
   loadData() {
     var val = new SaleReportSearch();
-    val.dateFrom = this.intlService.formatDate(this.optionSelected.dateFrom, 'd', 'en-US');
-    val.dateTo = this.intlService.formatDate(this.optionSelected.dateTo, 'd', 'en-US');
+    val.dateFrom = this.intlService.formatDate(this.optionSelected.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.optionSelected.dateTo, 'yyyy-MM-dd');
     val.groupBy
     this.saleReportService.getReport(val).subscribe(result => {
       if (result.length) {

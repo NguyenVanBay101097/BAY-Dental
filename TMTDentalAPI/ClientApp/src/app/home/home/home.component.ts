@@ -38,9 +38,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     //Doanh thu
-    this.getAmmountResidual();
+    // this.getAmmountResidual();
     //Đếm lịch hẹn
-    this.countAppoint();
+    // this.countAppoint();
     //Top dịch vụ
   }
 
