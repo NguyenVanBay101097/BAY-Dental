@@ -185,15 +185,6 @@ export class AppointmentKanbanComponent implements OnInit {
     this.dotkhamService.getSearchedDotKham(search).subscribe(
       rs => {
         this.router.navigate(['/dot-khams/edit/' + rs.id]);
-      },
-      er => {
-        this.notificationService.show({
-          content: 'Không có đợt khám nào',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
       }
     )
   }
