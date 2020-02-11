@@ -49,19 +49,19 @@ namespace TMTDentalAPI.Middlewares
             await _next(context);
         }
 
-        private static Task HandleExpiredAsync(HttpContext context)
-        {
-            return context.Response.WriteHtmlAsync("<html>" +
-                "<head>" +
-                    "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">" +
-                "</head>" +
-                "<body>" +
-                    "<div class=\"jumbotron\">" +
-                        "<h1 class=\"display-4\">Hết hạn!</h1>" +
-                        "<p class=\"lead\">Ứng dụng đã hết hạn, vui lòng liên hệ hotline <strong>0908075455</strong> để được hỗ trợ.</p>" +
-                    "</div>" +
-                "</body>" +
-                "</html>");
-        }
+        //private static Task HandleExpiredAsync(HttpContext context)
+        //{
+        //    return context.Response.WriteHtmlAsync("<html>" +
+        //        "<head>" +
+        //            "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">" +
+        //        "</head>" +
+        //        "<body>" +
+        //            "<div class=\"jumbotron\">" +
+        //                "<h1 class=\"display-4\">Hết hạn!</h1>" +
+        //                "<p class=\"lead\">Ứng dụng đã hết hạn, vui lòng liên hệ hotline <strong>0908075455</strong> để được hỗ trợ.</p>" +
+        //            "</div>" +
+        //        "</body>" +
+        //        "</html>");
+        //}
     }
 }
