@@ -87,8 +87,8 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   loadDataFromApi() {
     this.loading = true;
     var val = new AccountCommonPartnerReportSearch();
-    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'd', 'en-US') : null;
-    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'd', 'en-US') : null;
+    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.partnerId = this.searchPartner ? this.searchPartner.id : null;
     if (this.search) {
       val.search = this.search;

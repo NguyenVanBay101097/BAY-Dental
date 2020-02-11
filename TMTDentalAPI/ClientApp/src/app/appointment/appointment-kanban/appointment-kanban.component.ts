@@ -79,7 +79,7 @@ export class AppointmentKanbanComponent implements OnInit {
       if (this.search) {
         val.search = this.search;
       }
-      val.date = this.intlService.formatDate(date, 'd', 'en-US');
+      val.date = this.intlService.formatDate(date, 'yyyy-MM-dd');
       return this.appointmentService.searchReadByDate(val);
     });
 

@@ -191,7 +191,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     var data = Object.assign(this.purchaseOrder, val);
     this.purchaseOrderService.create(data).subscribe(result => {
@@ -313,7 +313,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {

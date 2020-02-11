@@ -27,11 +27,9 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IPartnerService _partnerService;
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         public ApplicationRolesController(RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
-            IHostingEnvironment hostingEnvironment,
             UserManager<ApplicationUser> userManager,
             IApplicationRoleFunctionService roleFunctionService)
         {
@@ -39,7 +37,6 @@ namespace TMTDentalAPI.Controllers
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _partnerService = partnerService;
-            _hostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _roleFunctionService = roleFunctionService;
         }
@@ -182,15 +179,6 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
             return NoContent();
-        }
-
-        [HttpGet("PermissionTree")]
-        public IActionResult PermissionTree()
-        {
-            var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\features.json");
-            string allText = System.IO.File.ReadAllText(filePath);
-            var jsonObject = JsonConvert.DeserializeObject(allText);
-            return Ok(jsonObject);
         }
     }
 }

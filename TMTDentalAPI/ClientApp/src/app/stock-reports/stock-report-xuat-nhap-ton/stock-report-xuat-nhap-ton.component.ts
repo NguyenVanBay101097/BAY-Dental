@@ -104,8 +104,8 @@ export class StockReportXuatNhapTonComponent implements OnInit {
   loadDataFromApi() {
     this.loading = true;
     var val = new StockReportXuatNhapTonSearch();
-    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'd', 'en-US') : null;
-    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'd', 'en-US') : null;
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.productId = this.searchProduct ? this.searchProduct.id : null;
     val.productCategId = this.searchCateg ? this.searchCateg.id : null;
     val.search = this.search ? this.search : null;

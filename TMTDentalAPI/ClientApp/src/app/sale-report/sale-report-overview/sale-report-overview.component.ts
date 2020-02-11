@@ -90,10 +90,10 @@ export class SaleReportOverviewComponent implements OnInit {
     val.state = "sale,done";
 
     if (this.dateFrom) {
-      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'd', 'en-US');
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     }
     if (this.dateTo) {
-      val.dateTo = this.intlService.formatDate(this.dateTo, 'd', 'en-US');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     }
     if (this.search) {
       val.search = this.search;

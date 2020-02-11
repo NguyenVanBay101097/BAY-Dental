@@ -24,7 +24,7 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
 
   onSave() {
     var val = this.formGroup.value;
-    val.dateExpired = this.intlService.formatDate(val.dateExpired, 'd', 'en-US');
+    val.dateExpired = this.intlService.formatDate(val.dateExpired, 'yyyy-MM-ddTHH:mm:ss');
     val.id = this.id;
     this.tenantService.updateDateExpired(val).subscribe(() => {
       this.activeModal.close(true);

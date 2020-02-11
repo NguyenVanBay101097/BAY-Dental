@@ -7,7 +7,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
-using Hangfire;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -249,7 +249,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
     var val = this.pickingForm.value;
     val.partnerId = val.partner ? val.partner.id : null;
-    val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     if (this.id) {
       this.stockPickingService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
@@ -284,7 +284,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
         var val = this.pickingForm.value;
         val.partnerId = val.partner ? val.partner.id : null;
-        val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+        val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
         this.stockPickingService.update(this.id, val).subscribe(() => {
           this.stockPickingService.actionDone([this.id]).subscribe(() => {
@@ -310,7 +310,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
       var val = this.pickingForm.value;
       val.partnerId = val.partner ? val.partner.id : null;
-      val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+      val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
       this.stockPickingService.create(val).subscribe(result => {
         this.stockPickingService.actionDone([result.id]).subscribe(() => {

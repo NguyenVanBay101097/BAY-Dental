@@ -118,7 +118,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.userId = appoint.user ? appoint.user.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-    appoint.date = this.intlService.formatDate(appoint.dateObj, 'g', 'en-US');
+    appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
       rs => {
@@ -212,7 +212,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         appoint.partnerId = appoint.partner ? appoint.partner.id : null;
         appoint.userId = appoint.user ? appoint.user.id : null;
         appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-        appoint.date = this.intlService.formatDate(appoint.dateObj, 'g', 'en-US');
+        appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
         this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
           rs => {

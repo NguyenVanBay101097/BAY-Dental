@@ -171,7 +171,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     }
 
     var val = this.toaThuocForm.value;
-    val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     val.lines = this.lines;
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
@@ -190,7 +190,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     }
 
     var val = this.toaThuocForm.value;
-    val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     val.lines = this.lines;
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
@@ -238,7 +238,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
 
     if (this.id) {
       var val = this.toaThuocForm.value;
-      val.date = this.intlService.formatDate(val.dateObj, 'g', 'en-US');
+      val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
       });

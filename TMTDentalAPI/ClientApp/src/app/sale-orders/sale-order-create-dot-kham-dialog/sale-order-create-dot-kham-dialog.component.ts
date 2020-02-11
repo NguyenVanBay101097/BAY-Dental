@@ -142,6 +142,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     var val = this.dotKhamForm.value;
     val.doctorId = val.doctor ? val.doctor.id : null;
     val.assistantId = val.assistant ? val.assistant.id : null;
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
         this.activeModal.close({
@@ -155,10 +156,10 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     if (!this.dotKhamForm.valid) {
       return;
     }
-
     var val = this.dotKhamForm.value;
     val.doctorId = val.doctor ? val.doctor.id : null;
     val.assistantId = val.assistant ? val.assistant.id : null;
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
         this.activeModal.close({

@@ -175,6 +175,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   searchSaleOrders(filter?: string) {
     var val = new SaleOrderPaged();
     val.search = filter || '';
+    val.isQuotation = false;
     return this.saleOrderService.getPaged(val);
   }
 
@@ -188,8 +189,8 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
-    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'g', 'en-US') : null;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
     val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
     this.laboOrderService.create(val).subscribe(result => {
@@ -245,8 +246,8 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
-    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'g', 'en-US') : null;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
     val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
     if (this.id) {

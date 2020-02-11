@@ -71,7 +71,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     //this.assignValue();
     var value = this.formCreate.value;
     value.categoryId = value.category ? value.category.id : null;
-    value.birthDay = this.intlService.formatDate(value.birthDayObj, 'd', 'en-US');
+    value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
     this.isChange = true;
     this.service.createUpdateEmployee(value, this.empId).subscribe(
       rs => {

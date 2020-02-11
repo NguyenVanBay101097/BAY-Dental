@@ -194,7 +194,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
   createRecord() {
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
@@ -204,7 +204,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
   saveRecord() {
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
@@ -268,7 +268,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
@@ -290,7 +290,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'g', 'en-US');
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
