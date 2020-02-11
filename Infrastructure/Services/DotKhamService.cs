@@ -191,6 +191,8 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<DotKham>(x => x.AppointmentId.Equals(search.AppointmentId)));
 
             var res = await SearchQuery(spec.AsExpression()).FirstOrDefaultAsync();
+            if (res == null)
+                throw new Exception("Không tìm thấy đợt khám nào !");
             var dotKham = _mapper.Map<DotKhamDisplay>(res);
 
             return dotKham;
