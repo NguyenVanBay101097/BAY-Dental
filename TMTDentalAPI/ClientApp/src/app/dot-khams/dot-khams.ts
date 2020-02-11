@@ -26,6 +26,7 @@ export class DotKhamPaged {
     offset: number;
     limit: number;
     search: string;
+    appointmentId: string;
 }
 
 export class DotKhamDisplay {

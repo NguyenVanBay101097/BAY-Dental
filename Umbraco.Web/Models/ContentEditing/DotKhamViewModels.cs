@@ -51,6 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
 
         public string Search { get; set; }
+        public Guid? AppointmentId { get; set; }
     }
 
     public class DotKhamDisplay

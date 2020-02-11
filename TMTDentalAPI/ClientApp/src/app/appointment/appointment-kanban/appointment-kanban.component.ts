@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { DotkhamEntitySearchBy } from 'src/app/dot-khams/dot-khams';
+import { DotkhamEntitySearchBy, DotKhamPaged } from 'src/app/dot-khams/dot-khams';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Router } from '@angular/router';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
@@ -180,9 +180,9 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   getPreviousDotKham(id) {
-    var search = new DotkhamEntitySearchBy;
-    search.appointmentId = id;
-    this.dotkhamService.getSearchedDotKham(search).subscribe(
+    var paged = new DotKhamPaged;
+    paged.appointmentId = id;
+    this.dotkhamService.getSearchedDotKham(paged).subscribe(
       rs => {
         this.router.navigate(['/dot-khams/edit/' + rs.id]);
       }
@@ -190,9 +190,9 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   createDotKham(id) {
-    var search = new DotkhamEntitySearchBy;
-    search.appointmentId = id;
-    this.dotkhamService.getSearchedDotKham(search).subscribe(
+    var paged = new DotKhamPaged;
+    paged.appointmentId = id;
+    this.dotkhamService.getSearchedDotKham(paged).subscribe(
       rs => {
         let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Tạo đợt khám';

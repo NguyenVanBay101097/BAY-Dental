@@ -106,6 +106,10 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search));
+
+            if (val.AppointmentId.HasValue)
+                query = query.Where(x => x.AppointmentId.Equals(val.AppointmentId));
+
             var items = await query.Include(x => x.User).Include(x => x.Partner).Include(x => x.Invoice)
                 .OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
@@ -182,26 +186,5 @@ namespace Infrastructure.Services
                     return null;
             }
         }
-
-        public async Task<DotKhamDisplay> GetSearchedDotKham(DotKhamEntitySearchBy search)
-        {
-            var appointmentService = GetService<IAppointmentService>();
-            ISpecification<DotKham> spec = new InitialSpecification<DotKham>(x => true);
-            if (search.AppointmentId != Guid.Empty)
-                spec = spec.And(new InitialSpecification<DotKham>(x => x.AppointmentId.Equals(search.AppointmentId)));
-
-            var res = await SearchQuery(spec.AsExpression()).FirstOrDefaultAsync();
-            if (res == null)
-                throw new Exception("Không tìm thấy đợt khám nào !");
-            var dotKham = _mapper.Map<DotKhamDisplay>(res);
-
-            return dotKham;
-        }
-    }
-
-    //Tiêu chuẩn tìm kiếm để trả về 1 đợt khám duy nhất
-    public class DotKhamEntitySearchBy
-    {
-        public Guid AppointmentId { get; set; }
     }
 }
