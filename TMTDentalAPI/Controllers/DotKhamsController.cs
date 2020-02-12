@@ -282,11 +282,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetSearchedDotKham(DotKhamEntitySearchBy search)
+        public async Task<IActionResult> GetSearchedDotKham(Guid appointmentId)
         {
-            var res = await _dotKhamService.GetSearchedDotKham(search);
+            var paged = new DotKhamPaged();
+            paged.AppointmentId = appointmentId;
+            var res = await _dotKhamService.GetPagedResultAsync(paged);
 
-            return Ok(res);
+            var dotkham = res.Items.FirstOrDefault();
+
+            return Ok(dotkham);
         }
 
 
