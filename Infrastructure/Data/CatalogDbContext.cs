@@ -130,10 +130,10 @@ namespace Infrastructure.Data
         public DbSet<IRModelField> IRModelFields { get; set; }
         public DbSet<IRProperty> IRProperties { get; set; }
 
-        public DbQuery<StockHistory> StockHistories { get; set; }
-        public DbQuery<AccountInvoiceReport> AccountInvoiceReports { get; set; }
-        public DbQuery<ModelAccessReport> ModelAccessReports { get; set; }
-        public DbQuery<SaleReport> SaleReports { get; set; }
+        public DbSet<StockHistory> StockHistories { get; set; }
+        public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
+        public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
+        public DbSet<SaleReport> SaleReports { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

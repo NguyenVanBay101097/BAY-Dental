@@ -7,11 +7,12 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class SaleReportConfiguration : IQueryTypeConfiguration<SaleReport>
+    public class SaleReportConfiguration : IEntityTypeConfiguration<SaleReport>
     {
-        public void Configure(QueryTypeBuilder<SaleReport> builder)
+        public void Configure(EntityTypeBuilder<SaleReport> builder)
         {
             builder.ToView("sale_report");
+            builder.HasNoKey();
 
             builder.HasOne(x => x.Product)
                 .WithMany()

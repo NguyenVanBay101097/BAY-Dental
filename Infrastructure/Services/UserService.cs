@@ -110,7 +110,7 @@ namespace Infrastructure.Services
             var tmp = group_ext_id.Split(".");
             var module = tmp[0];
             var name = tmp[1];
-            var result = await _dbContext.ResGroupsUsersRels.FromSql("SELECT * FROM ResGroupsUsersRels " +
+            var result = await _dbContext.ResGroupsUsersRels.FromSqlRaw("SELECT * FROM ResGroupsUsersRels " +
                                         "WHERE UserId = @p0 and GroupId in (SELECT ResId FROM IRModelDatas WHERE Module = @p1 and Name = @p2)", uid, module, name).ToListAsync();
             return result.Count > 0;
         }

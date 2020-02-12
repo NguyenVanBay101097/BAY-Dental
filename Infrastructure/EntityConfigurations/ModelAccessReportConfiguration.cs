@@ -7,11 +7,12 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class ModelAccessReportConfiguration : IQueryTypeConfiguration<ModelAccessReport>
+    public class ModelAccessReportConfiguration : IEntityTypeConfiguration<ModelAccessReport>
     {
-        public void Configure(QueryTypeBuilder<ModelAccessReport> builder)
+        public void Configure(EntityTypeBuilder<ModelAccessReport> builder)
         {
             builder.ToView("model_access_report");
+            builder.HasNoKey();
         }
     }
 }

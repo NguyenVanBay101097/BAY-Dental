@@ -88,28 +88,28 @@ namespace Infrastructure.Services
                 bool r = false;
                 if (mode == "Read")
                 {
-                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermRead=1",
+                    var access = _context.ModelAccessReports.FromSqlRaw("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermRead=1",
                     new SqlParameter("@model", model),
                     new SqlParameter("@userId", userId)).FirstOrDefault();
                     r = access != null;
                 }
                 else if (mode == "Create")
                 {
-                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermCreate=1",
+                    var access = _context.ModelAccessReports.FromSqlRaw("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermCreate=1",
                       new SqlParameter("@model", model),
                       new SqlParameter("@userId", userId)).FirstOrDefault();
                     r = access != null;
                 }
                 else if (mode == "Write")
                 {
-                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermWrite=1",
+                    var access = _context.ModelAccessReports.FromSqlRaw("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermWrite=1",
                       new SqlParameter("@model", model),
                       new SqlParameter("@userId", userId)).FirstOrDefault();
                     r = access != null;
                 }
                 else if (mode == "Unlink")
                 {
-                    var access = _context.ModelAccessReports.FromSql("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermUnlink=1",
+                    var access = _context.ModelAccessReports.FromSqlRaw("SELECT * from dbo.model_access_report where Model=@model and UserId=@userId and Active=1 and PermUnlink=1",
                       new SqlParameter("@model", model),
                       new SqlParameter("@userId", userId)).FirstOrDefault();
                     r = access != null;

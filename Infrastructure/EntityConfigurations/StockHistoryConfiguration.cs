@@ -7,11 +7,12 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class StockHistoryConfiguration : IQueryTypeConfiguration<StockHistory>
+    public class StockHistoryConfiguration : IEntityTypeConfiguration<StockHistory>
     {
-        public void Configure(QueryTypeBuilder<StockHistory> builder)
+        public void Configure(EntityTypeBuilder<StockHistory> builder)
         {
             builder.ToView("stock_history");
+            builder.HasNoKey();
 
             builder.HasOne(x => x.Product)
               .WithMany()

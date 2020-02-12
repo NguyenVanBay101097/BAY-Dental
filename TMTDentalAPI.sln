@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Web", "Umbraco.Web\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMTDentalAdmin", "TMTDentalAdmin\TMTDentalAdmin.csproj", "{5F3302BB-B568-4EC8-B996-15811F33A773}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZaloDotNetSDK", "ZaloDotNetSDK\ZaloDotNetSDK.csproj", "{35BF95D8-9599-4F33-8538-0D306572C118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZaloDotNetSDK", "ZaloDotNetSDK\ZaloDotNetSDK.csproj", "{35BF95D8-9599-4F33-8538-0D306572C118}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

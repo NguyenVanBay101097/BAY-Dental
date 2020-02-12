@@ -137,7 +137,7 @@ namespace Infrastructure.Data
 
         public IEnumerable<T> SqlQuery(string sql, params object[] parameters)
         {
-            return _dbContext.Set<T>().FromSql(sql, parameters).ToList();
+            return _dbContext.Set<T>().FromSqlRaw(sql, parameters).ToList();
         }
 
         public async Task UpdateAsync(IEnumerable<T> entities)

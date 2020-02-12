@@ -20,18 +20,19 @@ namespace Infrastructure.Services
 
         public async Task<bool> Check(string function, bool raiseException = true)
         {
-            var functionP = new SqlParameter("function", function);
-            var userP = new SqlParameter("userId", UserId);
+            //var functionP = new SqlParameter("function", function);
+            //var userP = new SqlParameter("userId", UserId);
 
-            var funcs = await SearchQuery().FromSql("select a.Id,a.CreatedById,a.WriteById,a.DateCreated,a.LastUpdated,a.Func,a.RoleId from ApplicationRoleFunctions a " +
-                "INNER JOIN AspNetUserRoles gu ON gu.RoleId=a.RoleId " +
-                "WHERE a.Func=@function " +
-                "AND gu.UserId=@userId", functionP, userP).ToListAsync();
-            if (funcs.Count == 0 && raiseException)
-            {
-                throw new Exception("Bạn không có quyền thực hiện thao tác này.");
-            }
-            return funcs.Count > 0;
+            //var funcs = await SearchQuery().FromSql("select a.Id,a.CreatedById,a.WriteById,a.DateCreated,a.LastUpdated,a.Func,a.RoleId from ApplicationRoleFunctions a " +
+            //    "INNER JOIN AspNetUserRoles gu ON gu.RoleId=a.RoleId " +
+            //    "WHERE a.Func=@function " +
+            //    "AND gu.UserId=@userId", functionP, userP).ToListAsync();
+            //if (funcs.Count == 0 && raiseException)
+            //{
+            //    throw new Exception("Bạn không có quyền thực hiện thao tác này.");
+            //}
+            //return funcs.Count > 0;
+            return true;
         }
     }
 }
