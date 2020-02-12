@@ -32,6 +32,10 @@ namespace Infrastructure.EntityConfigurations
             .HasForeignKey(x => x.CompanyId)
             .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.Appointment)
+             .WithMany()
+             .HasForeignKey(x => x.AppointmentId);
+
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);
