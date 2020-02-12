@@ -38,6 +38,7 @@ using Umbraco.Web.Mapping;
 using TMTDentalAPI.JobFilters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace TMTDentalAPI
 {
@@ -320,7 +321,10 @@ namespace TMTDentalAPI
             //GlobalJobFilters.Filters.Add(new ServerTenantFilter());
             //GlobalJobFilters.Filters.Add(new ClientTenantFilter());
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options =>
+            {
+                options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+            }).AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>
             {
@@ -434,6 +438,22 @@ namespace TMTDentalAPI
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+        }
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+        {
+            var builder = new ServiceCollection()
+                .AddLogging()
+                .AddMvc()
+                .AddNewtonsoftJson()
+                .Services.BuildServiceProvider();
+
+            return builder
+                .GetRequiredService<IOptions<MvcOptions>>()
+                .Value
+                .InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>()
+                .First();
         }
     }
 }
