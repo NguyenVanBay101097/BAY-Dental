@@ -532,13 +532,13 @@ namespace Infrastructure.Services
                 }
             }
 
+            var locObj = GetService<IStockLocationService>();
+            await locObj.CreateAsync(stock_locations_dict.Values);
+
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(stock_locations_dict, "stock.location"));
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(modelDatas);
-
-            var locObj = GetService<IStockLocationService>();
-            await locObj.CreateAsync(stock_locations_dict.Values);
 
             var whObj = GetService<IStockWarehouseService>();
             foreach(var wh in stock_warehouses_dict.Values)

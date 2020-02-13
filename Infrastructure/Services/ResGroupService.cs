@@ -327,7 +327,7 @@ namespace Infrastructure.Services
 
                                 var implieds = vals.Select(x => groupDict[x]).ToList();
                                 foreach (var implied in implieds)
-                                    mdl.ImpliedRels.Add(new ResGroupImpliedRel { HId = implied.Id });
+                                    mdl.ImpliedRels.Add(new ResGroupImpliedRel { H = implied });
                             }
                             else if (field_name == "users")
                             {
