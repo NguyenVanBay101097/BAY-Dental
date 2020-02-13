@@ -540,7 +540,8 @@ namespace Infrastructure.Services
                 {
                     ProductId = x.Key,
                     //OrderIdCount = x.Select(s => s.OrderId).Distinct().Count(),
-                    ProductIdCount = x.Select(s => s.OrderId).Distinct().Count(),
+                    //ProductIdCount = x.Select(s => s.OrderId).Distinct().Count(),
+                    ProductIdCount = x.Count()
                 }).ToDictionary(x => x.ProductId, x => x.ProductIdCount);
             var dict = self.ToDictionary(x => x.Id, x => 0);
             foreach (var program in self)
