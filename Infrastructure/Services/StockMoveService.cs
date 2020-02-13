@@ -22,7 +22,6 @@ namespace Infrastructure.Services
 
         public async Task ActionDone(IEnumerable<StockMove> self)
         {
-            await ProductPriceUpdateBeforeDone(self);
             foreach (var move in self)
             {
                 if (!move.PriceUnit.HasValue)

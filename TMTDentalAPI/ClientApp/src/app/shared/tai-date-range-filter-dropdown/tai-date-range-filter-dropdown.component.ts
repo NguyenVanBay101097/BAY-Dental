@@ -32,7 +32,7 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
   public weekStart: Date = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + (new Date().getDay() == 0 ? -6 : 1)));
   public weekEnd: Date = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + (new Date().getDay() == 0 ? -6 : 1) + 6));
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public yearStart: Date = new Date(new Date().getFullYear(), 0, 1);
   public yearEnd: Date = new Date(new Date().getFullYear(), 11, 31);
 

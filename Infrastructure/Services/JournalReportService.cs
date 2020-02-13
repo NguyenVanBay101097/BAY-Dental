@@ -134,14 +134,9 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "date:week")
             {
-                var group = query.GroupBy(x => new
+                var group = query.GroupBy(x => _context.DatePart("week", x.Date)).Select(x => new AccountMoveLineReport
                 {
-                    x.Date.Value.Year,
-                    Week = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
-                        x.Date.Value, CalendarWeekRule.FirstDay, DayOfWeek.Monday)
-                }).Select(x => new AccountMoveLineReport
-                {
-                    Name = $"Tuần {x.Key.Week}, {x.Key.Year}",
+                    Name = $"Tuần {x.Key}",
                     Debit = x.Sum(y => y.Debit),
                     Credit = x.Sum(y => y.Credit),
                     Balance = x.Sum(y => y.Debit - y.Credit)

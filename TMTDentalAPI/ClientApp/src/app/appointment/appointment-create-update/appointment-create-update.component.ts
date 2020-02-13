@@ -18,6 +18,7 @@ import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-di
 import { Router } from '@angular/router';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 class DatePickerLimit {
   min: Date;
@@ -62,7 +63,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   constructor(private fb: FormBuilder, private service: AppointmentService, private employeeService: EmployeeService,
     private partnerService: PartnerService, private intlService: IntlService,
     private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal,
-    private router: Router) { }
+    private router: Router, private errorService: AppSharedShowErrorService) { }
 
   formCreate: FormGroup;
 
@@ -128,6 +129,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       },
       er => {
         console.log(er);
+        this.errorService.show(er);
       },
     )
   }
@@ -224,6 +226,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           },
           er => {
             console.log(er);
+            this.errorService.show(er);
           },
         )
       } else {

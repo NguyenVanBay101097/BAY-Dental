@@ -5,6 +5,7 @@ using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -241,11 +243,42 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new IRModelFieldConfiguration());
             builder.ApplyConfiguration(new IRPropertyConfiguration());
 
+            //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
+            //builder
+            //    .HasDbFunction(methodInfo)
+            //    .HasTranslation(args => new SqlFunctionExpression(nameof(DatePart), typeof(int?), new[]
+            //            {
+            //            new SqlFragmentExpression(args.ToArray()[0].ToString()),
+            //            args.ToArray()[1]
+            //            }));
+
+            var methodInfo = typeof(CatalogDbContext).GetMethod(nameof(CatalogDbContext.DatePart));
+            //builder
+            //    .HasDbFunction(methodInfo)
+            //    .HasTranslation(args => SqlFunctionExpression.Create("DatePart", new[]
+            //            {
+            //            new SqlFragmentExpression(args.ToArray()[0].ToString()),
+            //            args.ToArray()[1]
+            //            }, typeof(int?), null));
+
+            builder.HasDbFunction(methodInfo, b => b.HasTranslation(e =>
+            {
+                var ea = e.ToArray();
+                var args = new[]
+                {
+                new SqlFragmentExpression((ea[0] as SqlConstantExpression).Value.ToString()),
+                ea[1]
+            };
+                return SqlFunctionExpression.Create(nameof(DatePart), args, typeof(int?), null);
+            }));
+
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public int? DatePart(string datePartArg, DateTime? date) => throw new Exception();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -7,12 +7,14 @@ export class RealRevenueReportItem {
     debit: number;
     credit: number;
     balance: number;
+    amountResidual: number;
 }
 
 export class RealRevenueReportResult {
     debit: number;
     credit: number;
     balance: number;
+    totalAmountResidual: number;
     items: RealRevenueReportItem[];
 }
 

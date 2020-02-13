@@ -214,7 +214,7 @@
                                                 <td class="text-right">{{ line.get('priceSubtotal').value | number }}
                                                 </td>
                                                 <td class="text-right"
-                                                    *ngIf="['cancel', 'done'].indexOf(laboOrder.state) === -1">
+                                                    *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1">
                                                     <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
                                                         (click)="editLine(line)">
                                                         <span class="k-icon k-i-edit"></span>

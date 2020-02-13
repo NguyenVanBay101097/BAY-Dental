@@ -172,7 +172,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get partner() {
-    return this.formGroup.get('partner').value;
+    var control = this.formGroup.get('partner');
+    return control ? control.value : null;
   }
 
   quickCreateCustomer() {

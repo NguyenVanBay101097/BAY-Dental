@@ -10,7 +10,10 @@ namespace ApplicationCore.Entities
     {
         public BaseEntity()
         {
-            Id = GuidComb.GenerateComb();
+            var time = DateTime.Now;
+            DateCreated = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+            LastUpdated = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+            //Id = GuidComb.GenerateComb();
         }
 
         public Guid Id { get; set; }
@@ -21,8 +24,8 @@ namespace ApplicationCore.Entities
         public string WriteById { get; set; }
         public ApplicationUser WriteBy { get; set; }
 
-        public DateTime? DateCreated { get; set; } = DateTime.Now;
+        public DateTime? DateCreated { get; set; }
 
-        public DateTime? LastUpdated { get; set; } = DateTime.Now;
+        public DateTime? LastUpdated { get; set; }
     }
 }

@@ -298,28 +298,29 @@ namespace TMTDentalAPI
             services.AddMemoryCache();
 
             // Add Hangfire services.
-            //services.AddHangfire(configuration => configuration
-            //    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-            //    .UseSimpleAssemblyNameTypeSerializer()
-            //    .UseRecommendedSerializerSettings()
-            //    .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-            //    {
-            //        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-            //        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-            //        QueuePollInterval = TimeSpan.Zero,
-            //        UseRecommendedIsolationLevel = true,
-            //        UsePageLocksOnDequeue = true,
-            //        DisableGlobalLocks = true
-            //    }));
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                }));
 
             // Add the processing server as IHostedService
-            //services.AddHangfireServer(option => {
-            //    option.FilterProvider = new ServerFilterProvider();
-            //});
+            services.AddHangfireServer(option =>
+            {
+                option.FilterProvider = new ServerFilterProvider();
+            });
 
-            //GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
-            //GlobalJobFilters.Filters.Add(new ServerTenantFilter());
-            //GlobalJobFilters.Filters.Add(new ClientTenantFilter());
+            GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
+            GlobalJobFilters.Filters.Add(new ServerTenantFilter());
+            GlobalJobFilters.Filters.Add(new ClientTenantFilter());
 
             services.AddControllersWithViews(options =>
             {
@@ -418,6 +419,8 @@ namespace TMTDentalAPI
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseHangfireServer();
 
             app.UseEndpoints(endpoints =>
             {

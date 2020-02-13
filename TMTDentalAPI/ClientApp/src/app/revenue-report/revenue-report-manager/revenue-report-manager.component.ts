@@ -18,7 +18,7 @@ import { RevenueReportResult, RevenueReportService, RevenueReportSearch } from '
 export class RevenueReportManagerComponent implements OnInit {
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   reportResult: RevenueReportResult;
   gridData: GridDataResult;
   limit = 20;
@@ -50,6 +50,8 @@ export class RevenueReportManagerComponent implements OnInit {
 
   ngOnInit() {
     this.reportResult = new RevenueReportResult();
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(

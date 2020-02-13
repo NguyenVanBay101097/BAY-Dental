@@ -22,16 +22,8 @@
     <div class="px-3 py-2">
         <div class="row">
             <div class="col">
-                <div class="text-muted font-weight-bold">Nợ phải thu</div>
-                <h4 class="text-success">{{reportResult.debit | number}}</h4>
-            </div>
-            <div class="col">
-                <div class="text-muted font-weight-bold">Đã thu</div>
-                <h4 class="text-success">{{reportResult.credit | number}}</h4>
-            </div>
-            <div class="col">
-                <div class="text-muted font-weight-bold">Còn phải thu</div>
-                <h4 class="text-success">{{reportResult.balance | number}}</h4>
+                <div class="text-muted font-weight-bold">Nợ còn phải thu</div>
+                <h4 class="text-success">{{reportResult.totalAmountResidual | number}}</h4>
             </div>
         </div>
     </div>
@@ -40,19 +32,10 @@
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Khách hàng">
         </kendo-grid-column>
-        <kendo-grid-column field="debit" class="text-right" title="Tổng nợ" footerClass="text-right font-weight-bold">
+        <kendo-grid-column field="amountResidual" class="text-right" title="Còn nợ"
+            footerClass="text-right font-weight-bold">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.debit | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="credit" class="text-right" title="Đã thu" footerClass="text-right font-weight-bold">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.credit | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="balance" class="text-right" title="Còn nợ" footerClass="text-right font-weight-bold">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.balance | number}}
+                {{dataItem.amountResidual | number}}
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

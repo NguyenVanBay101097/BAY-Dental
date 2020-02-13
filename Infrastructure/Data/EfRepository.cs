@@ -149,7 +149,16 @@ namespace Infrastructure.Data
             {
                 _dbContext.Entry(entity).State = EntityState.Modified;
             }
-            await _dbContext.SaveChangesAsync();
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                Console.WriteLine(ex);
+                throw ex;
+            }
         }
 
         public async Task DeleteAsync(IEnumerable<T> entities)

@@ -143,7 +143,8 @@ namespace TMTDentalAPI.Controllers
         public IActionResult AddJob()
         {
             var host = _tenant.Hostname;
-            RecurringJob.AddOrUpdate($"{host}-birthday", () => _birthdayMessageJobService.SendMessage(host), Cron.Minutely);
+            RecurringJob.AddOrUpdate($"{host}-birthday2", () => _birthdayMessageJobService.SendMessage(host), "39 9 * * *");
+            RecurringJob.AddOrUpdate($"{host}-birthday2", () => _birthdayMessageJobService.SendMessage(host), "39 2 * * *");
             return Ok(true);
         }
 

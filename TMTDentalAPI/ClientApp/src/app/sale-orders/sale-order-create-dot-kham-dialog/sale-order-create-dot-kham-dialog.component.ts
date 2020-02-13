@@ -28,7 +28,8 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   title: string;
 
   constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
-    private employeeService: EmployeeService, public activeModal: NgbActiveModal, private modalService: NgbModal) { }
+    private employeeService: EmployeeService, public activeModal: NgbActiveModal, private modalService: NgbModal,
+    private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
@@ -148,7 +149,11 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
         this.activeModal.close({
           view: false
         });
+      }, err1 => {
+        this.errorService.show(err1);
       });
+    }, err2 => {
+      this.errorService.show(err2);
     });
   }
 
@@ -166,7 +171,11 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
           view: true,
           result
         });
+      }, err1 => {
+        this.errorService.show(err1);
       });
+    }, err2 => {
+      this.errorService.show(err2);
     });
   }
 

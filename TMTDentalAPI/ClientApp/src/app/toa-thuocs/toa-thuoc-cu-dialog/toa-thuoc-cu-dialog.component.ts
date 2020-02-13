@@ -11,6 +11,7 @@ import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-ang
 import { ToaThuocLineDialogComponent } from '../toa-thuoc-line-dialog/toa-thuoc-line-dialog.component';
 import { update } from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog',
@@ -32,7 +33,8 @@ export class ToaThuocCuDialogComponent implements OnInit {
   // opened = false;
 
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, private intlService: IntlService,
-    private productService: ProductService, public activeModal: NgbActiveModal, private windowService: WindowService) { }
+    private productService: ProductService, public activeModal: NgbActiveModal, private windowService: WindowService,
+    private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
@@ -176,10 +178,14 @@ export class ToaThuocCuDialogComponent implements OnInit {
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
+      }, err => {
+        this.errorService.show(err);
       });
     } else {
       this.toaThuocService.create(val).subscribe(result => {
         this.activeModal.close(result);
+      }, err => {
+        this.errorService.show(err);
       });
     }
   }
@@ -195,10 +201,14 @@ export class ToaThuocCuDialogComponent implements OnInit {
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
+      }, err => {
+        this.errorService.show(err);
       });
     } else {
       this.toaThuocService.create(val).subscribe(result => {
         this.activeModal.close({ toaThuoc: result, print: true });
+      }, err => {
+        this.errorService.show(err);
       });
     }
   }

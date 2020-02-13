@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ResConfigSettingsService } from '../res-config-settings.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -12,7 +14,8 @@ import { ResConfigSettingsService } from '../res-config-settings.service';
 })
 export class ResConfigSettingsFormComponent implements OnInit {
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService) {
+  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService,
+    private authService: AuthService, private notificationService: NotificationService) {
   }
 
   ngOnInit() {
@@ -35,8 +38,10 @@ export class ResConfigSettingsFormComponent implements OnInit {
     var val = this.formGroup.value;
     this.configSettingsService.create(val).subscribe(result => {
       this.configSettingsService.excute(result.id).subscribe(() => {
-        localStorage.removeItem('groups');
-        window.location.reload();
+        this.authService.getGroups().subscribe(result => {
+          localStorage.setItem('groups', JSON.stringify(result));
+          window.location.reload();
+        });
       });
     })
   }

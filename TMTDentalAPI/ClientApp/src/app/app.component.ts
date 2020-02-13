@@ -72,7 +72,6 @@ export class AppComponent {
     this.authService.currentUser.subscribe(user => {
       if (user) {
         this.authService.getGroups().subscribe(result => {
-          console.log('groups: ', result);
           localStorage.setItem('groups', JSON.stringify(result));
         });
       }

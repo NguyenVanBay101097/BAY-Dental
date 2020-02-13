@@ -7,6 +7,7 @@ import { AccountJournalService, AccountJournalSimple, AccountJournalFilter } fro
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 @Component({
   selector: 'app-account-invoice-register-payment-dialog-v2',
   templateUrl: './account-invoice-register-payment-dialog-v2.component.html',
@@ -21,7 +22,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   title: string;
 
   constructor(private registerPaymentService: AccountRegisterPaymentService, private fb: FormBuilder, private intlService: IntlService,
-    public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService) { }
+    public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
+    private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
@@ -74,16 +76,13 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       return;
     }
 
-    this.loading = true;
     this.create().subscribe(result => {
       this.createPayment(result.id).subscribe(() => {
         this.activeModal.close(true);
-        this.loading = false;
-      }, () => {
-        this.loading = false;
+      }, (err) => {
+        this.errorService.show(err);
       });
     }, () => {
-      this.loading = false;
     });
   }
 

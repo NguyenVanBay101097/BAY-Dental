@@ -63,7 +63,7 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Thanh toán điều trị', link: '/accountpayments', params: { partner_type: 'customer' } },
         { name: 'Khách hàng', link: '/partners', params: { customer: true } },
         { name: 'Nhóm khách hàng', link: '/partner-categories' },
-        { name: 'Nhà cung cấp', link: '/suppliers' },
+        { name: 'Nhà cung cấp', link: '/partners', params: { supplier: true } },
         { name: 'Nhân viên', link: '/employees' },
         // { name: 'Nhóm nhân viên', link: '/employee-categories' },
         // { name: 'Sản phẩm', link: '/products' },

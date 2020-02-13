@@ -132,22 +132,17 @@ namespace Infrastructure.Services
             }
             if (val.GroupBy == "date:week")
             {
-                result.Details = query.GroupBy(x => new {
-                    Year = x.Date.Value.Year,
-                    WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
-                        x.Date.Value, CalendarWeekRule.FirstDay, DayOfWeek.Monday)
-                })
+                result.Details = query.GroupBy(x => _context.DatePart("week", x.Date))
                   .Select(x => new RevenueReportResultDetail
                   {
-                      Year = x.Key.Year,
-                      WeekOfYear = x.Key.WeekOfYear,
+                      WeekOfYear = x.Key,
                       Debit = x.Sum(s => s.Debit),
                       Credit = x.Sum(s => s.Credit),
                       Balance = x.Sum(s => s.Credit - s.Debit)
                   }).ToList();
 
                 foreach (var item in result.Details)
-                    item.Name = $"{item.WeekOfYear}, {item.Year}";
+                    item.Name = $"{item.WeekOfYear}";
             }
             else if (val.GroupBy == "date:day")
             {

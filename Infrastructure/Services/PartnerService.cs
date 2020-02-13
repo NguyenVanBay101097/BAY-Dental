@@ -224,6 +224,29 @@ namespace Infrastructure.Services
             return await base.CreateAsync(entity);
         }
 
+        public override Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
+        {
+            _CheckCityName(entities);
+            return base.CreateAsync(entities);
+        }
+
+        public override Task UpdateAsync(IEnumerable<Partner> entities)
+        {
+            _CheckCityName(entities);
+            return base.UpdateAsync(entities);
+        }
+
+        private void _CheckCityName(IEnumerable<Partner> self)
+        {
+            foreach(var partner in self)
+            {
+                if (string.IsNullOrEmpty(partner.CityName))
+                    continue;
+                if (partner.CityName == "TP Hồ Chí Minh")
+                    partner.CityName = "Thành phố Hồ Chí Minh";
+            }
+        }
+
         private async Task InsertCustomerSequence()
         {
             var seqObj = GetService<IIRSequenceService>();

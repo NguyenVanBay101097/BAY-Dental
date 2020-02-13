@@ -48,13 +48,11 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             var amlObj = GetService<IAccountMoveLineService>();
             var query = amlObj._QueryGet(state: "posted", companyId: companyId);
-            query = query.Where(x => x.Account.InternalType == "receivable" && !x.FullReconcileId.HasValue);
+            query = query.Where(x => x.Account.InternalType == "receivable" && !x.FullReconcileId.HasValue && !x.Reconciled);
 
             var result = await query.GroupBy(x => 0).Select(x => new RealRevenueReportResult
             {
-                Debit = x.Sum(s => s.Debit),
-                Credit = x.Sum(s => s.Credit),
-                Balance = x.Sum(s => s.Debit - s.Credit)
+                TotalAmountResidual = x.Sum(s => s.AmountResidual)
             }).FirstOrDefaultAsync();
 
             if (result == null)
@@ -67,9 +65,7 @@ namespace Infrastructure.Services
                   .Select(x => new RealRevenueReportItem
                   {
                       Name = x.Key.PartnerName,
-                      Debit = x.Sum(s => s.Debit),
-                      Credit = x.Sum(s => s.Credit),
-                      Balance = x.Sum(s => s.Debit - s.Credit),
+                      AmountResidual = x.Sum(s => s.AmountResidual),
                   }).ToListAsync();
             return result;
         }
