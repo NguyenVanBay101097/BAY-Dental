@@ -24,7 +24,7 @@ export class DotKhamService {
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<DotKhamPaging> {
-        return this.http.get<DotKhamPaging>(this.baseApi + this.apiUrl, { params: val });
+        return this.http.get<DotKhamPaging>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     defaultGet(val: DotKhamDefaultGet): Observable<DotKhamDisplay> {

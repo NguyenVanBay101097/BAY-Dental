@@ -182,11 +182,20 @@ export class AppointmentKanbanComponent implements OnInit {
   getPreviousDotKham(id) {
     var paged = new DotKhamPaged;
     paged.appointmentId = id;
-    this.dotkhamService.getSearchedDotKham(paged).subscribe(
-      rs => {
-        this.router.navigate(['/dot-khams/edit/' + rs.id]);
+    paged.limit = 1;
+    this.dotkhamService.getPaged(paged).subscribe(rs => {
+      if (rs.items.length) {
+        this.router.navigate(['/dot-khams/edit/' + rs.items[0].id]);
+      } else {
+        this.notificationService.show({
+          content: 'Không có đợt khám nào từ lịch hẹn này.',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
       }
-    )
+    });
   }
 
   createDotKham(id) {

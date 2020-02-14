@@ -59,7 +59,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]DotKhamPaged val)
         {
-            _modelAccessService.Check("DotKham", "Read");
             var result = await _dotKhamService.GetPagedResultAsync(val);
 
             var paged = new PagedResult2<DotKhamBasic>(result.TotalItems, val.Offset, val.Limit)

@@ -588,7 +588,6 @@ td.oe_form_group_cell_label label {
 .cdk-drag-preview .o_kanban_record .o_dropdown_kanban .dropdown-toggle,
 .oe_kanban_card.cdk-drag-preview .o_dropdown_kanban .dropdown-toggle,
 .o_kanban_record.cdk-drag-preview .o_dropdown_kanban .dropdown-toggle {
-    margin: -1px -1px auto auto;
     padding: 4px 8px;
     border: 1px solid transparent;
     border-bottom: none;
@@ -597,7 +596,7 @@ td.oe_form_group_cell_label label {
     margin: -9px -9px 0 0;
 }
 
-.o_kanban_view .oe_kanban_card .o_dropdown_kanban .dropdown-menu,
+/* .o_kanban_view .oe_kanban_card .o_dropdown_kanban .dropdown-menu,
 .o_kanban_view .o_kanban_record .o_dropdown_kanban .dropdown-menu,
 .cdk-drag-preview .oe_kanban_card .o_dropdown_kanban .dropdown-menu,
 .cdk-drag-preview .o_kanban_record .o_dropdown_kanban .dropdown-menu {
@@ -610,7 +609,7 @@ td.oe_form_group_cell_label label {
     border-color: #ced4da;
     right: -9px;
     min-width: 11rem;
-}
+} */
 
 .cdk-drag-placeholder {
     opacity: 0;

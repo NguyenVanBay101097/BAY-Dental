@@ -41,6 +41,7 @@ import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
 import { environment } from 'src/environments/environment';
 import { Operation } from 'fast-json-patch';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 declare var $: any;
 
 @Component({
@@ -948,8 +949,18 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   actionCreateDotKham() {
-    if (!this.dialog) {
-      this.router.navigate(['/dot-khams/create']);
+    if (this.dotKham && this.dotKham.saleOrderId) {
+      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Tạo đợt khám';
+      modalRef.componentInstance.saleOrderId = this.dotKham.saleOrderId;
+
+      modalRef.result.then(result => {
+        if (result.view) {
+          this.router.navigate(['/dot-khams/edit/', result.result.id]);
+        } else {
+        }
+      }, () => {
+      });
     }
   }
 
