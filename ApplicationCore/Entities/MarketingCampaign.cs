@@ -9,6 +9,11 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class MarketingCampaign: BaseEntity
     {
+        public MarketingCampaign()
+        {
+            State = "draft";
+        }
+
         /// <summary>
         /// Tên chiến dịch
         /// </summary>
@@ -21,5 +26,9 @@ namespace ApplicationCore.Entities
         /// stopped: Đã dừng
         /// </summary>
         public string State { get; set; }
+
+        public DateTime? DateStart { get; set; }
+
+        public ICollection<MarketingCampaignActivity> Activities { get; set; } = new List<MarketingCampaignActivity>();
     }
 }

@@ -2,30 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    /// <summary>
-    /// Hoạt động
-    /// </summary>
-    public class MarketingCampaignActivity: BaseEntity
+    public class MarketingCampaignActivitySave
     {
-        public MarketingCampaignActivity()
-        {
-            TriggerType = "interval";
-            IntervalNumber = 1;
-            IntervalType = "days";
-        }
-
+        public Guid Id { get; set; }
         public string Name { get; set; }
-
-        public Guid CampaignId { get; set; }
-        public MarketingCampaign Campaign { get; set; }
 
         /// <summary>
         /// Điều kiện
         /// no_sales: Không có phát sinh phiếu điều trị
-        /// birthday: Sinh nhật
-        /// today_appointment: Lịch hẹn hôm nay
         /// </summary>
         public string Condition { get; set; }
 
@@ -52,8 +38,6 @@ namespace ApplicationCore.Entities
         public string IntervalType { get; set; }
 
         public int? IntervalNumber { get; set; }
-
-        public int? Sequence { get; set; }
 
         /// <summary>
         /// interval: Định kỳ

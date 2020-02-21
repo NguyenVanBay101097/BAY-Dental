@@ -2,37 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    /// <summary>
-    /// Hoạt động
-    /// </summary>
-    public class MarketingCampaignActivity: BaseEntity
+    public class MarketingCampaignActivityDisplay
     {
-        public MarketingCampaignActivity()
-        {
-            TriggerType = "interval";
-            IntervalNumber = 1;
-            IntervalType = "days";
-        }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
-
-        public Guid CampaignId { get; set; }
-        public MarketingCampaign Campaign { get; set; }
 
         /// <summary>
         /// Điều kiện
         /// no_sales: Không có phát sinh phiếu điều trị
-        /// birthday: Sinh nhật
-        /// today_appointment: Lịch hẹn hôm nay
         /// </summary>
         public string Condition { get; set; }
-
-        /// <summary>
-        /// Số ngày chưa quay lại mua hàng
-        /// </summary>
-        public int? DaysNoSales { get; set; }
 
         /// <summary>
         /// Loại hoạt động. Xác định sẽ gửi tin nhắn thông qua kênh nào zalo hay facebook...
@@ -54,13 +36,5 @@ namespace ApplicationCore.Entities
         public int? IntervalNumber { get; set; }
 
         public int? Sequence { get; set; }
-
-        /// <summary>
-        /// interval: Định kỳ
-        /// everyday: Mỗi ngày
-        /// </summary>
-        public string TriggerType { get; set; }
-
-        public DateTime? EveryDayTimeAt { get; set; }
     }
 }

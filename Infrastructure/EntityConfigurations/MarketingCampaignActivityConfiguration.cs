@@ -11,8 +11,10 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<MarketingCampaignActivity> builder)
         {
+            builder.Property(x => x.Name).IsRequired();
+
             builder.HasOne(x => x.Campaign)
-            .WithMany()
+            .WithMany(x => x.Activities)
             .HasForeignKey(x => x.CampaignId);
 
             builder.HasOne(x => x.CreatedBy)

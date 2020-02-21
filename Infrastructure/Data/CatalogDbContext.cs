@@ -131,6 +131,8 @@ namespace Infrastructure.Data
         public DbSet<ZaloOAConfig> ZaloOAConfigs { get; set; }
         public DbSet<IRModelField> IRModelFields { get; set; }
         public DbSet<IRProperty> IRProperties { get; set; }
+        public DbSet<MarketingCampaign> MarketingCampaigns { get; set; }
+        public DbSet<MarketingCampaignActivity> MarketingCampaignActivities { get; set; }
 
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -242,6 +244,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ZaloOAConfigConfiguration());
             builder.ApplyConfiguration(new IRModelFieldConfiguration());
             builder.ApplyConfiguration(new IRPropertyConfiguration());
+            builder.ApplyConfiguration(new MarketingCampaignConfiguration());
+            builder.ApplyConfiguration(new MarketingCampaignActivityConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
