@@ -11,7 +11,7 @@ namespace ApplicationCore.Entities
     {
         public MarketingCampaignActivity()
         {
-            TriggerType = "interval";
+            TriggerType = "begin";
             IntervalNumber = 1;
             IntervalType = "days";
         }
@@ -24,15 +24,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Điều kiện
         /// no_sales: Không có phát sinh phiếu điều trị
-        /// birthday: Sinh nhật
-        /// today_appointment: Lịch hẹn hôm nay
         /// </summary>
         public string Condition { get; set; }
-
-        /// <summary>
-        /// Số ngày chưa quay lại mua hàng
-        /// </summary>
-        public int? DaysNoSales { get; set; }
 
         /// <summary>
         /// Loại hoạt động. Xác định sẽ gửi tin nhắn thông qua kênh nào zalo hay facebook...
@@ -55,12 +48,8 @@ namespace ApplicationCore.Entities
 
         public int? Sequence { get; set; }
 
-        /// <summary>
-        /// interval: Định kỳ
-        /// everyday: Mỗi ngày
-        /// </summary>
         public string TriggerType { get; set; }
 
-        public DateTime? EveryDayTimeAt { get; set; }
+        public string JobId { get; set; }
     }
 }

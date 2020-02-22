@@ -35,7 +35,7 @@ namespace Infrastructure.Services
                         var list = new List<PartnerSendMessageResult>();
                         if (activity.Condition == "no_sales")
                         {
-                            var date = DateTime.Now.AddDays(-(activity.DaysNoSales ?? 0));
+                            var date = activity.Campaign.DateStart ?? DateTime.Now;
                             var result = conn.Query<PartnerSendMessageResult>("select p.ZaloId as ZaloId " +
                                 "from Partners p " +
                                 "inner join(" +
@@ -49,34 +49,34 @@ namespace Infrastructure.Services
                                 ZaloId = x.ZaloId
                             }).ToList();
                         }
-                        else if (activity.Condition == "birthday")
-                        {
-                            var today = DateTime.Today;
-                            var result = conn.Query<PartnerSendMessageResult>(@"SELECT p.ZaloId as ZaloId FROM Partners p WHERE p.ZaloId IS NOT NULL AND p.Customer = 1 AND p.BirthMonth = @month AND p.BirthDay = @day",
-                                        new { month = today.Month, day = today.Day }).ToList();
+                        //else if (activity.Condition == "birthday")
+                        //{
+                        //    var today = DateTime.Today;
+                        //    var result = conn.Query<PartnerSendMessageResult>(@"SELECT p.ZaloId as ZaloId FROM Partners p WHERE p.ZaloId IS NOT NULL AND p.Customer = 1 AND p.BirthMonth = @month AND p.BirthDay = @day",
+                        //                new { month = today.Month, day = today.Day }).ToList();
 
-                            list = result.Select(x => new PartnerSendMessageResult
-                            {
-                                Content = x.Content,
-                                ZaloId = x.ZaloId
-                            }).ToList();
-                        }
-                        else if (activity.Condition == "today_appointment")
-                        {
-                            var result = conn.Query<PartnerToDayAppointmentQuery>(@"select ap.Date as Date, p.Name as PartnerName, p.ZaloId as PartnerZaloId from Appointments ap " +
-                                                                        "left join Partners p on ap.PartnerId = p.Id " +
-                                                                        "where DATEPART(DAY, ap.Date) = DATEPART(day, GETDATE()) and " +
-                                                                        "DATEPART(MONTH, ap.Date) = DATEPART(day, GETDATE()) and " +
-                                                                        "DATEPART(YEAR, ap.Date) = DATEPART(YEAR, GETDATE())").ToList();
-                            foreach (var item in result)
-                            {
-                                list.Add(new PartnerSendMessageResult
-                                {
-                                    ZaloId = item.PartnerZaloId,
-                                    Content = Regex.Replace(activity.Content, "{thoi_gian_lich_hen}", item.Date.ToString("HH:mm")),
-                                });
-                            }
-                        }
+                        //    list = result.Select(x => new PartnerSendMessageResult
+                        //    {
+                        //        Content = x.Content,
+                        //        ZaloId = x.ZaloId
+                        //    }).ToList();
+                        //}
+                        //else if (activity.Condition == "today_appointment")
+                        //{
+                        //    var result = conn.Query<PartnerToDayAppointmentQuery>(@"select ap.Date as Date, p.Name as PartnerName, p.ZaloId as PartnerZaloId from Appointments ap " +
+                        //                                                "left join Partners p on ap.PartnerId = p.Id " +
+                        //                                                "where DATEPART(DAY, ap.Date) = DATEPART(day, GETDATE()) and " +
+                        //                                                "DATEPART(MONTH, ap.Date) = DATEPART(day, GETDATE()) and " +
+                        //                                                "DATEPART(YEAR, ap.Date) = DATEPART(YEAR, GETDATE())").ToList();
+                        //    foreach (var item in result)
+                        //    {
+                        //        list.Add(new PartnerSendMessageResult
+                        //        {
+                        //            ZaloId = item.PartnerZaloId,
+                        //            Content = Regex.Replace(activity.Content, "{thoi_gian_lich_hen}", item.Date.ToString("HH:mm")),
+                        //        });
+                        //    }
+                        //}
 
                         if (list.Any())
                         {

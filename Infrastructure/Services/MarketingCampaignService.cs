@@ -60,27 +60,19 @@ namespace Infrastructure.Services
                 campaign.DateStart = DateTime.Now;
                 foreach(var activity in campaign.Activities)
                 {
+                    var date = campaign.DateStart.Value;
                     var intervalNumber = activity.IntervalNumber ?? 0;
-                    var cronExpression = "";
-                    if (activity.TriggerType == "everyday" && activity.EveryDayTimeAt.HasValue)
-                    {
-                        var hour = activity.EveryDayTimeAt.Value.Hour;
-                        var minute = activity.EveryDayTimeAt.Value.Minute;
-                        cronExpression = $"{minute} {hour} * * *";
-                    }
-                    else
-                    {
-                        if (activity.IntervalType == "hours")
-                            cronExpression = $"* */{intervalNumber} * * *";
-                        else if (activity.IntervalType == "days")
-                            cronExpression = $"* * */{intervalNumber} * *";
-                        else if (activity.IntervalType == "months")
-                            cronExpression = $"* * * */{intervalNumber} *";
-                        else if (activity.IntervalType == "weeks")
-                            cronExpression = $"* * */{intervalNumber * 7} * *";
-                    }
+                    if (activity.IntervalType == "hours")
+                        date.AddHours(intervalNumber);
+                    else if (activity.IntervalType == "days")
+                        date.AddDays(intervalNumber);
+                    else if (activity.IntervalType == "months")
+                        date.AddMonths(intervalNumber);
+                    else if (activity.IntervalType == "weeks")
+                        date.AddDays(intervalNumber * 7);
 
-                    RecurringJob.AddOrUpdate($"{_tenant.Hostname}-activity-{activity.Id}", () => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), cronExpression, TimeZoneInfo.Local);
+                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), date);
+                    activity.JobId = jobId;
                 }
             }
 
@@ -96,7 +88,9 @@ namespace Infrastructure.Services
                 campaign.State = "stopped";
                 foreach (var activity in campaign.Activities)
                 {
-                    RecurringJob.RemoveIfExists($"{_tenant.Hostname}-activity-{activity.Id}");
+                    if (string.IsNullOrEmpty(activity.JobId))
+                        continue;
+                    BackgroundJob.Delete(activity.JobId);
                 }
             }
 
