@@ -60,16 +60,16 @@ namespace Infrastructure.Services
                 campaign.DateStart = DateTime.Now;
                 foreach(var activity in campaign.Activities)
                 {
-                    var date = campaign.DateStart.Value;
+                    var date = DateTime.UtcNow;
                     var intervalNumber = activity.IntervalNumber ?? 0;
                     if (activity.IntervalType == "hours")
-                        date.AddHours(intervalNumber);
+                        date = date.AddHours(intervalNumber);
                     else if (activity.IntervalType == "days")
-                        date.AddDays(intervalNumber);
+                        date = date.AddDays(intervalNumber);
                     else if (activity.IntervalType == "months")
-                        date.AddMonths(intervalNumber);
+                        date = date.AddMonths(intervalNumber);
                     else if (activity.IntervalType == "weeks")
-                        date.AddDays(intervalNumber * 7);
+                        date = date.AddDays(intervalNumber * 7);
 
                     var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), date);
                     activity.JobId = jobId;

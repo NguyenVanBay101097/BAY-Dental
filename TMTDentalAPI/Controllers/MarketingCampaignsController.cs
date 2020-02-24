@@ -14,7 +14,7 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MarketingCampaignsController : ControllerBase
+    public class MarketingCampaignsController : BaseApiController
     {
         private readonly IMarketingCampaignService _marketingCampaignService;
         private readonly IMapper _mapper;
