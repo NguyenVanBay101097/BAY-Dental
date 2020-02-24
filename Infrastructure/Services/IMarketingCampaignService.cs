@@ -13,5 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<MarketingCampaignBasic>> GetPagedResultAsync(MarketingCampaignPaged val);
         Task ActionStartCampaign(IEnumerable<Guid> ids);
         Task ActionStopCampaign(IEnumerable<Guid> ids);
+        Task<MarketingCampaign> CreateCampaign(MarketingCampaignSave val);
+        Task UpdateCampaign(Guid id, MarketingCampaignSave val);
     }
 }

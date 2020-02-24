@@ -50,9 +50,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(MarketingCampaignSave val)
         {
-            var campaign = _mapper.Map<MarketingCampaign>(val);
-            SaveActivities(val, campaign);
-            await _marketingCampaignService.CreateAsync(campaign);
+            var campaign = await _marketingCampaignService.CreateCampaign(val);
 
             var basic = _mapper.Map<MarketingCampaignBasic>(campaign);
             return Ok(basic);
@@ -61,15 +59,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, MarketingCampaignSave val)
         {
-            var campaign = await _marketingCampaignService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Activities).FirstOrDefaultAsync();
-            if (campaign == null)
-                return NotFound();
-
-            campaign = _mapper.Map(val, campaign);
-            SaveActivities(val, campaign);
-
-            await _marketingCampaignService.UpdateAsync(campaign);
+            await _marketingCampaignService.UpdateCampaign(id, val);
 
             return NoContent();
         }
@@ -97,50 +87,6 @@ namespace TMTDentalAPI.Controllers
         {
             await _marketingCampaignService.ActionStopCampaign(ids);
             return NoContent();
-        }
-
-        private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)
-        {
-            var existLines = campaign.Activities.ToList();
-            var lineToRemoves = new List<MarketingCampaignActivity>();
-            foreach (var existLine in existLines)
-            {
-                bool found = false;
-                foreach (var item in val.Activities)
-                {
-                    if (item.Id == existLine.Id)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                    lineToRemoves.Add(existLine);
-            }
-
-            foreach (var line in lineToRemoves)
-                campaign.Activities.Remove(line);
-
-            int sequence = 0;
-            foreach (var line in val.Activities)
-            {
-                if (line.Id == Guid.Empty)
-                {
-                    var saleLine = _mapper.Map<MarketingCampaignActivity>(line);
-                    saleLine.Sequence = sequence++;
-                    campaign.Activities.Add(saleLine);
-                }
-                else
-                {
-                    var activity = campaign.Activities.SingleOrDefault(c => c.Id == line.Id);
-                    if (activity != null)
-                    {
-                        _mapper.Map(line, activity);
-                        activity.Sequence = sequence++;
-                    }
-                }
-            }
         }
     }
 }

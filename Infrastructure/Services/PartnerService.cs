@@ -306,6 +306,11 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public void FetchAllPSIDFromFacebookFanpage()
+        {
+
+        }
+
         public async Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val)
         {
             var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimple {

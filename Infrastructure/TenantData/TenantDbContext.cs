@@ -36,7 +36,7 @@ namespace Infrastructure.TenantData
 
         public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
         {
-            return Database.ExecuteSqlCommandAsync(sql, parameters);
+            return Database.ExecuteSqlRawAsync(sql, parameters);
         }
     }
 }
