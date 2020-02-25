@@ -51,5 +51,13 @@ namespace ApplicationCore.Entities
         public string TriggerType { get; set; }
 
         public string JobId { get; set; }
+
+        ///// <summary>
+        ///// Tự động lấy mã coupon chèn vào nội dung
+        ///// </summary>
+        //public bool? AutoTakeCoupon { get; set; }
+
+        //public Guid? CouponProgramId { get; set; }
+        //public SaleCouponProgram CouponProgram { get; set; }
     }
 }

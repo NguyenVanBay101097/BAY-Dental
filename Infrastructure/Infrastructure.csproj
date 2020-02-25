@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
+    <ProjectReference Include="..\Facebook.ApiClient\Facebook.ApiClient.csproj" />
     <ProjectReference Include="..\Umbraco.Web\Umbraco.Web.csproj" />
     <ProjectReference Include="..\ZaloDotNetSDK\ZaloDotNetSDK.csproj" />
   </ItemGroup>

@@ -29,65 +29,49 @@ namespace Infrastructure.Services
                 try
                 {
                     conn.Open();
-                    var activity = conn.Query<MarketingCampaignActivity>("SELECT * FROM MarketingCampaignActivities").FirstOrDefault();
+                    var activity = conn.Query<MarketingCampaignActivityQuery>("" +
+                        "SELECT a.Condition, a.ActivityType, a.Content, c.DateStart as CampaignDateStart, a.AutoTakeCoupon, a.CouponProgramId " +
+                        "FROM MarketingCampaignActivities a " +
+                        "LEFT JOIN MarketingCampaigns c on a.CampaignId = c.Id " +
+                        "where a.Id = @id" +
+                        "", new { id = activityId }).FirstOrDefault();
+
                     if (activity != null)
                     {
                         var list = new List<PartnerSendMessageResult>();
                         if (activity.Condition == "no_sales")
                         {
-                            var date = activity.Campaign.DateStart ?? DateTime.Now;
-                            var result = conn.Query<PartnerSendMessageResult>("select p.ZaloId as ZaloId " +
-                                "from Partners p " +
-                                "inner join(" +
-                                    "select s.PartnerId, MAX(s.DateOrder) as LastDateOrder from SaleOrders s " +
-                                    "group by s.PartnerId) sub on sub.PartnerId = p.Id " +
-                                "where sub.LastDateOrder < @date", new { date }).ToList();
+                            var dateFrom = activity.CampaignDateStart ?? DateTime.Now;
+                            var dateTo = DateTime.Now;
+                            var result = conn.Query<Partner>("" +
+                                "SELECT * " +
+                                "FROM Partners p " +
+                                "where p.Customer = 1 and p.Id not in ( " +
+                                "SELECT s.PartnerId " +
+                                "FROM SaleOrders s " +
+                                "WHERE s.DateOrder >= @dateFrom and s.DateOrder <= @dateTo " +
+                                "group by s.PartnerId)" +
+                                "", new { dateFrom, dateTo }).ToList();
 
                             list = result.Select(x => new PartnerSendMessageResult
                             {
-                                Content = x.Content,
+                                Content = activity.Content,
                                 ZaloId = x.ZaloId
                             }).ToList();
                         }
-                        //else if (activity.Condition == "birthday")
-                        //{
-                        //    var today = DateTime.Today;
-                        //    var result = conn.Query<PartnerSendMessageResult>(@"SELECT p.ZaloId as ZaloId FROM Partners p WHERE p.ZaloId IS NOT NULL AND p.Customer = 1 AND p.BirthMonth = @month AND p.BirthDay = @day",
-                        //                new { month = today.Month, day = today.Day }).ToList();
-
-                        //    list = result.Select(x => new PartnerSendMessageResult
-                        //    {
-                        //        Content = x.Content,
-                        //        ZaloId = x.ZaloId
-                        //    }).ToList();
-                        //}
-                        //else if (activity.Condition == "today_appointment")
-                        //{
-                        //    var result = conn.Query<PartnerToDayAppointmentQuery>(@"select ap.Date as Date, p.Name as PartnerName, p.ZaloId as PartnerZaloId from Appointments ap " +
-                        //                                                "left join Partners p on ap.PartnerId = p.Id " +
-                        //                                                "where DATEPART(DAY, ap.Date) = DATEPART(day, GETDATE()) and " +
-                        //                                                "DATEPART(MONTH, ap.Date) = DATEPART(day, GETDATE()) and " +
-                        //                                                "DATEPART(YEAR, ap.Date) = DATEPART(YEAR, GETDATE())").ToList();
-                        //    foreach (var item in result)
-                        //    {
-                        //        list.Add(new PartnerSendMessageResult
-                        //        {
-                        //            ZaloId = item.PartnerZaloId,
-                        //            Content = Regex.Replace(activity.Content, "{thoi_gian_lich_hen}", item.Date.ToString("HH:mm")),
-                        //        });
-                        //    }
-                        //}
-
+                      
                         if (list.Any())
                         {
                             if (activity.ActivityType == "zalo")
                             {
                                 var zaloConfig = conn.Query<ZaloOAConfig>("SELECT * FROM ZaloOAConfigs").FirstOrDefault();
-                                if (zaloConfig != null)
+                                if (zaloConfig != null && !string.IsNullOrEmpty(activity.Content))
                                 {
                                     var zaloClient = new ZaloClient(zaloConfig.AccessToken);
                                     foreach (var item in list)
                                     {
+                                        if (string.IsNullOrEmpty(item.ZaloId))
+                                            continue;
                                         var sendResult = zaloClient.sendTextMessageToUserId(item.ZaloId, item.Content);
                                     }
                                 }
@@ -112,6 +96,21 @@ namespace Infrastructure.Services
             public DateTime Date { get; set; }
             public string PartnerName { get; set; }
             public string PartnerZaloId { get; set; }
+        }
+
+        public class MarketingCampaignActivityQuery
+        {
+            public string Condition { get; set; }
+
+            public string Content { get; set; }
+
+            public string ActivityType { get; set; }
+
+            public DateTime? CampaignDateStart { get; set; }
+
+            public bool? AutoTakeCoupon { get; set; }
+
+            public Guid? CouponProgramId { get; set; }
         }
     }
 }

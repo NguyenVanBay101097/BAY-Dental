@@ -50,13 +50,90 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<MarketingCampaign> CreateCampaign(MarketingCampaignSave val)
+        {
+            var campaign = _mapper.Map<MarketingCampaign>(val);
+            SaveActivities(val, campaign);
+
+            _CheckActivityConstraints(campaign);
+
+            await CreateAsync(campaign);
+
+            return campaign;
+        }
+
+        public async Task UpdateCampaign(Guid id, MarketingCampaignSave val)
+        {
+            var campaign = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Activities).FirstOrDefaultAsync();
+            if (campaign == null)
+                throw new ArgumentNullException("campaign");
+
+            campaign = _mapper.Map(val, campaign);
+            SaveActivities(val, campaign);
+
+            _CheckActivityConstraints(campaign);
+
+            await UpdateAsync(campaign);
+        }
+
+        private void _CheckActivityConstraints(MarketingCampaign campaign)
+        {
+            var activityObj = GetService<IMarketingCampaignActivityService>();
+            activityObj.CheckAutoTakeCoupon(campaign.Activities);
+        }
+
+        private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)
+        {
+            var existLines = campaign.Activities.ToList();
+            var lineToRemoves = new List<MarketingCampaignActivity>();
+            foreach (var existLine in existLines)
+            {
+                bool found = false;
+                foreach (var item in val.Activities)
+                {
+                    if (item.Id == existLine.Id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+                campaign.Activities.Remove(line);
+
+            int sequence = 0;
+            foreach (var line in val.Activities)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var saleLine = _mapper.Map<MarketingCampaignActivity>(line);
+                    saleLine.Sequence = sequence++;
+                    campaign.Activities.Add(saleLine);
+                }
+                else
+                {
+                    var activity = campaign.Activities.SingleOrDefault(c => c.Id == line.Id);
+                    if (activity != null)
+                    {
+                        _mapper.Map(line, activity);
+                        activity.Sequence = sequence++;
+                    }
+                }
+            }
+        }
+
         public async Task ActionStartCampaign(IEnumerable<Guid> ids)
         {
             var states = new string[] { "draft", "stopped" };
             var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).ToListAsync();
             foreach(var campaign in self)
             {
-                campaign.State = "running";
+                //campaign.State = "running";
                 campaign.DateStart = DateTime.Now;
                 foreach(var activity in campaign.Activities)
                 {
@@ -70,8 +147,8 @@ namespace Infrastructure.Services
                         date = date.AddMonths(intervalNumber);
                     else if (activity.IntervalType == "weeks")
                         date = date.AddDays(intervalNumber * 7);
-
-                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), date);
+                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), TimeSpan.FromDays(0));
+                    //var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), date);
                     activity.JobId = jobId;
                 }
             }
@@ -86,6 +163,7 @@ namespace Infrastructure.Services
             foreach (var campaign in self)
             {
                 campaign.State = "stopped";
+                campaign.DateStart = null;
                 foreach (var activity in campaign.Activities)
                 {
                     if (string.IsNullOrEmpty(activity.JobId))
