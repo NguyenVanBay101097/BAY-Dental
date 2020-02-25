@@ -28,13 +28,18 @@ namespace Facebook.ApiClient.Constants
         public static readonly string V3_2 = "v3.2";
 
         /// <summary>
+        ///  Facebook api version v3.2
+        /// </summary>
+        public static readonly string V6_0 = "v6.0";
+
+        /// <summary>
         /// Check if given version is a valid FB api version or not
         /// </summary>
         /// <param name="version">API version to check</param>
         /// <returns>True if api version is valid</returns>
         public static bool IsValidVersion(string version)
         {
-            var validVersions = new List<string>() { V2_12, V3_0, V3_2 };
+            var validVersions = new List<string>() { V2_12, V3_0, V3_2, V6_0 };
             return validVersions.Contains(version);
         }
     }

@@ -18,11 +18,15 @@ using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Dapper;
+using Facebook.ApiClient.ApiEngine;
+using Facebook.ApiClient.Constants;
+using Facebook.ApiClient.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
+using Newtonsoft.Json;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
@@ -308,6 +312,50 @@ namespace Infrastructure.Services
 
         public void FetchAllPSIDFromFacebookFanpage()
         {
+            var page_access_token = "EAAJRTJsjvegBAOvgQmu16mdl9iZAgFT2pS7WUHN2nZAAgkSZAHvLZAe6smKBpK89pt9VJ3QLLneZAy88ffuRgn5Cw77FZB3K6MZCiBWfu8AdsNLjM2OuxQZBon9jGIDZCla8snZAOumpYaSMAD0nURDpCA6JQxP5k0rKdStTZBCLpVSk76nSCUHkKUWp8SiSh7FUkKBXWDhPXyc2wZDZD";
+            var apiClient = new ApiClient(page_access_token, FacebookApiVersions.V6_0);
+            //var page_id = "565832646833390";
+            //var url = $"/{page_id}";
+
+            //var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, url, apiClient);
+            //getRequest.AddQueryParameter("fields", "conversations{id}");
+
+            //var getRequestResponse = getRequest.Execute();
+
+            //var conversation_id = "t_1038688119828988";
+            //var url = $"/{conversation_id}";
+
+            //var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, url, apiClient);
+            //getRequest.AddQueryParameter("fields", "messages{message}");
+
+            //var getRequestResponse = getRequest.Execute();
+
+            //var message_id = "m_GN4KINrpp1zXQq06H-VTwr6db0nndO6EOyLMhdCTspc_Wli1Shf8ch3jKd9TdadSVolp5Osp1xKvG6PAkV7j7g";
+            //var message_id = "m_MbBf09HGKbUb3AV1JPcQR76db0nndO6EOyLMhdCTspelklgu2YcEi4vJHfisv7Gnxs1nB1eoCpmT0OyqOjcCkA";
+            //var url = $"/{message_id}";
+
+            //var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, url, apiClient);
+            //getRequest.AddQueryParameter("fields", "from,to");
+
+            //var getRequestResponse = getRequest.Execute();
+
+            //var conversation_id = "t_1038688119828988";
+            //var url = $"/{conversation_id}";
+
+            //var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, url, apiClient);
+            //getRequest.AddQueryParameter("fields", "participants,senders");
+
+            //var getRequestResponse = getRequest.Execute();
+
+            var psid = "2495342403910921";
+            var url = $"/me/messages";
+
+            var postRequest = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
+            postRequest.AddParameter("messaging_type", "RESPONSE");
+            postRequest.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
+            postRequest.AddParameter("message", JsonConvert.SerializeObject(new { text = "hello world, i'm testing" }));
+
+            var getRequestResponse = postRequest.Execute();
 
         }
 
