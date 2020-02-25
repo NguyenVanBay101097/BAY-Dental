@@ -1,0 +1,84 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form action="" class="o_form_view ng-pristine ng-invalid ng-touched" kendo-validator="validator" novalidate>
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên hoạt động</label>
+                    <h1>
+                        <input class="form-control ng-pristine ng-invalid ng-touched"
+                        [(ngModel)]="item.name" [ngModelOptions]="{standalone: true}" required>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6_fixed">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">Nội dung</label>
+                                </td>
+                                <td class="o_td_control_left" colspan="1" style="width:100%">
+                                    <textarea class="form-control ng-untouched ng-pristine ng-valid" 
+                                    [(ngModel)]="item.content" [ngModelOptions]="{standalone: true}">
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6_fixed o_table_right">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label o_td_label_right" colspan="1"><label
+                                        class="o_form_label">Loại hoạt động</label></td>
+                                <td class="o_td_control_right" colspan="1" style="width:100%">
+                                    <div class="o_field_radio o_horizontal o_field_widget o_required_modifier" name="activity_type" style="display: inline-flex;">
+                                        <div class="custom-control custom-radio o_radio_item mr-3" aria-atomic="true">
+                                            <input type="radio" name="type" class="custom-control-input o_radio_input" value="facebook" id="radio_facebook"
+                                                [ngModel]="item.activityType" (change)="changeRadioButton($event)">
+                                            <label class="custom-control-label o_form_label" for="radio_facebook">Facebook</label>
+                                        </div>
+                                    
+                                        <div class="custom-control custom-radio o_radio_item" aria-atomic="true">
+                                            <input type="radio" name="type" class="custom-control-input o_radio_input" value="zalo" id="radio_zalo"
+                                                [ngModel]="item.activityType" (change)="changeRadioButton($event)">
+                                            <label class="custom-control-label o_form_label" for="radio_zalo">Zalo</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label o_td_label_right" colspan="1">
+                                    <label class="o_form_label">Kích hoạt</label>
+                                </td>
+                                <td class="o_td_control_right" colspan="1" style="width:100%">
+                                    <div class="form-group">
+                                        <div class="d-flex">
+                                            <input type="number" class="form-control ng-untouched ng-pristine ng-valid mr-1"
+                                                placeholder="" [(ngModel)]="item.intervalNumber" [ngModelOptions]="{standalone: true}">
+                                            <select class="form-control kd-dropdown-dob-d ng-untouched ng-pristine ng-valid"
+                                                formcontrolname="trigger" [(ngModel)]="item.intervalType" [ngModelOptions]="{standalone: true}">
+                                                <option value="hours">giờ</option>
+                                                <option value="days">ngày</option>
+                                                <option value="weeks">tuần</option>
+                                                <option value="months">tháng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

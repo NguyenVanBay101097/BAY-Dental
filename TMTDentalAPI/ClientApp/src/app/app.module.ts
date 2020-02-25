@@ -86,6 +86,7 @@ import { ResConfigSettingsModule } from './res-config-settings/res-config-settin
 import { JournalReportsModule } from './journal-reports/journal-reports.module';
 import { ZaloOaConfigModule } from './zalo-oa-config/zalo-oa-config.module';
 import { RevenueReportModule } from './revenue-report/revenue-report.module';
+import { MarketingCampaignsModule } from './marketing-campaigns/marketing-campaigns.module';
 import { FacebookConfigModule } from './facebook-config/facebook-config.module';
 
 export function tokenGetter() {
@@ -180,6 +181,7 @@ registerLocaleData(localeVi, 'vi');
     ResConfigSettingsModule,
     ZaloOaConfigModule,
     RevenueReportModule,
+    MarketingCampaignsModule
     FacebookConfigModule,
   ],
   providers: [
