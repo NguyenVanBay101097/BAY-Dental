@@ -1,2 +1,16 @@
-<button type="button" class="btn btn-primary" (click)="submitLogin()">Login facebook</button>
+<div class="o_content" *ngIf="!showAuthUser">
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">Kết nối tài khoản facebook của bạn</h1>
+            <button type="button" class="btn btn-primary" (click)="submitLogin()">
+                <i class="fab fa-facebook-f"></i> Kết nối với facebook
+            </button>
+        </div>
+    </div>
+</div>
+
 <p>{{userName}}</p>
+
+<button type="button" class="btn btn-primary" (click)="onSave()">Lưu</button>
+
+<button type="button" *ngIf="showAuthUser" class="btn btn-primary" (click)="logout()">Logout</button>

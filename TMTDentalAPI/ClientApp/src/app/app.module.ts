@@ -88,6 +88,7 @@ import { ZaloOaConfigModule } from './zalo-oa-config/zalo-oa-config.module';
 import { RevenueReportModule } from './revenue-report/revenue-report.module';
 import { MarketingCampaignsModule } from './marketing-campaigns/marketing-campaigns.module';
 import { FacebookConfigModule } from './facebook-config/facebook-config.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -118,6 +119,7 @@ registerLocaleData(localeVi, 'vi');
         blacklistedRoutes: []
       }
     }),
+    FlexLayoutModule,
     SharedModule,
     AuthModule,
     ProductsModule,
@@ -181,7 +183,7 @@ registerLocaleData(localeVi, 'vi');
     ResConfigSettingsModule,
     ZaloOaConfigModule,
     RevenueReportModule,
-    MarketingCampaignsModule
+    MarketingCampaignsModule,
     FacebookConfigModule,
   ],
   providers: [

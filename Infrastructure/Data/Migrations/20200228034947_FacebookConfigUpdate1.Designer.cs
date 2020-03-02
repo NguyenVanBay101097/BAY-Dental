@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200228034947_FacebookConfigUpdate1")]
+    partial class FacebookConfigUpdate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1765,57 +1767,13 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("FacebookConfigPages");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.FacebookConversation", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.FacebookPageUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FacebookObjectId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacebookPageId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MessageCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Snippet")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UnreadCount")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("FacebookConversations");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.FacebookUserProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid?>("ConfigPageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
@@ -1830,16 +1788,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PageId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PsId")
+                    b.Property<string>("Psid")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
@@ -1847,13 +1796,13 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("ConfigPageId");
 
-                    b.HasIndex("PartnerId");
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("WriteById");
 
-                    b.ToTable("FacebookUserProfiles");
+                    b.ToTable("FacebookPageUsers");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.History", b =>
@@ -3050,6 +2999,24 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("PartnerCategories");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.PartnerFacebookPageUserRel", b =>
+                {
+                    b.Property<Guid>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FbPageUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Psid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PartnerId", "FbPageUserId");
+
+                    b.HasIndex("FbPageUserId");
+
+                    b.ToTable("PartnerFacebookPageUserRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PartnerHistoryRel", b =>
@@ -6339,30 +6306,15 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.FacebookConversation", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.FacebookPageUser", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.FacebookConfigPage", "ConfigPage")
+                        .WithMany("PageUsers")
+                        .HasForeignKey("ConfigPageId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.FacebookUserProfile", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.FacebookUserProfile", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -6756,6 +6708,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.PartnerFacebookPageUserRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.FacebookPageUser", "FbPageUser")
+                        .WithMany()
+                        .HasForeignKey("FbPageUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PartnerHistoryRel", b =>
