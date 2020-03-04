@@ -79,8 +79,8 @@ namespace Infrastructure.Services
 
         private void _CheckActivityConstraints(MarketingCampaign campaign)
         {
-            var activityObj = GetService<IMarketingCampaignActivityService>();
-            activityObj.CheckAutoTakeCoupon(campaign.Activities);
+            //var activityObj = GetService<IMarketingCampaignActivityService>();
+            //activityObj.CheckAutoTakeCoupon(campaign.Activities);
         }
 
         private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)

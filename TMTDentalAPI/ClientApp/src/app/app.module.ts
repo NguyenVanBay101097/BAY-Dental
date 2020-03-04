@@ -87,6 +87,8 @@ import { JournalReportsModule } from './journal-reports/journal-reports.module';
 import { ZaloOaConfigModule } from './zalo-oa-config/zalo-oa-config.module';
 import { RevenueReportModule } from './revenue-report/revenue-report.module';
 import { MarketingCampaignsModule } from './marketing-campaigns/marketing-campaigns.module';
+import { FacebookModule } from 'ngx-facebook';
+import { SocialsChannelModule } from './socials-channel/socials-channel.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -180,7 +182,9 @@ registerLocaleData(localeVi, 'vi');
     ResConfigSettingsModule,
     ZaloOaConfigModule,
     RevenueReportModule,
-    MarketingCampaignsModule
+    MarketingCampaignsModule,
+    FacebookModule.forRoot(),
+    SocialsChannelModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

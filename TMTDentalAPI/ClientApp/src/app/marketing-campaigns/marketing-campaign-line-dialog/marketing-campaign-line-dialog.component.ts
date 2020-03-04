@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MarketingCampaignActivity } from '../marketing-campaign.service';
+import { FormGroup, Validators, FormBuilder, FormControl, ValidatorFn } from '@angular/forms';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-marketing-campaign-line-dialog',
@@ -10,18 +12,48 @@ import { MarketingCampaignActivity } from '../marketing-campaign.service';
 export class MarketingCampaignLineDialogComponent implements OnInit {
   @Input() title: string;
   @Input() item: MarketingCampaignActivity;
-  @Output() item_new: EventEmitter<MarketingCampaignActivity> = new EventEmitter();
+
+  rfCampaignActivity: FormGroup;
+
+  trimValidator: ValidatorFn = (text: any) => {
+    if (text && text.value) {
+      if (text.value.startsWith(' ')) {
+        return {
+          'trimError': { value: 'không có khoảng trắng phía trước' }
+        };
+      }
+      if (text.value.endsWith(' ')) {
+        return {
+          'trimError': { value: 'không có khoảng trắng phía sau' }
+        };
+      }
+    }
+    return null;
+  };
   
-  constructor(public activeModal: NgbActiveModal, ) { }
+  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
+    private notificationService: NotificationService) { }
 
   ngOnInit() {
-
+    this.rfCampaignActivity = this.fb.group({
+      name: [null, [Validators.required, this.trimValidator]],
+      condition: null,
+      daysNoSales: 0,
+      activityType: 'facebook',
+      content: null,
+      intervalType: 'hours',
+      intervalNumber: 1,
+      triggerType: null,
+      everyDayTimeAt: null,
+    });
+    this.rfCampaignActivity.patchValue(this.item);
   }
+  get name() { return this.rfCampaignActivity.get('name'); };
 
   onSave() {
-    this.item_new.emit(this.item);
-  }
-  changeRadioButton(event) {
-    this.item.activityType = event.target.value;
+    if (!this.rfCampaignActivity.valid) {
+      return;
+    }
+    this.activeModal.close(this.rfCampaignActivity.value);
   }
 }

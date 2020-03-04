@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MarketingCampaignsRoutingModule } from './marketing-campaigns-routing.module';
 import { MarketingCampaignListComponent } from './marketing-campaign-list/marketing-campaign-list.component';
@@ -16,7 +16,9 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
     CommonModule,
     MarketingCampaignsRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     MyCustomKendoModule,
+    NgbModule
   ],
   providers: [
     MarketingCampaignService

@@ -1,0 +1,58 @@
+.pages {
+    width: calc(100% - 32px);
+    margin: 10px auto;
+}
+.pages .mid {
+    margin: 5px auto;
+    text-align: center;
+}
+
+.pages_connected .card {
+    width: calc(100% - 20px);
+    cursor: pointer;
+}
+.pages_connected .card:hover {
+    background: rgba(0,123,255,0.1);
+}
+.pages_connected .card.selected {
+    background: rgba(0,123,255,0.25);
+}
+.pages_connected .card img {
+    height: 60px;
+    width: 60px;
+}
+.conversations {
+    height: 100%;
+}
+.conversations > table {
+    width: 100%;
+    height: 100%;
+}
+.conversations > table > tr > td:nth-child(1) {
+    width: 352px;
+}
+.conversations > table > tr > td:nth-child(2) {
+
+}
+.conversations > table > tr > td:nth-child(3) {
+    width: 292px;
+}
+.conversations td > div {
+    height: 100%;
+}
+.conversations .avatar {
+    width: 45px;
+    height: 45px;
+    margin: 10px;
+    object-fit: cover;
+}
+.tag {
+    width: calc(100% - 10px);
+    margin-bottom: 0 !important;
+}
+.tag:hover {
+    background: rgba(0,123,255,0.1);
+}
+.tag.selected {
+    background: rgba(0,123,255,0.25);
+}

@@ -6,6 +6,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-marketing-campaign-list',
@@ -15,6 +16,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
     class: 'o_action o_view_controller'
   }
 })
+
 export class MarketingCampaignListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
@@ -28,7 +30,8 @@ export class MarketingCampaignListComponent implements OnInit {
   selectedIds: string[] = [];
 
   constructor(private modalService: NgbModal, private router: Router, 
-    private marketingCampaignService: MarketingCampaignService) { }
+    private marketingCampaignService: MarketingCampaignService, 
+    private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -97,17 +100,6 @@ export class MarketingCampaignListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.marketingCampaignService.delete(item.id).subscribe(() => {
-        this.loadDataFromApi();
-      });
-    });
-  }
-
-  deleteItems(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.marketingCampaignService.unlink([item.id]).subscribe(() => {
         this.loadDataFromApi();
       });
     });

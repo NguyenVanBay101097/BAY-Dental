@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { MarketingCampaignService, MarketingCampaign, MarketingCampaignActivity } from '../marketing-campaign.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-marketing-campaign-create-update',
@@ -18,7 +19,7 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
   campaign: MarketingCampaign;
   campaignActivity: MarketingCampaignActivity;
 
-  constructor(private modalService: NgbModal, private route: ActivatedRoute,
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private route: ActivatedRoute,
     private router: Router, private marketingCampaignService: MarketingCampaignService, 
     private notificationService: NotificationService) { }
 
@@ -59,24 +60,17 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
       this.defaultCampaignActivity()
       modalRef.componentInstance.item = this.campaignActivity;
     }
-    modalRef.componentInstance.item_new.subscribe(($event) => {
-      if ($event.name.trim() !== '') {
-        if (item) {
-          this.campaign.activities[index] = $event;
-        } else {
-          this.campaign.activities.push($event);
-        }
-        modalRef.close();
-      } else {
-        this.notificationService.show({
-          content: 'Tên không được trống',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
+    modalRef.result.then((result) => {
+      if (result) {
+          if (item) {
+            this.campaign.activities[index] = result;
+          } else {
+            this.campaign.activities.push(result);
+          }
+          modalRef.close();
       }
-    })
+    }, (reason) => {
+    });
   }
 
   deleteLineModal(index) {
@@ -114,20 +108,28 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
     if (this.campaign.name.trim() !== '') {
       if (this.campaign.id) {
         this.marketingCampaignService.update(this.campaign.id, this.campaign).subscribe(() => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           //this.router.navigate(['/marketing-campaigns']);
         });
       } else {
         this.marketingCampaignService.create(this.campaign).subscribe(result => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.router.navigate(['/marketing-campaigns/form'], { queryParams: { id: result.id } });
         });
       }
-      this.notificationService.show({
-        content: 'Lưu thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
+     
     } else {
       this.notificationService.show({
         content: 'Tên không được trống',
