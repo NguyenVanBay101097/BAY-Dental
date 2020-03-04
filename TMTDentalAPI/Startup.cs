@@ -39,6 +39,7 @@ using TMTDentalAPI.JobFilters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI
 {
@@ -67,7 +68,8 @@ namespace TMTDentalAPI
             services.Configure<SendGridConfig>(Configuration.GetSection("SendGrid"));
 
             services.Configure<ZaloAuthConfig>(Configuration.GetSection("ZaloAuthConfig"));
-
+            // Register the ConfigurationBuilder instance of FacebookAuthSettings
+            services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
           
@@ -206,6 +208,7 @@ namespace TMTDentalAPI
             services.AddScoped<IIRPropertyService, IRPropertyService>();
             services.AddScoped<IIRModelFieldService, IRModelFieldService>();
             services.AddScoped<IProductPriceHistoryService, ProductPriceHistoryService>();
+            services.AddScoped<IFacebookPageService, FacebookPageService>();
 
             services.AddMemoryCache();
 
@@ -278,6 +281,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ResConfigSettingsProfile());
                 mc.AddProfile(new AccountMoveLineProfile());
                 mc.AddProfile(new ZaloOAConfigProfile());
+                mc.AddProfile(new FacebookPageProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

@@ -136,6 +136,8 @@ namespace Infrastructure.Data
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
         public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
         public DbSet<SaleReport> SaleReports { get; set; }
+        //Facebook
+        public DbSet<FacebookPage> FacebookPages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -242,6 +244,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ZaloOAConfigConfiguration());
             builder.ApplyConfiguration(new IRModelFieldConfiguration());
             builder.ApplyConfiguration(new IRPropertyConfiguration());
+            builder.ApplyConfiguration(new FacebookPageConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
