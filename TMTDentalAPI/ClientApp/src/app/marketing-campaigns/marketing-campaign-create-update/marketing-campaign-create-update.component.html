@@ -1,0 +1,108 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/marketing-campaigns">Chiến dịch marketing</a>
+            </li>
+            <li class="active">
+                <span>Tạo mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+                        Lưu
+                    </button>
+                    <button type="button" class="btn btn-light btn-sm" (click)="cancelCampaign()" accesskey="j">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right"></div>
+    </div>
+</div>
+<div class="o_content">
+    <div class="o_form_view o_form_editable">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" accesskey="1" *ngIf="campaign.state !== 'running'"
+                        class="btn btn-primary btn-sm" (click)="onStart()">
+                        Bắt đầu
+                    </button>
+                    <button type="button" accesskey="1" *ngIf="campaign.state === 'running'"
+                        class="btn btn-primary btn-sm" (click)="onStop()">
+                        Dừng lại
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': campaign.state === 'stopped', 'btn-secondary': campaign.state !== 'stopped'}"
+                        type="button">
+                        Đã dừng
+                    </button>
+                    <button class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': campaign.state === 'running', 'btn-secondary': campaign.state !== 'running'}"
+                        type="button">
+                        Đang chạy
+                    </button>
+                    <button class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': campaign.state === 'draft', 'btn-secondary': campaign.state !== 'draft'}"
+                        type="button">
+                        Mới
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <div class="oe_title">
+                        <label class="o_form_label oe_edit_only">Tên chiến dịch</label>
+                        <h1>
+                            <input class="form-control" formcontrolname="name"
+                                [(ngModel)]="campaign.name" required>
+                        </h1>
+                    </div>
+                </div>
+                <div class="o_notebook">
+                    <div class="tab-content">
+                        <div aria-labelledby="home-tab" class="tab-pane active" id="home" role="tabpanel">
+                            <div class="mb-2"><button accesskey="A" class="btn btn-secondary btn-sm" type="button"
+                                    (click)="showCreateUpdateLineModal(null)">Thêm hoạt động mới</button></div>
+                            <div>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr style="white-space: nowrap;">
+                                            <th>Tên hoạt động</th>
+                                            <th style="text-align: right;">Loại hoạt động</th>
+                                            <th style="text-align: right;">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of campaign.activities; let i = index">
+                                            <td style="white-space: nowrap;">{{item.name}}</td>
+                                            <td style="text-align: right;">{{item.activityType}}</td>
+                                            <td class="text-right">
+                                                <div>
+                                                    <button class="btn btn-icon btn-sm btn-light mr-1" type="button"
+                                                        (click)="showCreateUpdateLineModal(item, i)">
+                                                        <span class="k-icon k-i-edit"></span>
+                                                    </button>
+                                                    <button class="btn btn-icon btn-sm btn-light" type="button"
+                                                        (click)="deleteLineModal(i)">
+                                                        <span class="k-icon k-i-delete"></span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

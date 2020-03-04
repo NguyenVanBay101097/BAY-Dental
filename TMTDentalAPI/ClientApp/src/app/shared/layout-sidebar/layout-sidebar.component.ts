@@ -60,6 +60,8 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
+        { name: 'Kênh xã hội', link: '/socials-channel'},
+        { name: 'Chiến dịch marketing', link: '/marketing-campaigns'},
         // { name: 'Thanh toán điều trị', link: '/accountpayments', params: { partner_type: 'customer' } },
         { name: 'Khách hàng', link: '/partners', params: { customer: true } },
         { name: 'Nhóm khách hàng', link: '/partner-categories' },

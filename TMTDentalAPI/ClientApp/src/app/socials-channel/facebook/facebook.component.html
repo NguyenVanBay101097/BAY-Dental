@@ -1,0 +1,81 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Kênh xã hội Facebook</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tên.." type="text"
+                        >
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button *ngIf="!logged_in" type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="login()">
+                        Đăng nhập Facebook
+                    </button>
+                    <button *ngIf="logged_in" type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="logout()">
+                        Đăng xuất Facebook
+                    </button>
+                    <button *ngIf="logged_in && !selectedPage" type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="showModalAddConnect()">
+                        Thêm kết nối
+                    </button>
+                    <button *ngIf="selectedPage" type="button" class="btn btn-light btn-sm" accesskey="c" (click)="selectPage(null)">
+                        Quay lại Danh sách Trang kết nối
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+
+        </div>
+    </div>
+</div>
+
+<div class="pages card pages_connected" *ngIf="logged_in && !selectedPage">
+    <b class="mid">Danh sách trang đang kết nối</b>
+    <div class="card mid" *ngFor="let item of DataFanpagesConnected; let i = index"
+        (click)="selectPage(item)">
+        <table>
+            <tr>
+                <td width=1%>
+                    <img src="{{item.picture}}" alt="">
+                </td>
+                <td style="text-align: left;">
+                    <b>{{item.name}}</b>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="pages conversations" *ngIf="selectedPage">
+    <table>
+        <tr>
+            <td>
+                <div class="card">
+                    <div class="card mid tag" *ngFor="let item of DataFanpages; let i = index"
+                    [class.selected]="item === selectedPage"
+                    (click)="selectPage(item)">
+                        <table>
+                            <tr>
+                                <td width=1%>
+                                    <img class="avatar" src="https://i.ya-webdesign.com/images/avatar-png-1.png" alt="">
+                                </td>
+                                <td style="text-align: left;">
+                                    <b>Hello Test 1</b><br>
+                                    <span>Lorem Ipisum..</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td><div class="card"></div></td>
+            <td><div class="card"></div></td>
+        </tr>
+    </table>
+</div>

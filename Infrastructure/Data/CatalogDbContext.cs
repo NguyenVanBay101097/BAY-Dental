@@ -131,6 +131,8 @@ namespace Infrastructure.Data
         public DbSet<ZaloOAConfig> ZaloOAConfigs { get; set; }
         public DbSet<IRModelField> IRModelFields { get; set; }
         public DbSet<IRProperty> IRProperties { get; set; }
+        public DbSet<MarketingCampaign> MarketingCampaigns { get; set; }
+        public DbSet<MarketingCampaignActivity> MarketingCampaignActivities { get; set; }
         public DbSet<PartnerMapPSIDFacebookPage> PartnerMapPSIDFacebookPages { get; set; }
         
 
@@ -244,6 +246,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ZaloOAConfigConfiguration());
             builder.ApplyConfiguration(new IRModelFieldConfiguration());
             builder.ApplyConfiguration(new IRPropertyConfiguration());
+            builder.ApplyConfiguration(new MarketingCampaignConfiguration());
+            builder.ApplyConfiguration(new MarketingCampaignActivityConfiguration());
             builder.ApplyConfiguration(new PartnerMapPSIDFacebookPageConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
@@ -305,7 +309,7 @@ namespace Infrastructure.Data
 
         public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
         {
-            return Database.ExecuteSqlCommandAsync(sql, parameters);
+            return Database.ExecuteSqlRawAsync(sql, parameters);
         }
     }
 }

@@ -154,6 +154,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        public IActionResult FetchAllPSIDFromFacebookFanpage()
+        {
+            _partnerService.FetchAllPSIDFromFacebookFanpage();
+            return Ok(true);
+        }
+
         [HttpPost("Autocomplete2")]
         public async Task<IActionResult> Autocomplete2(PartnerPaged val)
         {
