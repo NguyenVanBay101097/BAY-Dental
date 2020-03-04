@@ -35,5 +35,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerReportLocationWard>> ReportLocationWard(PartnerReportLocationDistrict val);
         IQueryable<Partner> GetQueryPaged(PartnerPaged val);
         Task UpdateCustomersZaloId();
+        void FetchAllPSIDFromFacebookFanpage();
     }
 }

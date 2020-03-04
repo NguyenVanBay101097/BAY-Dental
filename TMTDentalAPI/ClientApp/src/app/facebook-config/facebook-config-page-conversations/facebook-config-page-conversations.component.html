@@ -1,0 +1,11 @@
+<div class="conversation d-flex">
+    <div class="col-left">
+        <app-facebook-config-page-conversation-list [conversations]="conversations"
+            [conversationSelected]="conversationSelected" (conversationChange)="onConversationChange($event)">
+        </app-facebook-config-page-conversation-list>
+    </div>
+    <div class="col-right">
+        <app-facebook-config-page-customer-update [conversation]="conversationSelected">
+        </app-facebook-config-page-customer-update>
+    </div>
+</div>

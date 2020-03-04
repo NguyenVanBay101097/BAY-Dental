@@ -1,0 +1,33 @@
+<div *ngIf="config">
+    <div class="container">
+        <div class="d-flex">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>{{config.fbAccountName}}</h5>
+                    <div class="py-2">
+                        <img class="rounded-circle"
+                            src="//graph.facebook.com/{{config.fbAccountUserId}}/picture?width=100&amp;height=100"
+                            alt="avatar">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-block" (click)="logout()">Đăng xuất khỏi hệ
+                        thống</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" *ngFor="let page of config.configPages">
+                            <div>
+                                <img src="//graph.facebook.com/{{page.pageId}}/picture?type=small" alt="not found">
+                            </div>
+                            <div>
+                                <h5>{{page.pageName}}</h5>
+                            </div>
+                            <button type="button" class="btn btn-light" (click)="syncData(page)">Đồng bộ</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

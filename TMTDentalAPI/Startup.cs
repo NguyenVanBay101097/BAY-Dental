@@ -208,6 +208,11 @@ namespace TMTDentalAPI
             services.AddScoped<IProductPriceHistoryService, ProductPriceHistoryService>();
             services.AddScoped<IMarketingCampaignService, MarketingCampaignService>();
             services.AddScoped<IMarketingCampaignActivityJobService, MarketingCampaignActivityJobService>();
+            services.AddScoped<IFacebookConfigService, FacebookConfigService>();
+            services.AddScoped<IFacebookConfigPageService, FacebookConfigPageService>();
+            services.AddScoped<IFacebookOAuthService, FacebookOAuthService>();
+            services.AddScoped<IFacebookConversationService, FacebookConversationService>();
+            services.AddScoped<IFacebookUserProfileService, FacebookUserProfileService>();
 
             services.AddMemoryCache();
 
@@ -282,6 +287,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ZaloOAConfigProfile());
                 mc.AddProfile(new MarketingCampaignProfile());
                 mc.AddProfile(new MarketingCampaignActivityProfile());
+                mc.AddProfile(new FacebookConfigPageProfile());
+                mc.AddProfile(new FacebookConfigProfile());
+                mc.AddProfile(new FacebookUserProfileProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -413,7 +421,8 @@ namespace TMTDentalAPI
 
             app.UseCors("AllowAll");
             app.UseCors(
-                options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                //options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                options => options.WithOrigins("https://abc.tdental.vn:44377").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
             );
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
