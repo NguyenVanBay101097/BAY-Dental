@@ -133,10 +133,6 @@ namespace Infrastructure.Data
         public DbSet<IRProperty> IRProperties { get; set; }
         public DbSet<MarketingCampaign> MarketingCampaigns { get; set; }
         public DbSet<MarketingCampaignActivity> MarketingCampaignActivities { get; set; }
-        public DbSet<FacebookConfig> FacebookConfigs { get; set; }
-        public DbSet<FacebookConfigPage> FacebookConfigPages { get; set; }
-        public DbSet<FacebookConversation> FacebookConversations { get; set; }
-        public DbSet<FacebookUserProfile> FacebookUserProfiles { get; set; }
 
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -250,10 +246,6 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new IRPropertyConfiguration());
             builder.ApplyConfiguration(new MarketingCampaignConfiguration());
             builder.ApplyConfiguration(new MarketingCampaignActivityConfiguration());
-            builder.ApplyConfiguration(new FacebookConfigConfiguration());
-            builder.ApplyConfiguration(new FacebookConfigPageConfiguration());
-            builder.ApplyConfiguration(new FacebookConversationConfiguration());
-            builder.ApplyConfiguration(new FacebookUserProfileConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
