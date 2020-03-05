@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,8 @@ namespace Infrastructure.Services
 {
     public interface IFacebookPageService : IBaseService<FacebookPage>
     {
-        Task<FacebookUserAccessTokenData> GetFacebookAppAccessToken();
+        Task<PagedResult2<FacebookPageBasic>> GetPagedResultAsync(FacebookPaged val);
+        Task<string> GetFacebookAppAccessToken(string accesstoken);
         Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val);
     }
 }

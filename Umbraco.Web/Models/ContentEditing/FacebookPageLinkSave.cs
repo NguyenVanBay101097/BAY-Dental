@@ -7,6 +7,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class FacebookPageLinkSave
     {
         public string Accesstoken { get; set; }
-        public long PageId { get; set; }
+        public string PageId { get; set; }
     }
 }

@@ -12,15 +12,25 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FacebookPageController : BaseApiController
+    public class FacebookPagesController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly IFacebookPageService _facebookPageService;
-        public FacebookPageController(IMapper mapper, IFacebookPageService facebookPageService) {
+        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService) {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery]FacebookPaged val)
+        {
+            var lstfbpage = await _facebookPageService.GetPagedResultAsync(val);
+            if (lstfbpage == null)
+            {
+                return NotFound();
+            }
+            return Ok(lstfbpage);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
@@ -30,7 +40,7 @@ namespace TMTDentalAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<FacebookPageBasic2>(fbpage));
+            return Ok(_mapper.Map<FacebookPageBasic>(fbpage));
         }
 
         [HttpPost("[action]")]
@@ -40,7 +50,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var fbpage = await _facebookPageService.CreateFacebookPage(val);
-            var basic = _mapper.Map<FacebookPageBasic2>(fbpage);
+            var basic = _mapper.Map<FacebookPageBasic>(fbpage);
             return Ok(basic);
         }
     }

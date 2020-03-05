@@ -11,7 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public FacebookPageProfile()
         {
-            CreateMap<FacebookPage, FacebookPageBasic2>();
+            CreateMap<FacebookPage, FacebookPageBasic>();
             CreateMap<FacebookPage, FacebookPageSave>();
             CreateMap<FacebookPageSave, FacebookPage>()
                 .ForMember(x => x.Id, x => x.Ignore());
