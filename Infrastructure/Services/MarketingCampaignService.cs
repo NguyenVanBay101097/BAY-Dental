@@ -55,8 +55,6 @@ namespace Infrastructure.Services
             var campaign = _mapper.Map<MarketingCampaign>(val);
             SaveActivities(val, campaign);
 
-            _CheckActivityConstraints(campaign);
-
             await CreateAsync(campaign);
 
             return campaign;
@@ -72,15 +70,7 @@ namespace Infrastructure.Services
             campaign = _mapper.Map(val, campaign);
             SaveActivities(val, campaign);
 
-            _CheckActivityConstraints(campaign);
-
             await UpdateAsync(campaign);
-        }
-
-        private void _CheckActivityConstraints(MarketingCampaign campaign)
-        {
-            //var activityObj = GetService<IMarketingCampaignActivityService>();
-            //activityObj.CheckAutoTakeCoupon(campaign.Activities);
         }
 
         private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)
@@ -133,7 +123,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).ToListAsync();
             foreach(var campaign in self)
             {
-                //campaign.State = "running";
+                campaign.State = "running";
                 campaign.DateStart = DateTime.Now;
                 foreach(var activity in campaign.Activities)
                 {
@@ -147,7 +137,7 @@ namespace Infrastructure.Services
                         date = date.AddMonths(intervalNumber);
                     else if (activity.IntervalType == "weeks")
                         date = date.AddDays(intervalNumber * 7);
-                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), TimeSpan.FromDays(0));
+                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity("localhost", activity.Id), date);
                     //var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), date);
                     activity.JobId = jobId;
                 }
