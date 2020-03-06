@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMTDentalAdmin", "TMTDental
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZaloDotNetSDK", "ZaloDotNetSDK\ZaloDotNetSDK.csproj", "{35BF95D8-9599-4F33-8538-0D306572C118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facebook.ApiClient", "Facebook.ApiClient\Facebook.ApiClient.csproj", "{D6314431-6C67-469E-AD3D-59BE22AC5CF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Facebook.ApiClient", "Facebook.ApiClient\Facebook.ApiClient.csproj", "{D6314431-6C67-469E-AD3D-59BE22AC5CF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMTDentalWebhook", "TMTDentalWebhook\TMTDentalWebhook.csproj", "{6070E925-DDB6-405F-A8B8-442F0C06CF5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{D6314431-6C67-469E-AD3D-59BE22AC5CF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6314431-6C67-469E-AD3D-59BE22AC5CF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6314431-6C67-469E-AD3D-59BE22AC5CF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6070E925-DDB6-405F-A8B8-442F0C06CF5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6070E925-DDB6-405F-A8B8-442F0C06CF5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6070E925-DDB6-405F-A8B8-442F0C06CF5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6070E925-DDB6-405F-A8B8-442F0C06CF5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

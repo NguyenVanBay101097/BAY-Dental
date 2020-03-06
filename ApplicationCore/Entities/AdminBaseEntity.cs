@@ -15,11 +15,9 @@ namespace ApplicationCore.Entities
 
         public Guid Id { get; set; }
 
-        [ForeignKey("CreatedBy")]
         public string CreatedById { get; set; }
         public ApplicationAdminUser CreatedBy { get; set; }
 
-        [ForeignKey("WriteBy")]
         public string WriteById { get; set; }
         public ApplicationAdminUser WriteBy { get; set; }
 

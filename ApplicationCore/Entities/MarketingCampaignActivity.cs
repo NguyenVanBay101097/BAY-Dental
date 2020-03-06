@@ -59,5 +59,9 @@ namespace ApplicationCore.Entities
 
         //public Guid? CouponProgramId { get; set; }
         //public SaleCouponProgram CouponProgram { get; set; }
+
+        public int Processed { get; set; }
+
+        public int Rejected { get; set; }
     }
 }
