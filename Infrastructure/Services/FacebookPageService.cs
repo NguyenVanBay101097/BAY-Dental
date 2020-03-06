@@ -23,13 +23,14 @@ namespace Infrastructure.Services
     public class FacebookPageService : BaseService<FacebookPage>, IFacebookPageService
     {
         private readonly IMapper _mapper;
-        private readonly HttpClient _httpClient;
         private readonly FacebookAuthSettings _fbAuthSettings;
         public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
-           
+            _fbAuthSettings = fbAuthSettingsAccessor?.Value;
+
+
         }
 
         public async Task<PagedResult2<FacebookPageBasic>> GetPagedResultAsync(FacebookPaged val)
@@ -142,7 +143,10 @@ namespace Infrastructure.Services
 
             //generate an app access token
             var userAccessTokenData = await GetFacebookAppAccessToken(val.Accesstoken);
-
+            if (userAccessTokenData == null)
+            {
+                throw new Exception("App facebook không tồn tại !");
+            }
             //Get long term access token
             var longTermAccessToken = await GetLongTermAccessToken(val.Accesstoken);
             if (longTermAccessToken == null) {
