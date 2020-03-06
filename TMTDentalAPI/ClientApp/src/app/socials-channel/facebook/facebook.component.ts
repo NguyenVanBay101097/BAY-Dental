@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FacebookService, LoginResponse } from 'ngx-facebook';
+import { FacebookService, LoginResponse, LoginOptions } from 'ngx-facebook';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as $ from 'jquery';
 import { FacebookDialogComponent } from '../facebook-dialog/facebook-dialog.component';
@@ -14,13 +14,14 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   }
 })
 export class FacebookComponent implements OnInit {
-
+  accessToken: string;
   DataUser: any[] = [];
   DataFanpages: any[] = [];
   DataFanpagesConnected: any[] = [];
   dataCustomer: any[] = [];
   logged_in: boolean = false;
   selectedPage: any = null;
+  selectedCustomer: any = null;
 
   constructor(private fb: FacebookService, 
     private notificationService: NotificationService,
@@ -28,7 +29,7 @@ export class FacebookComponent implements OnInit {
       fb.init({
         appId: '507339379926048',
         xfbml: true,
-        version: 'v2.9'
+        version: 'v6.0'
       });
     }
 
@@ -36,9 +37,15 @@ export class FacebookComponent implements OnInit {
   }
 
   login() {
-    this.fb.login()
+    const loginOptions: LoginOptions = {
+      enable_profile_selector: true,
+      return_scopes: true,
+      scope: 'public_profile,manage_pages,publish_pages,pages_messaging,read_page_mailboxes'
+    };
+    this.fb.login(loginOptions)
     .then((res: LoginResponse) => {
       console.log('Logged in', res);
+      this.accessToken = res.authResponse.accessToken;
       this.getDataUser();
     })
     .catch(this.handleError);
@@ -48,11 +55,14 @@ export class FacebookComponent implements OnInit {
     this.fb.logout()
     .then((res) => {
       console.log('Logged out', res);
-      this.logged_in = false;
+      this.accessToken = null;
       this.DataUser = [];
       this.DataFanpages  = [];
       this.DataFanpagesConnected = [];
       this.dataCustomer = [];
+      this.logged_in = false;
+      this.selectedPage = null;
+      this.selectedCustomer = null;
     })
     .catch(this.handleError);
   }
@@ -60,8 +70,14 @@ export class FacebookComponent implements OnInit {
   getDataUser() {
     this.fb.api('/me?fields=id,name,picture.type(large)')
     .then((res: any) => {
-      console.log('Got the data user', res);
-      this.DataUser.push({'id': res.id, 'name': res.name, 'picture': res.picture.data.url});
+      console.log(res);
+      this.DataUser.push({
+        'id': res.id, 
+        'name': res.name, 
+        'picture': res.picture.data.url, 
+        'accessToken': this.accessToken,
+      });
+      console.log('Got the data user', this.DataUser[0]);
       this.getDataFanpages();
     })
     .catch(this.handleError);
@@ -71,7 +87,6 @@ export class FacebookComponent implements OnInit {
     this.fb.api('/me?fields=accounts{id,name,picture.type(large),access_token}')
     .then((res: any) => {
       console.log(res);
-
       var res_data = res.accounts.data;
       this.DataFanpages = [];
       for (var i = 0; i < res_data.length; i++) {
@@ -80,7 +95,6 @@ export class FacebookComponent implements OnInit {
           'name': res_data[i].name, 
           'picture': res_data[i].picture.data.url, 
           'accessToken': res_data[i].access_token,
-          'connected': false,
         });
       }
       console.log('Got the data fanpages', this.DataFanpages);
@@ -90,17 +104,34 @@ export class FacebookComponent implements OnInit {
   }
 
   getConversationsFanpage() {
-    this.fb.api('/' + this.selectedPage +'?fields=conversations.limit(10){participants,updated_time,id}&access_token='+ this.DataFanpages[0].accessToken)
+    this.fb.api('/' + this.selectedPage.id +'?fields=conversations.limit(10){id,participants,snippet,updated_time}&access_token='+ this.selectedPage.accessToken)
     .then((res: any) => {
       console.log('Got the data fanpage', res);
       if (res.conversations) {
         var res_data = res.conversations.data;
         this.dataCustomer = [];
         for (var i = 0; i < res_data.length; i++) {
-          this.dataCustomer.push({'id': res_data[i].participants.data[0].id, 'name': res_data[i].participants.data[0].name});
+          this.dataCustomer.push({
+            'id': res_data[i].participants.data[0].id, 
+            'name': res_data[i].participants.data[0].name, 
+            'picture': 'https://webelenz.com/wp-content/uploads/2019/11/testimonial.jpg',
+            'phone': '090x.xxx.xxx',
+            'snippet': res_data[i].snippet,
+            'updated_time': res_data[i].updated_time,
+            'editing_name': false,
+            'editing_phone': false,
+          });
         }
       }
       console.log('Data Conversations Fanpage', this.dataCustomer);
+    })
+    .catch(this.handleError);
+  }
+
+  getPictureCustomerDemo() {
+    this.fb.api('/' + this.dataCustomer[0].id +'/picture?access_token='+ this.selectedPage.accessToken)
+    .then((res: any) => {
+      console.log('Got picture', res);
     })
     .catch(this.handleError);
   }
@@ -124,5 +155,14 @@ export class FacebookComponent implements OnInit {
 
   selectPage(item) {
     this.selectedPage = item;
+    this.getConversationsFanpage();
+  }
+
+  selectCustomer(item) {
+    if (this.selectedCustomer === item) {
+      this.selectedCustomer = null;
+    } else {
+      this.selectedCustomer = item;
+    }
   }
 }
