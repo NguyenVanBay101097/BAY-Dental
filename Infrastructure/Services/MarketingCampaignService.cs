@@ -137,13 +137,41 @@ namespace Infrastructure.Services
                         date = date.AddMonths(intervalNumber);
                     else if (activity.IntervalType == "weeks")
                         date = date.AddDays(intervalNumber * 7);
-                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity("localhost", activity.Id), date);
-                    //var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant.Hostname, activity.Id), date);
+
+                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", activity.Id), date);
                     activity.JobId = jobId;
+
+                    if (string.IsNullOrEmpty(activity.JobId))
+                        throw new Exception("Can't not schedule job");
                 }
             }
 
             await UpdateAsync(self);
+        }
+
+        public async Task<MarketingCampaignDisplay> GetDisplay(Guid id)
+        {
+            var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay { 
+                Id = x.Id,
+                Name = x.Name,
+                State = x.State,
+            }).FirstOrDefaultAsync();
+
+            var activityObj = GetService<IMarketingCampaignActivityService>();
+            var activities = await activityObj.SearchQuery(x => x.CampaignId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Select(x => new MarketingCampaignActivityDisplay
+            {
+                Id = x.Id,
+                ActivityType = x.ActivityType,
+                Content = x.Content,
+                IntervalNumber = x.IntervalNumber,
+                IntervalType = x.IntervalType,
+                Name = x.Name,
+                TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count()
+            }).ToListAsync();
+
+            res.Activities = activities;
+            return res;
         }
 
         public async Task ActionStopCampaign(IEnumerable<Guid> ids)

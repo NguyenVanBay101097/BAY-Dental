@@ -36,5 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? IntervalNumber { get; set; }
 
         public int? Sequence { get; set; }
+
+        public int TotalSent { get; set; }
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,12 +22,15 @@ namespace TMTDentalWebhook.Controllers
     {
         private readonly FacebookOptions _fbOptions;
         private readonly ILogger<WebhooksController> _log;
+        private readonly TenantDbContext _tenantContext;
 
         public WebhooksController(IOptions<FacebookOptions> fbOptions,
-            ILogger<WebhooksController> logger)
+            ILogger<WebhooksController> logger,
+            TenantDbContext tenantContext)
         {
             _fbOptions = fbOptions?.Value;
             _log = logger;
+            _tenantContext = tenantContext;
         }
 
         [HttpGet]
@@ -46,7 +51,7 @@ namespace TMTDentalWebhook.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public async Task<IActionResult> Post()
         {
             string json = "";
             try
@@ -72,6 +77,12 @@ namespace TMTDentalWebhook.Controllers
                 var entry = updateObject.Entry[0];
                 var pageId = entry.Id;
 
+                var tenants = _tenantContext.TenantFacebookPages.Where(x => x.PageId == pageId).ToList();
+                foreach (var tenant in tenants)
+                {
+                    var client = new HttpClient();
+                    await client.PostAsJsonAsync($"{tenant.Tenant.Hostname}/api/Webhooks", updateObject);
+                }
             }
 
             return Ok();
