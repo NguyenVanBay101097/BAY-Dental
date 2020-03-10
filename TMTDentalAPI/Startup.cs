@@ -40,6 +40,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Umbraco.Web.Models.ContentEditing;
+using System.Reflection;
+using System.IO;
 
 namespace TMTDentalAPI
 {
@@ -211,6 +213,7 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookPageService, FacebookPageService>();
             services.AddScoped<IMarketingCampaignService, MarketingCampaignService>();
             services.AddScoped<IMarketingCampaignActivityJobService, MarketingCampaignActivityJobService>();
+            services.AddScoped<IPartnerMapPSIDFacebookPageService, PartnerMapPSIDFacebookPageService>();
 
             services.AddMemoryCache();
 
@@ -284,6 +287,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new AccountMoveLineProfile());
                 mc.AddProfile(new ZaloOAConfigProfile());
                 mc.AddProfile(new FacebookPageProfile());
+                mc.AddProfile(new PartnerMapPSIDFacebookPageProfile());
                 mc.AddProfile(new MarketingCampaignProfile());
                 mc.AddProfile(new MarketingCampaignActivityProfile());
             };
@@ -319,7 +323,7 @@ namespace TMTDentalAPI
                     UsePageLocksOnDequeue = true,
                     DisableGlobalLocks = true
                 }));
-
+           
             // Add the processing server as IHostedService
             services.AddHangfireServer(option =>
             {
@@ -366,6 +370,7 @@ namespace TMTDentalAPI
                         new List<string>()
                     }
                 });
+                
             });
 
 

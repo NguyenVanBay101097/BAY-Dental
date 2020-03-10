@@ -36,5 +36,7 @@ namespace Infrastructure.Services
         IQueryable<Partner> GetQueryPaged(PartnerPaged val);
         Task UpdateCustomersZaloId();
         void FetchAllPSIDFromFacebookFanpage();
+
+        Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone);
     }
 }

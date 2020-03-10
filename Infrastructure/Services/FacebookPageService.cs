@@ -24,6 +24,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly FacebookAuthSettings _fbAuthSettings;
+        private readonly IPartnerService _partnerService;
         public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
             : base(repository, httpContextAccessor)
         {
@@ -177,6 +178,8 @@ namespace Infrastructure.Services
             return fbpage;
 
         }
+
+       
 
 
     }

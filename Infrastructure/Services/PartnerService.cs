@@ -387,6 +387,19 @@ namespace Infrastructure.Services
             return query;
         }
 
+        /// <summary>
+        /// Search Phone 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone)
+        {
+            var query = await SearchQuery(x => x.Phone.Contains(phone) && x.Active == true).ToListAsync();
+            var result  = _mapper.Map<IEnumerable<PartnerInfoChangePhone>>(query);
+            return result;
+        }
+
+
         public async Task<string> UploadImage(IFormFile file)
         {
             if (file == null) throw new Exception("File is null");
@@ -1109,6 +1122,8 @@ namespace Infrastructure.Services
 
         //}
 
+
+       
     }
 
     public class PartnerCreditDebitItem
