@@ -39,13 +39,14 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-
+       // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
         public PartnerService(IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper, UserManager<ApplicationUser> userManager)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _userManager = userManager;
+            //_partnerMapPSIDFacebookPageService = partnerMapPSIDFacebookPageService;
         }
 
         public override ISpecification<Partner> RuleDomainGet(IRRule rule)
@@ -386,6 +387,19 @@ namespace Infrastructure.Services
             query = query.OrderBy(s => s.Name);
             return query;
         }
+
+        /// <summary>
+        /// Search Phone 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone)
+        {
+            var query = await SearchQuery(x => x.Phone.Contains(phone) && x.Active == true).ToListAsync();
+            var result  = _mapper.Map<IEnumerable<PartnerInfoChangePhone>>(query);
+            return result;
+        }
+
 
         public async Task<string> UploadImage(IFormFile file)
         {
@@ -1109,6 +1123,20 @@ namespace Infrastructure.Services
 
         //}
 
+        //public async Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val)
+        //{
+        //    var partnerid = await _partnerMapPSIDFacebookPageService.SearchQuery(x=>x.PageId == val.PageId && x.PSId == val.PSId).FirstOrDefaultAsync();
+        //    var result = await SearchQuery(x => x.Id == partnerid.Id && x.Active == true).FirstOrDefaultAsync();
+        //    if (result == null) {
+        //        return new PartnerInfoViewModel();
+        //    }
+        //    var query = _mapper.Map<PartnerInfoViewModel>(result);
+        //    return query;
+
+        //}
+
+
+       
     }
 
     public class PartnerCreditDebitItem
@@ -1129,4 +1157,6 @@ namespace Infrastructure.Services
         public string Phone { get; set; }
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
+
+    
 }

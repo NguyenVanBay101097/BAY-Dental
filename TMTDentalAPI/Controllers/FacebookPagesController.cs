@@ -16,9 +16,11 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IFacebookPageService _facebookPageService;
-        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService) {
+        private readonly IPartnerService _partnerService;
+        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService) {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
+            _partnerService = partnerService;
         }
 
         [HttpGet]
@@ -43,7 +45,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<FacebookPageBasic>(fbpage));
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<IActionResult> Create(FacebookPageLinkSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -53,5 +55,12 @@ namespace TMTDentalAPI.Controllers
             var basic = _mapper.Map<FacebookPageBasic>(fbpage);
             return Ok(basic);
         }
+
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> OnchangePartnerPhone(PartnerChangePhone val)
+        //{
+        //    var result = await _partnerService.OnChangePartner(val);
+        //    return Ok(result);
+        //}
     }
 }

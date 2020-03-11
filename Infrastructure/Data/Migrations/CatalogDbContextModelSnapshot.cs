@@ -2845,6 +2845,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("PartnerMapPSIDFacebookPageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
@@ -2879,6 +2882,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("PartnerMapPSIDFacebookPageId");
 
                     b.HasIndex("WriteById");
 
@@ -6609,6 +6614,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Employee", "Employees")
                         .WithMany()
                         .HasForeignKey("EmployeeId");
+
+                    b.HasOne("ApplicationCore.Entities.PartnerMapPSIDFacebookPage", "PartnerMapPSIDFacebookPage")
+                        .WithMany()
+                        .HasForeignKey("PartnerMapPSIDFacebookPageId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

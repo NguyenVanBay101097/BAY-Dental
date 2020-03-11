@@ -435,5 +435,11 @@ namespace TMTDentalAPI.Controllers
             partner.WardCode = val.Ward != null ? val.Ward.Code : string.Empty;
             partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
         }
+
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> CheckMegerFacebookPage(CheckMergeFacebookPage val) {
+        //    var res = await _partnerService.CheckPartner(val);
+        //    return Ok(res);
+        //}
     }
 }

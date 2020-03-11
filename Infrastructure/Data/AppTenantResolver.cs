@@ -58,6 +58,7 @@ namespace Infrastructure.Data
             if (tenant != null)
             {
                 tenantContext = new TenantContext<AppTenant>(tenant);
+
             }
 
             return Task.FromResult(tenantContext);

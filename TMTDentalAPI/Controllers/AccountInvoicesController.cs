@@ -103,6 +103,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             _modelAccessService.Check("AccountInvoice", "Unlink");
+
+
+
             await _accountInvoiceService.DeleteInvoice(id);
 
             return NoContent();
