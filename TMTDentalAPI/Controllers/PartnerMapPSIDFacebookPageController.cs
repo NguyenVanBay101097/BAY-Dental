@@ -72,28 +72,28 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> MergePartnerForFacebookPage(PartnerMapPSIDFacebookPageSave val)
-        {
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> MergePartnerForFacebookPage(PartnerMapPSIDFacebookPageSave val)
+        //{
 
-            var result = await _partnerMapPSIDFacebookPageService.MergePartnerMapFBPage(val);
+        //    var result = await _partnerMapPSIDFacebookPageService.MergePartnerMapFBPage(val);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-            var partner = _partnerService.GetById(result.PartnerId);
-            var basic = new PartnerMapPSIDFacebookPageBasic
-            {
-                id = result.Id,             
-                PartnerName = partner.Name,
-                PartnerEmail = partner.Email,
-                PartnerPhone = partner.Phone
-            };
-            return Ok(basic);
+        //    if (result == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var partner = _partnerService.GetById(result.PartnerId);
+        //    var basic = new PartnerMapPSIDFacebookPageBasic
+        //    {
+        //        id = result.Id,             
+        //        PartnerName = partner.Name,
+        //        PartnerEmail = partner.Email,
+        //        PartnerPhone = partner.Phone
+        //    };
+        //    return Ok(basic);
 
 
-        }
+        //}
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid>ids)

@@ -34,19 +34,22 @@ namespace Infrastructure.Services
 
         public async Task<PartnerMapPSIDFacebookPage> CreatePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val) {
 
-        
+
 
             // Create Merge Partner for FacobookPage
+            var check = await CheckPartnerMergeFBPage(val.PartnerId, val.PageId, val.PSId);
+            if (check != null)
+                throw new Exception(" khách hàng đã được liên kết !");
+
             var map = new PartnerMapPSIDFacebookPage
             {
                 PartnerId = val.PartnerId,
                 PageId = val.PageId,
                 PSId = val.PSId
             };
-            var check = await CheckPartnerMergeFBPage(val.PartnerId, val.PageId, val.PSId);
-            if (check != null)
-                throw new Exception(" khách hàng đã được liên kết !");
+
             await CreateAsync(map);
+
             return _mapper.Map<PartnerMapPSIDFacebookPage>(map);
         }
 
@@ -77,11 +80,7 @@ namespace Infrastructure.Services
 
         public async Task<PartnerMapPSIDFacebookPageBasic> CheckPartner(string PageId , string PSId) {
             var partner = await SearchQuery(x => x.PageId == PageId && x.PSId == PSId).FirstOrDefaultAsync();
-            var result = await _partnerService.SearchQuery(x => x.Id == partner.PartnerId && x.Active == true).FirstOrDefaultAsync();
-            if (result == null)
-            {
-                return new PartnerMapPSIDFacebookPageBasic();
-            }
+            var result = await _partnerService.SearchQuery(x => x.Id == partner.PartnerId && x.Active == true).FirstOrDefaultAsync();          
             var query = _mapper.Map<PartnerInfoViewModel>(result);
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
