@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
@@ -18,12 +20,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IFacebookPageService _facebookPageService;
         private readonly IPartnerService _partnerService;
         private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
-        public PartnerMapPSIDFacebookPageController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService, IPartnerMapPSIDFacebookPageService partnerMapPSIDFacebookPageService)
+        private readonly IUnitOfWorkAsync _unitOfWork;
+        public PartnerMapPSIDFacebookPageController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService, IPartnerMapPSIDFacebookPageService partnerMapPSIDFacebookPageService, IUnitOfWorkAsync unitOfWork)
         {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
             _partnerService = partnerService;
             _partnerMapPSIDFacebookPageService = partnerMapPSIDFacebookPageService;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -40,7 +44,6 @@ namespace TMTDentalAPI.Controllers
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
                 id = mapfbpage.Id,
-                PartnerId = partner.Id,
                 PartnerName = partner.Name,
                 PartnerEmail = partner.Email,
                 PartnerPhone = partner.Phone
@@ -61,8 +64,7 @@ namespace TMTDentalAPI.Controllers
             var partner = _partnerService.GetById(result.PartnerId);
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
-                id = result.Id,
-                PartnerId = partner.Id,
+                id = result.Id,              
                 PartnerName = partner.Name,
                 PartnerEmail = partner.Email,
                 PartnerPhone = partner.Phone
@@ -71,7 +73,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> MergePartnerForFacebookPage(CheckPartnerMapFBPage val)
+        public async Task<IActionResult> MergePartnerForFacebookPage(PartnerMapPSIDFacebookPageSave val)
         {
 
             var result = await _partnerMapPSIDFacebookPageService.MergePartnerMapFBPage(val);
@@ -83,8 +85,7 @@ namespace TMTDentalAPI.Controllers
             var partner = _partnerService.GetById(result.PartnerId);
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
-                id = result.Id,
-                PartnerId = partner.Id,
+                id = result.Id,             
                 PartnerName = partner.Name,
                 PartnerEmail = partner.Email,
                 PartnerPhone = partner.Phone
@@ -95,23 +96,34 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CheckPartnerFBPage(CheckPartnerMapFBPage val)
+        public async Task<IActionResult> Unlink(IEnumerable<Guid>ids)
         {
-            var result = await _partnerMapPSIDFacebookPageService.CheckPartnerMergeFBPage(val.PartnerId, val.PageId, val.PSId);
-            if (result != null)
-            {
-                throw new Exception(" khách hàng đã liên kết !");
-            }
-
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerMapPSIDFacebookPageService.Unlink(ids);
+            _unitOfWork.Commit();          
+                     
             return NoContent();
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> OnchangePartner (string phone)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var result = await _partnerService.OnChangePartner(phone);
+            _unitOfWork.Commit();           
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CheckPartner(string PageId , string PSId)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var result = await _partnerMapPSIDFacebookPageService.CheckPartner(PageId, PSId);
+            _unitOfWork.Commit();
+                    
+            return Ok(result);
+        }
+
 
     }
 }

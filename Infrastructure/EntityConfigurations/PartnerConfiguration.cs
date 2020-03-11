@@ -11,7 +11,7 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Partner> builder)
         {
-            builder.Property(x => x.Name).IsRequired();
+            builder.Property(x => x.Name).IsRequired();         
 
             builder.HasOne(x => x.Company)
                 .WithMany()

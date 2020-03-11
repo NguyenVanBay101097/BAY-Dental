@@ -25,7 +25,7 @@ namespace Infrastructure.Services
             _partnerService = partnerService;
         }
 
-        public async Task<PartnerMapPSIDFacebookPage> CheckPartnerMergeFBPage(Guid PartnerId , string PageId , string PSId)
+        public async Task<PartnerMapPSIDFacebookPage> CheckPartnerMergeFBPage(Guid PartnerId, string PageId , string PSId)
         {
             var query = await SearchQuery(x => x.PartnerId == PartnerId && x.PageId == PageId && x.PSId == PSId).FirstOrDefaultAsync();
           
@@ -63,9 +63,9 @@ namespace Infrastructure.Services
             return _mapper.Map<PartnerMapPSIDFacebookPage>(map);
         }
 
-        public async Task<PartnerMapPSIDFacebookPage> MergePartnerMapFBPage(CheckPartnerMapFBPage val)
+        public async Task<PartnerMapPSIDFacebookPage> MergePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val)
         {
-            var check = await CheckPartnerMergeFBPage(val.PartnerId , val.PageId , val.PSId);
+            var check = await CheckPartnerMergeFBPage(val.PartnerId,val.PageId , val.PSId);
             if (check != null) 
                 throw new Exception(" khách hàng đã được liên kết !");
             
@@ -80,6 +80,32 @@ namespace Infrastructure.Services
 
             return _mapper.Map<PartnerMapPSIDFacebookPage>(map);
         }
+
+
+        public async Task Unlink(IEnumerable<Guid> ids) { 
+
+            var result = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            await DeleteAsync(result);      
+        }
+
+        public async Task<PartnerMapPSIDFacebookPageBasic> CheckPartner(string PageId , string PSId) {
+            var partner = await SearchQuery(x => x.PageId == PageId && x.PSId == PSId).FirstOrDefaultAsync();
+            var result = await _partnerService.SearchQuery(x => x.Id == partner.PartnerId && x.Active == true).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return new PartnerMapPSIDFacebookPageBasic();
+            }
+            var query = _mapper.Map<PartnerInfoViewModel>(result);
+            var basic = new PartnerMapPSIDFacebookPageBasic
+            {
+                id = partner.Id,
+                PartnerName = result.Name,
+                PartnerEmail = result.Email,
+                PartnerPhone = result.Phone
+            };
+            return basic;
+        }
+
     }
     public class CreatePartner { 
 
@@ -94,4 +120,6 @@ namespace Infrastructure.Services
         public string PSId { get; set; }
     
     }
+
+  
 }

@@ -39,13 +39,14 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-
+       // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
         public PartnerService(IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper, UserManager<ApplicationUser> userManager)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _userManager = userManager;
+            //_partnerMapPSIDFacebookPageService = partnerMapPSIDFacebookPageService;
         }
 
         public override ISpecification<Partner> RuleDomainGet(IRRule rule)
@@ -1122,6 +1123,18 @@ namespace Infrastructure.Services
 
         //}
 
+        //public async Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val)
+        //{
+        //    var partnerid = await _partnerMapPSIDFacebookPageService.SearchQuery(x=>x.PageId == val.PageId && x.PSId == val.PSId).FirstOrDefaultAsync();
+        //    var result = await SearchQuery(x => x.Id == partnerid.Id && x.Active == true).FirstOrDefaultAsync();
+        //    if (result == null) {
+        //        return new PartnerInfoViewModel();
+        //    }
+        //    var query = _mapper.Map<PartnerInfoViewModel>(result);
+        //    return query;
+
+        //}
+
 
        
     }
@@ -1144,4 +1157,6 @@ namespace Infrastructure.Services
         public string Phone { get; set; }
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
+
+    
 }

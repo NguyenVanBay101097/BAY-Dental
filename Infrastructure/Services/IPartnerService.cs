@@ -38,5 +38,6 @@ namespace Infrastructure.Services
         void FetchAllPSIDFromFacebookFanpage();
 
         Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone);
+        //Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val);
     }
 }
