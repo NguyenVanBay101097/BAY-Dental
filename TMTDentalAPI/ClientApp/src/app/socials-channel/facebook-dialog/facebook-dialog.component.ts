@@ -10,6 +10,7 @@ export class FacebookDialogComponent implements OnInit {
 
   @Input() DataUser: any[];
   @Input() DataFanpages: any[];
+
   selectedPage: any = null;
 
   constructor(public activeModal: NgbActiveModal) { }

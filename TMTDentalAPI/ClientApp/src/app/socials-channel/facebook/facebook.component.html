@@ -49,6 +49,10 @@
                 <td style="text-align: left;">
                     <b>{{item.name}}</b>
                 </td>
+                <td width="1%">
+                    <button type="button" class="btn btn-light"
+                        style="white-space: nowrap; margin-right: 10px;">Gỡ kết nối</button>
+                </td>
             </tr>
         </table>
     </div>
@@ -59,20 +63,23 @@
         <tr>
             <td>
                 <div class="card list_Customers">
-                    <div class="mid tag" *ngFor="let item of dataCustomer; let i = index"
+                    <div class="mid tag" *ngFor="let item of DataCustomers; let i = index"
                         [class.selected]="item === selectedCustomer" (click)="selectCustomer(item)">
                         <table>
                             <tr>
-                                <td width=1%>
+                                <td>
                                     <img class="avatar"
                                         src="{{item.picture}}" alt="">
                                 </td>
-                                <td style="text-align: left;">
+                                <td>
                                     <b>{{item.name}}</b><br>
-                                    <span>{{item.snippet}}</span>
+                                    <span [class.font-weight-bold]="item.unread_count" style="font-size: 0.9rem;">
+                                        <span *ngIf="item.message_from_page">Bạn:</span>
+                                        {{item.snippet}}
+                                    </span>
                                 </td>
-                                <td width=1%>
-                                    <span>{{item.updated_time | date: 'dd/MM/yyyy'}}</span>
+                                <td>
+                                    <span style="font-size: 0.9rem;">{{item.updated_time}}</span>
                                 </td>
                             </tr>
                         </table>
@@ -99,47 +106,20 @@
                 </div>
             </td>
             <td *ngIf="selectedCustomer">
-                <div class="card messenger">
-                    <div class="card messenger_box">
-                        <table>
-                            <tr>
-                                <td width=1%>
-                                    <img class="avatar_mini"
-                                        src="{{selectedCustomer.picture}}" alt="">
-                                </td>
-                                <td style="text-align: left;">
-                                    Hello This is Test 1!
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="" style="text-align: right;">
-                            Hello This is Test 2!
+                <div class="card message">
+                    <div class="message_box" id="message_box">
+                        <div *ngFor="let DataGroupMessagesCustomer of DataMessagesCustomer" class="message_group">
+                            <div class="message_date">{{DataGroupMessagesCustomer[0].created_time}}</div>
+                            <div *ngFor="let item of DataGroupMessagesCustomer" class="message_con" [class.my_message]="item.message_from_page">
+                                <img *ngIf="!item.message_from_page && item.last_message" class="avatar_message" src="{{selectedCustomer.picture}}" alt="">
+                                <span class="message_content" [class.margin-left_message_content]="!item.message_from_page && !item.last_message"
+                                    [class.first_message]="item.first_message" [class.last_message]="item.last_message">
+                                    {{item.message}}
+                                </span> 
+                            </div>
                         </div>
-                        <table>
-                            <tr>
-                                <td></td>
-                                <td style="text-align: left;">
-                                    Hello This is Test 3!
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td style="text-align: left;">
-                                    Hello This is Test 4!
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width=1%>
-                                    <img class="avatar_mini"
-                                        src="{{selectedCustomer.picture}}" alt="">
-                                </td>
-                                <td style="text-align: left;">
-                                    Hello This is Test 5!
-                                </td>
-                            </tr>
-                        </table>
                     </div>
-                    <div class="card messenger_input">
+                    <div class="message_input">
                         <table style="width: 100%; height: 100%;">
                             <tr>
                                 <td style="width: 1%; white-space: nowrap;">
@@ -190,6 +170,31 @@
                             </td>
                         </tr>
                     </table>
+                    <div class="row mid" style="width: 100%;">
+                        <kendo-combobox
+                            [data]="listPartners"
+                            [textField]="'name'"
+                            [valueField]="'phone'"
+                            [placeholder]="'Tên hoặc sđt'"
+                            [(ngModel)]="selectPartner"
+                            style="padding: 0; width: calc(100% - 40px - 5px); margin-right: 5px;"
+                        >
+                            <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                <table>
+                                    <tr>
+                                        <td><b>{{ dataItem.name }}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ dataItem.phone }}</td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                        </kendo-combobox>
+                        <button type="button" class="btn btn-light border" accesskey="c" (click)="showModalAddCreatePartner(null)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div> 
+                    <button type="button" class="btn btn-light border" accesskey="c">Liên kết</button>
                 </div>
             </td>
         </tr>

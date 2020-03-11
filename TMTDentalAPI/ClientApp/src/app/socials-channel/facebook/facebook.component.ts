@@ -4,6 +4,12 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import * as $ from 'jquery';
 import { FacebookDialogComponent } from '../facebook-dialog/facebook-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SocialsChannelDisplay, SocialsChannelService, SocialsChannelPaged } from '../socials-channel.service';
+import { map } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
+import { PartnerPaged } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
 
 @Component({
   selector: 'app-facebook',
@@ -18,14 +24,34 @@ export class FacebookComponent implements OnInit {
   DataUser: any[] = [];
   DataFanpages: any[] = [];
   DataFanpagesConnected: any[] = [];
-  dataCustomer: any[] = [];
+  DataCustomers: any[] = [];
+  DataMessagesCustomer: any[] = [];
   logged_in: boolean = false;
   selectedPage: any = null;
   selectedCustomer: any = null;
+  //
+  DataFanpagesDisplay: SocialsChannelDisplay = {
+    'pageId': '', 
+    'accesstoken': ''
+  };
+  loading: boolean;
+  limit = 10;
+  skip = 0;
+  search: string;
+  //
+  datePipe = new DatePipe('en-US');
+  today = new Date();
+  currentDate = this.today.toISOString();
+  currentDateArray = this.convertDateToArray(this.currentDate);
+  listPartners: Array<{ name: string, phone: string }> = [];
+  selectPartner: { name: string, phone: string };
+  searchNamePhone: string;
 
   constructor(private fb: FacebookService, 
+    private socialsChannelService: SocialsChannelService, 
     private notificationService: NotificationService,
-    private modalService: NgbModal) { 
+    private modalService: NgbModal,
+    private partnerService: PartnerService,) { 
       fb.init({
         appId: '507339379926048',
         xfbml: true,
@@ -34,6 +60,7 @@ export class FacebookComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.onGetPartnersList();
   }
 
   login() {
@@ -59,7 +86,8 @@ export class FacebookComponent implements OnInit {
       this.DataUser = [];
       this.DataFanpages  = [];
       this.DataFanpagesConnected = [];
-      this.dataCustomer = [];
+      this.DataCustomers = [];
+      this.DataMessagesCustomer = [];
       this.logged_in = false;
       this.selectedPage = null;
       this.selectedCustomer = null;
@@ -98,45 +126,84 @@ export class FacebookComponent implements OnInit {
         });
       }
       console.log('Got the data fanpages', this.DataFanpages);
+      this.onGetFanpagesFromDB();
       this.logged_in = true;
     })
     .catch(this.handleError);
   }
 
   getConversationsFanpage() {
-    this.fb.api('/' + this.selectedPage.id +'?fields=conversations.limit(10){id,participants,snippet,updated_time}&access_token='+ this.selectedPage.accessToken)
+    var tempParam = 'id,participants,snippet,unread_count,messages.limit(1){from},updated_time';
+    this.fb.api('/' + this.selectedPage.id +'?fields=conversations.limit(10){'+tempParam+'}&access_token='+ this.selectedPage.accessToken)
     .then((res: any) => {
       console.log('Got the data fanpage', res);
       if (res.conversations) {
         var res_data = res.conversations.data;
-        this.dataCustomer = [];
+        this.DataCustomers = [];
+        var message_from_page = false;
         for (var i = 0; i < res_data.length; i++) {
-          this.dataCustomer.push({
+          message_from_page = false;
+          if (res_data[i].messages.data[0].from.id === this.selectedPage.id) {
+            message_from_page = true;
+          }
+          this.DataCustomers.push({
             'id': res_data[i].participants.data[0].id, 
             'name': res_data[i].participants.data[0].name, 
             'picture': 'https://webelenz.com/wp-content/uploads/2019/11/testimonial.jpg',
             'phone': '090x.xxx.xxx',
             'snippet': res_data[i].snippet,
-            'updated_time': res_data[i].updated_time,
+            'unread_count': res_data[i].unread_count,
+            'message_from_page': message_from_page,
+            'updated_time': this.formatDateForListCustomer(res_data[i].updated_time),
+            'conversation_id': res_data[i].id,
             'editing_name': false,
             'editing_phone': false,
           });
         }
       }
-      console.log('Data Conversations Fanpage', this.dataCustomer);
+      console.log('Data Conversations Fanpage', this.DataCustomers);
+    })
+    .catch(this.handleError);
+  }
+
+  getMessagesFanpageWithID(conversation_id) {
+    this.fb.api('/' + conversation_id +'?fields=messages{message,from,created_time}&access_token='+ this.selectedPage.accessToken)
+    .then((res: any) => {
+      console.log('Got the data messages with id ', res);
+      if (res.messages) {
+        var res_data = res.messages.data;
+        this.DataMessagesCustomer = [];
+        var message_from_page = false;
+        for (var i = 0; i < res_data.length; i++) {
+          message_from_page = false;
+          if (res_data[i].from.id === this.selectedPage.id) {
+            message_from_page = true;
+          }
+          this.DataMessagesCustomer.push({
+            'id': res_data[i].id, 
+            'message': res_data[i].message, 
+            'message_from_page': message_from_page, 
+            'created_time': this.formatDateForMessagesCustomer(res_data[i].created_time),
+          });
+        }
+        console.log('DataMessagesCustomer ', this.DataMessagesCustomer);
+        this.DataMessagesCustomer = this.groupDataMessagesCustomer(this.DataMessagesCustomer.slice().reverse());
+      }
+      console.log('Data MessagesFanpageWithID ', this.DataMessagesCustomer);
+      $('#message_box').animate({scrollTop: 9999});
     })
     .catch(this.handleError);
   }
 
   getPictureCustomerDemo() {
-    this.fb.api('/' + this.dataCustomer[0].id +'/picture?access_token='+ this.selectedPage.accessToken)
+    this.fb.api('/' + this.DataCustomers[0].id +'/picture?access_token='+ this.selectedPage.accessToken)
     .then((res: any) => {
       console.log('Got picture', res);
     })
     .catch(this.handleError);
   }
 
-  private handleError(error) {
+  handleError(error) {
     console.error('Error processing action', error);
   }
 
@@ -146,11 +213,23 @@ export class FacebookComponent implements OnInit {
     modalRef.componentInstance.DataFanpages = this.DataFanpages;
     modalRef.result.then((result) => {
       if (result) {
-        this.DataFanpagesConnected.push(result);
+        this.onAddFanpageToDB(result.id, this.accessToken);
+        this.onGetFanpagesFromDB();
         modalRef.close();
       }
     }, (reason) => {
     });
+  }
+
+  showModalAddCreatePartner(id) {
+    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.cusId = id;
+    modalRef.result.then(
+      response => {
+        this.onGetPartnersList();
+      },
+      err => { }
+    )
   }
 
   selectPage(item) {
@@ -163,6 +242,203 @@ export class FacebookComponent implements OnInit {
       this.selectedCustomer = null;
     } else {
       this.selectedCustomer = item;
+      this.getMessagesFanpageWithID(item.conversation_id);      
     }
+  }
+
+  formatDate(date: string) {
+    return this.datePipe.transform(date,"EEE, d/M/y, w, W, HH:mm, z");
+  }
+  convertWeekDay(weekDay) {
+    switch (weekDay) {
+      case 'Mon':
+        return 'T2';
+      case 'Tue':
+        return 'T3';
+      case 'Wed':
+        return 'T4';
+      case 'Thu':
+        return 'T5';
+      case 'Fri':
+        return 'T6';
+      case 'Sat':
+        return 'T7';
+      case 'Sun':
+        return 'CN';
+    }
+  }
+  convertDateToArray(date: string) {
+    var dateFormatted = this.formatDate(date);
+    var dateSplitted = dateFormatted.split(", ");
+    return {
+      'weekDay': this.convertWeekDay(dateSplitted[0]),
+      'day': dateSplitted[1].split('/')[0],
+      'month': dateSplitted[1].split('/')[1],
+      'year': dateSplitted[1].split('/')[2],
+      'weekOfYear': dateSplitted[2],
+      'weekOfMonth': dateSplitted[3],
+      'hour': dateSplitted[4].split(':')[0],
+      'minute': dateSplitted[4].split(':')[1],
+      'zone': dateSplitted[5],
+    };
+  }
+  formatDateForListCustomer(date: string) {
+    var dateArray = this.convertDateToArray(date);
+    if (dateArray.year === this.currentDateArray.year) {
+      if (dateArray.weekOfYear === this.currentDateArray.weekOfYear) {
+        if (dateArray.day === this.currentDateArray.day) {
+          return dateArray.hour+':'+dateArray.minute; //00:00
+        } else {
+          return dateArray.weekDay; //T0
+        }
+      } else  {
+        return dateArray.day + ' Tháng ' + dateArray.month; //00 Tháng 00
+      }
+    } else {
+      return dateArray.day+'/'+dateArray.month+'/'+dateArray.year; //00/00/0000
+    }
+  }
+
+  formatDateForMessagesCustomer(date: string) {
+    var dateArray = this.convertDateToArray(date);
+    if (dateArray.year === this.currentDateArray.year) {
+      if (dateArray.weekOfYear === this.currentDateArray.weekOfYear) {
+        if (dateArray.day === this.currentDateArray.day) {
+          return dateArray.hour+':'+dateArray.minute; //00:00
+        } else {
+          return dateArray.weekDay+' '+dateArray.hour+':'+dateArray.minute; //T0 00:00
+        }
+      } else  {
+        return dateArray.hour+':'+dateArray.minute+', '+
+        dateArray.day+' THÁNG '+dateArray.month+', '+ dateArray.year; //00:00, 00 THÁNG 00, 000
+      }
+    } else {
+      return dateArray.hour+':'+dateArray.minute+', '+
+      dateArray.day+' THÁNG '+dateArray.month+', '+ dateArray.year; //00:00, 00 THÁNG 00, 000
+    }
+  }
+
+  groupDataMessagesCustomer(dataMessagesCustomer) {
+    var result = [];
+    var temp = [];
+    var created_time = '';
+    for (var i = 0; i < dataMessagesCustomer.length; i++) {
+      if (dataMessagesCustomer[i].created_time !== created_time) {
+        if (temp.length) {
+          result.push(temp);
+          temp = [];
+        }
+        created_time = dataMessagesCustomer[i].created_time;
+      }
+      if (dataMessagesCustomer[i-1]) {
+        if (dataMessagesCustomer[i-1].message_from_page === false && 
+          dataMessagesCustomer[i].message_from_page === true) {
+            dataMessagesCustomer[i-1]['last_message'] = true;
+            dataMessagesCustomer[i]['first_message'] = true;
+        }
+        if (dataMessagesCustomer[i-1].message_from_page === true && 
+          dataMessagesCustomer[i].message_from_page === false) {
+            dataMessagesCustomer[i-1]['last_message'] = true;
+            dataMessagesCustomer[i]['first_message'] = true;
+        }
+      }
+      temp.push(dataMessagesCustomer[i]);
+    }
+    if (temp.length) {
+      result.push(temp);
+      temp = [];
+    }
+    for (var i = 0; i < result.length; i++) {
+      var length_result_i = result[i].length;
+      result[i][length_result_i-1]['last_message'] = true;
+      result[i][0]['first_message'] = true;
+    }
+    return result;
+  }
+
+  onGetPartnersList() {
+    this.loading = true;
+    var val = new PartnerPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.searchNamePhoneRef = this.searchNamePhone || '';
+    val.customer = true;
+    val.supplier = false;
+    this.partnerService.getPartnerPaged(val).pipe(
+      map(response => (<any>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      console.log('onGetPartnersList', res);
+      var res_data = res.data;
+      for (var i = 0; i < res_data.length; i++) { 
+        this.listPartners.push({
+          'name': res_data[i].name,
+          'phone': res_data[i].phone
+        });
+      }
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = true;
+    }
+    )
+  }
+  
+  onGetFanpagesFromDB() {
+    this.loading = true;
+    var val = new SocialsChannelPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    this.socialsChannelService.getPageBasic(val).pipe(
+      map(response => (<any>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      console.log('onGetFanpagesFromDB', res);
+      var res_data = res.data;
+      this.DataFanpagesConnected = [];
+      for (var i = 0; i < this.DataFanpages.length; i++) {
+        for (var j = 0; j < res_data.length; j++) {
+          if (this.DataFanpages[i].id === res_data[j].pageId) {
+            this.DataFanpagesConnected.push(this.DataFanpages[i]);
+          }
+        }
+      }
+      console.log('DataFanpagesConnected', this.DataFanpagesConnected);
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    })
+  }
+
+  onGetFanpageWithIDFromDB(fanpage_id) {
+    this.loading = true;
+
+    this.socialsChannelService.get(fanpage_id).subscribe(
+    res => {
+      console.log('onGetFanpageWithIDFromDB', res);
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    })
+  }
+
+  onAddFanpageToDB(fanpage_id, fanpage_accessToken) {
+    this.DataFanpagesDisplay.pageId = fanpage_id;
+    this.DataFanpagesDisplay.accesstoken = fanpage_accessToken;
+    this.socialsChannelService.create(this.DataFanpagesDisplay).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }
