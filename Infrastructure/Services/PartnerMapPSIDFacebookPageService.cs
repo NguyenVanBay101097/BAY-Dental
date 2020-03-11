@@ -32,31 +32,18 @@ namespace Infrastructure.Services
             return query;
         }
 
-        public async Task<PartnerMapPSIDFacebookPage> CreatePartnerMapFBPage(CreatePartner val) {
+        public async Task<PartnerMapPSIDFacebookPage> CreatePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val) {
 
-            var result = new Partner
-            {
-                Name = val.Name,
-                Phone = val.phone,
-                Email = val.Email,
-                CompanyId = CompanyId              
-            };
-
-            // Create Customer
-            var partner = await _partnerService.CreateAsync(result);
-            if(partner.Id == Guid.Empty)
-            {
-                throw new Exception(" khách hàng tạo không thành công !");
-            }
+        
 
             // Create Merge Partner for FacobookPage
             var map = new PartnerMapPSIDFacebookPage
             {
-                PartnerId = partner.Id,
+                PartnerId = val.PartnerId,
                 PageId = val.PageId,
                 PSId = val.PSId
             };
-            var check = await CheckPartnerMergeFBPage(partner.Id, val.PageId, val.PSId);
+            var check = await CheckPartnerMergeFBPage(val.PartnerId, val.PageId, val.PSId);
             if (check != null)
                 throw new Exception(" khách hàng đã được liên kết !");
             await CreateAsync(map);
@@ -107,19 +94,7 @@ namespace Infrastructure.Services
         }
 
     }
-    public class CreatePartner { 
-
-        public string Name { get; set; }
-
-        public string phone { get; set; }
-
-        public string Email { get; set; }
-
-        public string PageId { get; set; }
-
-        public string PSId { get; set; }
-    
-    }
+   
 
   
 }

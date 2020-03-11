@@ -53,7 +53,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePartnerForFacebookPage(CreatePartner val)
+        public async Task<IActionResult> CreatePartnerForFacebookPage(PartnerMapPSIDFacebookPageSave val)
         {
 
             var result = await _partnerMapPSIDFacebookPageService.CreatePartnerMapFBPage(val);
