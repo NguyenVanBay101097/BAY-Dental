@@ -74,19 +74,6 @@ namespace Infrastructure.Services
                                 offset += limit;
                                 subTasks = tasks.Skip(offset).Take(limit);
                             }
-
-                            //foreach (var partnerPsid in partnerPsids)
-                            //{
-                            //    var sendResult = SendFacebookMessage(page.PageAccesstoken, partnerPsid.PSId, content);
-                            //    //if (sendResult == null)
-                            //    //{
-                            //    //    var insertRes = conn.Execute("insert into MarketingTraces(Id,ActivityId,Exception) values (@Id,@ActivityId,@Exception)", new { Id = GuidComb.GenerateComb(), ActivityId = activity.Id, Exception = DateTime.Now });
-                            //    //}
-                            //    //else
-                            //    //{
-                            //    //    var insertRes = conn.Execute("insert into MarketingTraces(ActivityId,Sent) values (@Id,@ActivityId,@Sent)", new { Id = GuidComb.GenerateComb(), ActivityId = activity.Id, Sent = DateTime.Now });
-                            //    //}
-                            //}
                         }
                     }
                 }
@@ -97,7 +84,8 @@ namespace Infrastructure.Services
             }
         }
 
-        private async Task<SendFacebookMessageReponse> SendFacebookMessage(string access_token, string psid, string message)
+        private async Task<SendFacebookMessageReponse> SendFacebookMessage(string access_token, string psid, string message, Guid? activityId = null,
+            SqlConnection conn = null)
         {
             var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
             var url = $"/me/messages";
@@ -111,11 +99,13 @@ namespace Infrastructure.Services
             if (response.GetExceptions().Any())
             {
                 var error = string.Join("; ", response.GetExceptions().Select(x => x.Message));
+                await conn.ExecuteAsync("insert into MarketingTraces(ActivityId,Exception) values (@Id,@ActivityId,@Exception)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now });
                 return new SendFacebookMessageReponse() { error = error };
             }
             else
             {
                 var result = response.GetResult();
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId) values (@Id,@ActivityId,@Sent,@MessageId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = result.message_id });
                 return result;
             }
         }

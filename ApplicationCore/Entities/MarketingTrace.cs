@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+    //trace chỗ mỗi tin nhắn gửi
     public class MarketingTrace: BaseEntity
     {
         //public Guid? ParticipantId { get; set; }
@@ -15,6 +16,10 @@ namespace ApplicationCore.Entities
         public DateTime? Sent { get; set; }
 
         public DateTime? Exception { get; set; }
+
+        public DateTime? Read { get; set; }
+
+        public string MessageId { get; set; }
 
         //public string State { get; set; }
 
