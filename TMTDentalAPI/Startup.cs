@@ -423,8 +423,8 @@ namespace TMTDentalAPI
             app.UseCors("AllowAll");
             app.UseCors(
                 //options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-                options => options.WithOrigins("https://abc.tdental.vn:44377").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-            );
+                options => options.WithOrigins("https://localhost:44377").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+            );;
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
             app.UseMiddleware<MigrateDbMiddleware>();
