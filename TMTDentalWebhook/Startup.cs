@@ -37,10 +37,9 @@ namespace TMTDentalWebhook
 
             services.AddScoped<IWebhookService, WebhookService>();
 
-            services.AddNgrok();
-
             services.AddControllers()
-                .AddFacebookWebHooks();
+                .AddFacebookWebHooks()
+                .AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

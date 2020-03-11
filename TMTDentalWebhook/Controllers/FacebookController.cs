@@ -21,10 +21,16 @@ namespace TMTDentalWebhook.Controllers
 {
     public class FacebookController : ControllerBase
     {
-        [FacebookWebHook]
-        public IActionResult Facebook(string id, JObject data)
+        [FacebookWebHook(Id = "It")]
+        public IActionResult FacebookForIt(string id, JObject data)
         {
             return Ok();
+        }
+
+        [FacebookWebHook]
+        public IActionResult Facebook(string id, string @event, JObject data)
+        {
+           return Ok();
         }
     }
 }
