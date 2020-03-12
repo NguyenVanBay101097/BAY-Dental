@@ -36,14 +36,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var campaign = await _marketingCampaignService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Activities).FirstOrDefaultAsync();
-            if (campaign == null)
-                return NotFound();
-
-            var res = _mapper.Map<MarketingCampaignDisplay>(campaign);
-            res.Activities = res.Activities.OrderBy(x => x.Sequence);
-
+            var res = await _marketingCampaignService.GetDisplay(id);
             return Ok(res);
         }
 

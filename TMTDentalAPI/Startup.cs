@@ -212,7 +212,9 @@ namespace TMTDentalAPI
             services.AddScoped<IProductPriceHistoryService, ProductPriceHistoryService>();
             services.AddScoped<IFacebookPageService, FacebookPageService>();
             services.AddScoped<IMarketingCampaignService, MarketingCampaignService>();
+            services.AddScoped<IMarketingCampaignActivityService, MarketingCampaignActivityService>();
             services.AddScoped<IMarketingCampaignActivityJobService, MarketingCampaignActivityJobService>();
+            services.AddScoped<IMarketingTraceService, MarketingTraceService>();
             services.AddScoped<IPartnerMapPSIDFacebookPageService, PartnerMapPSIDFacebookPageService>();
 
             services.AddMemoryCache();
@@ -422,9 +424,10 @@ namespace TMTDentalAPI
 
             app.UseCors("AllowAll");
             app.UseCors(
-                //options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-                options => options.WithOrigins("https://localhost:44377").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-            );;
+                  //options => options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                  //options => options.WithOrigins("https://abc.tdental.vn:44377").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                  options => options.WithOrigins("https://localhost:44377").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+            );
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
             app.UseMiddleware<MigrateDbMiddleware>();

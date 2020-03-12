@@ -2757,6 +2757,53 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("MarketingCampaignActivities");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.MarketingTrace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Delivery")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Exception")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MessageId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Read")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Sent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MarketingTraces");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6589,6 +6636,23 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.MarketingCampaign", "Campaign")
                         .WithMany("Activities")
                         .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MarketingTrace", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", "Activity")
+                        .WithMany("Traces")
+                        .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
