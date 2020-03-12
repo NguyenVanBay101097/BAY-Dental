@@ -212,6 +212,7 @@ namespace TMTDentalAPI
             services.AddScoped<IMarketingCampaignService, MarketingCampaignService>();
             services.AddScoped<IMarketingCampaignActivityService, MarketingCampaignActivityService>();
             services.AddScoped<IMarketingCampaignActivityJobService, MarketingCampaignActivityJobService>();
+            services.AddScoped<IMarketingTraceService, MarketingTraceService>();
 
             services.AddMemoryCache();
 

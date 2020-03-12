@@ -19,6 +19,8 @@ namespace ApplicationCore.Entities
 
         public DateTime? Read { get; set; }
 
+        public DateTime? Delivery { get; set; }
+
         public string MessageId { get; set; }
 
         //public string State { get; set; }

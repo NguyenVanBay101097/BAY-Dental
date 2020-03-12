@@ -167,8 +167,10 @@ namespace Infrastructure.Services
                 IntervalNumber = x.IntervalNumber,
                 IntervalType = x.IntervalType,
                 Name = x.Name,
-                TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count()
-            }).ToListAsync();
+                TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
+                TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
+                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count()
+                }).ToListAsync();
 
             res.Activities = activities;
             return res;

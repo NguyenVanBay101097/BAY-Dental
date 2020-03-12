@@ -5,8 +5,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     public class FacebookMetadata : WebHookMetadata,
         IWebHookBodyTypeMetadata,
         IWebHookBodyTypeMetadataService,
-        //IWebHookEventMetadata,
-        IWebHookEventFromBodyMetadata,
+        //IWebHookEventFromBodyMetadata,
         IWebHookFilterMetadata,
         IWebHookGetHeadRequestMetadata
     {

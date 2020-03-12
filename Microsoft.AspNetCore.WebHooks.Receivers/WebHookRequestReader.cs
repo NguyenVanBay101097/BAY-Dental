@@ -110,6 +110,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             finally
             {
+                request.EnableBuffering();
                 request.Body.Seek(0L, SeekOrigin.Begin);
             }
 

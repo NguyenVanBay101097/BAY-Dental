@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Umbraco.Web.Models.Webhooks
 {
-    public class FacebookMessengerReadsWebhook
+    public class FacebookWebHook
     {
         [JsonProperty("object")]
         public string Object { get; set; }
 
         [JsonProperty("entry")]
-        public FacebookMessengerReadsWebhookEntry[] Entry { get; set; }
+        public FacebookWebHookEntry[] Entry { get; set; }
     }
 
-    public class FacebookMessengerReadsWebhookEntry
+    public class FacebookWebHookEntry
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -25,42 +25,49 @@ namespace Umbraco.Web.Models.Webhooks
         public DateTime Time { get; set; }
 
         [JsonProperty("messaging")]
-        public FacebookMessengerReadsWebhookEntryMessaging[] Messaging { get; set; }
+        public FacebookWebHookEntryMessaging[] Messaging { get; set; }
     }
 
-    public class FacebookMessengerReadsWebhookEntryMessaging
+    public class FacebookWebHookEntryMessaging
     {
         [JsonProperty("sender")]
-        public FacebookMessengerReadsWebhookEntryMessagingSender Sender { get; set; }
+        public FacebookWebHookEntryMessagingSender Sender { get; set; }
 
         [JsonProperty("recipient")]
-        public FacebookMessengerReadsWebhookEntryMessagingRecipient Recipient { get; set; }
+        public FacebookWebHookEntryMessagingSender Recipient { get; set; }
 
         [JsonProperty("timestamp")]
         [JsonConverter(typeof(UnixTimestampConverter))]
         public DateTime Timestamp { get; set; }
 
         [JsonProperty("read")]
-        public FacebookMessengerReadsWebhookEntryMessagingRead Read { get; set; }
+        public FacebookWebHookEntryMessagingRead Read { get; set; }
+
+        [JsonProperty("delivery")]
+        public FacebookWebHookEntryMessagingDelivery Delivery { get; set; }
     }
 
-    public class FacebookMessengerReadsWebhookEntryMessagingSender
+    public class FacebookWebHookEntryMessagingSender
     {
         [JsonProperty("id")]
         public string Id { get; set; }
     }
 
-    public class FacebookMessengerReadsWebhookEntryMessagingRead
+    public class FacebookWebHookEntryMessagingRead
     {
         [JsonProperty("watermark")]
         [JsonConverter(typeof(UnixTimestampConverter))]
         public DateTime Watermark { get; set; }
     }
 
-    public class FacebookMessengerReadsWebhookEntryMessagingRecipient
+    public class FacebookWebHookEntryMessagingDelivery
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        [JsonProperty("mids")]
+        public IEnumerable<string> Mids { get; set; }
+
+        [JsonProperty("watermark")]
+        [JsonConverter(typeof(UnixTimestampConverter))]
+        public DateTime Watermark { get; set; }
     }
 
     public class UnixTimestampConverter : DateTimeConverterBase

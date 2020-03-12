@@ -8,6 +8,6 @@ namespace Microsoft.AspNetCore.WebHooks
         public static int SecretKeyMaxLength => 100;
         public static string VerifyTokenParameterName => "hub.verify_token";
         public static string ChallengeParameterName => "hub.challenge";
-        public static string EventBodyPropertyPath => "entry[0].changes[0].field";
+        public static string EventBodyPropertyPath => "$.entry[0].changes[0].field";
     }
 }

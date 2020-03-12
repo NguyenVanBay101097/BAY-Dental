@@ -8,6 +8,7 @@ using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -21,16 +22,37 @@ namespace TMTDentalWebhook.Controllers
 {
     public class FacebookController : ControllerBase
     {
-        [FacebookWebHook(Id = "It")]
-        public IActionResult FacebookForIt(string id, JObject data)
+        private readonly TenantDbContext _tenantContext;
+
+        public FacebookController(TenantDbContext tenantContext)
         {
-            return Ok();
+            _tenantContext = tenantContext;
         }
 
         [FacebookWebHook]
-        public IActionResult Facebook(string id, string @event, JObject data)
+        public async Task<IActionResult> Facebook(string id, JObject data)
         {
-           return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var obj = data["object"].Value<string>();
+            if (obj == "page")
+            {
+                var pageId = data.SelectToken("$.entry[0].id").Value<string>();
+                var tenantPages = await _tenantContext.TenantFacebookPages.Where(x => x.PageId == pageId).Include(x => x.Tenant).ToListAsync();
+                //foreach(var tenantPage in tenantPages)
+                //{
+                //    var httpClient = new HttpClient();
+                //    await httpClient.PostAsJsonAsync($"https://localhost:44377/", data);
+                //}
+
+                var httpClient = new HttpClient();
+                await httpClient.PostAsJsonAsync($"https://localhost:44377/api/FacebookWebHook", data);
+            }
+
+            return Ok();
         }
     }
 }
