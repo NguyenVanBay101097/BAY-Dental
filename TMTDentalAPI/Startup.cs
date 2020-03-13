@@ -216,6 +216,8 @@ namespace TMTDentalAPI
             services.AddScoped<IMarketingCampaignActivityJobService, MarketingCampaignActivityJobService>();
             services.AddScoped<IMarketingTraceService, MarketingTraceService>();
             services.AddScoped<IPartnerMapPSIDFacebookPageService, PartnerMapPSIDFacebookPageService>();
+            services.AddScoped<IFacebookConnectService, FacebookConnectService>();
+            services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();
 
             services.AddMemoryCache();
 
@@ -292,6 +294,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PartnerMapPSIDFacebookPageProfile());
                 mc.AddProfile(new MarketingCampaignProfile());
                 mc.AddProfile(new MarketingCampaignActivityProfile());
+                mc.AddProfile(new FacebookConnectPageProfile());
+                mc.AddProfile(new FacebookConnectProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

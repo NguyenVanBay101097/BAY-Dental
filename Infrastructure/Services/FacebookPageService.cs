@@ -24,14 +24,24 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly FacebookAuthSettings _fbAuthSettings;
-        private readonly IPartnerService _partnerService;
         public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _fbAuthSettings = fbAuthSettingsAccessor?.Value;
+        }
 
+        public override async Task<FacebookPage> CreateAsync(FacebookPage entity)
+        {
+            await _CheckConstraint(entity);
+            return await base.CreateAsync(entity);
+        }
 
+        private async Task _CheckConstraint(FacebookPage self)
+        {
+            var exist = await SearchQuery(x => x.PageId == self.PageId).FirstOrDefaultAsync();
+            if (exist != null)
+                throw new Exception($"Bạn đã kết nối với page {exist.PageName}");
         }
 
         public async Task<PagedResult2<FacebookPageBasic>> GetPagedResultAsync(FacebookPaged val)
@@ -39,8 +49,6 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.UserName.Contains(val.Search) || x.PageName.Contains(val.Search));
-
-           
 
             var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
@@ -50,6 +58,7 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<FacebookPageBasic>>(items)
             };
         }
+
         public async Task<string> GetFacebookAppAccessToken(string accesstoken)
         {
             string errorMaessage = null;
@@ -72,8 +81,6 @@ namespace Infrastructure.Services
                 return (string)result["access_token"];
 
             }
-            
-
         }
 
         public async Task<string> GetLongTermAccessToken(string Accesstoken)
@@ -96,13 +103,8 @@ namespace Infrastructure.Services
             else
             {
                 var result = response.GetResult();
-
                 return (string)result["access_token"];
-
             }
-
-           
-
         }
 
         public async Task<FacebookPage> GetFacebookPage(string accesstoken , string pageId) {
@@ -125,14 +127,12 @@ namespace Infrastructure.Services
                 page.UserId = result.Id;
                 page.UserName = result.Name;
                 page.UserAccesstoken = accesstoken;
-                var fbpage = result.Data.Data.Where(x => x.Id == pageId).SingleOrDefault();
+                var fbpage = result.Accounts.Data.Where(x => x.Id == pageId).SingleOrDefault();
                 page.PageId = fbpage.Id;
                 page.PageName = fbpage.Name;
                 page.PageAccesstoken = fbpage.PageAccesstoken;
                 return page ;
-
             }
-
         }
 
         public async Task<FacebookPage> CheckFacebookPage(string userid , string pageid) {
@@ -140,6 +140,7 @@ namespace Infrastructure.Services
             var facebookpage = await  SearchQuery(x => x.UserId == userid && x.PageId == pageid).FirstOrDefaultAsync();
             return facebookpage;
         }
+
         public async Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val) {
 
             //generate an app access token
@@ -179,8 +180,37 @@ namespace Infrastructure.Services
 
         }
 
-       
+        public async Task LoadUserProfile()
+        {
+            //tải khách hàng từ conversations
+        }
 
+        public async Task LoadUserProfileFromConversations(Guid id)
+        {
+            var self = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            //tải khách hàng từ conversations
+            var conversations
+        }
 
+        public async Task<string> GetPageConversations(string page_id, string access_token, int limit)
+        {
+            string errorMaessage = null;
+            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
+            var getRequestUrl = $"{page_id}/access_token";
+            var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
+            getRequest.AddQueryParameter("fields", "conversations.limit(" + limit + "){participants}");
+            var response = (await getRequest.ExecuteAsync<dynamic>());
+
+            if (response.GetExceptions().Any())
+            {
+                errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
+                throw new Exception(errorMaessage);
+            }
+            else
+            {
+                var result = response.GetResult();
+                return (string)result["access_token"];
+            }
+        }
     }
 }

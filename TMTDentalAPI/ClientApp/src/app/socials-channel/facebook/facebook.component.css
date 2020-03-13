@@ -31,9 +31,7 @@
 .conversations > table > tr > td:nth-child(1) {
     width: 352px;
 }
-.conversations > table > tr > td:nth-child(2) {
 
-}
 .conversations > table > tr > td:nth-child(3) {
     width: 312px;
 }
@@ -209,4 +207,24 @@
     -webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.2);
     -moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.2);
     box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.2);
+}
+
+.wrapper {
+    background-color: white;
+    margin-top: 15px;
+}
+
+.user_section {
+    padding: .75rem 1.25rem;
+    text-align: center;
+}
+
+.user_section img {
+    max-width: 50px;
+    margin-bottom: 5px;
+}
+
+img.page_avatar {
+    max-width: 50px;
+    margin-right: 10px;
 }

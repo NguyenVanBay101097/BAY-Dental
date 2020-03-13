@@ -186,9 +186,9 @@ registerLocaleData(localeVi, 'vi');
     ZaloOaConfigModule,
     RevenueReportModule,
     MarketingCampaignsModule,
-      FacebookConfigModule,
-      FacebookModule.forRoot(),
-      SocialsChannelModule
+    FacebookConfigModule,
+    FacebookModule.forRoot(),
+    SocialsChannelModule,
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

@@ -1,0 +1,37 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Danh sách Facebook Page đã kết nối</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_view_controller">
+        <div class="o_kanban_view o_kanban_ungrouped">
+            <div class="oe_kanban_global_click o_kanban_record" *ngFor="let page of pages">
+                <div class="o_kanban_image">
+                    <img src="//graph.facebook.com/{{page.pageId}}/picture?height=100&amp;width=100"
+                        [alt]="page.pageName">
+                </div>
+                <div class="oe_kanban_details">
+                    <strong class="o_kanban_record_title">
+                        <span>{{page.pageName}}</span>
+                    </strong>
+                </div>
+            </div>
+            <div class="o_kanban_record o_kanban_ghost"></div>
+            <div class="o_kanban_record o_kanban_ghost"></div>
+            <div class="o_kanban_record o_kanban_ghost"></div>
+            <div class="o_kanban_record o_kanban_ghost"></div>
+            <div class="o_kanban_record o_kanban_ghost"></div>
+            <div class="o_kanban_record o_kanban_ghost"></div>
+        </div>
+    </div>
+</div>

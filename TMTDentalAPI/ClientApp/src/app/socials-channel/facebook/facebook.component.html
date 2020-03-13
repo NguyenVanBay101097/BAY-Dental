@@ -1,14 +1,9 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Kênh xã hội Facebook</li>
+            <li class="active">Kết nối Facebook Page</li>
         </ol>
         <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tên.." type="text">
-                </div>
-            </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -17,7 +12,7 @@
                         (click)="login()">
                         Đăng nhập Facebook
                     </button>
-                    <button *ngIf="logged_in" type="button" class="btn btn-primary btn-sm" accesskey="c"
+                    <!-- <button *ngIf="logged_in" type="button" class="btn btn-primary btn-sm" accesskey="c"
                         (click)="logout()">
                         Đăng xuất Facebook
                     </button>
@@ -28,37 +23,45 @@
                     <button *ngIf="selectedPage" type="button" class="btn btn-light btn-sm" accesskey="c"
                         (click)="selectPage(null)">
                         Quay lại Danh sách Trang kết nối
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
         <div class="o_cp_right">
-
         </div>
     </div>
 </div>
 
-<div class="pages card pages_connected" *ngIf="logged_in && !selectedPage">
-    <b class="mid">Danh sách trang đang kết nối</b>
-    <div class="card mid" *ngFor="let item of DataFanpagesConnected; let i = index" (click)="selectPage(item)">
-        <table>
-            <tr>
-                <td width=1%>
-                    <img src="{{item.picture}}" alt="">
-                </td>
-                <td style="text-align: left;">
-                    <b>{{item.name}}</b>
-                </td>
-                <td width="1%">
-                    <button type="button" class="btn btn-light"
-                        style="white-space: nowrap; margin-right: 10px;">Gỡ kết nối</button>
-                </td>
-            </tr>
-        </table>
+<div fxfill fxLayout="row" *ngIf="connect" class="container wrapper">
+    <div fxFlex="none" class="user_section">
+        <img class="rounded-circle" src="//graph.facebook.com/{{connect.fbUserId}}/picture?width=100&amp;height=100"
+            [alt]="connect.fbUserName">
+        <div class="user_name">{{connect.fbUserName}}</div>
+    </div>
+    <div fxFlex class="list_page_section">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" *ngFor="let item of connect.pages; let i = index" (click)="selectPage(item)">
+                <div fxFlex="none">
+                    <img class="page_avatar"
+                        src="https://graph.facebook.com/{{item.pageId}}/picture?height=100&amp;width=100"
+                        [alt]="item.pageName">
+                </div>
+                <div fxFlex>
+                    <div class="page_name">{{item.pageName}}</div>
+                    <div class="page_status text-success" *ngIf="item.connected == true">
+                        <i class="fas fa-check"></i> Đã kết nối
+                    </div>
+                </div>
+                <div fxFlex="nogrow">
+                    <button type="button" *ngIf="item.connected == false" class="btn btn-primary btn-sm"
+                        (click)="addConnect(item)">Kết nối</button>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>
 
-<div class="pages conversations" *ngIf="selectedPage">
+<!-- <div class="pages conversations" *ngIf="selectedPage">
     <table>
         <tr>
             <td>
@@ -68,8 +71,7 @@
                         <table>
                             <tr>
                                 <td>
-                                    <img class="avatar"
-                                        src="{{item.picture}}" alt="">
+                                    <img class="avatar" src="{{item.picture}}" alt="">
                                 </td>
                                 <td>
                                     <b>{{item.name}}</b><br>
@@ -94,8 +96,7 @@
                         <table>
                             <tr>
                                 <td width=1%>
-                                    <img class="avatar"
-                                        src="{{selectedPage.picture}}" alt="">
+                                    <img class="avatar" src="{{selectedPage.picture}}" alt="">
                                 </td>
                                 <td style="text-align: left;">
                                     <b style="margin-left: 10px; margin-right: 10px;">{{selectedPage.name}}</b>
@@ -110,12 +111,15 @@
                     <div class="message_box" id="message_box">
                         <div *ngFor="let DataGroupMessagesCustomer of DataMessagesCustomer" class="message_group">
                             <div class="message_date">{{DataGroupMessagesCustomer[0].created_time}}</div>
-                            <div *ngFor="let item of DataGroupMessagesCustomer" class="message_con" [class.my_message]="item.message_from_page">
-                                <img *ngIf="!item.message_from_page && item.last_message" class="avatar_message" src="{{selectedCustomer.picture}}" alt="">
-                                <span class="message_content" [class.margin-left_message_content]="!item.message_from_page && !item.last_message"
+                            <div *ngFor="let item of DataGroupMessagesCustomer" class="message_con"
+                                [class.my_message]="item.message_from_page">
+                                <img *ngIf="!item.message_from_page && item.last_message" class="avatar_message"
+                                    src="{{selectedCustomer.picture}}" alt="">
+                                <span class="message_content"
+                                    [class.margin-left_message_content]="!item.message_from_page && !item.last_message"
                                     [class.first_message]="item.first_message" [class.last_message]="item.last_message">
                                     {{item.message}}
-                                </span> 
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -145,40 +149,41 @@
                         <tr>
                             <td>
                                 <b *ngIf="!selectCustomer.editing_name">{{selectedCustomer.name}}</b>
-                                <input *ngIf="selectCustomer.editing_name" type="text" name="" id="" [(ngModel)]="selectedCustomer.name">
+                                <input *ngIf="selectCustomer.editing_name" type="text" name="" id=""
+                                    [(ngModel)]="selectedCustomer.name">
                             </td>
                             <td>
-                                <button *ngIf="!selectCustomer.editing_name" type="button" class="btn btn-light myBtnEdit"
-                                    (click)="selectCustomer.editing_name = true"><i class="fas fa-pencil-alt"></i></button>
-                                <button *ngIf="selectCustomer.editing_name" type="button" class="btn btn-light myBtnEdit"
-                                    (click)="selectCustomer.editing_name = false"><i class="fas fa-times"></i></button>
+                                <button *ngIf="!selectCustomer.editing_name" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_name = true"><i
+                                        class="fas fa-pencil-alt"></i></button>
+                                <button *ngIf="selectCustomer.editing_name" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_name = false"><i
+                                        class="fas fa-times"></i></button>
                             </td>
                         </tr>
                     </table>
                     <table class="mid">
                         <tr>
                             <td>
-                                <span *ngIf="!selectCustomer.editing_phone">{{selectedCustomer.phone ? selectedCustomer.phone : 'Chưa có số điện thoại'}}</span>
-                                <input *ngIf="selectCustomer.editing_phone" type="number" name="" id="" placeholder="Chưa có số điện thoại"
-                                    [(ngModel)]="selectedCustomer.phone">
+                                <span
+                                    *ngIf="!selectCustomer.editing_phone">{{selectedCustomer.phone ? selectedCustomer.phone : 'Chưa có số điện thoại'}}</span>
+                                <input *ngIf="selectCustomer.editing_phone" type="number" name="" id=""
+                                    placeholder="Chưa có số điện thoại" [(ngModel)]="selectedCustomer.phone">
                             </td>
                             <td>
-                                <button *ngIf="!selectCustomer.editing_phone" type="button" class="btn btn-light myBtnEdit"
-                                    (click)="selectCustomer.editing_phone = true"><i class="fas fa-pencil-alt"></i></button>
-                                <button *ngIf="selectCustomer.editing_phone" type="button" class="btn btn-light myBtnEdit"
-                                    (click)="selectCustomer.editing_phone = false"><i class="fas fa-times"></i></button>
+                                <button *ngIf="!selectCustomer.editing_phone" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_phone = true"><i
+                                        class="fas fa-pencil-alt"></i></button>
+                                <button *ngIf="selectCustomer.editing_phone" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_phone = false"><i
+                                        class="fas fa-times"></i></button>
                             </td>
                         </tr>
                     </table>
                     <div class="row mid" style="width: 100%;">
-                        <kendo-combobox
-                            [data]="listPartners"
-                            [textField]="'name'"
-                            [valueField]="'phone'"
-                            [placeholder]="'Tên hoặc sđt'"
-                            [(ngModel)]="selectPartner"
-                            style="padding: 0; width: calc(100% - 40px - 5px); margin-right: 5px;"
-                        >
+                        <kendo-combobox [data]="listPartners" [textField]="'name'" [valueField]="'phone'"
+                            [placeholder]="'Tên hoặc sđt'" [(ngModel)]="selectPartner"
+                            style="padding: 0; width: calc(100% - 40px - 5px); margin-right: 5px;">
                             <ng-template kendoComboBoxItemTemplate let-dataItem>
                                 <table>
                                     <tr>
@@ -190,13 +195,14 @@
                                 </table>
                             </ng-template>
                         </kendo-combobox>
-                        <button type="button" class="btn btn-light border" accesskey="c" (click)="showModalAddCreatePartner(null)">
+                        <button type="button" class="btn btn-light border" accesskey="c"
+                            (click)="showModalAddCreatePartner(null)">
                             <i class="fas fa-plus"></i>
                         </button>
-                    </div> 
+                    </div>
                     <button type="button" class="btn btn-light border" accesskey="c">Liên kết</button>
                 </div>
             </td>
         </tr>
     </table>
-</div>
+</div> -->
