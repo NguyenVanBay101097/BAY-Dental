@@ -127,6 +127,10 @@ html .o_web_client>.o_action_manager .o_action .o_content {
     min-height: 1px;
 }
 
+html .o_web_client .o_content {
+    position: relative;
+}
+
 html .o_web_client .o_content .o_view_controller {
     position: absolute;
     top: 0;
@@ -332,6 +336,26 @@ td.oe_form_group_cell_label label {
     background-color: #f9f9f9;
 }
 
+.o_kanban_view .oe_kanban_card.oe_kanban_global_click, .o_kanban_view .oe_kanban_card.oe_kanban_global_click_edit, .o_kanban_view .o_kanban_record.oe_kanban_global_click, .o_kanban_view .o_kanban_record.oe_kanban_global_click_edit {
+    cursor: pointer;
+}
+
+.o_kanban_view.o_kanban_ungrouped {
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    padding: 8px 8px;
+}
+
+.o_kanban_view.o_kanban_ungrouped .o_kanban_record {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 300px;
+    margin: 4px 8px;
+}
+
 .o_kanban_view .o_kanban_group,
 .o_kanban_group.cdk-drag-preview {
     -webkit-box-flex: 0;
@@ -429,6 +453,32 @@ td.oe_form_group_cell_label label {
 .o_kanban_record.cdk-drag-preview .o_kanban_record_top,
 .o_kanban_record.cdk-drag-preview .o_kanban_record_body {
     margin-bottom: 5px;
+}
+
+.o_kanban_view.o_kanban_ungrouped .o_kanban_record.o_kanban_ghost {
+    height: 0;
+    min-height: 0 !important;
+    visibility: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.o_kanban_view .oe_kanban_card .o_kanban_image, .o_kanban_view .o_kanban_record .o_kanban_image {
+    float: left;
+    width: 64px;
+}
+
+.o_kanban_view .oe_kanban_card .o_kanban_image img, .o_kanban_view .o_kanban_record .o_kanban_image img {
+    max-width: 100%;
+}
+
+.o_kanban_view .oe_kanban_card .oe_kanban_details, .o_kanban_view .o_kanban_record .oe_kanban_details {
+    width: 100%;
+}
+
+.o_kanban_view .oe_kanban_card .o_kanban_image + div, .o_kanban_view .o_kanban_record .o_kanban_image + div {
+    padding-left: 72px;
 }
 
 .o_kanban_view .o_kanban_record .o_kanban_record_top,

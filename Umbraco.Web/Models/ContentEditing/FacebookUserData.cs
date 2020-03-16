@@ -15,6 +15,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         [DeserializeAs(Name = "accounts")]
-        public FacebookPageData Data { get; set; } 
+        public FacebookPageData Accounts { get; set; } 
     }
 }

@@ -8,15 +8,18 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { PartnerCreateUpdateComponent } from '../partners/partner-create-update/partner-create-update.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FacebookDashboardComponent } from './facebook-dashboard/facebook-dashboard.component';
 
 @NgModule({
-  declarations: [FacebookComponent, FacebookDialogComponent],
+  declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent],
   imports: [
     CommonModule,
     SocialsChannelRoutingModule,
     FormsModule,
     NgbModule,
-    DropDownsModule
+    DropDownsModule,
+    FlexLayoutModule
   ],
   exports: [
   ],

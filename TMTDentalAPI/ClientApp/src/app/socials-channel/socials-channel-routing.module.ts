@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FacebookComponent } from './facebook/facebook.component';
+import { FacebookDashboardComponent } from './facebook-dashboard/facebook-dashboard.component';
 
 const routes: Routes = [
-  { path: 'socials-channel', component: FacebookComponent },
+  { path: 'facebook-connect', component: FacebookComponent },
+  { path: 'facebook-dashboard', component: FacebookDashboardComponent },
 ];
 
 @NgModule({
