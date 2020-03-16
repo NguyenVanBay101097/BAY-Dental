@@ -14,6 +14,7 @@ namespace ApplicationCore.Entities
             TriggerType = "begin";
             IntervalNumber = 1;
             IntervalType = "days";
+            ActivityType = "message";
         }
 
         public string Name { get; set; }
@@ -28,9 +29,8 @@ namespace ApplicationCore.Entities
         public string Condition { get; set; }
 
         /// <summary>
-        /// Loại hoạt động. Xác định sẽ gửi tin nhắn thông qua kênh nào zalo hay facebook...
-        /// zalo: Zalo
-        /// facebook: Facebook
+        /// Loại hoạt động
+        /// message: Nhắn tin
         /// </summary>
         public string ActivityType { get; set; }
 

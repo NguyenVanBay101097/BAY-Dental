@@ -23,7 +23,7 @@ namespace Infrastructure.Services
             var pageObj = GetService<IFacebookPageService>();
             foreach(var page in self)
             {
-                await pageObj.CreateAsync(new FacebookPage
+                var fbPage = await pageObj.CreateAsync(new FacebookPage
                 {
                     PageId = page.PageId,
                     PageName = page.PageName,

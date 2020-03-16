@@ -13,6 +13,10 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.Property(x => x.Name).IsRequired();
 
+            builder.HasOne(x => x.FacebookPage)
+                .WithMany()
+                .HasForeignKey(x => x.FacebookPageId);
+
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);

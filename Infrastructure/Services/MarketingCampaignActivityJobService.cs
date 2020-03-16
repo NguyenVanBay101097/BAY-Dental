@@ -44,36 +44,53 @@ namespace Infrastructure.Services
                         "where Id = @id" +
                         "", new { id = activityId }).FirstOrDefault();
 
+                    if (activity == null)
+                        return;
+
+                    var campaign = conn.Query<MarketingCampaign>("" +
+                        "SELECT * " +
+                        "FROM MarketingCampaigns " +
+                        "where Id = @id" +
+                        "", new { id = activity.CampaignId }).FirstOrDefault();
+
+                    if (campaign == null || !campaign.FacebookPageId.HasValue)
+                        return;
+
                     var content = activity.Content;
                     if (string.IsNullOrEmpty(content))
                         return;
 
-                    if (activity.ActivityType == "facebook")
+                    if (activity.ActivityType == "message")
                     {
-                        var pages = GetFbPagesSendMessage(conn, activity);
-                        foreach(var page in pages)
-                        {
-                            var partnerPsids = conn.Query<PartnerMapPSIDFacebookPage>("" +
+                        var page = conn.Query<FacebookPage>("" +
+                        "SELECT * " +
+                        "FROM FacebookPages " +
+                        "where Id = @id" +
+                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
+
+                        if (page == null)
+                            return;
+
+                        var profiles = conn.Query<FacebookUserProfile>("" +
                             "SELECT * " +
-                                "FROM PartnerMapPSIDFacebookPages m " +
-                                "where m.PageId = @pageId and m.PartnerId in (" +
+                                "FROM FacebookUserProfiles m " +
+                                "where m.FbPageId = @pageId and m.PartnerId in (" +
                                     "SELECT p.Id " +
                                     "FROM Partners p " +
                                     "where p.Customer = 1 " +
-                                ")", new { pageId = page.PageId }).ToList();
+                                ")", new { pageId = page.Id }).ToList();
 
 
-                            var tasks = partnerPsids.Select(x => SendFacebookMessage(page.PageAccesstoken, x.PSId, content));
+                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, x.PSID, content, activity.Id, conn)).ToList();
 
-                            var limit = 200;
-                            var offset = 0;
-                            var subTasks = tasks.Skip(offset).Take(limit);
-                            while(subTasks.Any())
-                            {
-                                var result = await Task.WhenAll(subTasks);
-                                offset += limit;
-                                subTasks = tasks.Skip(offset).Take(limit);
-                            }
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            var result = await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
                         }
                     }
                 }
@@ -106,6 +123,7 @@ namespace Infrastructure.Services
             {
                 var result = response.GetResult();
                 await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId) values (@Id,@ActivityId,@Sent,@MessageId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = result.message_id });
+
                 return result;
             }
         }

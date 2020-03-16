@@ -30,5 +30,8 @@ namespace ApplicationCore.Entities
         public DateTime? DateStart { get; set; }
 
         public ICollection<MarketingCampaignActivity> Activities { get; set; } = new List<MarketingCampaignActivity>();
+
+        public Guid? FacebookPageId { get; set; }
+        public FacebookPage FacebookPage { get; set; }
     }
 }

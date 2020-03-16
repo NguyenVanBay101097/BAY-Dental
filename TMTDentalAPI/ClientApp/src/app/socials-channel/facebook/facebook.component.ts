@@ -35,7 +35,7 @@ export class FacebookComponent implements OnInit {
   selectedCustomer: any = null;
   //
   DataFanpagesDisplay: SocialsChannelDisplay = {
-    'pageId': '', 
+    'pageId': '',
     'accesstoken': ''
   };
   loading: boolean;
@@ -52,19 +52,19 @@ export class FacebookComponent implements OnInit {
   searchNamePhone: string;
   linkedPartner: boolean = false;
 
-  constructor(private fb: FacebookService, 
-    private socialsChannelService: SocialsChannelService, 
+  constructor(private fb: FacebookService,
+    private socialsChannelService: SocialsChannelService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,) { 
-      fb.init({
-        appId: '507339379926048',
-        status: true, 
-        cookie: true, 
-        xfbml: true,
-        version: 'v6.0'
-      });
-    }
+    private partnerService: PartnerService, ) {
+    fb.init({
+      appId: '327268081110321',
+      status: true,
+      cookie: true,
+      xfbml: true,
+      version: 'v6.0'
+    });
+  }
 
   ngOnInit() {
     this.onGetPartnersList();
@@ -77,137 +77,137 @@ export class FacebookComponent implements OnInit {
       scope: 'public_profile,manage_pages,publish_pages,pages_messaging,read_page_mailboxes'
     };
     this.fb.login(loginOptions)
-    .then((res: LoginResponse) => {
-      //console.log('Logged in', res);
-      this.accessToken = res.authResponse.accessToken;
-      this.getDataUser();
-    })
-    .catch(this.handleError);
+      .then((res: LoginResponse) => {
+        console.log('Logged in', res);
+        this.accessToken = res.authResponse.accessToken;
+        this.getDataUser();
+      })
+      .catch(this.handleError);
   }
 
   logout() {
     this.fb.logout()
-    .then((res) => {
-      //console.log('Logged out', res);
-      this.accessToken = null;
-      this.DataUser = [];
-      this.DataFanpages  = [];
-      this.DataFanpagesConnected = [];
-      this.DataCustomers = [];
-      this.DataMessagesCustomer = [];
-      this.logged_in = false;
-      this.selectedPage = null;
-      this.selectedCustomer = null;
-    })
-    .catch(this.handleError);
+      .then((res) => {
+        //console.log('Logged out', res);
+        this.accessToken = null;
+        this.DataUser = [];
+        this.DataFanpages = [];
+        this.DataFanpagesConnected = [];
+        this.DataCustomers = [];
+        this.DataMessagesCustomer = [];
+        this.logged_in = false;
+        this.selectedPage = null;
+        this.selectedCustomer = null;
+      })
+      .catch(this.handleError);
   }
 
   getDataUser() {
     this.fb.api('/me?fields=id,name,picture.type(large)')
-    .then((res: any) => {
-      //console.log(res);
-      this.DataUser.push({
-        'id': res.id, 
-        'name': res.name, 
-        'picture': res.picture.data.url, 
-        'accessToken': this.accessToken,
-      });
-      //console.log('Got the data user', this.DataUser[0]);
-      this.getDataFanpages();
-    })
-    .catch(this.handleError);
+      .then((res: any) => {
+        //console.log(res);
+        this.DataUser.push({
+          'id': res.id,
+          'name': res.name,
+          'picture': res.picture.data.url,
+          'accessToken': this.accessToken,
+        });
+        //console.log('Got the data user', this.DataUser[0]);
+        this.getDataFanpages();
+      })
+      .catch(this.handleError);
   }
 
   getDataFanpages() {
     this.fb.api('/me?fields=accounts{id,name,picture.type(large),access_token}')
-    .then((res: any) => {
-      //console.log(res);
-      var res_data = res.accounts.data;
-      this.DataFanpages = [];
-      for (var i = 0; i < res_data.length; i++) {
-        this.DataFanpages.push({
-          'id': res_data[i].id, 
-          'name': res_data[i].name, 
-          'picture': res_data[i].picture.data.url, 
-          'accessToken': res_data[i].access_token,
-        });
-      }
-      //console.log('Got the data fanpages', this.DataFanpages);
-      this.onGetFanpagesFromDB();
-      this.logged_in = true;
-    })
-    .catch(this.handleError);
+      .then((res: any) => {
+        //console.log(res);
+        var res_data = res.accounts.data;
+        this.DataFanpages = [];
+        for (var i = 0; i < res_data.length; i++) {
+          this.DataFanpages.push({
+            'id': res_data[i].id,
+            'name': res_data[i].name,
+            'picture': res_data[i].picture.data.url,
+            'accessToken': res_data[i].access_token,
+          });
+        }
+        //console.log('Got the data fanpages', this.DataFanpages);
+        this.onGetFanpagesFromDB();
+        this.logged_in = true;
+      })
+      .catch(this.handleError);
   }
 
   getConversationsFanpage() {
     var tempParam = 'id,participants,snippet,unread_count,messages.limit(1){from},updated_time';
-    this.fb.api('/' + this.selectedPage.id +'?fields=conversations.limit(10){'+tempParam+'}&access_token='+ this.selectedPage.accessToken)
-    .then((res: any) => {
-      //console.log('Got the data fanpage', res);
-      if (res.conversations) {
-        var res_data = res.conversations.data;
-        this.DataCustomers = [];
-        var message_from_page = false;
-        for (var i = 0; i < res_data.length; i++) {
-          message_from_page = false;
-          if (res_data[i].messages.data[0].from.id === this.selectedPage.id) {
-            message_from_page = true;
+    this.fb.api('/' + this.selectedPage.id + '?fields=conversations.limit(10){' + tempParam + '}&access_token=' + this.selectedPage.accessToken)
+      .then((res: any) => {
+        //console.log('Got the data fanpage', res);
+        if (res.conversations) {
+          var res_data = res.conversations.data;
+          this.DataCustomers = [];
+          var message_from_page = false;
+          for (var i = 0; i < res_data.length; i++) {
+            message_from_page = false;
+            if (res_data[i].messages.data[0].from.id === this.selectedPage.id) {
+              message_from_page = true;
+            }
+            this.DataCustomers.push({
+              'id': res_data[i].participants.data[0].id,
+              'name': res_data[i].participants.data[0].name,
+              'picture': 'https://webelenz.com/wp-content/uploads/2019/11/testimonial.jpg',
+              'phone': '090x.xxx.xxx',
+              'snippet': res_data[i].snippet,
+              'unread_count': res_data[i].unread_count,
+              'message_from_page': message_from_page,
+              'updated_time': this.formatDateForListCustomer(res_data[i].updated_time),
+              'conversation_id': res_data[i].id,
+              'editing_name': false,
+              'editing_phone': false,
+            });
           }
-          this.DataCustomers.push({
-            'id': res_data[i].participants.data[0].id, 
-            'name': res_data[i].participants.data[0].name, 
-            'picture': 'https://webelenz.com/wp-content/uploads/2019/11/testimonial.jpg',
-            'phone': '090x.xxx.xxx',
-            'snippet': res_data[i].snippet,
-            'unread_count': res_data[i].unread_count,
-            'message_from_page': message_from_page,
-            'updated_time': this.formatDateForListCustomer(res_data[i].updated_time),
-            'conversation_id': res_data[i].id,
-            'editing_name': false,
-            'editing_phone': false,
-          });
         }
-      }
-      //console.log('Data Conversations Fanpage', this.DataCustomers);
-    })
-    .catch(this.handleError);
+        //console.log('Data Conversations Fanpage', this.DataCustomers);
+      })
+      .catch(this.handleError);
   }
 
   getMessagesFanpageWithID(conversation_id) {
-    this.fb.api('/' + conversation_id +'?fields=messages{message,from,created_time}&access_token='+ this.selectedPage.accessToken)
-    .then((res: any) => {
-      //console.log('Got the data messages with id ', res);
-      if (res.messages) {
-        var res_data = res.messages.data;
-        this.DataMessagesCustomer = [];
-        var message_from_page = false;
-        for (var i = 0; i < res_data.length; i++) {
-          message_from_page = false;
-          if (res_data[i].from.id === this.selectedPage.id) {
-            message_from_page = true;
+    this.fb.api('/' + conversation_id + '?fields=messages{message,from,created_time}&access_token=' + this.selectedPage.accessToken)
+      .then((res: any) => {
+        //console.log('Got the data messages with id ', res);
+        if (res.messages) {
+          var res_data = res.messages.data;
+          this.DataMessagesCustomer = [];
+          var message_from_page = false;
+          for (var i = 0; i < res_data.length; i++) {
+            message_from_page = false;
+            if (res_data[i].from.id === this.selectedPage.id) {
+              message_from_page = true;
+            }
+            this.DataMessagesCustomer.push({
+              'id': res_data[i].id,
+              'message': res_data[i].message,
+              'message_from_page': message_from_page,
+              'created_time': this.formatDateForMessagesCustomer(res_data[i].created_time),
+            });
           }
-          this.DataMessagesCustomer.push({
-            'id': res_data[i].id, 
-            'message': res_data[i].message, 
-            'message_from_page': message_from_page, 
-            'created_time': this.formatDateForMessagesCustomer(res_data[i].created_time),
-          });
+          //console.log('DataMessagesCustomer ', this.DataMessagesCustomer);
+          this.DataMessagesCustomer = this.groupDataMessagesCustomer(this.DataMessagesCustomer.slice().reverse());
         }
-        //console.log('DataMessagesCustomer ', this.DataMessagesCustomer);
-        this.DataMessagesCustomer = this.groupDataMessagesCustomer(this.DataMessagesCustomer.slice().reverse());
-      }
-      //console.log('Data MessagesFanpageWithID ', this.DataMessagesCustomer);
-      $('#message_box').animate({scrollTop: 9999});
-    })
-    .catch(this.handleError);
+        //console.log('Data MessagesFanpageWithID ', this.DataMessagesCustomer);
+        $('#message_box').animate({ scrollTop: 9999 });
+      })
+      .catch(this.handleError);
   }
 
   getPictureCustomerDemo() {
-    this.fb.api('/' + this.DataCustomers[0].id +'/picture?access_token='+ this.selectedPage.accessToken)
-    .then((res: any) => {
-      console.log('Got picture', res);
-    })
-    .catch(this.handleError);
+    this.fb.api('/' + this.DataCustomers[0].id + '/picture?access_token=' + this.selectedPage.accessToken)
+      .then((res: any) => {
+        console.log('Got picture', res);
+      })
+      .catch(this.handleError);
   }
 
   handleError(error) {
@@ -256,13 +256,13 @@ export class FacebookComponent implements OnInit {
       this.selectedCustomer = null;
     } else {
       this.selectedCustomer = item;
-      this.getMessagesFanpageWithID(item.conversation_id);  
-      this.onCheckPartner();    
+      this.getMessagesFanpageWithID(item.conversation_id);
+      this.onCheckPartner();
     }
   }
 
   formatDate(date: string) {
-    return this.datePipe.transform(date,"EEE, d/M/y, w, W, HH:mm, z");
+    return this.datePipe.transform(date, "EEE, d/M/y, w, W, HH:mm, z");
   }
   convertWeekDay(weekDay) {
     switch (weekDay) {
@@ -302,15 +302,15 @@ export class FacebookComponent implements OnInit {
     if (dateArray.year === this.currentDateArray.year) {
       if (dateArray.weekOfYear === this.currentDateArray.weekOfYear) {
         if (dateArray.day === this.currentDateArray.day) {
-          return dateArray.hour+':'+dateArray.minute; //00:00
+          return dateArray.hour + ':' + dateArray.minute; //00:00
         } else {
           return dateArray.weekDay; //T0
         }
-      } else  {
+      } else {
         return dateArray.day + ' Tháng ' + dateArray.month; //00 Tháng 00
       }
     } else {
-      return dateArray.day+'/'+dateArray.month+'/'+dateArray.year; //00/00/0000
+      return dateArray.day + '/' + dateArray.month + '/' + dateArray.year; //00/00/0000
     }
   }
 
@@ -319,17 +319,17 @@ export class FacebookComponent implements OnInit {
     if (dateArray.year === this.currentDateArray.year) {
       if (dateArray.weekOfYear === this.currentDateArray.weekOfYear) {
         if (dateArray.day === this.currentDateArray.day) {
-          return dateArray.hour+':'+dateArray.minute; //00:00
+          return dateArray.hour + ':' + dateArray.minute; //00:00
         } else {
-          return dateArray.weekDay+' '+dateArray.hour+':'+dateArray.minute; //T0 00:00
+          return dateArray.weekDay + ' ' + dateArray.hour + ':' + dateArray.minute; //T0 00:00
         }
-      } else  {
-        return dateArray.hour+':'+dateArray.minute+', '+
-        dateArray.day+' THÁNG '+dateArray.month+', '+ dateArray.year; //00:00, 00 THÁNG 00, 000
+      } else {
+        return dateArray.hour + ':' + dateArray.minute + ', ' +
+          dateArray.day + ' THÁNG ' + dateArray.month + ', ' + dateArray.year; //00:00, 00 THÁNG 00, 000
       }
     } else {
-      return dateArray.hour+':'+dateArray.minute+', '+
-      dateArray.day+' THÁNG '+dateArray.month+', '+ dateArray.year; //00:00, 00 THÁNG 00, 000
+      return dateArray.hour + ':' + dateArray.minute + ', ' +
+        dateArray.day + ' THÁNG ' + dateArray.month + ', ' + dateArray.year; //00:00, 00 THÁNG 00, 000
     }
   }
 
@@ -345,16 +345,16 @@ export class FacebookComponent implements OnInit {
         }
         created_time = dataMessagesCustomer[i].created_time;
       }
-      if (dataMessagesCustomer[i-1]) {
-        if (dataMessagesCustomer[i-1].message_from_page === false && 
+      if (dataMessagesCustomer[i - 1]) {
+        if (dataMessagesCustomer[i - 1].message_from_page === false &&
           dataMessagesCustomer[i].message_from_page === true) {
-            dataMessagesCustomer[i-1]['last_message'] = true;
-            dataMessagesCustomer[i]['first_message'] = true;
+          dataMessagesCustomer[i - 1]['last_message'] = true;
+          dataMessagesCustomer[i]['first_message'] = true;
         }
-        if (dataMessagesCustomer[i-1].message_from_page === true && 
+        if (dataMessagesCustomer[i - 1].message_from_page === true &&
           dataMessagesCustomer[i].message_from_page === false) {
-            dataMessagesCustomer[i-1]['last_message'] = true;
-            dataMessagesCustomer[i]['first_message'] = true;
+          dataMessagesCustomer[i - 1]['last_message'] = true;
+          dataMessagesCustomer[i]['first_message'] = true;
         }
       }
       temp.push(dataMessagesCustomer[i]);
@@ -365,7 +365,7 @@ export class FacebookComponent implements OnInit {
     }
     for (var i = 0; i < result.length; i++) {
       var length_result_i = result[i].length;
-      result[i][length_result_i-1]['last_message'] = true;
+      result[i][length_result_i - 1]['last_message'] = true;
       result[i][0]['first_message'] = true;
     }
     return result;
@@ -388,7 +388,7 @@ export class FacebookComponent implements OnInit {
       console.log('onGetPartnersList', res);
       var res_data = res.data;
       this.listPartners = [];
-      for (var i = 0; i < res_data.length; i++) { 
+      for (var i = 0; i < res_data.length; i++) {
         this.listPartners.push({
           'id': null,
           'partnerId': res_data[i].id,
@@ -404,7 +404,7 @@ export class FacebookComponent implements OnInit {
     }
     )
   }
-  
+
   onGetFanpagesFromDB() {
     this.loading = true;
     var val = new SocialsChannelPaged();
@@ -438,13 +438,13 @@ export class FacebookComponent implements OnInit {
   onGetFanpageWithIDFromDB(fanpage_id) {
     this.loading = true;
     this.socialsChannelService.get(fanpage_id).subscribe(
-    res => {
-      //console.log('onGetFanpageWithIDFromDB', res);
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
-    })
+      res => {
+        //console.log('onGetFanpageWithIDFromDB', res);
+        this.loading = false;
+      }, err => {
+        console.log(err);
+        this.loading = false;
+      })
   }
 
   onAddFanpageToDB(fanpage_id, fanpage_accessToken) {
