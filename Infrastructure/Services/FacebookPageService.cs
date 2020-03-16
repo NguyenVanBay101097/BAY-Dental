@@ -189,7 +189,6 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             //tải khách hàng từ conversations
-            var conversations
         }
 
         public async Task<string> GetPageConversations(string page_id, string access_token, int limit)
