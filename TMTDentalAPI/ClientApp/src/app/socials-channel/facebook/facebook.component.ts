@@ -2,14 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { FacebookService, LoginResponse, LoginOptions } from 'ngx-facebook';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as $ from 'jquery';
+import * as _ from 'lodash';
 import { FacebookDialogComponent } from '../facebook-dialog/facebook-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SocialsChannelDisplay, SocialsChannelService, SocialsChannelPaged } from '../socials-channel.service';
+import { SocialsChannelDisplay, SocialsChannelService, SocialsChannelPaged, CheckPartner, MapPartner, PartnerMap } from '../socials-channel.service';
 import { map } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
+import { HttpParams } from '@angular/common/http';
+import { FormGroup } from '@angular/forms';
+import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-facebook',
@@ -43,9 +47,10 @@ export class FacebookComponent implements OnInit {
   today = new Date();
   currentDate = this.today.toISOString();
   currentDateArray = this.convertDateToArray(this.currentDate);
-  listPartners: Array<{ name: string, phone: string }> = [];
-  selectPartner: { name: string, phone: string };
+  listPartners: Array<PartnerMap> = [];
+  selectedPartner: any = null;
   searchNamePhone: string;
+  linkedPartner: boolean = false;
 
   constructor(private fb: FacebookService, 
     private socialsChannelService: SocialsChannelService, 
@@ -54,6 +59,8 @@ export class FacebookComponent implements OnInit {
     private partnerService: PartnerService,) { 
       fb.init({
         appId: '507339379926048',
+        status: true, 
+        cookie: true, 
         xfbml: true,
         version: 'v6.0'
       });
@@ -71,7 +78,7 @@ export class FacebookComponent implements OnInit {
     };
     this.fb.login(loginOptions)
     .then((res: LoginResponse) => {
-      console.log('Logged in', res);
+      //console.log('Logged in', res);
       this.accessToken = res.authResponse.accessToken;
       this.getDataUser();
     })
@@ -81,7 +88,7 @@ export class FacebookComponent implements OnInit {
   logout() {
     this.fb.logout()
     .then((res) => {
-      console.log('Logged out', res);
+      //console.log('Logged out', res);
       this.accessToken = null;
       this.DataUser = [];
       this.DataFanpages  = [];
@@ -98,14 +105,14 @@ export class FacebookComponent implements OnInit {
   getDataUser() {
     this.fb.api('/me?fields=id,name,picture.type(large)')
     .then((res: any) => {
-      console.log(res);
+      //console.log(res);
       this.DataUser.push({
         'id': res.id, 
         'name': res.name, 
         'picture': res.picture.data.url, 
         'accessToken': this.accessToken,
       });
-      console.log('Got the data user', this.DataUser[0]);
+      //console.log('Got the data user', this.DataUser[0]);
       this.getDataFanpages();
     })
     .catch(this.handleError);
@@ -114,7 +121,7 @@ export class FacebookComponent implements OnInit {
   getDataFanpages() {
     this.fb.api('/me?fields=accounts{id,name,picture.type(large),access_token}')
     .then((res: any) => {
-      console.log(res);
+      //console.log(res);
       var res_data = res.accounts.data;
       this.DataFanpages = [];
       for (var i = 0; i < res_data.length; i++) {
@@ -125,7 +132,7 @@ export class FacebookComponent implements OnInit {
           'accessToken': res_data[i].access_token,
         });
       }
-      console.log('Got the data fanpages', this.DataFanpages);
+      //console.log('Got the data fanpages', this.DataFanpages);
       this.onGetFanpagesFromDB();
       this.logged_in = true;
     })
@@ -136,7 +143,7 @@ export class FacebookComponent implements OnInit {
     var tempParam = 'id,participants,snippet,unread_count,messages.limit(1){from},updated_time';
     this.fb.api('/' + this.selectedPage.id +'?fields=conversations.limit(10){'+tempParam+'}&access_token='+ this.selectedPage.accessToken)
     .then((res: any) => {
-      console.log('Got the data fanpage', res);
+      //console.log('Got the data fanpage', res);
       if (res.conversations) {
         var res_data = res.conversations.data;
         this.DataCustomers = [];
@@ -161,7 +168,7 @@ export class FacebookComponent implements OnInit {
           });
         }
       }
-      console.log('Data Conversations Fanpage', this.DataCustomers);
+      //console.log('Data Conversations Fanpage', this.DataCustomers);
     })
     .catch(this.handleError);
   }
@@ -169,7 +176,7 @@ export class FacebookComponent implements OnInit {
   getMessagesFanpageWithID(conversation_id) {
     this.fb.api('/' + conversation_id +'?fields=messages{message,from,created_time}&access_token='+ this.selectedPage.accessToken)
     .then((res: any) => {
-      console.log('Got the data messages with id ', res);
+      //console.log('Got the data messages with id ', res);
       if (res.messages) {
         var res_data = res.messages.data;
         this.DataMessagesCustomer = [];
@@ -186,10 +193,10 @@ export class FacebookComponent implements OnInit {
             'created_time': this.formatDateForMessagesCustomer(res_data[i].created_time),
           });
         }
-        console.log('DataMessagesCustomer ', this.DataMessagesCustomer);
+        //console.log('DataMessagesCustomer ', this.DataMessagesCustomer);
         this.DataMessagesCustomer = this.groupDataMessagesCustomer(this.DataMessagesCustomer.slice().reverse());
       }
-      console.log('Data MessagesFanpageWithID ', this.DataMessagesCustomer);
+      //console.log('Data MessagesFanpageWithID ', this.DataMessagesCustomer);
       $('#message_box').animate({scrollTop: 9999});
     })
     .catch(this.handleError);
@@ -221,15 +228,22 @@ export class FacebookComponent implements OnInit {
     });
   }
 
-  showModalAddCreatePartner(id) {
-    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.cusId = id;
-    modalRef.result.then(
-      response => {
-        this.onGetPartnersList();
-      },
-      err => { }
-    )
+  showModalCreatePartner() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm khách hàng';
+
+    modalRef.result.then(res => {
+      this.onGetPartnersList();
+      this.selectedPartner = {
+        'id': null,
+        'partnerId': res.id,
+        'partnerName': res.name,
+        'partnerPhone': res.phone,
+        'partnerEmail': null
+      };
+      this.linkedPartner = true;
+    }, () => {
+    });
   }
 
   selectPage(item) {
@@ -242,7 +256,8 @@ export class FacebookComponent implements OnInit {
       this.selectedCustomer = null;
     } else {
       this.selectedCustomer = item;
-      this.getMessagesFanpageWithID(item.conversation_id);      
+      this.getMessagesFanpageWithID(item.conversation_id);  
+      this.onCheckPartner();    
     }
   }
 
@@ -372,10 +387,14 @@ export class FacebookComponent implements OnInit {
     ).subscribe(res => {
       console.log('onGetPartnersList', res);
       var res_data = res.data;
+      this.listPartners = [];
       for (var i = 0; i < res_data.length; i++) { 
         this.listPartners.push({
-          'name': res_data[i].name,
-          'phone': res_data[i].phone
+          'id': null,
+          'partnerId': res_data[i].id,
+          'partnerName': res_data[i].name,
+          'partnerPhone': res_data[i].phone,
+          'partnerEmail': null
         });
       }
       this.loading = false;
@@ -398,7 +417,7 @@ export class FacebookComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log('onGetFanpagesFromDB', res);
+      //console.log('onGetFanpagesFromDB', res);
       var res_data = res.data;
       this.DataFanpagesConnected = [];
       for (var i = 0; i < this.DataFanpages.length; i++) {
@@ -408,7 +427,7 @@ export class FacebookComponent implements OnInit {
           }
         }
       }
-      console.log('DataFanpagesConnected', this.DataFanpagesConnected);
+      //console.log('DataFanpagesConnected', this.DataFanpagesConnected);
       this.loading = false;
     }, err => {
       console.log(err);
@@ -418,10 +437,9 @@ export class FacebookComponent implements OnInit {
 
   onGetFanpageWithIDFromDB(fanpage_id) {
     this.loading = true;
-
     this.socialsChannelService.get(fanpage_id).subscribe(
     res => {
-      console.log('onGetFanpageWithIDFromDB', res);
+      //console.log('onGetFanpageWithIDFromDB', res);
       this.loading = false;
     }, err => {
       console.log(err);
@@ -430,14 +448,93 @@ export class FacebookComponent implements OnInit {
   }
 
   onAddFanpageToDB(fanpage_id, fanpage_accessToken) {
+    this.loading = true;
     this.DataFanpagesDisplay.pageId = fanpage_id;
     this.DataFanpagesDisplay.accesstoken = fanpage_accessToken;
     this.socialsChannelService.create(this.DataFanpagesDisplay).subscribe(
       res => {
-        console.log(res);
+        //console.log(res);
+        this.loading = false;
       },
       err => {
         console.log(err);
+        this.loading = true;
+      }
+    );
+  }
+
+  onCheckPartner() {
+    this.loading = true;
+    var val = new CheckPartner();
+    val.PageId = this.selectedPage.id;
+    val.PSId = this.selectedCustomer.id;
+    this.socialsChannelService.checkPartner(val).subscribe(
+      res => {
+        //console.log(res);
+        this.onGetPartnersList();
+        if (res.partnerName) {
+          this.selectedPartner = {
+            'id': res.id,
+            'partnerId': res.partnerId,
+            'partnerName': res.partnerName,
+            'partnerPhone': res.partnerPhone,
+            'partnerEmail': res.partnerEmail
+          };
+          this.linkedPartner = true;
+        } else {
+          this.selectedPartner = null;
+          this.linkedPartner = false;
+        }
+        console.log('onCheckPartner', this.selectedPartner);
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.loading = true;
+      }
+    );
+  }
+
+  onMapPartner() {
+    this.loading = true;
+    var val = new MapPartner();
+    val.PartnerId = this.selectedPartner.partnerId;
+    val.PageId = this.selectedPage.id;
+    val.PSId = this.selectedCustomer.id;
+    console.log('onMapPartner', this.selectedPartner);
+    this.socialsChannelService.mapPartner(val).subscribe(
+      res => {
+        //console.log(res);
+        this.selectedPartner = {
+          'id': res.id,
+          'partnerId': res.partnerId,
+          'partnerName': res.partnerName,
+          'partnerPhone': res.partnerPhone,
+          'partnerEmail': res.partnerEmail
+        };
+        this.linkedPartner = true;
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.loading = true;
+      }
+    );
+  }
+
+  onUnlinkPartner() {
+    this.loading = true;
+    console.log('onUnlinkPartner', this.selectedPartner);
+    this.socialsChannelService.unlinkPartner([this.selectedPartner.id]).subscribe(
+      res => {
+        console.log(res);
+        this.selectedPartner = null;
+        this.linkedPartner = false;
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.loading = true;
       }
     );
   }

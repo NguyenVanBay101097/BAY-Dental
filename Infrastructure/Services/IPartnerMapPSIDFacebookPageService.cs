@@ -13,7 +13,8 @@ namespace Infrastructure.Services
         Task<PartnerMapPSIDFacebookPage> CreatePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val);
         Task<PartnerMapPSIDFacebookPage> MergePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val);
         Task Unlink(IEnumerable<Guid> ids);
-        Task<PartnerMapPSIDFacebookPageBasic> CheckPartner(string PageId, string PSId);
+        Task<PartnerMapPSIDFacebookPageBasic> CheckPartner(CheckPartner val);
+        Task<PartnerMapPSIDFacebookPage> CheckCreate(Guid PartnerId, string PageId, string PSId);
 
 
     }
