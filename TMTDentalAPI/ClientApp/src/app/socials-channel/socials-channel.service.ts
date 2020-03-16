@@ -27,9 +27,29 @@ export class SocialsChannelPaging<T> {
     items: T[];
 }
 
+export class PartnerMap {
+    id: string; // map id
+    partnerId: string;
+    partnerName: string;
+    partnerPhone: string; 
+    partnerEmail: string;
+}
+
+export class CheckPartner {
+    PageId: string;
+    PSId: string;
+}
+
+export class MapPartner {
+    PartnerId: string;
+    PageId: string;
+    PSId: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class SocialsChannelService {
     apiUrl = 'api/FacebookPages';
+    apiUrl2 = 'api/PartnerMapPSIDFacebookPage';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
     
     getPageBasic(val: any): Observable<SocialsChannelPaging<SocialsChannelBasic>> {
@@ -41,6 +61,18 @@ export class SocialsChannelService {
     }
 
     create(data: SocialsChannelDisplay) {
-        return this.http.post(this.baseApi + this.apiUrl + '/Create', data);
+        return this.http.post(this.baseApi + this.apiUrl, data);
+    }
+
+    checkPartner(val: any): Observable<any>{
+        return this.http.post(this.baseApi + this.apiUrl2 + '/CheckPartner', val);
+    }
+
+    mapPartner(val: any): Observable<any>{
+        return this.http.post(this.baseApi + this.apiUrl2, val);
+    }
+
+    unlinkPartner(val: any): Observable<any>{
+        return this.http.post(this.baseApi + this.apiUrl2 + '/Unlink', val);
     }
 }

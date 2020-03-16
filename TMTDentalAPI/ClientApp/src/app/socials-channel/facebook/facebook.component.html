@@ -105,7 +105,12 @@
                     </div>
                 </div>
             </td>
-            <td *ngIf="selectedCustomer">
+            <td *ngIf="selectedCustomer && loading">
+                <div class="card">
+                    <h2 class="mid" style="margin-top: 20%;">Loading..</h2>
+                </div>
+            </td>
+            <td *ngIf="selectedCustomer && !loading">
                 <div class="card message">
                     <div class="message_box" id="message_box">
                         <div *ngFor="let DataGroupMessagesCustomer of DataMessagesCustomer" class="message_group">
@@ -138,63 +143,68 @@
                     </div>
                 </div>
             </td>
-            <td *ngIf="selectedCustomer">
+            <td *ngIf="selectedCustomer && !loading">
                 <div class="card detail_Customer">
                     <img class="mid avatar" src="{{selectedCustomer.picture}}" alt="">
                     <table class="mid">
                         <tr>
                             <td>
-                                <b *ngIf="!selectCustomer.editing_name">{{selectedCustomer.name}}</b>
+                                <b *ngIf="linkedPartner">{{selectedPartner.partnerName}}</b>
+                                <b *ngIf="!selectCustomer.editing_name && !linkedPartner">{{selectedCustomer.name}}</b>
                                 <input *ngIf="selectCustomer.editing_name" type="text" name="" id="" [(ngModel)]="selectedCustomer.name">
                             </td>
-                            <td>
+                            <!-- <td>
                                 <button *ngIf="!selectCustomer.editing_name" type="button" class="btn btn-light myBtnEdit"
                                     (click)="selectCustomer.editing_name = true"><i class="fas fa-pencil-alt"></i></button>
                                 <button *ngIf="selectCustomer.editing_name" type="button" class="btn btn-light myBtnEdit"
                                     (click)="selectCustomer.editing_name = false"><i class="fas fa-times"></i></button>
-                            </td>
+                            </td> -->
                         </tr>
                     </table>
                     <table class="mid">
                         <tr>
                             <td>
-                                <span *ngIf="!selectCustomer.editing_phone">{{selectedCustomer.phone ? selectedCustomer.phone : 'Chưa có số điện thoại'}}</span>
+                                <span *ngIf="linkedPartner">{{selectedPartner.partnerPhone}}</span>
+                                <span *ngIf="!selectCustomer.editing_phone && !linkedPartner">{{selectedCustomer.phone ? selectedCustomer.phone : 'Chưa có số điện thoại'}}</span>
                                 <input *ngIf="selectCustomer.editing_phone" type="number" name="" id="" placeholder="Chưa có số điện thoại"
                                     [(ngModel)]="selectedCustomer.phone">
                             </td>
-                            <td>
+                            <!-- <td>
                                 <button *ngIf="!selectCustomer.editing_phone" type="button" class="btn btn-light myBtnEdit"
                                     (click)="selectCustomer.editing_phone = true"><i class="fas fa-pencil-alt"></i></button>
                                 <button *ngIf="selectCustomer.editing_phone" type="button" class="btn btn-light myBtnEdit"
                                     (click)="selectCustomer.editing_phone = false"><i class="fas fa-times"></i></button>
-                            </td>
+                            </td> -->
                         </tr>
                     </table>
                     <div class="row mid" style="width: 100%;">
                         <kendo-combobox
+                            *ngIf="!linkedPartner"
+                            name="selectedPartner"
                             [data]="listPartners"
-                            [textField]="'name'"
-                            [valueField]="'phone'"
+                            [textField]="'partnerName'"
+                            [valueField]="'partnerId'"
                             [placeholder]="'Tên hoặc sđt'"
-                            [(ngModel)]="selectPartner"
+                            [(ngModel)]="selectedPartner"
                             style="padding: 0; width: calc(100% - 40px - 5px); margin-right: 5px;"
                         >
                             <ng-template kendoComboBoxItemTemplate let-dataItem>
                                 <table>
                                     <tr>
-                                        <td><b>{{ dataItem.name }}</b></td>
+                                        <td><b>{{ dataItem.partnerName }}</b></td>
                                     </tr>
                                     <tr>
-                                        <td>{{ dataItem.phone }}</td>
+                                        <td>{{ dataItem.partnerPhone }}</td>
                                     </tr>
                                 </table>
                             </ng-template>
                         </kendo-combobox>
-                        <button type="button" class="btn btn-light border" accesskey="c" (click)="showModalAddCreatePartner(null)">
+                        <button *ngIf="!linkedPartner" type="button" class="btn btn-light border" accesskey="c" (click)="showModalCreatePartner()">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div> 
-                    <button type="button" class="btn btn-light border" accesskey="c">Liên kết</button>
+                    <button *ngIf="!linkedPartner" type="button" class="btn btn-light border" accesskey="c" (click)="onMapPartner()">Liên kết</button>
+                    <button *ngIf="linkedPartner" type="button" class="btn btn-light border" accesskey="c" (click)="onUnlinkPartner()">Hủy liên kết</button>
                 </div>
             </td>
         </tr>

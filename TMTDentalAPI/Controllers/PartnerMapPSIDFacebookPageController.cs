@@ -44,6 +44,7 @@ namespace TMTDentalAPI.Controllers
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
                 id = mapfbpage.Id,
+                PartnerId = partner.Id,
                 PartnerName = partner.Name,
                 PartnerEmail = partner.Email,
                 PartnerPhone = partner.Phone
@@ -64,7 +65,8 @@ namespace TMTDentalAPI.Controllers
             var partner = _partnerService.GetById(result.PartnerId);
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
-                id = result.Id,              
+                id = result.Id,      
+                PartnerId = partner.Id,
                 PartnerName = partner.Name,
                 PartnerEmail = partner.Email,
                 PartnerPhone = partner.Phone
@@ -115,10 +117,10 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CheckPartner(string PageId , string PSId)
+        public async Task<IActionResult> CheckPartner(CheckPartner val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            var result = await _partnerMapPSIDFacebookPageService.CheckPartner(PageId, PSId);
+            var result = await _partnerMapPSIDFacebookPageService.CheckPartner(val);
             _unitOfWork.Commit();
                     
             return Ok(result);

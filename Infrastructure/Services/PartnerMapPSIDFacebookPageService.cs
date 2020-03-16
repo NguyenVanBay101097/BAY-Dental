@@ -25,19 +25,33 @@ namespace Infrastructure.Services
             _partnerService = partnerService;
         }
 
-        public async Task<PartnerMapPSIDFacebookPage> CheckPartnerMergeFBPage(Guid PartnerId, string PageId , string PSId)
+        public async Task<PartnerMapPSIDFacebookPage> CheckPartnerMergeFBPage(Guid PartnerId, string PageId, string PSId)
         {
             var query = await SearchQuery(x => x.PartnerId == PartnerId && x.PageId == PageId && x.PSId == PSId).FirstOrDefaultAsync();
-          
+
             return query;
         }
 
-        public async Task<PartnerMapPSIDFacebookPage> CreatePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val) {
+        public async Task<PartnerMapPSIDFacebookPage> CheckCreate(Guid PartnerId, string PageId, string PSId)
+        {
+            var query = await SearchQuery(x => x.PartnerId == PartnerId && x.PageId == PageId).FirstOrDefaultAsync();
+            if(query != null) {
+                if (query.PSId != PSId)
+                {
+                    throw new Exception(" khách hàng này đã được liên kết !");
+                }
+            }
+           
+
+            return query;
+        }
+        public async Task<PartnerMapPSIDFacebookPage> CreatePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val)
+        {
 
 
 
             // Create Merge Partner for FacobookPage
-            var check = await CheckPartnerMergeFBPage(val.PartnerId, val.PageId, val.PSId);
+            var check = await CheckCreate(val.PartnerId, val.PageId, val.PSId);
             if (check != null)
                 throw new Exception(" khách hàng đã được liên kết !");
 
@@ -55,10 +69,10 @@ namespace Infrastructure.Services
 
         public async Task<PartnerMapPSIDFacebookPage> MergePartnerMapFBPage(PartnerMapPSIDFacebookPageSave val)
         {
-            var check = await CheckPartnerMergeFBPage(val.PartnerId,val.PageId , val.PSId);
-            if (check != null) 
+            var check = await CheckPartnerMergeFBPage(val.PartnerId, val.PageId, val.PSId);
+            if (check != null)
                 throw new Exception(" khách hàng đã được liên kết !");
-            
+
             var map = new PartnerMapPSIDFacebookPage
             {
                 PartnerId = val.PartnerId,
@@ -72,19 +86,25 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task Unlink(IEnumerable<Guid> ids) { 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
 
             var result = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            await DeleteAsync(result);      
+            await DeleteAsync(result);
         }
 
-        public async Task<PartnerMapPSIDFacebookPageBasic> CheckPartner(string PageId , string PSId) {
-            var partner = await SearchQuery(x => x.PageId == PageId && x.PSId == PSId).FirstOrDefaultAsync();
-            var result = await _partnerService.SearchQuery(x => x.Id == partner.PartnerId && x.Active == true).FirstOrDefaultAsync();          
+        public async Task<PartnerMapPSIDFacebookPageBasic> CheckPartner(CheckPartner val)
+        {
+            var partner = await SearchQuery(x => x.PageId == val.PageId && x.PSId == val.PSId).FirstOrDefaultAsync();
+            if (partner == null) {
+                return new PartnerMapPSIDFacebookPageBasic();
+            }
+            var result = await _partnerService.SearchQuery(x => x.Id == partner.PartnerId && x.Active == true).FirstOrDefaultAsync();
             var query = _mapper.Map<PartnerInfoViewModel>(result);
             var basic = new PartnerMapPSIDFacebookPageBasic
             {
                 id = partner.Id,
+                PartnerId = result.Id,
                 PartnerName = result.Name,
                 PartnerEmail = result.Email,
                 PartnerPhone = result.Phone
@@ -93,7 +113,14 @@ namespace Infrastructure.Services
         }
 
     }
-   
 
-  
+    public class CheckPartner
+    {
+        public string PageId { get; set; }
+        public string PSId { get; set; }
+
+    }
+
+
+
 }
