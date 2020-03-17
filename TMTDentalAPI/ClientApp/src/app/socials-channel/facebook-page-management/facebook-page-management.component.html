@@ -1,0 +1,38 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="page-selected-box" *ngIf="switchPage">
+            <div class="mess-head-logo">
+                <img *ngIf="switchPage.currentPage"
+                    src="https://graph.facebook.com/{{switchPage.currentPage.pageId}}/picture?height=40&amp;width=40">
+            </div>
+            <div class="mess-page">
+                <div class="page-selected-item">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span *ngIf="switchPage.currentPage">{{switchPage.currentPage.pageName}}</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <button *ngFor="let page of switchPage.pages" class="dropdown-item" (click)="switchPage(page)"
+                            type="button">{{page.pageName}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" [routerLink]="['campaigns']">Chiến dịch</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Hộp thoại</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Cấu hình</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

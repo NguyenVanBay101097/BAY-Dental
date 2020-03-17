@@ -15,7 +15,7 @@
 <div class="o_content">
     <div class="o_view_controller">
         <div class="o_kanban_view o_kanban_ungrouped">
-            <div class="oe_kanban_global_click o_kanban_record" *ngFor="let page of pages">
+            <div class="oe_kanban_global_click o_kanban_record" *ngFor="let page of pages" (click)="selectPage(page)">
                 <div class="o_kanban_image">
                     <img src="//graph.facebook.com/{{page.pageId}}/picture?height=100&amp;width=100"
                         [alt]="page.pageName">

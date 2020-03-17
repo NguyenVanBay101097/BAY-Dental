@@ -131,5 +131,10 @@ namespace Infrastructure.Services
             }
                 Console.WriteLine(s);
         }
+
+        public async Task UpdateAsync(ApplicationUser user)
+        {
+            await _userManager.UpdateAsync(user);
+        }
     }
 }

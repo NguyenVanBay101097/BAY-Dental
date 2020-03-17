@@ -6,6 +6,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -16,11 +17,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IFacebookPageService _facebookPageService;
+        private readonly IUserService _userService;
         private readonly IPartnerService _partnerService;
-        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService) {
+        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService,
+            IUserService userService) {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
             _partnerService = partnerService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -56,11 +60,31 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> OnchangePartnerPhone(PartnerChangePhone val)
-        //{
-        //    var result = await _partnerService.OnChangePartner(val);
-        //    return Ok(result);
-        //}
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> SelectPage(Guid id)
+        {
+            var user = await _userService.GetCurrentUser();
+            user.FacebookPageId = id;
+            await _userService.UpdateAsync(user);
+
+            return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSwitchPage()
+        {
+            var user = await _userService.GetCurrentUser();
+            var model = new UserChangeCurrentFacebookPage();
+            if (user.FacebookPageId.HasValue)
+            {
+                var currentPage = await _facebookPageService.GetByIdAsync(user.FacebookPageId);
+                model.CurrentPage = _mapper.Map<FacebookPageBasic>(currentPage);
+            }
+
+            var pages = await _facebookPageService.SearchQuery().ToListAsync();
+            model.Pages = _mapper.Map<IEnumerable<FacebookPageBasic>>(pages);
+
+            return Ok(model);
+        }
     }
 }

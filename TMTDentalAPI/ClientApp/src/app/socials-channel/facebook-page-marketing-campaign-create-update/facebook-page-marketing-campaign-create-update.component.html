@@ -1,0 +1,70 @@
+<div class="o_form_view o_form_editable market-campaign-form" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+                <button type="button" class="btn btn-primary btn-sm" (click)="onStart()">
+                    Bắt đầu
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="onStop()">
+                    Dừng lại
+                </button>
+            </div>
+            <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                <button class="btn o_arrow_button disabled" type="button">
+                    Đã dừng
+                </button>
+                <button class="btn o_arrow_button disabled" type="button">
+                    Đang chạy
+                </button>
+                <button class="btn o_arrow_button disabled" type="button">
+                    Mới
+                </button>
+            </div>
+        </div>
+        <div class="o_form_sheet">
+            <div class="row">
+                <div class="col-6">
+                    <div class="oe_title">
+                        <div class="oe_title">
+                            <label class="o_form_label oe_edit_only">Tên chiến dịch</label>
+                            <h1>
+                                <input class="form-control" formControlName="name" required>
+                            </h1>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-2">
+                            <button accesskey="A" class="btn btn-secondary btn-sm" type="button"
+                                (click)="addActivity()">Thêm hoạt động</button>
+                        </div>
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Tên hoạt động</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="activities">
+                                    <ng-container *ngFor="let activity of activities.controls;let i = index">
+                                        <tr [formGroup]="activity" (click)="selectActivity(activity)">
+                                            <td>
+                                                {{activity.get('name').value}}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <app-facebook-page-marketing-campaign-activity-detail>
+                    </app-facebook-page-marketing-campaign-activity-detail>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

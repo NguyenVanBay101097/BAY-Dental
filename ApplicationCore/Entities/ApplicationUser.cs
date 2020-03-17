@@ -33,5 +33,8 @@ namespace ApplicationCore.Entities
         public ICollection<ResCompanyUsersRel> ResCompanyUsersRels { get; set; } = new List<ResCompanyUsersRel>();
 
         public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
+
+        public Guid? FacebookPageId { get; set; }
+        public FacebookPage FacebookPage { get; set; }
     }
 }

@@ -9,6 +9,11 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
         builder.Property(x => x.Name)
                 .IsRequired();
 
+        builder.HasOne(x => x.FacebookPage)
+         .WithMany()
+         .HasForeignKey(x => x.FacebookPageId)
+         .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasOne(x => x.Partner)
             .WithMany()
             .HasForeignKey(x => x.PartnerId)

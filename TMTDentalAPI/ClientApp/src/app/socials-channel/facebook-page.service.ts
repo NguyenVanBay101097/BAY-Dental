@@ -9,4 +9,12 @@ export class FacebookPageService {
     getPaged(val: any) {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
+
+    selectPage(id: string) {
+        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/SelectPage', {});
+    }
+
+    getSwitchPage() {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSwitchPage');
+    }
 }
