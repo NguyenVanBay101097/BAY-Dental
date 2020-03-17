@@ -1,0 +1,24 @@
+﻿using ApplicationCore.Entities;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace Umbraco.Web.Mapping
+{
+   public class FacebookUserProfiles : Profile
+    {
+        public FacebookUserProfiles()
+        {
+            CreateMap<FacebookUserProfile, FacebookUserProfileBasic>();
+
+            CreateMap<FacebookUserProfile, FacebookUserProfileSave>();
+
+            CreateMap<FacebookUserProfileSave, FacebookUserProfile>()
+                 .ForMember(x => x.Id, x => x.Ignore())
+                 .ForMember(x => x.FbPage, x => x.Ignore())
+                 .ForMember(x => x.Partner, x => x.Ignore());
+        }
+    }
+}
