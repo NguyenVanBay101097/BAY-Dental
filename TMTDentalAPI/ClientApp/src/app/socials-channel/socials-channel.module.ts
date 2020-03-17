@@ -16,9 +16,11 @@ import { FacebookPageMarketingCampaignCreateUpdateComponent } from './facebook-p
 import { FacebookPageMarketingCampaignListComponent } from './facebook-page-marketing-campaign-list/facebook-page-marketing-campaign-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook-page-marketing-campaign-activity-detail/facebook-page-marketing-campaign-activity-detail.component';
+import { FacebookPageMarketingActivityDialogComponent } from './facebook-page-marketing-activity-dialog/facebook-page-marketing-activity-dialog.component';
+import { AutosizeModule } from 'ngx-autosize';
 
 @NgModule({
-  declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent, FacebookPageManagementComponent, FacebookPageMarketingCampaignsComponent, FacebookPageMarketingCampaignCreateUpdateComponent, FacebookPageMarketingCampaignListComponent, FacebookPageMarketingCampaignActivityDetailComponent],
+  declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent, FacebookPageManagementComponent, FacebookPageMarketingCampaignsComponent, FacebookPageMarketingCampaignCreateUpdateComponent, FacebookPageMarketingCampaignListComponent, FacebookPageMarketingCampaignActivityDetailComponent, FacebookPageMarketingActivityDialogComponent],
   imports: [
     CommonModule,
     SocialsChannelRoutingModule,
@@ -27,13 +29,15 @@ import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook
     DropDownsModule,
     FlexLayoutModule,
     MyCustomKendoModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AutosizeModule
   ],
   exports: [
   ],
   entryComponents: [
     FacebookDialogComponent,
-    PartnerCreateUpdateComponent
+    PartnerCreateUpdateComponent,
+    FacebookPageMarketingActivityDialogComponent
   ]
 })
 export class SocialsChannelModule { }

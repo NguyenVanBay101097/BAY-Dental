@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MarketingCampaignService, MarketingCampaignPaged } from 'src/app/marketing-campaigns/marketing-campaign.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-facebook-page-marketing-campaign-list',
@@ -14,7 +15,8 @@ export class FacebookPageMarketingCampaignListComponent implements OnInit {
   skip = 0;
   loading = false;
 
-  constructor(private marketingCampaignService: MarketingCampaignService) { }
+  constructor(private marketingCampaignService: MarketingCampaignService,
+    private router: Router) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -51,7 +53,11 @@ export class FacebookPageMarketingCampaignListComponent implements OnInit {
       case 'stopped':
         return 'Đã dừng';
       default:
-        return 'Nháp';
+        return 'Mới';
     }
+  }
+
+  editItem(item: any) {
+    this.router.navigate(['/facebook-management/campaigns/form'], { queryParams: { id: item.id } });
   }
 }

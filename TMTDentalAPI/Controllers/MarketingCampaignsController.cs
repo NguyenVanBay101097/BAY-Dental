@@ -17,13 +17,15 @@ namespace TMTDentalAPI.Controllers
     public class MarketingCampaignsController : BaseApiController
     {
         private readonly IMarketingCampaignService _marketingCampaignService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
         public MarketingCampaignsController(IMarketingCampaignService marketingCampaignService,
-            IMapper mapper)
+            IMapper mapper, IUserService userService)
         {
             _marketingCampaignService = marketingCampaignService;
             _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -66,6 +68,16 @@ namespace TMTDentalAPI.Controllers
             await _marketingCampaignService.DeleteAsync(campaign);
 
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGet()
+        {
+            var res = new MarketingCampaignDisplay();
+            var user = await _userService.GetCurrentUser();
+            res.FacebookPageId = user.FacebookPageId;
+
+            return Ok(res);
         }
 
         [HttpPost("[action]")]

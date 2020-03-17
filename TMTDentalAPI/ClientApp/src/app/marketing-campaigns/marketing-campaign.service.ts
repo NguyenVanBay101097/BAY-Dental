@@ -43,15 +43,27 @@ export class MarketingCampaignService {
         return this.http.get<MarketingCampaign>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    create(val: MarketingCampaign): Observable<MarketingCampaign> {
-        return this.http.post<MarketingCampaign>(this.baseApi + this.apiUrl, val);
+    create(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: MarketingCampaign) {
+    update(id: string, val: any) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
+    defaultGet() {
+        return this.http.get(this.baseApi + this.apiUrl + "/DefaultGet");
+    }
+
+    actionStartCampaign(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionStartCampaign", ids);
+    }
+
+    actionStopCampaign(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionStopCampaign", ids);
     }
 }

@@ -61,6 +61,7 @@
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "ng-keyboard-shortcuts": "^8.2.4",
+    "ngx-autosize": "^1.7.5",
     "ngx-facebook": "^2.4.0",
     "ngx-moment": "^3.5.0",
     "popper.js": "^1.15.0",
