@@ -11,12 +11,14 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   activity: any;
+
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
-      content: null,
+      text: '',
+      template: 'text',
       intervalNumber: 1,
       intervalType: 'days'
     });
@@ -33,5 +35,15 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
 
     var value = this.formGroup.value;
     this.activeModal.close(value);
+  }
+
+  getLimitText() {
+    var limit = 640;
+    var text = this.formGroup.get('text').value;
+    return limit - text.length;
+  }
+
+  get templateValue() {
+    return this.formGroup.get('template').value;
   }
 }

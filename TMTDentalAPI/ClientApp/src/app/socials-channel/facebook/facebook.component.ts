@@ -58,7 +58,7 @@ export class FacebookComponent implements OnInit {
     private modalService: NgbModal,
     private partnerService: PartnerService, ) {
     fb.init({
-      appId: '327268081110321',
+      appId: '652339415596520',
       status: true,
       cookie: true,
       xfbml: true,

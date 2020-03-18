@@ -10,15 +10,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         /// <summary>
-        /// Nội dung
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
         /// "hours", "days", "weeks", "months"
         /// </summary>
         public string IntervalType { get; set; }
 
         public int? IntervalNumber { get; set; }
+
+        public string Template { get; set; }
+
+        public string Text { get; set; }
+
+        public ICollection<MarketingMessageButtonSave> Buttons { get; set; } = new List<MarketingMessageButtonSave>();
     }
 }

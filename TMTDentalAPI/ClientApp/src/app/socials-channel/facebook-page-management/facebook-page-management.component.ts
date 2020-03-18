@@ -20,4 +20,10 @@ export class FacebookPageManagementComponent implements OnInit {
       this.switchPage = result;
     });
   }
+
+  switchPageClick(page: any) {
+    this.facebookPageService.selectPage(page.id).subscribe(() => {
+      window.location.reload();
+    });
+  }
 }

@@ -53,5 +53,8 @@ namespace ApplicationCore.Entities
         public string JobId { get; set; }
 
         public ICollection<MarketingTrace> Traces { get; set; } = new List<MarketingTrace>();
+
+        public Guid? MessageId { get; set; }
+        public MarketingMessage Message { get; set; }
     }
 }

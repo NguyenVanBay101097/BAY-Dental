@@ -56,9 +56,10 @@ namespace Infrastructure.Services
                     if (campaign == null || !campaign.FacebookPageId.HasValue)
                         return;
 
-                    var content = activity.Content;
-                    if (string.IsNullOrEmpty(content))
+                    if (!activity.MessageId.HasValue)
                         return;
+
+                    var message_obj = GetMessageForSendApi(conn, activity.MessageId.Value);
 
                     if (activity.ActivityType == "message")
                     {
@@ -81,7 +82,7 @@ namespace Infrastructure.Services
                                 ")", new { pageId = page.Id }).ToList();
 
 
-                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, x.PSID, content, activity.Id, conn)).ToList();
+                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, x.PSID, message_obj, activity.Id, conn)).ToList();
 
                         var limit = 200;
                         var offset = 0;
@@ -101,7 +102,69 @@ namespace Infrastructure.Services
             }
         }
 
-        private async Task<SendFacebookMessageReponse> SendFacebookMessage(string access_token, string psid, string message, Guid? activityId = null,
+        public object GetMessageForSendApi(SqlConnection conn, Guid messageId)
+        {
+            var message = conn.Query<MarketingMessage>("" +
+                      "SELECT * " +
+                      "FROM MarketingMessages " +
+                      "where Id = @id" +
+                      "", new { id = messageId }).FirstOrDefault();
+
+            if (message.Type == "facebook")
+            {
+                if (message.Template == "button")
+                {
+                    var buttons = conn.Query<MarketingMessageButton>("" +
+                      "SELECT * " +
+                      "FROM MarketingMessageButtons " +
+                      "where MessageId = @id" +
+                      "", new { id = messageId }).ToList();
+
+                    var buttonList = new List<object>();
+                    foreach(var button in buttons)
+                    {
+                        if (button.Type == "web_url")
+                        {
+                            buttonList.Add(new
+                            {
+                                type = button.Type,
+                                url = button.Url,
+                                title = button.Title
+                            });
+                        }
+                    }
+
+                    var res = new
+                    {
+                        attachment = new
+                        {
+                            type = "template",
+                            payload = new
+                            {
+                                template_type = "button",
+                                text = message.Text,
+                                buttons = buttonList
+                            }
+                        }
+                    };
+
+                    return res;
+                }
+                else if (message.Template == "text")
+                {
+                    var res = new
+                    {
+                        text = message.Text
+                    };
+
+                    return res;
+                }
+            }
+
+            throw new Exception("Not support");
+        }
+
+        private async Task<SendFacebookMessageReponse> SendFacebookMessage(string access_token, string psid, object message, Guid? activityId = null,
             SqlConnection conn = null)
         {
             var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
@@ -110,7 +173,7 @@ namespace Infrastructure.Services
             var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
             request.AddParameter("message_type", "RESPONSE");
             request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
-            request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
+            request.AddParameter("message", JsonConvert.SerializeObject(message));
 
             var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
             if (response.GetExceptions().Any())
@@ -133,12 +196,6 @@ namespace Infrastructure.Services
             public string message_id { get; set; }
             public string recipient_id { get; set; }
             public string error { get; set; }
-        }
-
-        private IEnumerable<FacebookPage> GetFbPagesSendMessage(SqlConnection conn, MarketingCampaignActivity activity)
-        {
-            var pages = conn.Query<FacebookPage>("SELECT * FROM FacebookPages").ToList();
-            return pages;
         }
 
         public class PartnerSendMessageResult
@@ -167,6 +224,41 @@ namespace Infrastructure.Services
             public bool? AutoTakeCoupon { get; set; }
 
             public Guid? CouponProgramId { get; set; }
+        }
+
+        public class MessageButtonTemplateJson
+        {
+            public MessageButtonTemplateAttachment attachment { get; set; }
+        }
+
+        public class MessageButtonTemplateAttachment
+        {
+            public MessageButtonTemplateAttachment()
+            {
+                type = "template";
+            }
+
+            public string type { get; set; }
+            public MessageButtonTemplateAttachmentPayload payload { get; set; }
+        }
+
+        public class MessageButtonTemplateAttachmentPayload
+        {
+            public MessageButtonTemplateAttachmentPayload()
+            {
+                template_type = "button";
+            }
+
+            public string template_type { get; set; }
+            public string text { get; set; }
+            public IEnumerable<MessageButtonTemplateAttachmentPayloadButton> buttons { get; set; }
+        }
+
+        public class MessageButtonTemplateAttachmentPayloadButton
+        {
+            public string type { get; set; }
+            public string url { get; set; }
+            public string title { get; set; }
         }
     }
 }

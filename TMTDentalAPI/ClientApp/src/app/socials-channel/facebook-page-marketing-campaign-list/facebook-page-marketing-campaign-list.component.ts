@@ -3,6 +3,8 @@ import { MarketingCampaignService, MarketingCampaignPaged } from 'src/app/market
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-campaign-list',
@@ -16,7 +18,7 @@ export class FacebookPageMarketingCampaignListComponent implements OnInit {
   loading = false;
 
   constructor(private marketingCampaignService: MarketingCampaignService,
-    private router: Router) { }
+    private router: Router, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -59,5 +61,16 @@ export class FacebookPageMarketingCampaignListComponent implements OnInit {
 
   editItem(item: any) {
     this.router.navigate(['/facebook-management/campaigns/form'], { queryParams: { id: item.id } });
+  }
+
+  deleteItem(item: any) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa chiến dịch';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.marketingCampaignService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    });
   }
 }

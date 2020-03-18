@@ -86,5 +86,12 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(model);
         }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> LoadUserProfiles(Guid id)
+        {
+            await _facebookPageService.LoadUserProfileFromConversations(id);
+            return NoContent();
+        }
     }
 }

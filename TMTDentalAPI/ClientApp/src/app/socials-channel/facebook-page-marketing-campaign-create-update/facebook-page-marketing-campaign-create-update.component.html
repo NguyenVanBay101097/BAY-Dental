@@ -3,16 +3,16 @@
         <div class="o_form_statusbar">
             <div class="o_statusbar_buttons">
                 <button type="button" class="btn btn-primary btn-sm"
-                    *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1" (click)="startCampaign()">
+                    *ngIf="id && ['draft', 'stopped'].indexOf(campaign.state) !== -1" (click)="startCampaign()">
                     Chạy chiến dịch
                 </button>
                 <button type="button" class="btn btn-primary btn-sm" *ngIf="campaign.state == 'running'"
                     (click)="stopCampaign()">
                     Dừng chiến dịch
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm" (click)="onSave()"
+                <button type="button" class="btn btn-primary btn-sm" (click)="onSave()"
                     *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1">
-                    Lưu
+                    Lưu chiến dịch
                 </button>
                 <button type="button" class="btn btn-sm btn-light" *ngIf="id" (click)="createNew()">
                     Thêm mới
@@ -51,7 +51,8 @@
 
             <div class="o_group">
                 <div class="mb-2">
-                    <button accesskey="A" class="btn btn-secondary btn-sm" type="button" (click)="addActivity()">Thêm
+                    <button accesskey="a" *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
+                        class="btn btn-secondary btn-sm" type="button" (click)="addActivity()">Thêm
                         hoạt động</button>
                 </div>
                 <div>
@@ -60,6 +61,7 @@
                             <tr>
                                 <th>Tên hoạt động</th>
                                 <th>Kích hoạt</th>
+                                <th>Đã gửi</th>
                                 <th>#</th>
                             </tr>
                         </thead>
@@ -73,12 +75,17 @@
                                         {{getTrigger(activity)}}
                                     </td>
                                     <td>
+                                        {{activity.get('totalSent') ? activity.get('totalSent').value : 0}}
+                                    </td>
+                                    <td>
                                         <div>
                                             <button type="button" class="btn btn-sm btn-success mr-2"
+                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
                                                 (click)="editActivity(activity)">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-sm btn-danger"
+                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
                                                 (click)="deleteActivity(i)">
                                                 <i class="far fa-trash-alt"></i>
                                             </button>

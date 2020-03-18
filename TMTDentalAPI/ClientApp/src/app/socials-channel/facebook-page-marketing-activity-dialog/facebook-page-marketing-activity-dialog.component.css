@@ -1,0 +1,11 @@
+.activity-text {
+    resize: none;
+}
+
+.text-number {
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    background-color: white;
+    bottom: 5px;
+}

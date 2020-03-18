@@ -62,11 +62,7 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var campaign = await _marketingCampaignService.GetByIdAsync(id);
-            if (campaign == null)
-                return NotFound();
-            await _marketingCampaignService.DeleteAsync(campaign);
-
+            await _marketingCampaignService.Unlink(new List<Guid>() { id });
             return NoContent();
         }
 

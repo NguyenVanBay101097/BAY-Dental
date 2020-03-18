@@ -4,9 +4,6 @@ import { Observable } from 'rxjs';
 import { PagedResult2 } from '../employee-categories/emp-category';
 import { JournalReport, JournalReportDetailPaged } from './journal-report';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class AccountMoveLineReport {
   name: string;
   debit: number;
@@ -15,6 +12,10 @@ export class AccountMoveLineReport {
   // date: string;
   // partnerId: string;
 }
+
+@Injectable({
+  providedIn: 'root'
+})
 export class JournalReportService {
 
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

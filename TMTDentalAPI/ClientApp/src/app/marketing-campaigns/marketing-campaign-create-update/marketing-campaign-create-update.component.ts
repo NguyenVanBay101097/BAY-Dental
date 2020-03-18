@@ -20,10 +20,10 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
   campaignActivity: MarketingCampaignActivity;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private route: ActivatedRoute,
-    private router: Router, private marketingCampaignService: MarketingCampaignService, 
+    private router: Router, private marketingCampaignService: MarketingCampaignService,
     private notificationService: NotificationService) { }
 
-  ngOnInit() { 
+  ngOnInit() {
     this.defaultCampaign();
     this.routeActive();
   }
@@ -62,12 +62,12 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
     }
     modalRef.result.then((result) => {
       if (result) {
-          if (item) {
-            this.campaign.activities[index] = result;
-          } else {
-            this.campaign.activities.push(result);
-          }
-          modalRef.close();
+        if (item) {
+          this.campaign.activities[index] = result;
+        } else {
+          this.campaign.activities.push(result);
+        }
+        modalRef.close();
       }
     }, (reason) => {
     });
@@ -118,7 +118,7 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
           //this.router.navigate(['/marketing-campaigns']);
         });
       } else {
-        this.marketingCampaignService.create(this.campaign).subscribe(result => {
+        this.marketingCampaignService.create(this.campaign).subscribe((result: any) => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -129,7 +129,7 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
           this.router.navigate(['/marketing-campaigns/form'], { queryParams: { id: result.id } });
         });
       }
-     
+
     } else {
       this.notificationService.show({
         content: 'Tên không được trống',

@@ -63,7 +63,8 @@ namespace Infrastructure.Services
         public async Task UpdateCampaign(Guid id, MarketingCampaignSave val)
         {
             var campaign = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Activities).FirstOrDefaultAsync();
+                .Include(x => x.Activities).Include("Activities.Message")
+                .Include("Activities.Message.Buttons").FirstOrDefaultAsync();
             if (campaign == null)
                 throw new ArgumentNullException("campaign");
 
@@ -101,9 +102,15 @@ namespace Infrastructure.Services
             {
                 if (line.Id == Guid.Empty)
                 {
-                    var saleLine = _mapper.Map<MarketingCampaignActivity>(line);
-                    saleLine.Sequence = sequence++;
-                    campaign.Activities.Add(saleLine);
+                    var act = _mapper.Map<MarketingCampaignActivity>(line);
+                    act.Sequence = sequence++;
+
+                    var message = new MarketingMessage() { Template = line.Template };
+                    SaveMessage(message, line);
+
+                    act.Message = message;
+
+                    campaign.Activities.Add(act);
                 }
                 else
                 {
@@ -111,9 +118,27 @@ namespace Infrastructure.Services
                     if (activity != null)
                     {
                         _mapper.Map(line, activity);
+                        if (activity.Message != null)
+                        {
+                            var message = activity.Message;
+                            SaveMessage(message, line);
+                        }
                         activity.Sequence = sequence++;
                     }
                 }
+            }
+        }
+
+        public void SaveMessage(MarketingMessage message, MarketingCampaignActivitySave val)
+        {
+            if (message.Template == "text")
+                message.Text = val.Text;
+            else if (message.Template == "button")
+            {
+                message.Text = val.Text;
+                message.Buttons.Clear();
+                foreach (var button in val.Buttons)
+                    message.Buttons.Add(_mapper.Map<MarketingMessageButton>(button));
             }
         }
 
@@ -193,6 +218,19 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(self);
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var states = new string[] { "draft", "stopped" };
+            foreach (var campaign in self)
+            {
+                if (!states.Contains(campaign.State))
+                    throw new Exception("Bạn chỉ có thể xóa chiến dịch ở trạng thái nháp hoặc đã dừng");
+            }
+
+            await DeleteAsync(self);
         }
     }
 }

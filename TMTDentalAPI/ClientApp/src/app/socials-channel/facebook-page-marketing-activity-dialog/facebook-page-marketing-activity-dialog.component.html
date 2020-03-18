@@ -18,11 +18,34 @@
                         <tbody>
                             <tr>
                                 <td class="o_td_label">
+                                    <label class="o_form_label">Mẫu tin</label>
+                                </td>
+                                <td style="width:100%">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="template"
+                                            id="template_text" value="text">
+                                        <label class="form-check-label" for="template_text">Đơn giản</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="template"
+                                            id="template_button" value="button">
+                                        <label class="form-check-label" for="template_button">Mẫu nút</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td style="width:100%">
-                                    <textarea autosize class="form-control" formControlName="content">
-                                    </textarea>
+                                    <div class="position-relative">
+                                        <textarea autosize class="form-control activity-text" formControlName="text">
+                                        </textarea>
+                                        <span class="text-number text-warning">{{getLimitText() | number}}</span>
+                                    </div>
+                                    <div *ngIf="templateValue == 'button'">
+                                        <button type="button" class="btn btn-light">Thêm nút</button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

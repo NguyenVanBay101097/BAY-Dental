@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<FacebookPageBasic>> GetPagedResultAsync(FacebookPaged val);
         Task<string> GetFacebookAppAccessToken(string accesstoken);
         Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val);
+        Task LoadUserProfileFromConversations(Guid id);
     }
 }
