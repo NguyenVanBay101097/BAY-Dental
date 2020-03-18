@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using AutoMapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
+using Facebook.ApiClient.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RestSharp.Deserializers;
@@ -19,15 +20,14 @@ namespace Infrastructure.Services
     public class FacebookUserProfileService : BaseService<FacebookUserProfile>, IFacebookUserProfileService
     {
         private readonly IMapper _mapper;
-        private readonly IFacebookPageService _facebookPageService;
-        private readonly IPartnerService _partnerService;
+       
+        
         public FacebookUserProfileService(IAsyncRepository<FacebookUserProfile> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, IFacebookPageService facebookPageService , IPartnerService partnerService)
+            IMapper mapper )
         : base(repository, httpContextAccessor)
         {
-            _mapper = mapper;
-            _facebookPageService = facebookPageService;
-            _partnerService = partnerService;
+            _mapper = mapper;           
+            
         }
 
         public async Task<PagedResult2<FacebookUserProfileBasic>> GetPagedResultAsync(FacebookUserProfilePaged val)
@@ -50,30 +50,49 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="FBpageId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<FacebookSenderDataBasic>> GetListPSId(Guid FBpageId)
+        public async Task<IEnumerable<string>> GetListPSId(Guid FBpageId)
         {
-            var page = _facebookPageService.SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
+            var facebookpage = GetService<IFacebookPageService>();
+            var page = facebookpage.SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
             if (page == null)
                 throw new Exception($"trang {page.PageName} vui lòng kiểm tra lại !");
             var errorMaessage = "";
-            var PSid = new List<FacebookSenderDataBasic>();
+            var PSid = new List<string>();
             var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{page.PageId}/conversations?fields=senders";
-            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
-            getRequest.AddQueryParameter("access_token", page.PageAccesstoken);
-            var response = (await getRequest.ExecuteAsync<FacebookSender>());
-            if (response.GetExceptions().Any())
+            //Paged API request
+            var pagedRequestUrl = $"{page.PageId}/conversations?fields=senders";
+            var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
+            pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
+            pagedRequest.AddPageLimit(25);
+
+            var res = new List<FacebookSenders>();
+            var lstCus = new List<string>();
+            var pagedRequestResponse = await pagedRequest.ExecutePageAsync<FacebookSenders>();
+            if (pagedRequestResponse.GetExceptions().Any())
             {
-                errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
+                errorMaessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
                 throw new Exception(errorMaessage);
             }
             else
             {
-                var result = response.GetResult();
-                PSid = result.Data.Select(x => x.Senders.Data[0]).ToList();
+                if (pagedRequestResponse.IsDataAvailable())
+                {
+                    res.AddRange(pagedRequestResponse.GetResultData());
+                    //kiểm tra nếu có phân trang
+                    while (pagedRequestResponse.IsNextPageDataAvailable())
+                    {
+                        //lấy dữ liệu lần lượt các trang kế
+                        pagedRequestResponse = pagedRequestResponse.GetNextPageData();
+                        //add vào data
+                        res.AddRange(pagedRequestResponse.GetResultData());
+                    }
+                    PSid = res.Select(x => x.Senders.Data[0].Id).ToList();
+                   
+                }
+
                 return PSid;
             }
-
+                      
         }
 
 
@@ -84,7 +103,8 @@ namespace Infrastructure.Services
         /// <returns></returns>
         public async Task<List<FacebookCustomer>> CheckCustomerNew(Guid FBpageId)
         {
-            var page = _facebookPageService.SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
+            var facebookpage = GetService<IFacebookPageService>();
+            var page = facebookpage.SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
             if (page == null)
                 throw new Exception($"trang {page.PageName} vui lòng kiểm tra lại !");
             //var lstCusNew = ""; 
@@ -92,16 +112,16 @@ namespace Infrastructure.Services
             //var faceboonCus = new FacebookCustomer();
             var lstFBCus = new List<FacebookCustomer>();
             var errorMaessage = "";
-            var lstCus = new List<string>();
+            //var lstCus = new List<string>();
             var lstPsid = await GetListPSId(FBpageId);
-            foreach (var psid in lstPsid)
-            {
-                lstCus.Add(psid.Id);
-            }
+            //foreach (var psid in lstPsid)
+            //{
+            //    lstCus.Add(psid.Id);
+            //}
             var lstFBUser = SearchQuery().Select(x => x.PSID).ToList();
             if (lstFBUser.Any())
             {
-                var lstCusNew = lstCus.Except(lstFBUser);
+                var lstCusNew = lstPsid.Except(lstFBUser);
                 if (lstCusNew.Any())
                 {
                     foreach (var item in lstCusNew)
@@ -141,6 +161,8 @@ namespace Infrastructure.Services
 
         public async Task<List<FacebookUserProfile>> CreateFacebookUser(Guid FBpageId)
         {
+            var facebookpage = GetService<IFacebookPageService>();
+            var page = facebookpage.SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
             var lstFBUser = new List<FacebookUserProfile>();
             var lstCusNew = await CheckCustomerNew(FBpageId);
             if (lstCusNew.Any())
@@ -164,6 +186,10 @@ namespace Infrastructure.Services
 
 
                 }
+            }
+            else
+            {
+                throw new Exception($"không tìm thấy khách hàng mới từ Fanpage {page.PageName} !");
             }
             return lstFBUser;
 

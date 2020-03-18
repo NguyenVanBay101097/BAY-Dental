@@ -46,16 +46,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<FacebookUserProfileBasic>(fbuser));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(Guid FBPageid)
-        {
-            if (null == FBPageid || !ModelState.IsValid)
-                return BadRequest();
-
-            var fbpage = await _facebookUserProfileService.CreateFacebookUser(FBPageid);
-            var basic = _mapper.Map<List<FacebookUserProfileBasic>>(fbpage);
-            return Ok(basic);
-        }
+        
 
         [HttpPost("[action]")]
         public async Task<IActionResult> ConnectPartner(ConnectPartner val)

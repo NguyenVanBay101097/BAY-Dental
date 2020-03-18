@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface IFacebookUserProfileService : IBaseService<FacebookUserProfile>
     {
-        Task<IEnumerable<FacebookSenderDataBasic>> GetListPSId(Guid FBpageId);
+        Task<IEnumerable<string>> GetListPSId(Guid FBpageId);
         Task<PagedResult2<FacebookUserProfileBasic>> GetPagedResultAsync(FacebookUserProfilePaged val);
         Task<List<FacebookCustomer>> CheckCustomerNew(Guid FBpageId);
         Task<List<FacebookUserProfile>> CreateFacebookUser(Guid FBpageId);

@@ -6,21 +6,24 @@ using System.Text;
 namespace Umbraco.Web.Models.ContentEditing
 {
 
-    public class FacebookSender
+    public class Conversations
     {
         [DeserializeAs(Name = "data")]
-        public List<FacebookSenderData> Data { get; set; } = new List<FacebookSenderData>();
+        public List<FacebookSenders> Data { get; set; } = new List<FacebookSenders>();
+        [DeserializeAs(Name = "paging")]
+        public ConversationsPaged paging { get; set; }
     }
 
-    public class FacebookSenderData
+    public class FacebookSenders
     {
         [DeserializeAs(Name = "id")]
         public string Id { get; set; }
         [DeserializeAs(Name = "senders")]
-        public Senders Senders { get; set; }
+        public FacebookSenderData Senders { get; set; }
 
     }
-    public class Senders {
+    public class FacebookSenderData
+    {
         [DeserializeAs(Name = "data")]
         public List<FacebookSenderDataBasic> Data { get; set; } = new List<FacebookSenderDataBasic>();
     }
@@ -31,5 +34,11 @@ namespace Umbraco.Web.Models.ContentEditing
        
         
 
+    }
+
+    public class ConversationsPaged
+    {
+        [DeserializeAs(Name = "next")]
+        public string PageNext { get; set; }
     }
 }
