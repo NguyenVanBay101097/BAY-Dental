@@ -14,6 +14,9 @@ import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-up
 import { HttpParams } from '@angular/common/http';
 import { FormGroup } from '@angular/forms';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { FacebookPageService } from '../facebook-page.service';
+import { FacebookConnectService } from '../facebook-connect.service';
+import { FacebookConnectPageService } from '../facebook-connect-page.service';
 
 @Component({
   selector: 'app-facebook',
@@ -52,13 +55,17 @@ export class FacebookComponent implements OnInit {
   searchNamePhone: string;
   linkedPartner: boolean = false;
 
+  connect: any;
+
   constructor(private fb: FacebookService,
     private socialsChannelService: SocialsChannelService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
-    private partnerService: PartnerService, ) {
+    private partnerService: PartnerService,
+    private facebookConnectService: FacebookConnectService,
+    private facebookConnectPageService: FacebookConnectPageService) {
     fb.init({
-      appId: '327268081110321',
+      appId: '507339379926048',
       status: true,
       cookie: true,
       xfbml: true,
@@ -67,7 +74,14 @@ export class FacebookComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadData();
     this.onGetPartnersList();
+  }
+
+  loadData() {
+    this.facebookConnectService.get().subscribe((result: any) => {
+      this.connect = result;
+    });
   }
 
   login() {
@@ -78,11 +92,25 @@ export class FacebookComponent implements OnInit {
     };
     this.fb.login(loginOptions)
       .then((res: LoginResponse) => {
-        console.log('Logged in', res);
-        this.accessToken = res.authResponse.accessToken;
-        this.getDataUser();
+        // console.log('Logged in', res);
+        // this.accessToken = res.authResponse.accessToken;
+        // this.getDataUser();
+        var val = {
+          fbUserId: res.authResponse.userID,
+          fbUserAccessToken: res.authResponse.accessToken
+        };
+
+        this.facebookConnectService.saveFromUI(val).subscribe(() => {
+          this.loadData();
+        });
       })
       .catch(this.handleError);
+  }
+
+  addConnect(item: any) {
+    this.facebookConnectPageService.addConnect([item.id]).subscribe((result: any) => {
+      this.loadData();
+    });
   }
 
   logout() {

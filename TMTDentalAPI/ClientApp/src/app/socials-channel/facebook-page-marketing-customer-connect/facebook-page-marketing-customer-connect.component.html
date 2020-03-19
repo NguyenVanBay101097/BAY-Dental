@@ -1,0 +1,22 @@
+<header class="modal-header">
+    <h5 class="modal-title">Kết nối khách hàng<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="row">
+    <div class="col-md-6">
+        Dropdown
+    </div>
+    <div class="col-md-6">
+        <button type="button" class="btn btn-light border" accesskey="c"
+            (click)="showModalCreatePartner()">
+            <i class="fas fa-plus"></i>
+            Thêm khách hàng
+        </button>
+    </div>
+</div>
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

@@ -1,0 +1,16 @@
+<p>facebook-page-marketing-customer-list works!</p>
+<button (click)="showModalConnect()">Kết nối</button>
+<br>
+<br>
+<div *ngFor="let item of dataSendMessage; index as i">
+    <input *ngIf="item.type === 'text' || item.type === 'template'" placeholder="Nhập tin nhắn.." [(ngModel)]="item.text">
+    <input *ngIf="item.type === 'text' || item.type === 'template'" type="button" value="Thêm nút"
+        (click)="onCreate('template_button', i)">
+    <div *ngIf="item.type === 'image'">Chọn image</div>
+    <div *ngIf="item.type === 'video'">Chọn video</div>
+</div>
+
+
+<input type="button" value="Tin nhắn" (click)="onCreate('text', null)">
+<input type="button" value="Image" (click)="onCreate('image', null)">
+<input type="button" value="Video" (click)="onCreate('video', null)">

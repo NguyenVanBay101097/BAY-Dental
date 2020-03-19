@@ -16,9 +16,11 @@ import { FacebookPageMarketingCampaignCreateUpdateComponent } from './facebook-p
 import { FacebookPageMarketingCampaignListComponent } from './facebook-page-marketing-campaign-list/facebook-page-marketing-campaign-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook-page-marketing-campaign-activity-detail/facebook-page-marketing-campaign-activity-detail.component';
+import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
+import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 
 @NgModule({
-  declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent, FacebookPageManagementComponent, FacebookPageMarketingCampaignsComponent, FacebookPageMarketingCampaignCreateUpdateComponent, FacebookPageMarketingCampaignListComponent, FacebookPageMarketingCampaignActivityDetailComponent],
+  declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent, FacebookPageManagementComponent, FacebookPageMarketingCampaignsComponent, FacebookPageMarketingCampaignCreateUpdateComponent, FacebookPageMarketingCampaignListComponent, FacebookPageMarketingCampaignActivityDetailComponent, FacebookPageMarketingCustomerListComponent, FacebookPageMarketingCustomerConnectComponent],
   imports: [
     CommonModule,
     SocialsChannelRoutingModule,
@@ -33,7 +35,8 @@ import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook
   ],
   entryComponents: [
     FacebookDialogComponent,
-    PartnerCreateUpdateComponent
+    PartnerCreateUpdateComponent,
+    FacebookPageMarketingCustomerConnectComponent
   ]
 })
 export class SocialsChannelModule { }

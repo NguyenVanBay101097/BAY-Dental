@@ -6,6 +6,7 @@ import { FacebookPageManagementComponent } from './facebook-page-management/face
 import { FacebookPageMarketingCampaignsComponent } from './facebook-page-marketing-campaigns/facebook-page-marketing-campaigns.component';
 import { FacebookPageMarketingCampaignCreateUpdateComponent } from './facebook-page-marketing-campaign-create-update/facebook-page-marketing-campaign-create-update.component';
 import { FacebookPageMarketingCampaignListComponent } from './facebook-page-marketing-campaign-list/facebook-page-marketing-campaign-list.component';
+import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
 
 const routes: Routes = [
   { path: 'facebook-connect', component: FacebookComponent },
@@ -32,6 +33,10 @@ const routes: Routes = [
             component: FacebookPageMarketingCampaignCreateUpdateComponent
           },
         ]
+      },
+      {
+        path: 'customers',
+        component: FacebookPageMarketingCustomerListComponent,
       },
     ]
   },
