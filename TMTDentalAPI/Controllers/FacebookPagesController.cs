@@ -19,13 +19,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IFacebookPageService _facebookPageService;
         private readonly IUserService _userService;
         private readonly IPartnerService _partnerService;
-        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService,
-            IUserService userService) {
+        private readonly IFacebookUserProfileService _facebookUserProfileService;
+        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService, IFacebookUserProfileService facebookUserProfileService) {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
             _partnerService = partnerService;
-            _userService = userService;
-        
+            _facebookUserProfileService = facebookUserProfileService;
         }
 
         [HttpGet]
