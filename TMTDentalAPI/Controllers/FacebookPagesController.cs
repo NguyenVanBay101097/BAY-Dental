@@ -19,13 +19,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IFacebookPageService _facebookPageService;
         private readonly IUserService _userService;
         private readonly IPartnerService _partnerService;
-        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService,
-            IUserService userService) {
+        private readonly IFacebookUserProfileService _facebookUserProfileService;
+        public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService, IFacebookUserProfileService facebookUserProfileService) {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
             _partnerService = partnerService;
-            _userService = userService;
-        
+            _facebookUserProfileService = facebookUserProfileService;
         }
 
         [HttpGet]
@@ -61,11 +60,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> OnchangePartnerPhone(PartnerChangePhone val)
-        //{
-        //    var result = await _partnerService.OnChangePartner(val);
-        //    return Ok(result);
-        //}
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> CreateFacebookUser(Guid id)
+        {
+            if (null == id || !ModelState.IsValid)
+                return BadRequest();
+
+            var fbpage = await _facebookPageService.CreateFacebookUser(id);
+            var basic = _mapper.Map<List<FacebookUserProfileBasic>>(fbpage);
+            return Ok(basic);
+        }
+
+      
     }
 }

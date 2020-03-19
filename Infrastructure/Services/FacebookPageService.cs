@@ -212,6 +212,7 @@ namespace Infrastructure.Services
             }
         }
 
+
         /// <summary>
         /// lấy ra danh sách các PSID đã inbox với Fanpage
         /// </summary>
@@ -270,33 +271,28 @@ namespace Infrastructure.Services
         /// <returns></returns>
         public async Task<IEnumerable<FacebookCustomer>> CheckCustomerNew(Guid FBpageId)
         {
-            var facebookCus = GetService<IFacebookUserProfileService>();
+            var facebookuser = GetService<IFacebookUserProfileService>();
             var page = SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
             if (page == null)
                 throw new Exception($"trang {page.PageName} vui lòng kiểm tra lại !");
-            //var lstCusNew = ""; 
+
             var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
             var lstFBCus = new List<FacebookCustomer>().AsEnumerable();
-           //var errorMaessage = "";
-            var lstPsid = await GetListPSId(FBpageId);
 
-            var lstFBUser = facebookCus.SearchQuery().Select(x => x.PSID).ToList();
+            var lstPsid = await GetListPSId(FBpageId);
+            var lstFBUser = facebookuser.SearchQuery().Select(x => x.PSID).ToList();
             if (lstFBUser.Any())
             {
-                var lstCusNew = lstPsid.Except(lstFBUser).ToList();
+                var lstCusNew = lstPsid.Except(lstFBUser);
                 if (lstCusNew.Any())
                 {
-
-                    var tasks = lstCusNew.Select(id => LoadFacebookCus(id,page.PageAccesstoken));
-                    //chạy list<task> 
+                    var tasks = lstCusNew.Select(id => LoadFacebookCustomer(id, page.PageAccesstoken));
                     lstFBCus = await Task.WhenAll(tasks);
-
-                   
 
                 }
 
             }
-            if(lstFBCus == null)
+            if(lstFBCus.Count() == 0)
             {
                 throw new Exception($"không tìm thấy khách hàng mới từ Fanpage {page.PageName} !");
             }
@@ -305,11 +301,12 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<FacebookCustomer> LoadFacebookCus(string id , string accesstoken)
+
+        public async Task<FacebookCustomer> LoadFacebookCustomer(string id, string accesstoken)
         {
-            var errorMaessage = "";
+
             var apiClient = new ApiClient(accesstoken, FacebookApiVersions.V6_0);
-            var lstFBCus = new List<FacebookCustomer>();
+            var errorMaessage = "";
             var getRequestUrl = $"{id}?fields=id,name,first_name,last_name";
             var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
             getRequest.AddQueryParameter("access_token", accesstoken);
@@ -334,11 +331,10 @@ namespace Infrastructure.Services
             }
         }
 
-
         public async Task<List<FacebookUserProfile>> CreateFacebookUser(Guid FBpageId)
         {
-            var facebookCus = GetService<IFacebookUserProfileService>();
-            //var page = SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
+            var facebookuser = GetService<IFacebookUserProfileService>();
+            var page = SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
             var lstFBUser = new List<FacebookUserProfile>();
             var lstCusNew = await CheckCustomerNew(FBpageId);
             if (lstCusNew.Any())
@@ -356,8 +352,8 @@ namespace Infrastructure.Services
                         FbPageId = FBpageId
 
                     };
-                    await facebookCus.CheckPsid(fbuser.PSID);
-                    await facebookCus.CreateAsync(fbuser);
+                    await facebookuser.CheckPsid(fbuser.PSID);
+                    await facebookuser.CreateAsync(fbuser);
                     lstFBUser.Add(fbuser);
 
 

@@ -11,8 +11,8 @@ namespace Infrastructure.Services
     public interface IFacebookUserProfileService : IBaseService<FacebookUserProfile>
     {
         Task<PagedResult2<FacebookUserProfileBasic>> GetPagedResultAsync(FacebookUserProfilePaged val);
-       
+      
         Task<FacebookUserProfile> ActionConectPartner(ConnectPartner val);
-        Task CheckPsid(string Psid);
+        Task CheckPsid(string pSID);
     }
 }

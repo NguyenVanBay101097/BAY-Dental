@@ -20,14 +20,14 @@ namespace Infrastructure.Services
     public class FacebookUserProfileService : BaseService<FacebookUserProfile>, IFacebookUserProfileService
     {
         private readonly IMapper _mapper;
-
-
+       
+        
         public FacebookUserProfileService(IAsyncRepository<FacebookUserProfile> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper )
         : base(repository, httpContextAccessor)
         {
-            _mapper = mapper;
-
+            _mapper = mapper;           
+            
         }
 
         public async Task<PagedResult2<FacebookUserProfileBasic>> GetPagedResultAsync(FacebookUserProfilePaged val)
@@ -47,16 +47,15 @@ namespace Infrastructure.Services
 
 
 
-        public async Task CheckConnectPartner(Guid partnerId)
-        {
+        public async Task CheckConnectPartner(Guid partnerId) {
 
             var result = await SearchQuery(x => x.PartnerId == partnerId).FirstOrDefaultAsync();
-            if (result != null)
+            if(result != null)
             {
-
+                
                 throw new Exception($"Khách hàng đã được kết nối với {result.Name}!");
             }
-
+           
         }
 
 
@@ -69,16 +68,16 @@ namespace Infrastructure.Services
         {
             var FBCus = await SearchQuery(x => x.Id == val.FacebookUserId).FirstOrDefaultAsync();
             await CheckConnectPartner(val.PartnerId);
-            if (FBCus.PartnerId == null)
+            if(FBCus.PartnerId == null)
             {
-                FBCus.PartnerId = val.PartnerId;
+                FBCus.PartnerId = val.PartnerId;               
                 await UpdateAsync(FBCus);
             }
             else
             {
                 throw new Exception($"{FBCus.Name} Đã được kết nối với khách hàng !");
             }
-
+           
             return FBCus;
         }
 
