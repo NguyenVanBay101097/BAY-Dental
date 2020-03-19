@@ -1,1 +1,27 @@
-<p>facebook-page-marketing-message-add-button works!</p>
+<div class="card" [formGroup]="formGroup">
+    <div class="card-body">
+        <div>
+            <input type="text" #textInput class="form-control text-center" formControlName="title"
+                placeholder="Nhập tên nút" />
+        </div>
+        <div class="menu-template-type mb-2">
+            <nav class="nav">
+                <a class="nav-link" [class.active]="typeValue == 'web_url'" (click)="setType('web_url')">
+                    <i class="fas fa-link"></i> URL
+                </a>
+                <a class="nav-link" [class.active]="typeValue == 'phone_number'" (click)="setType('phone_number')">
+                    <i class="fas fa-phone"></i> Điện thoại
+                </a>
+            </nav>
+        </div>
+        <div>
+            <input *ngIf="typeValue == 'web_url'" type="url" class="form-control" formControlName="url"
+                placeholder="http://" />
+            <input *ngIf="typeValue == 'phone_number'" type="text" class="form-control" formControlName="payload"
+                placeholder="+84938xxxxxx" />
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Hoàn tất</button>
+    </div>
+</div>

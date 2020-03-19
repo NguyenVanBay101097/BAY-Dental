@@ -49,6 +49,21 @@
                 </div>
             </div>
 
+            <div class="o_group" *ngIf="campaign.dateStart">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td class="o_td_label">
+                                <label class="o_form_label">Chạy lúc</label>
+                            </td>
+                            <td style="width:100%">
+                                {{campaign.dateStart | date: 'short'}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div class="o_group">
                 <div class="mb-2">
                     <button accesskey="a" *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"

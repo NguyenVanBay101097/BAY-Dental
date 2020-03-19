@@ -38,22 +38,51 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td style="width:100%">
-                                    <div class="position-relative">
+                                    <div class="position-relative mb-2">
                                         <textarea autosize class="form-control activity-text" formControlName="text">
                                         </textarea>
                                         <span class="text-number text-warning">{{getLimitText() | number}}</span>
                                     </div>
-                                    <div *ngIf="templateValue == 'button'">
-                                        <button type="button" class="btn btn-light">Thêm nút</button>
+                                    <div *ngIf="buttonsFormArray.length" class="button-editor-wrapper mb-2">
+                                        <div *ngFor="let c of buttonsFormArray.controls;let i = index"
+                                            class="button-editor" (click)="editMessageButton($event, c)">
+                                            <i *ngIf="c.get('type').value == 'web_url'" class="fas fa-link"></i>
+                                            <i *ngIf="c.get('type').value == 'phone_number'" class="fas fa-phone"></i>
+                                            <span class="message-button-header"> {{c.get('title').value}}</span>
+                                            <span class="message-button-remove"
+                                                (click)="removeMessageButton($event, i)">
+                                                <i class="far fa-trash-alt"></i>
+                                            </span>
+                                            <br />
+                                            <div class="message-button-small">
+                                                <span *ngIf="c.get('type').value == 'web_url'"
+                                                    class="block-name-show-btn">{{c.get('url').value}}</span>
+                                                <span *ngIf="c.get('type').value == 'phone_number'"
+                                                    class="block-name-show-btn">{{c.get('payload').value}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div [class.d-none]="templateValue == 'text'">
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-light btn-sm"
+                                                (click)="addMessageButton($event)">
+                                                <i class="fas fa-plus"></i> Thêm nút
+                                            </button>
+                                        </div>
+
+                                        <div class="position-relative">
+                                            <ng-template anchorHost>
+                                            </ng-template>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_6 ">
+                    <table class=" o_group o_inner_group o_group_col_6 ">
                         <tbody>
                             <tr>
-                                <td class="o_td_label">
+                                <td class=" o_td_label">
                                     <label class="o_form_label">Kích hoạt</label>
                                 </td>
                                 <td style="width:100%">

@@ -40,6 +40,7 @@ import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-
 import { SharedErrorDialogComponent } from './shared-error-dialog/shared-error-dialog.component';
 import { AppSharedShowErrorService } from './shared-show-error.service';
 import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.component';
+import { AnchorHostDirective } from './anchor-host.directive';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.
     SharedPartnerGridComponent,
     SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
-    ConfirmDialogV2Component
+    ConfirmDialogV2Component,
+    AnchorHostDirective
   ],
   exports: [
     HeaderComponent,
@@ -100,7 +102,8 @@ import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.
     SharedPartnerGridComponent,
     SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
-    ConfirmDialogV2Component
+    ConfirmDialogV2Component,
+    AnchorHostDirective
   ],
   imports: [
     CommonModule,

@@ -55,9 +55,23 @@ namespace Infrastructure.Services
             var campaign = _mapper.Map<MarketingCampaign>(val);
             SaveActivities(val, campaign);
 
+            await _EnsureFacebookPage(campaign);
+
             await CreateAsync(campaign);
 
             return campaign;
+        }
+
+        private async Task _EnsureFacebookPage(MarketingCampaign campaign)
+        {
+            if (!campaign.FacebookPageId.HasValue)
+            {
+                var userObj = GetService<IUserService>();
+                var user = await userObj.GetCurrentUser();
+                if (!user.FacebookPageId.HasValue)
+                    throw new Exception("You must select a facebook page");
+                campaign.FacebookPageId = user.FacebookPageId;
+            }
         }
 
         public async Task UpdateCampaign(Guid id, MarketingCampaignSave val)
@@ -70,6 +84,8 @@ namespace Infrastructure.Services
 
             campaign = _mapper.Map(val, campaign);
             SaveActivities(val, campaign);
+
+            await _EnsureFacebookPage(campaign);
 
             await UpdateAsync(campaign);
         }
@@ -156,6 +172,8 @@ namespace Infrastructure.Services
                     var intervalNumber = activity.IntervalNumber ?? 0;
                     if (activity.IntervalType == "hours")
                         date = date.AddHours(intervalNumber);
+                    else if (activity.IntervalType == "minutes")
+                        date = date.AddMinutes(intervalNumber);
                     else if (activity.IntervalType == "days")
                         date = date.AddDays(intervalNumber);
                     else if (activity.IntervalType == "months")
@@ -179,6 +197,7 @@ namespace Infrastructure.Services
             var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay { 
                 Id = x.Id,
                 Name = x.Name,
+                DateStart = x.DateStart,
                 State = x.State,
             }).FirstOrDefaultAsync();
 
@@ -194,8 +213,16 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
                 TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
-                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count()
-                }).ToListAsync();
+                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
+                Template = x.Message.Template,
+                Text = x.Message.Text,
+                Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay { 
+                    Payload = s.Payload,
+                    Title = s.Title,
+                    Type = s.Type,
+                    Url = s.Url
+                })
+            }).ToListAsync();
 
             res.Activities = activities;
             return res;
@@ -222,12 +249,15 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            var states = new string[] { "draft", "stopped" };
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Activities).ToListAsync();
             foreach (var campaign in self)
             {
-                if (!states.Contains(campaign.State))
-                    throw new Exception("Bạn chỉ có thể xóa chiến dịch ở trạng thái nháp hoặc đã dừng");
+                foreach (var activity in campaign.Activities)
+                {
+                    if (string.IsNullOrEmpty(activity.JobId))
+                        continue;
+                    BackgroundJob.Delete(activity.JobId);
+                }
             }
 
             await DeleteAsync(self);

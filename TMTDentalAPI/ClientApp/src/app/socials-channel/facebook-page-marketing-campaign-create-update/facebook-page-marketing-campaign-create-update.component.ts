@@ -45,7 +45,12 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         if (result.activities) {
           this.activities.clear();
           result.activities.forEach(activity => {
-            this.activities.push(this.fb.group(activity));
+            var g = this.fb.group(activity);
+            if (activity.buttons) {
+              g.setControl('buttons', this.fb.array(activity.buttons || []));
+            }
+
+            this.activities.push(g);
           });
         }
       });
@@ -59,7 +64,12 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         if (result.activities) {
           this.activities.clear();
           result.activities.forEach(activity => {
-            this.activities.push(this.fb.group(activity));
+            var g = this.fb.group(activity);
+            if (activity.buttons) {
+              g.setControl('buttons', this.fb.array(activity.buttons || []));
+            }
+
+            this.activities.push(g);
           });
         }
       });
@@ -71,7 +81,12 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     modalRef.componentInstance.title = 'Thêm hoạt động';
 
     modalRef.result.then(result => {
-      this.activities.push(this.fb.group(result));
+      var g = this.fb.group(result);
+      if (result.buttons) {
+        g.setControl('buttons', this.fb.array(result.buttons || []));
+      }
+      console.log(g);
+      this.activities.push(g);
     }, () => {
     });
   }
@@ -81,7 +96,11 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     modalRef.componentInstance.title = 'Sửa hoạt động';
     modalRef.componentInstance.activity = activity.value;
     modalRef.result.then(result => {
+      var a = result as any;
       activity.patchValue(result);
+      if (a.buttons) {
+        activity.setControl('buttons', this.fb.array(a.buttons || []));
+      }
     }, () => {
     });
   }

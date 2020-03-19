@@ -132,6 +132,15 @@ namespace Infrastructure.Services
                                 title = button.Title
                             });
                         }
+                        else if (button.Type == "phone_number")
+                        {
+                            buttonList.Add(new
+                            {
+                                type = button.Type,
+                                payload = button.Payload,
+                                title = button.Title
+                            });
+                        }
                     }
 
                     var res = new

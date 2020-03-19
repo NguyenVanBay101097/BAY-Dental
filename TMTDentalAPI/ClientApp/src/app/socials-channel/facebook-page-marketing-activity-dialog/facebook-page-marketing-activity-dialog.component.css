@@ -9,3 +9,51 @@
     background-color: white;
     bottom: 5px;
 }
+
+.button-editor-wrapper .button-editor {
+    margin-bottom: .5rem;
+}
+
+.button-editor-wrapper .button-editor:last-child {
+    margin-bottom: 0;
+}
+
+.button-editor {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    text-align: center;
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.button-editor .message-button-header, .button-editor i {
+    color: #0084ff;
+}
+
+.button-editor .message-button-small {
+    font-size: 80%;
+    color: #999;
+    position: relative;
+    height: 20px;
+}
+
+.message-button-small span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.message-button-remove {
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.message-button-remove i {
+    color: #333;
+}

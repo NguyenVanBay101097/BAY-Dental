@@ -42,5 +42,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public int TotalRead { get; set; }
 
         public int TotalDelivery { get; set; }
+
+        public string Template { get; set; }
+
+        public string Text { get; set; }
+
+        public IEnumerable<MarketingMessageButtonDisplay> Buttons { get; set; } = new List<MarketingMessageButtonDisplay>();
     }
 }

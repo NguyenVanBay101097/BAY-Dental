@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public MarketingMessageButtonProfile()
         {
             CreateMap<MarketingMessageButtonSave, MarketingMessageButton>();
+            CreateMap<MarketingMessageButton, MarketingMessageButtonDisplay>();
         }
     }
 }

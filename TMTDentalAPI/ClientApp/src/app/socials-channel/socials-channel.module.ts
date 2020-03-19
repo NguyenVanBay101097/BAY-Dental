@@ -19,6 +19,7 @@ import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook
 import { FacebookPageMarketingActivityDialogComponent } from './facebook-page-marketing-activity-dialog/facebook-page-marketing-activity-dialog.component';
 import { AutosizeModule } from 'ngx-autosize';
 import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent, FacebookPageManagementComponent, FacebookPageMarketingCampaignsComponent, FacebookPageMarketingCampaignCreateUpdateComponent, FacebookPageMarketingCampaignListComponent, FacebookPageMarketingCampaignActivityDetailComponent, FacebookPageMarketingActivityDialogComponent, FacebookPageMarketingMessageAddButtonComponent],
@@ -31,14 +32,16 @@ import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-
     FlexLayoutModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    AutosizeModule
+    AutosizeModule,
+    SharedModule
   ],
   exports: [
   ],
   entryComponents: [
     FacebookDialogComponent,
     PartnerCreateUpdateComponent,
-    FacebookPageMarketingActivityDialogComponent
+    FacebookPageMarketingActivityDialogComponent,
+    FacebookPageMarketingMessageAddButtonComponent
   ]
 })
 export class SocialsChannelModule { }
