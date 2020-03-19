@@ -6,6 +6,7 @@ using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -24,6 +25,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly FacebookAuthSettings _fbAuthSettings;
+     
         public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
             : base(repository, httpContextAccessor)
         {
@@ -278,21 +280,20 @@ namespace Infrastructure.Services
 
             var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
             var lstFBCus = new List<FacebookCustomer>().AsEnumerable();
-
             var lstPsid = await GetListPSId(FBpageId);
             var lstFBUser = facebookuser.SearchQuery().Select(x => x.PSID).ToList();
-            if (lstFBUser.Any())
+            var lstCusNew = lstPsid.Except(lstFBUser);
+            if (lstCusNew.Any())
             {
-                var lstCusNew = lstPsid.Except(lstFBUser);
-                if (lstCusNew.Any())
-                {
+                
+               
                     var tasks = lstCusNew.Select(id => LoadFacebookCustomer(id, page.PageAccesstoken));
                     lstFBCus = await Task.WhenAll(tasks);
 
-                }
+                
 
             }
-            if(lstFBCus.Count() == 0)
+            if(lstCusNew.Count() == 0)
             {
                 throw new Exception($"không tìm thấy khách hàng mới từ Fanpage {page.PageName} !");
             }
@@ -331,12 +332,18 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<List<FacebookUserProfile>> CreateFacebookUser(Guid FBpageId)
+        public async Task<List<FacebookUserProfile>> CreateFacebookUser()
         {
+            var userservice = GetService<UserManager<ApplicationUser>>();
+            var user = userservice.FindByIdAsync(UserId);
+            if(user.Result.FacebookPageId == null)
+            {
+                throw new Exception($"{user.Result.Name} chưa liên kết với Fanpage nào !");
+            }
             var facebookuser = GetService<IFacebookUserProfileService>();
-            var page = SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
+            var page = SearchQuery(x => x.Id == user.Result.FacebookPageId).FirstOrDefault();
             var lstFBUser = new List<FacebookUserProfile>();
-            var lstCusNew = await CheckCustomerNew(FBpageId);
+            var lstCusNew = await CheckCustomerNew(page.Id);
             if (lstCusNew.Any())
             {
                 foreach (var item in lstCusNew)
@@ -349,7 +356,7 @@ namespace Infrastructure.Services
                         FirstName = item.FirstName,
                         LastName = item.LastName,
                         Gender = item.Gender,
-                        FbPageId = FBpageId
+                        FbPageId = page.Id
 
                     };
                     await facebookuser.CheckPsid(fbuser.PSID);

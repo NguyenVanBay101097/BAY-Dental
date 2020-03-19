@@ -52,7 +52,7 @@ namespace TMTDentalAPI.Controllers
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
             var companyId = CompanyId;
-            query = query.Where(x => x.CompanyId == companyId);
+            query = query.Where(x => x.CompanyId == companyId );
             query = query.OrderBy(x => x.Name);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
