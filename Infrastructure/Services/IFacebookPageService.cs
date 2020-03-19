@@ -16,6 +16,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<string>> GetListPSId(Guid FBpageId);
 
         Task<IEnumerable<FacebookCustomer>> CheckCustomerNew(Guid FBpageId);
-        Task<List<FacebookUserProfile>> CreateFacebookUser(Guid FBpageId);
+        Task<List<FacebookUserProfile>> CreateFacebookUser();
     }
 }
