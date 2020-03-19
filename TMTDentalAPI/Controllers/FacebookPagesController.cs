@@ -66,7 +66,7 @@ namespace TMTDentalAPI.Controllers
             if (null == id || !ModelState.IsValid)
                 return BadRequest();
 
-            var fbpage = await _facebookUserProfileService.CreateFacebookUser(id);
+            var fbpage = await _facebookPageService.CreateFacebookUser(id);
             var basic = _mapper.Map<List<FacebookUserProfileBasic>>(fbpage);
             return Ok(basic);
         }
