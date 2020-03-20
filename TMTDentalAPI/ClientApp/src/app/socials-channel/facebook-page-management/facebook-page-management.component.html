@@ -11,8 +11,8 @@
                         <span *ngIf="switchPage.currentPage">{{switchPage.currentPage.pageName}}</span>
                     </a>
                     <div class="dropdown-menu">
-                        <button *ngFor="let page of switchPage.pages" class="dropdown-item" (click)="switchPage(page)"
-                            type="button">{{page.pageName}}</button>
+                        <button *ngFor="let page of switchPage.pages" class="dropdown-item"
+                            (click)="switchPageClick(page)" type="button">{{page.pageName}}</button>
                     </div>
                 </div>
             </div>
@@ -36,6 +36,6 @@
     </div>
 </div>
 
-<div class="o_content">
+<div>
     <router-outlet></router-outlet>
 </div>

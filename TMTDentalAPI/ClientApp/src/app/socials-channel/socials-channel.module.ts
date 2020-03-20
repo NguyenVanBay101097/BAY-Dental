@@ -16,11 +16,28 @@ import { FacebookPageMarketingCampaignCreateUpdateComponent } from './facebook-p
 import { FacebookPageMarketingCampaignListComponent } from './facebook-page-marketing-campaign-list/facebook-page-marketing-campaign-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook-page-marketing-campaign-activity-detail/facebook-page-marketing-campaign-activity-detail.component';
+import { FacebookPageMarketingActivityDialogComponent } from './facebook-page-marketing-activity-dialog/facebook-page-marketing-activity-dialog.component';
+import { AutosizeModule } from 'ngx-autosize';
+import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
+import { SharedModule } from '../shared/shared.module';
 import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
 import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 
 @NgModule({
-  declarations: [FacebookComponent, FacebookDialogComponent, FacebookDashboardComponent, FacebookPageManagementComponent, FacebookPageMarketingCampaignsComponent, FacebookPageMarketingCampaignCreateUpdateComponent, FacebookPageMarketingCampaignListComponent, FacebookPageMarketingCampaignActivityDetailComponent, FacebookPageMarketingCustomerListComponent, FacebookPageMarketingCustomerConnectComponent],
+    declarations: [
+        FacebookComponent,
+        FacebookDialogComponent,
+        FacebookDashboardComponent,
+        FacebookPageManagementComponent,
+        FacebookPageMarketingCampaignsComponent,
+        FacebookPageMarketingCampaignCreateUpdateComponent,
+        FacebookPageMarketingCampaignListComponent,
+        FacebookPageMarketingCampaignActivityDetailComponent,
+        FacebookPageMarketingActivityDialogComponent,
+        FacebookPageMarketingMessageAddButtonComponent,
+        FacebookPageMarketingCustomerListComponent,
+        FacebookPageMarketingCustomerConnectComponent
+    ],
   imports: [
     CommonModule,
     SocialsChannelRoutingModule,
@@ -29,12 +46,17 @@ import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-m
     DropDownsModule,
     FlexLayoutModule,
     MyCustomKendoModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AutosizeModule,
+    SharedModule
   ],
   exports: [
   ],
   entryComponents: [
     FacebookDialogComponent,
+    PartnerCreateUpdateComponent,
+    FacebookPageMarketingActivityDialogComponent,
+    FacebookPageMarketingMessageAddButtonComponent
     PartnerCreateUpdateComponent,
     FacebookPageMarketingCustomerConnectComponent
   ]

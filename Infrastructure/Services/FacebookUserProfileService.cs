@@ -81,6 +81,14 @@ namespace Infrastructure.Services
             return FBCus;
         }
 
+        public override async Task<IEnumerable<FacebookUserProfile>> CreateAsync(IEnumerable<FacebookUserProfile> entities)
+        {
+            var psids = entities.Select(x => x.PSID);
+            var exists = await SearchQuery(x => psids.Contains(x.PSID)).Select(x => x.PSID).ToListAsync();
+            entities = entities.Where(x => !exists.Contains(x.PSID));
+            return await base.CreateAsync(entities);
+        }
+
 
         public async Task CheckPsid(string Psid)
         {

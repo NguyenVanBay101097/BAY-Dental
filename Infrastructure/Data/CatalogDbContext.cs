@@ -136,6 +136,8 @@ namespace Infrastructure.Data
         public DbSet<PartnerMapPSIDFacebookPage> PartnerMapPSIDFacebookPages { get; set; }
         public DbSet<MarketingTrace> MarketingTraces { get; set; }
         public DbSet<FacebookUserProfile> FacebookUserProfiles { get; set; }
+        public DbSet<MarketingMessage> MarketingMessages { get; set; }
+        public DbSet<MarketingMessageButton> MarketingMessageButtons { get; set; }
 
 
         public DbSet<StockHistory> StockHistories { get; set; }
@@ -260,6 +262,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new FacebookConnectConfiguration());
             builder.ApplyConfiguration(new FacebookConnectPageConfiguration());
             builder.ApplyConfiguration(new FacebookUserProfileConfiguration());
+            builder.ApplyConfiguration(new MarketingMessageConfiguration());
+            builder.ApplyConfiguration(new MarketingMessageButtonConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

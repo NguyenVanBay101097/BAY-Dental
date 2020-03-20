@@ -13,6 +13,10 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.Property(x => x.Name).IsRequired();
 
+            builder.HasOne(x => x.Message)
+                .WithMany()
+                .HasForeignKey(x => x.MessageId);
+
             builder.HasOne(x => x.Campaign)
             .WithMany(x => x.Activities)
             .HasForeignKey(x => x.CampaignId);

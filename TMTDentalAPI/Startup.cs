@@ -297,6 +297,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MarketingCampaignActivityProfile());
                 mc.AddProfile(new FacebookConnectPageProfile());
                 mc.AddProfile(new FacebookConnectProfile());
+                mc.AddProfile(new MarketingMessageButtonProfile());
                 mc.AddProfile(new FacebookUserProfiles());
             };
 

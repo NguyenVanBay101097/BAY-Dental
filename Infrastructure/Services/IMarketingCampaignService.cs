@@ -16,5 +16,6 @@ namespace Infrastructure.Services
         Task<MarketingCampaign> CreateCampaign(MarketingCampaignSave val);
         Task UpdateCampaign(Guid id, MarketingCampaignSave val);
         Task<MarketingCampaignDisplay> GetDisplay(Guid id);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

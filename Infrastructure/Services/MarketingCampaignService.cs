@@ -55,20 +55,37 @@ namespace Infrastructure.Services
             var campaign = _mapper.Map<MarketingCampaign>(val);
             SaveActivities(val, campaign);
 
+            await _EnsureFacebookPage(campaign);
+
             await CreateAsync(campaign);
 
             return campaign;
         }
 
+        private async Task _EnsureFacebookPage(MarketingCampaign campaign)
+        {
+            if (!campaign.FacebookPageId.HasValue)
+            {
+                var userObj = GetService<IUserService>();
+                var user = await userObj.GetCurrentUser();
+                if (!user.FacebookPageId.HasValue)
+                    throw new Exception("You must select a facebook page");
+                campaign.FacebookPageId = user.FacebookPageId;
+            }
+        }
+
         public async Task UpdateCampaign(Guid id, MarketingCampaignSave val)
         {
             var campaign = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Activities).FirstOrDefaultAsync();
+                .Include(x => x.Activities).Include("Activities.Message")
+                .Include("Activities.Message.Buttons").FirstOrDefaultAsync();
             if (campaign == null)
                 throw new ArgumentNullException("campaign");
 
             campaign = _mapper.Map(val, campaign);
             SaveActivities(val, campaign);
+
+            await _EnsureFacebookPage(campaign);
 
             await UpdateAsync(campaign);
         }
@@ -101,9 +118,15 @@ namespace Infrastructure.Services
             {
                 if (line.Id == Guid.Empty)
                 {
-                    var saleLine = _mapper.Map<MarketingCampaignActivity>(line);
-                    saleLine.Sequence = sequence++;
-                    campaign.Activities.Add(saleLine);
+                    var act = _mapper.Map<MarketingCampaignActivity>(line);
+                    act.Sequence = sequence++;
+
+                    var message = new MarketingMessage() { Template = line.Template };
+                    SaveMessage(message, line);
+
+                    act.Message = message;
+
+                    campaign.Activities.Add(act);
                 }
                 else
                 {
@@ -111,9 +134,27 @@ namespace Infrastructure.Services
                     if (activity != null)
                     {
                         _mapper.Map(line, activity);
+                        if (activity.Message != null)
+                        {
+                            var message = activity.Message;
+                            SaveMessage(message, line);
+                        }
                         activity.Sequence = sequence++;
                     }
                 }
+            }
+        }
+
+        public void SaveMessage(MarketingMessage message, MarketingCampaignActivitySave val)
+        {
+            if (message.Template == "text")
+                message.Text = val.Text;
+            else if (message.Template == "button")
+            {
+                message.Text = val.Text;
+                message.Buttons.Clear();
+                foreach (var button in val.Buttons)
+                    message.Buttons.Add(_mapper.Map<MarketingMessageButton>(button));
             }
         }
 
@@ -131,6 +172,8 @@ namespace Infrastructure.Services
                     var intervalNumber = activity.IntervalNumber ?? 0;
                     if (activity.IntervalType == "hours")
                         date = date.AddHours(intervalNumber);
+                    else if (activity.IntervalType == "minutes")
+                        date = date.AddMinutes(intervalNumber);
                     else if (activity.IntervalType == "days")
                         date = date.AddDays(intervalNumber);
                     else if (activity.IntervalType == "months")
@@ -154,6 +197,7 @@ namespace Infrastructure.Services
             var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay { 
                 Id = x.Id,
                 Name = x.Name,
+                DateStart = x.DateStart,
                 State = x.State,
             }).FirstOrDefaultAsync();
 
@@ -169,8 +213,16 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
                 TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
-                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count()
-                }).ToListAsync();
+                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
+                Template = x.Message.Template,
+                Text = x.Message.Text,
+                Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay { 
+                    Payload = s.Payload,
+                    Title = s.Title,
+                    Type = s.Type,
+                    Url = s.Url
+                })
+            }).ToListAsync();
 
             res.Activities = activities;
             return res;
@@ -193,6 +245,22 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(self);
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Activities).ToListAsync();
+            foreach (var campaign in self)
+            {
+                foreach (var activity in campaign.Activities)
+                {
+                    if (string.IsNullOrEmpty(activity.JobId))
+                        continue;
+                    BackgroundJob.Delete(activity.JobId);
+                }
+            }
+
+            await DeleteAsync(self);
         }
     }
 }

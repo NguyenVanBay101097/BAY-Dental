@@ -1,4 +1,6 @@
-<a [routerLink]="['form']">Thêm chiến dịch</a>
+<div class="px-3 py-2">
+    <a class="btn btn-sm btn-primary" [routerLink]="['form']">Thêm chiến dịch</a>
+</div>
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"

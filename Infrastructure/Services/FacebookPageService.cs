@@ -182,25 +182,76 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task LoadUserProfile()
-        {
-            //tải khách hàng từ conversations
-        }
 
         public async Task LoadUserProfileFromConversations(Guid id)
         {
             var self = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            //tải khách hàng từ conversations
+            //Tải tất cả những conversations
+            var limit = 100;
+            var list = new List<FacebookUserProfile>();
+
+            var result = await GetPageConversations(self.PageId, self.PageAccesstoken, limit);
+
+            //Lấy ra 1 list psids duy nhất
+            var psids = new List<string>().AsEnumerable();
+            psids = psids.Union(ExtractPSIDsUserProfile(result, self.PageId));
+
+            while (!string.IsNullOrEmpty(result.paging.next))
+            {
+                result = await GetPageConversations(self.PageId, self.PageAccesstoken, limit, after: result.paging.cursors.after);
+                psids = psids.Union(ExtractPSIDsUserProfile(result, self.PageId));
+            }
+
+            var tasks = psids.Select(x => GetUserProfileFromPSID(x, self.PageAccesstoken));
+            var all_profiles = await Task.WhenAll(tasks);
+            foreach(var profile in all_profiles)
+            {
+                if (profile == null)
+                    continue;
+                list.Add(new FacebookUserProfile
+                {
+                    Name = profile.name,
+                    FirstName = profile.first_name,
+                    LastName = profile.last_name,
+                    FbPageId = self.Id,
+                    PSID = profile.id,
+                    Gender = profile.gender,
+                });
+            }
+
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            await userProfileObj.CreateAsync(list);
         }
 
-        public async Task<string> GetPageConversations(string page_id, string access_token, int limit)
+        public IEnumerable<string> ExtractPSIDsUserProfile(ApiPageConversationsResponse response, string pageId)
+        {
+            if (response.data == null)
+                return new List<string>();
+
+            var list = new List<string>().AsEnumerable();
+            foreach(var item in response.data)
+            {
+                var ids = item.participants.data.Where(x => x.id != pageId).Select(x => x.id);
+                list = list.Union(ids);
+            }
+
+            return list;
+        }
+
+        public async Task<ApiPageConversationsResponse> GetPageConversations(string page_id, string access_token, int limit, string after = "")
         {
             string errorMaessage = null;
             var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{page_id}/access_token";
+            var getRequestUrl = $"{page_id}/conversations";
             var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
-            getRequest.AddQueryParameter("fields", "conversations.limit(" + limit + "){participants}");
-            var response = (await getRequest.ExecuteAsync<dynamic>());
+            getRequest.AddQueryParameter("fields", "participants");
+            getRequest.AddQueryParameter("limit", limit.ToString());
+            if (!string.IsNullOrEmpty(after))
+            {
+                getRequest.AddQueryParameter("pretty", "0");
+                getRequest.AddQueryParameter("after", after);
+            }
+            var response = (await getRequest.ExecuteAsync<ApiPageConversationsResponse>());
 
             if (response.GetExceptions().Any())
             {
@@ -210,7 +261,27 @@ namespace Infrastructure.Services
             else
             {
                 var result = response.GetResult();
-                return (string)result["access_token"];
+                return result;
+            }
+        }
+
+        public async Task<ApiUserProfileResponse> GetUserProfileFromPSID(string psid, string access_token)
+        {
+            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
+            var getRequestUrl = $"{psid}";
+            var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
+            getRequest.AddQueryParameter("fields", "name,first_name,last_name,profile_pic,gender");
+            var response = (await getRequest.ExecuteAsync<ApiUserProfileResponse>());
+
+            if (response.GetExceptions().Any())
+            {
+                var error_message = string.Join("; ", response.GetExceptions().Select(x => x.Message));
+                return null;
+            }
+            else
+            {
+                var result = response.GetResult();
+                return result;
             }
         }
 
@@ -370,5 +441,52 @@ namespace Infrastructure.Services
             return lstFBUser;
 
         }
+    }
+
+    public class ApiPageConversationsResponse
+    {
+        public IEnumerable<ApiPageConversationsData> data { get; set; }
+        public ApiPageConversationsPaging paging { get; set; }
+    }
+
+    public class ApiPageConversationsData
+    {
+        public ApiPageConversationsDataParticipants participants { get; set; }
+        public string id { get; set; }
+    }
+
+    public class ApiPageConversationsDataParticipants
+    {
+        public IEnumerable<ApiPageConversationsDataParticipantData> data { get; set; }
+    }
+
+    public class ApiPageConversationsDataParticipantData
+    {
+        public string name { get; set; }
+        public string email { get; set; }
+        public string id { get; set; }
+    }
+
+    public class ApiPageConversationsPaging
+    {
+        public ApiPageConversationsPagingCursors cursors { get; set; }
+        public string next { get; set; }
+        public string previous { get; set; }
+    }
+
+    public class ApiPageConversationsPagingCursors
+    {
+        public string before { get; set; }
+        public string after { get; set; }
+    }
+
+    public class ApiUserProfileResponse
+    {
+        public string name { get; set; }
+        public string first_name { get; set; }
+        public string last_name { get; set; }
+        public string profile_pic { get; set; }
+        public string gender { get; set; }
+        public string id { get; set; }
     }
 }

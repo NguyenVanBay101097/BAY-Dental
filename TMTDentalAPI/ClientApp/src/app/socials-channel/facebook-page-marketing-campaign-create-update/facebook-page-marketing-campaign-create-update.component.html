@@ -1,68 +1,115 @@
-<div class="o_form_view o_form_editable market-campaign-form" [formGroup]="formGroup">
+<div class="o_form_view o_form_editable" [formGroup]="formGroup">
     <div class="o_form_sheet_bg">
         <div class="o_form_statusbar">
             <div class="o_statusbar_buttons">
-                <button type="button" class="btn btn-primary btn-sm" (click)="onStart()">
-                    Bắt đầu
+                <button type="button" class="btn btn-primary btn-sm"
+                    *ngIf="id && ['draft', 'stopped'].indexOf(campaign.state) !== -1" (click)="startCampaign()">
+                    Chạy chiến dịch
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="onStop()">
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="campaign.state == 'running'"
+                    (click)="stopCampaign()">
+                    Dừng chiến dịch
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="onSave()"
+                    *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1">
+                    Lưu chiến dịch
+                </button>
+                <button type="button" class="btn btn-sm btn-light" *ngIf="id" (click)="createNew()">
+                    Thêm mới
+                </button>
+                <!-- <button type="button" class="btn btn-primary btn-sm" (click)="onStop()">
                     Dừng lại
-                </button>
+                </button> -->
             </div>
             <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                <button class="btn o_arrow_button disabled" type="button">
+                <button [disabled]="campaign.state !== 'stopped'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': campaign.state === 'stopped', 'btn-secondary': campaign.state !== 'stopped'}"
+                    type="button">
                     Đã dừng
                 </button>
-                <button class="btn o_arrow_button disabled" type="button">
+                <button [disabled]="campaign.state !== 'running'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': campaign.state === 'running', 'btn-secondary': campaign.state !== 'running'}"
+                    type="button">
                     Đang chạy
                 </button>
-                <button class="btn o_arrow_button disabled" type="button">
+                <button [disabled]="campaign.state !== 'draft'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': campaign.state === 'draft', 'btn-secondary': campaign.state !== 'draft'}"
+                    type="button">
                     Mới
                 </button>
             </div>
         </div>
         <div class="o_form_sheet">
-            <div class="row">
-                <div class="col-6">
-                    <div class="oe_title">
-                        <div class="oe_title">
-                            <label class="o_form_label oe_edit_only">Tên chiến dịch</label>
-                            <h1>
-                                <input class="form-control" formControlName="name" required>
-                            </h1>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="mb-2">
-                            <button accesskey="A" class="btn btn-secondary btn-sm" type="button"
-                                (click)="addActivity()">Thêm hoạt động</button>
-                        </div>
-                        <div>
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Tên hoạt động</th>
-                                        <th>#</th>
-                                    </tr>
-                                </thead>
-                                <tbody formArrayName="activities">
-                                    <ng-container *ngFor="let activity of activities.controls;let i = index">
-                                        <tr [formGroup]="activity" (click)="selectActivity(activity)">
-                                            <td>
-                                                {{activity.get('name').value}}
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="oe_title">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên chiến dịch</label>
+                    <h1>
+                        <input class="form-control" formControlName="name" required>
+                    </h1>
                 </div>
-                <div class="col-6">
-                    <app-facebook-page-marketing-campaign-activity-detail>
-                    </app-facebook-page-marketing-campaign-activity-detail>
+            </div>
+
+            <div class="o_group" *ngIf="campaign.dateStart">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td class="o_td_label">
+                                <label class="o_form_label">Chạy lúc</label>
+                            </td>
+                            <td style="width:100%">
+                                {{campaign.dateStart | date: 'short'}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="o_group">
+                <div class="mb-2">
+                    <button accesskey="a" *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
+                        class="btn btn-secondary btn-sm" type="button" (click)="addActivity()">Thêm
+                        hoạt động</button>
+                </div>
+                <div>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Tên hoạt động</th>
+                                <th>Kích hoạt</th>
+                                <th>Đã gửi</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="activities">
+                            <ng-container *ngFor="let activity of activities.controls;let i = index">
+                                <tr [formGroup]="activity">
+                                    <td>
+                                        {{activity.get('name').value}}
+                                    </td>
+                                    <td>
+                                        {{getTrigger(activity)}}
+                                    </td>
+                                    <td>
+                                        {{activity.get('totalSent') ? activity.get('totalSent').value : 0}}
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-success mr-2"
+                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
+                                                (click)="editActivity(activity)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
+                                                (click)="deleteActivity(i)">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
