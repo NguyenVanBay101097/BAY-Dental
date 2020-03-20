@@ -24,20 +24,20 @@ import { FacebookPageMarketingCustomerListComponent } from './facebook-page-mark
 import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 
 @NgModule({
-    declarations: [
-        FacebookComponent,
-        FacebookDialogComponent,
-        FacebookDashboardComponent,
-        FacebookPageManagementComponent,
-        FacebookPageMarketingCampaignsComponent,
-        FacebookPageMarketingCampaignCreateUpdateComponent,
-        FacebookPageMarketingCampaignListComponent,
-        FacebookPageMarketingCampaignActivityDetailComponent,
-        FacebookPageMarketingActivityDialogComponent,
-        FacebookPageMarketingMessageAddButtonComponent,
-        FacebookPageMarketingCustomerListComponent,
-        FacebookPageMarketingCustomerConnectComponent
-    ],
+  declarations: [
+    FacebookComponent,
+    FacebookDialogComponent,
+    FacebookDashboardComponent,
+    FacebookPageManagementComponent,
+    FacebookPageMarketingCampaignsComponent,
+    FacebookPageMarketingCampaignCreateUpdateComponent,
+    FacebookPageMarketingCampaignListComponent,
+    FacebookPageMarketingCampaignActivityDetailComponent,
+    FacebookPageMarketingActivityDialogComponent,
+    FacebookPageMarketingMessageAddButtonComponent,
+    FacebookPageMarketingCustomerListComponent,
+    FacebookPageMarketingCustomerConnectComponent
+  ],
   imports: [
     CommonModule,
     SocialsChannelRoutingModule,
@@ -56,7 +56,7 @@ import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-m
     FacebookDialogComponent,
     PartnerCreateUpdateComponent,
     FacebookPageMarketingActivityDialogComponent,
-    FacebookPageMarketingMessageAddButtonComponent
+    FacebookPageMarketingMessageAddButtonComponent,
     PartnerCreateUpdateComponent,
     FacebookPageMarketingCustomerConnectComponent
   ]
