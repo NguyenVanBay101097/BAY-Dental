@@ -6,3 +6,12 @@
 .mess-head-logo {
     margin-right: 10px;
 }
+.dropdown-toggle {
+    cursor: pointer;
+}
+.dropdown-toggle::after {
+    display: none;
+}
+.dropdown-item {
+    cursor: pointer;
+}
