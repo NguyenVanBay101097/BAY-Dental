@@ -58,6 +58,18 @@ namespace TMTDentalAPI.Controllers
            
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RemovePartner(IEnumerable<Guid> ids)
+        {
+            if (null == ids || !ModelState.IsValid)
+                return BadRequest();
+
+            await _facebookUserProfileService.ActionRemovePartner(ids);
+
+            return NoContent();
+        }
+
         //[HttpPost]
         //public async Task<IActionResult> SearchSender(Fanpage val )
         //{

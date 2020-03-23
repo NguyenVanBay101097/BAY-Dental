@@ -6,6 +6,7 @@ using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestSharp.Deserializers;
 using System;
@@ -32,9 +33,16 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<FacebookUserProfileBasic>> GetPagedResultAsync(FacebookUserProfilePaged val)
         {
+            var userService = GetService<UserManager<ApplicationUser>>();
+            var user = userService.FindByIdAsync(UserId);
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.PSID.Contains(val.Search));
+
+            if (user.Result.FacebookPageId.HasValue)
+            {
+                query = query.Where(x => x.FbPageId == user.Result.FacebookPageId);
+            }
 
             var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
@@ -89,6 +97,18 @@ namespace Infrastructure.Services
             return await base.CreateAsync(entities);
         }
 
+        public async Task ActionRemovePartner(IEnumerable<Guid> ids)
+        {
+            var FBCus = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            if (FBCus == null) {
+                throw new Exception("Chưa được kết nối với khách hàng !");
+            }
+            foreach (var cus in FBCus)
+            {
+                cus.PartnerId = null;
+                await UpdateAsync(cus);
+            }        
+        }
 
         public async Task CheckPsid(string Psid)
         {
