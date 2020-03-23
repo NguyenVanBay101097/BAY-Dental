@@ -266,6 +266,117 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CustomerImport(IFormFile file)
+        {
+            var data = new List<PartnerCustomerRowExcel>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var errs = new List<string>();
+
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        if (string.IsNullOrWhiteSpace(name))
+                            errs.Add("Tên khách hàng là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        data.Add(new PartnerCustomerRowExcel
+                        {
+                            Name = name,
+                            Ref = Convert.ToString(worksheet.Cells[row, 2].Value),
+                            DateOfBirth = Convert.ToDateTime(worksheet.Cells[row, 3].Value),
+                            Phone = Convert.ToString(worksheet.Cells[row, 4].Value),
+                            Address = Convert.ToString(worksheet.Cells[row, 4].Value),
+                            MedicalHistory = Convert.ToString(worksheet.Cells[row, 5].Value),
+                            Job = Convert.ToString(worksheet.Cells[row, 6].Value),
+                            Email = Convert.ToString(worksheet.Cells[row, 7].Value),
+                            Note = Convert.ToString(worksheet.Cells[row, 8].Value),
+                        });
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new { success = false, errors });
+
+            var partner_code_dict = _partnerService.SearchQuery(x => x.Customer == true && x.Active && !string.IsNullOrEmpty(x.Ref))
+                .GroupBy(x => x.Ref).ToDictionary(x => x.Key, x => x.FirstOrDefault().Id);
+
+            var address_list = data.Where(x => string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).ToList();
+
+            var data_to_insert = data.Where(x => string.IsNullOrEmpty(x.Ref) ||
+                partner_code_dict.Keys.ToArray().Contains(x.Ref)).ToList();
+
+            var partners_to_insert = new List<Partner>();
+            foreach(var item in data_to_insert)
+            {
+                var partner = new Partner();
+                partner.CompanyId = CompanyId;
+                partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+
+            }
+
+            var vals = new List<Partner>();
+            foreach (var item in data)
+            {
+                var p = new Partner();
+                p.CompanyId = CompanyId;
+                p.Name = item.Name;
+                p.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                
+
+                vals.Add(p);
+            }
+
+            _unitOfWork.Commit();
+
+            return Ok(new { success = true });
+        }
+
+        private async Task<Dictionary<string, AddressCheckApi>> RunTaskAsync(List<string> strs, int limit = 100)
+        {
+            int offset = 0;
+            var dict = new Dictionary<string, AddressCheckApi>();
+            while (offset < strs.Count)
+            {
+                var subStrs = strs.Skip(offset).Take(limit);
+                var allTasks = subStrs.Select(x => AddressHandleAsync(x));
+                var res = await Task.WhenAll(allTasks);
+                foreach (var item in res)
+                {
+                    dict.Add(item.Key, item.Value);
+                }
+
+                offset += limit;
+            }
+
+            return dict;
+        }
+
+        private async Task<KeyValuePair<string, AddressCheckApi>> AddressHandleAsync(string text)
+        {
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
+            var res = response.Content.ReadAsAsync<AddressCheckApi[]>().Result.ToList().FirstOrDefault();
+            var pair = new KeyValuePair<string, AddressCheckApi>(text, res);
+            return pair;
+        }
+
         [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)

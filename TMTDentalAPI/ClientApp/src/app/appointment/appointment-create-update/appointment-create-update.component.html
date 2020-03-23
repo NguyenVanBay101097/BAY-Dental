@@ -1,15 +1,14 @@
-<!-- <div *ngIf="appointId" style="float: right">{{getState(state)}}</div> -->
 <header class="modal-header">
-    <h5 class="modal-title">{{appointId ? 'Cập nhật lịch hẹn':'Tạo lịch hẹn' }}<span
+    <h5 class="modal-title">{{appointId ? 'Cập nhật lịch hẹn' : 'Tạo lịch hẹn' }}<span
             class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+    <form class="o_form_view" [formGroup]="formCreate">
         <input formControlName="companyId" hidden />
         <div class="o_form_sheet_bg">
-            <div class="o_form_statusbar" *ngIf="appointId">
+            <!-- <div class="o_form_statusbar" *ngIf="appointId">
                 <div class="o_statusbar_buttons">
                     <button type="button" class="btn btn-primary btn-sm" (click)="createSaleOrder()">
                         Tạo phiếu điều trị
@@ -17,7 +16,7 @@
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                 </div>
-            </div>
+            </div> -->
             <div class="o_form_sheet">
                 <div class="oe_title">
                     <h1>
@@ -28,10 +27,10 @@
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Khách hàng</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                <td colspan="1" style="width: 100%;">
                                     <div class=" d-flex">
                                         <kendo-combobox formControlName="partner" [allowCustom]="false"
                                             [filterable]="true" [data]="customerSimpleFilter" #partnerCbx
@@ -50,10 +49,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Bác sĩ</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;" class="o_td_control_left">
+                                <td colspan="1" style="width: 100%;">
                                     <kendo-combobox formControlName="doctor" [filterable]="true"
                                         [data]="doctorSimpleFilter" #doctorCbx [valueField]="'id'" [textField]="'name'"
                                         [readonly]="doctorAvailble()">
@@ -65,7 +64,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Trạng thái</label>
                                 </td>
                                 <td>

@@ -1,66 +1,134 @@
-<div class="row container" *ngIf="partner">
-    <div class="col">
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Mã</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext ">{{partner.ref}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Tên</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext ">{{partner.name}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Giới tính</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext ">{{partner.gender}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Ngày sinh</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext ">{{partner.dateOfBirth}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Điện thoại</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext ">{{partner.phone}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Email</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext ">{{partner.email}}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Nghề nghiệp</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext">{{partner.jobTitle}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Địa chỉ</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext">{{partner.address}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Nhóm</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext">{{partner.categories}}</p>
-            </div>
-        </div>
-        <div class="row">
-            <label class="col-sm-3 col-form-label font-weight-600">Tiền sử bệnh</label>
-            <div class="col-sm-9">
-                <p class="form-control-plaintext">{{partner.medicalHistory}}</p>
-            </div>
-        </div>
+<div class="o_form_view o_form_container" *ngIf="partner">
+    <div class="o_group">
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Tên
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.name}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Tuổi
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.birthYear ? getAge(partner.birthYear) : ''}}
+
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Giới tính
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getGender(partner.gender)}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Địa chỉ
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getAddress(partner)}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Tiểu sử bệnh
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getHistories(partner)}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Tiểu sử khác
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.medicalHistory}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Mã
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.ref}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Điện thoại
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.phone}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Email
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.email}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Nhóm
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getCategories()}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Nghề nghiệp
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.jobTitle}}</span>
+                    </td>
+                </tr>
+                <tr *ngIf="partner.zaloId">
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Zalo Id
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.zaloId}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

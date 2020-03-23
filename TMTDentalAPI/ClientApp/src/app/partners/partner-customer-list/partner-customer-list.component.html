@@ -1,17 +1,19 @@
-<div kendoWindowContainer></div>
-<div kendoDialogContainer></div>
-
 <div class="o_control_panel">
     <ol class="breadcrumb">
         <li class="active">Khách hàng</li>
     </ol>
     <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+        </div>
     </div>
     <div class="o_cp_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">
-                    <i class="fas fa-plus"></i>&nbsp;Thêm mới</button>
+                <button type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="importFromExcel(true)">Thêm từ
+                    excel</button>
             </div>
         </div>
         <div class="o_cp_sidebar">
@@ -21,49 +23,52 @@
     </div>
 </div>
 
-<div class="d-flex">
-    <div class="accordion search-section" id="accordionExample">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
-                    href="#" onclick="javascript:void(0);">
-                    Tìm kiếm
-                </a>
-            </div>
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-                <div class="card-body">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Theo mã hoặc tên"
-                            [(ngModel)]="searchNameRef" (ngModelChange)="this.searchUpdate.next($event)" />
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" [(ngModel)]="searchPhone"
-                            (ngModelChange)="this.searchUpdate.next($event)" placeholder="Theo số điện thoại" />
-                    </div>
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+        [loading]="loading">
+        <kendo-grid-column field="ref" title="Mã" width="120"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
+        <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
+        <kendo-grid-column field="id" width="100">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+                    <i class="far fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                    <i class="far fa-trash-alt"></i></button>
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info_{{dataItem.id}}" role="tab"
+                        aria-controls="info" aria-selected="true">Thông tin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="invoice-tab" data-toggle="tab" href="#invoice_{{dataItem.id}}" role="tab"
+                        aria-controls="invoice" aria-selected="false">Phiếu điều trị</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment_{{dataItem.id}}" role="tab"
+                        aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane py-2 fade show active" id="info_{{dataItem.id}}" role="tabpanel"
+                    aria-labelledby="info-tab">
+                    <app-partner-customer-info [partnerId]="dataItem.id"></app-partner-customer-info>
+                </div>
+                <div class="tab-pane py-2 fade" id="invoice_{{dataItem.id}}" role="tabpanel"
+                    aria-labelledby="invoice-tab">
+                    <app-partner-tab-sale-order-list [item]="dataItem"></app-partner-tab-sale-order-list>
+                </div>
+                <div class="tab-pane py-2 fade" id="payment_{{dataItem.id}}" role="tabpanel"
+                    aria-labelledby="payment-tab">
+                    <app-partner-payments [partnerId]="dataItem.id"></app-partner-payments>
                 </div>
             </div>
         </div>
-    </div>
-    <div>
-        <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip"
-            (pageChange)="pageChange($event)" [loading]="loading">
-            <kendo-grid-column field="ref" title="Mã" width="120"></kendo-grid-column>
-            <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
-            <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
-            <kendo-grid-column field="email" title="Email" width="250"></kendo-grid-column>
-            <kendo-grid-command-column title="Thao tác" width="250">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
-                            class="fas fa-edit"></i>&nbsp;Sửa</button>
-                    <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i
-                            title="Vô hiệu hóa" class="fas fa-times"></i>&nbsp;Xóa</button>
-                </ng-template>
-            </kendo-grid-command-column>
-            <!-- <div *kendoGridDetailTemplate="let dataItem">
-                <app-partner-customer-list-detail [item]="dataItem"></app-partner-customer-list-detail>
-            </div> -->
-        </kendo-grid>
-    </div>
+    </kendo-grid>
 </div>
-
-<div class="k-overlay" *ngIf="opened"></div>

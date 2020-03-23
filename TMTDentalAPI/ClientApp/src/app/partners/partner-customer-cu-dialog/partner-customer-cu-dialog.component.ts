@@ -5,8 +5,10 @@ import { PartnerCategorySimple } from '../partner-simple';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from '../partner.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HistorySimple } from 'src/app/history/history';
+import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-partner-customer-cu-dialog',
@@ -38,7 +40,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   historiesList: HistorySimple[] = [];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService, public activeModal: NgbActiveModal) { }
+    private partnerService: PartnerService, public activeModal: NgbActiveModal,
+    private modalService: NgbModal) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -77,7 +80,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           }
 
           if (result.histories.length) {
-            debugger;
             result.histories.forEach(history => {
               var histories = this.formGroup.get('histories') as FormArray;
               histories.push(this.fb.group(history));
@@ -86,9 +88,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         });
       }
 
-      this.dayList = this.birthInit(1, 31);
-      this.monthList = this.birthInit(1, 12);
-      this.yearList = this.birthInit(1900, new Date().getFullYear());
+      this.dayList = _.range(1, 32);
+      console.log(this.dayList);
+      this.monthList = _.range(1, 13);
+      this.yearList = _.range(new Date().getFullYear(), 1900, -1);
       this.loadSourceCities();
       this.loadCategoriesList();
       this.loadHistoriesList();
@@ -213,6 +216,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   loadCategoriesList() {
     this.searchCategories().subscribe(result => {
       this.categoriesList = result;
+    });
+  }
+
+  quickCreatePartnerCategory() {
+    let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm nhóm khách hàng';
+
+    modalRef.result.then(() => {
+      this.loadCategoriesList();
+    }, () => {
     });
   }
 

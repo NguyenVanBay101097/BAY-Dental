@@ -379,11 +379,10 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Employee == val.Employee);
             if (val.Supplier.HasValue)
                 query = query.Where(x => x.Supplier == val.Supplier);
-            if (!string.IsNullOrEmpty(val.SearchNamePhoneRef))
-                query = query.Where(x => x.Name.Contains(val.SearchNamePhoneRef) || x.NameNoSign.Contains(val.SearchNamePhoneRef)
-                || x.Ref.Contains(val.SearchNamePhoneRef) || x.Phone.Contains(val.SearchNamePhoneRef));
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
+                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
 
-            //query = query.Skip(val.Offset).Take(val.Limit);
             query = query.OrderBy(s => s.Name);
             return query;
         }
@@ -792,23 +791,6 @@ namespace Infrastructure.Services
 
                 offset += limit;
             }
-
-            //var dictionary = new Dictionary<string, AddressCheckApi>();
-            //for (int i = 0; i < strs.Count; i += count)
-            //{
-            //    var listTask = new List<Task<KeyValuePair<string, AddressCheckApi>>>();
-            //    for (int j = i;j<((i+count)<= strs.Count ? i+count : strs.Count) ; j++)
-            //    {
-            //        listTask.Add(Task.Run(async () => await AddressHandleAsync(strs.ElementAt(j))));
-            //    }
-            //    var res = await Task.WhenAll(listTask.ToList());
-            //    foreach (var item in res)
-            //    {
-            //        dictionary.Add(item.Key, item.Value);
-            //    }
-            //}
-            //return dictionary;
-
 
             return dict;
         }

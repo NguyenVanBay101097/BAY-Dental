@@ -433,23 +433,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   // }
 
   quickCreateCustomerModal() {
-    const modalRef = this.modalService.open(PartnerCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.queryCustomer = true;
-    modalRef.result.then(
-      result => {
-        this.windowOpened = false;
+    const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm khách hàng';
 
-        if (result && result.id) {
-          console.log(result);
-          var newPartner = new PartnerSimple();
-          newPartner.id = result.id;
-          newPartner.name = result.name;
-          this.customerSimpleFilter.push(newPartner);
-          this.formCreate.get('partner').setValue(newPartner);
-        }
-      },
-      er => { }
-    )
+    modalRef.result.then(result => {
+      if (result && result.id) {
+        console.log(result);
+        var newPartner = new PartnerSimple();
+        newPartner.id = result.id;
+        newPartner.name = result.name;
+        this.customerSimpleFilter.push(newPartner);
+        this.formCreate.get('partner').setValue(newPartner);
+      }
+    }, er => {
+
+    })
   }
 
   defaultGet() {

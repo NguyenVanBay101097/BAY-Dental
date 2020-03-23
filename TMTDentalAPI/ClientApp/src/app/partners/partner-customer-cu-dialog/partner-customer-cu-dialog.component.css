@@ -1,0 +1,10 @@
+.x_12323 {
+    padding-right: 40px;
+    position: relative;
+}
+
+.x_12323 button {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

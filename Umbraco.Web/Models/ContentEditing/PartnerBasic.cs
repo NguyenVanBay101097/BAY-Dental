@@ -42,10 +42,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int Limit { get; set; }
 
-        /// <summary>
-        /// Search mã hoặc tên
-        /// </summary>
-        public string SearchNamePhoneRef { get; set; }
+        public string Search { get; set; }
 
         public bool? Customer { get; set; }
 
