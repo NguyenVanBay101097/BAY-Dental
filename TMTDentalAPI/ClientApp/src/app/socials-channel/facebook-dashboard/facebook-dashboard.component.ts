@@ -27,7 +27,7 @@ export class FacebookDashboardComponent implements OnInit {
 
   selectPage(page: any) {
     this.facebookPageService.selectPage(page.id).subscribe(() => {
-      this.router.navigate(['/facebook-management'])
+      this.router.navigate(['/facebook-management']);
     });
   }
 }

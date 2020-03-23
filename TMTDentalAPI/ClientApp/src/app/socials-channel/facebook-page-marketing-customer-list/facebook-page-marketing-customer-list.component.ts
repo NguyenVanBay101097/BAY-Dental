@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FacebookPageMarketingCustomerConnectComponent } from '../facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { FacebookPageService } from '../facebook-page.service';
+import { map } from 'rxjs/operators';
+import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -9,23 +13,75 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
-  constructor(private modalService: NgbModal,) { }
+  constructor(private modalService: NgbModal, 
+    private facebookUserProfilesService: FacebookUserProfilesService) { }
 
   dataSendMessage: any [] = [];
+  gridData: GridDataResult;
+  limit = 20;
+  skip = 0;
+  loading = false;
 
   ngOnInit() {
+    this.loadDataFromApi();
   }
 
-  showModalConnect() {
+  loadDataFromApi() {
+    this.loading = true;
+    var val = {
+      limit: 10
+    };
+    this.facebookUserProfilesService.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.gridData = res;
+      this.loading = false;
+      console.log(res);
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    });
+  }
+
+  showModalConnectPartner(dataItem: any, rowIndex) {
     let modalRef = this.modalService.open(FacebookPageMarketingCustomerConnectComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    // modalRef.componentInstance.DataUser = this.DataUser;
-    // modalRef.componentInstance.DataFanpages = this.DataFanpages;
     modalRef.result.then((result) => {
       if (result) {
-
+        var val = {
+          "facebookUserId": dataItem.id,
+          "partnerId": result
+        }
+        console.log(val);
+        this.facebookUserProfilesService.connectPartner(val).subscribe(res => {
+          this.loading = false;
+          console.log(res);
+          //this.loadDataFromApi();
+          this.gridData.data[rowIndex].partnerId = result;
+        }, err => {
+          console.log(err);
+          this.loading = false;
+        });
         modalRef.close();
       }
     }, (reason) => {
+    });
+  }
+
+  removePartner(dataItem: any, rowIndex) {
+    var val = [
+      dataItem.id
+    ]
+    this.facebookUserProfilesService.removePartner(val).subscribe(res => {
+      this.loading = false;
+      console.log(res);
+      //this.loadDataFromApi();
+      this.gridData.data[rowIndex].partnerId = null;
+    }, err => {
+      console.log(err);
+      this.loading = false;
     });
   }
 

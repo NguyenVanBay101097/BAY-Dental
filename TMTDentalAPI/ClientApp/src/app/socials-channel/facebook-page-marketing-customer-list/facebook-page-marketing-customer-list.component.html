@@ -1,5 +1,23 @@
-<p>facebook-page-marketing-customer-list works!</p>
-<button (click)="showModalConnect()">Kết nối</button>
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="psId" title="PSID">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên khách hàng">
+        </kendo-grid-column>
+        <kendo-grid-column field="gender" title="Giới tính">
+        </kendo-grid-column>
+        <kendo-grid-column field="action">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Kết nối
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button *ngIf="!dataItem.partnerId" (click)="showModalConnectPartner(dataItem, rowIndex)">Kết nối</button>
+                <button *ngIf="dataItem.partnerId" (click)="removePartner(dataItem, rowIndex)">Hủy kết nối</button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>
 <br>
 <br>
 <div *ngFor="let item of dataSendMessage; index as i">
@@ -9,7 +27,6 @@
     <div *ngIf="item.type === 'image'">Chọn image</div>
     <div *ngIf="item.type === 'video'">Chọn video</div>
 </div>
-
 
 <input type="button" value="Tin nhắn" (click)="onCreate('text', null)">
 <input type="button" value="Image" (click)="onCreate('image', null)">

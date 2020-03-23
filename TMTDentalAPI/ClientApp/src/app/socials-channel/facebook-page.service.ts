@@ -11,7 +11,7 @@ export class FacebookPageService {
     }
 
     selectPage(id: string) {
-        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/SelectPage', {});
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id);
     }
 
     getSwitchPage() {

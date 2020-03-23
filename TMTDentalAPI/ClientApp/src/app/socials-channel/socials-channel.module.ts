@@ -22,6 +22,7 @@ import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-
 import { SharedModule } from '../shared/shared.module';
 import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
 import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
+import { FacebookUserProfilesService } from './facebook-user-profiles.service';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,9 @@ import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-m
     FacebookPageMarketingMessageAddButtonComponent,
     PartnerCreateUpdateComponent,
     FacebookPageMarketingCustomerConnectComponent
+  ],
+  providers: [
+    FacebookUserProfilesService
   ]
 })
 export class SocialsChannelModule { }

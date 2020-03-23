@@ -5,7 +5,15 @@
 </header>
 <div class="row">
     <div class="col-md-6">
-        Dropdown
+        <kendo-dropdownlist
+            [data]="listPartners"
+            [defaultItem]="defaultPartner"
+            textField="name"
+            valueField="id"
+            [valuePrimitive]="true"
+            [(ngModel)]="selectedPartner"
+        >
+        </kendo-dropdownlist>
     </div>
     <div class="col-md-6">
         <button type="button" class="btn btn-light border" accesskey="c"

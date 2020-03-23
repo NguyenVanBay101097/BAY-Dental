@@ -6,6 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class FacebookUserProfileBasic
     {
+        public Guid id { get; set; }
         public string PSId { get; set; }
         public string Name { get; set; }
 
@@ -14,5 +15,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ngày tạo
         /// </summary>
         public DateTime DateCreated { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 }
