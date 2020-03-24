@@ -28,8 +28,13 @@
                 Kết nối
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button *ngIf="!dataItem.partnerId" (click)="showModalConnectPartner(dataItem, rowIndex)">Kết nối</button>
-                <button *ngIf="dataItem.partnerId" (click)="removePartner(dataItem, rowIndex)">Hủy kết nối</button>
+                <button *ngIf="!dataItem.partnerId" 
+                    class="btn btn-success btn-sm"
+                    (click)="showModalConnectPartner(dataItem, rowIndex)">Kết nối</button>
+                <button *ngIf="dataItem.partnerId" 
+                    class="btn btn-warning btn-sm"
+                    style="color: white"
+                    (click)="removePartner(dataItem, rowIndex)">Hủy kết nối</button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

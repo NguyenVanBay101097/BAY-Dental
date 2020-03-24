@@ -27,7 +27,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   search: string;
   loading = false;
   searchUpdate = new Subject<string>();
-
+  
   ngOnInit() {
     this.loadDataFromApi();
 

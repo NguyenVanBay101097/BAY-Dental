@@ -20,7 +20,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <kendo-combobox
-                                            [data]="listFilterPartners"
+                                            [data]="listPartners"
                                             [textField]="'name'"
                                             [valueField]="'id'"
                                             [(ngModel)]="selectedPartner"
@@ -55,7 +55,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Kết nối</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

@@ -14,7 +14,6 @@ import { Subject } from 'rxjs';
 export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
   loading: boolean;
   listPartners: any[];
-  listFilterPartners: any[];
   limit: number = 10;
   skip: number = 0;
   selectedPartner: any;
@@ -58,7 +57,6 @@ export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
           'phone': res_data[i].phone,
         });
       }
-      this.listFilterPartners = this.listPartners.slice();
       this.loading = false;
     }, err => {
       console.log(err);
@@ -72,8 +70,12 @@ export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm khách hàng';
 
     modalRef.result.then(res => {
-      this.getPartnersList();
-      console.log(res);
+      this.listPartners.push({
+        'id': res.id,
+        'name': res.name,
+        'phone': res.phone,
+      });
+      this.selectedPartner = res.id;
     }, () => {
     });
   }
