@@ -1,11 +1,27 @@
+<div class="px-3 py-2 d-flex justify-content-between">
+    <button class="btn btn-sm btn-primary" (click)="createFacebookUser()">Tải danh sách khách hàng</button>
+    <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm theo tên hay mã khách hàng " type="text"
+        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+</div>
+
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="psId" title="PSID">
         </kendo-grid-column>
+        <!-- <kendo-grid-column title="Ảnh đại diện">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <img src="https://graph.facebook.com/{{dataItem.psId}}/profile_pic?height=40&amp;width=40">
+            </ng-template>
+        </kendo-grid-column> -->
         <kendo-grid-column field="name" title="Tên khách hàng">
         </kendo-grid-column>
         <kendo-grid-column field="gender" title="Giới tính">
+        </kendo-grid-column>
+        <kendo-grid-column field="dateCreated" title="Ngày tạo">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateCreated | date : 'short'}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="action">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

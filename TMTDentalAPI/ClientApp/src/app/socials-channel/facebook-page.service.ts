@@ -14,6 +14,10 @@ export class FacebookPageService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id);
     }
 
+    createFacebookUser() {
+        return this.http.post(this.baseApi + this.apiUrl + '/CreateFacebookUser', {});
+    }
+
     getSwitchPage() {
         return this.http.get(this.baseApi + this.apiUrl + '/GetSwitchPage');
     }

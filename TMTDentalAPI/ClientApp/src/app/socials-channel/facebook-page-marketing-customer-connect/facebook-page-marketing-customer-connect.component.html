@@ -3,26 +3,57 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
-<div class="row">
-    <div class="col-md-6">
-        <kendo-dropdownlist
-            [data]="listPartners"
-            [defaultItem]="defaultPartner"
-            textField="name"
-            valueField="id"
-            [valuePrimitive]="true"
-            [(ngModel)]="selectedPartner"
-        >
-        </kendo-dropdownlist>
-    </div>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-light border" accesskey="c"
-            (click)="showModalCreatePartner()">
-            <i class="fas fa-plus"></i>
-            Thêm khách hàng
-        </button>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6" style="width: 100%;">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-combobox
+                                            [data]="listFilterPartners"
+                                            [textField]="'name'"
+                                            [valueField]="'id'"
+                                            [(ngModel)]="selectedPartner"
+                                            [valuePrimitive]="true"
+                                            [filterable]="true"
+                                            (filterChange)="handleFilter($event); this.searchNamePhoneRefUpdate.next($event)"
+                                            placeholder="Theo tên hoặc số điện thoại"
+                                        >
+                                            <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                                <table>
+                                                    <tr>
+                                                        <span><b>{{dataItem.name}}</b></span>
+                                                    </tr>
+                                                    <tr>
+                                                        <span>{{dataItem.phone}}</span>
+                                                    </tr>
+                                                </table>
+                                            </ng-template>
+                                        </kendo-combobox>
+                                        <a class="btn btn-sm btn-light" (click)="showModalCreatePartner()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"

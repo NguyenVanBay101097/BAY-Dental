@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { map } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-connect',
@@ -13,32 +14,32 @@ import { PartnerPaged } from 'src/app/partners/partner-simple';
 export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
   loading: boolean;
   listPartners: any[];
+  listFilterPartners: any[];
   limit: number = 10;
   skip: number = 0;
-  searchNamePhone: string;
   selectedPartner: any;
-  defaultPartner = {           
-    'id': null,
-    'name': 'Chọn khách hàng...',
-  };
+  searchNamePhoneRef: string;
+  searchNamePhoneRefUpdate = new Subject<string>();
 
   constructor(public activeModal: NgbActiveModal, private modalService: NgbModal,
     private partnerService: PartnerService) { }
 
   ngOnInit() {
-    this.onGetPartnersList();
+    this.getPartnersList();
+    this.searchChange();
   }
 
   onSave() {
+    console.log(this.selectedPartner);
     this.activeModal.close(this.selectedPartner);
   }
 
-  onGetPartnersList() {
+  getPartnersList() {
     this.loading = true;
     var val = new PartnerPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.searchNamePhoneRef = this.searchNamePhone || '';
+    val.searchNamePhoneRef = this.searchNamePhoneRef || '';
     val.customer = true;
     val.supplier = false;
     this.partnerService.getPartnerPaged(val).pipe(
@@ -47,15 +48,17 @@ export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log('onGetPartnersList', res);
+      // console.log('getPartnersList', res);
       var res_data = res.data;
       this.listPartners = [];
       for (var i = 0; i < res_data.length; i++) {
         this.listPartners.push({
           'id': res_data[i].id,
           'name': res_data[i].name,
+          'phone': res_data[i].phone,
         });
       }
+      this.listFilterPartners = this.listPartners.slice();
       this.loading = false;
     }, err => {
       console.log(err);
@@ -69,8 +72,22 @@ export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm khách hàng';
 
     modalRef.result.then(res => {
+      this.getPartnersList();
       console.log(res);
     }, () => {
     });
+  }
+
+  handleFilter(value) {
+    this.searchNamePhoneRef = value;
+  }
+  
+  searchChange() {
+    this.searchNamePhoneRefUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.getPartnersList();
+      });
   }
 }
