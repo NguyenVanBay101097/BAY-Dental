@@ -51,17 +51,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Supplier { get; set; }
     }
 
-    public class PartnerImportExcelViewModel
-    {
-        public string FileBase64 { get; set; }
-
-        public bool Customer { get; set; }
-
-        public bool Supplier { get; set; }
-
-        public bool Employee { get; set; }
-    }
-
     public class PartnerPatch
     {
         public string Avatar { get; set; }

@@ -143,6 +143,10 @@ export class PartnerService {
         return this.http.post(this.baseApi + this.apiUrl + '/UpdateCustomersZaloId', {});
     }
 
+    actionImport(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionImport', val);
+    }
+
     deleteCustomer(id) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }

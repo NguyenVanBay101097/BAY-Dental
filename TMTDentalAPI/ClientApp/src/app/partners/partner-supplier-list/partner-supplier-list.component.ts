@@ -7,6 +7,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PartnerImportComponent } from '../partner-import/partner-import.component';
 
 @Component({
   selector: 'app-partner-supplier-list',
@@ -61,6 +62,16 @@ export class PartnerSupplierListComponent implements OnInit {
       this.loading = false;
     })
   }
+
+  importFromExcel() {
+    const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.type = 'supplier';
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
+
 
   createItem() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });

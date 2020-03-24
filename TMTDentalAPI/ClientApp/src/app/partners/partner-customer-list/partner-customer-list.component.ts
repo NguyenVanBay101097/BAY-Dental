@@ -48,9 +48,9 @@ export class PartnerCustomerListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  importFromExcel(isCreateNew: boolean) {
+  importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.isCreateNew = isCreateNew;
+    modalRef.componentInstance.type = 'customer';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {

@@ -267,88 +267,35 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CustomerImport(IFormFile file)
+        public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
-            var data = new List<PartnerCustomerRowExcel>();
-            var errors = new List<string>();
-            using (var stream = new MemoryStream())
+            if (val.Type == "customer")
             {
-                await file.CopyToAsync(stream);
+                await _unitOfWork.BeginTransactionAsync();
 
-                using (var package = new ExcelPackage(stream))
-                {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
+                var result = await _partnerService.ImportCustomer(val);
 
-                    for (int row = 2; row <= rowCount; row++)
-                    {
-                        var errs = new List<string>();
+                if (result.Success)
+                    _unitOfWork.Commit();
 
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        if (string.IsNullOrWhiteSpace(name))
-                            errs.Add("Tên khách hàng là bắt buộc");
+                return Ok(result);
+            }
+            else if (val.Type == "supplier")
+            {
+                await _unitOfWork.BeginTransactionAsync();
 
-                        if (errs.Any())
-                        {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
-                        }
+                var result = await _partnerService.ImportSupplier(val);
 
-                        data.Add(new PartnerCustomerRowExcel
-                        {
-                            Name = name,
-                            Ref = Convert.ToString(worksheet.Cells[row, 2].Value),
-                            DateOfBirth = Convert.ToDateTime(worksheet.Cells[row, 3].Value),
-                            Phone = Convert.ToString(worksheet.Cells[row, 4].Value),
-                            Address = Convert.ToString(worksheet.Cells[row, 4].Value),
-                            MedicalHistory = Convert.ToString(worksheet.Cells[row, 5].Value),
-                            Job = Convert.ToString(worksheet.Cells[row, 6].Value),
-                            Email = Convert.ToString(worksheet.Cells[row, 7].Value),
-                            Note = Convert.ToString(worksheet.Cells[row, 8].Value),
-                        });
-                    }
-                }
+                if (result.Success)
+                    _unitOfWork.Commit();
+
+                return Ok(result);
             }
 
-            if (errors.Any())
-                return Ok(new { success = false, errors });
-
-            var partner_code_dict = _partnerService.SearchQuery(x => x.Customer == true && x.Active && !string.IsNullOrEmpty(x.Ref))
-                .GroupBy(x => x.Ref).ToDictionary(x => x.Key, x => x.FirstOrDefault().Id);
-
-            var address_list = data.Where(x => string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).ToList();
-
-            var data_to_insert = data.Where(x => string.IsNullOrEmpty(x.Ref) ||
-                partner_code_dict.Keys.ToArray().Contains(x.Ref)).ToList();
-
-            var partners_to_insert = new List<Partner>();
-            foreach(var item in data_to_insert)
-            {
-                var partner = new Partner();
-                partner.CompanyId = CompanyId;
-                partner.Name = item.Name;
-                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
-
-            }
-
-            var vals = new List<Partner>();
-            foreach (var item in data)
-            {
-                var p = new Partner();
-                p.CompanyId = CompanyId;
-                p.Name = item.Name;
-                p.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
-                
-
-                vals.Add(p);
-            }
-
-            _unitOfWork.Commit();
-
-            return Ok(new { success = true });
+            return BadRequest();
         }
 
-        private async Task<Dictionary<string, AddressCheckApi>> RunTaskAsync(List<string> strs, int limit = 100)
+        private async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
         {
             int offset = 0;
             var dict = new Dictionary<string, AddressCheckApi>();

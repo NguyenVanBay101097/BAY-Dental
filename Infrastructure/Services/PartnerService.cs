@@ -186,62 +186,68 @@ namespace Infrastructure.Services
             };
         }
 
-        public override async Task<Partner> CreateAsync(Partner entity)
+        public override async Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
         {
-            if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
+            _UpdateCityName(entities);
+            await _GenerateRefIfEmpty(entities);
+            await _CheckUniqueRef(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        private async Task _GenerateRefIfEmpty(IEnumerable<Partner> self)
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            var customers = self.Where(x => x.Customer == true && string.IsNullOrEmpty(x.Ref));
+            foreach (var cus in customers)
             {
-                var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-                if (entity.Customer == true)
+                cus.Ref = await seqObj.NextByCode("customer");
+                if (string.IsNullOrEmpty(cus.Ref))
                 {
-                    entity.Ref = await sequenceService.NextByCode("customer");
-                    if (string.IsNullOrEmpty(entity.Ref))
-                    {
-                        await InsertCustomerSequence();
-                        entity.Ref = await sequenceService.NextByCode("customer");
-                    }
-                }
-                else if (entity.Supplier == true)
-                {
-                    entity.Ref = await sequenceService.NextByCode("supplier");
-                    if (string.IsNullOrEmpty(entity.Ref))
-                    {
-                        await InsertSupplierSequence();
-                        entity.Ref = await sequenceService.NextByCode("supplier");
-                    }
-                }
-            } else
-            {
-                if (entity.Customer == true)
-                {
-                    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Customer == true && x.Supplier == false).FirstOrDefault();
-                    if (partner != null)
-                        throw new Exception("Mã Khách hàng bị trùng !");
-                }
-                else if (entity.Supplier == true)
-                {
-                    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Supplier == true && x.Customer == false).FirstOrDefault();
-                    if (partner != null)
-                        throw new Exception("Mã Nhà cung cấp bị trùng !");
+                    await InsertCustomerSequence();
+                    cus.Ref = await seqObj.NextByCode("customer");
                 }
             }
 
-            entity.DisplayName = _NameGet(entity);
-            return await base.CreateAsync(entity);
+            var suppliers = self.Where(x => x.Supplier == true && string.IsNullOrEmpty(x.Ref));
+            foreach (var sup in suppliers)
+            {
+                sup.Ref = await seqObj.NextByCode("supplier");
+                if (string.IsNullOrEmpty(sup.Ref))
+                {
+                    await InsertSupplierSequence();
+                    sup.Ref = await seqObj.NextByCode("supplier");
+                }
+            }
         }
 
-        public override Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
+        private async Task _CheckUniqueRef(IEnumerable<Partner> self)
         {
-            _CheckCityName(entities);
-            return base.CreateAsync(entities);
+            foreach(var partner in self)
+            {
+                if (partner.Customer == true && string.IsNullOrEmpty(partner.Ref))
+                {
+                    var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Customer == true).FirstOrDefaultAsync();
+                    if (exist != null)
+                        throw new Exception($"Đã tồn tại khách hàng với mã {partner.Ref}");
+                }
+
+                if (partner.Supplier == true && string.IsNullOrEmpty(partner.Ref))
+                {
+                    var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Supplier == true).FirstOrDefaultAsync();
+                    if (exist != null)
+                        throw new Exception($"Đã tồn tại nhà cung cấp với mã {partner.Ref}");
+                }
+            }
         }
 
-        public override Task UpdateAsync(IEnumerable<Partner> entities)
+        public override async Task UpdateAsync(IEnumerable<Partner> entities)
         {
-            _CheckCityName(entities);
-            return base.UpdateAsync(entities);
+            _UpdateCityName(entities);
+            await _CheckUniqueRef(entities);
+            await base.UpdateAsync(entities);
         }
 
-        private void _CheckCityName(IEnumerable<Partner> self)
+        private void _UpdateCityName(IEnumerable<Partner> self)
         {
             foreach(var partner in self)
             {
@@ -775,7 +781,397 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<Dictionary<string, AddressCheckApi>> RunTaskAsync(List<string> strs, int limit = 100)
+        public async Task<PartnerImportResponse> ImportCustomer(PartnerImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<PartnerCustomerRowExcel>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var errs = new List<string>();
+
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        if (string.IsNullOrWhiteSpace(name))
+                            errs.Add("Tên khách hàng là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        data.Add(new PartnerCustomerRowExcel
+                        {
+                            Name = name,
+                            Ref = Convert.ToString(worksheet.Cells[row, 2].Value),
+                            Gender = Convert.ToString(worksheet.Cells[row, 3].Value),
+                            DateOfBirth = worksheet.Cells[row, 4].Value != null ? DateTime.FromOADate(Convert.ToDouble(worksheet.Cells[row, 4].Value)) : (DateTime?)null,
+                            Phone = Convert.ToString(worksheet.Cells[row, 5].Value),
+                            Address = Convert.ToString(worksheet.Cells[row, 6].Value),
+                            MedicalHistory = Convert.ToString(worksheet.Cells[row, 7].Value),
+                            Job = Convert.ToString(worksheet.Cells[row, 8].Value),
+                            Email = Convert.ToString(worksheet.Cells[row, 9].Value),
+                            Note = Convert.ToString(worksheet.Cells[row, 10].Value),
+                        });
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return new PartnerImportResponse { Success = false, Errors = errors };
+
+            var partner_code_list = await SearchQuery(x => x.Customer == true && x.Active && !string.IsNullOrEmpty(x.Ref))
+                .GroupBy(x => x.Ref).Select(x => x.Key).ToListAsync();
+
+            var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).ToList();
+            var address_dict = await CheckAddressAsync(address_list);
+
+            var data_to_insert = data.Where(x => string.IsNullOrEmpty(x.Ref) ||
+                !partner_code_list.Contains(x.Ref)).ToList();
+
+            var partners_to_insert = new List<Partner>();
+            var medical_history_dict = new Dictionary<string, History>();
+            var historyObj = GetService<IHistoryService>();
+            foreach (var item in data_to_insert)
+            {
+                var partner = new Partner();
+                partner.Customer = true;
+                partner.CompanyId = CompanyId;
+                partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                partner.Ref = item.Ref;
+                partner.Gender = item.Gender == "Nữ" ? "female" : "male";
+                if (item.DateOfBirth.HasValue)
+                {
+                    var dateOfBirth = item.DateOfBirth.Value;
+                    partner.BirthDay = dateOfBirth.Day;
+                    partner.BirthMonth = dateOfBirth.Month;
+                    partner.BirthYear = dateOfBirth.Year;
+                }
+
+                partner.Phone = item.Phone;
+                partner.JobTitle = item.Job;
+                partner.Comment = item.Note;
+                partner.Email = item.Email;
+
+                if (!string.IsNullOrEmpty(item.MedicalHistory))
+                {
+                    var medical_history_list = item.MedicalHistory.Split(",");
+                    foreach(var mh in medical_history_list)
+                    {
+                        var new_mh = mh.Trim();
+                        if (string.IsNullOrEmpty(new_mh))
+                            continue;
+
+                        var history = medical_history_dict.ContainsKey(new_mh) ? medical_history_dict[new_mh] : null;
+                        if (history == null)
+                            history = await historyObj.SearchQuery(x => x.Name == new_mh).FirstOrDefaultAsync();
+                        if (history == null)
+                            history = await historyObj.CreateAsync(new History { Name = new_mh });
+
+                        partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = history });
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(item.Address))
+                {
+                    var addResult = address_dict.ContainsKey(item.Address) ? address_dict[item.Address] : null;
+                    if (addResult != null)
+                    {
+                        partner.Street = addResult.ShortAddress;
+                        partner.WardCode = addResult.WardCode;
+                        partner.WardName = addResult.WardName;
+                        partner.DistrictCode = addResult.DistrictCode;
+                        partner.DistrictName = addResult.DistrictName;
+                        partner.CityCode = addResult.CityCode;
+                        partner.CityName = addResult.CityName;
+                    }
+                }
+
+                partners_to_insert.Add(partner);
+            }
+
+            try
+            {
+                await CreateAsync(partners_to_insert);
+            }
+            catch(Exception e)
+            {
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
+            }
+
+            var data_to_update = data.Where(x => !string.IsNullOrEmpty(x.Ref) &&
+              partner_code_list.Contains(x.Ref)).ToList();
+
+            var partner_update_dict = await GetPartnerDictByRefs(partner_code_list);
+            var partners_to_update = new List<Partner>();
+            foreach (var item in data_to_update)
+            {
+                var partner = partner_update_dict[item.Ref];
+                partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                partner.Ref = item.Ref;
+                partner.Gender = item.Gender == "Nữ" ? "female" : "male";
+                if (item.DateOfBirth.HasValue)
+                {
+                    var dateOfBirth = item.DateOfBirth.Value;
+                    partner.BirthDay = dateOfBirth.Day;
+                    partner.BirthMonth = dateOfBirth.Month;
+                    partner.BirthYear = dateOfBirth.Year;
+                }
+
+                partner.Phone = item.Phone;
+                partner.JobTitle = item.Job;
+                partner.Comment = item.Note;
+                partner.Email = item.Email;
+
+                if (!string.IsNullOrEmpty(item.MedicalHistory))
+                {
+                    partner.PartnerHistoryRels.Clear();
+                    var medical_history_list = item.MedicalHistory.Split(",");
+                    foreach (var mh in medical_history_list)
+                    {
+                        var new_mh = mh.Trim();
+                        if (string.IsNullOrEmpty(new_mh))
+                            continue;
+
+                        var history = medical_history_dict.ContainsKey(new_mh) ? medical_history_dict[new_mh] : null;
+                        if (history == null)
+                            history = await historyObj.SearchQuery(x => x.Name == new_mh).FirstOrDefaultAsync();
+                        if (history == null)
+                            history = await historyObj.CreateAsync(new History { Name = new_mh });
+
+                        partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = history });
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(item.Address))
+                {
+                    var addResult = address_dict.ContainsKey(item.Address) ? address_dict[item.Address] : null;
+                    if (addResult != null)
+                    {
+                        partner.Street = addResult.ShortAddress;
+                        partner.WardCode = addResult.WardCode;
+                        partner.WardName = addResult.WardName;
+                        partner.DistrictCode = addResult.DistrictCode;
+                        partner.DistrictName = addResult.DistrictName;
+                        partner.CityCode = addResult.CityCode;
+                        partner.CityName = addResult.CityName;
+                    }
+                }
+
+                partners_to_update.Add(partner);
+            }
+
+            try
+            {
+                await UpdateAsync(partners_to_update);
+            }
+            catch (Exception e)
+            {
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
+            }
+
+            return new PartnerImportResponse { Success = true };
+        }
+
+        public async Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<PartnerSupplierRowExcel>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var errs = new List<string>();
+
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        if (string.IsNullOrWhiteSpace(name))
+                            errs.Add("Tên khách hàng là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        data.Add(new PartnerSupplierRowExcel
+                        {
+                            Name = name,
+                            Ref = Convert.ToString(worksheet.Cells[row, 2].Value),
+                            Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
+                            Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
+                            Address = Convert.ToString(worksheet.Cells[row, 5].Value),
+                            Email = Convert.ToString(worksheet.Cells[row, 6].Value),
+                            Note = Convert.ToString(worksheet.Cells[row, 7].Value),
+                        });
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return new PartnerImportResponse { Success = false, Errors = errors };
+
+            var partner_code_list = await SearchQuery(x => x.Supplier == true && x.Active && !string.IsNullOrEmpty(x.Ref))
+                .GroupBy(x => x.Ref).Select(x => x.Key).ToListAsync();
+
+            var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).ToList();
+            var address_dict = await CheckAddressAsync(address_list);
+
+            var data_to_insert = data.Where(x => string.IsNullOrEmpty(x.Ref) ||
+                !partner_code_list.Contains(x.Ref)).ToList();
+
+            var partners_to_insert = new List<Partner>();
+            var medical_history_dict = new Dictionary<string, History>();
+            var historyObj = GetService<IHistoryService>();
+            foreach (var item in data_to_insert)
+            {
+                var partner = new Partner();
+                partner.Supplier = true;
+                partner.Customer = false;
+                partner.CompanyId = CompanyId;
+                partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                partner.Ref = item.Ref;
+                partner.Phone = item.Phone;
+                partner.Fax = item.Fax;
+                partner.Comment = item.Note;
+                partner.Email = item.Email;
+
+                if (!string.IsNullOrEmpty(item.Address))
+                {
+                    var addResult = address_dict.ContainsKey(item.Address) ? address_dict[item.Address] : null;
+                    if (addResult != null)
+                    {
+                        partner.Street = addResult.ShortAddress;
+                        partner.WardCode = addResult.WardCode;
+                        partner.WardName = addResult.WardName;
+                        partner.DistrictCode = addResult.DistrictCode;
+                        partner.DistrictName = addResult.DistrictName;
+                        partner.CityCode = addResult.CityCode;
+                        partner.CityName = addResult.CityName;
+                    }
+                }
+
+                partners_to_insert.Add(partner);
+            }
+
+            try
+            {
+                await CreateAsync(partners_to_insert);
+            }
+            catch (Exception e)
+            {
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
+            }
+
+            var data_to_update = data.Where(x => !string.IsNullOrEmpty(x.Ref) &&
+              partner_code_list.Contains(x.Ref)).ToList();
+
+            var partner_update_dict = await GetPartnerDictByRefs(partner_code_list, type: "supplier");
+            var partners_to_update = new List<Partner>();
+            foreach (var item in data_to_update)
+            {
+                var partner = partner_update_dict[item.Ref];
+                partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                partner.Ref = item.Ref;
+                partner.Phone = item.Phone;
+                partner.Fax = item.Fax;
+                partner.Comment = item.Note;
+                partner.Email = item.Email;
+
+                if (!string.IsNullOrEmpty(item.Address))
+                {
+                    var addResult = address_dict.ContainsKey(item.Address) ? address_dict[item.Address] : null;
+                    if (addResult != null)
+                    {
+                        partner.Street = addResult.ShortAddress;
+                        partner.WardCode = addResult.WardCode;
+                        partner.WardName = addResult.WardName;
+                        partner.DistrictCode = addResult.DistrictCode;
+                        partner.DistrictName = addResult.DistrictName;
+                        partner.CityCode = addResult.CityCode;
+                        partner.CityName = addResult.CityName;
+                    }
+                }
+
+                partners_to_update.Add(partner);
+            }
+
+            try
+            {
+                await UpdateAsync(partners_to_update);
+            }
+            catch (Exception e)
+            {
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
+            }
+
+            return new PartnerImportResponse { Success = true };
+        }
+
+        public async Task<IDictionary<Guid, Partner>> GetPartnerDictByIds(IEnumerable<Guid> ids)
+        {
+            var limit = 200;
+            var offset = 0;
+            var sub_ids = ids.Skip(offset).Take(limit).ToList();
+            var res = new Dictionary<Guid, Partner>();
+            while(sub_ids.Count > 0)
+            {
+                var list = await SearchQuery(x => sub_ids.Contains(x.Id)).Include(x => x.PartnerHistoryRels).ToListAsync();
+                foreach (var item in list)
+                    res.Add(item.Id, item);
+
+                offset += limit;
+                sub_ids = sub_ids.Skip(offset).Take(limit).ToList();
+            }
+
+            return res;
+        }
+
+        public async Task<IDictionary<string, Partner>> GetPartnerDictByRefs(IEnumerable<string> refs, string type = "customer")
+        {
+            var limit = 200;
+            var offset = 0;
+            var sub_ids = refs.Skip(offset).Take(limit).ToList();
+            var res = new Dictionary<string, Partner>();
+            while (sub_ids.Count > 0)
+            {
+                var query = SearchQuery(x => sub_ids.Contains(x.Ref));
+                if (type == "supplier")
+                    query = query.Where(x => x.Supplier);
+                else if (type == "customer")
+                    query = query.Where(x => x.Customer);
+
+                var list = await query.Include(x => x.PartnerHistoryRels).ToListAsync();
+                foreach (var item in list)
+                {
+                    if (!res.ContainsKey(item.Ref))
+                        res.Add(item.Ref, item);
+                }
+
+                offset += limit;
+                sub_ids = sub_ids.Skip(offset).Take(limit).ToList();
+            }
+
+            return res;
+        }
+
+        public async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
         {
             int offset = 0;
             var dict = new Dictionary<string, AddressCheckApi>();
@@ -880,7 +1276,7 @@ namespace Infrastructure.Services
                     if (!string.IsNullOrEmpty(add))
                         adList.Add(add.ToLower());
                 }
-                var dict = await RunTaskAsync(strs: adList.Distinct().ToList());
+                var dict = await CheckAddressAsync(strs: adList.Distinct().ToList());
                 var genderDict = new Dictionary<string, string>()
                 {
                     { "nam","male" },
