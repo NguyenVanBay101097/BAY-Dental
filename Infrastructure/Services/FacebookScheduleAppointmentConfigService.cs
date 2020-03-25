@@ -39,70 +39,55 @@ namespace Infrastructure.Services
         public async Task<FacebookScheduleAppointmentConfig> CreateFBSheduleConfig(FacebookScheduleAppointmentConfigSave val)
         {
             var userService = GetService<UserManager<ApplicationUser>>();
-            var user = userService.FindByIdAsync(UserId);
-            
+            var user = await userService.FindByIdAsync(UserId);
+
             var result = _mapper.Map<FacebookScheduleAppointmentConfig>(val);
-            result.FBPageId = user.Result.FacebookPageId.Value;
+            if (result.ScheduleType == "minutes" && result.ScheduleNumber <= 0)
+            {
+                throw new Exception("");
+            }
+            result.FBPageId = user.FacebookPageId.Value;
             await CreateAsync(result);
 
             return result;
 
         }
 
+        [Obsolete]
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
+
+
             var result = await SearchQuery(x => ids.Contains(x.Id) && x.AutoScheduleAppoint == false).ToListAsync();
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             foreach (var item in result)
             {
                 item.AutoScheduleAppoint = true;
 
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-                builder["Database"] = $"TMTDentalCatalogDb";
-                using (var conn = new SqlConnection(builder.ConnectionString))
-                {
-                    try
-                    {
-                        conn.Open();
-                        var fbSheduleConfigs = conn.Query<PartnerAppointment>("Select app.PartnerId, fbu.PSID ,app.Date From FacebookUserProfiles as fbu Inner Join Appointments as app On app.PartnerId = fbu.PartnerId Where fbu.FbPageId = @pageId", new { pageId = item.FBPageId }).ToList();
-                        if (fbSheduleConfigs == null)
-                            throw new Exception("Chưa có khách hàng nào kết nối Fanpage !");
-                        foreach (var config in fbSheduleConfigs)
-                        {
-                            //thời gian được tính theo trước ngày tạo lịch hẹn 
-                            var date = config.Date;
-                            var ScheduleNumber = item.ScheduleNumber ?? 0;
 
-                            if (item.ScheduleType == "minutes")
-                                date = date.AddMinutes(-(ScheduleNumber));
-                            if (item.ScheduleType == "hours")
-                                date = date.AddHours(-(ScheduleNumber));
-                            else if (item.ScheduleType == "days")
-                                date = date.AddDays(-(ScheduleNumber));
-                            else if (item.ScheduleType == "weeks")
-                                date = date.AddDays((-(ScheduleNumber)) * 7);
+                var ScheduleNumber = item.ScheduleNumber ?? 0;
 
-                            var jobId = BackgroundJob.Schedule(() => RunSendMessageFB(tenant, item.FBPageId), date);
-                            item.JobId = jobId;
-                            if (string.IsNullOrEmpty(item.JobId))
-                                throw new Exception("Can't not schedule job");
-                        }
-                    }
-                    catch
-                    {
+                if (item.ScheduleType == "minutes")
+                    //date = date.AddMinutes(-(ScheduleNumber));
+                    RecurringJob.AddOrUpdate($"{tenant}-AutoMesFB", () => RunSendMessageFB(tenant, item.FBPageId, item.ScheduleType, item.ScheduleNumber.Value), Cron.MinuteInterval(ScheduleNumber));
+                if (item.ScheduleType == "hours")
+                    //date = date.AddHours(-(ScheduleNumber));
+                    RecurringJob.AddOrUpdate($"{tenant}-AutoMesFB", () => RunSendMessageFB(tenant, item.FBPageId, item.ScheduleType, item.ScheduleNumber.Value), Cron.HourInterval(ScheduleNumber));
 
-                    }
+                //var jobId = BackgroundJob.Schedule(() => RunSendMessageFB(tenant, item.FBPageId), date);
+                //item.JobId = jobId;
+                //if (string.IsNullOrEmpty(item.JobId))
+                //    throw new Exception("Can't not schedule job");
 
-                    
-                }
                 await UpdateAsync(result);
             }
         }
 
-        public async Task RunSendMessageFB(string db, Guid fbpageId)
+        public async Task RunSendMessageFB(string db, Guid fbpageId, string scheduletype, int ScheduleNumber)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             builder["Database"] = $"TMTDentalCatalogDb";
+
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
                 try
@@ -122,18 +107,55 @@ namespace Infrastructure.Services
                         ).FirstOrDefault();
                     if (page == null)
                         return;
-                    var fbSheduleConfig = conn.Query<PartnerAppointment>("Select app.PartnerId, fbu.PSID , app.DateCreated  From FacebookUserProfiles as fbu Join Appointments as app On app.PartnerId = fbu.PartnerId Where fbu.FbPageId = @pageId", new { pageId = fbpageId }).ToList();
-                    
-                    var tasks = fbSheduleConfig.Select(x => SendMessageFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage )).ToList();                  
-                    var limit = 200;
-                    var offset = 0;
-                    var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                    while (subTasks.Any())
+                    var date = DateTime.Now;
+                    if (fbshedule.ScheduleType == "minutes")
                     {
-                        var result = await Task.WhenAll(subTasks);
-                        offset += limit;
-                        subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        var datefrom = date.AddMinutes(-(ScheduleNumber + ScheduleNumber));
+                        var dateto = date.AddMinutes(-(ScheduleNumber));
+                        var fbSheduleConfigMinutes = conn.Query<PartnerAppointment>("" +
+                            "Select app.PartnerId, fbuser.PSID , app.Date " +
+                            "From Appointments as app  " +
+                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbu.PartnerId " +
+                            "Where fbu.FbPageId = @pageId AND app.Date BETWEEN @dateFrom AND @dateTo  ", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto }).ToList();
+                        if (fbSheduleConfigMinutes == null)
+                            return;
+                        var tasks = fbSheduleConfigMinutes.Select(x => SendMessageFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            var result = await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        }
                     }
+                    else if (fbshedule.ScheduleType == "hours")
+                    {
+                        var datefrom = date.AddHours(-(ScheduleNumber + 1));
+                        var dateto = date.AddHours(-(ScheduleNumber));
+                        var fbSheduleConfigHours = conn.Query<PartnerAppointment>("" +
+                            "Select app.PartnerId, fbuser.PSID , app.Date " +
+                            "From Appointments as app  " +
+                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbu.PartnerId " +
+                            "Where fbu.FbPageId = @pageId AND app.Date BETWEEN @dateFrom AND @dateTo  ", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto }).ToList();
+                        if (fbSheduleConfigHours == null)
+                            return;
+                        var tasks = fbSheduleConfigHours.Select(x => SendMessageFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            var result = await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        }
+                    }
+
+
+
+
                 }
                 catch
                 {
@@ -141,7 +163,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<SendFacebookMessage> SendMessageFBAsync(string accessTokenPage, string psid, string message )
+        public async Task<SendFacebookMessage> SendMessageFBAsync(string accessTokenPage, string psid, string message)
         {
             var errorMaessage = "";
             var apiClient = new ApiClient(accessTokenPage, FacebookApiVersions.V6_0);
