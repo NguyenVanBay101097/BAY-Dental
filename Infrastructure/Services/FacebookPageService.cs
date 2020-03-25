@@ -355,14 +355,10 @@ namespace Infrastructure.Services
             var lstFBUser = facebookuser.SearchQuery().Select(x => x.PSID).ToList();
             var lstCusNew = lstPsid.Except(lstFBUser);
             if (lstCusNew.Any())
-            {
-                
-               
+            {                             
                     var tasks = lstCusNew.Select(id => LoadFacebookCustomer(id, page.PageAccesstoken));
-                    lstFBCus = await Task.WhenAll(tasks);
-
-                
-
+                    lstFBCus = await Task.WhenAll(tasks); 
+               
             }
             if(lstCusNew.Count() == 0)
             {
@@ -386,7 +382,7 @@ namespace Infrastructure.Services
             if (response.GetExceptions().Any())
             {
                 errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
-                throw new Exception(errorMaessage);
+                return null;
             }
             else
             {
@@ -406,20 +402,21 @@ namespace Infrastructure.Services
         public async Task<List<FacebookUserProfile>> CreateFacebookUser()
         {
             var userservice = GetService<UserManager<ApplicationUser>>();
-            var user = userservice.FindByIdAsync(UserId);
-            if(user.Result.FacebookPageId == null)
+            var user = await userservice.FindByIdAsync(UserId);
+            if(user.FacebookPageId == null)
             {
-                throw new Exception($"{user.Result.Name} chưa liên kết với Fanpage nào !");
+                throw new Exception($"{user.Name} chưa liên kết với Fanpage nào !");
             }
             var facebookuser = GetService<IFacebookUserProfileService>();
-            var page = SearchQuery(x => x.Id == user.Result.FacebookPageId).FirstOrDefault();
+            var page = SearchQuery(x => x.Id == user.FacebookPageId).FirstOrDefault();
             var lstFBUser = new List<FacebookUserProfile>();
             var lstCusNew = await CheckCustomerNew(page.Id);
             if (lstCusNew.Any())
             {
                 foreach (var item in lstCusNew)
                 {
-
+                    if (item == null)
+                        continue;
                     var fbuser = new FacebookUserProfile
                     {
                         PSID = item.PSId,
