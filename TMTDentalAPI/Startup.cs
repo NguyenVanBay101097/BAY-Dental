@@ -219,6 +219,7 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookConnectService, FacebookConnectService>();
             services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();
             services.AddScoped<IFacebookUserProfileService, FacebookUserProfileService>();
+            services.AddScoped<IFacebookScheduleAppointmentConfigService, FacebookScheduleAppointmentConfigService>();
 
             services.AddMemoryCache();
 
@@ -298,6 +299,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new FacebookConnectPageProfile());
                 mc.AddProfile(new FacebookConnectProfile());
                 mc.AddProfile(new FacebookUserProfiles());
+                mc.AddProfile(new FacebookScheduleAppointmentConfigProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
