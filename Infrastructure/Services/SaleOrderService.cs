@@ -281,7 +281,9 @@ namespace Infrastructure.Services
                 var points = await cardObj.ConvertAmountToPoint(sale.AmountTotal);
                 card.TotalPoint = (card.TotalPoint ?? 0) + points;
                 card.PointInPeriod = (card.PointInPeriod ?? 0) + points;
+
                 await cardObj.UpdateAsync(card);
+                await cardObj._CheckUpgrade(new List<CardCard>() { card });
             }
 
             await UpdateAsync(self);

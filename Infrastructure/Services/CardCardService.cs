@@ -157,31 +157,38 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task ButtonActive(IEnumerable<Guid> ids)
+        public async Task ButtonActive(IEnumerable<Guid> ids, bool check_basic_points = true)
         {
             var cardTypeObj = GetService<ICardTypeService>();
-            var self = await SearchQuery(x => ids.Contains(x.Id) && x.State == "draft" || x.State == "confirmed")
+            var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Type).ToListAsync();
             foreach (var card in self)
             {
                 if (!card.PartnerId.HasValue)
                     throw new Exception("Thẻ thành viên không được để trống khách hàng");
+
                 await CheckExisted(card);
-                if (!card.ActivatedDate.HasValue)
-                    card.ActivatedDate = DateTime.Today;
-                if (!card.ExpiredDate.HasValue)
-                    card.ExpiredDate = cardTypeObj.GetPeriodEndDate(card.Type);
+
+                var active_date = card.State != "in_use" ? card.ActivatedDate : null;
+                if (!active_date.HasValue)
+                    active_date = DateTime.Today;
+
+                var expiry_date = cardTypeObj.GetPeriodEndDate(card.Type);
+            
                 card.State = "in_use";
                 card.PointInPeriod = 0;
+                card.ActivatedDate = active_date;
+                card.ExpiredDate = expiry_date;
             }
-              
+
+            await _CheckUpgrade(self);
             await UpdateAsync(self);
         }
 
         public async Task CheckExisted(CardCard self)
         {
             //Kiểm tra xem đã có thẻ nào đã được cấp cho khách hàng hay chưa? nếu có thì báo lỗi
-            var states = new string[] { "draft", "confirmed", "cancelled" };
+            var states = new string[] { "cancelled" };
             var existed = await SearchQuery(x => x.Id != self.Id && !states.Contains(x.State) && x.PartnerId == self.PartnerId).FirstOrDefaultAsync();
             if (existed != null)
                 throw new Exception($"Thẻ thành viên với số {existed.Name} đã được cấp cho khách hàng này");
@@ -215,6 +222,14 @@ namespace Infrastructure.Services
             foreach (var card in self)
                 card.State = "draft";
             await UpdateAsync(self);
+        }
+
+        public async Task ButtonRenew(IEnumerable<Guid> ids, bool check_basic_points = true)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var card in self)
+                await AddHistory(card);
+            await ButtonActive(ids, check_basic_points: check_basic_points);
         }
 
         public async Task ButtonLock(IEnumerable<Guid> ids)
@@ -258,30 +273,41 @@ namespace Infrastructure.Services
             return today > self.ExpiredDate;
         }
 
-        public async Task<CardType> FindTypeUpgrade(CardCard self)
-        {
-            var cardTypeObj = GetService<ICardTypeService>();
-            var points = self.PointInPeriod ?? 0;
-            var type = await cardTypeObj.SearchQuery(x => x.BasicPoint <= points, orderBy: x => x.OrderByDescending(s => s.BasicPoint))
-                .FirstOrDefaultAsync();
-            return type;
-        }
-
         public async Task ButtonUpgradeCard(IEnumerable<CardCard> self)
         {
             var cardTypeObj = GetService<ICardTypeService>();
+            var cards_check_upgrade = new List<CardCard>();
             foreach(var card in self)
             {
-                var upgradeType = await FindTypeUpgrade(card);
-                if (upgradeType == null || upgradeType.Id == card.TypeId)
+                if (!card.UpgradeTypeId.HasValue)
                     continue;
+                cards_check_upgrade.Add(card);
 
                 await AddHistory(card);
 
-                card.TypeId = upgradeType.Id;
+                card.TypeId = card.UpgradeTypeId.Value;
                 card.ActivatedDate = DateTime.Today;
                 card.ExpiredDate = cardTypeObj.GetPeriodEndDate(card.Type, dStart: card.ActivatedDate);
                 card.PointInPeriod = 0;
+            }
+
+            await UpdateAsync(cards_check_upgrade);
+            await _CheckUpgrade(cards_check_upgrade);
+        }
+
+        public async Task _CheckUpgrade(IEnumerable<CardCard> self, decimal? points = null)
+        {
+            var cardTypeObj = GetService<ICardTypeService>();
+            var ids = self.Select(x => x.Id).ToList();
+            self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Type).ToListAsync();
+            foreach(var r in self)
+            {
+                if (!points.HasValue)
+                    points = r.PointInPeriod ?? 0;
+                var type = await cardTypeObj.SearchQuery(x => x.BasicPoint <= points && x.BasicPoint >= r.Type.BasicPoint && x.Id != r.TypeId, orderBy: x => x.OrderByDescending(s => s.BasicPoint))
+                    .FirstOrDefaultAsync();
+
+                r.UpgradeTypeId = type != null ? type.Id : (Guid?)null;
             }
 
             await UpdateAsync(self);

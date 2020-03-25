@@ -147,6 +147,14 @@ export class CardCardCuDialogComponent implements OnInit {
     }
   }
 
+  buttonRenew() {
+    if (this.id) {
+      this.cardCardService.buttonRenew([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
   buttonLock() {
     if (this.id) {
       this.saveIfDirty().subscribe(() => {
@@ -158,10 +166,6 @@ export class CardCardCuDialogComponent implements OnInit {
   }
 
   buttonUpgrade() {
-    if (!confirm('Hệ thống sẽ nâng cấp hạng thẻ nếu đủ điểm tích lũy hoặc hạ cấp nếu không đủ điểm tích lũy. Bạn có chắc chắn muốn tiếp tục?')) {
-      return false;
-    }
-
     if (this.id) {
       this.cardCardService.buttonUpgrade([this.id]).pipe(finalize(() => this.loadRecord())).subscribe(() => {
         this.isChanged = true;

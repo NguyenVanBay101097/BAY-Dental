@@ -17,6 +17,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Name, x => x.Ignore())
                 .ForMember(x => x.PointInPeriod, x => x.Ignore())
+                .ForMember(x => x.UpgradeTypeId, x => x.Ignore())
                 .ForMember(x => x.TotalPoint, x => x.Ignore())
                 .ForMember(x => x.ExpiredDate, x => x.Ignore())
                 .ForMember(x => x.ActivatedDate, x => x.Ignore())

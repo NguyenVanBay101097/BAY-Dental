@@ -31,5 +31,9 @@ namespace ApplicationCore.Entities
         /// month: Tháng, year: Năm
         /// </summary>
         public string Period { get; set; }
+
+        public int? Sequence { get; set; }
+
+        public string Note { get; set; }
     }
 }

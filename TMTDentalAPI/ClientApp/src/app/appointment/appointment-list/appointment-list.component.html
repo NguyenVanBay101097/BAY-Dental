@@ -12,18 +12,7 @@
                         type="text" [(ngModel)]="search"
                         (ngModelChange)="appointmentVMService.searchSubject.next($event)">
                 </div>
-                <!-- <div class="o_searchview_advance">
-                    <button class="btn btn-secondary btn-sm rounded-0" type="button"
-                        (click)="advanceFilter.toggleShow()">
-                        Nâng cao
-                    </button>
-                </div> -->
             </div>
-            <!-- <div class="o_searchview">
-                <input type="text" class="o_searchview_input" formControlName="search" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)"
-                    placeholder="Theo tên, số điện thoại khách hàng hoặc tên bác sĩ" />
-            </div> -->
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -32,12 +21,6 @@
                         <i class="fas fa-calendar-plus"></i>&nbsp;Đặt lịch hẹn</button>
                     <button class="btn btn-primary btn-sm" (click)="refreshData()">
                         <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
-                    <!-- <button *ngIf="!schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="schedulerShow"
-                        (click)="showSchedulerDefault()">
-                        <i class="fas fa-calendar-alt"></i>&nbsp;Xem lịch</button>
-                    <button *ngIf="schedulerShow" kendoButton class="btn btn-sm" [class.activeButton]="!schedulerShow"
-                        (click)="showGridView()">
-                        <i class="fas fa-list"></i>&nbsp;Xem danh sách</button> -->
                 </div>
             </div>
             <div class="o_cp_sidebar">

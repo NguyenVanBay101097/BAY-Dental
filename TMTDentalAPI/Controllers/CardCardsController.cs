@@ -40,12 +40,15 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var type = await _cardCardService.SearchQuery(x => x.Id == id).Include(x => x.Type)
+            var card = await _cardCardService.SearchQuery(x => x.Id == id).Include(x => x.Type)
                 .Include(x => x.Partner).FirstOrDefaultAsync();
-            if (type == null)
+            if (card == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<CardCardDisplay>(type));
+            var display = _mapper.Map<CardCardDisplay>(card);
+            display.IsExpired = display.ExpiredDate.HasValue ? DateTime.Today > display.ExpiredDate.Value : false;
+
+            return Ok(display);
         }
 
         [HttpPost]
@@ -128,6 +131,16 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             await _cardCardService.ButtonLock(ids);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ButtonRenew(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _cardCardService.ButtonRenew(ids);
             return NoContent();
         }
 
