@@ -6,11 +6,12 @@
                     src="https://graph.facebook.com/{{switchPage.currentPage.pageId}}/picture?height=40&amp;width=40">
             </div>
             <div class="mess-page">
-                <div class="page-selected-item">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown page-selected-item">
+                    <a href="#" class="dropdown-toggle" role="button" aria-haspopup="true" id="bd-page"
+                        data-toggle="dropdown" aria-expanded="false">
                         <span *ngIf="switchPage.currentPage">{{switchPage.currentPage.pageName}}</span>
                     </a>
-                    <div class="dropdown-menu">
+                    <div class="dropdown-menu" aria-labelledby="bd-page">
                         <button *ngFor="let page of switchPage.pages" class="dropdown-item"
                             (click)="switchPageClick(page)" type="button">{{page.pageName}}</button>
                     </div>
@@ -19,59 +20,6 @@
         </div>
         <div>
             <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <table class="bg-white rounded dropdown-toggle mr-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <tr>
-                            <td rowspan="2">
-                                <img src="https://graph.facebook.com/437586009925813/picture?height=40&amp;width=40">
-                            </td>
-                            <td class="px-1">
-                                <b>Free For You</b>
-                            </td>
-                            <td class="px-1">
-                                <i class="fas fa-caret-down"></i>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-1" style="font-size: 0.7rem;">
-                                437586009925813
-                            </td>
-                        </tr>
-                    </table>
-                    <div class="dropdown-menu">
-                        <table class="dropdown-item">
-                            <tr>
-                                <td rowspan="2">
-                                    <img src="https://graph.facebook.com/437586009925813/picture?height=40&amp;width=40">
-                                </td>
-                                <td class="px-1">
-                                    <b>Free For You</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-1" style="font-size: 0.7rem;">
-                                    437586009925813
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="dropdown-divider"></div>
-                        <table class="dropdown-item">
-                            <tr>
-                                <td rowspan="2">
-                                    <img src="https://graph.facebook.com/437586009925813/picture?height=40&amp;width=40">
-                                </td>
-                                <td class="px-1">
-                                    <b>Free For You</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-1" style="font-size: 0.7rem;">
-                                    437586009925813
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active" [routerLink]="['campaigns']">Chiến dịch</a>
                 </li>
