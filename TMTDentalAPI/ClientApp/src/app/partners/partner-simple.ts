@@ -63,6 +63,7 @@ export class PartnerPaged {
     customer: boolean;
     employee: boolean;
     supplier: boolean;
+    search: string;
 }
 
 export class PagedResult2<T>{

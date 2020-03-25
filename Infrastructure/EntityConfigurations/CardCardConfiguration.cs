@@ -18,6 +18,11 @@ namespace Infrastructure.EntityConfigurations
               .HasForeignKey(x => x.TypeId)
               .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.UpgradeType)
+           .WithMany()
+           .HasForeignKey(x => x.UpgradeTypeId)
+           .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasOne(x => x.Partner)
               .WithMany()
               .HasForeignKey(x => x.PartnerId);

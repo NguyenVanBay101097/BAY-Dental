@@ -12,77 +12,38 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 })
 export class PartnerImportComponent implements OnInit {
 
-  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private activeRoute: ActivatedRoute,
-    private service: PartnerService, private notificationService: NotificationService, private router: Router) { }
+  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
+    private partnerService: PartnerService) { }
 
-  isChange: boolean = false;
-  formImport: FormGroup;
-  selectedFile: File;
-  isCustomer = false;
-  title = '';
-  isCreateNew = false;
+  formGroup: FormGroup;
+  title = 'Import';
+  type: string;
+  errors: any = [];
 
   ngOnInit() {
-    this.formImport = this.fb.group({
-      file: [null, Validators.required],
-    })
-    this.routingChange();
-
-    if (this.isCreateNew)
-      this.title = 'Thêm mới từ Excel';
-    else
-      this.title = 'Cập nhật từ Excel';
+    this.formGroup = this.fb.group({
+      fileBase64: [null, Validators.required],
+    });
   }
 
-  routingChange() {
-    this.activeRoute.queryParamMap.subscribe(
-      params => {
-        if (params['params']['customer'] == 'true') {
-          this.isCustomer = true;
-        }
-        if (params['params']['supplier'] == 'true') {
-          this.isCustomer = false;
-        }
-      },
-      er => {
-        console.log(er);
-      }
-    );
-  }
 
-  closeModal(rs) {
-    if (this.isChange) {
-      if (rs) {
-        this.activeModal.close(rs);
-      } else {
-        this.activeModal.close(true);
-      }
-    }
-    else {
-      this.activeModal.dismiss();
-    }
+  onFileChange(data) {
+    this.formGroup.get('fileBase64').patchValue(data);
   }
 
   import() {
-    var dir = new ImportExcelDirect;
-    dir.isCreateNew = this.isCreateNew;
-    dir.isCustomer = this.isCustomer;
-    this.service.importFromExcelCreate(this.selectedFile, dir).subscribe(
-      rs => {
-        this.isChange = true;
-        this.closeModal(null);
-        this.notificationService.show({
-          content: 'Thêm dữ liệu từ file thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'right', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-      }
-    )
-  }
+    if (!this.formGroup.valid) {
+      return false;
+    }
 
-  changeAttachment(e) {
-    this.selectedFile = e.target.files[0];
+    var val = this.formGroup.value;
+    val.type = this.type;
+    this.partnerService.actionImport(val).subscribe((result: any) => {
+      if (result.success) {
+        this.activeModal.close(true);
+      } else {
+        this.errors = result.errors;
+      }
+    });
   }
 }

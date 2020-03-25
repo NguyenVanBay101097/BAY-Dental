@@ -266,6 +266,64 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
+        {
+            if (val.Type == "customer")
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var result = await _partnerService.ImportCustomer(val);
+
+                if (result.Success)
+                    _unitOfWork.Commit();
+
+                return Ok(result);
+            }
+            else if (val.Type == "supplier")
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var result = await _partnerService.ImportSupplier(val);
+
+                if (result.Success)
+                    _unitOfWork.Commit();
+
+                return Ok(result);
+            }
+
+            return BadRequest();
+        }
+
+        private async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
+        {
+            int offset = 0;
+            var dict = new Dictionary<string, AddressCheckApi>();
+            while (offset < strs.Count)
+            {
+                var subStrs = strs.Skip(offset).Take(limit);
+                var allTasks = subStrs.Select(x => AddressHandleAsync(x));
+                var res = await Task.WhenAll(allTasks);
+                foreach (var item in res)
+                {
+                    dict.Add(item.Key, item.Value);
+                }
+
+                offset += limit;
+            }
+
+            return dict;
+        }
+
+        private async Task<KeyValuePair<string, AddressCheckApi>> AddressHandleAsync(string text)
+        {
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
+            var res = response.Content.ReadAsAsync<AddressCheckApi[]>().Result.ToList().FirstOrDefault();
+            var pair = new KeyValuePair<string, AddressCheckApi>(text, res);
+            return pair;
+        }
+
         [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)

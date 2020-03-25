@@ -140,18 +140,7 @@ namespace TMTDentalAPI.Controllers
             if (appointment == null)
                 return NotFound();
 
-            if (appointment.State != "cancel")
-                throw new Exception("Bạn chỉ có thể xóa lịch hẹn ở trạng thái hủy bỏ");
-
-            await _unitOfWork.BeginTransactionAsync();
-
-            var dks = await _dotKhamService.SearchQuery(x => x.AppointmentId == id).ToListAsync();
-            foreach (var dk in dks)
-                dk.AppointmentId = null;
-            await _dotKhamService.UpdateAsync(dks);
-
             await _appointmentService.DeleteAsync(appointment);
-            _unitOfWork.Commit();
 
             return NoContent();
         }

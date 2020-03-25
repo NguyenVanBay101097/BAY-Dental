@@ -28,6 +28,7 @@ import { CardCardsModule } from '../card-cards/card-cards.module';
 import { SharedModule } from '../shared/shared.module';
 import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
 import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
+import { CustomComponentModule } from '../common/common.module';
 
 @NgModule({
   declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
@@ -41,7 +42,8 @@ import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-se
     ReactiveFormsModule,
     FormsModule,
     MatStepperModule,
-    SharedModule
+    SharedModule,
+    CustomComponentModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

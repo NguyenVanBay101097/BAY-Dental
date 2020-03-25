@@ -39,5 +39,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? ActivatedDate { get; set; }
 
         public DateTime? ExpiredDate { get; set; }
+
+        public bool IsExpired { get; set; }
+
+        public Guid? UpgradeTypeId { get; set; }
     }
 }

@@ -1,12 +1,2 @@
 <kendo-tabstrip (tabSelect)="onTabSelect($event)">
-    <kendo-tabstrip-tab [title]="'Thông tin'" [selected]="true">
-        <ng-template kendoTabContent>
-            <app-partner-customer-info [partner]="partner"></app-partner-customer-info>
-        </ng-template>
-    </kendo-tabstrip-tab>
-    <kendo-tabstrip-tab [title]="'Hóa đơn điều trị'">
-        <ng-template kendoTabContent>
-            <app-partner-customer-invoices [partnerId]="item.id"></app-partner-customer-invoices>
-        </ng-template>
-    </kendo-tabstrip-tab>
 </kendo-tabstrip>

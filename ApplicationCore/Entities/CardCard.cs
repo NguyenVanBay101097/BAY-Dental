@@ -51,5 +51,8 @@ namespace ApplicationCore.Entities
         public decimal? PointInPeriod { get; set; }
 
         public DateTime? ExpiredDate { get; set; }
+
+        public Guid? UpgradeTypeId { get; set; }
+        public CardType UpgradeType { get; set; }
     }
 }

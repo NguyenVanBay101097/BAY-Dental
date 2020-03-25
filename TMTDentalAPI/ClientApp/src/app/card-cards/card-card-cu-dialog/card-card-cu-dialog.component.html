@@ -26,7 +26,12 @@
                         Reset
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id" (click)="buttonUpgrade()">
+                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id && card.isExpired == true"
+                        (click)="buttonRenew()">
+                        Cấp thẻ lại
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="card.upgradeTypeId && id"
+                        (click)="buttonUpgrade()">
                         Nâng cấp
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"

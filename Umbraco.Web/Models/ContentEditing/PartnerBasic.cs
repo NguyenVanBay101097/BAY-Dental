@@ -42,27 +42,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int Limit { get; set; }
 
-        /// <summary>
-        /// Search mã hoặc tên
-        /// </summary>
-        public string SearchNamePhoneRef { get; set; }
+        public string Search { get; set; }
 
         public bool? Customer { get; set; }
 
         public bool? Employee { get; set; }
 
         public bool? Supplier { get; set; }
-    }
-
-    public class PartnerImportExcelViewModel
-    {
-        public string FileBase64 { get; set; }
-
-        public bool Customer { get; set; }
-
-        public bool Supplier { get; set; }
-
-        public bool Employee { get; set; }
     }
 
     public class PartnerPatch

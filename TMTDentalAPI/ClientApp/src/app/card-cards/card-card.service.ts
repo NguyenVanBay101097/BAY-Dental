@@ -28,6 +28,8 @@ export class CardCardDisplay {
     type: CardTypeBasic;
     activatedDate: string;
     expiredDate: string;
+    isExpired: boolean;
+    upgradeTypeId: string;
 }
 
 @Injectable()
@@ -69,6 +71,10 @@ export class CardCardService {
 
     buttonReset(ids) {
         return this.http.post(this.baseApi + this.apiUrl + '/ButtonReset', ids);
+    }
+
+    buttonRenew(ids) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ButtonRenew', ids);
     }
 
     buttonLock(ids) {
