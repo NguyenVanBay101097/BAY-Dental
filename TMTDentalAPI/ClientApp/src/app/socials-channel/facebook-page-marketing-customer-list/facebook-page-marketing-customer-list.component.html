@@ -1,6 +1,6 @@
 <div class="px-3 py-2 d-flex justify-content-between">
     <button class="btn btn-sm btn-primary" (click)="createFacebookUser()">Tải danh sách khách hàng</button>
-    <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm theo tên hay mã khách hàng " type="text"
+    <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm theo tên khách hàng " type="text"
         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
 </div>
 
@@ -17,6 +17,10 @@
         <kendo-grid-column field="name" title="Tên khách hàng">
         </kendo-grid-column>
         <kendo-grid-column field="gender" title="Giới tính">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span *ngIf="dataItem.gender === 'male'">Nam</span>
+                <span *ngIf="dataItem.gender === 'female'">Nữ</span>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="dateCreated" title="Ngày tạo">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -39,16 +43,3 @@
         </kendo-grid-column>
     </kendo-grid>
 </div>
-<br>
-<br>
-<div *ngFor="let item of dataSendMessage; index as i">
-    <input *ngIf="item.type === 'text' || item.type === 'template'" placeholder="Nhập tin nhắn.." [(ngModel)]="item.text">
-    <input *ngIf="item.type === 'text' || item.type === 'template'" type="button" value="Thêm nút"
-        (click)="onCreate('template_button', i)">
-    <div *ngIf="item.type === 'image'">Chọn image</div>
-    <div *ngIf="item.type === 'video'">Chọn video</div>
-</div>
-
-<input type="button" value="Tin nhắn" (click)="onCreate('text', null)">
-<input type="button" value="Image" (click)="onCreate('image', null)">
-<input type="button" value="Video" (click)="onCreate('video', null)">

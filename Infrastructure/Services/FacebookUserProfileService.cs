@@ -34,14 +34,14 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<FacebookUserProfileBasic>> GetPagedResultAsync(FacebookUserProfilePaged val)
         {
             var userService = GetService<UserManager<ApplicationUser>>();
-            var user = userService.FindByIdAsync(UserId);
+            var user = await userService.FindByIdAsync(UserId);
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.PSID.Contains(val.Search));
 
-            if (user.Result.FacebookPageId.HasValue)
+            if (user.FacebookPageId.HasValue)
             {
-                query = query.Where(x => x.FbPageId == user.Result.FacebookPageId);
+                query = query.Where(x => x.FbPageId == user.FacebookPageId);
             }
 
             var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
