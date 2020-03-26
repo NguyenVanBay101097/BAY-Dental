@@ -6,6 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class FacebookScheduleAppointmentConfigBasic
     {
+        public Guid id { get; set; }
         public string ScheduleType { get; set; }
 
         public int? ScheduleNumber { get; set; }
@@ -13,5 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool AutoScheduleAppoint { get; set; }
 
         public string ContentMessage { get; set; }
+
+        public string JobId { get; set; }
     }
 }

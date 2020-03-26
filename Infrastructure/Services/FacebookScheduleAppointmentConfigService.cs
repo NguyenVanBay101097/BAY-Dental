@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Dapper;
 using Facebook.ApiClient.ApiEngine;
@@ -36,19 +38,42 @@ namespace Infrastructure.Services
             _tenant = tenant?.Value;
         }
 
+        public async Task<PagedResult2<FacebookScheduleAppointmentConfigBasic>> GetPagedResultAsync(FacebookScheduleAppointmentConfigPaged val)
+        {
+            ISpecification<FacebookScheduleAppointmentConfig> spec = new InitialSpecification<FacebookScheduleAppointmentConfig>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<FacebookScheduleAppointmentConfig>(x => x.ScheduleType.Contains(val.Search)));
+            if (val.AutoShedule)
+                spec = spec.And(new InitialSpecification<FacebookScheduleAppointmentConfig>(x => x.AutoScheduleAppoint == val.AutoShedule));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var items = await _mapper.ProjectTo<FacebookScheduleAppointmentConfigBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<FacebookScheduleAppointmentConfigBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
+        [Obsolete]
         public async Task<FacebookScheduleAppointmentConfig> CreateFBSheduleConfig(FacebookScheduleAppointmentConfigSave val)
         {
             var userService = GetService<UserManager<ApplicationUser>>();
             var user = await userService.FindByIdAsync(UserId);
-
+            var lstId = new List<Guid>();
             var result = _mapper.Map<FacebookScheduleAppointmentConfig>(val);
             if (result.ScheduleType == "minutes" && result.ScheduleNumber <= 0)
             {
-                throw new Exception("");
+                throw new Exception("thời gian nhắc lịch theo phút không được nhỏ hơn  hoặc bằng 0 !");
             }
             result.FBPageId = user.FacebookPageId.Value;
             await CreateAsync(result);
-
+            if(result.AutoScheduleAppoint == true)
+            {
+                lstId.Add(result.Id);
+                await ActionStart(lstId);
+            }
             return result;
 
         }
@@ -57,33 +82,62 @@ namespace Infrastructure.Services
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
 
-
+            var pageService = GetService<IFacebookPageService>();
             var result = await SearchQuery(x => ids.Contains(x.Id) && x.AutoScheduleAppoint == false).ToListAsync();
+           
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             foreach (var item in result)
             {
                 item.AutoScheduleAppoint = true;
 
-
+                var page = await pageService.SearchQuery(x=>x.Id == item.FBPageId).FirstOrDefaultAsync();
                 var ScheduleNumber = item.ScheduleNumber ?? 0;
 
                 if (item.ScheduleType == "minutes")
                     //date = date.AddMinutes(-(ScheduleNumber));
-                    RecurringJob.AddOrUpdate($"{tenant}-AutoMesFB", () => RunSendMessageFB(tenant, item.FBPageId, item.ScheduleType, item.ScheduleNumber.Value), Cron.MinuteInterval(ScheduleNumber));
+                    RecurringJob.AddOrUpdate($"{tenant}-{page.PageName}-AutoMesFB", () => RunSendMessageFB(tenant, item.FBPageId), Cron.MinuteInterval(ScheduleNumber));
                 if (item.ScheduleType == "hours")
                     //date = date.AddHours(-(ScheduleNumber));
-                    RecurringJob.AddOrUpdate($"{tenant}-AutoMesFB", () => RunSendMessageFB(tenant, item.FBPageId, item.ScheduleType, item.ScheduleNumber.Value), Cron.HourInterval(ScheduleNumber));
-
-                //var jobId = BackgroundJob.Schedule(() => RunSendMessageFB(tenant, item.FBPageId), date);
-                //item.JobId = jobId;
-                //if (string.IsNullOrEmpty(item.JobId))
-                //    throw new Exception("Can't not schedule job");
+                    RecurringJob.AddOrUpdate($"{tenant}-{page.PageName}-AutoMesFB", () => RunSendMessageFB(tenant, item.FBPageId), Cron.HourInterval(ScheduleNumber));
+              
+                item.JobId = $"{tenant}-AutoMesFB";
+                if (string.IsNullOrEmpty(item.JobId))
+                    throw new Exception("Can't not RecurringJob job");
 
                 await UpdateAsync(result);
             }
         }
 
-        public async Task RunSendMessageFB(string db, Guid fbpageId, string scheduletype, int ScheduleNumber)
+        [Obsolete]
+        public async Task<FacebookScheduleAppointmentConfig> UpdateFBSheduleConfig(Guid id , FacebookScheduleAppointmentConfigSave val)
+        {
+            var lstId = new List<Guid>();
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var fbshedule = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            if (fbshedule == null)
+                throw new ArgumentNullException("fbshedule");
+            if(fbshedule.ScheduleType != val.ScheduleType || fbshedule.ScheduleNumber.Value != val.ScheduleNumber)
+            {
+                if (val.ScheduleType == "minutes")
+                    RecurringJob.AddOrUpdate(fbshedule.JobId, () => RunSendMessageFB(tenant, fbshedule.FBPageId), Cron.MinuteInterval(val.ScheduleNumber.Value));
+                if (val.ScheduleType == "hours")
+                    RecurringJob.AddOrUpdate(fbshedule.JobId, () => RunSendMessageFB(tenant, fbshedule.FBPageId), Cron.HourInterval(val.ScheduleNumber.Value));
+            }
+           
+            var result = _mapper.Map<FacebookScheduleAppointmentConfig>(val);
+            if (result.AutoScheduleAppoint == false)
+            {
+                lstId.Add(result.Id);
+                await ActionStop(lstId);
+            }
+
+                await UpdateAsync(result);
+            return result;
+           
+        }
+
+
+        public async Task RunSendMessageFB(string db, Guid fbpageId)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             builder["Database"] = $"TMTDentalCatalogDb";
@@ -110,13 +164,13 @@ namespace Infrastructure.Services
                     var date = DateTime.Now;
                     if (fbshedule.ScheduleType == "minutes")
                     {
-                        var datefrom = date.AddMinutes(-(ScheduleNumber + ScheduleNumber));
-                        var dateto = date.AddMinutes(-(ScheduleNumber));
+                        var datefrom = date;
+                        var dateto = date.AddMinutes(fbshedule.ScheduleNumber.Value);
                         var fbSheduleConfigMinutes = conn.Query<PartnerAppointment>("" +
                             "Select app.PartnerId, fbuser.PSID , app.Date " +
-                            "From Appointments as app  " +
-                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbu.PartnerId " +
-                            "Where fbu.FbPageId = @pageId AND app.Date BETWEEN @dateFrom AND @dateTo  ", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto }).ToList();
+                            "From Appointments as app " +
+                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " +
+                            "Where fbuser.FbPageId = @pageId AND DATEADD(MINUTE,-(@scheduleNumber),app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
                         if (fbSheduleConfigMinutes == null)
                             return;
                         var tasks = fbSheduleConfigMinutes.Select(x => SendMessageFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
@@ -132,13 +186,13 @@ namespace Infrastructure.Services
                     }
                     else if (fbshedule.ScheduleType == "hours")
                     {
-                        var datefrom = date.AddHours(-(ScheduleNumber + 1));
-                        var dateto = date.AddHours(-(ScheduleNumber));
-                        var fbSheduleConfigHours = conn.Query<PartnerAppointment>("" +
-                            "Select app.PartnerId, fbuser.PSID , app.Date " +
-                            "From Appointments as app  " +
-                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbu.PartnerId " +
-                            "Where fbu.FbPageId = @pageId AND app.Date BETWEEN @dateFrom AND @dateTo  ", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto }).ToList();
+                        var datefrom = date;
+                        var dateto = date.AddHours(fbshedule.ScheduleNumber.Value);
+                        var fbSheduleConfigHours = conn.Query<PartnerAppointment>("" + 
+                            "Select app.PartnerId, fbuser.PSID , app.Date " + 
+                            "From Appointments as app " + 
+                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " + 
+                            "Where fbuser.FbPageId = @pageId AND DATEADD(HOUR,-(@scheduleNumber),app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();                      
                         if (fbSheduleConfigHours == null)
                             return;
                         var tasks = fbSheduleConfigHours.Select(x => SendMessageFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
@@ -200,10 +254,10 @@ namespace Infrastructure.Services
             foreach (var fbshedule in result)
             {
                 fbshedule.AutoScheduleAppoint = false;
-
+               
                 if (string.IsNullOrEmpty(fbshedule.JobId))
                     continue;
-                BackgroundJob.Delete(fbshedule.JobId);
+                RecurringJob.RemoveIfExists(nameof(fbshedule.JobId));
 
             }
 
