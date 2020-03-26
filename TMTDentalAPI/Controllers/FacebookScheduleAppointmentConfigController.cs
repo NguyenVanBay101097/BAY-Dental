@@ -28,12 +28,12 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] FacebookScheduleAppointmentConfigPaged val)
-        {
-            var res = await _facebookScheduleAppointmentConfigService.GetPagedResultAsync(val);
-            return Ok(res);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> Get([FromQuery] FacebookScheduleAppointmentConfigPaged val)
+        //{
+        //    var res = await _facebookScheduleAppointmentConfigService.GetPagedResultAsync(val);
+        //    return Ok(res);
+        //}
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)

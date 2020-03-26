@@ -25,8 +25,8 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly FacebookAuthSettings _fbAuthSettings;
-     
-        public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
+
+        public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -64,13 +64,13 @@ namespace Infrastructure.Services
         public async Task<string> GetFacebookAppAccessToken(string accesstoken)
         {
             string errorMaessage = null;
-            var apiClient = new ApiClient(_fbAuthSettings.AppId, _fbAuthSettings.AppSecret,accesstoken,FacebookApiVersions.V6_0);
+            var apiClient = new ApiClient(_fbAuthSettings.AppId, _fbAuthSettings.AppSecret, accesstoken, FacebookApiVersions.V6_0);
             var getRequestUrl = $"oauth/access_token";
-            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient,false);
+            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
             getRequest.AddQueryParameter("client_id", _fbAuthSettings.AppId);
             getRequest.AddQueryParameter("client_secret", _fbAuthSettings.AppSecret);
             getRequest.AddQueryParameter("grant_type", "client_credentials");
-            var response = await getRequest.ExecuteAsync<dynamic>();          
+            var response = await getRequest.ExecuteAsync<dynamic>();
             if (response.GetExceptions().Any())
             {
                 errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
@@ -109,13 +109,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<FacebookPage> GetFacebookPage(string accesstoken , string pageId) {
+        public async Task<FacebookPage> GetFacebookPage(string accesstoken, string pageId)
+        {
             string errorMaessage = null;
             var page = new FacebookPage();
             var a = new Object();
             var apiClient = new ApiClient(accesstoken, FacebookApiVersions.V6_0);
             var getRequestUrl = $"me?fields=id,name,accounts";
-            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);           
+            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
             getRequest.AddQueryParameter("access_token", accesstoken);
             var response = (await getRequest.ExecuteAsync<FacebookUserData>());
             if (response.GetExceptions().Any())
@@ -133,17 +134,19 @@ namespace Infrastructure.Services
                 page.PageId = fbpage.Id;
                 page.PageName = fbpage.Name;
                 page.PageAccesstoken = fbpage.PageAccesstoken;
-                return page ;
+                return page;
             }
         }
 
-        public async Task<FacebookPage> CheckFacebookPage(string userid , string pageid) {
+        public async Task<FacebookPage> CheckFacebookPage(string userid, string pageid)
+        {
 
-            var facebookpage = await  SearchQuery(x => x.UserId == userid && x.PageId == pageid).FirstOrDefaultAsync();
+            var facebookpage = await SearchQuery(x => x.UserId == userid && x.PageId == pageid).FirstOrDefaultAsync();
             return facebookpage;
         }
 
-        public async Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val) {
+        public async Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val)
+        {
 
             //generate an app access token
             var userAccessTokenData = await GetFacebookAppAccessToken(val.Accesstoken);
@@ -153,12 +156,13 @@ namespace Infrastructure.Services
             }
             //Get long term access token
             var longTermAccessToken = await GetLongTermAccessToken(val.Accesstoken);
-            if (longTermAccessToken == null) {
+            if (longTermAccessToken == null)
+            {
                 throw new Exception("Chưa lấy được access_token dài hạn");
             }
-            
+
             //Get page facebook
-            var page = await GetFacebookPage(longTermAccessToken,val.PageId);
+            var page = await GetFacebookPage(longTermAccessToken, val.PageId);
 
             //check
             var check = await CheckFacebookPage(page.UserId, page.PageId);
@@ -285,15 +289,15 @@ namespace Infrastructure.Services
             var lstCusNew = lstPsid.Except(lstFBUser);
             if (lstCusNew.Any())
             {
-                
-               
-                    var tasks = lstCusNew.Select(id => LoadFacebookCustomer(id, page.PageAccesstoken));
-                    lstFBCus = await Task.WhenAll(tasks);
 
-                
+
+                var tasks = lstCusNew.Select(id => LoadFacebookCustomer(id, page.PageAccesstoken));
+                lstFBCus = await Task.WhenAll(tasks);
+
+
 
             }
-            if(lstCusNew.Count() == 0)
+            if (lstCusNew.Count() == 0)
             {
                 throw new Exception($"không tìm thấy khách hàng mới từ Fanpage {page.PageName} !");
             }
@@ -336,7 +340,7 @@ namespace Infrastructure.Services
         {
             var userservice = GetService<UserManager<ApplicationUser>>();
             var user = userservice.FindByIdAsync(UserId);
-            if(user.Result.FacebookPageId == null)
+            if (user.Result.FacebookPageId == null)
             {
                 throw new Exception($"{user.Result.Name} chưa liên kết với Fanpage nào !");
             }
@@ -366,9 +370,79 @@ namespace Infrastructure.Services
 
                 }
             }
-            
+
             return lstFBUser;
 
         }
+
+
+
+        /// <summary>
+        /// Automation Config
+        /// </summary>
+        /// <returns></returns>
+        public async Task<FacebookScheduleAppointmentConfigBasic> _GetAutoConfig()
+        {
+            var userService = GetService<UserManager<ApplicationUser>>();
+            var user = await userService.FindByIdAsync(UserId);
+            if (user.FacebookPageId == null)
+            {
+                throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
+            }
+            var page = await SearchQuery(x => x.Id == user.FacebookPageId).Select(x => x.AutoConfig).FirstOrDefaultAsync();
+            var basic = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(page);
+            return basic;
+        }
+
+        public async Task<FacebookPage> CreateAutoConfig(FacebookScheduleAppointmentConfigSave val)
+        {
+            var userService = GetService<UserManager<ApplicationUser>>();
+            var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
+            var user = await userService.FindByIdAsync(UserId);
+            if (user.FacebookPageId == null)
+            {
+                throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
+            }
+            var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
+            if (page.AutoConfigId == null)
+            {
+                var autoconfig = await autoConfigService.CreateFBSheduleConfig(val);
+
+                page.AutoConfigId = autoconfig.Id;
+                page.AutoConfig = autoconfig;
+
+
+            }
+            else
+            {
+                var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);
+                page.AutoConfig = autoconfig;
+            }
+
+            await UpdateAsync(page);
+
+            return page;
+
+        }
+        public async Task<FacebookPage> UpdateAutoConfig(FacebookScheduleAppointmentConfigSave val)
+        {
+            var userService = GetService<UserManager<ApplicationUser>>();
+            var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
+            var user = await userService.FindByIdAsync(UserId);
+            if (user.FacebookPageId == null)
+            {
+                throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
+            }
+            var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
+            var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);         
+
+
+            await UpdateAsync(page);
+
+            return page;
+
+        }
+
     }
+
 }

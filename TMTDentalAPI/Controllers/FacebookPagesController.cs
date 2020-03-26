@@ -71,6 +71,34 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-      
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetAutoConfigAppointment()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var fbpage = await _facebookPageService._GetAutoConfig();           
+            return Ok(fbpage);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateAutoConfigAppointment(FacebookScheduleAppointmentConfigSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var fbpage = await _facebookPageService.CreateAutoConfig(val);
+            return Ok(fbpage);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateAutoConfigAppointment(FacebookScheduleAppointmentConfigSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var fbpage = await _facebookPageService.UpdateAutoConfig(val);
+            return Ok(fbpage);
+        }
     }
 }

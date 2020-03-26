@@ -9,17 +9,17 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class FacebookScheduleAppointmentConfig : BaseEntity
     {
-        public FacebookScheduleAppointmentConfig(){
-            AutoScheduleAppoint = false;
-            ScheduleType = "day";
-            ScheduleNumber = 1;
-        }
-        public Guid FBPageId {get;set;}    
 
-        public FacebookPage FacebookPage { get; set; }
+        public FacebookScheduleAppointmentConfig()
+        {
+            ScheduleType = "hours";
+            ScheduleNumber = 1;
+            AutoScheduleAppoint = false;
+        }
+        /// Config Shedule Appointment
         /// <summary>
         /// Create Date Appoint - 
-        /// "hours", "days", "weeks", "months"
+        /// "hours", "minutes"
         /// </summary>
         public string ScheduleType { get; set; }
 
@@ -29,6 +29,9 @@ namespace ApplicationCore.Entities
 
         public string ContentMessage { get; set; }
 
-        public string JobId { get; set; }
+        public string RecurringJobId { get; set; }
+
+        ///Config happy birthday customers
+
     }
 }

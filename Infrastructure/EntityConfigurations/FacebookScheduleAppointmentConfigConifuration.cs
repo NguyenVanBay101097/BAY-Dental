@@ -12,9 +12,7 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<FacebookScheduleAppointmentConfig> builder)
         {
 
-            builder.HasOne(x => x.FacebookPage)
-        .WithMany()
-        .HasForeignKey(x => x.FBPageId);
+           
 
             builder.HasOne(x => x.CreatedBy)
                .WithMany()
