@@ -15,6 +15,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ContentMessage { get; set; }
 
-        public string JobId { get; set; }
+        public string RecurringJobId { get; set; }
     }
 }
