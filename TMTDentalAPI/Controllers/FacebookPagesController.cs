@@ -91,14 +91,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(fbpage);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> UpdateAutoConfigAppointment(FacebookScheduleAppointmentConfigSave val)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var fbpage = await _facebookPageService.UpdateAutoConfig(val);
-            return Ok(fbpage);
-        }
+       
     }
 }

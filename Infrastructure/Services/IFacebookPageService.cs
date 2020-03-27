@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         Task<List<FacebookUserProfile>> CreateFacebookUser();
         Task<FacebookScheduleAppointmentConfigBasic> _GetAutoConfig();
 
-        Task<FacebookPage> CreateAutoConfig(FacebookScheduleAppointmentConfigSave val);
-        Task<FacebookPage> UpdateAutoConfig(FacebookScheduleAppointmentConfigSave val);
+        Task<FacebookScheduleAppointmentConfigBasic> CreateAutoConfig(FacebookScheduleAppointmentConfigSave val);
+        //Task<FacebookPage> UpdateAutoConfig(FacebookScheduleAppointmentConfigSave val);
     }
 }

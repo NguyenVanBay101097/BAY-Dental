@@ -48,9 +48,9 @@ namespace Infrastructure.Services
             var user = await userService.FindByIdAsync(UserId);
             var lstId = new List<Guid>();
             var result = _mapper.Map<FacebookScheduleAppointmentConfig>(val);
-            if (result.ScheduleType == "minutes" && result.ScheduleNumber <= 0)
+            if (result.ScheduleType == "minutes" && result.ScheduleNumber <= 0 || result.ScheduleType == "hours" && result.ScheduleNumber <= 0)
             {
-                throw new Exception("thời gian nhắc lịch theo phút không được nhỏ hơn  hoặc bằng 0 !");
+                throw new Exception("thời gian nhắc lịch không được nhỏ hơn hoặc bằng 0 !");
             }
             await CreateAsync(result);
             if (result.AutoScheduleAppoint == true)
@@ -67,7 +67,7 @@ namespace Infrastructure.Services
         {
 
             var pageService = GetService<IFacebookPageService>();
-            var result = await SearchQuery(x => ids.Contains(x.Id) && x.AutoScheduleAppoint == false).ToListAsync();
+            var result = await SearchQuery(x => ids.Contains(x.Id) && x.AutoScheduleAppoint == true).ToListAsync();
             var userService = GetService<UserManager<ApplicationUser>>();
             var user = await userService.FindByIdAsync(UserId);
             if (user.FacebookPageId == null)
@@ -125,7 +125,7 @@ namespace Infrastructure.Services
                     RecurringJob.AddOrUpdate(fbshedule.RecurringJobId, () => RunSendMessageFB(tenant, user.FacebookPageId.Value), Cron.HourInterval(val.ScheduleNumber.Value));
             }
 
-            var result = _mapper.Map<FacebookScheduleAppointmentConfig>(val);
+            var result = _mapper.Map(val,fbshedule);
             if (result.AutoScheduleAppoint == false)
             {
                 lstId.Add(result.Id);
@@ -153,14 +153,15 @@ namespace Infrastructure.Services
                         "FROM FacebookPages " +
                         "where Id = @id" +
                         "", new { id = fbpageId }).FirstOrDefault();
-
+                    if (page == null)
+                        return;
                     var fbshedule = conn.Query<FacebookScheduleAppointmentConfig>("" +
                         "Select * " +
                         "FROM FacebookScheduleAppointmentConfigs " +
-                         "where FBPageId = @fbPageId" +
-                         "", new { fbPageId = fbpageId }
+                         "where Id = @Id" +
+                         "", new { Id = page.AutoConfigId }
                         ).FirstOrDefault();
-                    if (page == null)
+                    if (fbshedule == null)
                         return;
                     var date = DateTime.Now;
                     if (fbshedule.ScheduleType == "minutes")
@@ -171,7 +172,7 @@ namespace Infrastructure.Services
                             "Select app.PartnerId, fbuser.PSID , app.Date " +
                             "From Appointments as app " +
                             "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " +
-                            "Where fbuser.FbPageId = @pageId AND DATEADD(MINUTE,-(@scheduleNumber),app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
+                            "Where fbuser.FbPageId = @pageId AND DATEADD(MINUTE,-@scheduleNumber,app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
                         if (fbSheduleConfigMinutes == null)
                             return;
                         var tasks = fbSheduleConfigMinutes.Select(x => SendMessageFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
@@ -225,9 +226,11 @@ namespace Infrastructure.Services
             var url = $"me/messages";
 
             var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
-            request.AddParameter("messaging_type", "RESPONSE");
+            request.AddParameter("messaging_type", "MESSAGE_TAG");
+            request.AddParameter("tag", "CONFIRMED_EVENT_UPDATE");
             request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
             request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
+            
 
             var response = await request.ExecuteAsync<SendFacebookMessage>();
 

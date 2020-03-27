@@ -385,16 +385,32 @@ namespace Infrastructure.Services
         {
             var userService = GetService<UserManager<ApplicationUser>>();
             var user = await userService.FindByIdAsync(UserId);
+            var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
             if (user.FacebookPageId == null)
             {
                 throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
             }
-            var page = await SearchQuery(x => x.Id == user.FacebookPageId).Select(x => x.AutoConfig).FirstOrDefaultAsync();
-            var basic = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(page);
+            var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
+            if (page.AutoConfigId == null)
+            {
+                var fbSheduleApp = new FacebookScheduleAppointmentConfigSave();
+                fbSheduleApp.ScheduleType = "minutes";
+                fbSheduleApp.ScheduleNumber = 30;
+                fbSheduleApp.AutoScheduleAppoint = false;
+                fbSheduleApp.ContentMessage = "";
+                var autoConfig = await autoConfigService.CreateFBSheduleConfig(fbSheduleApp);
+                page.AutoConfigId = autoConfig.Id;
+                await UpdateAsync(page);
+
+                var basicautoConfig = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(autoConfig);
+                return basicautoConfig;
+
+            }
+            var basic = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(page.AutoConfig);
             return basic;
         }
 
-        public async Task<FacebookPage> CreateAutoConfig(FacebookScheduleAppointmentConfigSave val)
+        public async Task<FacebookScheduleAppointmentConfigBasic> CreateAutoConfig(FacebookScheduleAppointmentConfigSave val)
         {
             var userService = GetService<UserManager<ApplicationUser>>();
             var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
@@ -407,41 +423,37 @@ namespace Infrastructure.Services
             if (page.AutoConfigId == null)
             {
                 var autoconfig = await autoConfigService.CreateFBSheduleConfig(val);
-
-                page.AutoConfigId = autoconfig.Id;
-                page.AutoConfig = autoconfig;
-
-
             }
             else
             {
                 var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);
-                page.AutoConfig = autoconfig;
+
             }
 
-            await UpdateAsync(page);
-
-            return page;
-
-        }
-        public async Task<FacebookPage> UpdateAutoConfig(FacebookScheduleAppointmentConfigSave val)
-        {
-            var userService = GetService<UserManager<ApplicationUser>>();
-            var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
-            var user = await userService.FindByIdAsync(UserId);
-            if (user.FacebookPageId == null)
-            {
-                throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
-            }
-            var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
-            var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);         
-
-
-            await UpdateAsync(page);
-
-            return page;
+            //await UpdateAsync(page);
+            var basicautoConfig = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(page.AutoConfig);
+            return basicautoConfig;
+           
 
         }
+        //public async Task<FacebookPage> UpdateAutoConfig(FacebookScheduleAppointmentConfigSave val)
+        //{
+        //    var userService = GetService<UserManager<ApplicationUser>>();
+        //    var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
+        //    var user = await userService.FindByIdAsync(UserId);
+        //    if (user.FacebookPageId == null)
+        //    {
+        //        throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
+        //    }
+        //    var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
+        //    var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);         
+
+
+        //    await UpdateAsync(page);
+
+        //    return page;
+
+        //}
 
     }
 
