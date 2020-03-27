@@ -2,16 +2,21 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
+using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
+using Hangfire;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -25,12 +30,16 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly FacebookAuthSettings _fbAuthSettings;
-
-        public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
+        private readonly AppTenant _tenant;
+        private readonly ConnectionStrings _connectionStrings;
+        public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
+            ITenant<AppTenant> tenant, IOptions<ConnectionStrings> connectionStrings)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _fbAuthSettings = fbAuthSettingsAccessor?.Value;
+            _tenant = tenant?.Value;
+            _connectionStrings = connectionStrings?.Value;
         }
 
         public override async Task<FacebookPage> CreateAsync(FacebookPage entity)
@@ -390,27 +399,22 @@ namespace Infrastructure.Services
             {
                 throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
             }
+
             var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
-            if (page.AutoConfigId == null)
+            var autoConfig = page.AutoConfig;
+            if (autoConfig == null)
             {
-                var fbSheduleApp = new FacebookScheduleAppointmentConfigSave();
-                fbSheduleApp.ScheduleType = "minutes";
-                fbSheduleApp.ScheduleNumber = 30;
-                fbSheduleApp.AutoScheduleAppoint = false;
-                fbSheduleApp.ContentMessage = "";
-                var autoConfig = await autoConfigService.CreateFBSheduleConfig(fbSheduleApp);
+                autoConfig = await autoConfigService.CreateAsync(new FacebookScheduleAppointmentConfig());
+
                 page.AutoConfigId = autoConfig.Id;
                 await UpdateAsync(page);
-
-                var basicautoConfig = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(autoConfig);
-                return basicautoConfig;
-
             }
-            var basic = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(page.AutoConfig);
+
+            var basic = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(autoConfig);
             return basic;
         }
 
-        public async Task<FacebookScheduleAppointmentConfigBasic> CreateAutoConfig(FacebookScheduleAppointmentConfigSave val)
+        public async Task SaveAutoConfig(FacebookScheduleAppointmentConfigSave val)
         {
             var userService = GetService<UserManager<ApplicationUser>>();
             var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
@@ -420,40 +424,158 @@ namespace Infrastructure.Services
                 throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
             }
             var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
-            if (page.AutoConfigId == null)
+            var autoConfig = page.AutoConfig;
+
+            if (autoConfig == null)
             {
-                var autoconfig = await autoConfigService.CreateFBSheduleConfig(val);
+                autoConfig = await autoConfigService.CreateAsync(new FacebookScheduleAppointmentConfig());
+
+                page.AutoConfigId = autoConfig.Id;
+                await UpdateAsync(page);
+            }
+            if (val.ScheduleType == "minutes" && val.ScheduleNumber <= 0 || val.ScheduleType == "hours" && val.ScheduleNumber <= 0)
+            {
+                throw new Exception("thời gian nhắc lịch không được nhỏ hơn hoặc bằng 0 !");
+            }
+            autoConfig = _mapper.Map(val, autoConfig);
+            await autoConfigService.UpdateAsync(autoConfig);
+
+            if (autoConfig.AutoScheduleAppoint)
+            {
+                var host = _tenant != null ? _tenant.Hostname : "localhost";
+                var ScheduleNumber = autoConfig.ScheduleNumber ?? 0;
+                var RecurringJobId = $"{host}-{user.FacebookPageId.Value}-AutoMesAppointmentFB";
+
+                if (autoConfig.ScheduleType == "minutes")
+                  
+                RecurringJob.AddOrUpdate(RecurringJobId, () => RunSendMessageAppointmentFB(host, user.FacebookPageId.Value), $"*/{ScheduleNumber} * * * *");
+                else if (autoConfig.ScheduleType == "hours")
+                    RecurringJob.AddOrUpdate(RecurringJobId, () => RunSendMessageAppointmentFB(host, user.FacebookPageId.Value), $"* */{ScheduleNumber}  * * *");
+
+                autoConfig.RecurringJobId = RecurringJobId;
+                await autoConfigService.UpdateAsync(autoConfig);
             }
             else
             {
-                var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);
+                if (!string.IsNullOrEmpty(autoConfig.RecurringJobId))
+                    RecurringJob.RemoveIfExists(autoConfig.RecurringJobId);
+            }
+        }
+
+        public async Task RunSendMessageAppointmentFB(string db, Guid fbpageId)
+        {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);          
+            builder["Database"] = $"TMTDentalCatalogDb__{db}";
+            if (db == "localhost")
+                builder["Database"] = "TMTDentalCatalogDb";
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    var page = conn.Query<FacebookPage>("" +
+                        "SELECT * " +
+                        "FROM FacebookPages " +
+                        "where Id = @id" +
+                        "", new { id = fbpageId }).FirstOrDefault();
+                    if (page == null)
+                        return;
+                    var fbshedule = conn.Query<FacebookScheduleAppointmentConfig>("" +
+                        "Select * " +
+                        "FROM FacebookScheduleAppointmentConfigs " +
+                         "where Id = @Id" +
+                         "", new { Id = page.AutoConfigId }
+                        ).FirstOrDefault();
+                    if (fbshedule == null)
+                        return;
+                    var date = DateTime.Now;
+                    if (fbshedule.ScheduleType == "minutes")
+                    {
+                        var datefrom = date;
+                        var dateto = date.AddMinutes(fbshedule.ScheduleNumber.Value);
+                        var fbSheduleConfigMinutes = conn.Query<PartnerAppointment>("" +
+                            "Select app.PartnerId, fbuser.PSID , app.Date " +
+                            "From Appointments as app " +
+                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " +
+                            "Where fbuser.FbPageId = @pageId AND DATEADD(MINUTE,-@scheduleNumber,app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
+                        if (fbSheduleConfigMinutes == null)
+                            return;
+                        var tasks = fbSheduleConfigMinutes.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            var result = await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        }
+                    }
+                    else if (fbshedule.ScheduleType == "hours")
+                    {
+                        var datefrom = date;
+                        var dateto = date.AddHours(fbshedule.ScheduleNumber.Value);
+                        var fbSheduleConfigHours = conn.Query<PartnerAppointment>("" +
+                            "Select app.PartnerId, fbuser.PSID , app.Date " +
+                            "From Appointments as app " +
+                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " +
+                            "Where fbuser.FbPageId = @pageId AND DATEADD(HOUR,-(@scheduleNumber),app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
+                        if (fbSheduleConfigHours == null)
+                            return;
+                        var tasks = fbSheduleConfigHours.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            var result = await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        }
+                    }
+
+
+
+
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public async Task<SendFacebookMessage> SendMessageAppointmentFBAsync(string accessTokenPage, string psid, string message)
+        {
+            var errorMaessage = "";
+            var apiClient = new ApiClient(accessTokenPage, FacebookApiVersions.V6_0);
+            var url = $"me/messages";
+
+            var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
+            request.AddParameter("messaging_type", "MESSAGE_TAG");
+            request.AddParameter("tag", "CONFIRMED_EVENT_UPDATE");
+            request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
+            request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
+
+
+            var response = await request.ExecuteAsync<SendFacebookMessage>();
+
+            if (response.GetExceptions().Any())
+            {
+                errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
+                return new SendFacebookMessage() { error = errorMaessage };
+            }
+            else
+            {
+                var result = response.GetResult();
+
+                return result;
 
             }
 
-            //await UpdateAsync(page);
-            var basicautoConfig = _mapper.Map<FacebookScheduleAppointmentConfigBasic>(page.AutoConfig);
-            return basicautoConfig;
-           
+
 
         }
-        //public async Task<FacebookPage> UpdateAutoConfig(FacebookScheduleAppointmentConfigSave val)
-        //{
-        //    var userService = GetService<UserManager<ApplicationUser>>();
-        //    var autoConfigService = GetService<IFacebookScheduleAppointmentConfigService>();
-        //    var user = await userService.FindByIdAsync(UserId);
-        //    if (user.FacebookPageId == null)
-        //    {
-        //        throw new Exception($"Tài khoản {user.Name} chưa kết nối với Fanpage nào !");
-        //    }
-        //    var page = await SearchQuery(x => x.Id == user.FacebookPageId).Include(x => x.AutoConfig).FirstOrDefaultAsync();
-        //    var autoconfig = await autoConfigService.UpdateFBSheduleConfig(page.AutoConfigId.Value, val);         
 
-
-        //    await UpdateAsync(page);
-
-        //    return page;
-
-        //}
 
     }
 

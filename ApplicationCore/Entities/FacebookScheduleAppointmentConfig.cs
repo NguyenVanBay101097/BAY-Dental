@@ -14,7 +14,6 @@ namespace ApplicationCore.Entities
         {
             ScheduleType = "hours";
             ScheduleNumber = 1;
-            AutoScheduleAppoint = false;
         }
         /// Config Shedule Appointment
         /// <summary>

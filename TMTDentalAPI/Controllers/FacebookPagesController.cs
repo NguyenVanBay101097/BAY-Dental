@@ -87,8 +87,8 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var fbpage = await _facebookPageService.CreateAutoConfig(val);
-            return Ok(fbpage);
+            await  _facebookPageService.SaveAutoConfig(val);
+            return Ok();
         }
 
        

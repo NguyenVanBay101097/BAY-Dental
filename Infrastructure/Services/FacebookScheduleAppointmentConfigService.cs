@@ -39,7 +39,7 @@ namespace Infrastructure.Services
             _tenant = tenant?.Value;
         }
 
-       
+
 
         [Obsolete]
         public async Task<FacebookScheduleAppointmentConfig> CreateFBSheduleConfig(FacebookScheduleAppointmentConfigSave val)
@@ -62,7 +62,6 @@ namespace Infrastructure.Services
 
         }
 
-        [Obsolete]
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
 
@@ -84,10 +83,10 @@ namespace Infrastructure.Services
 
                 if (item.ScheduleType == "minutes")
                     //date = date.AddMinutes(-(ScheduleNumber));
-                    RecurringJob.AddOrUpdate($"{tenant}-{page.PageName}-AutoMesFB", () => RunSendMessageFB(tenant, user.FacebookPageId.Value), Cron.MinuteInterval(ScheduleNumber));
+                    RecurringJob.AddOrUpdate($"{tenant}-{page.PageName}-AutoMesFB", () => RunSendMessageFB(tenant, user.FacebookPageId.Value), $"{ScheduleNumber} * * * *");
                 if (item.ScheduleType == "hours")
                     //date = date.AddHours(-(ScheduleNumber));
-                    RecurringJob.AddOrUpdate($"{tenant}-{page.PageName}-AutoMesFB", () => RunSendMessageFB(tenant, user.FacebookPageId.Value), Cron.HourInterval(ScheduleNumber));
+                    RecurringJob.AddOrUpdate($"{tenant}-{page.PageName}-AutoMesFB", () => RunSendMessageFB(tenant, user.FacebookPageId.Value), $"* {ScheduleNumber}  * * *");
 
                 item.RecurringJobId = $"{tenant}-{page.PageName}-AutoMesFB";
                 if (string.IsNullOrEmpty(item.RecurringJobId))
@@ -101,7 +100,7 @@ namespace Infrastructure.Services
         public async Task<FacebookScheduleAppointmentConfig> UpdateFBSheduleConfig(Guid id, FacebookScheduleAppointmentConfigSave val)
         {
             var lstId = new List<Guid>();
-            var pageService = GetService<IFacebookPageService>();        
+            var pageService = GetService<IFacebookPageService>();
             var userService = GetService<UserManager<ApplicationUser>>();
             var user = await userService.FindByIdAsync(UserId);
             var page = await pageService.SearchQuery(x => x.Id == user.FacebookPageId).FirstOrDefaultAsync();
@@ -113,7 +112,7 @@ namespace Infrastructure.Services
             var fbshedule = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (fbshedule == null)
                 throw new ArgumentNullException("fbshedule");
-            if(fbshedule.RecurringJobId == null)
+            if (fbshedule.RecurringJobId == null)
             {
                 fbshedule.RecurringJobId = $"{tenant}-{page.PageName}-AutoMesFB";
             }
@@ -121,11 +120,12 @@ namespace Infrastructure.Services
             {
                 if (val.ScheduleType == "minutes")
                     RecurringJob.AddOrUpdate(fbshedule.RecurringJobId, () => RunSendMessageFB(tenant, user.FacebookPageId.Value), Cron.MinuteInterval(val.ScheduleNumber.Value));
+                //RecurringJob.AddOrUpdate(fbshedule.RecurringJobId, () => RunSendMessageFB(tenant, user.FacebookPageId.Value), $"{val.ScheduleNumber.Value} * * * *");
                 if (val.ScheduleType == "hours")
-                    RecurringJob.AddOrUpdate(fbshedule.RecurringJobId, () => RunSendMessageFB(tenant, user.FacebookPageId.Value), Cron.HourInterval(val.ScheduleNumber.Value));
+                    RecurringJob.AddOrUpdate(fbshedule.RecurringJobId, () => RunSendMessageFB(tenant, user.FacebookPageId.Value), $"* {val.ScheduleNumber.Value} * * *");
             }
 
-            var result = _mapper.Map(val,fbshedule);
+            var result = _mapper.Map(val, fbshedule);
             if (result.AutoScheduleAppoint == false)
             {
                 lstId.Add(result.Id);
@@ -230,7 +230,7 @@ namespace Infrastructure.Services
             request.AddParameter("tag", "CONFIRMED_EVENT_UPDATE");
             request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
             request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
-            
+
 
             var response = await request.ExecuteAsync<SendFacebookMessage>();
 
@@ -261,7 +261,7 @@ namespace Infrastructure.Services
 
                 if (string.IsNullOrEmpty(fbshedule.RecurringJobId))
                     continue;
-                
+
                 using (var connection = JobStorage.Current.GetConnection())
                 {
                     list = connection.GetRecurringJobs();
