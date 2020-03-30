@@ -138,6 +138,8 @@ namespace Infrastructure.Data
         public DbSet<FacebookUserProfile> FacebookUserProfiles { get; set; }
         public DbSet<MarketingMessage> MarketingMessages { get; set; }
         public DbSet<MarketingMessageButton> MarketingMessageButtons { get; set; }
+        public DbSet<FacebookMassMessaging> FacebookMassMessagings { get; set; }
+        public DbSet<FacebookMessagingTrace> FacebookMessagingTraces { get; set; }
 
 
         public DbSet<StockHistory> StockHistories { get; set; }
@@ -264,6 +266,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new FacebookUserProfileConfiguration());
             builder.ApplyConfiguration(new MarketingMessageConfiguration());
             builder.ApplyConfiguration(new MarketingMessageButtonConfiguration());
+            builder.ApplyConfiguration(new FacebookMassMessagingConfiguration());
+            builder.ApplyConfiguration(new FacebookMessagingTraceConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
