@@ -196,110 +196,6 @@ namespace Infrastructure.Services
 
         }
 
-
-        public async Task LoadUserProfileFromConversations(Guid id)
-        {
-            var self = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            //Tải tất cả những conversations
-            var limit = 100;
-            var list = new List<FacebookUserProfile>();
-
-            var result = await GetPageConversations(self.PageId, self.PageAccesstoken, limit);
-
-            //Lấy ra 1 list psids duy nhất
-            var psids = new List<string>().AsEnumerable();
-            psids = psids.Union(ExtractPSIDsUserProfile(result, self.PageId));
-
-            while (!string.IsNullOrEmpty(result.paging.next))
-            {
-                result = await GetPageConversations(self.PageId, self.PageAccesstoken, limit, after: result.paging.cursors.after);
-                psids = psids.Union(ExtractPSIDsUserProfile(result, self.PageId));
-            }
-
-            var tasks = psids.Select(x => GetUserProfileFromPSID(x, self.PageAccesstoken));
-            var all_profiles = await Task.WhenAll(tasks);
-            foreach(var profile in all_profiles)
-            {
-                if (profile == null)
-                    continue;
-                list.Add(new FacebookUserProfile
-                {
-                    Name = profile.name,
-                    FirstName = profile.first_name,
-                    LastName = profile.last_name,
-                    FbPageId = self.Id,
-                    PSID = profile.id,
-                    Gender = profile.gender,
-                });
-            }
-
-            var userProfileObj = GetService<IFacebookUserProfileService>();
-            await userProfileObj.CreateAsync(list);
-        }
-
-        public IEnumerable<string> ExtractPSIDsUserProfile(ApiPageConversationsResponse response, string pageId)
-        {
-            if (response.data == null)
-                return new List<string>();
-
-            var list = new List<string>().AsEnumerable();
-            foreach(var item in response.data)
-            {
-                var ids = item.participants.data.Where(x => x.id != pageId).Select(x => x.id);
-                list = list.Union(ids);
-            }
-
-            return list;
-        }
-
-        public async Task<ApiPageConversationsResponse> GetPageConversations(string page_id, string access_token, int limit, string after = "")
-        {
-            string errorMaessage = null;
-            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{page_id}/conversations";
-            var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
-            getRequest.AddQueryParameter("fields", "participants");
-            getRequest.AddQueryParameter("limit", limit.ToString());
-            if (!string.IsNullOrEmpty(after))
-            {
-                getRequest.AddQueryParameter("pretty", "0");
-                getRequest.AddQueryParameter("after", after);
-            }
-            var response = (await getRequest.ExecuteAsync<ApiPageConversationsResponse>());
-
-            if (response.GetExceptions().Any())
-            {
-                errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
-                throw new Exception(errorMaessage);
-            }
-            else
-            {
-                var result = response.GetResult();
-                return result;
-            }
-        }
-
-        public async Task<ApiUserProfileResponse> GetUserProfileFromPSID(string psid, string access_token)
-        {
-            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{psid}";
-            var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
-            getRequest.AddQueryParameter("fields", "name,first_name,last_name,profile_pic,gender");
-            var response = (await getRequest.ExecuteAsync<ApiUserProfileResponse>());
-
-            if (response.GetExceptions().Any())
-            {
-                var error_message = string.Join("; ", response.GetExceptions().Select(x => x.Message));
-                return null;
-            }
-            else
-            {
-                var result = response.GetResult();
-                return result;
-            }
-        }
-
-
         /// <summary>
         /// lấy ra danh sách các PSID đã inbox với Fanpage
         /// </summary>
@@ -580,7 +476,7 @@ namespace Infrastructure.Services
                             "Where fbuser.FbPageId = @pageId AND DATEADD(MINUTE,-@scheduleNumber,app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
                         if (fbSheduleConfigMinutes == null)
                             return;
-                        var tasks = fbSheduleConfigMinutes.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage.Replace("{{tenchinhanh}}", x.CompanyName).Replace("{{diachichinhanh}}", x.CompanyAddress == null ? "đang cập nhật ..." : x.CompanyAddress).Replace("{{tenkhachhang}}", x.Name).Replace("{{giohen}}", x.Date.ToString("hh:mm tt")))).ToList();
+                        var tasks = fbSheduleConfigMinutes.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage.Replace("{{ten_chi_nhanh}}", x.CompanyName).Replace("{{dia_chi_chi_nhanh}}", x.CompanyAddress == null ? "đang cập nhật ..." : x.CompanyAddress).Replace("{{ten_khach_hang}}", x.Name).Replace("{{gio_hen}}", x.Date.ToString("hh:mm tt")))).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -606,7 +502,7 @@ namespace Infrastructure.Services
 
                         if (fbSheduleConfigHours == null)
                             return;
-                        var tasks = fbSheduleConfigHours.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage.Replace("{{tenchinhanh}}", x.CompanyName).Replace("{{diachichinhanh}}", x.CompanyAddress == null ? "đang cập nhật ..." : x.CompanyAddress).Replace("{{tenkhachhang}}", x.Name).Replace("{{giohen}}", x.Date.ToString("hh:mm tt")))).ToList();
+                        var tasks = fbSheduleConfigHours.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage.Replace("{{ten_chi_nhanh}}", x.CompanyName).Replace("{{dia_chi_chi_nhanh}}", x.CompanyAddress == null ? "đang cập nhật ..." : x.CompanyAddress).Replace("{{ten_khach_hang}}", x.Name).Replace("{{gio_hen}}", x.Date.ToString("hh:mm tt")))).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
