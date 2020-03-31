@@ -345,24 +345,24 @@ namespace Infrastructure.Services
 
             }
         }
-
         public async Task<List<FacebookUserProfile>> CreateFacebookUser()
         {
             var userservice = GetService<UserManager<ApplicationUser>>();
-            var user = userservice.FindByIdAsync(UserId);
-            if (user.Result.FacebookPageId == null)
+            var user = await userservice.FindByIdAsync(UserId);
+            if (user.FacebookPageId == null)
             {
-                throw new Exception($"{user.Result.Name} chưa liên kết với Fanpage nào !");
+                throw new Exception($"{user.Name} chưa liên kết với Fanpage nào !");
             }
             var facebookuser = GetService<IFacebookUserProfileService>();
-            var page = SearchQuery(x => x.Id == user.Result.FacebookPageId).FirstOrDefault();
+            var page = SearchQuery(x => x.Id == user.FacebookPageId).FirstOrDefault();
             var lstFBUser = new List<FacebookUserProfile>();
             var lstCusNew = await CheckCustomerNew(page.Id);
             if (lstCusNew.Any())
             {
                 foreach (var item in lstCusNew)
                 {
-
+                    if (item == null)
+                        continue;
                     var fbuser = new FacebookUserProfile
                     {
                         PSID = item.PSId,
@@ -384,6 +384,7 @@ namespace Infrastructure.Services
             return lstFBUser;
 
         }
+
 
 
 
