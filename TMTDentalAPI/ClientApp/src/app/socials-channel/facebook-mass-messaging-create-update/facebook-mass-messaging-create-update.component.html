@@ -1,0 +1,78 @@
+<div class="o_form_view o_form_editable" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+                <button type="button" class="btn btn-primary btn-sm" (click)="actionSend()"
+                    *ngIf="['in_queue', 'done'].indexOf(messaging.state) === -1">
+                    Gửi ngay
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="actionSchedule()"
+                    *ngIf="['in_queue', 'done'].indexOf(messaging.state) === -1">
+                    Lên lịch
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="actionCancel()"
+                    *ngIf="messaging.state === 'in_queue'">
+                    Hủy bỏ
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+                    Lưu
+                </button>
+                <button type="button" class="btn btn-sm btn-light" *ngIf="id" (click)="createNew()">
+                    Thêm mới
+                </button>
+            </div>
+            <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                <button [disabled]="messaging.state !== 'done'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': messaging.state === 'done', 'btn-secondary': messaging.state !== 'done'}"
+                    type="button">
+                    Đã gửi
+                </button>
+                <button [disabled]="messaging.state !== 'in_queue'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': messaging.state === 'in_queue', 'btn-secondary': messaging.state !== 'in_queue'}"
+                    type="button">
+                    Chờ gửi
+                </button>
+                <button [disabled]="messaging.state !== 'draft'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': messaging.state === 'draft', 'btn-secondary': messaging.state !== 'draft'}"
+                    type="button">
+                    Nháp
+                </button>
+            </div>
+        </div>
+        <div class="alert alert-info text-center" *ngIf="messaging.state == 'in_queue'" role="alert">
+            <strong>
+                <span>Tin nhắn được lên lịch gửi lúc </span>
+                <span class="o_field_date o_field_widget o_readonly_modifier oe_inline">
+                    {{messaging.scheduleDate | date : 'short'}}
+                </span>.
+            </strong>
+        </div>
+        <div class="o_form_sheet">
+            <div class="o_group">
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td class="o_td_label">
+                                <label class="o_form_label">Mô tả</label>
+                            </td>
+                            <td style="width:100%">
+                                <input type="text" class="form-control" formControlName="name" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="o_td_label">
+                                <label class="o_form_label">Nội dung</label>
+                            </td>
+                            <td style="width:100%">
+                                <div class="position-relative">
+                                    <textarea type="text" my-autosize charCount [limit]="640" class="form-control"
+                                        formControlName="content"></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

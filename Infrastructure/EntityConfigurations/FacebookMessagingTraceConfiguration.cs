@@ -12,7 +12,7 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<FacebookMessagingTrace> builder)
         {
             builder.HasOne(x => x.MassMessaging)
-                .WithMany()
+                .WithMany(x => x.Traces)
                 .HasForeignKey(x => x.MassMessagingId)
                 .OnDelete(DeleteBehavior.Cascade);
 

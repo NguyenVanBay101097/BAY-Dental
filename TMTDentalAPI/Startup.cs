@@ -220,6 +220,9 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();
             services.AddScoped<IFacebookUserProfileService, FacebookUserProfileService>();
             services.AddScoped<IFacebookMassMessagingService, FacebookMassMessagingService>();
+            services.AddScoped<IFacebookMessagingTraceService, FacebookMessagingTraceService>();
+            services.AddScoped<IFacebookMessageSender, FacebookMessageSender>();
+            services.AddScoped<IFacebookMassMessageJobService, FacebookMassMessageJobService>();
 
             services.AddMemoryCache();
 

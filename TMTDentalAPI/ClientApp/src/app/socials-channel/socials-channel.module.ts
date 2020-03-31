@@ -23,6 +23,10 @@ import { SharedModule } from '../shared/shared.module';
 import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
 import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 import { FacebookUserProfilesService } from './facebook-user-profiles.service';
+import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-list/facebook-mass-messaging-list.component';
+import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
+import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
+import { FacebookMassMessagingScheduleDialogComponent } from './facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +41,11 @@ import { FacebookUserProfilesService } from './facebook-user-profiles.service';
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     FacebookPageMarketingCustomerListComponent,
-    FacebookPageMarketingCustomerConnectComponent
+    FacebookPageMarketingCustomerConnectComponent,
+    FacebookMassMessagingListComponent,
+    FacebookMassMessagingsComponent,
+    FacebookMassMessagingCreateUpdateComponent,
+    FacebookMassMessagingScheduleDialogComponent
   ],
   imports: [
     CommonModule,
@@ -59,7 +67,8 @@ import { FacebookUserProfilesService } from './facebook-user-profiles.service';
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     PartnerCreateUpdateComponent,
-    FacebookPageMarketingCustomerConnectComponent
+    FacebookPageMarketingCustomerConnectComponent,
+    FacebookMassMessagingScheduleDialogComponent
   ],
   providers: [
     FacebookUserProfilesService

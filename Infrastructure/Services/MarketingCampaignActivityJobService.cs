@@ -188,7 +188,7 @@ namespace Infrastructure.Services
             if (response.GetExceptions().Any())
             {
                 var error = string.Join("; ", response.GetExceptions().Select(x => x.Message));
-                await conn.ExecuteAsync("insert into MarketingTraces(ActivityId,Exception) values (@Id,@ActivityId,@Exception)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now });
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception) values (@Id,@ActivityId,@Exception)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now });
                 return new SendFacebookMessageReponse() { error = error };
             }
             else

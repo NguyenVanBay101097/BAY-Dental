@@ -11,5 +11,9 @@ namespace Infrastructure.Services
     public interface IFacebookMassMessagingService: IBaseService<FacebookMassMessaging>
     {
         Task<PagedResult2<FacebookMassMessagingBasic>> GetPagedResultAsync(FacebookMassMessagingPaged val);
+        Task ActionSend(IEnumerable<Guid> ids);
+        Task SetScheduleDate(FacebookMassMessagingSetScheduleDate val);
+        Task ActionCancel(IEnumerable<Guid> ids);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

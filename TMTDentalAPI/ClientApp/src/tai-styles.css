@@ -1223,3 +1223,12 @@ td.oe_form_group_cell_label label {
 	display: flex;
 	align-items: center;
 }
+
+span.char-count {
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    background-color: white;
+    bottom: 5px;
+    color: #ffc107!important;
+}

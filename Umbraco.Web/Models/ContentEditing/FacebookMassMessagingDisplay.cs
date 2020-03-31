@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class FacebookMassMessaging: BaseEntity
+    public class FacebookMassMessagingDisplay
     {
-        public FacebookMassMessaging()
+        public FacebookMassMessagingDisplay()
         {
             State = "draft";
         }
+
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -22,10 +24,5 @@ namespace ApplicationCore.Entities
         public string State { get; set; }
 
         public Guid? FacebookPageId { get; set; }
-        public FacebookPage FacebookPage { get; set; }
-
-        public ICollection<FacebookMessagingTrace> Traces { get; set; }
-
-        public string JobId { get; set; }
     }
 }
