@@ -1379,5 +1379,7 @@ namespace ApplicationCore.Utilities
         {
             return Encipher(input, 26 - key);
         }
+
+       
     }
 }

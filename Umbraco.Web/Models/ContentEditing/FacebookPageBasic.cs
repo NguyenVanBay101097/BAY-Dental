@@ -11,5 +11,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string PageName { get; set; }
         public string PageAccesstoken { get; set; }
+
+        public Guid? AutoConfigId { get; set; }
+        public FacebookScheduleAppointmentConfigBasic AutoConfig { get; set; }
     }
 }

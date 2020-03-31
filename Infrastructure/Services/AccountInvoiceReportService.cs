@@ -178,6 +178,7 @@ namespace Infrastructure.Services
             return query;
         }
 
+     
         //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)
         //{
         //    var companyId = CompanyId;

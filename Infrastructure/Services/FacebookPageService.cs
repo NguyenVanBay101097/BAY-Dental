@@ -2,20 +2,26 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
+using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
+using Hangfire;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -25,12 +31,16 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly FacebookAuthSettings _fbAuthSettings;
-     
-        public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , IOptions<FacebookAuthSettings> fbAuthSettingsAccessor)
+        private readonly AppTenant _tenant;
+        private readonly ConnectionStrings _connectionStrings;
+        public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
+            ITenant<AppTenant> tenant, IOptions<ConnectionStrings> connectionStrings)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _fbAuthSettings = fbAuthSettingsAccessor?.Value;
+            _tenant = tenant?.Value;
+            _connectionStrings = connectionStrings?.Value;
         }
 
         public override async Task<FacebookPage> CreateAsync(FacebookPage entity)
@@ -64,13 +74,13 @@ namespace Infrastructure.Services
         public async Task<string> GetFacebookAppAccessToken(string accesstoken)
         {
             string errorMaessage = null;
-            var apiClient = new ApiClient(_fbAuthSettings.AppId, _fbAuthSettings.AppSecret,accesstoken,FacebookApiVersions.V6_0);
+            var apiClient = new ApiClient(_fbAuthSettings.AppId, _fbAuthSettings.AppSecret, accesstoken, FacebookApiVersions.V6_0);
             var getRequestUrl = $"oauth/access_token";
-            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient,false);
+            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
             getRequest.AddQueryParameter("client_id", _fbAuthSettings.AppId);
             getRequest.AddQueryParameter("client_secret", _fbAuthSettings.AppSecret);
             getRequest.AddQueryParameter("grant_type", "client_credentials");
-            var response = await getRequest.ExecuteAsync<dynamic>();          
+            var response = await getRequest.ExecuteAsync<dynamic>();
             if (response.GetExceptions().Any())
             {
                 errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
@@ -109,13 +119,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<FacebookPage> GetFacebookPage(string accesstoken , string pageId) {
+        public async Task<FacebookPage> GetFacebookPage(string accesstoken, string pageId)
+        {
             string errorMaessage = null;
             var page = new FacebookPage();
             var a = new Object();
             var apiClient = new ApiClient(accesstoken, FacebookApiVersions.V6_0);
             var getRequestUrl = $"me?fields=id,name,accounts";
-            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);           
+            var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
             getRequest.AddQueryParameter("access_token", accesstoken);
             var response = (await getRequest.ExecuteAsync<FacebookUserData>());
             if (response.GetExceptions().Any())
@@ -133,17 +144,19 @@ namespace Infrastructure.Services
                 page.PageId = fbpage.Id;
                 page.PageName = fbpage.Name;
                 page.PageAccesstoken = fbpage.PageAccesstoken;
-                return page ;
+                return page;
             }
         }
 
-        public async Task<FacebookPage> CheckFacebookPage(string userid , string pageid) {
+        public async Task<FacebookPage> CheckFacebookPage(string userid, string pageid)
+        {
 
-            var facebookpage = await  SearchQuery(x => x.UserId == userid && x.PageId == pageid).FirstOrDefaultAsync();
+            var facebookpage = await SearchQuery(x => x.UserId == userid && x.PageId == pageid).FirstOrDefaultAsync();
             return facebookpage;
         }
 
-        public async Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val) {
+        public async Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val)
+        {
 
             //generate an app access token
             var userAccessTokenData = await GetFacebookAppAccessToken(val.Accesstoken);
@@ -153,12 +166,13 @@ namespace Infrastructure.Services
             }
             //Get long term access token
             var longTermAccessToken = await GetLongTermAccessToken(val.Accesstoken);
-            if (longTermAccessToken == null) {
+            if (longTermAccessToken == null)
+            {
                 throw new Exception("Chưa lấy được access_token dài hạn");
             }
-            
+
             //Get page facebook
-            var page = await GetFacebookPage(longTermAccessToken,val.PageId);
+            var page = await GetFacebookPage(longTermAccessToken, val.PageId);
 
             //check
             var check = await CheckFacebookPage(page.UserId, page.PageId);
@@ -402,8 +416,8 @@ namespace Infrastructure.Services
         public async Task<List<FacebookUserProfile>> CreateFacebookUser()
         {
             var userservice = GetService<UserManager<ApplicationUser>>();
-            var user = await userservice.FindByIdAsync(UserId);
-            if(user.FacebookPageId == null)
+            var user = userservice.FindByIdAsync(UserId);
+            if(user.Result.FacebookPageId == null)
             {
                 throw new Exception($"{user.Name} chưa liên kết với Fanpage nào !");
             }
@@ -434,56 +448,9 @@ namespace Infrastructure.Services
 
                 }
             }
-            
+
             return lstFBUser;
 
         }
-    }
-
-    public class ApiPageConversationsResponse
-    {
-        public IEnumerable<ApiPageConversationsData> data { get; set; }
-        public ApiPageConversationsPaging paging { get; set; }
-    }
-
-    public class ApiPageConversationsData
-    {
-        public ApiPageConversationsDataParticipants participants { get; set; }
-        public string id { get; set; }
-    }
-
-    public class ApiPageConversationsDataParticipants
-    {
-        public IEnumerable<ApiPageConversationsDataParticipantData> data { get; set; }
-    }
-
-    public class ApiPageConversationsDataParticipantData
-    {
-        public string name { get; set; }
-        public string email { get; set; }
-        public string id { get; set; }
-    }
-
-    public class ApiPageConversationsPaging
-    {
-        public ApiPageConversationsPagingCursors cursors { get; set; }
-        public string next { get; set; }
-        public string previous { get; set; }
-    }
-
-    public class ApiPageConversationsPagingCursors
-    {
-        public string before { get; set; }
-        public string after { get; set; }
-    }
-
-    public class ApiUserProfileResponse
-    {
-        public string name { get; set; }
-        public string first_name { get; set; }
-        public string last_name { get; set; }
-        public string profile_pic { get; set; }
-        public string gender { get; set; }
-        public string id { get; set; }
     }
 }

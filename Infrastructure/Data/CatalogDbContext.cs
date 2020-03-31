@@ -149,6 +149,8 @@ namespace Infrastructure.Data
         //Facebook
         public DbSet<FacebookPage> FacebookPages { get; set; }
 
+        public DbSet<FacebookScheduleAppointmentConfig> FacebookScheduleAppointmentConfigs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -264,6 +266,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new FacebookUserProfileConfiguration());
             builder.ApplyConfiguration(new MarketingMessageConfiguration());
             builder.ApplyConfiguration(new MarketingMessageButtonConfiguration());
+            builder.ApplyConfiguration(new FacebookScheduleAppointmentConfigConifuration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

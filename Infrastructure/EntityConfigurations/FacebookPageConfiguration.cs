@@ -16,6 +16,9 @@ namespace Infrastructure.EntityConfigurations
             builder.Property(x => x.PageId).IsRequired();
             builder.Property(x => x.PageAccesstoken).IsRequired();
 
+            builder.HasOne(x => x.AutoConfig)
+      .WithMany()
+      .HasForeignKey(x => x.AutoConfigId);
             builder.HasOne(x => x.CreatedBy)
         .WithMany()
         .HasForeignKey(x => x.CreatedById);

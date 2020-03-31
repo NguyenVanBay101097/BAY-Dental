@@ -18,5 +18,9 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<FacebookCustomer>> CheckCustomerNew(Guid FBpageId);
         Task<List<FacebookUserProfile>> CreateFacebookUser();
+        Task<FacebookScheduleAppointmentConfigBasic> _GetAutoConfig();
+
+        Task SaveAutoConfig(FacebookScheduleAppointmentConfigSave val);
+        
     }
 }

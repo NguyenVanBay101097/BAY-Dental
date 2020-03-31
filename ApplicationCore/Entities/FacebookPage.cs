@@ -14,5 +14,11 @@ namespace ApplicationCore.Entities
 
         public string PageName { get; set; }
         public string PageAccesstoken { get; set; }
+
+        //Config Automations
+
+        public Guid? AutoConfigId { get; set; }
+        public FacebookScheduleAppointmentConfig AutoConfig { get; set; }
+        //
     }
 }
