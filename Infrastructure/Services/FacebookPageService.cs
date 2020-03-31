@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -437,6 +438,7 @@ namespace Infrastructure.Services
             {
                 throw new Exception("thời gian nhắc lịch không được nhỏ hơn hoặc bằng 0 !");
             }
+
             autoConfig = _mapper.Map(val, autoConfig);
             await autoConfigService.UpdateAsync(autoConfig);
 
@@ -447,8 +449,8 @@ namespace Infrastructure.Services
                 var RecurringJobId = $"{host}-{user.FacebookPageId.Value}-AutoMesAppointmentFB";
 
                 if (autoConfig.ScheduleType == "minutes")
-                  
-                RecurringJob.AddOrUpdate(RecurringJobId, () => RunSendMessageAppointmentFB(host, user.FacebookPageId.Value), $"*/{ScheduleNumber} * * * *");
+
+                    RecurringJob.AddOrUpdate(RecurringJobId, () => RunSendMessageAppointmentFB(host, user.FacebookPageId.Value), $"*/{ScheduleNumber} * * * *");
                 else if (autoConfig.ScheduleType == "hours")
                     RecurringJob.AddOrUpdate(RecurringJobId, () => RunSendMessageAppointmentFB(host, user.FacebookPageId.Value), $"* */{ScheduleNumber}  * * *");
 
@@ -464,7 +466,7 @@ namespace Infrastructure.Services
 
         public async Task RunSendMessageAppointmentFB(string db, Guid fbpageId)
         {
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);          
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             builder["Database"] = $"TMTDentalCatalogDb__{db}";
             if (db == "localhost")
                 builder["Database"] = "TMTDentalCatalogDb";
@@ -486,21 +488,28 @@ namespace Infrastructure.Services
                          "where Id = @Id" +
                          "", new { Id = page.AutoConfigId }
                         ).FirstOrDefault();
+
+
                     if (fbshedule == null)
                         return;
+
+                   
+                   
                     var date = DateTime.Now;
                     if (fbshedule.ScheduleType == "minutes")
                     {
                         var datefrom = date;
                         var dateto = date.AddMinutes(fbshedule.ScheduleNumber.Value);
                         var fbSheduleConfigMinutes = conn.Query<PartnerAppointment>("" +
-                            "Select app.PartnerId, fbuser.PSID , app.Date " +
+                            "Select app.PartnerId, fbuser.PSID , app.Date , pn.Name , company.Name as CompanyName  , company.AddressCompany as CompanyAddress " +
                             "From Appointments as app " +
-                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " +
+                            "Left Join FacebookUserProfiles as fbuser On app.PartnerId = fbuser.PartnerId " +
+                            "Left Join Partners as pn ON pn.Id = fbuser.PartnerId " +
+                            "Left Join (Select cps.Id as companyid, pns.Id, pns.Name, (pns.Street + ',' + pns.CityName + ',' + pns.DistrictName + ',' + pns.WardName) as AddressCompany From Partners as pns Left Join Companies as cps  On cps.PartnerId = pns.Id) company ON company.companyid = pn.CompanyId " +
                             "Where fbuser.FbPageId = @pageId AND DATEADD(MINUTE,-@scheduleNumber,app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
                         if (fbSheduleConfigMinutes == null)
                             return;
-                        var tasks = fbSheduleConfigMinutes.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
+                        var tasks = fbSheduleConfigMinutes.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage.Replace("{{tenchinhanh}}", x.CompanyName).Replace("{{diachichinhanh}}", x.CompanyAddress == null ? "đang cập nhật ..." : x.CompanyAddress).Replace("{{tenkhachhang}}", x.Name).Replace("{{giohen}}", x.Date.ToString("hh:mm tt")))).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -516,13 +525,17 @@ namespace Infrastructure.Services
                         var datefrom = date;
                         var dateto = date.AddHours(fbshedule.ScheduleNumber.Value);
                         var fbSheduleConfigHours = conn.Query<PartnerAppointment>("" +
-                            "Select app.PartnerId, fbuser.PSID , app.Date " +
+                            "Select app.PartnerId, fbuser.PSID , app.Date , pn.Name , company.Name as CompanyName  , company.AddressCompany as CompanyAddress " +
                             "From Appointments as app " +
-                            "Inner Join FacebookUserProfiles as fbuser  On app.PartnerId = fbuser.PartnerId " +
+                            "Left Join FacebookUserProfiles as fbuser On app.PartnerId = fbuser.PartnerId " +
+                            "Left Join Partners as pn ON pn.Id = fbuser.PartnerId " +
+                            "Left Join (Select cps.Id as companyid, pns.Id, pns.Name, (pns.Street + ',' + pns.CityName + ',' + pns.DistrictName + ',' + pns.WardName) as AddressCompany From Partners as pns Left Join Companies as cps  On cps.PartnerId = pns.Id) company ON company.companyid = pn.CompanyId " +
                             "Where fbuser.FbPageId = @pageId AND DATEADD(HOUR,-(@scheduleNumber),app.Date) BETWEEN @dateFrom AND @dateTo " + "", new { pageId = fbpageId, dateFrom = datefrom, dateTo = dateto, scheduleNumber = fbshedule.ScheduleNumber.Value }).ToList();
+
+
                         if (fbSheduleConfigHours == null)
                             return;
-                        var tasks = fbSheduleConfigHours.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage)).ToList();
+                        var tasks = fbSheduleConfigHours.Select(x => SendMessageAppointmentFBAsync(page.PageAccesstoken, x.PSId, fbshedule.ContentMessage.Replace("{{tenchinhanh}}", x.CompanyName).Replace("{{diachichinhanh}}", x.CompanyAddress == null ? "đang cập nhật ..." : x.CompanyAddress).Replace("{{tenkhachhang}}", x.Name).Replace("{{giohen}}", x.Date.ToString("hh:mm tt")))).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -544,12 +557,13 @@ namespace Infrastructure.Services
             }
         }
 
+
         public async Task<SendFacebookMessage> SendMessageAppointmentFBAsync(string accessTokenPage, string psid, string message)
         {
             var errorMaessage = "";
             var apiClient = new ApiClient(accessTokenPage, FacebookApiVersions.V6_0);
             var url = $"me/messages";
-
+            //var messagefb = message.Replace("{{name}}", partner.Name).Replace("{{date}}", date.ToString("hh:mm tt"));
             var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
             request.AddParameter("messaging_type", "MESSAGE_TAG");
             request.AddParameter("tag", "CONFIRMED_EVENT_UPDATE");
@@ -578,5 +592,6 @@ namespace Infrastructure.Services
 
 
     }
+   
 
 }

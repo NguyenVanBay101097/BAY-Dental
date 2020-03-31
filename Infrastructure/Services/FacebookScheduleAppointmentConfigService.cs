@@ -283,6 +283,10 @@ namespace Infrastructure.Services
         public Guid PartnerId { get; set; }
         public string PSId { get; set; }
         public DateTime Date { get; set; }
+
+        public string Name { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyAddress { get; set; }
     }
     public class SendFacebookMessage
     {
