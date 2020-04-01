@@ -27,6 +27,7 @@ import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-li
 import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
 import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
 import { FacebookMassMessagingScheduleDialogComponent } from './facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
+import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-messaging-statistics-dialog/facebook-mass-messaging-statistics-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { FacebookMassMessagingScheduleDialogComponent } from './facebook-mass-me
     FacebookMassMessagingListComponent,
     FacebookMassMessagingsComponent,
     FacebookMassMessagingCreateUpdateComponent,
-    FacebookMassMessagingScheduleDialogComponent
+    FacebookMassMessagingScheduleDialogComponent,
+    FacebookMassMessagingStatisticsDialogComponent
   ],
   imports: [
     CommonModule,

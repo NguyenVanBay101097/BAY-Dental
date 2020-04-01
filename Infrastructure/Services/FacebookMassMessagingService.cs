@@ -60,8 +60,8 @@ namespace Infrastructure.Services
                 if (item.FacebookPage == null)
                     continue;
                 var page = item.FacebookPage;
-                var psids = await userProfileObj.SearchQuery(x => x.FbPageId == page.Id).Select(x => x.PSID).ToListAsync();
-                var tasks = psids.Select(x => SendMessageAndTrace(item, item.Content, x, page.PageAccesstoken));
+                var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == page.Id).ToListAsync();
+                var tasks = profiles.Select(x => SendMessageAndTrace(item, item.Content, x, page.PageAccesstoken));
 
                 await Task.WhenAll(tasks);
 
@@ -72,16 +72,17 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task SendMessageAndTrace(FacebookMassMessaging self, string text, string psid, string access_token)
+        public async Task SendMessageAndTrace(FacebookMassMessaging self, string text, FacebookUserProfile profile, string access_token)
         {
             var traceObj = GetService<IFacebookMessagingTraceService>();
-            var sendResult = await _fbMessageSender.SendMessageTagTextAsync(text, psid, access_token);
+            var sendResult = await _fbMessageSender.SendMessageTagTextAsync(text, profile.PSID, access_token);
             if (sendResult == null)
             {
                 await traceObj.CreateAsync(new FacebookMessagingTrace
                 {
                     MassMessagingId = self.Id,
-                    Exception = DateTime.Now
+                    Exception = DateTime.Now,
+                    UserProfileId = profile.Id
                 });
             }
             else
@@ -90,9 +91,29 @@ namespace Infrastructure.Services
                 {
                     MassMessagingId = self.Id,
                     Sent = DateTime.Now,
-                    MessageId = sendResult.message_id
+                    MessageId = sendResult.message_id,
+                    UserProfileId = profile.Id
                 });
             }
+        }
+
+        public void _ComputeStatistics(IEnumerable<FacebookMassMessaging> self)
+        {
+        }
+
+        public async Task<PagedResult2<FacebookUserProfileBasic>> ActionViewDelivered(Guid id, FacebookMassMessagingStatisticsPaged paged)
+        {
+            var traceObj = GetService<IFacebookMessagingTraceService>();
+            var query = traceObj.SearchQuery(x => x.MassMessagingId == id && x.Delivered.HasValue);
+
+            var items = await query.OrderByDescending(x => x.Delivered.Value).Skip(paged.Offset).Take(paged.Limit).Select(x => new FacebookUserProfileBasic
+            {
+                Name = x.UserProfile.Name,
+                PSId = x.UserProfile.PSID
+            }).ToListAsync();
+
+            var total = await query.CountAsync();
+            return new PagedResult2<FacebookUserProfileBasic>(total, paged.Limit, paged.Offset) { Items = items };
         }
 
         public async Task SetScheduleDate(FacebookMassMessagingSetScheduleDate val)

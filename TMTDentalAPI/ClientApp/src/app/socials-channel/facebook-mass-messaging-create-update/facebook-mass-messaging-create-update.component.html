@@ -48,6 +48,37 @@
             </strong>
         </div>
         <div class="o_form_sheet">
+            <div class="o_not_full oe_button_box">
+                <button type="button" (click)="button_view_sent()" class="btn oe_stat_button">
+                    <i class="far fa-envelope o_button_icon"></i>
+                    <div class="o_field_widget o_stat_info o_readonly_modifier">
+                        <span class="o_stat_value">{{messaging.totalSent | number}}</span>
+                        <span class="o_stat_text">Đã gửi</span>
+                    </div>
+                </button>
+                <button type="button" (click)="action_view_delivered()" class="btn oe_stat_button">
+                    <div class="o_field_percent_pie o_field_widget o_readonly_modifier">
+                        <div class="o_pie">
+                            <div class="o_mask" style="transform: rotate(180deg);"></div>
+                            <div class="o_mask" style="transform: rotate(0deg);"></div>
+                            <div class="o_pie_value">{{100 * messaging.totalReceived / messaging.totalSent | number}}%
+                            </div>
+                        </div>
+                        <span>{{messaging.totalReceived | number}} Đã nhận</span>
+                    </div>
+                </button>
+                <button type="button" (click)="action_view_opened()" class="btn oe_stat_button">
+                    <div class="o_field_percent_pie o_field_widget o_readonly_modifier" name="opened_ratio">
+                        <div class="o_pie">
+                            <div class="o_mask" style="transform: rotate(180deg);"></div>
+                            <div class="o_mask" style="transform: rotate(0deg);"></div>
+                            <div class="o_pie_value">{{100 * messaging.totalOpened / messaging.totalSent | number}}%
+                            </div>
+                        </div>
+                        <span>{{messaging.totalOpened | number}} Đã đọc</span>
+                    </div>
+                </button>
+            </div>
             <div class="o_group">
                 <table class="o_group o_inner_group">
                     <tbody>

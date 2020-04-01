@@ -15,12 +15,12 @@ import { Subject } from 'rxjs';
 })
 export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
-  constructor(private modalService: NgbModal, 
+  constructor(private modalService: NgbModal,
     private facebookPageService: FacebookPageService,
     private facebookUserProfilesService: FacebookUserProfilesService,
     private notificationService: NotificationService) { }
 
-  dataSendMessage: any [] = [];
+  dataSendMessage: any[] = [];
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
@@ -64,11 +64,11 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
   createFacebookUser() {
     this.facebookPageService.createFacebookUser()
-    .subscribe(res => {
-      console.log(res);
-    }, err => {
-      console.log(err);
-    });
+      .subscribe(res => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
   }
 
   pageChange(event: PageChangeEvent): void {

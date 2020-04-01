@@ -16,6 +16,11 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.MassMessagingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(x => x.UserProfile)
+             .WithMany()
+             .HasForeignKey(x => x.UserProfileId)
+             .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);

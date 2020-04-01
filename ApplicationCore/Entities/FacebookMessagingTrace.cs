@@ -13,8 +13,15 @@ namespace ApplicationCore.Entities
 
         public DateTime? Exception { get; set; }
 
+        public DateTime? Delivered { get; set; }
+
+        public DateTime? Opened { get; set; }
+
         public string MessageId { get; set; }
 
         public string State { get; set; }
+
+        public Guid? UserProfileId { get; set; }
+        public FacebookUserProfile UserProfile { get; set; }
     }
 }

@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task SetScheduleDate(FacebookMassMessagingSetScheduleDate val);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
+        Task<PagedResult2<FacebookUserProfileBasic>> ActionViewDelivered(Guid id, FacebookMassMessagingStatisticsPaged paged);
     }
 }

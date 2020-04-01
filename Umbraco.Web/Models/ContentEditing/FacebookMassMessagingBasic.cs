@@ -10,5 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string State { get; set; }
         public int TotalSent { get; set; }
+        public int TotalReceived { get; set; }
+        public int TotalOpened { get; set; }
     }
 }

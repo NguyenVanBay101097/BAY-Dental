@@ -312,6 +312,10 @@ namespace Infrastructure.Data
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
                 builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
+
+                if (_tenant.Hostname == "localhost")
+                    builder["Database"] = $"TMTDentalCatalogDb";
+
                 optionsBuilder.UseSqlServer(builder.ConnectionString);
             }
             else
@@ -319,9 +323,6 @@ namespace Infrastructure.Data
                 var defaultConnectionString = _connectionStrings.CatalogConnection;
                 optionsBuilder.UseSqlServer(defaultConnectionString);
             }
-
-            //var defaultConnectionString = _connectionStrings.CatalogConnection;
-            //optionsBuilder.UseSqlServer(defaultConnectionString);
 
             base.OnConfiguring(optionsBuilder);
         }

@@ -24,7 +24,7 @@ namespace ApplicationCore.Entities
         public Guid? FacebookPageId { get; set; }
         public FacebookPage FacebookPage { get; set; }
 
-        public ICollection<FacebookMessagingTrace> Traces { get; set; }
+        public ICollection<FacebookMessagingTrace> Traces { get; set; } = new List<FacebookMessagingTrace>();
 
         public string JobId { get; set; }
     }

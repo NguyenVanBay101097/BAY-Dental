@@ -42,7 +42,8 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var messaging = await _facebookMassMessagingService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var messaging = await _facebookMassMessagingService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Traces).FirstOrDefaultAsync();
             if (messaging == null)
                 return NotFound();
 
@@ -127,6 +128,13 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> ActionViewDelivered(Guid id, [FromQuery]FacebookMassMessagingStatisticsPaged paged)
+        {
+            var res = await _facebookMassMessagingService.ActionViewDelivered(id, paged);
+            return Ok(res);
         }
     }
 }
