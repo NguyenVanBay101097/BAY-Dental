@@ -27,5 +27,10 @@ namespace ApplicationCore.Entities
         public ICollection<FacebookMessagingTrace> Traces { get; set; } = new List<FacebookMessagingTrace>();
 
         public string JobId { get; set; }
+
+        /// <summary>
+        /// Điều kiện lọc những khách hàng sẽ gửi tin nhắn
+        /// </summary>
+        //public string AudienceFilter { get; set; }
     }
 }

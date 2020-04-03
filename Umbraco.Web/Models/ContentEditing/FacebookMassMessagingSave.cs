@@ -11,5 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Content { get; set; }
 
         public Guid? FacebookPageId { get; set; }
+
+        public string AudienceFilter { get; set; }
     }
 }
