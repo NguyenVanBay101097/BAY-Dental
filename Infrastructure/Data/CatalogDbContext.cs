@@ -308,6 +308,8 @@ namespace Infrastructure.Data
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
                 builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
+                if (_tenant.Hostname == "localhost")
+                    builder["Database"] = $"TMTDentalCatalogDb";
                 optionsBuilder.UseSqlServer(builder.ConnectionString);
             }
             else

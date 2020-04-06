@@ -224,14 +224,14 @@ namespace Infrastructure.Services
         {
             foreach(var partner in self)
             {
-                if (partner.Customer == true && string.IsNullOrEmpty(partner.Ref))
+                if (partner.Customer == true && !string.IsNullOrEmpty(partner.Ref))
                 {
                     var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Customer == true).FirstOrDefaultAsync();
                     if (exist != null)
                         throw new Exception($"Đã tồn tại khách hàng với mã {partner.Ref}");
                 }
 
-                if (partner.Supplier == true && string.IsNullOrEmpty(partner.Ref))
+                if (partner.Supplier == true && !string.IsNullOrEmpty(partner.Ref))
                 {
                     var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Supplier == true).FirstOrDefaultAsync();
                     if (exist != null)

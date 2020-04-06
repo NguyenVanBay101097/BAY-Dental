@@ -74,6 +74,11 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
+        if (result.datePlanned) {
+          let datePlanned = this.intlService.parseDate(result.datePlanned);
+          this.formGroup.get('datePlannedObj').patchValue(datePlanned);
+        }
+
         if (result.saleOrder) {
           this.filteredSaleOrders = _.unionBy(this.filteredSaleOrders, [result.saleOrder], 'id');
         }

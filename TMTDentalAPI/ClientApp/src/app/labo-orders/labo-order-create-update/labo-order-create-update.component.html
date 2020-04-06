@@ -163,11 +163,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
-                                        [class.d-none]="laboOrder.state != 'draft'" formControlName="datePlannedObj">
+                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="datePlannedObj">
                                     </kendo-datepicker>
-                                    <span
-                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.datePlanned | date: 'short'}}</span>
                                 </td>
                             </tr>
                         </tbody>

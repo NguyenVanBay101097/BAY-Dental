@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from '../partner.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-partner-supplier-cu-dialog',
@@ -27,7 +28,8 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
   dataResultWards: Array<{ code: string, name: string, districtCode: string, districtName: string, cityCode: string, cityName: string }>;
 
   constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService, public activeModal: NgbActiveModal) { }
+    private partnerService: PartnerService, public activeModal: NgbActiveModal,
+    private showErrorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -56,14 +58,6 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
           }
           if (result.ward && result.ward.code) {
             this.handleWardChange(result.ward);
-          }
-
-          if (result.histories.length) {
-            debugger;
-            result.histories.forEach(history => {
-              var histories = this.formGroup.get('histories') as FormArray;
-              histories.push(this.fb.group(history));
-            });
           }
         });
       }
@@ -162,12 +156,12 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       var val = this.formGroup.value;
       this.partnerService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
-      });
+      }, err => this.showErrorService.show(err));
     } else {
       var val = this.formGroup.value;
       this.partnerService.create(val).subscribe(result => {
         this.activeModal.close(result);
-      });
+      }, err => this.showErrorService.show(err));
     }
   }
 

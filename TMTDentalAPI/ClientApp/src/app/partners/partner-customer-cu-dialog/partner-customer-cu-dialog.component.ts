@@ -9,6 +9,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HistorySimple } from 'src/app/history/history';
 import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
 import * as _ from 'lodash';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-partner-customer-cu-dialog',
@@ -41,7 +42,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
     private partnerService: PartnerService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -252,12 +253,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       var val = this.formGroup.value;
       this.partnerService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
-      });
+      }, err => this.showErrorService.show(err));
     } else {
       var val = this.formGroup.value;
       this.partnerService.create(val).subscribe(result => {
         this.activeModal.close(result);
-      });
+      }, err => this.showErrorService.show(err));
     }
   }
 
