@@ -13,10 +13,13 @@ namespace Infrastructure.Services
         Task<PagedResult2<FacebookPageBasic>> GetPagedResultAsync(FacebookPaged val);
         Task<string> GetFacebookAppAccessToken(string accesstoken);
         Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val);
-        Task LoadUserProfileFromConversations(Guid id);
         Task<IEnumerable<string>> GetListPSId(Guid FBpageId);
 
         Task<IEnumerable<FacebookCustomer>> CheckCustomerNew(Guid FBpageId);
         Task<List<FacebookUserProfile>> CreateFacebookUser();
+        Task<FacebookScheduleAppointmentConfigBasic> _GetAutoConfig();
+
+        Task SaveAutoConfig(FacebookScheduleAppointmentConfigSave val);
+        
     }
 }
