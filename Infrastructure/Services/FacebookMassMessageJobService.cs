@@ -58,7 +58,7 @@ namespace Infrastructure.Services
                     var profiles = conn.Query<FacebookUserProfile>("" +
                           "SELECT * " +
                               "FROM FacebookUserProfiles m " +
-                              "where m.FbPageId = @pageId " +
+                              "where m.FbPageId = @pageId  " +
                               "", new { pageId = page.Id }).ToList();
 
                     var tasks = profiles.Select(x => SendMessageAndTrace(conn, messaging.Id, messaging.Content, x, page.PageAccesstoken)).ToList();
