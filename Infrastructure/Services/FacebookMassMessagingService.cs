@@ -13,6 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using System.Linq.Dynamic.Core;
+using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Infrastructure.Services
 {
@@ -36,6 +39,28 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<FacebookMassMessagingBasic>> GetPagedResultAsync(FacebookMassMessagingPaged val)
         {
+            var filter = new Filter
+            {
+                Logic = "and",
+                Filters = new List<Filter>()
+                {
+                    new Filter { 
+                        Field = "Traces",
+                        Operator = "seq_any",
+                        Logic = "and",
+                        Filters = new List<Filter>()
+                        {
+                            new Filter { Field = "Traces.Sent", Operator = "contains", Value = "abc" }
+                        }
+                    },
+                    new Filter { Field = "Name", Operator = "contains", Value = "abc" }
+                }
+            };
+
+            var q = SearchQuery();
+            var errors = new List<object>();
+            var b = q.Filters(filter, errors).ToList();
+
             ISpecification<FacebookMassMessaging> spec = new InitialSpecification<FacebookMassMessaging>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<FacebookMassMessaging>(x => x.Name.Contains(val.Search)));
@@ -97,10 +122,6 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _ComputeStatistics(IEnumerable<FacebookMassMessaging> self)
-        {
-        }
-
         public async Task<PagedResult2<FacebookUserProfileBasic>> ActionViewDelivered(Guid id, FacebookMassMessagingStatisticsPaged paged)
         {
             var traceObj = GetService<IFacebookMessagingTraceService>();
@@ -155,5 +176,48 @@ namespace Infrastructure.Services
 
             await DeleteAsync(self);
         }
+    }
+
+    [DataContract]
+    public class AudienceFilter
+    {
+        /// <summary>
+        /// Gets or sets the name of the sorted field (property). Set to <c>null</c> if the <c>Filters</c> property is set.
+        /// </summary>
+        [DataMember(Name = "field")]
+        public string Field { get; set; }
+
+        /// <summary>
+        /// Gets or sets the filtering operator. Set to <c>null</c> if the <c>Filters</c> property is set.
+        /// </summary>
+        [DataMember(Name = "operator")]
+        public string Operator { get; set; }
+
+        /// <summary>
+        /// Gets or sets the filtering value. Set to <c>null</c> if the <c>Filters</c> property is set.
+        /// </summary>
+        [DataMember(Name = "value")]
+        public object Value { get; set; }
+
+        /// <summary>
+        /// Gets or sets the filtering logic. Can be set to "or" or "and". Set to <c>null</c> unless <c>Filters</c> is set.
+        /// </summary>
+        [DataMember(Name = "logic")]
+        public string Logic { get; set; }
+
+        /// <summary>
+        /// Gets or sets the child filter expressions. Set to <c>null</c> if there are no child expressions.
+        /// </summary>
+        [DataMember(Name = "filters")]
+        public IEnumerable<Filter> Filters { get; set; }
+    }
+
+    public class AudienceFilterItem
+    {
+        public string type { get; set; }
+        public string name { get; set; }
+        public string formula_type { get; set; }
+        public string formula_value { get; set; }
+        public string formula_display { get; set; }
     }
 }
