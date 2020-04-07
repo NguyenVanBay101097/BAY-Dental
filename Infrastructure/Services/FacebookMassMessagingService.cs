@@ -198,13 +198,17 @@ namespace Infrastructure.Services
         public async Task SendMessageAndTrace(FacebookMassMessaging self, string text, FacebookUserProfile profile, string access_token)
         {
             var traceObj = GetService<IFacebookMessagingTraceService>();
+            var now = DateTime.Now;
+            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            date = date.AddSeconds(-1);
+
             var sendResult = await _fbMessageSender.SendMessageTagTextAsync(text, profile.PSID, access_token);
             if (sendResult == null)
             {
                 await traceObj.CreateAsync(new FacebookMessagingTrace
                 {
                     MassMessagingId = self.Id,
-                    Exception = DateTime.Now,
+                    Exception = date,
                     UserProfileId = profile.Id
                 });
             }
@@ -213,7 +217,7 @@ namespace Infrastructure.Services
                 await traceObj.CreateAsync(new FacebookMessagingTrace
                 {
                     MassMessagingId = self.Id,
-                    Sent = DateTime.Now,
+                    Sent = date,
                     MessageId = sendResult.message_id,
                     UserProfileId = profile.Id
                 });

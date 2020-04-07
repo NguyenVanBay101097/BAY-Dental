@@ -6,6 +6,7 @@ using Facebook.ApiClient.Interfaces;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RestSharp;
 using SaasKit.Multitenancy;
@@ -22,13 +23,15 @@ namespace Infrastructure.Services
     {
         private readonly TenantDbContext _tenantContext;
         private readonly AppTenant _tenant;
+        private readonly AppSettings _appSettings;
 
         public FacebookConnectPageService(IAsyncRepository<FacebookConnectPage> repository, IHttpContextAccessor httpContextAccessor,
-            TenantDbContext tenantContext, ITenant<AppTenant> tenant)
+            TenantDbContext tenantContext, ITenant<AppTenant> tenant, IOptions<AppSettings> appSettings)
             : base(repository, httpContextAccessor)
         {
             _tenantContext = tenantContext;
             _tenant = tenant?.Value;
+            _appSettings = appSettings?.Value;
         }
 
         public async Task AddConnect(IEnumerable<Guid> ids)
@@ -49,33 +52,36 @@ namespace Infrastructure.Services
 
                 await SubcribeAppFacebookPage(fbPage);
                 AddFacebookPageToTenant(fbPage);
-                await GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
+                GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
             }
         }
 
-        private async Task<bool> GetConnectWebhooksForPage(string pageId , string pageAccesstoken)
+        private bool GetConnectWebhooksForPage(string pageId , string pageAccesstoken)
         {
-            HttpClient client = new HttpClient();
             var host = _tenant != null ? _tenant.Hostname : "localhost";
-            if (host == "localhost") {
-                host = "http://302dce2d.ngrok.io";
-            }
 
             var content = new ConnectWebhooks
             {
                 Host = host,
                 FacebookId = pageId,
-                FaceookToken = pageAccesstoken,
+                FacebookToken = pageAccesstoken,
                 FacebookName = null,
                 FacebookAvatar = null,
                 FacebookCover = null,
                 FacebookLink = null,
                 FacebookType = 2,
-                CallbackUrl = $"{host}/api/FacebookWebHook",
+                CallbackUrl = $"{_appSettings.Schema}://{host}.{_appSettings.Domain}/api/FacebookWebHook",
                 IsCallbackWithRaw = true
             };
 
-            var response = await client.PostAsJsonAsync("https://fba.tpos.vn/api/facebook/updatetoken", content);
+            HttpResponseMessage response = null;
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
+            {
+                response = client.PostAsJsonAsync("https://fba.tpos.vn/api/facebook/updatetoken", content).Result;
+            }
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Lỗi đăng ký fba.tpos.vn");
             
             return true;
         }
@@ -145,7 +151,7 @@ namespace Infrastructure.Services
         [JsonProperty]
         public string FacebookId { get; set; }
         [JsonProperty]
-        public string FaceookToken { get; set; }
+        public string FacebookToken { get; set; }
         [JsonProperty]
         public string FacebookName { get; set; }
         [JsonProperty]

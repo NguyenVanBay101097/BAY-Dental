@@ -23,15 +23,23 @@ namespace Infrastructure.Services
             request.AddParameter("message", JsonConvert.SerializeObject(new { text = text }));
             request.AddParameter("tag", tag);
 
-            var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
-            if (response.GetExceptions().Any())
+            try
             {
-                return null;
+                var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
+                if (response.GetExceptions().Any())
+                {
+                    return null;
+                }
+                else
+                {
+                    var result = response.GetResult();
+                    return result;
+                }
             }
-            else
+            catch(Exception e)
             {
-                var result = response.GetResult();
-                return result;
+                Console.WriteLine(e.Message);
+                return null;
             }
         }
     }

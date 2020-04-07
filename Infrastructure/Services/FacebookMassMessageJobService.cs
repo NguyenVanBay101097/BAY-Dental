@@ -75,11 +75,15 @@ namespace Infrastructure.Services
 
         public async Task SendMessageAndTrace(SqlConnection conn, Guid mass_messaging_id, string text, FacebookUserProfile profile, string access_token)
         {
+            var now = DateTime.Now;
+            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            date = date.AddSeconds(-1);
+
             var sendResult = await _fbMessageSender.SendMessageTagTextAsync(text, profile.PSID, access_token);
             if (sendResult == null)
-                await conn.ExecuteAsync("insert into FacebookMessagingTraces(Id,MassMessagingId,Exception,UserProfileId) values (@Id,@MassMessagingId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), MassMessagingId = mass_messaging_id, Exception = DateTime.Now, UserProfileId = profile.Id });
+                await conn.ExecuteAsync("insert into FacebookMessagingTraces(Id,MassMessagingId,Exception,UserProfileId) values (@Id,@MassMessagingId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), MassMessagingId = mass_messaging_id, Exception = date, UserProfileId = profile.Id });
             else
-                await conn.ExecuteAsync("insert into FacebookMessagingTraces(Id,MassMessagingId,Sent,MessageId,UserProfileId) values (@Id,@MassMessagingId,@Sent,@MessageId,@UserProfileId)", new { Id = GuidComb.GenerateComb(), MassMessagingId = mass_messaging_id, Sent = DateTime.Now, MessageId = sendResult.message_id, UserProfileId = profile.Id });
+                await conn.ExecuteAsync("insert into FacebookMessagingTraces(Id,MassMessagingId,Sent,MessageId,UserProfileId) values (@Id,@MassMessagingId,@Sent,@MessageId,@UserProfileId)", new { Id = GuidComb.GenerateComb(), MassMessagingId = mass_messaging_id, Sent = date, MessageId = sendResult.message_id, UserProfileId = profile.Id });
         }
     }
 }
