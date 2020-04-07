@@ -28,6 +28,10 @@ import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/face
 import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
 import { FacebookMassMessagingScheduleDialogComponent } from './facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
 import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-messaging-statistics-dialog/facebook-mass-messaging-statistics-dialog.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { ClickOutsideDirective } from './click-outside.directive';
+import { FacebookMassMessagingCreateUpdateDialogComponent } from './facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +51,9 @@ import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-
     FacebookMassMessagingsComponent,
     FacebookMassMessagingCreateUpdateComponent,
     FacebookMassMessagingScheduleDialogComponent,
-    FacebookMassMessagingStatisticsDialogComponent
+    FacebookMassMessagingStatisticsDialogComponent,
+    ClickOutsideDirective,
+    FacebookMassMessagingCreateUpdateDialogComponent
   ],
   imports: [
     CommonModule,
@@ -59,7 +65,9 @@ import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-
     MyCustomKendoModule,
     ReactiveFormsModule,
     AutosizeModule,
-    SharedModule
+    SharedModule,
+    PickerModule,
+    EmojiModule
   ],
   exports: [
   ],
@@ -70,7 +78,8 @@ import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-
     FacebookPageMarketingMessageAddButtonComponent,
     PartnerCreateUpdateComponent,
     FacebookPageMarketingCustomerConnectComponent,
-    FacebookMassMessagingScheduleDialogComponent
+    FacebookMassMessagingScheduleDialogComponent,
+    FacebookMassMessagingCreateUpdateDialogComponent
   ],
   providers: [
     FacebookUserProfilesService

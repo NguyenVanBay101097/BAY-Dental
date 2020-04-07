@@ -6,6 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookMassMessagingScheduleDialogComponent } from '../facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
+import { FacebookMassMessagingCreateUpdateDialogComponent } from '../facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
 
 @Component({
   selector: 'app-facebook-mass-messaging-create-update',
@@ -16,6 +17,9 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   messaging = {};
+  focusTextarea: boolean = false;
+  selectArea_start: number;
+  selectArea_end: number;
 
   constructor(private fb: FormBuilder, private massMessagingService: FacebookMassMessagingService,
     private route: ActivatedRoute, private router: Router, private notificationService: NotificationService,
@@ -143,5 +147,54 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
         });
       });
     }
+  }
+  action_view_sent() {
+    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.massMessagingId = this.id;
+
+    modalRef.result.then(() => {
+      //
+    }, () => {
+    });
+  }
+  action_view_delivered() {
+    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.massMessagingId = this.id;
+
+    modalRef.result.then(() => {
+      //
+    }, () => {
+    });
+  }
+  action_view_opened() {
+    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.massMessagingId = this.id;
+
+    modalRef.result.then(() => {
+      //
+    }, () => {
+    });
+  }
+  selectArea(event) {
+    this.selectArea_start = event.target.selectionStart;
+    this.selectArea_end = event.target.selectionEnd;
+  }
+  selectEmoji(event) {
+    var icon_emoji = event.emoji.native;
+    if (this.formGroup.value.content) {
+      this.formGroup.patchValue({
+        content: this.formGroup.value.content.slice(0, this.selectArea_start) + icon_emoji + this.formGroup.value.content.slice(this.selectArea_end)
+      });
+    } else {
+      this.formGroup.patchValue({
+        content: icon_emoji
+      });
+    }
+  }
+  showEmoji() {
+    document.getElementById('emoji_mass').style.display = 'block';
+  }
+  hideEmoji() {
+    document.getElementById('emoji_mass').style.display = 'none';
   }
 }

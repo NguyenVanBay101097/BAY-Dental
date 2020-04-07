@@ -49,7 +49,7 @@
         </div>
         <div class="o_form_sheet">
             <div class="o_not_full oe_button_box">
-                <button type="button" (click)="button_view_sent()" class="btn oe_stat_button">
+                <button type="button" (click)="action_view_sent()" class="btn oe_stat_button">
                     <i class="far fa-envelope o_button_icon"></i>
                     <div class="o_field_widget o_stat_info o_readonly_modifier">
                         <span class="o_stat_value">{{messaging.totalSent | number}}</span>
@@ -97,9 +97,18 @@
                                 <label class="o_form_label">Nội dung</label>
                             </td>
                             <td style="width:100%">
-                                <div class="position-relative">
+                                <div class="position-relative" (clickOutside)=hideEmoji()>
                                     <textarea type="text" my-autosize charCount [limit]="640" class="form-control"
-                                        formControlName="content"></textarea>
+                                        formControlName="content" (click)="selectArea($event)" (keyup)="selectArea($event)"
+                                        (focus)="showEmoji()">
+                                    </textarea>
+                                    <div class="dropdown position-absolute mt-1" style="right: 0;"
+                                        id="emoji_mass">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-toggle="dropdown">
+                                            <h5 class="m-0"><i class="fas fa-laugh"></i></h5>
+                                        </button>
+                                        <emoji-mart class="dropdown-menu p-0 border-0" (emojiSelect)="selectEmoji($event)"></emoji-mart>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
