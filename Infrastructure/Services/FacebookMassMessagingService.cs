@@ -16,6 +16,7 @@ using Umbraco.Web.Models.ContentEditing;
 using System.Linq.Dynamic.Core;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Services
 {
@@ -39,29 +40,10 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<FacebookMassMessagingBasic>> GetPagedResultAsync(FacebookMassMessagingPaged val)
         {
-            var filter = new Filter
-            {
-                Logic = "and",
-                Filters = new List<Filter>()
-                {
-                    new Filter { 
-                        Field = "Traces",
-                        Operator = "seq_any",
-                        Logic = "and",
-                        Filters = new List<Filter>()
-                        {
-                            new Filter { Field = "Traces.Sent", Operator = "contains", Value = "abc" }
-                        }
-                    },
-                    new Filter { Field = "Name", Operator = "contains", Value = "abc" }
-                }
-            };
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
+            ISpecification<FacebookMassMessaging> spec = new InitialSpecification<FacebookMassMessaging>(x => x.FacebookPageId == user.FacebookPageId);
 
-            var q = SearchQuery();
-            var errors = new List<object>();
-            var b = q.Filters(filter, errors).ToList();
-
-            ISpecification<FacebookMassMessaging> spec = new InitialSpecification<FacebookMassMessaging>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<FacebookMassMessaging>(x => x.Name.Contains(val.Search)));
 
@@ -85,7 +67,7 @@ namespace Infrastructure.Services
                 if (item.FacebookPage == null)
                     continue;
                 var page = item.FacebookPage;
-                var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == page.Id).ToListAsync();
+                var profiles = GetProfilesSendMessage(item, page);
                 var tasks = profiles.Select(x => SendMessageAndTrace(item, item.Content, x, page.PageAccesstoken));
 
                 await Task.WhenAll(tasks);
@@ -95,6 +77,122 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(self);
+        }
+
+        private IEnumerable<FacebookUserProfile> GetProfilesSendMessage(FacebookMassMessaging self, FacebookPage page)
+        {
+            //Lấy ra những profiles sẽ gửi message
+            ISpecification<FacebookUserProfile> profileSpec = new InitialSpecification<FacebookUserProfile>(x => x.FbPageId == page.Id);
+            if (!string.IsNullOrEmpty(self.AudienceFilter))
+            {
+                var filter = JsonConvert.DeserializeObject<SimpleFilter>(self.AudienceFilter);
+                if (filter.items.Any())
+                {
+                    var itemSpecs = new List<ISpecification<FacebookUserProfile>>();
+                    foreach(var item in filter.items)
+                    {
+                        var parameter = Expression.Parameter(typeof(FacebookUserProfile), "x");
+                        var expression = ToLamdaExpression(item, parameter);
+
+                        var predicateExpression = Expression.Lambda<Func<FacebookUserProfile, bool>>(expression, parameter);
+                        itemSpecs.Add(new InitialSpecification<FacebookUserProfile>(predicateExpression));
+                    }
+
+                    if (filter.type == "and")
+                    {
+                        ISpecification<FacebookUserProfile> tmp = new InitialSpecification<FacebookUserProfile>(x => true);
+                        foreach (var spec in itemSpecs)
+                            tmp = tmp.And(spec);
+                        profileSpec = profileSpec.And(tmp);
+                    }
+                    else
+                    {
+                        ISpecification<FacebookUserProfile> tmp = new InitialSpecification<FacebookUserProfile>(x => false);
+                        foreach (var spec in itemSpecs)
+                            tmp = tmp.Or(spec);
+                        profileSpec = profileSpec.And(tmp);
+                    }
+                }
+            }
+
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            return userProfileObj.SearchQuery(profileSpec.AsExpression()).ToList();
+        }
+
+        private Expression ToLamdaExpression(SimpleFilterItem item, ParameterExpression parameter)
+        {
+            Expression resultExpression = null;
+            if (item.type == "Name" || item.type == "FirstName" || item.type == "LastName" || item.type == "Gender")
+            {
+                Expression left = Expression.PropertyOrField(parameter, item.type);
+                Expression right = Expression.Constant(item.formula_value);
+                switch (item.formula_type)
+                {
+                    case "contains":
+                    case "doesnotcontain":
+                    case "startswith":
+                        var nullCheckExpression = Expression.Equal(left, Expression.Constant(null, typeof(String)));
+
+                        if (item.formula_type == "contains" || item.formula_type == "doesnotcontain")
+                        {
+                            var containsMethod = typeof(String).GetMethod("Contains", new[] { typeof(String) });
+                            var containsExpression = Expression.Call(left, containsMethod, right);
+                            if (item.formula_type == "contains")
+                                resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), containsExpression);
+                            else
+                                resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), Expression.Not(containsExpression));
+                        }
+                        else if (item.formula_type == "startswith")
+                        {
+                            var startswithMethod = typeof(String).GetMethod("StartsWith", new[] { typeof(String) });
+                            var startswithExpression = Expression.Call(left, startswithMethod, right);
+                            resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), startswithExpression);
+                        }
+                        break;
+                    case "eq":
+                    case "neq":
+                        var equalCheckExpression = Expression.Equal(left, right);
+                        if (item.formula_type == "eq")
+                            resultExpression = equalCheckExpression;
+                        else
+                            resultExpression = Expression.Not(equalCheckExpression);
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                }
+            }
+            else if (item.type == "Tag")
+            {
+                Expression tagRelsExpression = Expression.PropertyOrField(parameter, "TagRels");
+                switch (item.formula_type)
+                {
+                    case "eq":
+                    case "neq":
+                        // find Any method
+                        var containsMethod = typeof(ICollection<FacebookUserProfileTagRel>).GetMethods()
+                            .Where(m => m.Name == "Any")
+                            .Single(m => m.GetParameters().Length == 2);
+
+                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel), "s");
+
+                        Expression left = Expression.PropertyOrField(tagRelParameter, "Name");
+                        Expression right = Expression.Constant(item.formula_value);
+                        Expression equalExpression = Expression.Equal(left, right);
+
+                        var containsExpression = Expression.Call(tagRelsExpression, containsMethod, equalExpression);
+                        if (item.formula_type == "eq")
+                            resultExpression = containsExpression;
+                        else
+                            resultExpression = Expression.Not(containsExpression);
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                }
+            }
+            else
+                throw new NotSupportedException(string.Format("Not support type {0}!", item.type));
+
+            return resultExpression;
         }
 
         public async Task SendMessageAndTrace(FacebookMassMessaging self, string text, FacebookUserProfile profile, string access_token)
@@ -122,13 +220,21 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<PagedResult2<FacebookUserProfileBasic>> ActionViewDelivered(Guid id, FacebookMassMessagingStatisticsPaged paged)
+        public async Task<PagedResult2<FacebookUserProfileBasic>> ActionStatistics(Guid id, FacebookMassMessagingStatisticsPaged paged)
         {
             var traceObj = GetService<IFacebookMessagingTraceService>();
-            var query = traceObj.SearchQuery(x => x.MassMessagingId == id && x.Delivered.HasValue);
+            var query = traceObj.SearchQuery(x => x.MassMessagingId == id);
 
-            var items = await query.OrderByDescending(x => x.Delivered.Value).Skip(paged.Offset).Take(paged.Limit).Select(x => new FacebookUserProfileBasic
+            if (paged.Type == "delivered")
+                query = query.Where(x => x.Delivered.HasValue);
+            else if (paged.Type == "opened")
+                query = query.Where(x => x.Opened.HasValue);
+            else if (paged.Type == "sent")
+                query = query.Where(x => x.Sent.HasValue);
+
+            var items = await query.OrderBy(x => x.DateCreated).Skip(paged.Offset).Take(paged.Limit).Select(x => new FacebookUserProfileBasic
             {
+                Id = x.UserProfile.Id,
                 Name = x.UserProfile.Name,
                 PSId = x.UserProfile.PSID
             }).ToListAsync();
@@ -176,48 +282,34 @@ namespace Infrastructure.Services
 
             await DeleteAsync(self);
         }
-    }
 
-    [DataContract]
-    public class AudienceFilter
-    {
-        /// <summary>
-        /// Gets or sets the name of the sorted field (property). Set to <c>null</c> if the <c>Filters</c> property is set.
-        /// </summary>
-        [DataMember(Name = "field")]
-        public string Field { get; set; }
+        public async Task TagStatistics(FacebookMassMessagingTagStatistics val)
+        {
+            var profileObj = GetService<IFacebookUserProfileService>();
+            var limit = 200;
+            var offset = 0;
 
-        /// <summary>
-        /// Gets or sets the filtering operator. Set to <c>null</c> if the <c>Filters</c> property is set.
-        /// </summary>
-        [DataMember(Name = "operator")]
-        public string Operator { get; set; }
+            var pagedResult = await ActionStatistics(val.Id, 
+                new FacebookMassMessagingStatisticsPaged { Offset = offset, Limit = limit, Type = val.Type });
+            while(pagedResult.Items.Count() > 0)
+            {
+                var ids = pagedResult.Items.Select(x => x.Id).ToList();
+                var profiles = await profileObj.SearchQuery(x => ids.Contains(x.Id)).Include(x => x.TagRels).ToListAsync();
+                foreach(var profile in profiles)
+                {
+                    foreach(var tagId in val.TagIds)
+                    {
+                        if (!profile.TagRels.Any(x => x.TagId == tagId))
+                            profile.TagRels.Add(new FacebookUserProfileTagRel { TagId = tagId });
+                    }
+                }
 
-        /// <summary>
-        /// Gets or sets the filtering value. Set to <c>null</c> if the <c>Filters</c> property is set.
-        /// </summary>
-        [DataMember(Name = "value")]
-        public object Value { get; set; }
+                await profileObj.UpdateAsync(profiles);
+                offset += limit;
 
-        /// <summary>
-        /// Gets or sets the filtering logic. Can be set to "or" or "and". Set to <c>null</c> unless <c>Filters</c> is set.
-        /// </summary>
-        [DataMember(Name = "logic")]
-        public string Logic { get; set; }
-
-        /// <summary>
-        /// Gets or sets the child filter expressions. Set to <c>null</c> if there are no child expressions.
-        /// </summary>
-        [DataMember(Name = "filters")]
-        public IEnumerable<Filter> Filters { get; set; }
-    }
-
-    public class AudienceFilterItem
-    {
-        public string type { get; set; }
-        public string name { get; set; }
-        public string formula_type { get; set; }
-        public string formula_value { get; set; }
-        public string formula_display { get; set; }
+                pagedResult = await ActionStatistics(val.Id,
+                new FacebookMassMessagingStatisticsPaged { Offset = offset, Limit = limit, Type = val.Type });
+            }
+        }
     }
 }

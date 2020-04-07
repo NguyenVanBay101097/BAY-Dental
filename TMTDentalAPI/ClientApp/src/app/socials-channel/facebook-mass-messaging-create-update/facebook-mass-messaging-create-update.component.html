@@ -61,7 +61,8 @@
                         <div class="o_pie">
                             <div class="o_mask" style="transform: rotate(180deg);"></div>
                             <div class="o_mask" style="transform: rotate(0deg);"></div>
-                            <div class="o_pie_value">{{100 * messaging.totalReceived / messaging.totalSent | number}}%
+                            <div class="o_pie_value">
+                                {{100 * messaging.totalReceived / messaging.totalSent | number:'1.0-0'}}%
                             </div>
                         </div>
                         <span>{{messaging.totalReceived | number}} Đã nhận</span>
@@ -72,7 +73,8 @@
                         <div class="o_pie">
                             <div class="o_mask" style="transform: rotate(180deg);"></div>
                             <div class="o_mask" style="transform: rotate(0deg);"></div>
-                            <div class="o_pie_value">{{100 * messaging.totalOpened / messaging.totalSent | number}}%
+                            <div class="o_pie_value">
+                                {{100 * messaging.totalOpened / messaging.totalSent | number:'1.0-0'}}%
                             </div>
                         </div>
                         <span>{{messaging.totalOpened | number}} Đã đọc</span>

@@ -131,10 +131,20 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> ActionViewDelivered(Guid id, [FromQuery]FacebookMassMessagingStatisticsPaged paged)
+        public async Task<IActionResult> ActionStatistics(Guid id, [FromQuery]FacebookMassMessagingStatisticsPaged paged)
         {
-            var res = await _facebookMassMessagingService.ActionViewDelivered(id, paged);
+            var res = await _facebookMassMessagingService.ActionStatistics(id, paged);
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> TagStatistics(FacebookMassMessagingTagStatistics val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _facebookMassMessagingService.TagStatistics(val);
+            _unitOfWork.Commit();
+
+            return NoContent();
         }
     }
 }

@@ -31,6 +31,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Điều kiện lọc những khách hàng sẽ gửi tin nhắn
         /// </summary>
-        //public string AudienceFilter { get; set; }
+        public string AudienceFilter { get; set; }
     }
 }

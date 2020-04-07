@@ -65,7 +65,7 @@ export class FacebookComponent implements OnInit {
     private facebookConnectService: FacebookConnectService,
     private facebookConnectPageService: FacebookConnectPageService) {
     fb.init({
-      appId: '652339415596520',
+      appId: '327268081110321',
       status: true,
       cookie: true,
       xfbml: true,

@@ -43,7 +43,7 @@ namespace TMTDentalAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<FacebookUserProfileBasic>(fbuser));
+            return Ok(_mapper.Map<FacebookUserProfileDisplay>(fbuser));
         }
 
         

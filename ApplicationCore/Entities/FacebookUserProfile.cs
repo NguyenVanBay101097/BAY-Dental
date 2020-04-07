@@ -21,5 +21,7 @@ namespace ApplicationCore.Entities
 
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
+
+        public ICollection<FacebookUserProfileTagRel> TagRels { get; set; } = new List<FacebookUserProfileTagRel>();
     }
 }

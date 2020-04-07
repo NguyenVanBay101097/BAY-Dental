@@ -223,6 +223,7 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookMessagingTraceService, FacebookMessagingTraceService>();
             services.AddScoped<IFacebookMessageSender, FacebookMessageSender>();
             services.AddScoped<IFacebookMassMessageJobService, FacebookMassMessageJobService>();
+            services.AddScoped<IFacebookTagService, FacebookTagService>();
 
             services.AddMemoryCache();
 
@@ -304,6 +305,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MarketingMessageButtonProfile());
                 mc.AddProfile(new FacebookUserProfiles());
                 mc.AddProfile(new FacebookMassMessagingProfile());
+                mc.AddProfile(new FacebookTagProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

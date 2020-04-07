@@ -15,13 +15,13 @@
         <kendo-grid-column field="totalReceived" title="Đã nhận">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.totalReceived | number}}
-                ({{100 * dataItem.totalReceived / dataItem.totalSent | number}}%)
+                ({{100 * dataItem.totalReceived / dataItem.totalSent | number:'1.0-0'}}%)
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="totalOpened" title="Đã đọc">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.totalOpened | number}}
-                ({{100 * dataItem.totalOpened / dataItem.totalSent | number}}%)
+                ({{100 * dataItem.totalOpened / dataItem.totalSent | number:'1.0-0'}}%)
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái">

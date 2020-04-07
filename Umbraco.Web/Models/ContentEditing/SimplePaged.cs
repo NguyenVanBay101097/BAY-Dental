@@ -4,20 +4,14 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class FacebookMassMessagingStatisticsPaged
+    public class SimplePaged
     {
-        public FacebookMassMessagingStatisticsPaged()
+        public SimplePaged()
         {
             Limit = 20;
         }
-
         public int Offset { get; set; }
-
         public int Limit { get; set; }
-
-        /// <summary>
-        /// delivered, opened
-        /// </summary>
-        public string Type { get; set; }
+        public string Search { get; set; }
     }
 }

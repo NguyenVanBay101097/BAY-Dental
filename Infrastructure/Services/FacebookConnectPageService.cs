@@ -52,7 +52,7 @@ namespace Infrastructure.Services
         private async Task<bool> SubcribeAppFacebookPage(FacebookPage fbPage)
         {
             var apiClient = new ApiClient(fbPage.PageAccesstoken, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{fbPage.PageId}/subscribed_apps?subscribed_fields=feed,messages";
+            var getRequestUrl = $"{fbPage.PageId}/subscribed_apps?subscribed_fields=feed,messages,message_reads,message_deliveries";
             var postRequest = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, getRequestUrl, apiClient, false);
             var response = await postRequest.ExecuteAsync<dynamic>();
             if (response.GetExceptions().Any())
