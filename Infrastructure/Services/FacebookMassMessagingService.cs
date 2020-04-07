@@ -39,28 +39,6 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<FacebookMassMessagingBasic>> GetPagedResultAsync(FacebookMassMessagingPaged val)
         {
-            var filter = new Filter
-            {
-                Logic = "and",
-                Filters = new List<Filter>()
-                {
-                    new Filter { 
-                        Field = "Traces",
-                        Operator = "seq_any",
-                        Logic = "and",
-                        Filters = new List<Filter>()
-                        {
-                            new Filter { Field = "Traces.Sent", Operator = "contains", Value = "abc" }
-                        }
-                    },
-                    new Filter { Field = "Name", Operator = "contains", Value = "abc" }
-                }
-            };
-
-            var q = SearchQuery();
-            var errors = new List<object>();
-            var b = q.Filters(filter, errors).ToList();
-
             ISpecification<FacebookMassMessaging> spec = new InitialSpecification<FacebookMassMessaging>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<FacebookMassMessaging>(x => x.Name.Contains(val.Search)));
