@@ -82,7 +82,8 @@ namespace Umbraco.Web.Models.Webhooks
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.Value == null) { return null; }
-            return _epoch.AddSeconds((long)reader.Value);
+            double d = double.Parse(reader.Value.ToString());
+            return _epoch.AddMilliseconds(d);
         }
     }
 }

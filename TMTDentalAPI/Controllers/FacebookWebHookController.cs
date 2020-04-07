@@ -38,7 +38,7 @@ namespace TMTDentalAPI.Controllers
                         if (messaging.Read != null)
                         {
                             var watermark = messaging.Read.Watermark.ToLocalTime();
-                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark).ToListAsync();
+                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
                             foreach (var trace in traces)
                                 trace.Opened = watermark;
 
@@ -48,7 +48,7 @@ namespace TMTDentalAPI.Controllers
                         if (messaging.Delivery != null)
                         {
                             var watermark = messaging.Delivery.Watermark.ToLocalTime();
-                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivered.HasValue && x.Sent.HasValue && x.Sent <= watermark).ToListAsync();
+                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivered.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
                             foreach (var trace in traces)
                                 trace.Delivered = watermark;
 

@@ -7,7 +7,7 @@ export const environment = {
   // apiDomain: 'http://tenant3.myproject.com:50396/',
   apiDomain: 'https://localhost:44377/',
   uploadDomain: 'http://statics.tmtdental.com/',
-  // apiDomain: 'http://localhost:50396/'
+   //apiDomain: 'http://localhost:50396/'
 };
 
 /*

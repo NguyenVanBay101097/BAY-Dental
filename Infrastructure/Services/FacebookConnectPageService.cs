@@ -6,10 +6,13 @@ using Facebook.ApiClient.Interfaces;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using RestSharp;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,13 +49,41 @@ namespace Infrastructure.Services
 
                 await SubcribeAppFacebookPage(fbPage);
                 AddFacebookPageToTenant(fbPage);
+                await GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
             }
+        }
+
+        private async Task<bool> GetConnectWebhooksForPage(string pageId , string pageAccesstoken)
+        {
+            HttpClient client = new HttpClient();
+            var host = _tenant != null ? _tenant.Hostname : "localhost";
+            if (host == "localhost") {
+                host = "http://302dce2d.ngrok.io";
+            }
+
+            var content = new ConnectWebhooks
+            {
+                Host = host,
+                FacebookId = pageId,
+                FaceookToken = pageAccesstoken,
+                FacebookName = null,
+                FacebookAvatar = null,
+                FacebookCover = null,
+                FacebookLink = null,
+                FacebookType = 2,
+                CallbackUrl = $"{host}/api/FacebookWebHook",
+                IsCallbackWithRaw = true
+            };
+
+            var response = await client.PostAsJsonAsync("https://fba.tpos.vn/api/facebook/updatetoken", content);
+            
+            return true;
         }
 
         private async Task<bool> SubcribeAppFacebookPage(FacebookPage fbPage)
         {
             var apiClient = new ApiClient(fbPage.PageAccesstoken, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{fbPage.PageId}/subscribed_apps?subscribed_fields=feed,messages,message_reads,message_deliveries";
+            var getRequestUrl = $"{fbPage.PageId}/subscribed_apps?subscribed_fields=feed,messages,message_deliveries,message_reads";
             var postRequest = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, getRequestUrl, apiClient, false);
             var response = await postRequest.ExecuteAsync<dynamic>();
             if (response.GetExceptions().Any())
@@ -74,6 +105,8 @@ namespace Infrastructure.Services
                 _tenantContext.Tenants.Add(tenant);
                 _tenantContext.SaveChanges();
             }
+
+           
 
             if (tenant != null)
             {
@@ -104,5 +137,28 @@ namespace Infrastructure.Services
             _tenantContext.TenantFacebookPages.RemoveRange(tfps);
             _tenantContext.SaveChanges();
         }
+    }
+    public class ConnectWebhooks
+    {
+        [JsonProperty]
+        public string Host { get; set; }
+        [JsonProperty]
+        public string FacebookId { get; set; }
+        [JsonProperty]
+        public string FaceookToken { get; set; }
+        [JsonProperty]
+        public string FacebookName { get; set; }
+        [JsonProperty]
+        public string FacebookAvatar { get; set; }
+        [JsonProperty]
+        public string FacebookCover { get; set; }
+        [JsonProperty]
+        public string FacebookLink { get; set; }
+        [JsonProperty]
+        public int FacebookType { get; set; }
+        [JsonProperty]
+        public string CallbackUrl { get; set; }
+        [JsonProperty]
+        public bool IsCallbackWithRaw { get; set; }
     }
 }
