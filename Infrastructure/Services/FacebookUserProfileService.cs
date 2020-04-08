@@ -69,13 +69,19 @@ namespace Infrastructure.Services
             var fbuser = await SearchQuery(x => x.Id == id)
                 .Include(x => x.TagRels)
                 .Include("TagRels.Tag")
-                .FirstOrDefaultAsync();                                 
-             SaveTags(val,fbuser);
+                .FirstOrDefaultAsync();
+
+            fbuser = _mapper.Map(val, fbuser);
+
+            SaveTags(val,fbuser);
+
             await CheckConnectPartnerForUpdate(fbuser);
             await UpdateAsync(fbuser);
+
             var res = _mapper.Map<FacebookUserProfileBasic>(fbuser);
             return res;
         }
+
         public async Task CheckConnectPartnerForUpdate(FacebookUserProfile res)
         {
             if(res.PartnerId != null)
@@ -83,11 +89,11 @@ namespace Infrastructure.Services
                 var result = await SearchQuery(x => x.PartnerId == res.PartnerId).FirstOrDefaultAsync();
                 if (result != null)
                 {
-
                     throw new Exception($"Khách hàng đã được kết nối với {result.Name}!");
                 }
             }
         }
+
         public async Task CheckConnectPartner(Guid partnerId) {
 
             var result = await SearchQuery(x => x.PartnerId == partnerId).FirstOrDefaultAsync();
@@ -101,20 +107,20 @@ namespace Infrastructure.Services
 
         private void SaveTags(FacebookUserProfileSave val, FacebookUserProfile res)
         {
-            var toRemove = res.TagRels.Where(x => !val.Tags.Any(s => s.Id == x.TagId)).ToList();
+            var toRemove = res.TagRels.Where(x => !val.TagIds.Any(s => s == x.TagId)).ToList();
             foreach (var tag in toRemove)
             {
                 res.TagRels.Remove(tag);
             }
-            if (val.Tags != null)
+            if (val.TagIds != null)
             {
-                foreach (var tag in val.Tags)
+                foreach (var tag in val.TagIds)
                 {
-                    if (res.TagRels.Any(x => x.TagId == tag.Id))
+                    if (res.TagRels.Any(x => x.TagId == tag))
                         continue;
                     res.TagRels.Add(new FacebookUserProfileTagRel
                     {
-                        TagId = tag.Id
+                        TagId = tag
                     });
 
                 }
