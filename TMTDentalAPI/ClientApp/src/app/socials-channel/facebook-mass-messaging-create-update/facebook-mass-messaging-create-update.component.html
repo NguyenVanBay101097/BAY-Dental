@@ -49,14 +49,14 @@
         </div>
         <div class="o_form_sheet">
             <div class="o_not_full oe_button_box">
-                <button type="button" (click)="action_view_sent()" class="btn oe_stat_button">
+                <button type="button" (click)="action_view('sent')" class="btn oe_stat_button">
                     <i class="far fa-envelope o_button_icon"></i>
                     <div class="o_field_widget o_stat_info o_readonly_modifier">
                         <span class="o_stat_value">{{messaging.totalSent | number}}</span>
                         <span class="o_stat_text">Đã gửi</span>
                     </div>
                 </button>
-                <button type="button" (click)="action_view_delivered()" class="btn oe_stat_button">
+                <button type="button" (click)="action_view('delivered')" class="btn oe_stat_button">
                     <div class="o_field_percent_pie o_field_widget o_readonly_modifier">
                         <div class="o_pie">
                             <div class="o_mask" style="transform: rotate(180deg);"></div>
@@ -68,7 +68,7 @@
                         <span>{{messaging.totalReceived | number}} Đã nhận</span>
                     </div>
                 </button>
-                <button type="button" (click)="action_view_opened()" class="btn oe_stat_button">
+                <button type="button" (click)="action_view('opened')" class="btn oe_stat_button">
                     <div class="o_field_percent_pie o_field_widget o_readonly_modifier" name="opened_ratio">
                         <div class="o_pie">
                             <div class="o_mask" style="transform: rotate(180deg);"></div>
@@ -98,18 +98,86 @@
                             </td>
                             <td style="width:100%">
                                 <div class="position-relative" (clickOutside)=hideEmoji()>
-                                    <textarea type="text" my-autosize charCount [limit]="640" class="form-control"
+                                    <textarea type="text" my-autosize charCount [limit]="640" class="form-control" id="textarea_mass"
                                         formControlName="content" (click)="selectArea($event)" (keyup)="selectArea($event)"
+
                                         (focus)="showEmoji()">
                                     </textarea>
-                                    <div class="dropdown position-absolute mt-1" style="right: 0;"
-                                        id="emoji_mass">
-                                        <button type="button" class="btn btn-secondary btn-sm" data-toggle="dropdown">
-                                            <h5 class="m-0"><i class="fas fa-laugh"></i></h5>
-                                        </button>
+                                    <div class="plugin-textarea dropdown position-absolute text-dark rounded border" *ngIf="emoji">
+                                        <span class="px-1" data-toggle="dropdown">
+                                            <i class="fas fa-laugh"></i>
+                                        </span>
                                         <emoji-mart class="dropdown-menu p-0 border-0" (emojiSelect)="selectEmoji($event)"></emoji-mart>
+                                        <span class="px-1">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <span class="px-1">{{num_CharLeft}}</span>
                                     </div>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="o_td_label">
+                                <label class="o_form_label">Khách hàng</label>
+                            </td>
+                            <td style="width:100%">
+                                <span class="audience-filter-content rounded border">
+                                    <span class="audience-filter-item btn btn-light btn-sm border mr-2"
+                                        *ngFor="let item of listAudienceFilterItems; index as i">
+                                        <span class="drop-select">{{item.name}}</span>
+                                        <span class="condition-select pl-1">{{item.formula_type_selected}}</span>
+                                        <span class="value-select pl-1">{{item.formula_value_selected}}</span>
+                                        <span class="remove" (click)="deleteAudienceFilterItem(i)">
+                                            <i class="fas fa-times pl-2"></i>
+                                        </span>
+                                    </span>
+                                    <span class="dropdown audience-filter-picker">
+                                        <button type="button" class="audience-filter-open btn btn-light btn-sm"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                            [disabled]="selectedAudienceFilterPicker">
+                                            + Thêm điều kiện lọc
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <button class="dropdown-item" type="button"
+                                                *ngFor="let item of listAudienceFilterPicker"
+                                                (click)="selectAudienceFilter(item)">
+                                                {{item.name}}
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu pb-0 dropdown-menu-2 show" *ngIf="selectedAudienceFilterPicker">
+                                            <table>
+                                                <tr>
+                                                    <td class="border-right p-0">
+                                                        <button class="dropdown-item" 
+                                                            [class.text-primary]="item === selectedFormulaType"
+                                                            type="button" 
+                                                            *ngFor="let item of selectedAudienceFilterPicker.formula_type"
+                                                            (click)="selectFormulaType(item)">
+                                                            {{item}}
+                                                        </button>
+                                                    </td>
+                                                    <td class="p-0">
+                                                        <button class="dropdown-item"
+                                                            [class.text-primary]="item === selectedFormulaValue"
+                                                            type="button" 
+                                                            *ngFor="let item of selectedAudienceFilterPicker.formula_value"
+                                                            (click)="selectFormulaValue(item)">
+                                                            {{item}}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="text-right">
+                                                        <button type="button" class="btn btn-light btn-sm mr-1" 
+                                                            (click)="cancelAudienceFilter()">Hủy</button>
+                                                        <button type="button" class="btn btn-primary btn-sm"
+                                                            (click)="addAudienceFilter()">Thêm</button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </span>
+                                </span>
                             </td>
                         </tr>
                     </tbody>

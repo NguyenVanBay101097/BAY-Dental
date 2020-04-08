@@ -7,6 +7,19 @@ export class FacebookMassMessagingPaged {
     search: string;
 }
 
+export class ActionStatisticsPaged {
+    id: string;
+    offset: number;
+    limit: number;
+    type: string;
+}
+
+export class TagStatisticsPaged {
+    id: string;
+    type: string;
+    tagIds: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class FacebookMassMessagingService {
     apiUrl = 'api/FacebookMassMessagings';
@@ -46,5 +59,13 @@ export class FacebookMassMessagingService {
 
     setScheduleDate(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SetScheduleDate', data);
+    }
+
+    getActionStatistics(id, val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/ActionStatistics',  { params: new HttpParams({ fromObject: val }) });
+    }
+
+    setTagStatistics(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/TagStatistics', data);
     }
 }

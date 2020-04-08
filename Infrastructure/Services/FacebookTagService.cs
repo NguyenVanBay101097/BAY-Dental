@@ -20,6 +20,7 @@ namespace Infrastructure.Services
             IMapper mapper)
             : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public async Task<PagedResult2<FacebookTagBasic>> GetPagedResultAsync(SimplePaged val)

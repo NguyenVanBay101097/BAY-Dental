@@ -16,5 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime DateCreated { get; set; }
         public Guid? PartnerId { get; set; }
+
+        public string ProfilePic { get; set; }
     }
 }

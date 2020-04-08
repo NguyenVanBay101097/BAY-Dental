@@ -17,9 +17,10 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   messaging = {};
-  focusTextarea: boolean = false;
+  emoji: boolean = false;
   selectArea_start: number;
   selectArea_end: number;
+  num_CharLeft: number = 640;
 
   constructor(private fb: FormBuilder, private massMessagingService: FacebookMassMessagingService,
     private route: ActivatedRoute, private router: Router, private notificationService: NotificationService,
@@ -43,6 +44,12 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
       })).subscribe((result: any) => {
         this.messaging = result;
         this.formGroup.patchValue(result);
+      });
+
+      this.formGroup.get('content').valueChanges.subscribe((value) => {
+        if (value) {
+          this.num_CharLeft = 640 - value.length;
+        }
       });
   }
 
@@ -148,27 +155,10 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
       });
     }
   }
-  action_view_sent() {
-    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  action_view(action_view_type) {
+    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.massMessagingId = this.id;
-
-    modalRef.result.then(() => {
-      //
-    }, () => {
-    });
-  }
-  action_view_delivered() {
-    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.massMessagingId = this.id;
-
-    modalRef.result.then(() => {
-      //
-    }, () => {
-    });
-  }
-  action_view_opened() {
-    let modalRef = this.modalService.open(FacebookMassMessagingCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.massMessagingId = this.id;
+    modalRef.componentInstance.massMessagingType = action_view_type;
 
     modalRef.result.then(() => {
       //
@@ -180,7 +170,7 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     this.selectArea_end = event.target.selectionEnd;
   }
   selectEmoji(event) {
-    var icon_emoji = event.emoji.native;
+    var icon_emoji = event.emoji.native;   
     if (this.formGroup.value.content) {
       this.formGroup.patchValue({
         content: this.formGroup.value.content.slice(0, this.selectArea_start) + icon_emoji + this.formGroup.value.content.slice(this.selectArea_end)
@@ -192,9 +182,80 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     }
   }
   showEmoji() {
-    document.getElementById('emoji_mass').style.display = 'block';
+    this.emoji = true;
   }
   hideEmoji() {
-    document.getElementById('emoji_mass').style.display = 'none';
+    this.emoji = false;
+  }
+
+  listAudienceFilterPicker = [
+    {
+      type: 'tag',
+      name: 'Tag',
+      formula_type: ['equal', 'not equal'],
+      formula_value: ['Tag_1', 'Tag_2']
+    }, {
+      type: 'last_name',
+      name: 'Họ',
+      formula_type: ['equal', 'not equal', 'contain', 'not contain', 'start with'],
+      formula_value: []
+    }, {
+      type: 'first_name',
+      name: 'Tên',
+      formula_type: ['equal', 'not equal', 'contain', 'not contain', 'start with'],
+      formula_value: []
+    }, {
+      type: 'last_interaction',
+      name: 'Lần tương tác cuối',
+      formula_type: ['before', 'after'],
+      formula_value: []
+    }, {
+      type: 'sequence_subscription',
+      name: 'Kịch bản',
+      formula_type: ['equal', 'not equal'],
+      formula_value: []
+    }, {
+      type: 'subscribed',
+      name: 'Ngày đăng ký',
+      formula_type: ['before', 'after'],
+      formula_value: []
+    }
+  ]
+  selectedAudienceFilterPicker: any;
+  selectedFormulaType: any;
+  selectedFormulaValue: any;
+  listAudienceFilterItems: any[] = [];
+  selectAudienceFilter(item) {
+    this.selectedAudienceFilterPicker = item;
+  }
+  selectFormulaType(item) {
+    this.selectedFormulaType = item;
+  }
+  selectFormulaValue(item) {
+    this.selectedFormulaValue = item;
+  }
+  cancelAudienceFilter() {
+    this.selectedAudienceFilterPicker = null;
+    this.selectedFormulaType = null;
+    this.selectedFormulaValue = null;
+  }
+  addAudienceFilter() {
+    var temp = {
+      type: this.selectedAudienceFilterPicker.type,
+      name: this.selectedAudienceFilterPicker.name,
+      formula_type: this.selectedAudienceFilterPicker.formula_type,
+      formula_value: this.selectedAudienceFilterPicker.formula_value,
+      formula_display: '',
+      formula_type_selected: this.selectedFormulaType,
+      formula_value_selected: this.selectedFormulaValue,
+    }
+    this.listAudienceFilterItems.push(temp);
+    this.selectedAudienceFilterPicker = null;
+    this.selectedFormulaType = null;
+    this.selectedFormulaValue = null;
+    console.log(this.listAudienceFilterItems);
+  }
+  deleteAudienceFilterItem(index) {
+    this.listAudienceFilterItems.splice(index, 1);
   }
 }

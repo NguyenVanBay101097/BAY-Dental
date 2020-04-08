@@ -1,0 +1,55 @@
+.plugin-textarea {
+    right: 0; 
+    font-size: 0.8rem; 
+    background: white;
+}
+.plugin-textarea span {
+    cursor: pointer;
+}
+.plugin-textarea span:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.audience-filter-content {
+    position: relative;
+    display: block;
+    background-color: white;
+    padding: 10px;  
+    padding-bottom: 5px;  
+    word-break: break-all;
+    line-height: 1.8;
+}
+.audience-filter-item {
+    width: fit-content;
+    white-space: nowrap;
+    margin-bottom: 5px;
+}
+.audience-filter-item .remove {
+    cursor: pointer;
+    transition: 0.2s;
+}
+.audience-filter-item .remove:hover {
+    color: orangered;
+}
+.audience-filter-open {
+    width: fit-content;
+    border: 1px dashed #8492a6;
+}
+.audience-filter-item .condition-select, 
+.audience-filter-item .value-select {
+    text-decoration: underline;
+}
+.audience-filter-picker .dropdown-menu {
+    max-height: 240px;
+    overflow-y: auto;
+}
+.audience-filter-picker button {
+    margin-bottom: 5px;
+}
+.dropdown-menu-2 {
+    position: absolute;
+    will-change: transform;
+    top: 0px;
+    left: 0px;
+    transform: translate3d(0px, 32px, 0px);
+}
