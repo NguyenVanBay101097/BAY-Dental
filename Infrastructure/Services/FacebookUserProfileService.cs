@@ -69,19 +69,24 @@ namespace Infrastructure.Services
             var fbuser = await SearchQuery(x => x.Id == id)
                 .Include(x => x.TagRels)
                 .Include("TagRels.Tag")
-                .FirstOrDefaultAsync();
-
-            if (val.PartnerId.HasValue)
-            {
-                await CheckConnectPartner(val.PartnerId.Value);
-                fbuser.PartnerId = val.PartnerId;
-            }
-
+                .FirstOrDefaultAsync();                                 
              SaveTags(val,fbuser);
-
+            await CheckConnectPartnerForUpdate(fbuser);
             await UpdateAsync(fbuser);
             var res = _mapper.Map<FacebookUserProfileBasic>(fbuser);
             return res;
+        }
+        public async Task CheckConnectPartnerForUpdate(FacebookUserProfile res)
+        {
+            if(res.PartnerId != null)
+            {
+                var result = await SearchQuery(x => x.PartnerId == res.PartnerId).FirstOrDefaultAsync();
+                if (result != null)
+                {
+
+                    throw new Exception($"Khách hàng đã được kết nối với {result.Name}!");
+                }
+            }
         }
         public async Task CheckConnectPartner(Guid partnerId) {
 
