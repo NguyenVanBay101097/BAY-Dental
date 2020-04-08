@@ -21,6 +21,8 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
+      activityType: 'message',
+      triggerType: 'begin',
       text: '',
       template: 'text',
       intervalNumber: 1,
@@ -43,6 +45,10 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.formGroup.get('text').setValue(newVal);
       }
     });
+  }
+
+  get activityTypeValue() {
+    return this.formGroup.get('activityType').value;
   }
 
   onSave() {

@@ -31,6 +31,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Loại hoạt động
         /// message: Nhắn tin
+        /// action: Hành động
         /// </summary>
         public string ActivityType { get; set; }
 
@@ -48,6 +49,11 @@ namespace ApplicationCore.Entities
 
         public int? Sequence { get; set; }
 
+        /// <summary>
+        /// begin: beginning of campaign
+        /// act: another activity
+        /// message_open: Message opened
+        /// </summary>
         public string TriggerType { get; set; }
 
         public string JobId { get; set; }
@@ -56,5 +62,13 @@ namespace ApplicationCore.Entities
 
         public Guid? MessageId { get; set; }
         public MarketingMessage Message { get; set; }
+
+        /// <summary>
+        /// add_tags: Thêm tags
+        /// remove_tags: Gỡ tags
+        /// </summary>
+        public string ActionType { get; set; }
+
+        public ICollection<MarketingCampaignActivityFacebookTagRel> TagRels { get; set; } = new List<MarketingCampaignActivityFacebookTagRel>();
     }
 }
