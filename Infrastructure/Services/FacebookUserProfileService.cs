@@ -54,7 +54,35 @@ namespace Infrastructure.Services
         }
 
 
+        public async Task<FacebookUserProfile> GetFacebookUserProfile(Guid id)
+        {
+            var fbprofile = await SearchQuery(x => x.Id == id)
+                .Include(x => x.TagRels)
+                .Include("TagRels.Tag")
+                .FirstOrDefaultAsync();
+            
+           return fbprofile;
+        }
 
+        public async Task<FacebookUserProfileBasic> UpdateUserProfile(Guid id , FacebookUserProfileSave val)
+        {
+            var fbuser = await SearchQuery(x => x.Id == id)
+                .Include(x => x.TagRels)
+                .Include("TagRels.Tag")
+                .FirstOrDefaultAsync();
+
+            if (val.PartnerId.HasValue)
+            {
+                await CheckConnectPartner(val.PartnerId.Value);
+                fbuser.PartnerId = val.PartnerId;
+            }
+
+             SaveTags(val,fbuser);
+
+            await UpdateAsync(fbuser);
+            var res = _mapper.Map<FacebookUserProfileBasic>(fbuser);
+            return res;
+        }
         public async Task CheckConnectPartner(Guid partnerId) {
 
             var result = await SearchQuery(x => x.PartnerId == partnerId).FirstOrDefaultAsync();
@@ -66,7 +94,28 @@ namespace Infrastructure.Services
            
         }
 
+        private void SaveTags(FacebookUserProfileSave val, FacebookUserProfile res)
+        {
+            var toRemove = res.TagRels.Where(x => !val.Tags.Any(s => s.Id == x.TagId)).ToList();
+            foreach (var tag in toRemove)
+            {
+                res.TagRels.Remove(tag);
+            }
+            if (val.Tags != null)
+            {
+                foreach (var tag in val.Tags)
+                {
+                    if (res.TagRels.Any(x => x.TagId == tag.Id))
+                        continue;
+                    res.TagRels.Add(new FacebookUserProfileTagRel
+                    {
+                        TagId = tag.Id
+                    });
 
+                }
+            }
+
+        }
         /// <summary>
         /// kết nối với khách hàng
         /// </summary>
@@ -97,6 +146,8 @@ namespace Infrastructure.Services
             return await base.CreateAsync(entities);
         }
 
+      
+
         public async Task ActionRemovePartner(IEnumerable<Guid> ids)
         {
             var FBCus = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -120,6 +171,14 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task RemoveUserProfile(IEnumerable<Guid> ids)
+        {
+            var profiles = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.TagRels)
+                .Include("TagRels.Tag")
+                .ToListAsync();
+            await DeleteAsync(profiles);
+        }
 
     }
 

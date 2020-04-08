@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class FacebookTag: BaseEntity
+    public class FacebookTagSimple
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        
     }
 }

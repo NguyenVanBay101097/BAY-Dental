@@ -15,5 +15,8 @@ namespace Infrastructure.Services
         Task<FacebookUserProfile> ActionConectPartner(ConnectPartner val);
         Task CheckPsid(string pSID);
         Task ActionRemovePartner(IEnumerable<Guid> ids);
+        Task<FacebookUserProfile> GetFacebookUserProfile(Guid id);
+        Task<FacebookUserProfileBasic> UpdateUserProfile(Guid id, FacebookUserProfileSave val);
+        Task RemoveUserProfile(IEnumerable<Guid> ids);
     }
 }

@@ -15,7 +15,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
 
         public string PSID { get; set; }
+        public Guid? PartnerId { get; set; }
 
-        public Guid FbPageId { get; set; }
+        public IEnumerable<FacebookTagSimple> Tags { get; set; } = new List<FacebookTagSimple>();
     }
 }

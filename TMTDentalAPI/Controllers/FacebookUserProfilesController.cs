@@ -38,15 +38,28 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var fbuser = await _facebookUserProfileService.GetByIdAsync(id);
+            var fbuser = await _facebookUserProfileService.GetFacebookUserProfile(id);
             if (fbuser == null)
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<FacebookUserProfileDisplay>(fbuser));
+            return Ok(_mapper.Map<FacebookUserProfileBasic>(fbuser));
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> Update(Guid id , FacebookUserProfileSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var fbuser = await _facebookUserProfileService.UpdateUserProfile(id, val);
+            if (fbuser == null)
+            {
+                return NotFound();
+            }
+
+
+            return NoContent();
+        }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> ConnectPartner(ConnectPartner val)
@@ -70,6 +83,14 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RemoveUserProfile(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();            
+            await _facebookUserProfileService.RemoveUserProfile(ids);        
+            return NoContent();
+        }
         //[HttpPost]
         //public async Task<IActionResult> SearchSender(Fanpage val )
         //{
