@@ -77,7 +77,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == ids || !ModelState.IsValid)
                 return BadRequest();
-
             await _facebookUserProfileService.ActionRemovePartner(ids);
 
             return NoContent();
