@@ -1,0 +1,54 @@
+<header class="modal-header">
+    <h5 class="modal-title mr-auto">Account<span class="o_subtitle text-muted small"></span></h5>
+    <div [formGroup]="formGroup">
+        <button type="button" class="btn btn-primary btn-sm"
+            *ngIf="!showAddTag" 
+            (click)="showAddTag = true">
+            Thêm thẻ cho tài khoản này
+        </button>
+        <kendo-combobox 
+            *ngIf="showAddTag"
+            [placeholder]="'Nhập Tag'"
+            [data]="listTags" 
+            [valueField]="'id'"
+            [textField]="'name'"
+            [filterable]="true" 
+            formControlName="tag"
+            (valueChange)="changeTag()">
+        </kendo-combobox>
+    </div>
+    <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label text-right">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Facebook_head.png" alt="Avatar" height="42" width="42">
+                        </td>
+                        <td style="width: 100%;">
+                            ABC
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label text-right">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Facebook_head.png" alt="Avatar" height="42" width="42">
+
+                        </td>
+                        <td style="width: 100%;">
+                            ABC
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
