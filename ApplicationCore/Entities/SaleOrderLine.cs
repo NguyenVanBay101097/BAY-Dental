@@ -130,5 +130,9 @@ namespace ApplicationCore.Entities
         public string DiscountType { get; set; }
 
         public decimal? DiscountFixed { get; set; }
+
+        public decimal? PriceReduce { get; set; }
+
+        public ICollection<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; } = new List<SaleOrderLineInvoice2Rel>();
     }
 }

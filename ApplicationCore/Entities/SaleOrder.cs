@@ -72,9 +72,6 @@ namespace ApplicationCore.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
-        /// <summary>
-        /// Nhân viên, bác sĩ điều trị
-        /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 

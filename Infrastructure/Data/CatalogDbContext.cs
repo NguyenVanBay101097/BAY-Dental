@@ -138,6 +138,7 @@ namespace Infrastructure.Data
         public DbSet<FacebookUserProfile> FacebookUserProfiles { get; set; }
         public DbSet<MarketingMessage> MarketingMessages { get; set; }
         public DbSet<MarketingMessageButton> MarketingMessageButtons { get; set; }
+        public DbSet<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; }
 
 
         public DbSet<StockHistory> StockHistories { get; set; }
@@ -267,6 +268,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new MarketingMessageConfiguration());
             builder.ApplyConfiguration(new MarketingMessageButtonConfiguration());
             builder.ApplyConfiguration(new FacebookScheduleAppointmentConfigConifuration());
+            builder.ApplyConfiguration(new SaleOrderLineInvoice2RelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

@@ -1734,6 +1734,80 @@ namespace Infrastructure.Services
                 await cardObj.UpdateAsync(card);
             }
         }
+
+        public async Task _CreateInvoices(IEnumerable<SaleOrder> self, bool final = false)
+        {
+            //param final: if True, refunds will be generated if necessary
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var invoice_vals_list = new List<AccountMove>();
+            foreach (var order in self)
+            {
+                // Invoice values.
+                var invoice_vals = await _PrepareInvoice(order);
+
+                //Invoice line values (keep only necessary sections)
+                foreach(var line in order.OrderLines)
+                {
+                    if (line.QtyToInvoice == 0)
+                        continue;
+                    if (line.QtyToInvoice > 0 || (line.QtyToInvoice < 0 && final))
+                    {
+                        invoice_vals.Lines.Add(saleLineObj._PrepareInvoiceLine(line));
+                    }
+                }
+
+                if (!invoice_vals.Lines.Any())
+                    throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+
+                invoice_vals_list.Add(invoice_vals);
+            }
+
+            if (!invoice_vals_list.Any())
+                throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+
+            //3) Manage 'final' parameter: transform out_invoice to out_refund if negative.
+            var out_invoice_vals_list = new List<AccountMove>();
+            var refund_invoice_vals_list = new List<AccountMove>();
+            if (final)
+            {
+                foreach(var invoice_vals in invoice_vals_list)
+                {
+                    if (invoice_vals.Lines.Sum(x => x.Quantity * x.PriceUnit) < 0)
+                    {
+                        foreach (var l in invoice_vals.Lines)
+                            l.Quantity = -l.Quantity;
+                        invoice_vals.Type = "out_refund";
+                        refund_invoice_vals_list.Add(invoice_vals);
+                    }
+                    else
+                        out_invoice_vals_list.Add(invoice_vals);
+                }
+            }
+
+            var moveObj = GetService<IAccountMoveService>();
+            //moveObj.CreateInvoice(default_type = "out_invoice", out_invoice_vals_list);
+        }
+
+        private async Task<AccountMove> _PrepareInvoice(SaleOrder self)
+        {
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "out_invoice");
+            if (journal == null)
+                throw new Exception($"Please define an accounting sales journal for the company {CompanyId}.");
+
+            var invoice_vals = new AccountMove
+            {
+                Ref = "",
+                Type = "out_invoice",
+                Narration = self.Note,
+                InvoiceUserId = self.UserId,
+                PartnerId = self.PartnerId,
+                InvoiceOrigin = self.Name,
+            };
+
+            return invoice_vals;
+        }
     }
 
     public class SaleOrderSearchPromotionRuleItem

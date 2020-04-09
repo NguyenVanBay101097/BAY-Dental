@@ -27,5 +27,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         Task _UpdateInvoiceQty(IEnumerable<Guid> ids);
         void UpdateProps(IEnumerable<SaleOrderLine> self);
+        AccountMoveLine _PrepareInvoiceLine(SaleOrderLine line);
     }
 }

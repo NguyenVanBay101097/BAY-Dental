@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<AccountMove> self);
         Task Unlink(IEnumerable<Guid> ids);
         Task Write(IEnumerable<AccountMove> self);
+        Task<AccountJournal> GetDefaultJournalAsync(Guid? default_journal_id = null, Guid? default_company_id = null, string default_type = "entry");
     }
 }

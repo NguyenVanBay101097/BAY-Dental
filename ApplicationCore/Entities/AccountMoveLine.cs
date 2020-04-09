@@ -55,5 +55,26 @@ namespace ApplicationCore.Entities
 
         public Guid? InvoiceId { get; set; }
         public AccountInvoice Invoice { get; set; }
+
+        public decimal? Discount { get; set; }
+
+        public decimal? PriceUnit { get; set; }
+
+        public ICollection<SaleOrderLineInvoice2Rel> SaleLineRels { get; set; } = new List<SaleOrderLineInvoice2Rel>();
+
+        /// <summary>
+        /// Technical field used to exclude some lines from the invoice_line_ids tab in the form view.
+        /// </summary>
+        public bool? ExcludeFromInvoiceTab { get; set; }
+
+        public string MoveName { get; set; }
+
+        public string ParentState { get; set; }
+
+        public string AccountInternalType { get; set; }
+
+        public decimal? PriceSubtotal { get; set; }
+
+        public decimal? PriceTotal { get; set; }
     }
 }

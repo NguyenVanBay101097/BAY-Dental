@@ -23,6 +23,11 @@ namespace Infrastructure.EntityConfigurations
              .WithMany()
              .HasForeignKey(x => x.CompanyId);
 
+            builder.HasOne(x => x.InvoiceUser)
+               .WithMany()
+               .HasForeignKey(x => x.InvoiceUserId)
+               .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

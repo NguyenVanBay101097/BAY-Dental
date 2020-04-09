@@ -207,6 +207,23 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public AccountMoveLine _PrepareInvoiceLine(SaleOrderLine line)
+        {
+            var res = new AccountMoveLine
+            {
+                Name = line.Name,
+                ProductId = line.ProductId,
+                ProductUoMId = line.ProductUOMId,
+                Quantity = line.QtyToInvoice,
+                Discount = line.Discount,
+                PriceUnit = line.PriceUnit,
+            };
+
+            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLine = line });
+
+            return res;
+        }
+
         public async Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
             var query = SearchQuery();
