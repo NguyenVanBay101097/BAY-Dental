@@ -48,6 +48,7 @@
             <button type="button" class="btn btn-sm" *ngFor="let i of pages"
                 [class.btn-primary]="selectedPage === i"
                 [class.btn-light]="selectedPage !== i"
+                [class.disabled]="selectedPage === i"
                 (click)="onClickPage(i)">{{i}}</button>
         </div>
     </div>

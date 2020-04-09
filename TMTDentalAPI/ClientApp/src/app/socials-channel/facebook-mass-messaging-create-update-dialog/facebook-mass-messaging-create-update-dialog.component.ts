@@ -76,8 +76,10 @@ export class FacebookMassMessagingCreateUpdateDialogComponent implements OnInit 
     })
   }
   onClickPage(i) {
-    this.selectedPage = i;
-    this.offsetCustomers = (i-1)*this.limitCustomers;
-    this.getCustomers();
+    if (this.selectedPage !== i) {
+      this.selectedPage = i;
+      this.offsetCustomers = (i-1)*this.limitCustomers;
+      this.getCustomers();
+    }
   }
 }
