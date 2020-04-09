@@ -239,7 +239,7 @@
                                             <th>Chuẩn đoán</th>
                                             <th class="text-right">Số lượng</th>
                                             <th class="text-right">Đơn giá</th>
-                                            <th class="text-right">Giảm (%)</th>
+                                            <th class="text-right">Giảm</th>
                                             <th class="text-right">Thành tiền</th>
                                             <th class="text-right"
                                                 *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1">#</th>
@@ -254,7 +254,10 @@
                                                 <td class="text-right">{{ line.get('productUOMQty').value | number }}
                                                 </td>
                                                 <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
-                                                <td class="text-right">{{ line.get('discount').value | number }}</td>
+                                                <td class="text-right">
+                                                    {{getDiscountNumber(line) | number}}{{getDiscountTypeDisplay(line)}}
+
+                                                </td>
                                                 <td class="text-right">{{ line.get('priceSubTotal').value | number }}
                                                 </td>
                                                 <td class="text-right"

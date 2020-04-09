@@ -43,6 +43,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
       priceUnit: 0,
       productUOMQty: 1,
       discount: 0,
+      discountType: 'percentage',
+      discountFixed: 0,
       priceSubTotal: 1,
       diagnostic: null,
       toothCategory: null,
@@ -92,6 +94,10 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
   get lineState() {
     return this.line ? this.line.state : 'draft';
+  }
+
+  get discountTypeValue() {
+    return this.saleLineForm.get('discountType').value;
   }
 
   onSelected(tooth: ToothDisplay) {
@@ -168,6 +174,13 @@ export class SaleOrderLineDialogComponent implements OnInit {
     });
   }
 
+  onChangeDiscountFixed(value) {
+    var price = this.getPriceUnit();
+    if (value > price) {
+      this.saleLineForm.get('discountFixed').setValue(price);
+    }
+  }
+
   searchProducts(search?: string) {
     var val = new ProductFilter();
     val.saleOK = true;
@@ -176,7 +189,10 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   getPriceSubTotal() {
-    var subtotal = (this.getPriceUnit() * (1 - this.getDiscount() / 100)) * this.getQuantity();
+    var discountType = this.discountTypeValue;
+    var price = discountType == 'percentage' ? this.getPriceUnit() * (1 - this.getDiscount() / 100) :
+      Math.max(0, this.getPriceUnit() - this.discountFixedValue);
+    var subtotal = price * this.getQuantity();
     return subtotal;
   }
 
@@ -190,6 +206,10 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
   getDiscount() {
     return this.saleLineForm.get('discount').value;
+  }
+
+  get discountFixedValue() {
+    return this.saleLineForm.get('discountFixed').value;
   }
 
   onChangeProduct(value: any) {

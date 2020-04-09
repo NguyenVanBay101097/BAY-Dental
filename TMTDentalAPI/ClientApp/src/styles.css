@@ -776,6 +776,10 @@ html .o_web_client {
   margin-right: 5px;
 }
 
+.width-auto {
+  width: auto!important;
+}
+
 
 
 

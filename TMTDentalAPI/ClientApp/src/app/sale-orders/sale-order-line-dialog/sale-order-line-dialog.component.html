@@ -37,7 +37,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="priceUnit">
+                                    <kendo-numerictextbox [format]="'n0'" formControlName="priceUnit">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -48,7 +48,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="productUOMQty">
+                                    <kendo-numerictextbox [format]="'n0'" formControlName="productUOMQty">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -59,12 +59,25 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Giảm (%)
+                                        Giảm
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [max]="100" formControlName="discount">
-                                    </kendo-numerictextbox>
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox [class.d-none]="discountTypeValue !== 'percentage'"
+                                            [min]="0" [max]="100" formControlName="discount" [autoCorrect]="true">
+                                        </kendo-numerictextbox>
+                                        <kendo-numerictextbox [format]="'n0'"
+                                            [class.d-none]="discountTypeValue !== 'fixed'"
+                                            (valueChange)="onChangeDiscountFixed($event)"
+                                            formControlName="discountFixed">
+                                        </kendo-numerictextbox>
+                                        <select class="form-control width-auto" formControlName="discountType">
+                                            <option value="percentage">%</option>
+                                            <option value="fixed">VNĐ</option>
+                                        </select>
+                                    </div>
+
                                 </td>
                             </tr>
                             <tr>
@@ -74,7 +87,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [disabled]="true" [format]="'n0'"
+                                    <kendo-numerictextbox [disabled]="true" [format]="'n0'"
                                         [value]="getPriceSubTotal()">
                                     </kendo-numerictextbox>
                                 </td>

@@ -13,6 +13,8 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             InvoiceStatus = "no";
+            DiscountType = "percentage";
+            DiscountFixed = 0;
         }
 
         public SaleOrderLine(SaleOrderLine line)
@@ -36,6 +38,8 @@ namespace ApplicationCore.Entities
             ToothCategoryId = line.ToothCategoryId;
             Diagnostic = line.Diagnostic;
             Sequence = line.Sequence;
+            DiscountType = "percentage";
+            DiscountFixed = 0;
         }
 
         public decimal PriceUnit { get; set; }
@@ -122,5 +126,9 @@ namespace ApplicationCore.Entities
         public SaleCoupon Coupon { get; set; }
 
         public bool IsRewardLine { get; set; }
+
+        public string DiscountType { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
     }
 }

@@ -41,7 +41,9 @@ namespace Infrastructure.Services
 
             foreach (var line in self)
             {
-                var price = line.PriceUnit * (1 - line.Discount / 100);
+                var discountType = line.DiscountType ?? "percentage";
+                var price = discountType == "percentage" ? line.PriceUnit * (1 - line.Discount / 100) :
+                    Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;

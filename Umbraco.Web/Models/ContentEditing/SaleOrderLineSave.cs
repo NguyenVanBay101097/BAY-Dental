@@ -28,5 +28,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
 
         public string State { get; set; }
+
+        public string DiscountType { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
     }
 }

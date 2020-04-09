@@ -53,5 +53,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CouponId { get; set; }
 
+        public string DiscountType { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
+
     }
 }

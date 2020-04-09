@@ -438,6 +438,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.saleOrderService.create(val);
   }
 
+  getDiscountNumber(line: FormGroup) {
+    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    if (discountType == 'fixed') {
+      return line.get('discountFixed').value;
+    } else {
+      return line.get('discount').value;
+    }
+  }
+
+  getDiscountTypeDisplay(line: FormGroup) {
+    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    if (discountType == 'fixed') {
+      return "";
+    } else {
+      return '%';
+    }
+  }
+
   saveRecord() {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
