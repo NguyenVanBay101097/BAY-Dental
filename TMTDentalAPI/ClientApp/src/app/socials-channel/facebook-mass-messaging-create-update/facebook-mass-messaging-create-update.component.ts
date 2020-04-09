@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookMassMessagingScheduleDialogComponent } from '../facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
 import { FacebookMassMessagingCreateUpdateDialogComponent } from '../facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
+declare var $ :any;
 
 @Component({
   selector: 'app-facebook-mass-messaging-create-update',
@@ -51,6 +52,10 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
           this.num_CharLeft = 640 - value.length;
         }
       });
+    
+    $(document).on('click', '.allow-focus', function (e) {
+      e.stopPropagation();
+    });
   }
 
   loadRecord() {
@@ -190,72 +195,120 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
 
   listAudienceFilterPicker = [
     {
-      type: 'tag',
-      name: 'Tag',
-      formula_type: ['equal', 'not equal'],
-      formula_value: ['Tag_1', 'Tag_2']
+      type: 'Tag',
+      name: 'Nhãn',
+      formula_types: ['eq', 'neq'],
+      formula_values: ['Tag_1', 'Tag_2', 'Tag_3', 'Tag_4', 'Tag_5', 'Tbg_6', 'Tbg_7'],
+      formula_displays: null,
+      search: true
     }, {
-      type: 'last_name',
-      name: 'Họ',
-      formula_type: ['equal', 'not equal', 'contain', 'not contain', 'start with'],
-      formula_value: []
+      type: 'Gender',
+      name: 'Giới tính',
+      formula_types: ['eq', 'neq'],
+      formula_values: ['male', 'female'],
+      formula_displays: ['Nam', 'Nữ'],
+      search: false
     }, {
-      type: 'first_name',
+      type: 'FirstName',
       name: 'Tên',
-      formula_type: ['equal', 'not equal', 'contain', 'not contain', 'start with'],
-      formula_value: []
+      formula_types: ['eq', 'neq', 'contains', 'doesnotcontain', 'startswith'],
+      formula_values: [],
+      formula_displays: null,
+      search: true
     }, {
-      type: 'last_interaction',
-      name: 'Lần tương tác cuối',
-      formula_type: ['before', 'after'],
-      formula_value: []
-    }, {
-      type: 'sequence_subscription',
-      name: 'Kịch bản',
-      formula_type: ['equal', 'not equal'],
-      formula_value: []
-    }, {
-      type: 'subscribed',
-      name: 'Ngày đăng ký',
-      formula_type: ['before', 'after'],
-      formula_value: []
+      type: 'LastName',
+      name: 'Họ',
+      formula_types: ['eq', 'neq', 'contains', 'doesnotcontain', 'startswith'],
+      formula_values: [],
+      formula_displays: null,
+      search: true
     }
   ]
   selectedAudienceFilterPicker: any;
   selectedFormulaType: any;
   selectedFormulaValue: any;
+  selectedFormulaDisplay: any;
   listAudienceFilterItems: any[] = [];
+  copyFormulaValues: any[] = [];
+  clickDropdownButtonAudienceFilter() {
+    this.selectedAudienceFilterPicker = null;
+    this.selectedFormulaType = null;
+    this.selectedFormulaValue = null;
+    this.selectedFormulaDisplay = null;
+    document.getElementById('dropdown-item-audience-filter').style.display = 'block';
+  }
   selectAudienceFilter(item) {
     this.selectedAudienceFilterPicker = item;
+    this.copyFormulaValues = this.selectedAudienceFilterPicker.formula_values;
+    document.getElementById('dropdown-item-audience-filter').style.display = 'none';
   }
   selectFormulaType(item) {
     this.selectedFormulaType = item;
+    this.addAudienceFilter()
   }
-  selectFormulaValue(item) {
+  selectFormulaValue(item, i) {
     this.selectedFormulaValue = item;
-  }
-  cancelAudienceFilter() {
-    this.selectedAudienceFilterPicker = null;
-    this.selectedFormulaType = null;
-    this.selectedFormulaValue = null;
+    if (this.selectedAudienceFilterPicker.formula_displays) {
+      this.selectedFormulaDisplay = this.selectedAudienceFilterPicker.formula_displays[i];
+    } else {
+      this.selectedFormulaDisplay = null;
+    }
+    this.addAudienceFilter()
   }
   addAudienceFilter() {
-    var temp = {
-      type: this.selectedAudienceFilterPicker.type,
-      name: this.selectedAudienceFilterPicker.name,
-      formula_type: this.selectedAudienceFilterPicker.formula_type,
-      formula_value: this.selectedAudienceFilterPicker.formula_value,
-      formula_display: '',
-      formula_type_selected: this.selectedFormulaType,
-      formula_value_selected: this.selectedFormulaValue,
+    if (this.selectedFormulaType && this.selectedFormulaValue) {
+
+      var temp = {
+        type: this.selectedAudienceFilterPicker.type,
+        name: this.selectedAudienceFilterPicker.name,
+        formula_type: this.selectedFormulaType,
+        formula_value: this.selectedFormulaValue,
+        formula_display: this.selectedFormulaDisplay
+      }
+      this.listAudienceFilterItems.push(temp);
+      this.selectedAudienceFilterPicker = null;
+      this.selectedFormulaType = null;
+      this.selectedFormulaValue = null;
+      this.selectedFormulaDisplay = null;
+      document.getElementById('dropdown-item-audience-filter').style.display = 'block';
+      console.log(this.listAudienceFilterItems);
     }
-    this.listAudienceFilterItems.push(temp);
-    this.selectedAudienceFilterPicker = null;
-    this.selectedFormulaType = null;
-    this.selectedFormulaValue = null;
-    console.log(this.listAudienceFilterItems);
   }
   deleteAudienceFilterItem(index) {
     this.listAudienceFilterItems.splice(index, 1);
+  }
+  convertFormulaType(item) {
+    switch (item) {
+      case 'eq':
+        return 'bằng';
+      case 'neq':
+        return 'không bằng';
+      case 'contains':
+        return 'có chứa';
+      case 'doesnotcontain':
+        return 'không chứa';
+      case 'startswith':
+        return 'bắt đầu với';
+      case 'bằng':
+        return 'eq';
+      case 'không bằng':
+        return 'neq';
+      case 'có chứa':
+        return 'contains';
+      case 'không chứa':
+        return 'doesnotcontain';
+      case 'bắt đầu với':
+        return 'startswith';
+    }
+  }
+  searchFormulaValue(value) {
+    if (value) {
+      value = value.toLowerCase();
+      this.copyFormulaValues = this.selectedAudienceFilterPicker.formula_values.filter(function(el: any) {
+        return el.toLowerCase().indexOf(value) >= 0;
+      });
+    } else {
+      this.copyFormulaValues = this.selectedAudienceFilterPicker.formula_values;
+    }
   }
 }

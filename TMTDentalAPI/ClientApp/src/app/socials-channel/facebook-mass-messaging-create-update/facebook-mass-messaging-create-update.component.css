@@ -39,17 +39,22 @@
 .audience-filter-item .value-select {
     text-decoration: underline;
 }
-.audience-filter-picker .dropdown-menu {
-    max-height: 240px;
-    overflow-y: auto;
-}
 .audience-filter-picker button {
     margin-bottom: 5px;
 }
-.dropdown-menu-2 {
-    position: absolute;
-    will-change: transform;
-    top: 0px;
-    left: 0px;
-    transform: translate3d(0px, 32px, 0px);
+.list-formula-value {
+    max-height: 240px;
+    overflow-y: auto;
+}
+.list-formula-value::-webkit-scrollbar {
+    width: 10px;
+}
+.list-formula-value::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.list-formula-value::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+.list-formula-value::-webkit-scrollbar-thumb:hover {
+    background: #555; 
 }
