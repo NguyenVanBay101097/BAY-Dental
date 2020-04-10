@@ -6,6 +6,8 @@
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        [kendoGridSelectBy]="'id'"
+        (selectedKeysChange)="selectedKeysChange($event)"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="psId" title="PSID">
         </kendo-grid-column>

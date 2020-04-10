@@ -71,6 +71,10 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       });
   }
 
+  selectedKeysChange(rows: number[]) {
+    console.log(rows);
+  }
+
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
