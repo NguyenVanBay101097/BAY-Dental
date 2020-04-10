@@ -34,5 +34,19 @@ namespace Infrastructure.Services
         Task RemoveMoveReconcile(IEnumerable<AccountMoveLine> self);
         Task RemoveMoveReconcile(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
+        Task<AccountAccount> _GetComputedAccount(AccountMoveLine self);
+        string _GetComputedName(AccountMoveLine self);
+
+        object _GetPriceTotalAndSubtotal(AccountMoveLine self, decimal? price_unit = null, decimal? quantity = null,
+            decimal? discount = null, Product product = null, Partner partner = null, string move_type = null);
+
+        object _GetFieldsOnChangeSubtotal(AccountMoveLine self, decimal? price_subtotal = null, string move_type = null,
+            DateTime? date = null);
+
+        void _OnChangePriceSubtotal(IEnumerable<AccountMoveLine> self);
+
+        void _ComputeBalance(IEnumerable<AccountMoveLine> self);
+
+        IEnumerable<AccountMoveLine> PrepareLines(IEnumerable<AccountMoveLine> entities);
     }
 }

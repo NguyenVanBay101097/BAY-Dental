@@ -188,7 +188,7 @@ namespace Infrastructure.Services
             }
 
             await moveObj.Write(new List<AccountMove>() { move });
-            await moveObj.Post(new List<AccountMove>() { move });
+            await moveObj.ActionPost(new List<AccountMove>() { move });
             return move;
         }
 
@@ -284,6 +284,69 @@ namespace Infrastructure.Services
             else
             {
                 return _ComputeTotalInvoiceAmount(invoices) - amount;
+            }
+        }
+
+        public async Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> saleOrderIds)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orders = await orderObj.SearchQuery(x => saleOrderIds.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
+                .ToListAsync();
+
+            var invoice_ids = orders.SelectMany(x => x.OrderLines).SelectMany(x => x.SaleOrderLineInvoice2Rels)
+                .Select(x => x.InvoiceLine).Select(x => x.Move.Id).Distinct();
+
+            var moveObj = GetService<IAccountMoveService>();
+            var invoices = await moveObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            invoices = invoices.Where(x => moveObj.IsInvoice(x, include_receipts: true)).ToList();
+
+            if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
+                throw new Exception("You can only register payments for open invoices");
+            var dtype = invoices[0].Type;
+            foreach (var inv in invoices.Skip(1))
+            {
+                if (inv.Type != dtype)
+                {
+                    if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" || inv.Type == "in_refund"))
+                        throw new Exception("You cannot register payments for vendor bills and supplier refunds at the same time.");
+                    if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" || inv.Type == "out_refund"))
+                        throw new Exception("You cannot register payments for customer invoices and credit notes at the same time.");
+                }
+            }
+
+            var total_amount = invoices.Sum(x => x.AmountResidual);
+
+            var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
+                (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount ?? 0),
+                PaymentType = total_amount > 0 ? "inbound" : "outbound",
+                PartnerId = invoices[0].PartnerId,
+                PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
+                InvoiceIds = invoice_ids,
+                Communication = communication
+            };
+
+            return rec;
+        }
+
+        public IDictionary<string, string> MAP_INVOICE_TYPE_PARTNER_TYPE
+        {
+            get
+            {
+                var res = new Dictionary<string, string>();
+                res.Add("out_invoice", "customer");
+                res.Add("out_refund", "customer");
+                res.Add("out_receipt", "customer");
+                res.Add("in_invoice", "supplier");
+                res.Add("in_refund", "supplier");
+                res.Add("in_receipt", "supplier");
+                return res;
             }
         }
 

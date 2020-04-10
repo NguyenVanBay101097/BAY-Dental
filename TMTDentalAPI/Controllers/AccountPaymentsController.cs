@@ -72,6 +72,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SaleDefaultGet(IEnumerable<Guid> ids)
+        {
+            var res = await _paymentService.OrderDefaultGet(ids);
+            return Ok(res);
+        }
+
         [HttpGet("GetPaymentBasicList")]
         public async Task<IActionResult> GetPaymentBasicList([FromQuery]AccountPaymentFilter val)
         {

@@ -545,7 +545,7 @@ namespace Infrastructure.Services
                 };
 
                 await accountMoveObj.CreateAsync(move_vals);
-                await accountMoveObj.Post(new List<AccountMove>() { move_vals }, invoice: invoice);
+                await accountMoveObj.ActionPost(new List<AccountMove>() { move_vals });
 
                 invoice.MoveId = move_vals.Id;
                 invoice.Move = move_vals;

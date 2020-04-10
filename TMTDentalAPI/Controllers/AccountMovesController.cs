@@ -11,19 +11,5 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class AccountMovesController : BaseApiController
     {
-
-        [HttpPost]
-        public async Task<IActionResult> Create(AccountInvoiceDisplay val)
-        {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-            _modelAccessService.Check("AccountInvoice", "Create");
-            var inv = _mapper.Map<AccountInvoice>(val);
-            SaveInvoiceLines(val, inv);
-            await _accountInvoiceService.CreateAsync(inv);
-
-            val.Id = inv.Id;
-            return Ok(val);
-        }
     }
 }

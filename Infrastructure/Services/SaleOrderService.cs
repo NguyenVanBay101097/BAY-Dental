@@ -1243,12 +1243,9 @@ namespace Infrastructure.Services
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             }
 
-            _GetInvoiced(self);
-            await UpdateAsync(self);
-
-            var invoices = await ActionInvoiceCreate(self);
-            var invObj = GetService<IAccountInvoiceService>();
-            await invObj.ActionInvoiceOpen(invoices.Select(x => x.Id).ToList());
+            var invoices = await _CreateInvoices(self, final: true);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
 
             foreach (var order in self)
             {
@@ -1670,18 +1667,19 @@ namespace Infrastructure.Services
         {
             foreach (var order in self)
             {
-                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels)
-                    .Select(x => x.InvoiceLine).Select(x => x.Invoice).Distinct().ToList();
-                decimal residual = 0M;
+                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
+                    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
+                decimal? residual = 0M;
                 foreach (var invoice in invoices)
                 {
                     if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
                         continue;
                     if (invoice.Type == "out_invoice")
-                        residual += invoice.Residual;
+                        residual += invoice.AmountResidual;
                     else
-                        residual -= invoice.Residual;
+                        residual -= invoice.AmountResidual;
                 }
+
                 order.Residual = residual;
             }
         }
@@ -1735,7 +1733,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task _CreateInvoices(IEnumerable<SaleOrder> self, bool final = false)
+        public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<SaleOrder> self, bool final = false)
         {
             //param final: if True, refunds will be generated if necessary
 
@@ -1753,11 +1751,11 @@ namespace Infrastructure.Services
                         continue;
                     if (line.QtyToInvoice > 0 || (line.QtyToInvoice < 0 && final))
                     {
-                        invoice_vals.Lines.Add(saleLineObj._PrepareInvoiceLine(line));
+                        invoice_vals.InvoiceLines.Add(saleLineObj._PrepareInvoiceLine(line));
                     }
                 }
 
-                if (!invoice_vals.Lines.Any())
+                if (!invoice_vals.InvoiceLines.Any())
                     throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
 
                 invoice_vals_list.Add(invoice_vals);
@@ -1771,7 +1769,7 @@ namespace Infrastructure.Services
             var refund_invoice_vals_list = new List<AccountMove>();
             if (final)
             {
-                foreach(var invoice_vals in invoice_vals_list)
+                foreach (var invoice_vals in invoice_vals_list)
                 {
                     if (invoice_vals.Lines.Sum(x => x.Quantity * x.PriceUnit) < 0)
                     {
@@ -1784,9 +1782,14 @@ namespace Infrastructure.Services
                         out_invoice_vals_list.Add(invoice_vals);
                 }
             }
+            else
+                out_invoice_vals_list = invoice_vals_list;
 
             var moveObj = GetService<IAccountMoveService>();
-            //moveObj.CreateInvoice(default_type = "out_invoice", out_invoice_vals_list);
+            var moves= await moveObj.CreateMoves(out_invoice_vals_list, default_type: "out_invoice");
+            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "out_refund"));
+
+            return moves;
         }
 
         private async Task<AccountMove> _PrepareInvoice(SaleOrder self)
@@ -1804,6 +1807,9 @@ namespace Infrastructure.Services
                 InvoiceUserId = self.UserId,
                 PartnerId = self.PartnerId,
                 InvoiceOrigin = self.Name,
+                JournalId = journal.Id,
+                Journal = journal,
+                CompanyId = journal.CompanyId,
             };
 
             return invoice_vals;

@@ -6,6 +6,14 @@ namespace ApplicationCore.Entities
 {
     public class AccountMoveLine: BaseEntity
     {
+        public AccountMoveLine()
+        {
+            ExcludeFromInvoiceTab = false;
+            Discount = 0;
+            Quantity = 1;
+            Name = "/";
+        }
+
         public string Name { get; set; }
 
         public decimal? Quantity { get; set; }

@@ -46,5 +46,7 @@ namespace ApplicationCore.Entities
 
         public Guid? WriteoffAccountId { get; set; }
         public AccountAccount WriteoffAccount { get; set; }
+
+        public ICollection<AccountMovePaymentRel> AccountMovePaymentRels { get; set; } = new List<AccountMovePaymentRel>();
     }
 }

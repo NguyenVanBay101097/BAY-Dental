@@ -60,6 +60,50 @@ namespace Infrastructure.Services
                          (!companyIds.Any() || companyIds.Contains(x.Company.Id)));
         }
 
+        public void _OnChangePriceSubtotal(IEnumerable<AccountMoveLine> self)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            foreach(var line in self)
+            {
+                if (!moveObj.IsInvoice(line.Move, include_receipts: true))
+                    continue;
+
+                dynamic computeSubtotal = _GetPriceTotalAndSubtotal(line);
+                line.PriceSubtotal = computeSubtotal.PriceSubtotal;
+                line.PriceTotal = computeSubtotal.PriceTotal;
+
+                dynamic computeFields = _GetFieldsOnChangeSubtotal(line);
+                line.Debit = computeFields.Debit;
+                line.Credit = computeFields.Credit;
+            }
+        }
+
+        public object _GetFieldsOnChangeSubtotal(AccountMoveLine self, decimal? price_subtotal = null, string move_type = null,
+            DateTime? date = null)
+        {
+            return _GetFieldsOnChangeSubtotalModel(self, price_subtotal: price_subtotal ?? self.PriceSubtotal,
+                move_type: move_type ?? self.Move.Type,
+                date: date ?? self.Move.Date);
+        }
+
+        private object _GetFieldsOnChangeSubtotalModel(AccountMoveLine self, decimal? price_subtotal, string move_type, DateTime date)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            var sign = 1;
+            if (moveObj.GetOutboundTypes().Contains(move_type))
+                sign = 1;
+            else if (moveObj.GetInboundTypes().Contains(move_type))
+                sign = -1;
+
+            price_subtotal *= sign;
+
+            return new
+            {
+                Debit = price_subtotal > 0 ? price_subtotal : 0,
+                Credit = price_subtotal < 0 ? -price_subtotal : 0,
+            };
+        }
+
         public ComputeAmountFieldsRes ComputeAmountFields(decimal amount)
         {
             var debit = amount > 0 ? amount : 0;
@@ -67,11 +111,123 @@ namespace Infrastructure.Services
             return new ComputeAmountFieldsRes { Debit = debit, Credit = credit };
         }
 
-        public override Task<AccountMoveLine> CreateAsync(AccountMoveLine entity)
+        public string _GetComputedName(AccountMoveLine self)
         {
-            _StoreBalance(new List<AccountMoveLine>() { entity });
-            _AmountResidual(new List<AccountMoveLine>() { entity });
-            return base.CreateAsync(entity);
+            if (self.Product == null)
+                return "";
+            return self.Product.Name;
+        }
+
+        public object _GetPriceTotalAndSubtotal(AccountMoveLine self, decimal? price_unit = null, decimal? quantity = null,
+            decimal? discount = null, Product product = null, Partner partner = null, string move_type = null)
+        {
+            return _GetPriceTotalAndSubtotalModel(self, price_unit: price_unit ?? self.PriceUnit,
+                quantity: quantity ?? self.Quantity,
+                discount: discount ?? self.Discount,
+                product: product ?? self.Product,
+                partner: partner ?? self.Partner,
+                move_type: move_type ?? self.Move.Type);
+        }
+
+        private object _GetPriceTotalAndSubtotalModel(AccountMoveLine self, decimal? price_unit, decimal? quantity, decimal? discount, Product product, Partner partner, string move_type)
+        {
+            var price_unit_wo_discount = price_unit * (1 - (discount ?? 0) / 100);
+            var subtotal = price_unit_wo_discount * (quantity ?? 0);
+            return new { PriceTotal = subtotal, PriceSubtotal = subtotal };
+        }
+
+        public override async Task<IEnumerable<AccountMoveLine>> CreateAsync(IEnumerable<AccountMoveLine> entities)
+        {
+            return await base.CreateAsync(entities);
+        }
+
+        public IEnumerable<AccountMoveLine> PrepareLines(IEnumerable<AccountMoveLine> entities)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            foreach (var vals in entities)
+            {
+                if (vals.Move == null)
+                    throw new ArgumentNullException("Move");
+
+                if (vals.Account == null)
+                    throw new ArgumentNullException("Account");
+
+                var move = vals.Move;
+
+                //store related fields
+                vals.MoveName = vals.Move.Name;
+                vals.Date = vals.Move.Date;
+                vals.Ref = vals.Move.Ref;
+                vals.ParentState = vals.Move.State;
+                vals.JournalId = vals.Move.JournalId;
+                vals.CompanyId = vals.Move.CompanyId;
+                vals.AccountInternalType = vals.Account.InternalType;
+
+                if (moveObj.IsInvoice(move, include_receipts: true))
+                {
+                    if (vals.Debit != 0 || vals.Credit != 0)
+                    {
+                        var balance = vals.Debit - vals.Credit;
+                        var refobj = _GetFieldsOnChangeBalanceModel(vals, vals.Quantity ?? 0, vals.Discount ?? 0, balance, move.Type);
+                        foreach (var field in refobj.GetType().GetProperties())
+                        {
+                            string name = field.Name;
+                            var value = field.GetValue(refobj, null);
+                            vals.GetType().GetProperty(field.Name).SetValue(vals, value);
+                        }
+
+                        dynamic computeTotal = _GetPriceTotalAndSubtotalModel(vals, vals.PriceUnit ?? 0, vals.Quantity ?? 0, vals.Discount ?? 0, vals.Product, vals.Partner, move.Type);
+                        vals.PriceSubtotal = computeTotal.PriceSubtotal;
+                        vals.PriceTotal = computeTotal.PriceTotal;
+                    }
+                    else
+                    {
+                        dynamic computeSubtotal = _GetFieldsOnChangeSubtotalModel(vals, vals.PriceSubtotal, move.Type, move.Date);
+                        vals.Debit = computeSubtotal.Debit;
+                        vals.Credit = computeSubtotal.Credit;
+                    }
+                }
+            }
+
+            _ComputeBalance(entities);
+            _AmountResidual(entities);
+            return entities;
+        }
+
+        public object _GetFieldsOnChangeBalanceModel(AccountMoveLine self, decimal? quantity, decimal discount, decimal? balance,
+            string move_type)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            var sign = 1;
+            if (moveObj.GetOutboundTypes().Contains(move_type))
+                sign = 1;
+            else if (moveObj.GetInboundTypes().Contains(move_type))
+                sign = -1;
+            balance *= sign;
+            var discount_factor = 1 - (discount / 100);
+            if (balance != 0 && discount_factor > 0)
+            {
+                return new
+                {
+                    Quantity = quantity ?? 1,
+                    PriceUnit = balance / discount_factor / (quantity ?? 1)
+                };
+            }
+            else if (balance != 0 && discount_factor == 0)
+            {
+                return new
+                {
+                    Quantity = quantity ?? 1,
+                    Discount = 0,
+                    PriceUnit = balance / (quantity ?? 1)
+                };
+            }
+            else
+            {
+                return new
+                {
+                };
+            }
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
@@ -378,6 +534,36 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public void _ComputeBalance(IEnumerable<AccountMoveLine> self)
+        {
+            foreach (var line in self)
+                line.Balance = line.Debit - line.Credit;
+        }
+
+        public async Task<AccountAccount> _GetComputedAccount(AccountMoveLine self)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            var accountObj = GetService<IAccountAccountService>();
+
+            var companyId = CompanyId;
+            if (moveObj.IsSaleDocument(self.Move, include_receipts: true))
+            {
+                var account = await accountObj.SearchQuery(x => x.Code == "5111" && x.CompanyId == companyId).FirstOrDefaultAsync();
+                if (account == null)
+                    throw new Exception("Không tìm thấy tài khoản doanh thu");
+                return account;
+            }
+            else if (moveObj.IsPurchaseDocument(self.Move, include_receipts: true))
+            {
+                var account = await accountObj.SearchQuery(x => x.Code == "1561" && x.CompanyId == companyId).FirstOrDefaultAsync();
+                if (account == null)
+                    throw new Exception("Không tìm thấy tài khoản chi phí");
+                return account;
+            }
+
+            return null;
         }
     }
 

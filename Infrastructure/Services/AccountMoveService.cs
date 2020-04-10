@@ -32,16 +32,16 @@ namespace Infrastructure.Services
             }
         }
 
-        public override Task<AccountMove> CreateAsync(AccountMove self)
-        {
-            var amlObj = GetService<IAccountMoveLineService>();
-            amlObj._AmountResidual(self.Lines);
-            amlObj._StoreBalance(self.Lines);
+        //public override Task<AccountMove> CreateAsync(AccountMove self)
+        //{
+        //    var amlObj = GetService<IAccountMoveLineService>();
+        //    amlObj._AmountResidual(self.Lines);
+        //    amlObj._StoreBalance(self.Lines);
 
-            _ComputeAmount(new List<AccountMove>() { self });
-            _ComputePartner(new List<AccountMove>() { self });
-            return base.CreateAsync(self);
-        }
+        //    _ComputeAmount(new List<AccountMove>() { self });
+        //    _ComputePartner(new List<AccountMove>() { self });
+        //    return base.CreateAsync(self);
+        //}
 
         private void _ComputePartner(IEnumerable<AccountMove> self)
         {
@@ -57,49 +57,98 @@ namespace Infrastructure.Services
         {
             foreach (var move in self)
             {
+                decimal total_untaxed = 0;
+                decimal total_tax = 0;
+                decimal total_residual = 0;
                 decimal total = 0;
+
                 foreach (var line in move.Lines)
                 {
-                    total += line.Debit;
+                    if (IsInvoice(move, include_receipts: true))
+                    {
+                        if (line.ExcludeFromInvoiceTab == false)
+                        {
+                            total_untaxed += line.Balance;
+                            total += line.Balance;
+                        }
+                        else if (line.Account.InternalType == "receivable" || line.Account.InternalType == "payable")
+                        {
+                            total_residual += line.AmountResidual;
+                        }
+                    }
+                    else
+                    {
+                        if (line.Debit != 0)
+                        {
+                            total += line.Balance;
+                        }
+                    }
                 }
-                move.Amount = total;
+
+                var sign = -1;
+                if (move.Type == "entry" || IsOutbound(move))
+                    sign = 1;
+
+                move.AmountUntaxed = sign * total_untaxed;
+                move.AmountTax = sign * total_tax;
+                move.AmountTotal = sign * total;
+                move.AmountResidual = -sign * total_residual;
+                move.AmountUntaxedSigned = -total_untaxed;
+                move.AmountTaxSigned = -total_tax;
+                move.AmountTotalSigned = move.Type == "entry" ? Math.Abs(total) : -total;
+                move.AmountResidualSigned = total_residual;
+
+                var is_paid = move.AmountResidual == 0;
+
+                if (move.Type == "entry")
+                    move.InvoicePaymentState = null;
+                else if (move.State == "posted" && is_paid)
+                    move.InvoicePaymentState = "paid";
+                else
+                    move.InvoicePaymentState = "not_paid";
             }
         }
 
-        public async Task Post(IEnumerable<AccountMove> moves, AccountInvoice invoice = null)
+        public async Task ActionPost(IEnumerable<AccountMove> self)
         {
-            _PostValidate(moves);
+            await Post(self);
+        }
+
+        public async Task Post(IEnumerable<AccountMove> self)
+        {
+            _PostValidate(self);
             var seqObj = GetService<IIRSequenceService>();
-            foreach (var move in moves)
+            foreach (var move in self)
             {
+                if (IsInvoice(move, include_receipts: true) && move.AmountTotal < 0)
+                    throw new Exception("You cannot validate an invoice with a negative total amount. You should create a credit note instead. Use the action menu to transform it into a credit note or refund.");
+
+                if (!move.InvoiceDate.HasValue && IsInvoice(move, include_receipts: true))
+                    move.InvoiceDate = DateTime.Today;
+
+
                 if (move.Name == "/")
                 {
-                    var newName = "";
-                    var journal = move.Journal;
-                    if (invoice != null && !string.IsNullOrEmpty(invoice.MoveName) && invoice.MoveName != "/")
-                        newName = invoice.MoveName;
-                    else
-                    {
-                        if (journal.Sequence != null)
-                        {
-                            var sequence = journal.Sequence;
-                            if (invoice != null && (invoice.Type == "out_refund" || invoice.Type == "in_refund") && journal.RefundSequence != null)
-                                sequence = journal.RefundSequence;
+                    var sequenceId = _GetSequence(move);
+                    if (!sequenceId.HasValue)
+                        throw new Exception("Please define a sequence on your journal.");
 
-                            newName = await seqObj.NextById(sequence.Id);
-                        }
-                        else
-                            throw new Exception("Vui lòng định nghĩa trình tự cho nhật ký này");
-                    }
-
-                    if (!string.IsNullOrEmpty(newName))
-                        move.Name = newName;
+                    move.Name = await seqObj.NextById(sequenceId.Value);
                 }
 
                 move.State = "posted";
             }
 
-            await UpdateAsync(moves);
+            await UpdateAsync(self);
+        }
+
+        public Guid? _GetSequence(AccountMove self)
+        {
+            var journal = self.Journal;
+            var types = new string[] { "entry", "out_invoice", "in_invoice", "out_receipt", "in_receipt" };
+            if (types.Contains(self.Type) || !journal.DedicatedRefund)
+                return journal.SequenceId;
+            return journal.RefundSequenceId;
         }
 
         public async Task Write(IEnumerable<AccountMove> self)
@@ -121,7 +170,7 @@ namespace Infrastructure.Services
             }
 
             AssertBalanced(moves);
-            _CheckLockDate(moves);
+            //_CheckLockDate(moves);
         }
 
         public bool _CheckLockDate(IEnumerable<AccountMove> self)
@@ -228,9 +277,11 @@ namespace Infrastructure.Services
             return journal;
         }
 
-        public async Task<IEnumerable<AccountMove>> CreateMoves(IEnumerable<AccountMove> vals_list)
+        public async Task<IEnumerable<AccountMove>> CreateMoves(IEnumerable<AccountMove> vals_list, string default_type = "")
         {
             vals_list = await _MoveAutocompleteInvoiceLinesCreate(vals_list);
+
+            _ComputeAmount(vals_list);
             var moves = await CreateAsync(vals_list);
             return moves;
         }
@@ -242,7 +293,8 @@ namespace Infrastructure.Services
             // and payment terms will be computed. At the end, the values will contains all accounting lines in 'line_ids'
             // and the moves should be balanced.
             var new_vals_list = new List<AccountMove>();
-            foreach(var vals in vals_list)
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            foreach (var vals in vals_list)
             {
                 if (!vals.InvoiceLines.Any())
                 {
@@ -259,7 +311,10 @@ namespace Infrastructure.Services
                 foreach (var l in vals.InvoiceLines)
                     vals.Lines.Add(l);
 
-                new_vals_list.Add(await _MoveAutocompleteInvoiceLinesValues(vals));
+                var new_vals = await _MoveAutocompleteInvoiceLinesValues(vals);
+                moveLineObj.PrepareLines(new_vals.Lines);
+
+                new_vals_list.Add(new_vals);
             }
 
             return new_vals_list;
@@ -267,6 +322,32 @@ namespace Infrastructure.Services
 
         public async Task<AccountMove> _MoveAutocompleteInvoiceLinesValues(AccountMove self)
         {
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            foreach(var line in self.Lines)
+            {
+                if (line.ExcludeFromInvoiceTab == true)
+                    continue;
+
+                line.PartnerId = self.PartnerId;
+                line.Date = self.Date;
+                line.Move = self;
+                line.Account = await moveLineObj._GetComputedAccount(line);
+
+                if (line.Account == null)
+                {
+                    if (IsSaleDocument(self, include_receipts: true))
+                        line.Account = self.Journal.DefaultCreditAccount;
+                    else if (IsPurchaseDocument(self, include_receipts: true))
+                        line.Account = self.Journal.DefaultDebitAccount;
+                }
+
+                if (line.Product != null)
+                    line.Name = moveLineObj._GetComputedName(line);
+            }
+          
+            moveLineObj._OnChangePriceSubtotal(self.Lines);
+            moveLineObj._ComputeBalance(self.Lines);
+
             await _RecomputeDynamicLines(new List<AccountMove>() { self });
             return self;
         }
@@ -305,7 +386,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            async Task<IList<AccountMoveLine>> _ComputeDiffPaymentTermsLines(IList<AccountMoveLine> existing_terms_lines, AccountAccount account, decimal balance, DateTime date_maturity)
+            IList<AccountMoveLine> _ComputeDiffPaymentTermsLines(IList<AccountMoveLine> existing_terms_lines, AccountAccount account, decimal balance, DateTime date_maturity)
             {
                 existing_terms_lines = existing_terms_lines.OrderBy(x => x.DateMaturity).ToList();
                 var existing_terms_lines_index = 0;
@@ -324,18 +405,20 @@ namespace Infrastructure.Services
                 else
                 {
                     var moveLineObj = GetService<IAccountMoveLineService>();
-                    candidate = await moveLineObj.CreateAsync(new AccountMoveLine
+                    candidate = new AccountMoveLine
                     {
-                        Name = self.InvoicePaymentRef ?? "",
+                        Name = self.InvoicePaymentRef ?? "/",
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         Quantity = 1,
                         DateMaturity = date_maturity,
                         MoveId = self.Id,
+                        Move = self,
                         AccountId = account.Id,
+                        Account = account,
                         PartnerId = self.PartnerId,
                         ExcludeFromInvoiceTab = true
-                    });
+                    };
                 }
 
                 new_terms_lines.Add(candidate);
@@ -344,8 +427,8 @@ namespace Infrastructure.Services
 
 
             var accountTypes = new List<string>() { "receivable", "payable" };
-            var existing_terms_lines = self.Lines.Where(x => accountTypes.Contains(x.Account.UserType.Type)).ToList();
-            var others_lines = self.Lines.Where(x => !accountTypes.Contains(x.Account.UserType.Type)).ToList();
+            var existing_terms_lines = self.Lines.Where(x => accountTypes.Contains(x.Account.InternalType)).ToList();
+            var others_lines = self.Lines.Where(x => !accountTypes.Contains(x.Account.InternalType)).ToList();
             var total_balance = others_lines.Sum(x => x.Balance);
 
             if (!others_lines.Any())
@@ -356,16 +439,9 @@ namespace Infrastructure.Services
 
             var computation_date = _GetPaymentTermsComputationDate();
             var account = _GetPaymentTermsAccount(existing_terms_lines);
-            var new_terms_lines = await _ComputeDiffPaymentTermsLines(existing_terms_lines, account, total_balance, computation_date);
+            var new_terms_lines = _ComputeDiffPaymentTermsLines(existing_terms_lines, account, total_balance, computation_date);
 
             self.Lines = self.Lines.Except(existing_terms_lines).Concat(new_terms_lines).ToList();
-        }
-
-    
-
-        private bool IsInvoice(AccountMove self, bool include_receipts = false)
-        {
-            return GetInvoiceTypes(include_receipts: include_receipts).Contains(self.Type);
         }
 
         private IEnumerable<string> GetInvoiceTypes(bool include_receipts = false)
@@ -376,9 +452,45 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public bool IsInvoice(AccountMove self, bool include_receipts = false)
+        {
+            return GetInvoiceTypes(include_receipts: include_receipts).Contains(self.Type);
+        }
+
+        public bool IsOutbound(AccountMove self, bool include_receipts = true)
+        {
+            return GetOutboundTypes(include_receipts: include_receipts).Contains(self.Type);
+        }
+
+        public bool IsSaleDocument(AccountMove self, bool include_receipts = false)
+        {
+            return GetSaleTypes(include_receipts: include_receipts).Contains(self.Type);
+        }
+
+        public bool IsPurchaseDocument(AccountMove self, bool include_receipts = false)
+        {
+            return GetPurchaseTypes(include_receipts: include_receipts).Contains(self.Type);
+        }
+
         private IEnumerable<string> GetSaleTypes(bool include_receipts = false)
         {
             var res = new List<string>() { "out_invoice", "out_refund" };
+            if (include_receipts)
+                res = res.Concat(new List<string>() { "out_receipt" }).ToList();
+            return res;
+        }
+
+        public IEnumerable<string> GetOutboundTypes(bool include_receipts = true)
+        {
+            var res = new List<string>() { "in_invoice", "out_refund" };
+            if (include_receipts)
+                res = res.Concat(new List<string>() { "in_receipt" }).ToList();
+            return res;
+        }
+
+        public IEnumerable<string> GetInboundTypes(bool include_receipts = true)
+        {
+            var res = new List<string>() { "out_invoice", "in_refund" };
             if (include_receipts)
                 res = res.Concat(new List<string>() { "out_receipt" }).ToList();
             return res;

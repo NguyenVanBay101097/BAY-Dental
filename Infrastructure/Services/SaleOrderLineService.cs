@@ -127,12 +127,10 @@ namespace Infrastructure.Services
                 if (line.Order.State == "sale" || line.Order.State == "done")
                 {
                     line.QtyToInvoice = line.ProductUOMQty - (line.QtyInvoiced ?? 0);
-                    line.AmountToInvoice = line.PriceTotal - (line.AmountInvoiced ?? 0);
                 }
                 else
                 {
                     line.QtyToInvoice = 0;
-                    line.AmountToInvoice = 0;
                 }
             }
         }
@@ -142,28 +140,24 @@ namespace Infrastructure.Services
             foreach (var line in lines)
             {
                 decimal qtyInvoiced = 0;
-                decimal amountInvoiced = 0;
-                foreach (var rel in line.SaleOrderLineInvoiceRels)
+                foreach (var rel in line.SaleOrderLineInvoice2Rels)
                 {
-                    var invoice = rel.InvoiceLine.Invoice;
+                    var move = rel.InvoiceLine.Move;
                     var invoiceLine = rel.InvoiceLine;
-                    if (invoice.State != "cancel")
+                    if (move.State != "cancel")
                     {
-                        if (invoice.Type == "out_invoice")
+                        if (move.Type == "out_invoice")
                         {
-                            qtyInvoiced += invoiceLine.Quantity;
-                            amountInvoiced += invoiceLine.PriceSubTotal;
+                            qtyInvoiced += (invoiceLine.Quantity ?? 0);
                         }
-                        else if (invoice.Type == "out_refund")
+                        else if (move.Type == "out_refund")
                         {
-                            qtyInvoiced -= invoiceLine.Quantity;
-                            amountInvoiced -= invoiceLine.PriceSubTotal;
+                            qtyInvoiced -= (invoiceLine.Quantity ?? 0);
                         }
                     }
                 }
 
                 line.QtyInvoiced = qtyInvoiced;
-                line.AmountInvoiced = amountInvoiced;
             }
         }
 

@@ -45,31 +45,36 @@ namespace Infrastructure.Services
 
         public async Task<AccountRegisterPaymentDisplay> DefaultGet(IEnumerable<Guid> invoice_ids)
         {
-            if (invoice_ids == null || invoice_ids.Count() == 0)
-                throw new Exception("Phải chọn tối thiểu 1 hóa đơn để thanh toán");
-            var invoiceService = (IAccountInvoiceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountInvoiceService));
-            var invoices = await invoiceService.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
-            if (invoices.Any(x => x.State != "open" && x.State != "paid"))
-                throw new Exception("Bạn chỉ có thể thanh toán cho hóa đơn đã xác nhận");
-            if (invoices.Any(x => x.PartnerId != invoices[0].PartnerId))
-                throw new Exception("Để thanh toán nhiều hóa đơn cùng một lần, chúng phải có cùng khách hàng/nhà cung cấp");
-            var dict = MAP_INVOICE_TYPE_PAYMENT_SIGN;
-            //if (invoices.Any(x => dict[x.Type] != dict[invoices[0].Type]))
-            //    throw new Exception("Bạn không thể kết hợp hóa đơn khách hàng và hóa đơn nhà cung cấp trong một lần thanh toán");
-            //if (invoices.Any(x => x.CurrencyId != invoices[0].CurrencyId))
-            //    throw new Exception("Các hóa đơn phải có chung tiền tệ");
+            var moveObj = GetService<IAccountMoveService>();
+            var invoices = await moveObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            invoices = invoices.Where(x => moveObj.IsInvoice(x, include_receipts: true)).ToList();
 
-            var total_amount = invoices.Sum(x => x.Residual * dict[x.Type]);
-            var communication = string.Join(" ", invoices.Select(x => x.Number).Distinct());
+            if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
+                throw new Exception("You can only register payments for open invoices");
+            var dtype = invoices[0].Type;
+            foreach (var inv in invoices.Skip(1))
+            {
+                if (inv.Type != dtype)
+                {
+                    if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" || inv.Type == "in_refund"))
+                        throw new Exception("You cannot register payments for vendor bills and supplier refunds at the same time.");
+                    if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" || inv.Type == "out_refund"))
+                        throw new Exception("You cannot register payments for customer invoices and credit notes at the same time.");
+                }
+            }
 
+            var total_amount = invoices.Sum(x => x.AmountResidual);
+
+            var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
+                (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
             var rec = new AccountRegisterPaymentDisplay
             {
-                Amount = Math.Abs(total_amount),
+                Amount = Math.Abs(total_amount ?? 0),
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
                 PartnerId = invoices[0].PartnerId,
                 PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
-                //Communication = communication,
-                InvoiceIds = invoice_ids
+                InvoiceIds = invoice_ids,
+                Communication = communication
             };
 
             return rec;

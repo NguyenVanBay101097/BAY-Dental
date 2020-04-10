@@ -16,6 +16,7 @@ namespace Infrastructure.Services
         Task UnlinkAsync(IEnumerable<Guid> ids);
         void _ComputeResidualPayment(IEnumerable<SaleOrder> saleOrders, decimal amount);
         Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val);
+        Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> saleOrderIds);
 
     }
 }
