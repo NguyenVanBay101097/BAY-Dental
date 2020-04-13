@@ -175,9 +175,9 @@ namespace Infrastructure.Services
             {
                 if (line.State != "sale" && line.State != "done")
                     line.InvoiceStatus = "no";
-                else if (line.AmountToInvoice != 0)
+                else if (line.QtyToInvoice != 0)
                     line.InvoiceStatus = "to invoice";
-                else if (line.AmountToInvoice == 0)
+                else if (line.QtyToInvoice == 0)
                     line.InvoiceStatus = "invoiced";
                 else
                     line.InvoiceStatus = "no";

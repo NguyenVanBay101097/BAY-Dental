@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<AccountPayment, AccountPaymentBasic>();
             CreateMap<AccountPayment, AccountPaymentDisplay>();
+            CreateMap<AccountPaymentSave, AccountPayment>();
         }
     }
 }

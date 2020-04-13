@@ -53,11 +53,23 @@ export class AccountPaymentService {
         return this.http.get<AccountPaymentDisplay>(this.baseApi + this.apiUrl + '/' + id);
     }
 
+    create(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl, val);
+    }
+
     actionCancel(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
     }
 
     unlink(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
+    }
+
+    saleDefaultGet(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/SaleDefaultGet', ids);
+    }
+
+    post(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Post', ids);
     }
 }

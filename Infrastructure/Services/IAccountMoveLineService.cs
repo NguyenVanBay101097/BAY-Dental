@@ -48,5 +48,7 @@ namespace Infrastructure.Services
         void _ComputeBalance(IEnumerable<AccountMoveLine> self);
 
         IEnumerable<AccountMoveLine> PrepareLines(IEnumerable<AccountMoveLine> entities);
+
+        void ComputeMoveNameState(IEnumerable<AccountMoveLine> self);
     }
 }

@@ -25,50 +25,222 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task Post(IEnumerable<AccountPayment> payments)
+        public async Task Post(IEnumerable<Guid> ids)
         {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.AccountMovePaymentRels)
+                .Include("AccountMovePaymentRels.Move")
+                .Include("AccountMovePaymentRels.Move.Lines")
+                .Include("AccountMovePaymentRels.Move.Lines.Account")
+                .Include(x => x.Journal).Include(x => x.Journal.DefaultDebitAccount)
+                .Include(x => x.Journal.DefaultCreditAccount).ToListAsync();
+
             var seqObj = GetService<IIRSequenceService>();
-            foreach (var rec in payments)
+            foreach (var rec in self)
             {
                 if (rec.State != "draft")
                     throw new Exception("Chỉ những thanh toán nháp mới được vào sổ.");
-                if (rec.AccountInvoicePaymentRels.Any(x => x.Invoice.State != "open" && x.Invoice.State != "paid"))
-                    throw new Exception("Chỉ được thanh toán cho những hóa đơn trạng thái đã xác nhận.");
-                string sequenceCode = "";
+
+                if (rec.AccountMovePaymentRels.Any(x => x.Move.State != "posted"))
+                    throw new Exception("The payment cannot be processed because the invoice is not open!");
+
+                string sequence_code = "";
                 if (string.IsNullOrEmpty(rec.Name))
                 {
                     if (rec.PaymentType == "transfer")
                     {
-                        sequenceCode = "account.payment.transfer";
+                        sequence_code = "account.payment.transfer";
                     }
                     else
                     {
                         if (rec.PartnerType == "customer")
                         {
                             if (rec.PaymentType == "outbound")
-                                sequenceCode = "account.payment.customer.refund";
+                                sequence_code = "account.payment.customer.refund";
                             if (rec.PaymentType == "inbound")
-                                sequenceCode = "account.payment.customer.invoice";
+                                sequence_code = "account.payment.customer.invoice";
                         }
                         if (rec.PartnerType == "supplier")
                         {
                             if (rec.PaymentType == "outbound")
-                                sequenceCode = "account.payment.supplier.invoice";
+                                sequence_code = "account.payment.supplier.invoice";
                             if (rec.PaymentType == "inbound")
-                                sequenceCode = "account.payment.supplier.refund";
+                                sequence_code = "account.payment.supplier.refund";
                         }
                     }
 
-                    rec.Name = await seqObj.NextByCode(sequenceCode);
+                    rec.Name = await seqObj.NextByCode(sequence_code);
+
+                    if (string.IsNullOrEmpty(rec.Name) && rec.PaymentType != "transfer")
+                        throw new Exception($"You have to define a sequence for {sequence_code} in your company.");
                 }
 
-           
+                var moveObj = GetService<IAccountMoveService>();
+                var moves = await _PreparePaymentMoves(new List<AccountPayment>() { rec });
+              
+                var amlObj = GetService<IAccountMoveLineService>();
+                foreach(var move in moves)
+                    amlObj.PrepareLines(move.Lines);
 
-                var amount = rec.Amount * (rec.PaymentType == "outbound" || rec.PaymentType == "transfer" ? 1 : -1);
-                var move = await _CreatePaymentEntry(rec, amount);
+                await moveObj.CreateMoves(moves);
+                await moveObj.ActionPost(moves);
+
+                foreach (var move in moves)
+                    amlObj.ComputeMoveNameState(move.Lines);
+
                 rec.State = "posted";
                 await UpdateAsync(rec);
+
+                if (rec.PaymentType == "inbound" || rec.PaymentType == "outbound")
+                {
+                    if (rec.AccountMovePaymentRels.Any())
+                    {
+                        var invoices = moves.Concat(rec.AccountMovePaymentRels.Select(x => x.Move));
+                        var lines = invoices.SelectMany(x => x.Lines).Where(x => !x.Reconciled && x.AccountId == rec.DestinationAccount.Id).ToList();
+
+                        await amlObj.Reconcile(lines);
+
+                        amlObj._AmountResidual(lines);
+                        moveObj._ComputeAmount(invoices);
+                        await moveObj.UpdateAsync(invoices);
+
+                        //update sale order residual
+                        var invoiceIds = invoices.Select(x => x.Id).ToList();
+                        var saleLineObj = GetService<ISaleOrderLineService>();
+                        var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.Move.Id)))
+                            .Select(x => x.OrderId).Distinct().ToListAsync();
+                        if (saleOrderIds.Any())
+                        {
+                            var saleObj = GetService<ISaleOrderService>();
+                            await saleObj.RecomputeResidual(saleOrderIds);
+                        }
+                    }
+                    else
+                    {
+                        //auto reconcile theo partner
+                        var lines = await amlObj.SearchQuery(x => !x.Reconciled && x.AccountId == rec.DestinationAccount.Id && x.PartnerId == rec.PartnerId,
+                            orderBy: x => x.OrderBy(s => s.DateCreated))
+                            .Include(x => x.Account).Include(x => x.MatchedDebits).Include(x => x.MatchedCredits).ToListAsync();
+                        await amlObj.Reconcile(lines);
+
+                        amlObj._AmountResidual(lines);
+                        await amlObj.UpdateAsync(lines);
+
+                        var invoiceIds = lines.Select(x => x.MoveId).ToList();
+                        await moveObj._ComputeAmount(invoiceIds);
+
+                        //update sale order residual
+                        var saleLineObj = GetService<ISaleOrderLineService>();
+                        var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.Move.Id)))
+                            .Select(x => x.OrderId).Distinct().ToListAsync();
+                        if (saleOrderIds.Any())
+                        {
+                            var saleObj = GetService<ISaleOrderService>();
+                            await saleObj.RecomputeResidual(saleOrderIds);
+                        }
+                    }
+                }
             }
+        }
+
+        public async Task<IList<AccountMove>> _PreparePaymentMoves(IEnumerable<AccountPayment> self)
+        {
+            var all_move_vals = new List<AccountMove>();
+
+            await _ComputeDestinationAccount(self);
+            foreach (var payment in self)
+            {
+                decimal counterpart_amount = 0;
+                AccountAccount liquidity_line_account = null;
+
+                if (payment.PaymentType == "outbound" || payment.PaymentType == "transfer")
+                {
+                    counterpart_amount = payment.Amount;
+                    liquidity_line_account = payment.Journal.DefaultDebitAccount;
+                }
+                else
+                {
+                    counterpart_amount = -payment.Amount;
+                    liquidity_line_account = payment.Journal.DefaultCreditAccount;
+                }
+
+                var balance = counterpart_amount;
+                var liquidity_amount = counterpart_amount;
+
+                var rec_pay_line_name = "";
+                if (payment.PaymentType == "transfer")
+                    rec_pay_line_name = payment.Name;
+                else
+                {
+                    if (payment.PartnerType == "customer")
+                    {
+                        if (payment.PaymentType == "inbound")
+                            rec_pay_line_name += "Khách hàng thanh toán";
+                        else if (payment.PaymentType == "outbound")
+                            rec_pay_line_name += "Hoàn tiền khách hàng";
+                    }
+                    else if (payment.PartnerType == "supplier")
+                    {
+                        if (payment.PaymentType == "inbound")
+                            rec_pay_line_name += "Nhà cung cấp hoàn tiền";
+                        else if (payment.PaymentType == "outbound")
+                            rec_pay_line_name += "Thanh toán nhà cung cấp";
+                    }
+
+                    if (payment.AccountMovePaymentRels.Any())
+                        rec_pay_line_name += $": {string.Join(", ", payment.AccountMovePaymentRels.Select(x => x.Move.Name))}";
+                }
+
+                var liquidity_line_name = "";
+                if (payment.PaymentType == "transfer")
+                { }
+                else
+                    liquidity_line_name = payment.Name;
+
+                var move_vals = new AccountMove
+                {
+                    Date = payment.PaymentDate,
+                    Ref = payment.Communication,
+                    JournalId = payment.JournalId,
+                    Journal = payment.Journal,
+                    PartnerId = payment.PartnerId,
+                    CompanyId = payment.CompanyId,
+                };
+
+                var lines = new List<AccountMoveLine>()
+                {
+                    new AccountMoveLine
+                    {
+                        Name = rec_pay_line_name,
+                        Debit = balance > 0 ? balance : 0,
+                        Credit = balance < 0 ? -balance : 0,
+                        DateMaturity = payment.PaymentDate,
+                        PartnerId = payment.PartnerId,
+                        AccountId = payment.DestinationAccount.Id,
+                        Account = payment.DestinationAccount,
+                        PaymentId = payment.Id,
+                        Move = move_vals,
+                    },
+                    new AccountMoveLine
+                    {
+                        Name = liquidity_line_name,
+                        Debit = balance < 0 ? -balance : 0,
+                        Credit = balance > 0 ? balance : 0,
+                        DateMaturity = payment.PaymentDate,
+                        PartnerId = payment.PartnerId,
+                        AccountId = liquidity_line_account.Id,
+                        Account = liquidity_line_account,
+                        PaymentId = payment.Id,
+                        Move = move_vals,
+                    },
+                };
+
+                move_vals.Lines = lines;
+
+                all_move_vals.Add(move_vals);
+            }
+
+            return all_move_vals;
         }
 
         private async Task<AccountMove> _GetMoveVals(AccountPayment rec, AccountJournal journal = null)
@@ -320,8 +492,7 @@ namespace Infrastructure.Services
 
             var total_amount = invoices.Sum(x => x.AmountResidual);
 
-            var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
-                (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
+            var communication = string.Join(", ", orders.Select(x => x.Name));
             var rec = new AccountRegisterPaymentDisplay
             {
                 Amount = Math.Abs(total_amount ?? 0),
@@ -333,6 +504,63 @@ namespace Infrastructure.Services
             };
 
             return rec;
+        }
+
+        public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId)
+        {
+            //Tính số tiền còn nợ của partner
+            var partnerObj = GetService<IPartnerService>();
+            var creditDebitGet = partnerObj.CreditDebitGet(new List<Guid>() { partnerId });
+
+            var partner = await partnerObj.GetByIdAsync(partnerId);
+            decimal total_amount = 0;
+            string partner_type = "";
+            if (partner.Customer && partner.Supplier)
+                throw new Exception("Không thể thanh toán cho đối tác vừa là khách hàng, vừa là nhà cung cấp");
+
+            if (partner.Customer)
+            {
+                total_amount = creditDebitGet[partnerId].Credit;
+                partner_type = "customer";
+            }
+            else if (partner.Supplier)
+            {
+                total_amount = creditDebitGet[partnerId].Debit;
+                partner_type = "supplier";
+            }
+
+            if (total_amount == 0)
+                throw new Exception("Không có gì để thanh toán");
+
+            string payment_type = "";
+            if (partner.Customer)
+                payment_type = total_amount > 0 ? "inbound" : "outbound";
+            else if (partner.Supplier)
+                payment_type = total_amount > 0 ? "outbound" : "inbound";
+
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount),
+                PaymentType = payment_type,
+                PartnerId = partnerId,
+                PartnerType = partner_type,
+            };
+
+            return rec;
+        }
+
+        public async Task<AccountPayment> CreateUI(AccountPaymentSave val)
+        {
+            var payment = _mapper.Map<AccountPayment>(val);
+
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.GetByIdAsync(payment.JournalId);
+            payment.CompanyId = journal.CompanyId;
+
+            foreach (var invoice_id in val.InvoiceIds)
+                payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
+
+            return await CreateAsync(payment);
         }
 
         public IDictionary<string, string> MAP_INVOICE_TYPE_PARTNER_TYPE
@@ -424,7 +652,8 @@ namespace Infrastructure.Services
                 }
             }
 
-            var account = await _ComputeDestinationAccount(rec);
+            await _ComputeDestinationAccount(new List<AccountPayment>() { rec });
+            var account = rec.DestinationAccount;
             return new AccountMoveLine
             {
                 Name = name,
@@ -439,22 +668,26 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<AccountAccount> _ComputeDestinationAccount(AccountPayment rec)
+        public async Task _ComputeDestinationAccount(IEnumerable<AccountPayment> self)
         {
-            if (rec.AccountInvoicePaymentRels.Any())
+            foreach (var payment in self)
             {
-                return rec.AccountInvoicePaymentRels.First().Invoice.Account;
+                if (payment.AccountMovePaymentRels.Any())
+                {
+                    payment.DestinationAccount = payment.AccountMovePaymentRels.SelectMany(x => x.Move.Lines)
+                        .Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
+                }
+                else if (payment.PartnerType == "customer")
+                {
+                    var accountObj = GetService<IAccountAccountService>();
+                    payment.DestinationAccount = await accountObj.GetAccountReceivableCurrentCompany();
+                }
+                else if (payment.PartnerType == "supplier")
+                {
+                    var accountObj = GetService<IAccountAccountService>();
+                    payment.DestinationAccount = await accountObj.GetAccountReceivableCurrentCompany();
+                }
             }
-            else if (rec.Partner != null)
-            {
-                var accountObj = GetService<IAccountAccountService>();
-                if (rec.PartnerType == "customer")
-                    return await accountObj.GetAccountReceivableCurrentCompany();
-                else
-                    return await accountObj.GetAccountPayableCurrentCompany();
-            }
-
-            throw new Exception("Không tìm thấy tài khoản kế toán");
         }
 
         private AccountMoveLine _GetSharedMoveLineVals(AccountPayment rec, decimal debit, decimal credit, AccountMove move, Guid? invoiceId = null)
@@ -536,7 +769,22 @@ namespace Infrastructure.Services
         public async Task CancelAsync(IEnumerable<Guid> ids)
         {
             await CancelAsync(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines)
-                .Include("MoveLines.Move").Include("MoveLines.Move.Lines").Include(x => x.AccountInvoicePaymentRels).ToList());
+                .Include("MoveLines.Move").Include("MoveLines.Move.Lines").Include(x => x.AccountMovePaymentRels).ToList());
+        }
+
+        public async Task<IEnumerable<AccountPayment>> ActionDraft(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            var moveObj = GetService<IAccountMoveService>();
+            var move_ids = self.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
+            var moves = await moveObj.ButtonDraft(move_ids);
+
+            await moveObj.Unlink(move_ids);
+
+            foreach (var rec in self)
+                rec.State = "draft";
+            await UpdateAsync(self);
+            return self;
         }
 
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
@@ -560,21 +808,22 @@ namespace Infrastructure.Services
             await UpdateAsync(payments);
         }
 
-        public async Task UnlinkAsync(IEnumerable<Guid> ids)
+        public async Task ActionDraftUnlink(IEnumerable<Guid> ids)
         {
-            var payments = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            await UnlinkAsync(payments);
+            var self = await ActionDraft(ids);
+            await UnlinkAsync(ids);
         }
 
-        public async Task UnlinkAsync(IEnumerable<AccountPayment> payments)
+        public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
-            foreach (var rec in payments.ToList())
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            foreach (var rec in self)
             {
-                if (rec.State != "draft")
+                if (rec.MoveLines.Any())
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
             }
 
-            await DeleteAsync(payments);
+            await DeleteAsync(self);
         }
 
         public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)

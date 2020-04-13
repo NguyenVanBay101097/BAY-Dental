@@ -49,6 +49,23 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost()]
+        public async Task<IActionResult> Create(AccountPaymentSave val)
+        {
+            var payment = await _paymentService.CreateUI(val);
+            var basic = _mapper.Map<AccountPaymentBasic>(payment);
+            return Ok(basic);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Post(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _paymentService.Post(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
@@ -67,7 +84,7 @@ namespace TMTDentalAPI.Controllers
             if (ids == null || !ids.Any())
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _paymentService.UnlinkAsync(ids);
+            await _paymentService.ActionDraftUnlink(ids);
             _unitOfWork.Commit();
             return NoContent();
         }

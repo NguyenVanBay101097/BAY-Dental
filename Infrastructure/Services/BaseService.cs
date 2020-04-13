@@ -204,8 +204,8 @@ namespace Infrastructure.Services
 
         private void CheckAccessRules(IEnumerable<TEntity> entities, string operation)
         {
-            if (IsUserRoot)
-                return;
+            //if (IsUserRoot)
+            //    return;
             if (string.IsNullOrEmpty(UserId))
                 return;
 

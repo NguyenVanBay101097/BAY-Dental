@@ -22,17 +22,6 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="dropdown" *ngIf="id">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false" type="button" id="dropdownMenuButton">
-                    Thao tác
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a *ngIf="id" class="dropdown-item" (click)="printSaleOrder()">In phiếu</a>
-                    <button type="button" *ngIf="id" class="dropdown-item" (click)="actionSaleOrderPayment()">Thanh
-                        toán</button>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -69,6 +58,10 @@
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionDone()">
                         Khóa
+                    </button>
+                    <button *ngIf="['draft', 'cancel'].indexOf(saleOrder.state) === -1" type="button"
+                        class="btn btn-secondary btn-sm" (click)="actionSaleOrderPayment()">
+                        Thanh toán
                     </button>
                     <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                         In phiếu

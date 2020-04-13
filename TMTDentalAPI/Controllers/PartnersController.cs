@@ -36,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAuthorizationService _authorizationService;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IAccountInvoiceService _accountInvoiceService;
+        private readonly IAccountPaymentService _paymentService;
 
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
@@ -44,7 +45,8 @@ namespace TMTDentalAPI.Controllers
             IApplicationRoleFunctionService roleFunctionService,
             IAuthorizationService authorizationService,
             IIRModelAccessService modelAccessService,
-            IAccountInvoiceService accountInvoiceService)
+            IAccountInvoiceService accountInvoiceService,
+            IAccountPaymentService paymentService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -54,6 +56,7 @@ namespace TMTDentalAPI.Controllers
             _authorizationService = authorizationService;
             _modelAccessService = modelAccessService;
             _accountInvoiceService = accountInvoiceService;
+            _paymentService = paymentService;
         }
 
         [HttpGet]
@@ -351,34 +354,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetDefaultRegisterPayment(Guid id)
         {
-            var partner = await _partnerService.GetByIdAsync(id);
-            if (partner.Customer != true && partner.Supplier != true)
-                throw new Exception("Đối tác không phải khách hàng cũng ko phải nhà cung cấp.");
-            if (partner.Customer == true && partner.Supplier == true)
-                throw new Exception("Không cho phép thanh toán đối tác vừa là khách hàng vừa là nhà cung cấp.");
-
-            var dict = _partnerService.CreditDebitGet(new List<Guid>() { id });
-            decimal total_amount = 0;
-            var sign = partner.Customer == true ? 1 : -1;
-            if (partner.Customer == true)
-            {
-                total_amount = (dict.ContainsKey(id) ? dict[id].Credit : 0) * sign;
-            }
-            else
-            {
-                total_amount = (dict.ContainsKey(id) ? dict[id].Debit : 0) * sign;
-            }
-
-            if (total_amount == 0)
-                throw new Exception("Không có gì để thanh toán");
-            var rec = new AccountRegisterPaymentDisplay
-            {
-                Amount = Math.Abs(total_amount),
-                PaymentType = total_amount > 0 ? "inbound" : "outbound",
-                PartnerId = partner.Id,
-                PartnerType = partner.Customer == true ? "customer" : "supplier",
-            };
-
+            var rec = await _paymentService.PartnerDefaultGet(id);
             return Ok(rec);
         }
 

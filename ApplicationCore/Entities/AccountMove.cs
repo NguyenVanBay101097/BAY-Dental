@@ -83,5 +83,8 @@ namespace ApplicationCore.Entities
 
         [NotMapped]
         public ICollection<AccountMoveLine> InvoiceLines { get; set; } = new List<AccountMoveLine>();
+
+        [NotMapped]
+        public string InvoicePaymentsWidget { get; set; }
     }
 }

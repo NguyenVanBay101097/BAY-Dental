@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Services
 {
@@ -69,8 +70,8 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines).Include("OrderLines.SaleOrderLineInvoiceRels")
-                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice").ToListAsync();
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
             _ComputeResidual(self);
             await UpdateAsync(self);
         }
@@ -175,9 +176,9 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
                 .Include("OrderLines.Order")
-                .Include("OrderLines.SaleOrderLineInvoiceRels")
-                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Move")
                 .ToListAsync();
 
             var saleLineObj = GetService<ISaleOrderLineService>();
@@ -187,10 +188,9 @@ namespace Infrastructure.Services
             {
                 if (sale.DotKhams.Any())
                     throw new Exception("Không thể hủy phiếu điều trị đã có đợt khám.");
+
                 foreach (var line in sale.OrderLines)
-                {
-                    invoiceIds = invoiceIds.Union(line.SaleOrderLineInvoiceRels.Select(x => x.InvoiceLine.Invoice.Id).Distinct().ToList());
-                }
+                    invoiceIds = invoiceIds.Union(line.SaleOrderLineInvoice2Rels.Select(x => x.InvoiceLine.Move.Id).Distinct().ToList());
 
                 dotKhamIds = dotKhamIds.Union(sale.DotKhams.Select(x => x.Id).ToList());
             }
@@ -1264,18 +1264,26 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
         {
             var self = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
-              .Include("OrderLines.SaleOrderLineInvoiceRels")
-              .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine").FirstOrDefaultAsync();
-            var invoiceIds = self.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Where(x => x.InvoiceLine.InvoiceId.HasValue).Select(x => x.InvoiceLine.InvoiceId.Value).ToList();
-            var invoiceObj = GetService<IAccountInvoiceService>();
-            var paymentInfos = await invoiceObj._GetPaymentInfoJson(invoiceIds);
+              .Include("OrderLines.SaleOrderLineInvoice2Rels")
+              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine").FirstOrDefaultAsync();
+
+            var invoiceIds = self.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.MoveId).Distinct().ToList();
+            var invoiceObj = GetService<IAccountMoveService>();
+            var invoices = await invoiceObj._ComputePaymentsWidgetReconciledInfo(invoiceIds);
             var dict = new Dictionary<Guid, PaymentInfoContent>();
-            foreach(var paymentInfo in paymentInfos)
+            foreach(var invoice in invoices)
             {
-                if (!dict.ContainsKey(paymentInfo.PaymentId))
-                    dict.Add(paymentInfo.PaymentId, paymentInfo);
-                else
-                    dict[paymentInfo.PaymentId].Amount += paymentInfo.Amount;
+                if (string.IsNullOrEmpty(invoice.InvoicePaymentsWidget))
+                    continue;
+
+                var paymentsWidget = JsonConvert.DeserializeObject<IList<PaymentInfoContent>>(invoice.InvoicePaymentsWidget);
+                foreach(var paymentWidget in paymentsWidget)
+                {
+                    if (!dict.ContainsKey(paymentWidget.PaymentId))
+                        dict.Add(paymentWidget.PaymentId, paymentWidget);
+                    else
+                        dict[paymentWidget.PaymentId].Amount += invoice.Amount;
+                }
             }
 
             return dict.Values;
@@ -1786,7 +1794,7 @@ namespace Infrastructure.Services
                 out_invoice_vals_list = invoice_vals_list;
 
             var moveObj = GetService<IAccountMoveService>();
-            var moves= await moveObj.CreateMoves(out_invoice_vals_list, default_type: "out_invoice");
+            var moves = await moveObj.CreateMoves(out_invoice_vals_list, default_type: "out_invoice");
             moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "out_refund"));
 
             return moves;

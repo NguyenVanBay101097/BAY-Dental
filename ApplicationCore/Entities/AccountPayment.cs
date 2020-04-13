@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -48,5 +49,8 @@ namespace ApplicationCore.Entities
         public AccountAccount WriteoffAccount { get; set; }
 
         public ICollection<AccountMovePaymentRel> AccountMovePaymentRels { get; set; } = new List<AccountMovePaymentRel>();
+
+        [NotMapped]
+        public AccountAccount DestinationAccount { get; set; }
     }
 }

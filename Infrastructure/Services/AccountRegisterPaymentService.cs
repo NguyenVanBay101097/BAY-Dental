@@ -139,7 +139,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             var paymentObj = GetService<IAccountPaymentService>();
             var payment = await paymentObj.CreateAsync(GetPaymentVals(self));
-            await paymentObj.Post(new List<AccountPayment>() { payment });
+            await paymentObj.Post(new List<Guid>() { payment.Id });
             return payment;
         }
 

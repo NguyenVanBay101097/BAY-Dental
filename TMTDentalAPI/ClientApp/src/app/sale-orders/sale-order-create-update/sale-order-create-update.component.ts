@@ -910,34 +910,23 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     if (this.id) {
-      this.registerPaymentService.saleOrdersDefaultGet([this.id]).subscribe(rs2 => {
-        if (rs2.amount > 0) {
-          let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-          modalRef.componentInstance.title = 'Thanh toán';
-          modalRef.componentInstance.defaultVal = rs2;
-          modalRef.result.then(() => {
-            this.notificationService.show({
-              content: 'Thanh toán thành công',
-              hideAfter: 3000,
-              position: { horizontal: 'center', vertical: 'top' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'success', icon: true }
-            });
-
-            this.loadRecord();
-            this.loadPayments();
-          }, () => {
-
-          });
-        } else {
+      this.paymentService.saleDefaultGet([this.id]).subscribe(rs2 => {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.result.then(() => {
           this.notificationService.show({
-            content: 'Phiếu điều trị đã thanh toán đủ',
+            content: 'Thanh toán thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
-            type: { style: 'error', icon: true }
+            type: { style: 'success', icon: true }
           });
-        }
+
+          this.loadRecord();
+          this.loadPayments();
+        }, () => {
+        });
       })
     }
   }
@@ -951,15 +940,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   deletePayment(payment) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa thanh toán';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
     modalRef.result.then(() => {
-      this.paymentService.actionCancel([payment.accountPaymentId]).subscribe(() => {
-        this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
-          this.loadRecord();
-          this.loadPayments();
-        });
+      this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
+        this.loadRecord();
+        this.loadPayments();
       });
     });
   }

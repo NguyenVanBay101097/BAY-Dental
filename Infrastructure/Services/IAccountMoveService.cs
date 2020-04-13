@@ -22,5 +22,9 @@ namespace Infrastructure.Services
         IEnumerable<string> GetOutboundTypes(bool include_receipts = true);
         IEnumerable<string> GetInboundTypes(bool include_receipts = true);
         Task ActionPost(IEnumerable<AccountMove> self);
+        void _ComputeAmount(IEnumerable<AccountMove> self);
+        Task _ComputeAmount(IEnumerable<Guid> ids);
+        Task<IEnumerable<AccountMove>> _ComputePaymentsWidgetReconciledInfo(IEnumerable<Guid> ids);
+        Task<IEnumerable<AccountMove>> ButtonDraft(IEnumerable<Guid> ids);
     }
 }

@@ -80,6 +80,10 @@ export class PartnerCustomerListComponent implements OnInit {
     })
   }
 
+  onPaymentChange() {
+    this.loadDataFromApi();
+  }
+
   createItem() {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';

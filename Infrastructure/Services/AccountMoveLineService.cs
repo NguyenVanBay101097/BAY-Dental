@@ -141,6 +141,17 @@ namespace Infrastructure.Services
             return await base.CreateAsync(entities);
         }
 
+        public void ComputeMoveNameState(IEnumerable<AccountMoveLine> self)
+        {
+            foreach (var line in self)
+            {
+                if (line.Move == null)
+                    throw new ArgumentNullException("Move");
+                line.MoveName = line.Move.Name;
+                line.ParentState = line.Move.State;
+            }
+        }
+
         public IEnumerable<AccountMoveLine> PrepareLines(IEnumerable<AccountMoveLine> entities)
         {
             var moveObj = GetService<IAccountMoveService>();
@@ -315,7 +326,10 @@ namespace Infrastructure.Services
             var partners = new HashSet<Guid?>();
             foreach (var line in self)
             {
-                companyIds.Add(line.Company.Id);
+                if (!line.CompanyId.HasValue)
+                    throw new ArgumentNullException("line.CompanyId");
+                companyIds.Add(line.CompanyId.Value);
+
                 allAccounts.Add(line.Account.Id);
                 if (line.Account.InternalType == "receivable" || line.Account.InternalType == "payable")
                     partners.Add(line.PartnerId);
@@ -478,9 +492,9 @@ namespace Infrastructure.Services
             return new PairToReconcileRes { Credit = credit, Debit = debit };
         }
 
-        public async Task RemoveMoveReconcile(IEnumerable<Guid> moveIds)
+        public async Task RemoveMoveReconcile(IEnumerable<Guid> ids)
         {
-            await RemoveMoveReconcile(SearchQuery(x => moveIds.Contains(x.Id)).Include(x => x.MatchedDebits)
+            await RemoveMoveReconcile(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MatchedDebits)
                 .Include(x => x.MatchedCredits).ToList());
         }
 
@@ -490,7 +504,7 @@ namespace Infrastructure.Services
                 return;
 
             var recMoveObj = GetService<IAccountPartialReconcileService>();
-            var invObj = GetService<IAccountInvoiceService>();
+            var invObj = GetService<IAccountMoveService>();
             var recMoves = new List<AccountPartialReconcile>().AsEnumerable();
             foreach (var moveLine in self)
             {
@@ -505,16 +519,14 @@ namespace Infrastructure.Services
             var amls = _AmountResidual(amlsToRecompute);
             await UpdateAsync(amls);
 
-            var invoiceIds = amls.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
+            var invoiceIds = amls.Select(x => x.MoveId).Distinct().ToList();
             if (invoiceIds.Any())
             {
-                await invObj.UpdatePayments(invoiceIds);
-                await invObj.UpdateResidual(invoiceIds);
-
+                await invObj._ComputeAmount(invoiceIds);
                 //Tìm sale orders để tính lại residual
              
                 var saleLineObj = GetService<ISaleOrderLineService>();
-                var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.Invoice.Id)))
+                var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
                     .Select(x => x.OrderId).Distinct().ToListAsync();
                 if (saleOrderIds.Any())
                 {

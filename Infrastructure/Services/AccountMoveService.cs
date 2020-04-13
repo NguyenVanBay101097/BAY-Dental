@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -42,6 +43,69 @@ namespace Infrastructure.Services
         //    _ComputePartner(new List<AccountMove>() { self });
         //    return base.CreateAsync(self);
         //}
+
+        public async Task<IEnumerable<AccountMove>> _ComputePaymentsWidgetReconciledInfo(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines).Include("Lines.Account").Include("Lines.MatchedCredits").Include("Lines.MatchedDebits")
+                .Include("Lines.MatchedDebits.DebitMove").Include("Lines.MatchedDebits.DebitMove.Move").Include("Lines.MatchedDebits.DebitMove.Journal")
+                .Include("Lines.MatchedDebits.CreditMove").Include("Lines.MatchedDebits.CreditMove.Move").Include("Lines.MatchedDebits.CreditMove.Journal")
+                .Include("Lines.MatchedCredits.DebitMove").Include("Lines.MatchedCredits.DebitMove.Move").Include("Lines.MatchedCredits.DebitMove.Journal")
+                .Include("Lines.MatchedCredits.CreditMove").Include("Lines.MatchedCredits.CreditMove.Move").Include("Lines.MatchedCredits.CreditMove.Journal")
+                .Include("Lines.Move").Include("Lines.Journal").ToListAsync();
+
+            foreach(var move in self)
+            {
+                if (move.State != "posted" || !IsInvoice(move, include_receipts: true))
+                {
+                    move.InvoicePaymentsWidget = "";
+                    continue;
+                }
+
+                var reconciled_vals = _GetReconciledInfoJSONValues(move);
+                if (reconciled_vals.Any())
+                    move.InvoicePaymentsWidget = JsonConvert.SerializeObject(reconciled_vals);
+                else
+                    move.InvoicePaymentsWidget = "";
+            }
+
+            return self;
+        }
+
+        public IList<PaymentInfoContent> _GetReconciledInfoJSONValues(AccountMove self)
+        {
+            var reconciled_vals = new List<PaymentInfoContent>();
+            var pay_term_line_ids = self.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable").ToList();
+            var partials = pay_term_line_ids.SelectMany(x => x.MatchedCredits).Concat(pay_term_line_ids.SelectMany(x => x.MatchedCredits)).ToList();
+            foreach(var partial in partials)
+            {
+                var counterpart_lines = new List<AccountMoveLine>() { partial.DebitMove, partial.CreditMove };
+                var counterpart_line = counterpart_lines.Where(x => !self.Lines.Contains(x)).FirstOrDefault();
+                var amount = partial.Amount;
+
+                if (amount == 0)
+                    continue;
+
+                var reference = counterpart_line.Move.Name;
+                if (!string.IsNullOrEmpty(counterpart_line.Move.Ref))
+                    reference += " (" + counterpart_line.Move.Ref +")";
+
+                reconciled_vals.Add(new PaymentInfoContent
+                {
+                    Name = counterpart_line.Name,
+                    JournalName = counterpart_line.Journal.Name,
+                    Amount = amount,
+                    Date = counterpart_line.Date,
+                    PaymentId = counterpart_line.Id,
+                    AccountPaymentId = counterpart_line.PaymentId,
+                    MoveId = counterpart_line.MoveId,
+                    Ref = reference
+                });
+            }
+
+            return reconciled_vals;
+        }
+
 
         private void _ComputePartner(IEnumerable<AccountMove> self)
         {
@@ -109,6 +173,15 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task _ComputeAmount(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines)
+                .Include("Lines.Account").ToList();
+            _ComputeAmount(self);
+            await UpdateAsync(self);
+        }
+
         public async Task ActionPost(IEnumerable<AccountMove> self)
         {
             await Post(self);
@@ -137,9 +210,22 @@ namespace Infrastructure.Services
                 }
 
                 move.State = "posted";
+
+                //Compute 'ref' for 'out_invoice'.
+                if (move.Type == "out_invoice" && string.IsNullOrEmpty(move.InvoicePaymentRef))
+                {
+                    var invoice_payment_ref = _GetInvoiceComputedReference(move);
+                    foreach (var line in move.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable"))
+                        line.Name = invoice_payment_ref;
+                }
             }
 
             await UpdateAsync(self);
+        }
+
+        private string _GetInvoiceComputedReference(AccountMove self)
+        {
+            return self.Name;
         }
 
         public Guid? _GetSequence(AccountMove self)
@@ -175,12 +261,12 @@ namespace Infrastructure.Services
 
         public bool _CheckLockDate(IEnumerable<AccountMove> self)
         {
-            foreach (var move in self)
-            {
-                var lock_date = move.Company.PeriodLockDate ?? DateTime.MinValue;
-                if (move.Date <= lock_date)
-                    throw new Exception(string.Format("Bạn không thể ghi/thay đổi sổ sách trước hoặc trong ngày khóa sổ {0}. Kiểm tra cấu hình hoặc yêu cầu quyền Kế toán/Cố vấn", lock_date.ToString("d")));
-            }
+            //foreach (var move in self)
+            //{
+            //    var lock_date = move.Company.PeriodLockDate ?? DateTime.MinValue;
+            //    if (move.Date <= lock_date)
+            //        throw new Exception(string.Format("Bạn không thể ghi/thay đổi sổ sách trước hoặc trong ngày khóa sổ {0}. Kiểm tra cấu hình hoặc yêu cầu quyền Kế toán/Cố vấn", lock_date.ToString("d")));
+            //}
             return true;
         }
 
@@ -209,6 +295,22 @@ namespace Infrastructure.Services
         public async Task ButtonCancel(IEnumerable<Guid> ids)
         {
             await ButtonCancel(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Journal).Include(x => x.Company).ToList());
+        }
+
+        public async Task<IEnumerable<AccountMove>> ButtonDraft(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines).ToListAsync();
+
+            var amlObj = GetService<IAccountMoveLineService>();
+            var line_ids = self.SelectMany(x => x.Lines).Select(x => x.Id).ToList();
+            await amlObj.RemoveMoveReconcile(line_ids);
+
+            foreach (var move in self)
+                move.State = "draft";
+
+            await UpdateAsync(self);
+            return self;
         }
 
         public async Task ButtonCancel(IEnumerable<AccountMove> self)

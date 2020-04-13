@@ -8,6 +8,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 @Component({
   selector: 'app-account-invoice-register-payment-dialog-v2',
   templateUrl: './account-invoice-register-payment-dialog-v2.component.html',
@@ -21,7 +22,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   loading = false;
   title: string;
 
-  constructor(private registerPaymentService: AccountRegisterPaymentService, private fb: FormBuilder, private intlService: IntlService,
+  constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
     private errorService: AppSharedShowErrorService) { }
 
@@ -41,7 +42,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     if (this.defaultVal) {
       this.paymentForm.patchValue(this.defaultVal);
-      console.log(this.defaultVal);
       var paymentDate = new Date(this.defaultVal.paymentDate);
       this.paymentForm.get('paymentDateObj').setValue(paymentDate);
     }
@@ -76,8 +76,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       return;
     }
 
-    this.create().subscribe(result => {
-      this.createPayment(result.id).subscribe(() => {
+    this.create().subscribe((result: any) => {
+      this.paymentService.post([result.id]).subscribe(() => {
         this.activeModal.close(true);
       }, (err) => {
         this.errorService.show(err);
@@ -90,13 +90,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
-    return this.registerPaymentService.create(val);
-  }
-
-  createPayment(id) {
-    var val = new AccountRegisterPaymentCreatePayment();
-    val.id = id;
-    return this.registerPaymentService.createPayment(val);
+    return this.paymentService.create(val);
   }
 
   cancel() {
