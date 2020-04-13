@@ -31,7 +31,8 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       content: null,
-      facebookPageId: null
+      facebookPageId: null,
+      audienceFilter: null
     });
 
     this.route.queryParamMap.pipe(
@@ -272,7 +273,44 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
       this.selectedFormulaDisplay = null;
       document.getElementById('dropdown-item-audience-filter').style.display = 'block';
       console.log(this.listAudienceFilterItems);
+      this.formGroup.patchValue({
+        audienceFilter: this.convertAudienceFilterItemsToString()
+      });
     }
+  }
+  convertAudienceFilterItemsToString() {
+    var listAudienceFilterItemsString = "";
+    var element = "";
+    for (let i = 0; i < this.listAudienceFilterItems.length; i++) {
+      element = this.listAudienceFilterItems[i].type + ",|" +
+        this.listAudienceFilterItems[i].name + ",|" + 
+        this.listAudienceFilterItems[i].formula_type + ",|" + 
+        this.listAudienceFilterItems[i].formula_value + ",|" + 
+        this.listAudienceFilterItems[i].formula_display;
+      if (i === this.listAudienceFilterItems.length - 1) {
+        listAudienceFilterItemsString += element;
+      } else {
+        listAudienceFilterItemsString += element + ";|";
+      }
+    }
+    this.convertAudienceFilterItemsToArray(listAudienceFilterItemsString);
+    return listAudienceFilterItemsString;
+  }
+  convertAudienceFilterItemsToArray(listAudienceFilterItemsString) {
+    var listAudienceFilterItemsArray = [];
+    var element_s = listAudienceFilterItemsString.split(";|");
+    for (let i = 0; i < element_s.length; i++) {
+      var element_sm = element_s[i].split(",|");
+      var element = {
+        type: element_sm[0],
+        name: element_sm[1],
+        formula_type: element_sm[2],
+        formula_value: element_sm[3],
+        formula_display: element_sm[4]
+      }
+      listAudienceFilterItemsArray.push(element);
+    }
+    console.log(listAudienceFilterItemsArray);
   }
   deleteAudienceFilterItem(index) {
     this.listAudienceFilterItems.splice(index, 1);

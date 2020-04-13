@@ -7,6 +7,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
+import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -46,7 +47,6 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       offset: this.skip,
       search: this.search || ''
     }
-    console.log(val);
     this.facebookUserProfilesService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -71,8 +71,15 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       });
   }
 
-  selectedKeysChange(rows: number[]) {
-    console.log(rows);
+  selectedKeysChange(id: number[]) {
+    console.log(id);
+    let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.customerId = id;
+
+    modalRef.result.then(() => {
+      //
+    }, () => {
+    });
   }
 
   pageChange(event: PageChangeEvent): void {

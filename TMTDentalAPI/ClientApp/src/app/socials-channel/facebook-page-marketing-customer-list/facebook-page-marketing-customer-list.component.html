@@ -6,16 +6,18 @@
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        [resizable]="true"
         [kendoGridSelectBy]="'id'"
         (selectedKeysChange)="selectedKeysChange($event)"
         (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Avatar" width="70">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <img class="rounded" 
+                    [src]="dataItem.profilePic" height="40" width="40">
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="psId" title="PSID">
         </kendo-grid-column>
-        <!-- <kendo-grid-column title="Ảnh đại diện">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <img src="https://graph.facebook.com/{{dataItem.psId}}/profile_pic?height=40&amp;width=40">
-            </ng-template>
-        </kendo-grid-column> -->
         <kendo-grid-column field="name" title="Tên khách hàng">
         </kendo-grid-column>
         <kendo-grid-column field="gender" title="Giới tính">

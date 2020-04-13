@@ -70,7 +70,7 @@ export class FacebookMassMessagingCreateUpdateDialogComponent implements OnInit 
     this.facebookTagsService.getTags(val).subscribe(res => {
       this.listTags = res['items'];
       this.showAddTag = 2;
-      console.log(this.listTags);
+      // console.log(this.listTags);
     }, err => {
       console.log(err);
     })

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime DateCreated { get; set; }
         public Guid? PartnerId { get; set; }
+        public IEnumerable<FacebookTagBasic> Tags { get; set; } = new List<FacebookTagBasic>();
 
         public string ProfilePic { get; set; }
     }

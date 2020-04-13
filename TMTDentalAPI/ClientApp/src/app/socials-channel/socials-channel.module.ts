@@ -32,6 +32,7 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ClickOutsideDirective } from './click-outside.directive';
 import { FacebookMassMessagingCreateUpdateDialogComponent } from './facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
+import { FacebookPageMarketingCustomerDialogComponent } from './facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { FacebookMassMessagingCreateUpdateDialogComponent } from './facebook-mas
     FacebookMassMessagingScheduleDialogComponent,
     FacebookMassMessagingStatisticsDialogComponent,
     ClickOutsideDirective,
-    FacebookMassMessagingCreateUpdateDialogComponent
+    FacebookMassMessagingCreateUpdateDialogComponent,
+    FacebookPageMarketingCustomerDialogComponent
   ],
   imports: [
     CommonModule,
@@ -79,7 +81,8 @@ import { FacebookMassMessagingCreateUpdateDialogComponent } from './facebook-mas
     PartnerCreateUpdateComponent,
     FacebookPageMarketingCustomerConnectComponent,
     FacebookMassMessagingScheduleDialogComponent,
-    FacebookMassMessagingCreateUpdateDialogComponent
+    FacebookMassMessagingCreateUpdateDialogComponent,
+    FacebookPageMarketingCustomerDialogComponent
   ],
   providers: [
     FacebookUserProfilesService

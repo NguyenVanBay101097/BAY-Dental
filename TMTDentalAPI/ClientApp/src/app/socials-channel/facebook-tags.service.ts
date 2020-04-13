@@ -16,4 +16,7 @@ export class FacebookTagsService {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
+    create(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl, val);
+    }
 }
