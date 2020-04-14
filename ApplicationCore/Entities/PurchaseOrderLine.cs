@@ -6,6 +6,12 @@ namespace ApplicationCore.Entities
 {
     public class PurchaseOrderLine: BaseEntity
     {
+        public PurchaseOrderLine()
+        {
+            QtyInvoiced = 0;
+            Discount = 0;
+        }
+
         public string Name { get; set; }
         public int? Sequence { get; set; }
         public decimal ProductQty { get; set; }
@@ -29,5 +35,7 @@ namespace ApplicationCore.Entities
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
         public decimal? QtyInvoiced { get; set; }
+
+        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
     }
 }

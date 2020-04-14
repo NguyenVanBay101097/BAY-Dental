@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200414031809_UpdatePurchaseInvoiceColumns")]
+    partial class UpdatePurchaseInvoiceColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -674,12 +676,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("Discount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("DiscountFixed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("DiscountType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool?>("ExcludeFromInvoiceTab")
                         .HasColumnType("bit");
 
@@ -690,9 +686,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("JournalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("LaboLineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LastUpdated")
@@ -760,8 +753,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("JournalId");
-
-                    b.HasIndex("LaboLineId");
 
                     b.HasIndex("MoveId");
 
@@ -6242,11 +6233,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("JournalId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ApplicationCore.Entities.LaboOrderLine", "LaboLine")
-                        .WithMany("MoveLines")
-                        .HasForeignKey("LaboLineId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
                         .WithMany("Lines")
                         .HasForeignKey("MoveId")
@@ -6270,7 +6256,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ProductUoMId");
 
                     b.HasOne("ApplicationCore.Entities.PurchaseOrderLine", "PurchaseLine")
-                        .WithMany("MoveLines")
+                        .WithMany()
                         .HasForeignKey("PurchaseLineId")
                         .OnDelete(DeleteBehavior.SetNull);
 

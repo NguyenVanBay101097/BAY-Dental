@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AccountPaymentPaged } from 'src/app/account-payments/account-payment.service';
+import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { PartnerService } from '../partner.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-partner-payments',
@@ -21,7 +22,8 @@ export class PartnerPaymentsComponent implements OnInit {
 
   limit = 5;
   skip = 0;
-  constructor(private service: PartnerService, private modalService: NgbModal) { }
+  constructor(private service: PartnerService, private modalService: NgbModal,
+    private paymentService: AccountPaymentService) { }
 
   ngOnInit() {
     this.loadPayments();
@@ -49,6 +51,18 @@ export class PartnerPaymentsComponent implements OnInit {
       console.log(er);
     }
     );
+  }
+
+  draftUnlinkPayment(payment) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa thanh toán';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.paymentService.unlink([payment.id]).subscribe(() => {
+        this.loadPayments();
+        this.paymentChange.emit(null);
+      });
+    });
   }
 
   pageChange(event: PageChangeEvent): void {

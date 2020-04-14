@@ -76,7 +76,7 @@ namespace Infrastructure.Services
         {
             var reconciled_vals = new List<PaymentInfoContent>();
             var pay_term_line_ids = self.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable").ToList();
-            var partials = pay_term_line_ids.SelectMany(x => x.MatchedCredits).Concat(pay_term_line_ids.SelectMany(x => x.MatchedCredits)).ToList();
+            var partials = pay_term_line_ids.SelectMany(x => x.MatchedDebits).Concat(pay_term_line_ids.SelectMany(x => x.MatchedCredits)).ToList();
             foreach(var partial in partials)
             {
                 var counterpart_lines = new List<AccountMoveLine>() { partial.DebitMove, partial.CreditMove };
@@ -185,6 +185,18 @@ namespace Infrastructure.Services
         public async Task ActionPost(IEnumerable<AccountMove> self)
         {
             await Post(self);
+
+            //sau khi post name va state thay đổi nên cập nhật lại cho lines
+            foreach(var move in self)
+            {
+                foreach(var line in move.Lines)
+                {
+                    line.ParentState = move.State;
+                    line.MoveName = move.Name;
+                }
+            }
+
+            await UpdateAsync(self);
         }
 
         public async Task Post(IEnumerable<AccountMove> self)

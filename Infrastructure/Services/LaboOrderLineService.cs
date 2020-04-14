@@ -51,6 +51,25 @@ namespace Infrastructure.Services
             return null;
         }
 
+        public AccountMoveLine _PrepareAccountMoveLine(LaboOrderLine self, AccountMove move)
+        {
+            var qty = self.ProductQty - self.QtyInvoiced;
+            if (qty < 0)
+                qty = 0;
+
+            return new AccountMoveLine
+            {
+                Name = $"{self.Order.Name}: {self.Name}",
+                Move = move,
+                LaboLineId = self.Id,
+                ProductUoMId = self.Product.UOMId,
+                ProductId = self.ProductId,
+                PriceUnit = self.PriceUnit,
+                Quantity = qty,
+                PartnerId = move.PartnerId,
+            };
+        }
+
         public async Task<PagedResult2<LaboOrderLineBasic>> GetPagedResultAsync(LaboOrderLinePaged val)
         {
             var query = SearchQuery();
@@ -178,21 +197,20 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 decimal qty = 0;
-                foreach (var invLine in line.InvoiceLines)
+                foreach (var invLine in line.MoveLines)
                 {
-                    if (invLine.Invoice.State != "cancel")
+                    if (invLine.Move.State != "cancel")
                     {
-                        if (invLine.Invoice.Type == "in_invoice")
-                            qty += invLine.Quantity;
-                        else if (invLine.Invoice.Type == "in_refund")
-                            qty -= invLine.Quantity;
+                        if (invLine.Move.Type == "in_invoice")
+                            qty += (invLine.Quantity ?? 0);
+                        else if (invLine.Move.Type == "in_refund")
+                            qty -= (invLine.Quantity ?? 0);
                     }
                 }
 
                 line.QtyInvoiced = qty;
             }
         }
-
 
         public async Task<LaboOrderLineOnChangeProductResult> OnChangeProduct(LaboOrderLineOnChangeProduct val)
         {

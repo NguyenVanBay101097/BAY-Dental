@@ -18,9 +18,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredProducts" ngbAutofocus [textField]="'name'"
-                                        [filterable]="true" (valueChange)="onChangeProduct($event)" #productCbx
-                                        formControlName="product" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredProducts" [disabled]="productUpdatable == false"
+                                        ngbAutofocus [textField]="'name'" [filterable]="true"
+                                        (valueChange)="onChangeProduct($event)" #productCbx formControlName="product"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -37,7 +38,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="priceUnit">
+                                    <kendo-numerictextbox [format]="'n0'" [disabled]="line && line.qtyInvoiced > 0"
+                                        formControlName="priceUnit">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>

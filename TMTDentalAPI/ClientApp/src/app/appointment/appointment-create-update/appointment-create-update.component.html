@@ -68,7 +68,7 @@
                                     <label class="o_form_label">Trạng thái</label>
                                 </td>
                                 <td>
-                                    <select class="form-control" formControlName="state">
+                                    <select class="form-control" [disableControl]="!appointId" formControlName="state">
                                         <option value="confirmed">Đang hẹn</option>
                                         <option value="done">Đã tới</option>
                                         <option value="cancel">Đã hủy</option>

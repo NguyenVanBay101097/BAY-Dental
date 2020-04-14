@@ -62,6 +62,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<AccountInvoiceLine> InvoiceLines { get; set; } = new List<AccountInvoiceLine>();
 
+        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
+
         public decimal QtyInvoiced { get; set; }
 
         public string State { get; set; }

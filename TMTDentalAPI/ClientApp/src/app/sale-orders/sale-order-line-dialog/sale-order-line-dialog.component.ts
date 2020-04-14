@@ -92,6 +92,15 @@ export class SaleOrderLineDialogComponent implements OnInit {
     });
   }
 
+  get productUpdatable() {
+    if (!this.line) {
+      return true;
+    }
+
+    var updatable = (this.line.state == "done" || this.line.state == "cancel") || (this.line.state == "sale" && this.line.qtyInvoiced > 0);
+    return !updatable;
+  }
+
   get lineState() {
     return this.line ? this.line.state : 'draft';
   }

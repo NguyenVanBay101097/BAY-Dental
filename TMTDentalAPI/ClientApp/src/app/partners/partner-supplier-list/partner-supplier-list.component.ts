@@ -12,7 +12,10 @@ import { PartnerImportComponent } from '../partner-import/partner-import.compone
 @Component({
   selector: 'app-partner-supplier-list',
   templateUrl: './partner-supplier-list.component.html',
-  styleUrls: ['./partner-supplier-list.component.css']
+  styleUrls: ['./partner-supplier-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class PartnerSupplierListComponent implements OnInit {
   gridData: GridDataResult;
@@ -70,6 +73,10 @@ export class PartnerSupplierListComponent implements OnInit {
       this.loadDataFromApi();
     }, () => {
     });
+  }
+
+  onPaymentChange() {
+    this.loadDataFromApi();
   }
 
 

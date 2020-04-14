@@ -41,7 +41,7 @@
                     </button>
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
                         (click)="actionInvoiceCreateV2()">
-                        Cập nhật công nợ
+                        Tạo hóa đơn
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
                         *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateDotKham()">
@@ -76,7 +76,7 @@
                     <button [disabled]="saleOrder.state !== 'sale'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': saleOrder.state === 'sale', 'btn-secondary': saleOrder.state !== 'sale'}"
                         type="button">
-                        Đơn hàng
+                        Đã xác nhận
                     </button>
                     <button [disabled]="saleOrder.state !== 'draft'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': saleOrder.state === 'draft', 'btn-secondary': saleOrder.state !== 'draft'}"

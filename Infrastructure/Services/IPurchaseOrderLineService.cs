@@ -12,5 +12,6 @@ namespace Infrastructure.Services
         Task<PurchaseOrderLineOnChangeProductResult> OnChangeProduct(PurchaseOrderLineOnChangeProduct val);
         void _ComputeAmount(IEnumerable<PurchaseOrderLine> self);
         void _ComputeQtyInvoiced(IEnumerable<PurchaseOrderLine> self);
+        AccountMoveLine _PrepareAccountMoveLine(PurchaseOrderLine self, AccountMove move);
     }
 }

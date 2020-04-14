@@ -41,7 +41,7 @@ export class SaleOrderListComponent implements OnInit {
 
   stateFilterOptions: TmtOptionSelect[] = [
     { text: 'Tất cả', value: '' },
-    { text: 'Đơn hàng', value: 'sale,done' },
+    { text: 'Đã xác nhận', value: 'sale,done' },
     { text: 'Nháp', value: 'draft,cancel' }
   ];
 
@@ -64,7 +64,7 @@ export class SaleOrderListComponent implements OnInit {
   stateGet(state) {
     switch (state) {
       case 'sale':
-        return 'Đơn hàng';
+        return 'Đã xác nhận';
       case 'done':
         return 'Đã khóa';
       case 'cancel':
@@ -102,7 +102,7 @@ export class SaleOrderListComponent implements OnInit {
       return false;
     }
 
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu điều trị';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
@@ -158,7 +158,7 @@ export class SaleOrderListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu điều trị';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

@@ -178,11 +178,11 @@ namespace Infrastructure.Services
                 .Include("OrderLines.Order")
                 .Include("OrderLines.SaleOrderLineInvoice2Rels")
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoiceRels.InvoiceLine.Move")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .ToListAsync();
 
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var invoiceIds = new List<Guid>().AsEnumerable();
+            var move_ids = new List<Guid>().AsEnumerable();
             var dotKhamIds = new List<Guid>().AsEnumerable();
             foreach (var sale in self)
             {
@@ -190,17 +190,19 @@ namespace Infrastructure.Services
                     throw new Exception("Không thể hủy phiếu điều trị đã có đợt khám.");
 
                 foreach (var line in sale.OrderLines)
-                    invoiceIds = invoiceIds.Union(line.SaleOrderLineInvoice2Rels.Select(x => x.InvoiceLine.Move.Id).Distinct().ToList());
+                    move_ids = move_ids.Union(line.SaleOrderLineInvoice2Rels.Select(x => x.InvoiceLine.Move.Id).Distinct().ToList());
 
                 dotKhamIds = dotKhamIds.Union(sale.DotKhams.Select(x => x.Id).ToList());
             }
 
             await UpdateAsync(self);
 
-            if (invoiceIds.Any())
+            if (move_ids.Any())
             {
-                var invObj = GetService<IAccountInvoiceService>();
-                await invObj.ActionCancel(invoiceIds);
+                var moveObj = GetService<IAccountMoveService>();
+                await moveObj.ButtonDraft(move_ids);
+
+                await moveObj.Unlink(move_ids);
             }
 
             if (dotKhamIds.Any())
@@ -213,17 +215,17 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
-                    line.State = "cancel";
+                    line.State = "draft";
                 }
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
 
-                sale.State = "cancel";
-                _GetInvoiced(new List<SaleOrder>() { sale });
+                sale.State = "draft";
             }
 
+            _GetInvoiced(self);
             await UpdateAsync(self);
         }
 
@@ -911,9 +913,9 @@ namespace Infrastructure.Services
             var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
                 .Include(x => x.Order)
                 .Include(x => x.Product)
-               .Include(x => x.SaleOrderLineInvoiceRels)
-               .Include("SaleOrderLineInvoiceRels.InvoiceLine")
-               .Include("SaleOrderLineInvoiceRels.InvoiceLine.Invoice")
+               .Include(x => x.SaleOrderLineInvoice2Rels)
+               .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
+               .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                .ToListAsync();
 
             saleLineObj._GetInvoiceQty(lines);
@@ -929,84 +931,23 @@ namespace Infrastructure.Services
             var self = new List<SaleOrder>() { order };
             await _GenerateDotKhamSteps(self);
 
-            //if (order.InvoiceStatus == "to_invoice" && order.State == "sale")
-            //{
-            //    var invs = await ActionInvoiceCreateV2(order);
-            //    var invObj = GetService<IAccountInvoiceService>();
-            //    await invObj.ActionInvoiceOpen(invs.Select(x => x.Id).ToList());
+            if (order.InvoiceStatus == "to invoice" && order.State == "sale")
+            {
+                var invoices = await _CreateInvoices(self, final: true);
+                var moveObj = GetService<IAccountMoveService>();
+                await moveObj.ActionPost(invoices);
 
-            //    saleLineObj._GetInvoiceQty(lines);
-            //    saleLineObj._GetToInvoiceQty(lines);
-            //    saleLineObj._ComputeInvoiceStatus(lines);
-            //    await saleLineObj.UpdateAsync(lines);
+                foreach (var so in self)
+                {
+                    saleLineObj._GetInvoiceQty(so.OrderLines);
+                    saleLineObj._GetToInvoiceQty(so.OrderLines);
+                    saleLineObj._ComputeInvoiceStatus(so.OrderLines);
+                }
 
-            //    _AmountAll(order);
-            //    _GetInvoiced(new List<SaleOrder>() { order });
-            //    await UpdateAsync(order);
-
-            //    ////Những dòng tăng số lượng sẽ tạo hóa đơn tăng doanh thu
-            //    ////Những dòng giảm số lượng sẽ tạo hóa đơn giảm doanh thu
-            //    //var increaseLines = new List<SaleOrderLine>();
-            //    //var decreaseLines = new List<SaleOrderLine>();
-            //    //foreach (var line in order.OrderLines)
-            //    //{
-            //    //    var qtyInvoiced = line.QtyInvoiced ?? 0;
-            //    //    var priceUnit = line.PriceUnit;
-            //    //    var qtyToInvoice = line.ProductUOMQty - qtyInvoiced;
-            //    //    if (qtyToInvoice > 0 && priceUnit > 0)
-            //    //        increaseLines.Add(line);
-            //    //    if (qtyToInvoice > 0 && priceUnit < 0)
-            //    //        decreaseLines.Add(line);
-            //    //    if (qtyToInvoice < 0 && priceUnit > 0)
-            //    //        decreaseLines.Add(line);
-            //    //    if (qtyToInvoice < 0 && priceUnit < 0)
-            //    //        increaseLines.Add(line);
-            //    //}
-
-            //    //var invObj = GetService<IAccountInvoiceService>();
-            //    //bool updateFlag = false;
-            //    //if (increaseLines.Any())
-            //    //{
-            //    //    var increaseInv = await CreateInvoice(increaseLines, order, type: "out_invoice");
-            //    //    await invObj.ActionInvoiceOpen(new List<Guid>() { increaseInv.Id });
-
-            //    //    saleLineObj._GetInvoiceQty(increaseLines);
-            //    //    saleLineObj._GetToInvoiceQty(increaseLines);
-            //    //    saleLineObj._ComputeInvoiceStatus(increaseLines);
-            //    //    await saleLineObj.UpdateAsync(increaseLines);
-
-            //    //    updateFlag = true;
-            //    //}
-
-            //    //if (decreaseLines.Any())
-            //    //{
-            //    //    var decreaseInv = await CreateInvoice(decreaseLines, order, type: "out_refund");
-            //    //    await invObj.ActionInvoiceOpen(new List<Guid>() { decreaseInv.Id });
-
-            //    //    saleLineObj._GetInvoiceQty(decreaseLines);
-            //    //    saleLineObj._GetToInvoiceQty(decreaseLines);
-            //    //    saleLineObj._ComputeInvoiceStatus(decreaseLines);
-            //    //    await saleLineObj.UpdateAsync(decreaseLines);
-
-            //    //    updateFlag = true;
-            //    //}
-
-            //    //if (updateFlag)
-            //    //{
-            //    //    var self = new List<SaleOrder>() { order };
-            //    //    foreach (var saleOrder in self)
-            //    //    {
-            //    //        saleLineObj._GetInvoiceQty(saleOrder.OrderLines);
-            //    //        saleLineObj._GetToInvoiceQty(saleOrder.OrderLines);
-            //    //        saleLineObj._ComputeInvoiceStatus(saleOrder.OrderLines);
-            //    //    }
-
-            //    //    _GetInvoiced(self);
-            //    //    await UpdateAsync(self);
-
-            //    //    await _GenerateDotKhamSteps(self);
-            //    //}
-            //}
+                _GetInvoiced(self);
+                _ComputeResidual(self);
+                await UpdateAsync(self);
+            }
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -1282,7 +1223,7 @@ namespace Infrastructure.Services
                     if (!dict.ContainsKey(paymentWidget.PaymentId))
                         dict.Add(paymentWidget.PaymentId, paymentWidget);
                     else
-                        dict[paymentWidget.PaymentId].Amount += invoice.Amount;
+                        dict[paymentWidget.PaymentId].Amount += paymentWidget.Amount;
                 }
             }
 
@@ -1779,9 +1720,9 @@ namespace Infrastructure.Services
             {
                 foreach (var invoice_vals in invoice_vals_list)
                 {
-                    if (invoice_vals.Lines.Sum(x => x.Quantity * x.PriceUnit) < 0)
+                    if (invoice_vals.InvoiceLines.Sum(x => x.Quantity * x.PriceUnit) < 0)
                     {
-                        foreach (var l in invoice_vals.Lines)
+                        foreach (var l in invoice_vals.InvoiceLines)
                             l.Quantity = -l.Quantity;
                         invoice_vals.Type = "out_refund";
                         refund_invoice_vals_list.Add(invoice_vals);

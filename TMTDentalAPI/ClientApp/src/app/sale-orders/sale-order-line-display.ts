@@ -9,4 +9,5 @@ export class SaleOrderLineDisplay {
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
     state: string;
+    qtyInvoiced: number;
 }

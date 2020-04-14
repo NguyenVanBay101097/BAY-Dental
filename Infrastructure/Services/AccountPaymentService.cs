@@ -685,7 +685,7 @@ namespace Infrastructure.Services
                 else if (payment.PartnerType == "supplier")
                 {
                     var accountObj = GetService<IAccountAccountService>();
-                    payment.DestinationAccount = await accountObj.GetAccountReceivableCurrentCompany();
+                    payment.DestinationAccount = await accountObj.GetAccountPayableCurrentCompany();
                 }
             }
         }

@@ -258,10 +258,9 @@ namespace Infrastructure.Services
                     line.State = "purchase";
             }
 
-
-            var invObj = GetService<IAccountInvoiceService>();
-            var invoices = await ActionInvoiceCreate(self);
-            await invObj.ActionInvoiceOpen(invoices.Select(x => x.Id).ToList());
+            var invoices = await _CreateInvoices(self);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
 
             var poLineObj = GetService<IPurchaseOrderLineService>();
             poLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
@@ -284,62 +283,57 @@ namespace Infrastructure.Services
                   
                 if (order.OrderLines.Any(x => (x.QtyInvoiced ?? 0) < x.ProductQty))
                     order.InvoiceStatus = "to invoice";
-                else if (order.OrderLines.Any(x => (x.QtyInvoiced ?? 0) >= x.ProductQty))
+                else if (order.OrderLines.All(x => (x.QtyInvoiced ?? 0) >= x.ProductQty))
                     order.InvoiceStatus = "invoiced";
                 else
                     order.InvoiceStatus = "no";
             }
         }
 
-        public async Task<IList<AccountInvoice>> ActionInvoiceCreate(IEnumerable<PurchaseOrder> self)
+        public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<PurchaseOrder> self)
         {
-            var invObj = GetService<IAccountInvoiceService>();
-            var invLineObj = GetService<IAccountInvoiceLineService>();
-            var res = new List<AccountInvoice>();
+            var poLineObj = GetService<IPurchaseOrderLineService>();
+            var invoice_vals_list = new List<AccountMove>();
             foreach (var order in self)
             {
-                var invData = await PrepareInvoice(order);
-                res.Add(invData);
-                var invLines = new List<AccountInvoiceLine>();
+                var invoice_vals = await PrepareInvoice(order);
                 foreach (var poLine in order.OrderLines)
                 {
-                    if (poLine.State == "cancel")
-                        continue;
-
-                    var invLineData = await invObj.PrepareInvoiceLineFromPOLine(invData, poLine, journal: invData.Journal, type: "in_invoice");
-                    invLines.Add(invLineData);
+                    invoice_vals.InvoiceLines.Add(poLineObj._PrepareAccountMoveLine(poLine, invoice_vals));
                 }
 
-                invData.InvoiceLines = invLines;
-                invLineObj.ComputePrice(invData.InvoiceLines);
-                invObj._ComputeAmount(invData);
-                await invObj.CreateAsync(invData);
+                if (!invoice_vals.InvoiceLines.Any())
+                    throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+
+                invoice_vals_list.Add(invoice_vals);
             }
 
-            return res;
+            var in_invoice_vals_list = invoice_vals_list.Where(x => x.Type == "in_invoice").ToList();
+            var refund_invoice_vals_list = invoice_vals_list.Where(x => x.Type == "in_refund").ToList();
+
+            var moveObj = GetService<IAccountMoveService>();
+            var moves = await moveObj.CreateMoves(in_invoice_vals_list, default_type: "in_invoice");
+            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "in_refund"));
+
+            return moves;
         }
 
-        private async Task<AccountInvoice> PrepareInvoice(PurchaseOrder order)
+        private async Task<AccountMove> PrepareInvoice(PurchaseOrder self)
         {
-            var journalObj = GetService<IAccountJournalService>();
-            var journal = await journalObj.SearchQuery(x => x.Type == "purchase").Include(x => x.DefaultDebitAccount)
-                .Include(x => x.DefaultCreditAccount).FirstOrDefaultAsync();
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice");
             if (journal == null)
-                throw new Exception("Không tìm thấy nhật ký mua hàng");
-            var accountObj = GetService<IAccountAccountService>();
-            var account = await accountObj.GetAccountPayableCurrentCompany();
-
-            return new AccountInvoice()
+                throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
+        
+            return new AccountMove()
             {
-                Name = !string.IsNullOrEmpty(order.PartnerRef) ? order.PartnerRef : order.Name,
-                AccountId = account.Id,
-                Type = order.Type == "refund" ? "in_refund" : "in_invoice",
-                PartnerId = order.PartnerId,
-                Origin = order.Name,
+                Type = self.Type == "refund" ? "in_refund" : "in_invoice",
+                PartnerId = self.PartnerId,
                 JournalId = journal.Id,
                 Journal = journal,
-                CompanyId = order.CompanyId,
-                UserId = UserId,
+                CompanyId = self.CompanyId,
+                InvoiceUserId = UserId,
+                InvoiceOrigin = self.Name,
             };
         }
 

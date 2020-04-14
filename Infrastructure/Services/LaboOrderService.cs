@@ -183,55 +183,50 @@ namespace Infrastructure.Services
             await UpdateAsync(labo);
         }
 
-        public async Task<IList<AccountInvoice>> ActionInvoiceCreate(IEnumerable<LaboOrder> self)
+        public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<LaboOrder> self)
         {
-            var invObj = GetService<IAccountInvoiceService>();
-            var invLineObj = GetService<IAccountInvoiceLineService>();
-            var res = new List<AccountInvoice>();
+            var lbLineObj = GetService<ILaboOrderLineService>();
+            var invoice_vals_list = new List<AccountMove>();
             foreach (var order in self)
             {
-                var invData = await PrepareInvoice(order);
-                res.Add(invData);
-                var invLines = new List<AccountInvoiceLine>();
+                var invoice_vals = await PrepareInvoice(order);
                 foreach (var poLine in order.OrderLines)
                 {
-                    if (poLine.State == "cancel")
-                        continue;
-
-                    var invLineData = await invObj.PrepareInvoiceLineFromLBLine(invData, poLine, journal: invData.Journal, type: "in_invoice");
-                    invLines.Add(invLineData);
+                    invoice_vals.InvoiceLines.Add(lbLineObj._PrepareAccountMoveLine(poLine, invoice_vals));
                 }
 
-                invData.InvoiceLines = invLines;
-                invLineObj.ComputePrice(invData.InvoiceLines);
-                invObj._ComputeAmount(invData);
-                await invObj.CreateAsync(invData);
+                if (!invoice_vals.InvoiceLines.Any())
+                    throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+
+                invoice_vals_list.Add(invoice_vals);
             }
 
-            return res;
+            var in_invoice_vals_list = invoice_vals_list.Where(x => x.Type == "in_invoice").ToList();
+            var refund_invoice_vals_list = invoice_vals_list.Where(x => x.Type == "in_refund").ToList();
+
+            var moveObj = GetService<IAccountMoveService>();
+            var moves = await moveObj.CreateMoves(in_invoice_vals_list, default_type: "in_invoice");
+            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "in_refund"));
+
+            return moves;
         }
 
-        private async Task<AccountInvoice> PrepareInvoice(LaboOrder order)
+        private async Task<AccountMove> PrepareInvoice(LaboOrder self)
         {
-            var journalObj = GetService<IAccountJournalService>();
-            var journal = await journalObj.SearchQuery(x => x.Type == "purchase").Include(x => x.DefaultDebitAccount)
-                .Include(x => x.DefaultCreditAccount).FirstOrDefaultAsync();
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice");
             if (journal == null)
-                throw new Exception("Không tìm thấy nhật ký mua hàng");
-            var accountObj = GetService<IAccountAccountService>();
-            var account = await accountObj.GetAccountPayableCurrentCompany();
+                throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
 
-            return new AccountInvoice()
+            return new AccountMove()
             {
-                Name = !string.IsNullOrEmpty(order.PartnerRef) ? order.PartnerRef : order.Name,
-                AccountId = account.Id,
                 Type = "in_invoice",
-                PartnerId = order.PartnerId,
-                Origin = order.Name,
+                PartnerId = self.PartnerId,
                 JournalId = journal.Id,
                 Journal = journal,
-                CompanyId = order.CompanyId,
-                UserId = UserId,
+                CompanyId = self.CompanyId,
+                InvoiceUserId = UserId,
+                InvoiceOrigin = self.Name,
             };
         }
 
@@ -249,11 +244,10 @@ namespace Infrastructure.Services
                 foreach (var line in order.OrderLines)
                     line.State = "purchase";
             }
-
            
-            var invObj = GetService<IAccountInvoiceService>();
-            var invoices = await ActionInvoiceCreate(self);
-            await invObj.ActionInvoiceOpen(invoices.Select(x => x.Id).ToList());
+            var invoices = await _CreateInvoices(self);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
 
             var lbLineObj = GetService<ILaboOrderLineService>();
             lbLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
@@ -265,26 +259,31 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
-                .Include("OrderLines.InvoiceLines")
+                .Include("OrderLines.MoveLines")
                 .ToListAsync();
-            var invoiceIds = new List<Guid>().AsEnumerable();
+
+            var move_ids = new List<Guid>().AsEnumerable();
             foreach (var order in self)
+                move_ids = move_ids.Union(order.OrderLines.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList());
+
+            if (move_ids.Any())
             {
-                invoiceIds = invoiceIds.Union(order.OrderLines.SelectMany(x => x.InvoiceLines)
-                    .Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList());
-            }
-            if (invoiceIds.Any())
-            {
-                var invObj = GetService<IAccountInvoiceService>();
-                await invObj.ActionCancel(invoiceIds);
+                var moveObj = GetService<IAccountMoveService>();
+                await moveObj.ButtonDraft(move_ids);
+
+                await moveObj.Unlink(move_ids);
             }
 
-            foreach(var order in self)
+            foreach (var order in self)
             {
-                order.State = "cancel";
+                order.State = "draft";
                 foreach (var line in order.OrderLines)
-                    line.State = "cancel";
+                    line.State = "draft";
             }
+
+            var lbLineObj = GetService<ILaboOrderLineService>();
+            lbLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
+
             await UpdateAsync(self);
         }
 

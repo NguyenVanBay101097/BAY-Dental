@@ -201,19 +201,21 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public AccountMoveLine _PrepareInvoiceLine(SaleOrderLine line)
+        public AccountMoveLine _PrepareInvoiceLine(SaleOrderLine self)
         {
             var res = new AccountMoveLine
             {
-                Name = line.Name,
-                ProductId = line.ProductId,
-                ProductUoMId = line.ProductUOMId,
-                Quantity = line.QtyToInvoice,
-                Discount = line.Discount,
-                PriceUnit = line.PriceUnit,
+                Name = self.Name,
+                ProductId = self.ProductId,
+                ProductUoMId = self.ProductUOMId,
+                Quantity = self.QtyToInvoice,
+                Discount = self.Discount,
+                PriceUnit = self.PriceUnit,
+                DiscountType = self.DiscountType,
+                DiscountFixed = self.DiscountFixed
             };
 
-            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLine = line });
+            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLine = self });
 
             return res;
         }

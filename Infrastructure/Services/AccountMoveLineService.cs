@@ -129,9 +129,15 @@ namespace Infrastructure.Services
                 move_type: move_type ?? self.Move.Type);
         }
 
-        private object _GetPriceTotalAndSubtotalModel(AccountMoveLine self, decimal? price_unit, decimal? quantity, decimal? discount, Product product, Partner partner, string move_type)
+        private object _GetPriceTotalAndSubtotalModel(AccountMoveLine self, decimal? price_unit, decimal? quantity,
+            decimal? discount, Product product, Partner partner, string move_type)
         {
-            var price_unit_wo_discount = price_unit * (1 - (discount ?? 0) / 100);
+            var price_unit_wo_discount = self.DiscountType == "fixed" ? price_unit - (self.DiscountFixed ?? 0) :
+                price_unit * (1 - (discount ?? 0) / 100);
+
+            if (price_unit_wo_discount < 0)
+                price_unit_wo_discount = 0;
+
             var subtotal = price_unit_wo_discount * (quantity ?? 0);
             return new { PriceTotal = subtotal, PriceSubtotal = subtotal };
         }
@@ -215,29 +221,41 @@ namespace Infrastructure.Services
             else if (moveObj.GetInboundTypes().Contains(move_type))
                 sign = -1;
             balance *= sign;
-            var discount_factor = 1 - (discount / 100);
-            if (balance != 0 && discount_factor > 0)
+
+            if (self.DiscountType == "fixed")
             {
                 return new
                 {
                     Quantity = quantity ?? 1,
-                    PriceUnit = balance / discount_factor / (quantity ?? 1)
-                };
-            }
-            else if (balance != 0 && discount_factor == 0)
-            {
-                return new
-                {
-                    Quantity = quantity ?? 1,
-                    Discount = 0,
-                    PriceUnit = balance / (quantity ?? 1)
+                    PriceUnit = balance / (quantity ?? 1) + (self.DiscountFixed ?? 0)
                 };
             }
             else
             {
-                return new
+                var discount_factor = 1 - (discount / 100);
+                if (balance != 0 && discount_factor > 0)
                 {
-                };
+                    return new
+                    {
+                        Quantity = quantity ?? 1,
+                        PriceUnit = balance / discount_factor / (quantity ?? 1)
+                    };
+                }
+                else if (balance != 0 && discount_factor == 0)
+                {
+                    return new
+                    {
+                        Quantity = quantity ?? 1,
+                        Discount = 0,
+                        PriceUnit = balance / (quantity ?? 1)
+                    };
+                }
+                else
+                {
+                    return new
+                    {
+                    };
+                }
             }
         }
 

@@ -845,6 +845,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
 
+    console.log(line.value);
+
     let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.line = line.value;

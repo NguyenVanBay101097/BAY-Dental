@@ -57,5 +57,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? DiscountFixed { get; set; }
 
+        public decimal? QtyInvoiced { get; set; }
     }
 }

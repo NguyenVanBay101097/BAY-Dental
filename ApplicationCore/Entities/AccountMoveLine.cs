@@ -12,6 +12,8 @@ namespace ApplicationCore.Entities
             Discount = 0;
             Quantity = 1;
             Name = "/";
+            DiscountType = "percentage";
+            DiscountFixed = 0;
         }
 
         public string Name { get; set; }
@@ -31,7 +33,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Ngày đáo hạn
         /// </summary>
-        public DateTime DateMaturity { get; set; }
+        public DateTime? DateMaturity { get; set; }
 
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
@@ -84,5 +86,15 @@ namespace ApplicationCore.Entities
         public decimal? PriceSubtotal { get; set; }
 
         public decimal? PriceTotal { get; set; }
+
+        public Guid? PurchaseLineId { get; set; }
+        public PurchaseOrderLine PurchaseLine { get; set; }
+
+        public Guid? LaboLineId { get; set; }
+        public LaboOrderLine LaboLine { get; set; }
+
+        public string DiscountType { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
     }
 }

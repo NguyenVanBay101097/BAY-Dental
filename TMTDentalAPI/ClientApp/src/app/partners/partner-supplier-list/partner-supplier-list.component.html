@@ -60,7 +60,8 @@
                 </div>
                 <div class="tab-pane  py-2 fade" id="payment_{{dataItem.id}}" role="tabpanel"
                     aria-labelledby="payment-tab">
-                    <app-partner-payments [partnerId]="dataItem.id"></app-partner-payments>
+                    <app-partner-payments (paymentChange)="onPaymentChange()" [partnerId]="dataItem.id">
+                    </app-partner-payments>
                 </div>
             </div>
         </div>
