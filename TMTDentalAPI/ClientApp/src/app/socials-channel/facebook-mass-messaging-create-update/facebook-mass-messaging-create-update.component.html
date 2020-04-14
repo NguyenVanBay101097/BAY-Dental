@@ -163,7 +163,7 @@
                                                     </td>
                                                     <td class="p-0 align-top">
                                                         <div class="px-2 pb-2" *ngIf="selectedAudienceFilter_Picker.type === 'Tag'">
-                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Tìm kiếm.." 
+                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Tìm kiếm.." myAutofocus
                                                                 (input)="inputSearchTag = inputFormulaValue.value; this.searchTagUpdate.next(inputFormulaValue.value)">
                                                         </div>
                                                         <div class="px-2 pb-2" *ngIf="showButtonCreateTag">
@@ -172,7 +172,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="px-2 pb-2" *ngIf="selectedAudienceFilter_Picker.inputbox">
-                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Nhập..">
+                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Nhập.." myAutofocus>
                                                             <div class="text-right mt-2">
                                                                 <button type="button" class="btn btn-light btn-sm" (click)="cancelInputFormulaValue()">Hủy bỏ</button>
                                                                 <button type="button" class="btn btn-primary btn-sm ml-1" (click)="saveInputFormulaValue(inputFormulaValue.value)">Lưu</button>

@@ -249,11 +249,11 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     var val = new FacebookTagsPaged();
     val.offset = 0;
     val.limit = 10;
-    console.log(this.inputSearchTag);
+    // console.log(this.inputSearchTag);
     val.search = this.inputSearchTag || '';
     this.facebookTagsService.getTags(val).subscribe(res => {
       this.listTags = res['items'];
-      console.log(this.listTags);
+      // console.log(this.listTags);
       if (this.listTags.length == 0) {
         this.showButtonCreateTag = true;
       } else {
