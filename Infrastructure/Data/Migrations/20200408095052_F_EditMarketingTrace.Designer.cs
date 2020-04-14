@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200408095052_F_EditMarketingTrace")]
+    partial class F_EditMarketingTrace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3048,9 +3050,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int?>("Sequence")
                         .HasColumnType("int");
 
@@ -3067,8 +3066,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("MessageId");
-
-                    b.HasIndex("ParentId");
 
                     b.HasIndex("WriteById");
 
@@ -3204,6 +3201,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -7187,10 +7187,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.MarketingMessage", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId");
-
-                    b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", "Parent")
-                        .WithMany("ActivityChilds")
-                        .HasForeignKey("ParentId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

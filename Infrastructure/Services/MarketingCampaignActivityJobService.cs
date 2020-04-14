@@ -3,6 +3,7 @@ using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
+using Hangfire;
 using Infrastructure.Data;
 using Microsoft.Extensions.Options;
 using MyERP.Utilities;
@@ -21,9 +22,11 @@ namespace Infrastructure.Services
     public class MarketingCampaignActivityJobService: IMarketingCampaignActivityJobService
     {
         private readonly ConnectionStrings _connectionStrings;
-        public MarketingCampaignActivityJobService(IOptions<ConnectionStrings> connectionStrings)
+        private readonly IFacebookMessageSender _fbMessageSender;
+        public MarketingCampaignActivityJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender)
         {
             _connectionStrings = connectionStrings?.Value;
+            _fbMessageSender = fbMessageSender;
         }
 
         public async Task RunActivity(string db, Guid activityId)
@@ -72,30 +75,112 @@ namespace Infrastructure.Services
                         if (page == null)
                             return;
 
+                        //var profiles = conn.Query<FacebookUserProfile>("" +
+                        //    "SELECT * " +
+                        //        "FROM FacebookUserProfiles m " +
+                        //        "where m.FbPageId = @pageId and m.PartnerId in (" +
+                        //            "SELECT p.Id " +
+                        //            "FROM Partners p " +
+                        //            "where p.Customer = 1 " +
+                        //        ")", new { pageId = page.Id }).ToList();
                         var profiles = conn.Query<FacebookUserProfile>("" +
-                            "SELECT * " +
-                                "FROM FacebookUserProfiles m " +
-                                "where m.FbPageId = @pageId and m.PartnerId in (" +
-                                    "SELECT p.Id " +
-                                    "FROM Partners p " +
-                                    "where p.Customer = 1 " +
-                                ")", new { pageId = page.Id }).ToList();
+                         "SELECT * " +
+                             "FROM FacebookUserProfiles m " +
+                             "where m.FbPageId = @pageId  " +
+                             "", new { pageId = page.Id }).ToList();
 
 
-                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, x.PSID, message_obj, activity.Id, conn)).ToList();
+                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj,x, activity.Id, conn)).ToList();
 
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
                         while (subTasks.Any())
                         {
-                            var result = await Task.WhenAll(subTasks);
+                            await Task.WhenAll(subTasks);                        
                             offset += limit;
                             subTasks = tasks.Skip(offset).Take(limit).ToList();
                         }
                     }
                 }
                 catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+
+        public async Task CreateRunActivetyContinueJobAsync(string db, Guid activityId, DateTime dateFrom , DateTime dateTo)
+        {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+            builder["Database"] = $"TMTDentalCatalogDb__{db}";
+            if (db == "localhost")
+                builder["Database"] = "TMTDentalCatalogDb";
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    var activity = conn.Query<MarketingCampaignActivity>("" +
+                        "SELECT * " +
+                        "FROM MarketingCampaignActivities " +
+                        "where Id = @id" +
+                        "", new { id = activityId }).FirstOrDefault();
+
+                    if (activity == null)
+                        return;
+
+                    var campaign = conn.Query<MarketingCampaign>("" +
+                        "SELECT * " +
+                        "FROM MarketingCampaigns " +
+                        "where Id = @id" +
+                        "", new { id = activity.CampaignId }).FirstOrDefault();
+
+                    if (campaign == null || !campaign.FacebookPageId.HasValue)
+                        return;
+
+                    if (!activity.MessageId.HasValue)
+                        return;
+
+                    var message_obj = GetMessageForSendApi(conn, activity.MessageId.Value);
+
+                    if (activity.ActivityType == "message")
+                    {
+                        var page = conn.Query<FacebookPage>("" +
+                        "SELECT * " +
+                        "FROM FacebookPages " +
+                        "where Id = @id" +
+                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
+
+                        if (page == null)
+                            return;
+                      
+                        var profiles = conn.Query<FacebookUserProfile>("" +
+                         "SELECT * " +
+                             "FROM FacebookUserProfiles m " +
+                             "Left Join MarketingTraces as tr " +
+                             "On tr.ActivityId = @activityId " +
+                             "where m.FbPageId = @pageId AND tr.[Read] is not null  And tr.[Read] between @datefrom AND @dateto " +
+                             "", new { pageId = page.Id , activityId  = activity.Id , datefrom = dateFrom  , dateto = dateTo }).ToList();
+                        if (profiles == null)
+                            return;
+
+                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
+
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        }
+                    }
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
@@ -173,31 +258,18 @@ namespace Infrastructure.Services
             throw new Exception("Not support");
         }
 
-        private async Task<SendFacebookMessageReponse> SendFacebookMessage(string access_token, string psid, object message, Guid? activityId = null,
+        private async Task SendFacebookMessage(string access_token, object message, FacebookUserProfile profile, Guid? activityId = null,
             SqlConnection conn = null)
         {
-            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
-            var url = $"/me/messages";
-
-            var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
-            request.AddParameter("message_type", "RESPONSE");
-            request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
-            request.AddParameter("message", JsonConvert.SerializeObject(message));
-
-            var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
-            if (response.GetExceptions().Any())
-            {
-                var error = string.Join("; ", response.GetExceptions().Select(x => x.Message));
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception) values (@Id,@ActivityId,@Exception)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now });
-                return new SendFacebookMessageReponse() { error = error };
-            }
+            var now = DateTime.Now;
+            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            date = date.AddSeconds(-1);
+            var sendResult = await _fbMessageSender.SendMessageMarketingTextAsync(message, profile.PSID, access_token);
+            if (sendResult == null)
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = profile.Id });
             else
-            {
-                var result = response.GetResult();
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId) values (@Id,@ActivityId,@Sent,@MessageId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = result.message_id });
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId,UserProfileId) values (@Id,@ActivityId,@Sent,@MessageId,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = sendResult.message_id , UserProfileId = profile.Id });
 
-                return result;
-            }
         }
 
         public class SendFacebookMessageReponse

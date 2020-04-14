@@ -26,6 +26,8 @@ namespace ApplicationCore.Entities
         public Guid? UserProfileId { get; set; }
         public FacebookUserProfile UserProfile { get; set; }
 
+      
+
         //public string State { get; set; }
 
         //public string StateMsg { get; set; }

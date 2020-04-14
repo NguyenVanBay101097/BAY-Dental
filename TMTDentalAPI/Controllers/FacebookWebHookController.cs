@@ -29,12 +29,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Post([FromBody]JObject data)
         {
             var wh = data.ToObject<FacebookWebHook>();
-            foreach(var entry in wh.Entry)
+            foreach (var entry in wh.Entry)
             {
                 if (entry.Messaging != null)
                 {
-                    foreach(var messaging in entry.Messaging)
+                    foreach (var messaging in entry.Messaging)
                     {
+
                         if (messaging.Read != null)
                         {
                             var watermark = messaging.Read.Watermark.ToLocalTime();
@@ -43,8 +44,14 @@ namespace TMTDentalAPI.Controllers
                                 trace.Opened = watermark;
 
                             await _messagingTraceService.UpdateAsync(traces);
+                            //update marketingtraces
+                            var marketingtraces = await _marketingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
+                            foreach (var trace in marketingtraces)
+                                trace.Read = watermark;
+
+                            await _marketingTraceService.UpdateAsync(marketingtraces);
                         }
-                        
+
                         if (messaging.Delivery != null)
                         {
                             var watermark = messaging.Delivery.Watermark.ToLocalTime();
@@ -53,6 +60,16 @@ namespace TMTDentalAPI.Controllers
                                 trace.Delivered = watermark;
 
                             await _messagingTraceService.UpdateAsync(traces);
+                            //update marketingtraces
+                            var marketingtraces = await _marketingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
+                            foreach (var trace in marketingtraces)
+                                trace.Delivery = watermark;
+
+                            await _marketingTraceService.UpdateAsync(marketingtraces);
+
+
+
+
                         }
                     }
                 }

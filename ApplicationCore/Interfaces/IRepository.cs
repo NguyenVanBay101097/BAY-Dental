@@ -47,5 +47,10 @@ namespace ApplicationCore.Interfaces
         IQueryable<T> SearchQuery(ISpecification<T> spec, Func<IQueryable<T>, IOrderedQueryable<T>> sort = null,
           string includes = "",
           int offset = 0, int limit = int.MaxValue, bool isPagingEnabled = false);
+        //IEnumerable<T> Flatten<T, R>(this IEnumerable<T> source, Func<T, R> recursion) where R : IEnumerable<T>
+        //{
+        //    return source.SelectMany(x => (recursion(x) != null && recursion(x).Any()) ? recursion(x).Flatten(recursion) : null)
+        //                 .Where(x => x != null);
+        //}
     }
 }

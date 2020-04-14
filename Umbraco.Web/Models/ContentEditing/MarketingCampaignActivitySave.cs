@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,6 +21,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Text { get; set; }
 
+        public string TriggerType { get; set; }
+
+        public ICollection<MarketingCampaignActivitySave> ActivityChilds { get; set; } = new List<MarketingCampaignActivitySave>();
         public ICollection<MarketingMessageButtonSave> Buttons { get; set; } = new List<MarketingMessageButtonSave>();
     }
 }

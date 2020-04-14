@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
                 await SubcribeAppFacebookPage(fbPage);
                 AddFacebookPageToTenant(fbPage);
-                GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
+                //GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
             }
         }
 

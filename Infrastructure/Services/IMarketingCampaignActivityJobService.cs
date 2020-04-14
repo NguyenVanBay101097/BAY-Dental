@@ -8,5 +8,6 @@ namespace Infrastructure.Services
     public interface IMarketingCampaignActivityJobService
     {
         Task RunActivity(string db, Guid activityId);
+        Task CreateRunActivetyContinueJobAsync(string db, Guid activityId, DateTime dateFrom, DateTime dateTo);
     }
 }

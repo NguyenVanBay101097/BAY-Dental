@@ -92,6 +92,7 @@ namespace Infrastructure.Services
 
         private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)
         {
+            var Obj = GetService<IMarketingCampaignActivityService>();
             var existLines = campaign.Activities.ToList();
             var lineToRemoves = new List<MarketingCampaignActivity>();
             foreach (var existLine in existLines)
@@ -114,8 +115,10 @@ namespace Infrastructure.Services
                 campaign.Activities.Remove(line);
 
             int sequence = 0;
+
             foreach (var line in val.Activities)
             {
+
                 if (line.Id == Guid.Empty)
                 {
                     var act = _mapper.Map<MarketingCampaignActivity>(line);
@@ -125,8 +128,20 @@ namespace Infrastructure.Services
                     SaveMessage(message, line);
 
                     act.Message = message;
-
                     campaign.Activities.Add(act);
+                    if (act.ActivityChilds.Any())
+                    {
+                        foreach (var item in act.ActivityChilds)
+                        {
+                            item.Sequence = sequence++;
+                            var messageitem = new MarketingMessage() { Template = line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id).Template };
+                            SaveMessage(messageitem, line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id));
+                            item.Message = messageitem;
+                            campaign.Activities.Add(item);
+                        }
+                    }
+
+
                 }
                 else
                 {
@@ -134,6 +149,19 @@ namespace Infrastructure.Services
                     if (activity != null)
                     {
                         _mapper.Map(line, activity);
+                        if (activity.ActivityChilds.Any())
+                        {
+                            foreach (var item in activity.ActivityChilds)
+                            {
+
+                                item.Sequence = sequence++;
+                                var messageitem = new MarketingMessage() { Template = line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id).Template };
+                                SaveMessage(messageitem, line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id));
+                                item.Message = messageitem;
+                                campaign.Activities.Add(item);
+                            }
+                        }
+
                         if (activity.Message != null)
                         {
                             var message = activity.Message;
@@ -160,32 +188,115 @@ namespace Infrastructure.Services
 
         public async Task ActionStartCampaign(IEnumerable<Guid> ids)
         {
+            var jobId = "";
+            var datetime = new DateTime();
             var states = new string[] { "draft", "stopped" };
-            var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).ToListAsync();
-            foreach(var campaign in self)
+            var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).Include("Activities.ActivityChilds").ToListAsync();
+            foreach (var campaign in self)
             {
                 campaign.State = "running";
                 campaign.DateStart = DateTime.Now;
-                foreach(var activity in campaign.Activities)
+                var date = DateTime.UtcNow;
+                var activities = campaign.Activities.Where(x => x.ParentId == null).ToList();
+                foreach (var activity in activities)
                 {
-                    var date = DateTime.UtcNow;
-                    var intervalNumber = activity.IntervalNumber ?? 0;
-                    if (activity.IntervalType == "hours")
-                        date = date.AddHours(intervalNumber);
-                    else if (activity.IntervalType == "minutes")
-                        date = date.AddMinutes(intervalNumber);
-                    else if (activity.IntervalType == "days")
-                        date = date.AddDays(intervalNumber);
-                    else if (activity.IntervalType == "months")
-                        date = date.AddMonths(intervalNumber);
-                    else if (activity.IntervalType == "weeks")
-                        date = date.AddDays(intervalNumber * 7);
+                    if (activity.ActivityChilds.Count > 0)
+                    {
+                        if (activity.TriggerType == "begin")
+                        {
+                            date = DateTime.UtcNow;
+                            var intervalNumber = activity.IntervalNumber ?? 0;
+                            if (activity.IntervalType == "hours")
+                                date = date.AddHours(intervalNumber);
+                            else if (activity.IntervalType == "minutes")
+                                date = date.AddMinutes(intervalNumber);
+                            else if (activity.IntervalType == "days")
+                                date = date.AddDays(intervalNumber);
+                            else if (activity.IntervalType == "months")
+                                date = date.AddMonths(intervalNumber);
+                            else if (activity.IntervalType == "weeks")
+                                date = date.AddDays(intervalNumber * 7);
+                            jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", activity.Id), date);
+                            datetime = date;
+                            activity.JobId = jobId;
+                            if (string.IsNullOrEmpty(activity.JobId))
+                                throw new Exception("Can't not schedule job");
+                        }
+                        foreach (var child in activity.ActivityChilds)
+                        {
+                            if (child.TriggerType == "act")
+                            {
+                                date = datetime;
+                                var intervalNumber = child.IntervalNumber ?? 0;
+                                if (child.IntervalType == "hours")
+                                    date = date.AddHours(intervalNumber);
+                                else if (child.IntervalType == "minutes")
+                                    date = date.AddMinutes(intervalNumber);
+                                else if (child.IntervalType == "days")
+                                    date = date.AddDays(intervalNumber);
+                                else if (child.IntervalType == "months")
+                                    date = date.AddMonths(intervalNumber);
+                                else if (child.IntervalType == "weeks")
+                                    date = date.AddDays(intervalNumber * 7);
+                                jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", child.Id), date);
+                                // var jobIda = BackgroundJob.ContinueJobWith(jobId, () => _activityJobService.CreateContinueActivity(_tenant != null ? _tenant.Hostname : "localhost", child.Id, date));
+                                child.JobId = jobId;
+                                datetime = date;
+                                jobId = child.JobId;
+                                if (string.IsNullOrEmpty(activity.JobId))
+                                    throw new Exception("Can't not schedule job");
+                            }
+                            else if (child.TriggerType == "message_open")
+                            {
+                                date = datetime;
+                                var intervalNumber = child.IntervalNumber ?? 0;
+                                if (child.IntervalType == "hours")
+                                    date = date.AddHours(intervalNumber);
+                                else if (child.IntervalType == "minutes")
+                                    date = date.AddMinutes(intervalNumber);
+                                else if (child.IntervalType == "days")
+                                    date = date.AddDays(intervalNumber);
+                                else if (child.IntervalType == "months")
+                                    date = date.AddMonths(intervalNumber);
+                                else if (child.IntervalType == "weeks")
+                                    date = date.AddDays(intervalNumber * 7);
+                                jobId = BackgroundJob.Schedule(() => _activityJobService.CreateRunActivetyContinueJobAsync(_tenant != null ? _tenant.Hostname : "localhost", child.Id,datetime,date), date);
+                                // var jobIda = BackgroundJob.ContinueJobWith(jobId, () => _activityJobService.CreateContinueActivity(_tenant != null ? _tenant.Hostname : "localhost", child.Id, date));
+                                child.JobId = jobId;
+                                datetime = date;
+                                jobId = child.JobId;
+                                if (string.IsNullOrEmpty(activity.JobId))
+                                    throw new Exception("Can't not schedule job");
+                            }
 
-                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", activity.Id), date);
-                    activity.JobId = jobId;
+                        }
+                    }
+                    else
+                    {
+                        if (activity.TriggerType == "begin")
+                        {
+                            date = DateTime.UtcNow;
+                            var intervalNumber = activity.IntervalNumber ?? 0;
+                            if (activity.IntervalType == "hours")
+                                date = date.AddHours(intervalNumber);
+                            else if (activity.IntervalType == "minutes")
+                                date = date.AddMinutes(intervalNumber);
+                            else if (activity.IntervalType == "days")
+                                date = date.AddDays(intervalNumber);
+                            else if (activity.IntervalType == "months")
+                                date = date.AddMonths(intervalNumber);
+                            else if (activity.IntervalType == "weeks")
+                                date = date.AddDays(intervalNumber * 7);
+                            jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", activity.Id), date);
+                            datetime = date;
+                            activity.JobId = jobId;
+                            if (string.IsNullOrEmpty(activity.JobId))
+                                throw new Exception("Can't not schedule job");
+                        }
+                    }
 
-                    if (string.IsNullOrEmpty(activity.JobId))
-                        throw new Exception("Can't not schedule job");
+
+
                 }
             }
 
@@ -194,7 +305,8 @@ namespace Infrastructure.Services
 
         public async Task<MarketingCampaignDisplay> GetDisplay(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay { 
+            var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay
+            {
                 Id = x.Id,
                 Name = x.Name,
                 DateStart = x.DateStart,
@@ -202,27 +314,50 @@ namespace Infrastructure.Services
             }).FirstOrDefaultAsync();
 
             var activityObj = GetService<IMarketingCampaignActivityService>();
-            var activities = await activityObj.SearchQuery(x => x.CampaignId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+            var activities = await activityObj.SearchQuery(x => x.CampaignId == id , orderBy: x => x.OrderBy(s => s.Sequence) ).Where(x=>x.ParentId == null)
                 .Select(x => new MarketingCampaignActivityDisplay
-            {
-                Id = x.Id,
-                ActivityType = x.ActivityType,
-                Content = x.Content,
-                IntervalNumber = x.IntervalNumber,
-                IntervalType = x.IntervalType,
-                Name = x.Name,
-                TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
-                TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
-                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
-                Template = x.Message.Template,
-                Text = x.Message.Text,
-                Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay { 
-                    Payload = s.Payload,
-                    Title = s.Title,
-                    Type = s.Type,
-                    Url = s.Url
-                })
-            }).ToListAsync();
+                {
+                    Id = x.Id,
+                    ActivityType = x.ActivityType,
+                    Content = x.Content,
+                    IntervalNumber = x.IntervalNumber,
+                    IntervalType = x.IntervalType,
+                    Name = x.Name,
+                    TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
+                    TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
+                    TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
+                    Template = x.Message.Template,
+                    Text = x.Message.Text,
+                    ActivityChilds = x.ActivityChilds.Select(y => new MarketingCampaignActivityDisplay {
+
+                        Id = y.Id,
+                        ActivityType = y.ActivityType,
+                        Content = y.Content,
+                        IntervalNumber = y.IntervalNumber,
+                        IntervalType = y.IntervalType,
+                        Name = y.Name,
+                        TotalSent = y.Traces.Where(x => x.Sent.HasValue).Count(),
+                        TotalRead = y.Traces.Where(x => x.Read.HasValue).Count(),
+                        TotalDelivery = y.Traces.Where(x => x.Delivery.HasValue).Count(),
+                        Template = y.Message.Template,
+                        Text = y.Message.Text,                       
+                        Buttons = y.Message.Buttons.Select(f => new MarketingMessageButtonDisplay
+                        {
+                            Payload = f.Payload,
+                            Title = f.Title,
+                            Type = f.Type,
+                            Url = f.Url
+                        })
+
+                    }),
+                    Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay
+                    {
+                        Payload = s.Payload,
+                        Title = s.Title,
+                        Type = s.Type,
+                        Url = s.Url
+                    })
+                }).ToListAsync();
 
             res.Activities = activities;
             return res;
