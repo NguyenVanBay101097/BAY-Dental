@@ -32,7 +32,8 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <div class="px-2 pb-2">
-                                        <input class="form-control shadow-sm" style="min-width: 200px;" #inputSearchTag type="text" placeholder="Search.." (keyup)="searchTags(inputSearchTag.value)">
+                                        <input class="form-control shadow-sm" style="min-width: 200px;" type="text" placeholder="Tìm kiếm.." 
+                                            [(ngModel)]="inputSearchTag" (ngModelChange)="this.searchTagUpdate.next($event)">
                                     </div>
                                     <div class="px-2 pb-2" *ngIf="showButtonCreateTag">
                                         <button class="btn btn-light btn-sm" type="button" (click)="createTag()">

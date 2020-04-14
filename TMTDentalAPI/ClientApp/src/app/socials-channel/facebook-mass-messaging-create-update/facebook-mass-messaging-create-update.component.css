@@ -19,9 +19,7 @@
     word-break: break-all;
     line-height: 1.8;
 }
-.audience-filter-item {
-    width: fit-content;
-    white-space: nowrap;
+.audience-filter-item button {
     margin-bottom: 5px;
 }
 .audience-filter-item .remove {

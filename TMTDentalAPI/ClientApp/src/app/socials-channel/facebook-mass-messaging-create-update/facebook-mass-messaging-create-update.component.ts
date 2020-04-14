@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FacebookMassMessagingService } from '../facebook-mass-messaging.service';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookMassMessagingScheduleDialogComponent } from '../facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
 import { FacebookMassMessagingCreateUpdateDialogComponent } from '../facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
+import { Subject } from 'rxjs';
+import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service';
 declare var $ :any;
 
 @Component({
@@ -25,7 +27,7 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private massMessagingService: FacebookMassMessagingService,
     private route: ActivatedRoute, private router: Router, private notificationService: NotificationService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private facebookTagsService: FacebookTagsService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -46,17 +48,25 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
       })).subscribe((result: any) => {
         this.messaging = result;
         this.formGroup.patchValue(result);
+        this.listAudienceFilter_Items = this.convertAudienceFilterItemsToArray(this.formGroup.value.audienceFilter);
       });
 
-      this.formGroup.get('content').valueChanges.subscribe((value) => {
-        if (value) {
-          this.num_CharLeft = 640 - value.length;
-        }
-      });
+    this.formGroup.get('content').valueChanges.subscribe((value) => {
+      if (value) {
+        this.num_CharLeft = 640 - value.length;
+      }
+    });
     
     $(document).on('click', '.allow-focus', function (e) {
       e.stopPropagation();
     });
+    
+    this.searchTagUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.loadListTags();
+      });
   }
 
   loadRecord() {
@@ -194,126 +204,153 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     this.emoji = false;
   }
 
-  listAudienceFilterPicker = [
+  listAudienceFilter_Picker = [
     {
       type: 'Tag',
       name: 'Nhãn',
       formula_types: ['eq', 'neq'],
-      formula_values: ['Tag_1', 'Tag_2', 'Tag_3', 'Tag_4', 'Tag_5', 'Tbg_6', 'Tbg_7'],
+      formula_values: [],
       formula_displays: null,
-      search: true
     }, {
       type: 'Gender',
       name: 'Giới tính',
       formula_types: ['eq', 'neq'],
       formula_values: ['male', 'female'],
       formula_displays: ['Nam', 'Nữ'],
-      search: false
     }, {
       type: 'FirstName',
       name: 'Tên',
       formula_types: ['eq', 'neq', 'contains', 'doesnotcontain', 'startswith'],
       formula_values: [],
       formula_displays: null,
-      search: true
+      inputbox: true
     }, {
       type: 'LastName',
       name: 'Họ',
       formula_types: ['eq', 'neq', 'contains', 'doesnotcontain', 'startswith'],
       formula_values: [],
       formula_displays: null,
-      search: true
+      inputbox: true
     }
   ]
-  selectedAudienceFilterPicker: any;
-  selectedFormulaType: any;
-  selectedFormulaValue: any;
-  selectedFormulaDisplay: any;
-  listAudienceFilterItems: any[] = [];
-  copyFormulaValues: any[] = [];
+  selectedAudienceFilter_Picker: any;
+  selectedFormula = {
+    type: null, 
+    value: null, 
+    display: null
+  };
+  listAudienceFilter_Items: any[] = [];
+  listTags: any[];
+  inputSearchTag: string;
+  searchTagUpdate = new Subject<string>();
+  showButtonCreateTag: boolean = false;
+
+  loadListTags() {
+    var val = new FacebookTagsPaged();
+    val.offset = 0;
+    val.limit = 10;
+    console.log(this.inputSearchTag);
+    val.search = this.inputSearchTag || '';
+    this.facebookTagsService.getTags(val).subscribe(res => {
+      this.listTags = res['items'];
+      console.log(this.listTags);
+      if (this.listTags.length == 0) {
+        this.showButtonCreateTag = true;
+      } else {
+        this.showButtonCreateTag = false;
+      }
+      this.listAudienceFilter_Picker[0].formula_values = [];
+      for (let i = 0; i < this.listTags.length; i++) {
+        this.listAudienceFilter_Picker[0].formula_values.push(this.listTags[i].name); // Add formula_values Tag
+      }
+      if (this.selectedAudienceFilter_Picker) {
+        this.selectedAudienceFilter_Picker.formula_values = this.listAudienceFilter_Picker[0].formula_values;
+      }
+      // console.log(this.listTags);
+    }, err => {
+      console.log(err);
+    })
+  }
+  createTag() {
+    var val = {
+      name: this.inputSearchTag
+    };
+    this.facebookTagsService.create(val).subscribe(res => {
+      this.notificationService.show({
+        content: 'Tạo nhãn thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+      this.loadListTags();
+      // console.log(res);
+    }, err => {
+      console.log(err);
+    })
+  }
   clickDropdownButtonAudienceFilter() {
-    this.selectedAudienceFilterPicker = null;
-    this.selectedFormulaType = null;
-    this.selectedFormulaValue = null;
-    this.selectedFormulaDisplay = null;
+    this.selectedAudienceFilter_Picker = null;
+    this.selectedFormula.type = null;
+    this.selectedFormula.value = null;
+    this.selectedFormula.display = null;
+    this.inputSearchTag = null;
+    this.loadListTags();
     document.getElementById('dropdown-item-audience-filter').style.display = 'block';
   }
   selectAudienceFilter(item) {
-    this.selectedAudienceFilterPicker = item;
-    this.copyFormulaValues = this.selectedAudienceFilterPicker.formula_values;
+    this.selectedAudienceFilter_Picker = item;
+    this.selectedFormula.type = item.formula_types[0];
     document.getElementById('dropdown-item-audience-filter').style.display = 'none';
   }
   selectFormulaType(item) {
-    this.selectedFormulaType = item;
+    this.selectedFormula.type = item;
     this.addAudienceFilter()
   }
   selectFormulaValue(item, i) {
-    this.selectedFormulaValue = item;
-    if (this.selectedAudienceFilterPicker.formula_displays) {
-      this.selectedFormulaDisplay = this.selectedAudienceFilterPicker.formula_displays[i];
+    this.selectedFormula.value = item;
+    if (this.selectedAudienceFilter_Picker.formula_displays) {
+      this.selectedFormula.display = this.selectedAudienceFilter_Picker.formula_displays[i];
     } else {
-      this.selectedFormulaDisplay = null;
+      this.selectedFormula.display = null;
     }
     this.addAudienceFilter()
   }
+  cancelInputFormulaValue() {
+    this.selectedAudienceFilter_Picker = null;
+  }
+  saveInputFormulaValue(value) {
+    this.selectedFormula.value = value;
+    this.selectedFormula.display = value;
+    this.addAudienceFilter()
+  }
   addAudienceFilter() {
-    if (this.selectedFormulaType && this.selectedFormulaValue) {
+    if (this.selectedFormula.type && this.selectedFormula.value) {
 
       var temp = {
-        type: this.selectedAudienceFilterPicker.type,
-        name: this.selectedAudienceFilterPicker.name,
-        formula_type: this.selectedFormulaType,
-        formula_value: this.selectedFormulaValue,
-        formula_display: this.selectedFormulaDisplay
+        type: this.selectedAudienceFilter_Picker.type,
+        name: this.selectedAudienceFilter_Picker.name,
+        formula_type: this.selectedFormula.type,
+        formula_value: this.selectedFormula.value,
+        formula_display: this.selectedFormula.display
       }
-      this.listAudienceFilterItems.push(temp);
-      this.selectedAudienceFilterPicker = null;
-      this.selectedFormulaType = null;
-      this.selectedFormulaValue = null;
-      this.selectedFormulaDisplay = null;
+      this.listAudienceFilter_Items.push(temp);
+      this.selectedAudienceFilter_Picker = null;
+      this.selectedFormula.type = null;
+      this.selectedFormula.value = null;
+      this.selectedFormula.display = null;
       document.getElementById('dropdown-item-audience-filter').style.display = 'block';
-      console.log(this.listAudienceFilterItems);
+      console.log(this.listAudienceFilter_Items);
       this.formGroup.patchValue({
         audienceFilter: this.convertAudienceFilterItemsToString()
       });
     }
   }
-  convertAudienceFilterItemsToString() {
-    var listAudienceFilterItemsString = "";
-    var element = "";
-    for (let i = 0; i < this.listAudienceFilterItems.length; i++) {
-      element = this.listAudienceFilterItems[i].type + ",|" +
-        this.listAudienceFilterItems[i].name + ",|" + 
-        this.listAudienceFilterItems[i].formula_type + ",|" + 
-        this.listAudienceFilterItems[i].formula_value + ",|" + 
-        this.listAudienceFilterItems[i].formula_display;
-      if (i === this.listAudienceFilterItems.length - 1) {
-        listAudienceFilterItemsString += element;
-      } else {
-        listAudienceFilterItemsString += element + ";|";
-      }
-    }
-    this.convertAudienceFilterItemsToArray(listAudienceFilterItemsString);
-    return listAudienceFilterItemsString;
-  }
-  convertAudienceFilterItemsToArray(listAudienceFilterItemsString) {
-    var listAudienceFilterItemsArray = [];
-    var element_s = listAudienceFilterItemsString.split(";|");
-    for (let i = 0; i < element_s.length; i++) {
-      var element_sm = element_s[i].split(",|");
-      var element = {
-        type: element_sm[0],
-        name: element_sm[1],
-        formula_type: element_sm[2],
-        formula_value: element_sm[3],
-        formula_display: element_sm[4]
-      }
-      listAudienceFilterItemsArray.push(element);
-    }
-    console.log(listAudienceFilterItemsArray);
+  selectAudienceFilterItem(index) {
+    console.log("Hello");
   }
   deleteAudienceFilterItem(index) {
-    this.listAudienceFilterItems.splice(index, 1);
+    this.listAudienceFilter_Items.splice(index, 1);
   }
   convertFormulaType(item) {
     switch (item) {
@@ -339,14 +376,38 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
         return 'startswith';
     }
   }
-  searchFormulaValue(value) {
-    if (value) {
-      value = value.toLowerCase();
-      this.copyFormulaValues = this.selectedAudienceFilterPicker.formula_values.filter(function(el: any) {
-        return el.toLowerCase().indexOf(value) >= 0;
-      });
-    } else {
-      this.copyFormulaValues = this.selectedAudienceFilterPicker.formula_values;
+  convertAudienceFilterItemsToString() {
+    var listAudienceFilter_Items_String = "";
+    var element = "";
+    for (let i = 0; i < this.listAudienceFilter_Items.length; i++) {
+      element = (this.listAudienceFilter_Items[i].type || '') + ",|" +
+        (this.listAudienceFilter_Items[i].name || '') + ",|" + 
+        (this.listAudienceFilter_Items[i].formula_type || '') + ",|" + 
+        (this.listAudienceFilter_Items[i].formula_value || '') + ",|" + 
+        (this.listAudienceFilter_Items[i].formula_display || '');
+      if (i === this.listAudienceFilter_Items.length - 1) {
+        listAudienceFilter_Items_String += element;
+      } else {
+        listAudienceFilter_Items_String += element + ";|";
+      }
     }
+    this.convertAudienceFilterItemsToArray(listAudienceFilter_Items_String);
+    return listAudienceFilter_Items_String;
+  }
+  convertAudienceFilterItemsToArray(listAudienceFilter_Items_String) {
+    var listAudienceFilter_Items_Array = [];
+    var element_s = listAudienceFilter_Items_String.split(";|");
+    for (let i = 0; i < element_s.length; i++) {
+      var element_sm = element_s[i].split(",|");
+      var element = {
+        type: element_sm[0],
+        name: element_sm[1],
+        formula_type: element_sm[2],
+        formula_value: element_sm[3],
+        formula_display: element_sm[4]
+      }
+      listAudienceFilter_Items_Array.push(element);
+    }
+    return listAudienceFilter_Items_Array;
   }
 }

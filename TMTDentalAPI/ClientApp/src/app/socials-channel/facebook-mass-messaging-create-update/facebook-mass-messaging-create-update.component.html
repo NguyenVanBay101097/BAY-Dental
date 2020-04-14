@@ -122,17 +122,19 @@
                             </td>
                             <td style="width:100%">
                                 <span class="audience-filter-content rounded border">
-                                    <span class="audience-filter-item btn btn-light btn-sm border mr-2"
-                                        *ngFor="let item of listAudienceFilterItems; index as i">
-                                        <span class="drop-select">{{item.name}}</span>
-                                        <span class="condition-select pl-1">{{convertFormulaType(item.formula_type)}}</span>
-                                        <span class="value-select pl-1">
-                                            <span *ngIf="item.formula_display === null">{{item.formula_value}}</span>
-                                            <span *ngIf="item.formula_display !== null">{{item.formula_display}}</span>
-                                        </span>
-                                        <span class="remove" (click)="deleteAudienceFilterItem(i)">
-                                            <i class="fas fa-times pl-2"></i>
-                                        </span>
+                                    <span class="audience-filter-item mr-2"
+                                        *ngFor="let item of listAudienceFilter_Items; index as i">
+                                        <button type="button" class="btn btn-light btn-sm border" (click)="selectAudienceFilterItem(i)">
+                                            <span class="drop-select">{{item.name}}</span>
+                                            <span class="condition-select pl-1">{{convertFormulaType(item.formula_type)}}</span>
+                                            <span class="value-select pl-1">
+                                                <span *ngIf="!item.formula_display || item.formula_display === ''">{{item.formula_value}}</span>
+                                                <span *ngIf="item.formula_display && item.formula_display !== ''">{{item.formula_display}}</span>
+                                            </span>
+                                            <span class="remove" (click)="deleteAudienceFilterItem(i)">
+                                                <i class="fas fa-times pl-2"></i>
+                                            </span>
+                                        </button>
                                     </span>
                                     <span class="dropdown audience-filter-picker">
                                         <button type="button" class="audience-filter-open btn btn-light btn-sm"
@@ -143,34 +145,47 @@
                                         <div class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="dropdownMenuButton">
                                             <div id="dropdown-item-audience-filter">
                                                 <button class="dropdown-item" type="button"
-                                                    *ngFor="let item of listAudienceFilterPicker"
+                                                    *ngFor="let item of listAudienceFilter_Picker"
                                                     (click)="selectAudienceFilter(item)">
                                                     {{item.name}}
                                                 </button>
                                             </div>
-                                            <table *ngIf="selectedAudienceFilterPicker">
+                                            <table *ngIf="selectedAudienceFilter_Picker">
                                                 <tr>
                                                     <td class="border-right p-0 align-top">
                                                         <button class="dropdown-item" 
-                                                            [class.text-primary]="item === selectedFormulaType"
+                                                            [class.text-primary]="item === selectedFormula.type"
                                                             type="button" 
-                                                            *ngFor="let item of selectedAudienceFilterPicker.formula_types"
+                                                            *ngFor="let item of selectedAudienceFilter_Picker.formula_types"
                                                             (click)="selectFormulaType(item)">
                                                             {{convertFormulaType(item)}}
                                                         </button>
                                                     </td>
                                                     <td class="p-0 align-top">
-                                                        <div class="px-2 pb-2" *ngIf="selectedAudienceFilterPicker.search">
-                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Search.." (input)="searchFormulaValue(inputFormulaValue.value)">
+                                                        <div class="px-2 pb-2" *ngIf="selectedAudienceFilter_Picker.type === 'Tag'">
+                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Tìm kiếm.." 
+                                                                (input)="inputSearchTag = inputFormulaValue.value; this.searchTagUpdate.next(inputFormulaValue.value)">
+                                                        </div>
+                                                        <div class="px-2 pb-2" *ngIf="showButtonCreateTag">
+                                                            <button class="btn btn-light btn-sm" type="button" (click)="createTag()">
+                                                                Create Tag
+                                                            </button>
+                                                        </div>
+                                                        <div class="px-2 pb-2" *ngIf="selectedAudienceFilter_Picker.inputbox">
+                                                            <input class="form-control shadow-sm" style="min-width: 200px;" #inputFormulaValue type="text" placeholder="Nhập..">
+                                                            <div class="text-right mt-2">
+                                                                <button type="button" class="btn btn-light btn-sm" (click)="cancelInputFormulaValue()">Hủy bỏ</button>
+                                                                <button type="button" class="btn btn-primary btn-sm ml-1" (click)="saveInputFormulaValue(inputFormulaValue.value)">Lưu</button>
+                                                            </div>
                                                         </div>
                                                         <div class="list-formula-value">
                                                             <button class="dropdown-item"
-                                                                [class.text-primary]="item === selectedFormulaValue"
+                                                                [class.text-primary]="item === selectedFormula.value"
                                                                 type="button" 
-                                                                *ngFor="let item of copyFormulaValues; index as i"
+                                                                *ngFor="let item of selectedAudienceFilter_Picker.formula_values; index as i"
                                                                 (click)="selectFormulaValue(item, i)">
-                                                                <span *ngIf="selectedAudienceFilterPicker.formula_displays === null">{{item}}</span>
-                                                                <span *ngIf="selectedAudienceFilterPicker.formula_displays !== null">{{selectedAudienceFilterPicker.formula_displays[i]}}</span>
+                                                                <span *ngIf="selectedAudienceFilter_Picker.formula_displays === null">{{item}}</span>
+                                                                <span *ngIf="selectedAudienceFilter_Picker.formula_displays !== null">{{selectedAudienceFilter_Picker.formula_displays[i]}}</span>
                                                             </button>
                                                         </div>
                                                     </td>

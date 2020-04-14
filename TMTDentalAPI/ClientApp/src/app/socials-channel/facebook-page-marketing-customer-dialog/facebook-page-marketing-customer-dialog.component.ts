@@ -3,6 +3,8 @@ import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-dialog',
@@ -15,7 +17,8 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   dataCustomer: any;
   listTags: any[];
   listAddTags: any[] = [];
-  searchTag: string;
+  inputSearchTag: string;
+  searchTagUpdate = new Subject<string>();
   showButtonCreateTag: boolean = false;
 
   constructor(
@@ -26,6 +29,13 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi(this.customerId);
+
+    this.searchTagUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.loadListTags();
+      });
   }
   
   loadDataFromApi(id) {
@@ -45,7 +55,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     var val = new FacebookTagsPaged();
     val.offset = 0;
     val.limit = 10;
-    val.search = this.searchTag || '';
+    val.search = this.inputSearchTag || '';
     this.facebookTagsService.getTags(val).subscribe(res => {
       this.listTags = res['items'];
       if (this.listTags.length == 0) {
@@ -72,7 +82,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
 
   createTag() {
     var val = {
-      name: this.searchTag
+      name: this.inputSearchTag
     };
     this.facebookTagsService.create(val).subscribe(res => {
       this.notificationService.show({
@@ -87,11 +97,6 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     }, err => {
       console.log(err);
     })
-  }
-
-  searchTags(value) {
-    this.searchTag = value;
-    this.loadListTags();
   }
 
   onSave() {

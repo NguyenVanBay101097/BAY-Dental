@@ -28,5 +28,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int TotalSent { get; set; }
         public int TotalReceived { get; set; }
         public int TotalOpened { get; set; }
+
+        public string AudienceFilter { get; set; }
     }
 }
