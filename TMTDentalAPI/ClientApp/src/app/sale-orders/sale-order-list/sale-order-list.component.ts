@@ -7,13 +7,13 @@ import { Router } from '@angular/router';
 import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserSimple } from 'src/app/users/user-simple';
-import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
 import { SaleOrderService, SaleOrderPaged } from '../sale-order.service';
 import { SaleOrderBasic } from '../sale-order-basic';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 
 @Component({
   selector: 'app-sale-order-list',
@@ -48,7 +48,7 @@ export class SaleOrderListComponent implements OnInit {
   selectedIds: string[] = [];
 
   constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router, private dialogService: DialogService,
-    private modalService: NgbModal, private registerPaymentService: AccountRegisterPaymentService, private notificationService: NotificationService) { }
+    private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -172,31 +172,21 @@ export class SaleOrderListComponent implements OnInit {
     if (this.selectedIds.length == 0) {
       return false;
     }
-    this.registerPaymentService.saleOrdersDefaultGet(this.selectedIds).subscribe(rs2 => {
-      if (rs2.amount > 0) {
-        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.title = 'Thanh toán';
-        modalRef.componentInstance.defaultVal = rs2;
-        modalRef.result.then(() => {
-          this.notificationService.show({
-            content: 'Thanh toán thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-          this.loadDataFromApi();
-        }, () => {
-        });
-      } else {
+    this.paymentService.saleDefaultGet(this.selectedIds).subscribe(rs2 => {
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thanh toán';
+      modalRef.componentInstance.defaultVal = rs2;
+      modalRef.result.then(() => {
         this.notificationService.show({
-          content: 'Không có gì để thanh toán',
+          content: 'Thanh toán thành công',
           hideAfter: 3000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
+          type: { style: 'success', icon: true }
         });
-      }
+        this.loadDataFromApi();
+      }, () => {
+      });
     })
   }
 }

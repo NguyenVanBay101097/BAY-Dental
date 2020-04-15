@@ -555,6 +555,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       })
   }
 
+  actionViewInvoice() {
+    if (this.id) {
+      this.router.navigate(['/sale-orders/' + this.id + '/invoices']);
+    }
+  }
+
   actionInvoiceCreateV2() {
     if (this.id) {
       this.saleOrderService.actionInvoiceCreateV2(this.id).subscribe(() => {

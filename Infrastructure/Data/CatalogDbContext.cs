@@ -140,6 +140,7 @@ namespace Infrastructure.Data
         public DbSet<MarketingMessageButton> MarketingMessageButtons { get; set; }
         public DbSet<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; }
         public DbSet<AccountMovePaymentRel> AccountMovePaymentRels { get; set; }
+        public DbSet<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; }
 
 
         public DbSet<StockHistory> StockHistories { get; set; }
@@ -271,6 +272,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new FacebookScheduleAppointmentConfigConifuration());
             builder.ApplyConfiguration(new SaleOrderLineInvoice2RelConfiguration());
             builder.ApplyConfiguration(new AccountMovePaymentRelConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

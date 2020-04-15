@@ -140,8 +140,13 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search)));
+
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.PartnerId == val.PartnerId));
+
+            if (val.Id.HasValue)
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.Id == val.Id));
+
             if (val.DateOrderFrom.HasValue)
             {
                 var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
@@ -881,6 +886,9 @@ namespace Infrastructure.Services
                 .Include(x => x.Pricelist)
                 .Include(x => x.User)
                 .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .Include("OrderLines.Product")
                 .Include("OrderLines.ToothCategory")
                 .Include("OrderLines.SaleOrderLineToothRels")
@@ -931,23 +939,23 @@ namespace Infrastructure.Services
             var self = new List<SaleOrder>() { order };
             await _GenerateDotKhamSteps(self);
 
-            if (order.InvoiceStatus == "to invoice" && order.State == "sale")
-            {
-                var invoices = await _CreateInvoices(self, final: true);
-                var moveObj = GetService<IAccountMoveService>();
-                await moveObj.ActionPost(invoices);
+            //if (order.InvoiceStatus == "to invoice" && order.State == "sale")
+            //{
+            //    var invoices = await _CreateInvoices(self, final: true);
+            //    var moveObj = GetService<IAccountMoveService>();
+            //    await moveObj.ActionPost(invoices);
 
-                foreach (var so in self)
-                {
-                    saleLineObj._GetInvoiceQty(so.OrderLines);
-                    saleLineObj._GetToInvoiceQty(so.OrderLines);
-                    saleLineObj._ComputeInvoiceStatus(so.OrderLines);
-                }
+            //    foreach (var so in self)
+            //    {
+            //        saleLineObj._GetInvoiceQty(so.OrderLines);
+            //        saleLineObj._GetToInvoiceQty(so.OrderLines);
+            //        saleLineObj._ComputeInvoiceStatus(so.OrderLines);
+            //    }
 
-                _GetInvoiced(self);
-                _ComputeResidual(self);
-                await UpdateAsync(self);
-            }
+            //    _GetInvoiced(self);
+            //    _ComputeResidual(self);
+            //    await UpdateAsync(self);
+            //}
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -1220,6 +1228,9 @@ namespace Infrastructure.Services
                 var paymentsWidget = JsonConvert.DeserializeObject<IList<PaymentInfoContent>>(invoice.InvoicePaymentsWidget);
                 foreach(var paymentWidget in paymentsWidget)
                 {
+                    if (!paymentWidget.AccountPaymentId.HasValue)
+                        continue;
+
                     if (!dict.ContainsKey(paymentWidget.PaymentId))
                         dict.Add(paymentWidget.PaymentId, paymentWidget);
                     else
@@ -1364,76 +1375,50 @@ namespace Infrastructure.Services
             return invoices.Values.ToList();
         }
 
-        public async Task<IEnumerable<AccountInvoice>> ActionInvoiceCreateV2(Guid id)
+        public async Task<IEnumerable<AccountMoveBasic>> GetInvoicesBasic(Guid id)
+        {
+            var self = await SearchQuery(x => x.Id == id)
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
+                .FirstOrDefaultAsync();
+
+            var invoice_ids = self.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
+                .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Select(x => x.Id).Distinct().ToList();
+
+            var moveObj = GetService<IAccountMoveService>();
+            var res = await _mapper.ProjectTo<AccountMoveBasic>(moveObj.SearchQuery(x => invoice_ids.Contains(x.Id))).ToListAsync();
+            return res;
+        }
+
+        public async Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id)
         {
             var order = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .FirstOrDefaultAsync();
-            var saleLineObj = GetService<ISaleOrderLineService>();
-            var invLineObj = GetService<IAccountInvoiceLineService>();
-            var invObj = GetService<IAccountInvoiceService>();
-
-            var companyId = CompanyId;
-            var journalObj = GetService<IAccountJournalService>();
-            var journal = journalObj.SearchQuery(x => x.Type == "sale" && x.CompanyId == companyId)
-                .Include(x => x.DefaultCreditAccount).Include(x => x.DefaultDebitAccount).FirstOrDefault();
-            if (journal == null)
-                throw new Exception("Vui lòng tạo nhật ký bán hàng cho công ty này.");
-
-            var invoices = new Dictionary<string, AccountInvoice>();
-            var orderToUpdate = new HashSet<SaleOrder>();
-
-            var invLines = new List<AccountInvoiceLine>();
-            foreach (var line in order.OrderLines)
-            {
-                var amountToInvoice = line.AmountToInvoice ?? 0;
-                var qtyToInvoice = line.QtyToInvoice ?? 0;
-                if (amountToInvoice == 0)
-                    continue;
-                var invType = amountToInvoice > 0 ? "out_invoice" : "out_refund";
-                var sign = amountToInvoice > 0 ? 1 : -1;
-                if (!invoices.ContainsKey(invType))
-                {
-                    var inv = await PrepareInvoice(order, journal);
-                    inv.Type = invType;
-                    await invObj.CreateAsync(inv);
-                    invoices.Add(invType, inv);
-                }
-
-                var invLine = saleLineObj._PrepareInvoiceLine(line, Math.Abs(qtyToInvoice), journal.DefaultCreditAccount);
-                invLine.PriceUnit *= sign;
-                if (qtyToInvoice == 0)
-                {
-                    invLine.Quantity = 1;
-                    invLine.PriceUnit = amountToInvoice * sign;
-                    invLine.Discount = 0;
-                }
-                invLine.InvoiceId = invoices[invType].Id;
-                invLine.Invoice = invoices[invType];
-                invLine.SaleLines.Add(new SaleOrderLineInvoiceRel { OrderLineId = line.Id });
-                invLines.Add(invLine);
-            }
-
-            if (invLines.Any())
-            {
-                await invLineObj.CreateAsync(invLines);
-                var invs = invoices.Values;
-                invObj._ComputeAmount(invs);
-                await invObj.UpdateAsync(invs);
-            }
-
-            await invObj.ActionInvoiceOpen(invoices.Values.Select(x => x.Id).ToList());
-
-            await saleLineObj._UpdateInvoiceQty(order.OrderLines.Select(x => x.Id).ToList());
-            saleLineObj._GetToInvoiceQty(order.OrderLines);
-            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-            await saleLineObj.UpdateAsync(order.OrderLines);
 
             var self = new List<SaleOrder>() { order };
+
+            var invoices = await _CreateInvoices(self, final: true);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            foreach (var so in self)
+            {
+                saleLineObj._GetInvoiceQty(so.OrderLines);
+                saleLineObj._GetToInvoiceQty(so.OrderLines);
+                saleLineObj._ComputeInvoiceStatus(so.OrderLines);
+            }
+
             _GetInvoiced(self);
             _ComputeResidual(self);
             await UpdateAsync(self);
 
-            return invoices.Values.ToList();
+            return invoices;
         }
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)

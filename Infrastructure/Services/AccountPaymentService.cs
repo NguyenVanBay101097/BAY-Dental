@@ -29,6 +29,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.AccountMovePaymentRels)
+                .Include(x => x.SaleOrderPaymentRels)
                 .Include("AccountMovePaymentRels.Move")
                 .Include("AccountMovePaymentRels.Move.Lines")
                 .Include("AccountMovePaymentRels.Move.Lines.Account")
@@ -96,50 +97,59 @@ namespace Infrastructure.Services
                     if (rec.AccountMovePaymentRels.Any())
                     {
                         var invoices = moves.Concat(rec.AccountMovePaymentRels.Select(x => x.Move));
-                        var lines = invoices.SelectMany(x => x.Lines).Where(x => !x.Reconciled && x.AccountId == rec.DestinationAccount.Id).ToList();
+                        await _AutoReconcile(rec, invoices);
+                    }
+                    else if (rec.SaleOrderPaymentRels.Any())
+                    {
+                        //tìm tất cả các moves của các sale orders
+                        var sale_order_ids = rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).ToList();
+                        var sale_moves = await moveObj.SearchQuery(x => x.Lines.Any(s => s.SaleLineRels.Any(m => sale_order_ids.Contains(m.OrderLine.OrderId))))
+                            .Include(x => x.Lines).Include("Lines.Account").ToListAsync();
 
-                        await amlObj.Reconcile(lines);
-
-                        amlObj._AmountResidual(lines);
-                        moveObj._ComputeAmount(invoices);
-                        await moveObj.UpdateAsync(invoices);
-
-                        //update sale order residual
-                        var invoiceIds = invoices.Select(x => x.Id).ToList();
-                        var saleLineObj = GetService<ISaleOrderLineService>();
-                        var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.Move.Id)))
-                            .Select(x => x.OrderId).Distinct().ToListAsync();
-                        if (saleOrderIds.Any())
-                        {
-                            var saleObj = GetService<ISaleOrderService>();
-                            await saleObj.RecomputeResidual(saleOrderIds);
-                        }
+                        var invoices = moves.Concat(sale_moves);
+                        await _AutoReconcile(rec, invoices);
                     }
                     else
                     {
                         //auto reconcile theo partner
-                        var lines = await amlObj.SearchQuery(x => !x.Reconciled && x.AccountId == rec.DestinationAccount.Id && x.PartnerId == rec.PartnerId,
-                            orderBy: x => x.OrderBy(s => s.DateCreated))
-                            .Include(x => x.Account).Include(x => x.MatchedDebits).Include(x => x.MatchedCredits).ToListAsync();
-                        await amlObj.Reconcile(lines);
-
-                        amlObj._AmountResidual(lines);
-                        await amlObj.UpdateAsync(lines);
-
-                        var invoiceIds = lines.Select(x => x.MoveId).ToList();
-                        await moveObj._ComputeAmount(invoiceIds);
-
-                        //update sale order residual
-                        var saleLineObj = GetService<ISaleOrderLineService>();
-                        var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.Move.Id)))
-                            .Select(x => x.OrderId).Distinct().ToListAsync();
-                        if (saleOrderIds.Any())
-                        {
-                            var saleObj = GetService<ISaleOrderService>();
-                            await saleObj.RecomputeResidual(saleOrderIds);
-                        }
+                        await _AutoReconcile(rec);
                     }
                 }
+            }
+        }
+
+        private async Task _AutoReconcile(AccountPayment self, IEnumerable<AccountMove> invoices = null)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var moveObj = GetService<IAccountMoveService>();
+            IList<AccountMoveLine> lines = null;
+            if (invoices == null)
+            {
+                lines = await amlObj.SearchQuery(x => !x.Reconciled && x.AccountId == self.DestinationAccount.Id && x.PartnerId == self.PartnerId,
+                         orderBy: x => x.OrderBy(s => s.DateCreated))
+                         .Include(x => x.Account).Include(x => x.MatchedDebits).Include(x => x.MatchedCredits).ToListAsync();
+            }
+            else
+            {
+                lines = invoices.SelectMany(x => x.Lines).Where(x => !x.Reconciled && x.AccountId == self.DestinationAccount.Id).ToList();
+            }
+         
+
+            await amlObj.Reconcile(lines);
+
+            amlObj._AmountResidual(lines);
+
+            var move_ids = lines.Select(x => x.MoveId).Distinct().ToList();
+            await moveObj._ComputeAmount(move_ids);
+
+            //update sale order residual
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => move_ids.Contains(s.InvoiceLine.Move.Id)))
+                .Select(x => x.OrderId).Distinct().ToListAsync();
+            if (saleOrderIds.Any())
+            {
+                var saleObj = GetService<ISaleOrderService>();
+                await saleObj.RecomputeResidual(saleOrderIds);
             }
         }
 
@@ -462,45 +472,25 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> saleOrderIds)
         {
             var orderObj = GetService<ISaleOrderService>();
-            var orders = await orderObj.SearchQuery(x => saleOrderIds.Contains(x.Id))
-                .Include(x => x.OrderLines)
-                .Include("OrderLines.SaleOrderLineInvoice2Rels")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
-                .ToListAsync();
+            var orders = await orderObj.SearchQuery(x => saleOrderIds.Contains(x.Id)).ToListAsync();
 
-            var invoice_ids = orders.SelectMany(x => x.OrderLines).SelectMany(x => x.SaleOrderLineInvoice2Rels)
-                .Select(x => x.InvoiceLine).Select(x => x.Move.Id).Distinct();
+            if (!orders.Any() || orders.Any(x => x.State != "sale" && x.State != "done"))
+                throw new Exception("Bạn chỉ có thể thanh toán cho phiếu điều trị đã xác nhận");
 
-            var moveObj = GetService<IAccountMoveService>();
-            var invoices = await moveObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
-            invoices = invoices.Where(x => moveObj.IsInvoice(x, include_receipts: true)).ToList();
+            if (orders.Any(x => x.PartnerId != orders[0].PartnerId))
+                throw new Exception("Để thanh toán nhiều phiếu điều trị cùng một lần, chúng phải có cùng khách hàng");
 
-            if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
-                throw new Exception("You can only register payments for open invoices");
-            var dtype = invoices[0].Type;
-            foreach (var inv in invoices.Skip(1))
-            {
-                if (inv.Type != dtype)
-                {
-                    if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" || inv.Type == "in_refund"))
-                        throw new Exception("You cannot register payments for vendor bills and supplier refunds at the same time.");
-                    if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" || inv.Type == "out_refund"))
-                        throw new Exception("You cannot register payments for customer invoices and credit notes at the same time.");
-                }
-            }
-
-            var total_amount = invoices.Sum(x => x.AmountResidual);
+            var total_amount = orders.Sum(x => x.Residual);
 
             var communication = string.Join(", ", orders.Select(x => x.Name));
             var rec = new AccountRegisterPaymentDisplay
             {
                 Amount = Math.Abs(total_amount ?? 0),
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
-                PartnerId = invoices[0].PartnerId,
-                PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
-                InvoiceIds = invoice_ids,
-                Communication = communication
+                PartnerId = orders[0].PartnerId,
+                PartnerType = "customer",
+                Communication = communication,
+                SaleOrderIds = saleOrderIds
             };
 
             return rec;
@@ -559,6 +549,9 @@ namespace Infrastructure.Services
 
             foreach (var invoice_id in val.InvoiceIds)
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
+
+            foreach (var order_id in val.SaleOrderIds)
+                payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order_id });
 
             return await CreateAsync(payment);
         }

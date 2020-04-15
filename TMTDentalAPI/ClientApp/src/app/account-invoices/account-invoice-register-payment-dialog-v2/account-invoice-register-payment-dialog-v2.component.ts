@@ -37,7 +37,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       journal: [null, Validators.required],
       partnerType: null,
       partnerId: null,
-      invoiceIds: null
+      invoiceIds: null,
+      saleOrderIds: null,
     });
 
     if (this.defaultVal) {

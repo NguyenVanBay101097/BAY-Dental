@@ -62,5 +62,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public SaleOrderBasic Order { get; set; }
 
         public string InvoiceStatus { get; set; }
+
+        public int InvoiceCount { get; set; }
     }
 }

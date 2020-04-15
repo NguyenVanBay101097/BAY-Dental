@@ -32,7 +32,7 @@ namespace Infrastructure.Services
         Task ApplyPromotion(Guid id);
 
         Task ActionConvertToOrder(Guid id);
-        Task<IEnumerable<AccountInvoice>> ActionInvoiceCreateV2(Guid id);
+        Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id);
         bool _IsGlobalDiscountAlreadyApplied(SaleOrder self);
         bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program);
         IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self);
@@ -41,5 +41,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id);
         Task RecomputeResidual(IEnumerable<Guid> ids);
         Task<bool> CheckHasPromotionCanApply(Guid id);
+        Task<IEnumerable<AccountMoveBasic>> GetInvoicesBasic(Guid id);
     }
 }

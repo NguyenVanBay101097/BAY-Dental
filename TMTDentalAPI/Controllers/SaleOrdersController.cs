@@ -58,13 +58,15 @@ namespace TMTDentalAPI.Controllers
             }
 
             var res = _mapper.Map<SaleOrderDisplay>(saleOrder);
+            res.InvoiceCount = saleOrder.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
+                .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Distinct().Count();
             res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
             foreach (var inl in res.OrderLines)
             {
                 inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
             }
 
-            return Ok(_mapper.Map<SaleOrderDisplay>(saleOrder));
+            return Ok(res);
         }
 
         [HttpPost]
@@ -190,6 +192,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPayments(Guid id)
         {
             var res = await _saleOrderService._GetPaymentInfoJson(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetInvoices(Guid id)
+        {
+            var res = await _saleOrderService.GetInvoicesBasic(id);
             return Ok(res);
         }
 

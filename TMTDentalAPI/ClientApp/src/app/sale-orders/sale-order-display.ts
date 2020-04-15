@@ -20,4 +20,5 @@ export class SaleOrderDisplay {
     invoiceStatus: string;
     quote: SaleOrderBasic;
     order: SaleOrderBasic;
+    invoiceCount: number;
 }

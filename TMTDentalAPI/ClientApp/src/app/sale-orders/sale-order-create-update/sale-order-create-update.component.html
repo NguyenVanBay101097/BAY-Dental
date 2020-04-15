@@ -92,6 +92,15 @@
                 </div>
             </div>
             <div class="o_form_sheet">
+                <div class="o_not_full oe_button_box">
+                    <button type="button" *ngIf="id" (click)="actionViewInvoice()" class="btn oe_stat_button">
+                        <i class="fas fa-edit o_button_icon"></i>
+                        <div name="invoice_count" class="o_field_widget o_stat_info o_readonly_modifier">
+                            <span class="o_stat_value">{{saleOrder.invoiceCount | number}}</span>
+                            <span class="o_stat_text">Hóa đơn</span>
+                        </div>
+                    </button>
+                </div>
                 <div class="oe_title">
                     <h1>
                         <span>{{saleOrder.name}}</span>

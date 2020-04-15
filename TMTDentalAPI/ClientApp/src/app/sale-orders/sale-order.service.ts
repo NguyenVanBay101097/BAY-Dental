@@ -135,4 +135,8 @@ export class SaleOrderService {
     getPayments(id): Observable<PaymentInfoContent[]> {
         return this.http.get<PaymentInfoContent[]>(this.baseApi + this.apiUrl + `/${id}/GetPayments`);
     }
+
+    getInvoices(id) {
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/GetInvoices`);
+    }
 }

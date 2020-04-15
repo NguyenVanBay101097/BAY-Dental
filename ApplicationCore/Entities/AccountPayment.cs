@@ -50,6 +50,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<AccountMovePaymentRel> AccountMovePaymentRels { get; set; } = new List<AccountMovePaymentRel>();
 
+        public ICollection<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; } = new List<SaleOrderPaymentRel>();
+
         [NotMapped]
         public AccountAccount DestinationAccount { get; set; }
     }

@@ -301,6 +301,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MarketingMessageButtonProfile());
                 mc.AddProfile(new FacebookUserProfiles());
                 mc.AddProfile(new FacebookScheduleAppointmentConfigProfile());
+                mc.AddProfile(new AccountMoveProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
