@@ -10,6 +10,7 @@ import { debug } from 'util';
 import { CompanyService } from '../company.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-company-cu-dialog',
@@ -39,7 +40,8 @@ export class CompanyCuDialogComponent implements OnInit {
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private companyService: CompanyService, public activeModal: NgbActiveModal, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private companyService: CompanyService, public activeModal: NgbActiveModal, private http: HttpClient,
+    private showErrorService: AppSharedShowErrorService) {
   }
 
   ngOnInit() {
@@ -166,7 +168,7 @@ export class CompanyCuDialogComponent implements OnInit {
     this.saveOrUpdate().subscribe(() => {
       this.activeModal.close(true);
     }, err => {
-      console.log(err);
+      this.showErrorService.show(err);
     });
   }
 
@@ -181,7 +183,6 @@ export class CompanyCuDialogComponent implements OnInit {
 
   getBodyData() {
     var data = this.companyForm.value;
-    console.log(data);
     return data;
   }
 

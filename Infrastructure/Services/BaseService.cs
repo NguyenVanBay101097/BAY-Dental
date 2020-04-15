@@ -151,7 +151,7 @@ namespace Infrastructure.Services
             }
 
             CheckAccessRights(typeof(TEntity).Name, "Create");
-            CheckAccessRules(entities, "Create");
+            //CheckAccessRules(entities, "Create");
 
             await _repository.InsertAsync(entities);
 
@@ -178,7 +178,7 @@ namespace Infrastructure.Services
             }
 
             CheckAccessRights(typeof(TEntity).Name, "Write");
-            CheckAccessRules(entities, "Write");
+            //CheckAccessRules(entities, "Write");
 
             await _repository.UpdateAsync(entities);
         }
@@ -186,7 +186,7 @@ namespace Infrastructure.Services
         public virtual async Task DeleteAsync(IEnumerable<TEntity> entities)
         {
             CheckAccessRights(typeof(TEntity).Name, "Unlink");
-            CheckAccessRules(entities, "Unlink");
+            //CheckAccessRules(entities, "Unlink");
 
             await _repository.DeleteAsync(entities);
         }
@@ -204,8 +204,9 @@ namespace Infrastructure.Services
 
         private void CheckAccessRules(IEnumerable<TEntity> entities, string operation)
         {
-            //if (IsUserRoot)
-            //    return;
+            if (IsUserRoot)
+                return;
+
             if (string.IsNullOrEmpty(UserId))
                 return;
 

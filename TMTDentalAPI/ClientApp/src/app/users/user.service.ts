@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { UserSimple } from './user-simple';
 import { CompanyBasic } from '../companies/company.service';
+import { ResGroupBasic } from '../res-groups/res-group.service';
 
 export class UserBasic {
     id: string;
@@ -19,6 +20,7 @@ export class UserDisplay {
     avatar: string;
     company: CompanyBasic;
     companies: CompanyBasic[];
+    groups: ResGroupBasic[];
 }
 
 export class UserPaging {

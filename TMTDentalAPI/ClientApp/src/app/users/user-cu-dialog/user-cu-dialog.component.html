@@ -92,6 +92,28 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <td colspan="2" style="width: 100%;">
+                                <div class="o_horizontal_separator">
+                                    Nhóm quyền
+                                </div>
+                            </td>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhóm quyền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listGroups" [textField]="'name'" [valueField]="'id'"
+                                        formControlName="groups">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

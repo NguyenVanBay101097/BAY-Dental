@@ -5,6 +5,7 @@ import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyBasic, CompanySimple, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 import * as _ from 'lodash';
+import { ResGroupBasic, ResGroupService, ResGroupPaged } from 'src/app/res-groups/res-group.service';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -17,10 +18,11 @@ export class UserCuDialogComponent implements OnInit {
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   listCompanies: CompanyBasic[] = [];
+  listGroups: ResGroupBasic[] = [];
 
   title: string;
   constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal,
-    private companyService: CompanyService) {
+    private companyService: CompanyService, private resGroupService: ResGroupService) {
   }
 
   ngOnInit() {
@@ -32,8 +34,10 @@ export class UserCuDialogComponent implements OnInit {
       companyId: null,
       company: [null, Validators.required],
       companies: [[]],
-      avatar: null
+      avatar: null,
+      groups: [[]],
     });
+
     setTimeout(() => {
       if (this.id) {
         this.userService.get(this.id).subscribe(result => {
@@ -44,6 +48,10 @@ export class UserCuDialogComponent implements OnInit {
 
           if (result.companies) {
             this.listCompanies = _.unionBy(this.listCompanies, result.companies, 'id');
+          }
+
+          if (result.groups) {
+            this.listGroups = _.unionBy(this.listGroups, result.groups, 'id');
           }
         });
       } else {
@@ -60,6 +68,7 @@ export class UserCuDialogComponent implements OnInit {
       }
 
       this.loadListCompanies();
+      this.loadListGroups();
     });
   }
 
@@ -67,6 +76,13 @@ export class UserCuDialogComponent implements OnInit {
     var val = new CompanyPaged();
     this.companyService.getPaged(val).subscribe(result => {
       this.listCompanies = _.unionBy(this.listCompanies, result.items, 'id');
+    });
+  }
+
+  loadListGroups() {
+    var val = new ResGroupPaged();
+    this.resGroupService.getPaged(val).subscribe(result => {
+      this.listGroups = _.unionBy(this.listGroups, result.items, 'id');
     });
   }
 

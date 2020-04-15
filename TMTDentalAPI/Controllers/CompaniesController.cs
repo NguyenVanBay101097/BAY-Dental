@@ -12,6 +12,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -33,12 +34,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IMemoryCache _cache;
         private readonly AppTenant _tenant;
         private readonly IPartnerService _partnerService;
+        private readonly UserManager<ApplicationUser> _userManager;
+
         public CompaniesController(ICompanyService companyService, IUploadService uploadService,
             IUnitOfWorkAsync unitOfWork,
             CatalogDbContext context,
             IMapper mapper, IIRModelAccessService modelAccessService,
             IMemoryCache cache, ITenant<AppTenant> tenant,
-            IPartnerService partnerService)
+            UserManager<ApplicationUser> userManager, IPartnerService partnerService)
         {
             _unitOfWork = unitOfWork;
             _companyService = companyService;
@@ -48,6 +51,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _cache = cache;
             _tenant = tenant?.Value;
+            _userManager = userManager;
             _partnerService = partnerService;
         }
 
@@ -117,7 +121,16 @@ namespace TMTDentalAPI.Controllers
          
             await _companyService.CreateAsync(company);
             await SaveLogo(company, val);
+
             await _companyService.InsertCompanyData(company);
+
+            var userRoot = await _userManager.Users.Where(x => x.IsUserRoot).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
+            if (userRoot != null)
+            {
+                userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { Company = company });
+                await _userManager.UpdateAsync(userRoot);
+            }
+
             _unitOfWork.Commit();
 
             val.Id = company.Id;
@@ -156,7 +169,10 @@ namespace TMTDentalAPI.Controllers
             var company = await _companyService.GetByIdAsync(id);
             if (company == null)
                 return NotFound();
-            await _companyService.DeleteAsync(company);
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _companyService.Unlink(company);
+            _unitOfWork.Commit();
 
             return NoContent();
         }

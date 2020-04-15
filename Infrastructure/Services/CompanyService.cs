@@ -73,8 +73,10 @@ namespace Infrastructure.Services
                 CompanyId = mainCompany.Id,
                 Partner = partnerRoot,
                 Name = partnerRoot.Name,
-                IsUserRoot = true
+                IsUserRoot = true,
             };
+
+            userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { Company = mainCompany });
 
             var userObj = GetService<UserManager<ApplicationUser>>();
             await userObj.CreateAsync(userRoot, password);
@@ -195,7 +197,7 @@ namespace Infrastructure.Services
 
             #endregion
 
-           #region For currentAssetsType
+            #region For currentAssetsType
             var currentAssetsType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_assets");
 
             var acc1561 = new AccountAccount
@@ -919,6 +921,35 @@ namespace Infrastructure.Services
                 await accessObj.CreateAsync(accessDict.Values);
             }
             await InsertAccesses();
+        }
+
+        public async Task Unlink(Company self)
+        {
+            try
+            {
+                var partnerId = self.PartnerId;
+                await ExcuteSqlCommandAsync("update StockWarehouses set InTypeId = null, OutTypeId = null " +
+                    "where CompanyId = @p0", self.Id);
+
+                await ExcuteSqlCommandAsync("delete StockPickingTypes where Id in ( " +
+                    "select pt.Id " +
+                    "from StockPickingTypes pt " +
+                    "left join StockWarehouses wh on pt.WarehouseId = wh.Id " +
+                    "where wh.CompanyId = @p0)", self.Id);
+
+                await ExcuteSqlCommandAsync("delete StockWarehouses where CompanyId=@p0", self.Id);
+                await ExcuteSqlCommandAsync("delete StockLocations where CompanyId=@p0", self.Id);
+                await ExcuteSqlCommandAsync("delete AccountJournals where CompanyId=@p0", self.Id);
+                await ExcuteSqlCommandAsync("delete IRSequences where CompanyId=@p0", self.Id);
+                await ExcuteSqlCommandAsync("delete AccountAccounts where CompanyId=@p0", self.Id);
+                await ExcuteSqlCommandAsync("delete Companies where Id=@p0", self.Id);
+
+                await ExcuteSqlCommandAsync("delete Partners where Id=@p0", partnerId);
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         private async Task<IDictionary<string, IRModel>> InsertModels()

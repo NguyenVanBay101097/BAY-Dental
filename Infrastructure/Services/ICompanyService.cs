@@ -18,5 +18,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<CompanyBasic>> GetPagedResultAsync(CompanyPaged val);
         Task InsertSecurityData();
         Task InsertCompanyData(Company company);
+        Task Unlink(Company self);
     }
 }

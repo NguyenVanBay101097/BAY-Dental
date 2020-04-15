@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { CompanyService, CompanyPaged, CompanyBasic } from '../company.service';
 import { CompanyCuDialogComponent } from '../company-cu-dialog/company-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-company-list',
@@ -76,31 +77,15 @@ export class CompanyListComponent implements OnInit {
   }
 
   deleteItem(item: CompanyBasic) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa chi nhánh',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa chi nhánh';
 
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        console.log('close');
-      } else {
-        console.log('action', result);
-        if (result['value']) {
-          this.companyService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-            console.log(err);
-          });
-        }
-      }
+    modalRef.result.then(() => {
+      this.companyService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      }, () => {
+      });
+    }, () => {
     });
   }
 

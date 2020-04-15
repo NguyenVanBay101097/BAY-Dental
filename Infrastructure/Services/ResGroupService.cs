@@ -107,6 +107,31 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task AddAllImpliedGroupsToAllUser(IEnumerable<Guid> ids)
+        {
+            foreach (var id in ids)
+            {
+                await ExcuteSqlCommandAsync(" WITH group_imply(gid, hid) AS ( " +
+                        "SELECT GId as gid, HId as hid " +
+                          "FROM ResGroupImpliedRels " +
+                         "UNION ALL " +
+                        "SELECT i.gid, r.HId as hid " +
+                          "FROM ResGroupImpliedRels r " +
+                          "JOIN group_imply i ON(i.hid = r.GId) " +
+                    ") " +
+                    "INSERT INTO ResGroupsUsersRels(GroupId, UserId) " +
+                         "SELECT i.hid, r.UserId " +
+                           "FROM group_imply i, ResGroupsUsersRels r " +
+                          "WHERE r.GroupId = i.gid " +
+                            "AND i.gid = @p0 " +
+                         "EXCEPT " +
+                         "SELECT r.GroupId, r.UserId " +
+                           "FROM ResGroupsUsersRels r " +
+                           "JOIN group_imply i ON(r.GroupId = i.hid) " +
+                          "WHERE i.gid = @p0", id);
+            }
+        }
+
         public void Write(IEnumerable<ResGroup> groups, List<ResGroup> implied_ids)
         {
             throw new NotImplementedException();

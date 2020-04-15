@@ -29,10 +29,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IUserService _userService;
         private readonly IUploadService _uploadService;
         private readonly ICompanyService _companyService;
+        private readonly IResGroupService _resGroupService;
+
         public ApplicationUsersController(UserManager<ApplicationUser> userManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             IIRModelAccessService modelAccessService, IUserService userService,
-            IUploadService uploadService, ICompanyService companyService)
+            IUploadService uploadService, ICompanyService companyService, IResGroupService resGroupService)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -42,6 +44,7 @@ namespace TMTDentalAPI.Controllers
             _userService = userService;
             _uploadService = uploadService;
             _companyService = companyService;
+            _resGroupService = resGroupService;
         }
 
         [HttpGet]
@@ -67,7 +70,8 @@ namespace TMTDentalAPI.Controllers
         {
             _modelAccessService.Check("ResUser", "Read");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
-                .Include("ResCompanyUsersRels.Company").Include(x=>x.Partner).FirstOrDefaultAsync();
+                .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.Group")
+                .Include("ResCompanyUsersRels.Company").Include(x => x.Partner).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
@@ -105,7 +109,13 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
             }
 
+            foreach (var group in val.Groups)
+            {
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+            }
+
             var result = await _userManager.CreateAsync(user, val.Password);
+
             if (!result.Succeeded)
             {
                 if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
@@ -113,6 +123,9 @@ namespace TMTDentalAPI.Controllers
                 else
                     throw new Exception("Lỗi chưa xác định, vui lòng liên hệ với người quản trị phần mềm");
             }
+
+            var group_ids = val.Groups.Select(x => x.Id).ToList();
+            await _resGroupService.AddAllImpliedGroupsToAllUser(group_ids);
 
             _unitOfWork.Commit();
 
@@ -127,7 +140,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             _modelAccessService.Check("ResUser", "Write");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
+                .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
             if (user == null)
                 return NotFound();
             await _unitOfWork.BeginTransactionAsync();
@@ -137,6 +150,12 @@ namespace TMTDentalAPI.Controllers
             foreach (var company in val.Companies)
             {
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
+            }
+
+            user.ResGroupsUsersRels.Clear();
+            foreach (var group in val.Groups)
+            {
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
             }
 
             await _userManager.UpdateAsync(user);
@@ -151,6 +170,10 @@ namespace TMTDentalAPI.Controllers
             partner.Email = val.Email;
             await SaveAvatar(partner, val);
             await _partnerService.UpdateAsync(partner);
+
+
+            var group_ids = val.Groups.Select(x => x.Id).ToList();
+            await _resGroupService.AddAllImpliedGroupsToAllUser(group_ids);
 
             _unitOfWork.Commit();
 
