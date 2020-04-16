@@ -18,7 +18,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.DotKham)
-                .WithMany()
+                .WithMany(x => x.Steps)
                 .HasForeignKey(x => x.DotKhamId);
 
             builder.HasOne(x => x.SaleLine)

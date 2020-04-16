@@ -9,6 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Customer = true;
             Active = true;
+            Gender = "male";
         }
 
         /// <summary>

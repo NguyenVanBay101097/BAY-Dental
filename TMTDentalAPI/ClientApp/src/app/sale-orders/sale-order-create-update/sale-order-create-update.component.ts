@@ -34,6 +34,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { from, of, Observable } from 'rxjs';
 import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confirm-dialog-v2.component';
 import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
+import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 declare var $: any;
 
 @Component({
@@ -72,7 +73,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
   }
 
   ngOnInit() {
@@ -523,30 +524,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           }
         }),
         mergeMap(() => {
-          if (this.isTurnOnSalePromotion()) {
-            return this.saleOrderService.checkPromotion(this.id);
-          } else {
-            return of(false);
-          }
-        }),
-        mergeMap(r => {
-          if (r) {
-            let modalRef = this.modalService.open(ConfirmDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-            modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
-            modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
-            return from(modalRef.result);
-          } else {
-            return of(r);
-          }
-        }),
-        mergeMap(r => {
-          if (r) {
-            return this.saleOrderService.applyPromotion(this.id)
-          } else {
-            return of(true);
-          }
-        }),
-        mergeMap(() => {
           return this.saleOrderService.actionConfirm([this.id]);
         }),
       )
@@ -659,33 +636,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var val = this.getFormDataSave();
     this.saleOrderService.create(val)
       .pipe(
-        mergeMap(result => {
-          this.id = result.id;
-          if (this.isTurnOnSalePromotion()) {
-            return this.saleOrderService.checkPromotion(result.id);
-          } else {
-            return of(false);
-          }
-        }),
         mergeMap(r => {
-          if (r) {
-            let modalRef = this.modalService.open(ConfirmDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-            modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
-            modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
-            return from(modalRef.result);
-          } else {
-            return of(r);
-          }
-        }),
-        mergeMap(r => {
-          if (r) {
-            return this.saleOrderService.applyPromotion(this.id)
-              .pipe(
-                mergeMap(() => this.saleOrderService.actionConfirm([this.id]))
-              );
-          } else {
-            return this.saleOrderService.actionConfirm([this.id]);
-          }
+          this.id = r.id;
+          return this.saleOrderService.actionConfirm([r.id]);
         })
       )
       .subscribe(r => {
@@ -945,6 +898,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.paymentsInfo = result;
       });
     }
+  }
+
+  deleteDotKham(dotKham) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa đợt khám';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.dotKhamService.delete(dotKham.id).subscribe(() => {
+        this.loadDotKhamList();
+      });
+    });
   }
 
   deletePayment(payment) {

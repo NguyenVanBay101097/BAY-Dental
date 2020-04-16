@@ -69,5 +69,7 @@ namespace ApplicationCore.Entities
         public Appointment Appointment { get; set; }
 
         public ICollection<DotKhamLine> Lines { get; set; } = new List<DotKhamLine>();
+
+        public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
     }
 }

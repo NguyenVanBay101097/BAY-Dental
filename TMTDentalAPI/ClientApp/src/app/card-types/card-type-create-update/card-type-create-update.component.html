@@ -71,7 +71,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="discount">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" [max]="100" [autoCorrect]="true"
+                                        formControlName="discount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>

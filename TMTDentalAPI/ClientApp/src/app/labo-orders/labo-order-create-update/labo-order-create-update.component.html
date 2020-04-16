@@ -118,13 +118,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="laboOrder.state != 'draft'"
-                                        [data]="filteredSaleOrders" [textField]="'name'" [filterable]="true"
-                                        #saleOrderCbx formControlName="saleOrder" [valueField]="'id'">
-                                    </kendo-combobox>
                                     <a *ngIf="laboOrder.saleOrder" [routerLink]="['/sale-orders/form']"
-                                        [queryParams]="{id: laboOrder.saleOrder.id}"
-                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
+                                        [queryParams]="{id: laboOrder.saleOrder.id}">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
                                 </td>
                             </tr>
                             <tr *ngIf="laboOrder.dotKham">

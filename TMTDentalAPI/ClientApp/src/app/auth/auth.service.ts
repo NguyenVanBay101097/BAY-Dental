@@ -117,6 +117,7 @@ export class AuthService {
     logout(): void {
         localStorage.removeItem('access_token');
         localStorage.removeItem('user_info');
+        localStorage.removeItem('user_change_company_vm');
         this.isLoggedIn = false;
         this.currentUserSubject.next(null);
     }

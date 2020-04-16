@@ -15,6 +15,7 @@ namespace ApplicationCore.Entities
             InvoiceStatus = "no";
             DiscountType = "percentage";
             DiscountFixed = 0;
+            Sequence = 10;
         }
 
         public SaleOrderLine(SaleOrderLine line)
@@ -40,6 +41,7 @@ namespace ApplicationCore.Entities
             Sequence = line.Sequence;
             DiscountType = "percentage";
             DiscountFixed = 0;
+            Sequence = 10;
         }
 
         public decimal PriceUnit { get; set; }

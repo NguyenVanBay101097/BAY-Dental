@@ -900,6 +900,7 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.OrderLines)
+                .Include("OrderLines.Product")
                 .Include("OrderLines.SaleOrderLineToothRels")
                 .Include("OrderLines.DotKhamSteps")
                 .FirstOrDefaultAsync();
@@ -1179,8 +1180,10 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Order")
+                .Include("OrderLines.Product")
                 .Include("OrderLines.DotKhamSteps")
                 .ToListAsync();
+
             foreach (var order in self)
             {
                 order.State = "sale";

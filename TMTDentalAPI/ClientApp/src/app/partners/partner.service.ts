@@ -322,6 +322,10 @@ export class PartnerService {
     getPartnerDisplaysByIds(ids: string[]): Observable<PartnerDisplay[]> {
         return this.http.post<PartnerDisplay[]>(this.baseApi + this.apiUrl + '/getPartnerDisplaysByIds', ids);
     }
+
+    defaultGet(val?: any) {
+        return this.http.post<PartnerDisplay[]>(this.baseApi + this.apiUrl + '/DefaultGet', val || {});
+    }
 }
 
 

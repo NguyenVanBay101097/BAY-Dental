@@ -97,14 +97,17 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
 
+            await _unitOfWork.BeginTransactionAsync();
+
             var partner = _mapper.Map<Partner>(val);
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
             SaveCategories(val, partner);
             SaveHistories(val, partner);
-            //FixCityName(partner);
             await _partnerService.CreateAsync(partner);
+
+            _unitOfWork.Commit();
 
             var basic = _mapper.Map<PartnerBasic>(partner);
             return Ok(basic);
@@ -121,9 +124,12 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+
             var partner = await _partnerService.GetPartnerForDisplayAsync(id);
             if (partner == null)
                 return NotFound();
+
+            await _unitOfWork.BeginTransactionAsync();
 
             partner = _mapper.Map(val, partner);
 
@@ -133,8 +139,9 @@ namespace TMTDentalAPI.Controllers
             partner.EmployeeId = val.EmployeeId;
             SaveCategories(val, partner);
             SaveHistories(val, partner);
-            //FixCityName(partner);
             await _partnerService.UpdateAsync(partner);
+
+            _unitOfWork.Commit();
 
             return NoContent();
         }

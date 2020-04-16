@@ -109,9 +109,13 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
             }
 
-            foreach (var group in val.Groups)
+            var group_ids = val.Groups.Select(x => x.Id).ToList();
+            var dict = _resGroupService._GetTransImplied(group_ids);
+            foreach(var group_id in group_ids)
             {
-                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                var groups = dict[group_id];
+                foreach(var group in groups)
+                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
             }
 
             var result = await _userManager.CreateAsync(user, val.Password);
@@ -123,9 +127,6 @@ namespace TMTDentalAPI.Controllers
                 else
                     throw new Exception("Lỗi chưa xác định, vui lòng liên hệ với người quản trị phần mềm");
             }
-
-            var group_ids = val.Groups.Select(x => x.Id).ToList();
-            await _resGroupService.AddAllImpliedGroupsToAllUser(group_ids);
 
             _unitOfWork.Commit();
 
@@ -140,7 +141,8 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             _modelAccessService.Check("ResUser", "Write");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
+                .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels)
+                .Include("ResGroupsUsersRels.Group").FirstOrDefaultAsync();
             if (user == null)
                 return NotFound();
             await _unitOfWork.BeginTransactionAsync();
@@ -152,13 +154,50 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
             }
 
-            user.ResGroupsUsersRels.Clear();
-            foreach (var group in val.Groups)
+         
+            var to_remove = new List<Guid>();
+            foreach (var rel in user.ResGroupsUsersRels)
             {
-                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                if (!val.Groups.Any(x => x.Id == rel.GroupId) && !rel.Group.CategoryId.HasValue)
+                    to_remove.Add(rel.GroupId);
+            }
+
+            var to_add = val.Groups.Select(x => x.Id).ToList();
+
+            var remove_dict = _resGroupService._GetTransImplied(to_remove);
+            foreach (var group_id in to_remove)
+            {
+                var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
+                if (rel2 != null)
+                    user.ResGroupsUsersRels.Remove(rel2);
+
+                var groups = remove_dict[group_id];
+                foreach (var group in groups)
+                {
+                    var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
+                    if (rel != null)
+                        user.ResGroupsUsersRels.Remove(rel);
+                }
+            }
+
+            var add_dict = _resGroupService._GetTransImplied(to_add);
+            foreach (var group_id in to_add)
+            {
+                var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
+                if (rel2 == null)
+                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
+
+                var groups = add_dict[group_id];
+                foreach (var group in groups)
+                {
+                    var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
+                    if (rel == null)
+                        user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                }
             }
 
             await _userManager.UpdateAsync(user);
+
             if (!string.IsNullOrEmpty(val.Password))
             {
                 await _userManager.RemovePasswordAsync(user);
@@ -171,9 +210,7 @@ namespace TMTDentalAPI.Controllers
             await SaveAvatar(partner, val);
             await _partnerService.UpdateAsync(partner);
 
-
-            var group_ids = val.Groups.Select(x => x.Id).ToList();
-            await _resGroupService.AddAllImpliedGroupsToAllUser(group_ids);
+            _userService.ClearSecurityCache(new List<string>() { id });
 
             _unitOfWork.Commit();
 

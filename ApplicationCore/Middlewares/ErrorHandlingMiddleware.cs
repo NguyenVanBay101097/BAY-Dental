@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace ApplicationCore.Middlewares
             //if (ex is MyNotFoundException) code = HttpStatusCode.NotFound;
             //else if (ex is MyUnauthorizedException) code = HttpStatusCode.Unauthorized;
             //else if (ex is MyException) code = HttpStatusCode.BadRequest;
+
             var msg = ex.Message;
             if (ex.InnerException != null)
                 msg = ex.InnerException.Message;

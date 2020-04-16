@@ -101,17 +101,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
       this.partnerCbx.loading = false;
     });
 
-    this.saleOrderCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.saleOrderCbx.loading = true)),
-      switchMap(value => this.searchSaleOrders(value))
-    ).subscribe(result => {
-      this.filteredSaleOrders = result.items;
-      this.saleOrderCbx.loading = false;
-    });
-
     this.loadPartners();
-    this.loadSaleOrders();
   }
 
   loadPartners() {

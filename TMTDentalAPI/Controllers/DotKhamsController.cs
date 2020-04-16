@@ -73,7 +73,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("DotKham", "Read");
             var dotKham = await _dotKhamService.GetDotKhamForDisplayAsync(id);
             if (dotKham == null)
             {
@@ -93,7 +92,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("DotKham", "Create");
             var dotKham = _mapper.Map<DotKham>(val);
             await _dotKhamService.CreateAsync(dotKham);
             val.Id = dotKham.Id;
@@ -105,7 +103,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("DotKham", "Write");
             var dotKham = await _dotKhamService.GetByIdAsync(id);
             if (dotKham == null)
                 return NotFound();
@@ -119,12 +116,7 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("DotKham", "Unlink");
-            var dotKham = await _dotKhamService.GetByIdAsync(id);
-            if (dotKham == null)
-                return NotFound();
-            await _dotKhamService.DeleteAsync(dotKham);
-
+            await _dotKhamService.Unlink(new List<Guid>() { id });
             return NoContent();
         }
 

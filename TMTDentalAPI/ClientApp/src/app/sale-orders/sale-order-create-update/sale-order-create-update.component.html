@@ -336,6 +336,7 @@
                                         <th>Số đợt khám</th>
                                         <th>Ngày khám</th>
                                         <th>Người tạo</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -345,6 +346,10 @@
                                         </td>
                                         <td>{{ dk.date | date : 'short' }}</td>
                                         <td>{{ dk.user ? dk.user.name : '' }}</td>
+                                        <td>
+                                            <a title="Xóa" (click)="deleteDotKham(dk)">
+                                                <span class="far fa-trash-alt"></span></a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

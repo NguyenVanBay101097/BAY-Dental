@@ -190,8 +190,21 @@ namespace Infrastructure.Services
         {
             _UpdateCityName(entities);
             await _GenerateRefIfEmpty(entities);
+            _SetCompanyIfNull(entities);
+
+            await base.CreateAsync(entities);
+
             await _CheckUniqueRef(entities);
-            return await base.CreateAsync(entities);
+            return entities;
+        }
+
+        private void _SetCompanyIfNull(IEnumerable<Partner> self)
+        {
+            foreach(var partner in self)
+            {
+                if (!partner.CompanyId.HasValue)
+                    partner.CompanyId = CompanyId;
+            }
         }
 
         private async Task _GenerateRefIfEmpty(IEnumerable<Partner> self)
@@ -226,15 +239,15 @@ namespace Infrastructure.Services
             {
                 if (partner.Customer == true && !string.IsNullOrEmpty(partner.Ref))
                 {
-                    var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Customer == true).FirstOrDefaultAsync();
-                    if (exist != null)
+                    var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Customer == true).ToListAsync();
+                    if (exist.Count >= 2)
                         throw new Exception($"Đã tồn tại khách hàng với mã {partner.Ref}");
                 }
 
                 if (partner.Supplier == true && !string.IsNullOrEmpty(partner.Ref))
                 {
-                    var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Supplier == true).FirstOrDefaultAsync();
-                    if (exist != null)
+                    var exist = await SearchQuery(x => x.Ref == partner.Ref && x.Supplier == true).ToListAsync();
+                    if (exist.Count >= 2)
                         throw new Exception($"Đã tồn tại nhà cung cấp với mã {partner.Ref}");
                 }
             }
@@ -243,8 +256,11 @@ namespace Infrastructure.Services
         public override async Task UpdateAsync(IEnumerable<Partner> entities)
         {
             _UpdateCityName(entities);
-            await _CheckUniqueRef(entities);
+            _SetCompanyIfNull(entities);
+
             await base.UpdateAsync(entities);
+
+            await _CheckUniqueRef(entities);
         }
 
         private void _UpdateCityName(IEnumerable<Partner> self)

@@ -42,6 +42,18 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Steps).ToListAsync();
+            foreach (var dk in self)
+            {
+                if (dk.Steps.Any(x => x.IsDone))
+                    throw new Exception("Không thể xóa đợt khám đã có công đoạn hoàn thành");
+            }
+
+            await DeleteAsync(self);
+        }
+
         public async Task<IEnumerable<DotKham>> GetDotKhamsForInvoice(Guid invoiceId)
         {
             return await SearchQuery(x => x.InvoiceId == invoiceId, orderBy: x => x.OrderByDescending(s => s.DateCreated))

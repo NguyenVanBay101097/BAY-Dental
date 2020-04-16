@@ -64,6 +64,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       jobTitle: null,
       customer: true,
       histories: this.fb.array([]),
+      companyId: null
     });
 
     setTimeout(() => {
@@ -90,7 +91,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       }
 
       this.dayList = _.range(1, 32);
-      console.log(this.dayList);
       this.monthList = _.range(1, 13);
       this.yearList = _.range(new Date().getFullYear(), 1900, -1);
       this.loadSourceCities();

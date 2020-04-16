@@ -21,17 +21,31 @@ export class LayoutHeaderComponent implements OnInit {
     public authService: AuthService, private router: Router, private userService: UserService) { }
 
   ngOnInit() {
-    if (this.authService.isAuthenticated()) {
-      this.userService.getChangeCurrentCompany().subscribe(result => {
-        this.userChangeCurrentCompany = result;
-      });
+    if (localStorage.getItem('user_change_company_vm')) {
+      this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }
+
+    this.authService.currentUser.subscribe(result => {
+      if (result) {
+        this.loadChangeCurrentCompany();
+      }
+    });
+  }
+
+  loadChangeCurrentCompany() {
+    this.userService.getChangeCurrentCompany().subscribe(result => {
+      this.userChangeCurrentCompany = result;
+      localStorage.setItem('user_change_company_vm', JSON.stringify(result));
+    });
   }
 
   switchCompany(companyId) {
     this.userService.switchCompany({ companyId: companyId }).subscribe(() => {
       this.authService.refresh().subscribe(result => {
-        window.location.reload();
+        this.userService.getChangeCurrentCompany().subscribe(result => {
+          localStorage.setItem('user_change_company_vm', JSON.stringify(result));
+          window.location.reload();
+        });
       });
     });
   }

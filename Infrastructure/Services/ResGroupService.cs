@@ -534,5 +534,46 @@ namespace Infrastructure.Services
 
             return dict;
         }
+
+        public IDictionary<Guid, IList<ResGroup>> _GetTransImplied(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id)).ToList();
+            return _GetTransImplied(self);
+        }
+
+        public IDictionary<Guid, IList<ResGroup>> _GetTransImplied(IList<ResGroup> groups)
+        {
+            var memo = new Dictionary<Guid, IList<ResGroup>>();
+            var res = new Dictionary<Guid, IList<ResGroup>>();
+
+            IList<ResGroup> ComputedSet(ResGroup g)
+            {
+                g = SearchQuery(x => x.Id == g.Id).Include(x => x.ImpliedRels)
+                    .Include("ImpliedRels.H").FirstOrDefault();
+                if (!memo.ContainsKey(g.Id))
+                {
+                    var gs = g.ImpliedRels.Select(s => s.H).ToList();
+                    memo.Add(g.Id, gs);
+                    foreach (var h in gs.ToList())
+                    {
+                        foreach (var s in ComputedSet(h))
+                        {
+                            if (!memo[g.Id].Contains(s))
+                                memo[g.Id].Add(s);
+                        }
+                    }
+                }
+                return memo[g.Id];
+            }
+
+            foreach (var g in groups)
+            {
+                if (!res.ContainsKey(g.Id))
+                    res.Add(g.Id, new List<ResGroup>());
+                res[g.Id] = ComputedSet(g);
+            }
+
+            return res;
+        }
     }
 }

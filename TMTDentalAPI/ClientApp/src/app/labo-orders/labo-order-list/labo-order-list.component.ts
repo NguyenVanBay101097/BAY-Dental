@@ -90,7 +90,7 @@ export class LaboOrderListComponent implements OnInit {
       return false;
     }
 
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu labo';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

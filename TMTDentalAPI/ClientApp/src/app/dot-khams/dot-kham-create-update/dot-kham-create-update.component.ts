@@ -5,7 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { DotKhamService } from '../dot-kham.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, map, mergeMap } from 'rxjs/operators';
 import { AccountInvoiceCbx, AccountInvoiceService } from 'src/app/account-invoices/account-invoice.service';
 import { Observable, pipe } from 'rxjs';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
@@ -135,39 +135,11 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       filter: "dotkham"
     });
 
-    this.getCustomerList();
     this.getDoctorList();
     this.getAssistantList();
-
-    if (this.dialog) {
-      this.loadDataFromHistory();
-    } else {
-      this.getActiveRoute();
-    }
-
-    if (!this.id && !this.invoiceId) {
-      this.dotKhamForm.get('invoice').disable();
-    }
-
-    // this.userCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.userCbx.loading = true)),
-    //   switchMap(value => this.searchUsers(value))
-    // ).subscribe(result => {
-    //   this.filteredUsers = result;
-    //   this.userCbx.loading = false;
-    // });
-
-    this.loadToaThuocs();
-    // this.loadAppointments();
-    // this.loadDotKhamSteps();
-    this.loadDotKhamStepList();
-    this.loadLaboOrders();
-    this.loadProductSimpleList();
+    this.getActiveRoute();
 
     this.filterChangeCombobox();
-    this.valueChangeCombobox();
-    this.getImageIds();
 
     this.webImageApi = environment.uploadDomain + 'api/Web/Image';
     this.webContentApi = environment.uploadDomain + 'api/Web/Content';
@@ -178,30 +150,43 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   getActiveRoute() {
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.id = params.get("id");
-        if (this.id) {
-          return this.dotKhamService.get(this.id);
-        } else {
-          var defaultVal = new DotKhamDefaultGet();
-          return this.dotKhamService.defaultGet(defaultVal);
-        }
-      })).subscribe(result => {
-        this.dotKham = result;
-        this.dotKhamForm.patchValue(result);
-        let date = new Date(result.date);
-        this.dotKhamForm.get('dateObj').patchValue(date);
-        if (result.doctor) {
-          this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [result.doctor], 'id');
-        }
-        if (result.assistant) {
-          this.assistantSimpleFilter = _.unionBy(this.assistantSimpleFilter, [result.assistant], 'id');
-        }
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-        }
-      });
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.id = params.get('id');
+      if (this.id) {
+        this.loadData();
+      } else {
+        this.loadDefaultFormGroup();
+      }
+    });
+  }
+
+  loadRecordUpdateFormGroup() {
+    this.dotKhamService.get(this.id).subscribe(result => {
+      this.updateFormGroup(result);
+    });
+  }
+
+  loadDefaultFormGroup() {
+    var defaultVal = new DotKhamDefaultGet();
+    this.dotKhamService.defaultGet(defaultVal).subscribe(result => {
+      this.updateFormGroup(result);
+    });
+  }
+
+  updateFormGroup(result) {
+    this.dotKham = result;
+    this.dotKhamForm.patchValue(result);
+    let date = new Date(result.date);
+    this.dotKhamForm.get('dateObj').patchValue(date);
+    if (result.doctor) {
+      this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [result.doctor], 'id');
+    }
+    if (result.assistant) {
+      this.assistantSimpleFilter = _.unionBy(this.assistantSimpleFilter, [result.assistant], 'id');
+    }
+    if (result.user) {
+      this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+    }
   }
 
   updateStepName(event, step: DotKhamStepDisplay) {
@@ -706,8 +691,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   onUpdate() {
-    debugger;
-
     if (!this.dotKhamForm.valid) {
       return;
     }
@@ -718,11 +701,11 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         this.notificationService.show({
           content: 'Lưu thay đổi thành công',
           hideAfter: 3000,
-          position: { horizontal: 'right', vertical: 'top' },
+          position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-        this.reloadData();
+        this.loadData();
       });
     }
   }
@@ -734,24 +717,23 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         var data = this.prepareData();
         this.dotKhamService.update(this.id, data).subscribe(() => {
           this.dotKhamService.actionConfirm(this.id).subscribe(() => {
-            this.reloadData();
+            this.loadData();
           })
         });
       } else {
         this.dotKhamService.actionConfirm(this.id).subscribe(() => {
-          this.reloadData();
+          this.loadData();
         })
       }
     }
   }
 
-  reloadData() {
+  loadData() {
     if (this.id) {
-      this.dotKhamService.get(this.id).subscribe(result => {
-        this.dotKhamForm.patchValue(result);
-        let date = this.intlService.parseDate(result.date);
-        this.dotKhamForm.get('dateObj').patchValue(date);
-      });
+      this.loadRecordUpdateFormGroup();
+      this.loadToaThuocs();
+      this.loadDotKhamStepList();
+      this.getImageIds();
     }
   }
 
@@ -767,13 +749,13 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   // markLineDone(item: any) {
   //   this.dotKhamLineService.markDone(item.id).subscribe(() => {
-  //     this.reloadData();
+  //     this.loadData();
   //   });
   // }
 
   // markOperationDone(item: any) {
   //   this.dotKhamLineOperationService.markDone(item.id).subscribe(() => {
-  //     this.reloadData();
+  //     this.loadData();
   //   });
   // }
 
@@ -818,17 +800,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   filterChangeCombobox() {
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.partnerCbx.loading = true),
-      switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
-    ).subscribe(
-      rs => {
-        this.customerSimpleFilter = rs;
-        this.partnerCbx.loading = false;
-      }
-    )
-
     this.doctorCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.doctorCbx.loading = true),
@@ -1148,10 +1119,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         rs.forEach(e => {
           // _.unionBy(this.imagesPreview, [src], 'id');
           if (this.getFileMineType(e.mineType) == 'image') {
-            console.log(1);
             this.imagesPreview.push(e);
           } else {
-            console.log(2);
             this.filesPreview.push(e);
           }
         });
