@@ -113,6 +113,10 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.formGroup.patchValue({
+      audienceFilter: this.convertAudienceFilterItemsToString()
+    });
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -211,12 +215,14 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
       formula_types: ['eq', 'neq'],
       formula_values: [],
       formula_displays: null,
+      inputbox: false
     }, {
       type: 'Gender',
       name: 'Giới tính',
       formula_types: ['eq', 'neq'],
       formula_values: ['male', 'female'],
       formula_displays: ['Nam', 'Nữ'],
+      inputbox: false
     }, {
       type: 'FirstName',
       name: 'Tên',
@@ -240,6 +246,16 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     display: null
   };
   listAudienceFilter_Items: any[] = [];
+  index_selectedAudienceFilter_Item: any;
+  selectedAudienceFilter_Item: any;
+  selectedAudienceFilter_Item_Picker = {
+    type: null,
+    name: null,
+    formula_types: [],
+    formula_values: [],
+    formula_displays: null,
+    inputbox: false
+  };
   listTags: any[];
   inputSearchTag: string;
   searchTagUpdate = new Subject<string>();
@@ -299,22 +315,36 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     document.getElementById('dropdown-item-audience-filter').style.display = 'block';
   }
   selectAudienceFilter(item) {
+    this.index_selectedAudienceFilter_Item = null; // null selected Item
     this.selectedAudienceFilter_Picker = item;
     this.selectedFormula.type = item.formula_types[0];
     document.getElementById('dropdown-item-audience-filter').style.display = 'none';
   }
   selectFormulaType(item) {
     this.selectedFormula.type = item;
-    this.addAudienceFilter()
+    if (this.index_selectedAudienceFilter_Item !== null) {
+      this.editAudienceFilter();
+    } else {
+      this.addAudienceFilter();
+    }
   }
   selectFormulaValue(item, i) {
     this.selectedFormula.value = item;
-    if (this.selectedAudienceFilter_Picker.formula_displays) {
-      this.selectedFormula.display = this.selectedAudienceFilter_Picker.formula_displays[i];
+    if (this.index_selectedAudienceFilter_Item !== null) {
+      if (this.selectedAudienceFilter_Item_Picker.formula_displays) {
+        this.selectedFormula.display = this.selectedAudienceFilter_Item_Picker.formula_displays[i];
+      } else {
+        this.selectedFormula.display = null;
+      }
+      this.editAudienceFilter();
     } else {
-      this.selectedFormula.display = null;
+      if (this.selectedAudienceFilter_Picker.formula_displays) {
+        this.selectedFormula.display = this.selectedAudienceFilter_Picker.formula_displays[i];
+      } else {
+        this.selectedFormula.display = null;
+      }
+      this.addAudienceFilter();
     }
-    this.addAudienceFilter()
   }
   cancelInputFormulaValue() {
     this.selectedAudienceFilter_Picker = null;
@@ -322,11 +352,14 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
   saveInputFormulaValue(value) {
     this.selectedFormula.value = value;
     this.selectedFormula.display = value;
-    this.addAudienceFilter()
+    if (this.index_selectedAudienceFilter_Item !== null) {
+      this.editAudienceFilter();
+    } else {
+      this.addAudienceFilter();
+    }
   }
   addAudienceFilter() {
     if (this.selectedFormula.type && this.selectedFormula.value) {
-
       var temp = {
         type: this.selectedAudienceFilter_Picker.type,
         name: this.selectedAudienceFilter_Picker.name,
@@ -335,19 +368,56 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
         formula_display: this.selectedFormula.display
       }
       this.listAudienceFilter_Items.push(temp);
-      this.selectedAudienceFilter_Picker = null;
+      this.selectedAudienceFilter_Picker = null; // null selected Picker
       this.selectedFormula.type = null;
       this.selectedFormula.value = null;
       this.selectedFormula.display = null;
       document.getElementById('dropdown-item-audience-filter').style.display = 'block';
-      console.log(this.listAudienceFilter_Items);
-      this.formGroup.patchValue({
-        audienceFilter: this.convertAudienceFilterItemsToString()
-      });
+      // console.log(this.listAudienceFilter_Items);
     }
   }
-  selectAudienceFilterItem(index) {
-    console.log("Hello");
+  editAudienceFilter() {
+    if (this.selectedFormula.type && this.selectedFormula.value) {
+      this.listAudienceFilter_Items[this.index_selectedAudienceFilter_Item].formula_type = this.selectedFormula.type;
+      this.listAudienceFilter_Items[this.index_selectedAudienceFilter_Item].formula_value = this.selectedFormula.value;
+      this.listAudienceFilter_Items[this.index_selectedAudienceFilter_Item].formula_display = this.selectedFormula.display;
+      /*
+      this.index_selectedAudienceFilter_Item = null; 
+      this.selectedAudienceFilter_Item = null; // null selected Item
+      this.selectedAudienceFilter_Item_Picker = {
+        type: null,
+        name: null,
+        formula_types: [],
+        formula_values: [],
+        formula_displays: null,
+        inputbox: false
+      };
+      this.selectedFormula.type = null;
+      this.selectedFormula.value = null;
+      this.selectedFormula.display = null;
+      */
+      // console.log(this.listAudienceFilter_Items);
+    }
+  }
+  selectAudienceFilterItem(item, index) {
+    this.selectedAudienceFilter_Picker = null; // null selected Picker
+    this.index_selectedAudienceFilter_Item = index;
+    this.selectedAudienceFilter_Item = item;
+    this.selectedAudienceFilter_Item_Picker = this.listAudienceFilter_Picker.find(x => x.type == item.type);
+    this.selectedFormula.type = item.formula_type;
+    this.selectedFormula.value = item.formula_value;
+    this.selectedFormula.display = item.formula_display;
+    if (item.type === "Tag") {
+      this.inputSearchTag = this.selectedFormula.value;
+      // console.log(document.getElementById('inputFormulaValue_Tag'));
+      document.getElementById("inputFormulaValue_Tag").setAttribute('value', this.selectedFormula.value);
+      this.loadListTags();
+    }
+    if (this.selectedAudienceFilter_Item_Picker.inputbox) {
+      // console.log(document.getElementById('inputFormulaValue_Input'));
+      document.getElementById("inputFormulaValue_Input").setAttribute('value', this.selectedFormula.value);
+    }
+    // console.log(item);
   }
   deleteAudienceFilterItem(index) {
     this.listAudienceFilter_Items.splice(index, 1);
@@ -391,7 +461,6 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
         listAudienceFilter_Items_String += element + ";|";
       }
     }
-    this.convertAudienceFilterItemsToArray(listAudienceFilter_Items_String);
     return listAudienceFilter_Items_String;
   }
   convertAudienceFilterItemsToArray(listAudienceFilter_Items_String) {

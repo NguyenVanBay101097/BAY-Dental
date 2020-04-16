@@ -19,7 +19,7 @@
     word-break: break-all;
     line-height: 1.8;
 }
-.audience-filter-item button {
+.audience-filter-item {
     margin-bottom: 5px;
 }
 .audience-filter-item .remove {
