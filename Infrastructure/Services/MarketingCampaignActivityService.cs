@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +38,26 @@ namespace Infrastructure.Services
             //        throw new Exception($"Bạn nên chèn mã trộn {ma_tron} vào nội dung gửi");
             //}
         }
+
+        public async Task<PagedResult2<MarketingCampaignActivitySimple>> AutocompleteActivity(MarketingCampaignActivityPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (val.ParentId.HasValue)
+            {
+                query = SearchQuery().Where(x => x.Id == val.ParentId);
+            }
+            var items = await _mapper.ProjectTo<MarketingCampaignActivitySimple>(query).ToListAsync();
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<MarketingCampaignActivitySimple>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+           
+        }
+
         public async Task<MarketingCampaignActivityDisplay> GetActivityDisplay(Guid id)
         {
             var activity = await SearchQuery(x => x.Id == id)

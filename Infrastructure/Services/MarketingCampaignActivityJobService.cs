@@ -85,11 +85,13 @@ namespace Infrastructure.Services
                         //        ")", new { pageId = page.Id }).ToList();
                         if (activity.TriggerType == "begin" || activity.TriggerType == "act")
                         {
-                            var profiles = conn.Query<FacebookUserProfile>("" +
-                        "SELECT * " +
-                            "FROM FacebookUserProfiles m " +
-                            "where m.FbPageId = @pageId  " +
-                            "", new { pageId = page.Id }).ToList();
+                            var profiles = conn.Query<UserProfile>("" +
+                              "SELECT us.id,us.PSId,us.Name " +
+                              "FROM FacebookUserProfiles us " +
+                              "where us.FbPageId = @pageId  " +
+                              "", new { pageId = page.Id }).ToList();
+                            if (profiles == null)
+                                return;
                             var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
 
                             var limit = 200;
@@ -105,13 +107,12 @@ namespace Infrastructure.Services
                         else
                         {
                             //filter list userprofile read message 
-                            var profiles = conn.Query<FacebookUserProfile>("" +
-                             "SELECT * " +
-                             "FROM FacebookUserProfiles m " +
-                             "Left Join MarketingTraces as tr " +
-                             "On tr.ActivityId = @activityId " +
-                             "where m.FbPageId = @pageId AND tr.[Read] is not null" +
-                             "", new { pageId = page.Id, activityId = activity.ParentId }).ToList();
+                            var profiles = conn.Query<UserProfile>("" +
+                             "SELECT  us.id,us.PSId,us.Name " +
+                            "FROM MarketingTraces m " +
+                            "Left join FacebookUserProfiles as us on us.Id = m.UserProfileId " +
+                            "where m.ActivityId = @activityId AND m.[Read] is not null " +
+                            "", new { activityId = activity.ParentId }).ToList();
                             if (profiles == null)
                                 return;
                             var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
@@ -211,7 +212,7 @@ namespace Infrastructure.Services
             throw new Exception("Not support");
         }
 
-        private async Task SendFacebookMessage(string access_token, object message, FacebookUserProfile profile, Guid? activityId = null,
+        private async Task SendFacebookMessage(string access_token, object message, UserProfile profile, Guid? activityId = null,
             SqlConnection conn = null)
         {
             var now = DateTime.Now;
@@ -225,6 +226,13 @@ namespace Infrastructure.Services
 
         }
 
+
+        public class UserProfile { 
+            public Guid Id { get; set; }
+            public string PSID { get; set; }
+            public string Name { get; set; }
+
+        }
         public class SendFacebookMessageReponse
         {
             public string message_id { get; set; }

@@ -341,7 +341,7 @@ namespace Infrastructure.Services
         public async Task ActionStopCampaign(IEnumerable<Guid> ids)
         {
             var states = new string[] { "running" };
-            var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).Include("Activities.Traces").ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).ToListAsync();
             foreach (var campaign in self)
             {
                 campaign.State = "stopped";
@@ -350,8 +350,9 @@ namespace Infrastructure.Services
                 {
                     if (string.IsNullOrEmpty(activity.JobId))
                         continue;
-                    activity.Traces.Clear();
                     BackgroundJob.Delete(activity.JobId);
+                   
+                   
                 }
             }
 
@@ -368,26 +369,16 @@ namespace Infrastructure.Services
                     if (string.IsNullOrEmpty(activity.JobId))
                         continue;
                     BackgroundJob.Delete(activity.JobId);
+                   
                 }
             }
 
             await DeleteAsync(self);
         }
 
-        //---Activity----//
+      
 
-        public async Task<IEnumerable<MarketingCampaignActivitySimple>> AutocompleteActivity(Guid id)
-        {
-            var activityObj = GetService<IMarketingCampaignActivityService>();
-            var activities = await activityObj.SearchQuery(x => x.CampaignId == id, orderBy: x => x.OrderBy(s => s.Sequence))
-              .Select(x => new MarketingCampaignActivitySimple
-              {
-                  Id = x.Id,
-                  Name = x.Name
-
-              }).ToListAsync();
-            return activities;
-        }
+       
 
 
 

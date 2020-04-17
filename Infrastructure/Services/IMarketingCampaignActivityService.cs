@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Infrastructure.Services
     public interface IMarketingCampaignActivityService: IBaseService<MarketingCampaignActivity>
     {
         void CheckAutoTakeCoupon(IEnumerable<MarketingCampaignActivity> self);
+        Task<PagedResult2<MarketingCampaignActivitySimple>> AutocompleteActivity(MarketingCampaignActivityPaged val);
         Task<MarketingCampaignActivityDisplay> GetActivityDisplay(Guid id);
         Task<MarketingCampaignActivity> CreateActivity(MarketingCampaignActivitySave val);
         Task UpdateActivity(Guid id, MarketingCampaignActivitySave val);

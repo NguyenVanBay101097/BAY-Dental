@@ -3073,6 +3073,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("MessageId");
 
+                    b.HasIndex("ParentId");
+
                     b.HasIndex("WriteById");
 
                     b.ToTable("MarketingCampaignActivities");
@@ -7194,6 +7196,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.MarketingMessage", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId");
+
+                    b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

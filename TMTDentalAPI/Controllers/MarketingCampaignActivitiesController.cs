@@ -25,6 +25,12 @@ namespace TMTDentalAPI.Controllers
             _mapper = mapper;
             _userService = userService;
         }
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery]MarketingCampaignActivityPaged val)
+        {
+            var result = await _marketingCampaignActivityService.AutocompleteActivity(val);
+            return Ok(result);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
@@ -33,7 +39,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> CreateActivity(MarketingCampaignActivitySave val)
         {
             var activity = await _marketingCampaignActivityService.CreateActivity(val);

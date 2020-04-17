@@ -17,10 +17,10 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.MessageId);
 
-            //builder.HasOne(x => x.Parent)
-            //.WithMany()
-            //.HasForeignKey(x => x.ParentId);
-            
+            builder.HasOne(x => x.Parent)
+            .WithMany()
+            .HasForeignKey(x => x.ParentId);
+
 
 
             builder.HasOne(x => x.Campaign)

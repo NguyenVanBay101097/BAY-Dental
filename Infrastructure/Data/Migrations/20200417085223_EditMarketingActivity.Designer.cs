@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20200416014637_F_Edit_2_MarketingCampaignActivity")]
-    partial class F_Edit_2_MarketingCampaignActivity
+    [Migration("20200417085223_EditMarketingActivity")]
+    partial class EditMarketingActivity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -3074,6 +3074,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("MarketingCampaignActivityId");
 
                     b.HasIndex("MessageId");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("WriteById");
 
@@ -7196,6 +7198,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.MarketingMessage", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId");
+
+                    b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
