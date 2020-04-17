@@ -21,19 +21,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IResGroupService _resGroupService;
         private readonly IMapper _mapper;
-        private readonly IIRModelAccessService _modelAccessService;
-        private readonly IMyCache _cache;
         private readonly IUserService _userService;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
         public ResGroupsController(IResGroupService resGroupService,
-            IMapper mapper, IIRModelAccessService modelAccessService,
-            IMyCache cache, IUserService userService, IUnitOfWorkAsync unitOfWork)
+            IMapper mapper, IUserService userService, IUnitOfWorkAsync unitOfWork)
         {
             _resGroupService = resGroupService;
             _mapper = mapper;
-            _modelAccessService = modelAccessService;
-            _cache = cache;
             _userService = userService;
             _unitOfWork = unitOfWork;
         }
@@ -41,7 +36,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]ResGroupPaged val)
         {
-            _modelAccessService.Check("ResGroup", "Read");
             var result = await _resGroupService.GetPagedResultAsync(val);
             return Ok(result);
         }
@@ -49,14 +43,12 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("ResGroup", "Read");
             var group = await _resGroupService.SearchQuery(x => x.Id == id).Include(x => x.ModelAccesses)
                 .Include("ModelAccesses.Model")
                 .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.User").FirstOrDefaultAsync();
             if (group == null)
-            {
                 return NotFound();
-            }
+
             var res = _mapper.Map<ResGroupDisplay>(group);
             res.ModelAccesses = res.ModelAccesses.OrderBy(x => x.Name);
             return Ok(res);
@@ -67,21 +59,13 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResGroup", "Create");
             await _unitOfWork.BeginTransactionAsync();
+
             var group = _mapper.Map<ResGroup>(val);
             SaveAccesses(val, group);
 
-            var refreshCacheUserIds = new List<string>().AsEnumerable();
-            refreshCacheUserIds = refreshCacheUserIds.Union(group.ResGroupsUsersRels.Select(x => x.UserId).ToList());
-            refreshCacheUserIds = refreshCacheUserIds.Union(val.Users.Select(x => x.Id).ToList());
-
-            SaveUsers(val, group);
             await _resGroupService.CreateAsync(group);
 
-            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { group });
-
-            _userService.ClearSecurityCache(refreshCacheUserIds);
             _unitOfWork.Commit();
 
             val.Id = group.Id;
@@ -93,9 +77,10 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResGroup", "Write");
+
             var group = await _resGroupService.SearchQuery(x => x.Id == id).Include(x => x.ModelAccesses)
                 .Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
+
             if (group == null)
                 return NotFound();
 
@@ -108,10 +93,7 @@ namespace TMTDentalAPI.Controllers
             refreshCacheUserIds = refreshCacheUserIds.Union(group.ResGroupsUsersRels.Select(x => x.UserId).ToList());
             refreshCacheUserIds = refreshCacheUserIds.Union(val.Users.Select(x => x.Id).ToList());
 
-            SaveUsers(val, group);
             await _resGroupService.UpdateAsync(group);
-
-            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { group });
 
             _userService.ClearSecurityCache(refreshCacheUserIds);
 
@@ -123,11 +105,12 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("ResGroup", "Unlink");
             var group = await _resGroupService.SearchQuery(x => x.Id == id).Include(x => x.ModelAccesses)
                .Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
+
             if (group == null)
                 return NotFound();
+
             await _resGroupService.DeleteAsync(group);
 
             var refreshCacheUserIds = new List<string>().AsEnumerable();

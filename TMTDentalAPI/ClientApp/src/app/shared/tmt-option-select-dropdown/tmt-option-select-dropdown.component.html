@@ -4,7 +4,7 @@
         <i class="fas fa-filter"></i>
         {{title}} : <span *ngIf="optionSelected">{{optionSelected.text}}</span>
     </button>
-    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="tmtOptionSelectDropdown">
+    <div class="dropdown-menu" aria-labelledby="tmtOptionSelectDropdown">
         <button class="dropdown-item" *ngFor="let option of options" type="button" (click)="selectOption(option)">
             <span>{{option.text}}</span>
         </button>

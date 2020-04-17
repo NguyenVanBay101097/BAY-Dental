@@ -195,8 +195,10 @@ namespace TMTDentalAPI.Controllers
                         user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
                 }
             }
-
-            await _userManager.UpdateAsync(user);
+             
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+                throw new Exception(string.Join(", ", updateResult.Errors.Select(x => x.Description)));
 
             if (!string.IsNullOrEmpty(val.Password))
             {

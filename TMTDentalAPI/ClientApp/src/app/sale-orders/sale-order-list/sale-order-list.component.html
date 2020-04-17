@@ -6,8 +6,9 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, khách hàng, SĐT" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" accesskey="q"
+                        placeholder="Tìm kiếm theo số phiếu, khách hàng, SĐT" type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -50,9 +51,9 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-        <kendo-grid-column field="name" title="Số phiếu" width="150">
+        <kendo-grid-column field="name" title="Số phiếu" width="100">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="dateOrder" title="Ngày điều trị" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -61,17 +62,17 @@
         </kendo-grid-column>
         <kendo-grid-column field="userName" title="Người tạo" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="150">
+        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountTotal | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Còn nợ" class="text-right" width="150">
+        <kendo-grid-column title="Còn nợ" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.residual | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="Trạng thái" width="150">
+        <kendo-grid-column field="state" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{stateGet(dataItem.state)}}
             </ng-template>

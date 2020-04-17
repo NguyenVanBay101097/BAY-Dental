@@ -1,4 +1,4 @@
-<div ngbDropdown #myDrop="ngbDropdown" [autoClose]="false">
+<div ngbDropdown #myDrop="ngbDropdown">
     <button class="btn btn-secondary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
         <i class="fas fa-filter"></i>
         {{title}}:
@@ -10,19 +10,29 @@
         <button class="dropdown-item" *ngFor="let option of quickOptions" type="button"
             (click)="quickOptionClick(option)">{{option.text}}</button>
         <div class="dropdown-divider"></div>
-        <div class="px-4" [formGroup]="formGroup">
+        <div class="px-4 pb-3" [formGroup]="formGroup">
             <div class="form-group">
                 <label>Từ ngày</label>
-                <div>
-                    <kendo-datepicker formControlName="dateFrom">
-                    </kendo-datepicker>
+                <div class="input-group">
+                    <input class="form-control" placeholder="dd/mm/yyyy" name="dp" formControlName="dateFrom"
+                        ngbDatepicker #d1="ngbDatepicker">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="d1.toggle()" type="button">
+                            <i class="far fa-calendar-alt"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
                 <label>Đến ngày</label>
-                <div>
-                    <kendo-datepicker formControlName="dateTo">
-                    </kendo-datepicker>
+                <div class="input-group">
+                    <input class="form-control" placeholder="dd/mm/yyyy" name="dp" formControlName="dateTo"
+                        ngbDatepicker #d2="ngbDatepicker">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button">
+                            <i class="far fa-calendar-alt"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div>

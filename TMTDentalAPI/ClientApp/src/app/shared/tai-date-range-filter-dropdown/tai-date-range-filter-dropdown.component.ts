@@ -41,10 +41,18 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group(this.defaultFormGroup);
     if (this.dateFrom) {
-      this.formGroup.get('dateFrom').setValue(this.dateFrom);
+      this.formGroup.get('dateFrom').setValue({
+        year: this.dateFrom.getFullYear(),
+        month: this.dateFrom.getMonth() + 1,
+        day: this.dateFrom.getDate(),
+      });
     }
     if (this.dateTo) {
-      this.formGroup.get('dateTo').setValue(this.dateTo);
+      this.formGroup.get('dateTo').setValue({
+        year: this.dateTo.getFullYear(),
+        month: this.dateTo.getMonth() + 1,
+        day: this.dateTo.getDate(),
+      });
     }
 
     this.quickOptions = [
@@ -57,13 +65,36 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
   }
 
   quickOptionClick(option) {
-    this.formGroup.get('dateFrom').setValue(option.dateFrom);
-    this.formGroup.get('dateTo').setValue(option.dateTo);
-    this.searchChange.emit(this.formGroup.value);
-    this.myDrop.close();
+    this.formGroup.get('dateFrom').setValue({
+      year: option.dateFrom.getFullYear(),
+      month: option.dateFrom.getMonth() + 1,
+      day: option.dateFrom.getDate(),
+    });
+
+    this.formGroup.get('dateTo').setValue({
+      year: option.dateTo.getFullYear(),
+      month: option.dateTo.getMonth() + 1,
+      day: option.dateTo.getDate(),
+    });
+
+    this.onSearch();
   }
 
   onSearch() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var value = this.formGroup.value;
+
+    if (value.dateFrom) {
+      value.dateFrom = new Date(value.dateFrom.year, value.dateFrom.month - 1, value.dateFrom.day);
+    }
+
+    if (value.dateTo) {
+      value.dateTo = new Date(value.dateTo.year, value.dateTo.month - 1, value.dateTo.day);
+    }
+
     this.searchChange.emit(this.formGroup.value);
     this.myDrop.close();
   }
@@ -72,6 +103,10 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
     this.formGroup = this.fb.group(this.defaultFormGroup);
     this.searchChange.emit(this.formGroup.value);
     this.myDrop.close();
+  }
+
+  toggleDropdown() {
+    this.myDrop.toggle();
   }
 }
 

@@ -34,7 +34,6 @@ export class ResGroupCreateUpdateComponent implements OnInit {
     this.groupForm = this.fb.group({
       name: [null, Validators.required],
       modelAccesses: this.fb.array([]),
-      users: null
     });
 
     this.id = this.route.snapshot.params['id'];

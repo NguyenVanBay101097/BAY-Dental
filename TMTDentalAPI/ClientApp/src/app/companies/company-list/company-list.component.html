@@ -8,7 +8,8 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm</button>
+                    <button class="btn btn-primary btn-sm" hasGroups [groups]="'base.group_multi_company'"
+                        (click)="createItem()" accesskey="c">Thêm</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">

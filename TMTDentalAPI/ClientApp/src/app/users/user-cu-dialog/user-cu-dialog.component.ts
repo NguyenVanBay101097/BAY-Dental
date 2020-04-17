@@ -6,6 +6,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyBasic, CompanySimple, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 import * as _ from 'lodash';
 import { ResGroupBasic, ResGroupService, ResGroupPaged } from 'src/app/res-groups/res-group.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -22,7 +23,8 @@ export class UserCuDialogComponent implements OnInit {
 
   title: string;
   constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal,
-    private companyService: CompanyService, private resGroupService: ResGroupService) {
+    private companyService: CompanyService, private resGroupService: ResGroupService,
+    private showErrorService: AppSharedShowErrorService) {
   }
 
   ngOnInit() {
@@ -94,7 +96,7 @@ export class UserCuDialogComponent implements OnInit {
     this.saveOrUpdate().subscribe(() => {
       this.activeModal.close(true);
     }, err => {
-      console.log(err);
+      this.showErrorService.show(err);
     });
   }
 

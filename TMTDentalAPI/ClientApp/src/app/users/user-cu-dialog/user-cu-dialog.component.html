@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="userForm" #form="ngForm">
+    <div class="o_form_view" [formGroup]="userForm" #form="ngForm" autocomplete="off">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <app-field-binary-image-simple formControlName="avatar" [imgSource]="userForm.get('avatar').value">
@@ -27,7 +27,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="userName" />
+                                    <input type="text" class="form-control" formControlName="userName"
+                                        autocomplete="nope" />
                                 </td>
                             </tr>
                             <tr>
@@ -37,7 +38,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="password" class="form-control" formControlName="passWord" />
+                                    <input type="password" class="form-control" formControlName="passWord"
+                                        autocomplete="new-password" />
                                 </td>
                             </tr>
                         </tbody>
@@ -117,7 +119,7 @@
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>
 
 <footer class="modal-footer">

@@ -4,7 +4,7 @@
         <i class="fas fa-filter"></i>
         {{getResult()}}
     </button>
-    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownAppointmentState">
+    <div class="dropdown-menu" aria-labelledby="dropdownAppointmentState">
         <button class="dropdown-item" *ngFor="let state of states" type="button" [ngClass]="state.class"
             (click)="onSelect(state.value)">
             <span>{{state.text}}</span>
