@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200415105155_F_Edit_MarketingCampaignActivity")]
+    partial class F_Edit_MarketingCampaignActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3041,9 +3043,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("MarketingCampaignActivityId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("MessageId")
                         .HasColumnType("uniqueidentifier");
 
@@ -3068,8 +3067,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CampaignId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("MarketingCampaignActivityId");
 
                     b.HasIndex("MessageId");
 
@@ -7186,10 +7183,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", null)
-                        .WithMany("ActivityChilds")
-                        .HasForeignKey("MarketingCampaignActivityId");
 
                     b.HasOne("ApplicationCore.Entities.MarketingMessage", "Message")
                         .WithMany()

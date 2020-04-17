@@ -72,7 +72,8 @@ namespace ApplicationCore.Entities
         public ICollection<MarketingCampaignActivityFacebookTagRel> TagRels { get; set; } = new List<MarketingCampaignActivityFacebookTagRel>();
 
         public Guid? ParentId { get; set; }
-        public MarketingCampaignActivity Parent { get; set; }
+       // public MarketingCampaignActivity Parent { get; set; }
         public ICollection<MarketingCampaignActivity> ActivityChilds { get; set; } = new List<MarketingCampaignActivity>();
+
     }
 }

@@ -7,7 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class MarketingCampaignSave
     {
         public string Name { get; set; }
-        public IEnumerable<MarketingCampaignActivitySave> Activities { get; set; } = new List<MarketingCampaignActivitySave>();
+        //public IEnumerable<MarketingCampaignActivitySave> Activities { get; set; } = new List<MarketingCampaignActivitySave>();
         public Guid? FacebookPageId { get; set; }
     }
 }

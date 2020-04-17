@@ -215,6 +215,7 @@ namespace TMTDentalAPI
             services.AddScoped<IMarketingCampaignActivityService, MarketingCampaignActivityService>();
             services.AddScoped<IMarketingCampaignActivityJobService, MarketingCampaignActivityJobService>();
             services.AddScoped<IMarketingTraceService, MarketingTraceService>();
+            services.AddScoped<IMarketingMessageService, MarketingMessageService>();
             services.AddScoped<IPartnerMapPSIDFacebookPageService, PartnerMapPSIDFacebookPageService>();
             services.AddScoped<IFacebookConnectService, FacebookConnectService>();
             services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();

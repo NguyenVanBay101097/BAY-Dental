@@ -19,7 +19,7 @@ using ZaloDotNetSDK;
 
 namespace Infrastructure.Services
 {
-    public class MarketingCampaignActivityJobService: IMarketingCampaignActivityJobService
+    public class MarketingCampaignActivityJobService : IMarketingCampaignActivityJobService
     {
         private readonly ConnectionStrings _connectionStrings;
         private readonly IFacebookMessageSender _fbMessageSender;
@@ -83,101 +83,52 @@ namespace Infrastructure.Services
                         //            "FROM Partners p " +
                         //            "where p.Customer = 1 " +
                         //        ")", new { pageId = page.Id }).ToList();
-                        var profiles = conn.Query<FacebookUserProfile>("" +
-                         "SELECT * " +
-                             "FROM FacebookUserProfiles m " +
-                             "where m.FbPageId = @pageId  " +
-                             "", new { pageId = page.Id }).ToList();
-
-
-                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj,x, activity.Id, conn)).ToList();
-
-                        var limit = 200;
-                        var offset = 0;
-                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        while (subTasks.Any())
+                        if (activity.TriggerType == "begin" || activity.TriggerType == "act")
                         {
-                            await Task.WhenAll(subTasks);                        
-                            offset += limit;
-                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            var profiles = conn.Query<FacebookUserProfile>("" +
+                        "SELECT * " +
+                            "FROM FacebookUserProfiles m " +
+                            "where m.FbPageId = @pageId  " +
+                            "", new { pageId = page.Id }).ToList();
+                            var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
+
+                            var limit = 200;
+                            var offset = 0;
+                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            while (subTasks.Any())
+                            {
+                                await Task.WhenAll(subTasks);
+                                offset += limit;
+                                subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            }
                         }
-                    }
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-
-        public async Task CreateRunActivetyContinueJobAsync(string db, Guid activityId, DateTime dateFrom , DateTime dateTo)
-        {
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            if (db == "localhost")
-                builder["Database"] = "TMTDentalCatalogDb";
-            using (var conn = new SqlConnection(builder.ConnectionString))
-            {
-                try
-                {
-                    conn.Open();
-
-                    var activity = conn.Query<MarketingCampaignActivity>("" +
-                        "SELECT * " +
-                        "FROM MarketingCampaignActivities " +
-                        "where Id = @id" +
-                        "", new { id = activityId }).FirstOrDefault();
-
-                    if (activity == null)
-                        return;
-
-                    var campaign = conn.Query<MarketingCampaign>("" +
-                        "SELECT * " +
-                        "FROM MarketingCampaigns " +
-                        "where Id = @id" +
-                        "", new { id = activity.CampaignId }).FirstOrDefault();
-
-                    if (campaign == null || !campaign.FacebookPageId.HasValue)
-                        return;
-
-                    if (!activity.MessageId.HasValue)
-                        return;
-
-                    var message_obj = GetMessageForSendApi(conn, activity.MessageId.Value);
-
-                    if (activity.ActivityType == "message")
-                    {
-                        var page = conn.Query<FacebookPage>("" +
-                        "SELECT * " +
-                        "FROM FacebookPages " +
-                        "where Id = @id" +
-                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
-
-                        if (page == null)
-                            return;
-                      
-                        var profiles = conn.Query<FacebookUserProfile>("" +
-                         "SELECT * " +
+                        else
+                        {
+                            //filter list userprofile read message 
+                            var profiles = conn.Query<FacebookUserProfile>("" +
+                             "SELECT * " +
                              "FROM FacebookUserProfiles m " +
                              "Left Join MarketingTraces as tr " +
                              "On tr.ActivityId = @activityId " +
-                             "where m.FbPageId = @pageId AND tr.[Read] is not null  And tr.[Read] between @datefrom AND @dateto " +
-                             "", new { pageId = page.Id , activityId  = activity.Id , datefrom = dateFrom  , dateto = dateTo }).ToList();
-                        if (profiles == null)
-                            return;
-
-                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
-
-                        var limit = 200;
-                        var offset = 0;
-                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        while (subTasks.Any())
-                        {
-                            await Task.WhenAll(subTasks);
-                            offset += limit;
-                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                             "where m.FbPageId = @pageId AND tr.[Read] is not null" +
+                             "", new { pageId = page.Id, activityId = activity.ParentId }).ToList();
+                            if (profiles == null)
+                                return;
+                            var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
+                            var limit = 200;
+                            var offset = 0;
+                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            while (subTasks.Any())
+                            {
+                                await Task.WhenAll(subTasks);
+                                offset += limit;
+                                subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            }
                         }
+
+
+
+
                     }
                 }
                 catch (Exception e)
@@ -187,6 +138,8 @@ namespace Infrastructure.Services
             }
         }
 
+
+      
         public object GetMessageForSendApi(SqlConnection conn, Guid messageId)
         {
             var message = conn.Query<MarketingMessage>("" +
@@ -206,7 +159,7 @@ namespace Infrastructure.Services
                       "", new { id = messageId }).ToList();
 
                     var buttonList = new List<object>();
-                    foreach(var button in buttons)
+                    foreach (var button in buttons)
                     {
                         if (button.Type == "web_url")
                         {
@@ -268,7 +221,7 @@ namespace Infrastructure.Services
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = profile.Id });
             else
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId,UserProfileId) values (@Id,@ActivityId,@Sent,@MessageId,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = sendResult.message_id , UserProfileId = profile.Id });
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId,UserProfileId) values (@Id,@ActivityId,@Sent,@MessageId,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = sendResult.message_id, UserProfileId = profile.Id });
 
         }
 

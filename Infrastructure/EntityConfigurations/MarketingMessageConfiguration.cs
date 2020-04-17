@@ -13,7 +13,7 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.Property(x => x.Type).IsRequired();
             builder.Property(x => x.Template).IsRequired();
-
+           
           
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

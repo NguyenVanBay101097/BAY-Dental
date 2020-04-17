@@ -89,5 +89,14 @@ namespace TMTDentalAPI.Controllers
             await _marketingCampaignService.ActionStopCampaign(ids);
             return NoContent();
         }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> AutocompleteActivities(Guid id)
+        {
+            var res = await _marketingCampaignService.AutocompleteActivity(id);
+            return Ok(res);
+        }
+
+
     }
 }

@@ -46,7 +46,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Template { get; set; }
 
         public string Text { get; set; }
-        public IEnumerable<MarketingCampaignActivityDisplay> ActivityChilds { get; set; } = new List<MarketingCampaignActivityDisplay>();
+       
+        public Guid? ParentId { get; set; }
         public IEnumerable<MarketingMessageButtonDisplay> Buttons { get; set; } = new List<MarketingMessageButtonDisplay>();
     }
 }
