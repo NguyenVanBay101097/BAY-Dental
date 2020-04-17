@@ -59,7 +59,7 @@
                         (click)="actionDone()">
                         Khóa
                     </button>
-                    <button *ngIf="['draft', 'cancel'].indexOf(saleOrder.state) === -1" type="button"
+                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-secondary btn-sm" (click)="actionSaleOrderPayment()">
                         Thanh toán
                     </button>
