@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { FacebookMassMessagingService } from '../facebook-mass-messaging.service';
+import { FacebookMassMessagingService, AudienceFilterItem } from '../facebook-mass-messaging.service';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -9,6 +9,9 @@ import { FacebookMassMessagingScheduleDialogComponent } from '../facebook-mass-m
 import { FacebookMassMessagingCreateUpdateDialogComponent } from '../facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
 import { Subject } from 'rxjs';
 import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service';
+import { AudienceFilterTagComponent } from '../facebook-audience-filter-dropdown/audience-filter-tag/audience-filter-tag.component';
+import { AudienceFilterGenderComponent } from '../facebook-audience-filter-dropdown/audience-filter-gender/audience-filter-gender.component';
+import { AudienceFilterInputComponent } from '../facebook-audience-filter-dropdown/audience-filter-input/audience-filter-input.component';
 declare var $ :any;
 
 @Component({
@@ -16,7 +19,7 @@ declare var $ :any;
   templateUrl: './facebook-mass-messaging-create-update.component.html',
   styleUrls: ['./facebook-mass-messaging-create-update.component.css']
 })
-export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
+export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnChanges {
   formGroup: FormGroup;
   id: string;
   messaging = {};
@@ -60,13 +63,15 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     $(document).on('click', '.allow-focus', function (e) {
       e.stopPropagation();
     });
-    
-    this.searchTagUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadListTags();
-      });
+
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+  }
+
+  hello(value) {
+    console.log(value);
   }
 
   loadRecord() {
@@ -208,220 +213,28 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     this.emoji = false;
   }
 
+  //
+  audience_filter_comp_data: { component, data };
+  listAudienceFilter_Items: any[] = [];
+  selectedAudienceFilter_Item: any;
+  openAudienceFilter_Picker: boolean = false;
+  openAudienceFilter: boolean = false;
+  AudienceFilter_Item: AudienceFilterItem;
   listAudienceFilter_Picker = [
     {
       type: 'Tag',
-      name: 'Nhãn',
-      formula_types: ['eq', 'neq'],
-      formula_values: [],
-      formula_displays: null,
-      inputbox: false
+      name: 'Nhãn'
     }, {
       type: 'Gender',
-      name: 'Giới tính',
-      formula_types: ['eq', 'neq'],
-      formula_values: ['male', 'female'],
-      formula_displays: ['Nam', 'Nữ'],
-      inputbox: false
+      name: 'Giới tính'
     }, {
       type: 'FirstName',
-      name: 'Tên',
-      formula_types: ['eq', 'neq', 'contains', 'doesnotcontain', 'startswith'],
-      formula_values: [],
-      formula_displays: null,
-      inputbox: true
+      name: 'Tên'
     }, {
       type: 'LastName',
-      name: 'Họ',
-      formula_types: ['eq', 'neq', 'contains', 'doesnotcontain', 'startswith'],
-      formula_values: [],
-      formula_displays: null,
-      inputbox: true
+      name: 'Họ'
     }
   ]
-  selectedAudienceFilter_Picker: any;
-  selectedFormula = {
-    type: null, 
-    value: null, 
-    display: null
-  };
-  listAudienceFilter_Items: any[] = [];
-  index_selectedAudienceFilter_Item: any;
-  selectedAudienceFilter_Item: any;
-  selectedAudienceFilter_Item_Picker = {
-    type: null,
-    name: null,
-    formula_types: [],
-    formula_values: [],
-    formula_displays: null,
-    inputbox: false
-  };
-  listTags: any[];
-  inputSearchTag: string;
-  searchTagUpdate = new Subject<string>();
-  showButtonCreateTag: boolean = false;
-
-  loadListTags() {
-    var val = new FacebookTagsPaged();
-    val.offset = 0;
-    val.limit = 10;
-    // console.log(this.inputSearchTag);
-    val.search = this.inputSearchTag || '';
-    this.facebookTagsService.getTags(val).subscribe(res => {
-      this.listTags = res['items'];
-      // console.log(this.listTags);
-      if (this.listTags.length == 0) {
-        this.showButtonCreateTag = true;
-      } else {
-        this.showButtonCreateTag = false;
-      }
-      this.listAudienceFilter_Picker[0].formula_values = [];
-      for (let i = 0; i < this.listTags.length; i++) {
-        this.listAudienceFilter_Picker[0].formula_values.push(this.listTags[i].name); // Add formula_values Tag
-      }
-      if (this.selectedAudienceFilter_Picker) {
-        this.selectedAudienceFilter_Picker.formula_values = this.listAudienceFilter_Picker[0].formula_values;
-      }
-      // console.log(this.listTags);
-    }, err => {
-      console.log(err);
-    })
-  }
-  createTag() {
-    var val = {
-      name: this.inputSearchTag
-    };
-    this.facebookTagsService.create(val).subscribe(res => {
-      this.notificationService.show({
-        content: 'Tạo nhãn thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.loadListTags();
-      // console.log(res);
-    }, err => {
-      console.log(err);
-    })
-  }
-  clickDropdownButtonAudienceFilter() {
-    this.selectedAudienceFilter_Picker = null;
-    this.selectedFormula.type = null;
-    this.selectedFormula.value = null;
-    this.selectedFormula.display = null;
-    this.inputSearchTag = null;
-    this.loadListTags();
-    document.getElementById('dropdown-item-audience-filter').style.display = 'block';
-  }
-  selectAudienceFilter(item) {
-    this.index_selectedAudienceFilter_Item = null; // null selected Item
-    this.selectedAudienceFilter_Picker = item;
-    this.selectedFormula.type = item.formula_types[0];
-    document.getElementById('dropdown-item-audience-filter').style.display = 'none';
-  }
-  selectFormulaType(item) {
-    this.selectedFormula.type = item;
-    if (this.index_selectedAudienceFilter_Item !== null) {
-      this.editAudienceFilter();
-    } else {
-      this.addAudienceFilter();
-    }
-  }
-  selectFormulaValue(item, i) {
-    this.selectedFormula.value = item;
-    if (this.index_selectedAudienceFilter_Item !== null) {
-      if (this.selectedAudienceFilter_Item_Picker.formula_displays) {
-        this.selectedFormula.display = this.selectedAudienceFilter_Item_Picker.formula_displays[i];
-      } else {
-        this.selectedFormula.display = null;
-      }
-      this.editAudienceFilter();
-    } else {
-      if (this.selectedAudienceFilter_Picker.formula_displays) {
-        this.selectedFormula.display = this.selectedAudienceFilter_Picker.formula_displays[i];
-      } else {
-        this.selectedFormula.display = null;
-      }
-      this.addAudienceFilter();
-    }
-  }
-  cancelInputFormulaValue() {
-    this.selectedAudienceFilter_Picker = null;
-  }
-  saveInputFormulaValue(value) {
-    this.selectedFormula.value = value;
-    this.selectedFormula.display = value;
-    if (this.index_selectedAudienceFilter_Item !== null) {
-      this.editAudienceFilter();
-    } else {
-      this.addAudienceFilter();
-    }
-  }
-  addAudienceFilter() {
-    if (this.selectedFormula.type && this.selectedFormula.value) {
-      var temp = {
-        type: this.selectedAudienceFilter_Picker.type,
-        name: this.selectedAudienceFilter_Picker.name,
-        formula_type: this.selectedFormula.type,
-        formula_value: this.selectedFormula.value,
-        formula_display: this.selectedFormula.display
-      }
-      this.listAudienceFilter_Items.push(temp);
-      this.selectedAudienceFilter_Picker = null; // null selected Picker
-      this.selectedFormula.type = null;
-      this.selectedFormula.value = null;
-      this.selectedFormula.display = null;
-      document.getElementById('dropdown-item-audience-filter').style.display = 'block';
-      // console.log(this.listAudienceFilter_Items);
-    }
-  }
-  editAudienceFilter() {
-    if (this.selectedFormula.type && this.selectedFormula.value) {
-      this.listAudienceFilter_Items[this.index_selectedAudienceFilter_Item].formula_type = this.selectedFormula.type;
-      this.listAudienceFilter_Items[this.index_selectedAudienceFilter_Item].formula_value = this.selectedFormula.value;
-      this.listAudienceFilter_Items[this.index_selectedAudienceFilter_Item].formula_display = this.selectedFormula.display;
-      /*
-      this.index_selectedAudienceFilter_Item = null; 
-      this.selectedAudienceFilter_Item = null; // null selected Item
-      this.selectedAudienceFilter_Item_Picker = {
-        type: null,
-        name: null,
-        formula_types: [],
-        formula_values: [],
-        formula_displays: null,
-        inputbox: false
-      };
-      this.selectedFormula.type = null;
-      this.selectedFormula.value = null;
-      this.selectedFormula.display = null;
-      */
-      // console.log(this.listAudienceFilter_Items);
-    }
-  }
-  selectAudienceFilterItem(item, index) {
-    this.selectedAudienceFilter_Picker = null; // null selected Picker
-    this.index_selectedAudienceFilter_Item = index;
-    this.selectedAudienceFilter_Item = item;
-    this.selectedAudienceFilter_Item_Picker = this.listAudienceFilter_Picker.find(x => x.type == item.type);
-    this.selectedFormula.type = item.formula_type;
-    this.selectedFormula.value = item.formula_value;
-    this.selectedFormula.display = item.formula_display;
-    if (item.type === "Tag") {
-      this.inputSearchTag = this.selectedFormula.value;
-      // console.log(document.getElementById('inputFormulaValue_Tag'));
-      document.getElementById("inputFormulaValue_Tag").setAttribute('value', this.selectedFormula.value);
-      this.loadListTags();
-    }
-    if (this.selectedAudienceFilter_Item_Picker.inputbox) {
-      // console.log(document.getElementById('inputFormulaValue_Input'));
-      document.getElementById("inputFormulaValue_Input").setAttribute('value', this.selectedFormula.value);
-    }
-    // console.log(item);
-  }
-  deleteAudienceFilterItem(index) {
-    this.listAudienceFilter_Items.splice(index, 1);
-  }
   convertFormulaType(item) {
     switch (item) {
       case 'eq':
@@ -447,36 +260,127 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit {
     }
   }
   convertAudienceFilterItemsToString() {
-    var listAudienceFilter_Items_String = "";
-    var element = "";
-    for (let i = 0; i < this.listAudienceFilter_Items.length; i++) {
-      element = (this.listAudienceFilter_Items[i].type || '') + ",|" +
-        (this.listAudienceFilter_Items[i].name || '') + ",|" + 
-        (this.listAudienceFilter_Items[i].formula_type || '') + ",|" + 
-        (this.listAudienceFilter_Items[i].formula_value || '') + ",|" + 
-        (this.listAudienceFilter_Items[i].formula_display || '');
-      if (i === this.listAudienceFilter_Items.length - 1) {
-        listAudienceFilter_Items_String += element;
-      } else {
-        listAudienceFilter_Items_String += element + ";|";
-      }
+    var result = {
+      type: "and",
+      items: this.listAudienceFilter_Items
     }
-    return listAudienceFilter_Items_String;
+    return JSON.stringify(result);
   }
   convertAudienceFilterItemsToArray(listAudienceFilter_Items_String) {
-    var listAudienceFilter_Items_Array = [];
-    var element_s = listAudienceFilter_Items_String.split(";|");
-    for (let i = 0; i < element_s.length; i++) {
-      var element_sm = element_s[i].split(",|");
-      var element = {
-        type: element_sm[0],
-        name: element_sm[1],
-        formula_type: element_sm[2],
-        formula_value: element_sm[3],
-        formula_display: element_sm[4]
-      }
-      listAudienceFilter_Items_Array.push(element);
+    return JSON.parse(listAudienceFilter_Items_String).items;
+  }
+  clickedAudienceFilter_Item: boolean = false;
+  clickAudienceFilter_Item(item) {
+    if (this.AudienceFilter_Item !== item) {
+      this.AudienceFilter_Item = item;
+      switch (item.type) {
+        case "Tag":
+          this.audience_filter_comp_data = {
+            component: AudienceFilterTagComponent,
+            data: this.AudienceFilter_Item
+          }
+        break;
+        case "Gender":
+          this.audience_filter_comp_data = {
+            component: AudienceFilterGenderComponent,
+            data: this.AudienceFilter_Item
+          }
+        break;
+        case "FirstName":
+          this.audience_filter_comp_data = {
+            component: AudienceFilterInputComponent,
+            data: this.AudienceFilter_Item
+          }
+        break;
+        case "LastName":
+          this.audience_filter_comp_data = {
+            component: AudienceFilterInputComponent,
+            data: this.AudienceFilter_Item
+          }
+        break;
+      } 
     }
-    return listAudienceFilter_Items_Array;
+    this.selectedAudienceFilter_Item = item;
+    this.clickedAudienceFilter_Item = true;
+  }
+  count_clickOutside: number = 1;
+  clickOutsideAudienceFilter_Item_Picker() {
+    if (this.count_clickOutside === 2) {
+      if (this.clickedAudienceFilter_Item === true) {
+        this.clickedAudienceFilter_Item = false;
+      } else {
+        this.selectedAudienceFilter_Item = null;
+      }
+      this.count_clickOutside = 1;
+    } else {
+      this.count_clickOutside += 1;
+    }
+  }
+  deleteAudienceFilterItem(index) {
+    this.selectedAudienceFilter_Item = null;
+    this.listAudienceFilter_Items.splice(index, 1);
+  }
+  clickedAudienceFilter: boolean = false;
+  clickAudienceFilter() {
+    this.openAudienceFilter = true;
+    this.openAudienceFilter_Picker = false;
+    this.clickedAudienceFilter = true;
+  }
+  clickOutsideAudienceFilter() {
+    if (this.count_clickOutside === 2) {
+      if (this.clickedAudienceFilter === true) {
+        this.clickedAudienceFilter = false;
+      } else {
+        this.openAudienceFilter = false;
+        this.openAudienceFilter_Picker = false;
+      }
+      this.count_clickOutside = 1;
+    } else {
+      this.count_clickOutside += 1;
+    }
+  }
+  selectAudienceFilter(item) {
+    this.AudienceFilter_Item = {
+      type: item.type,
+      name: item.name,
+      formula_type: null,
+      formula_value: null,
+      formula_display: null
+    }
+    switch (item.type) {
+      case "Tag":
+        this.audience_filter_comp_data = {
+          component: AudienceFilterTagComponent,
+          data: this.AudienceFilter_Item
+        }
+        break;
+      case "Gender":
+        this.audience_filter_comp_data = {
+          component: AudienceFilterGenderComponent,
+          data: this.AudienceFilter_Item
+        }
+        break;
+      case "FirstName":
+        this.audience_filter_comp_data = {
+          component: AudienceFilterInputComponent,
+          data: this.AudienceFilter_Item
+        }
+        break;
+      case "LastName":
+        this.audience_filter_comp_data = {
+          component: AudienceFilterInputComponent,
+          data: this.AudienceFilter_Item
+        }
+        break;
+    }
+    document.getElementById("dropdown-item-audience-filter").style.display = 'none';
+    this.openAudienceFilter_Picker = true;
+  }
+  addAudienceFilterItem() {
+    if (this.AudienceFilter_Item.formula_type && this.AudienceFilter_Item.formula_value) {
+      this.listAudienceFilter_Items.push(this.AudienceFilter_Item);
+      this.openAudienceFilter = false;
+      this.openAudienceFilter_Picker = false;
+    }
   }
 }

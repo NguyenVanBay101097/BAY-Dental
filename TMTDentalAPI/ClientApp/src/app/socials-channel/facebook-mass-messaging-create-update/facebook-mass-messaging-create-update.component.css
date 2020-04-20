@@ -32,6 +32,7 @@
 .audience-filter-open {
     width: fit-content;
     border: 1px dashed #8492a6;
+    margin-bottom: 5px;
 }
 .audience-filter-item .condition-select, 
 .audience-filter-item .value-select {
@@ -39,20 +40,4 @@
 }
 .audience-filter-picker button {
     margin-bottom: 5px;
-}
-.list-formula-value {
-    max-height: 240px;
-    overflow-y: auto;
-}
-.list-formula-value::-webkit-scrollbar {
-    width: 10px;
-}
-.list-formula-value::-webkit-scrollbar-track {
-    background: #f1f1f1; 
-}
-.list-formula-value::-webkit-scrollbar-thumb {
-    background: #888; 
-}
-.list-formula-value::-webkit-scrollbar-thumb:hover {
-    background: #555; 
 }

@@ -34,6 +34,10 @@ import { ClickOutsideDirective } from './click-outside.directive';
 import { MyAutofocusDirective } from './autofocus.directive';
 import { FacebookMassMessagingCreateUpdateDialogComponent } from './facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
 import { FacebookPageMarketingCustomerDialogComponent } from './facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
+import { FacebookAudienceFilterDropdownComponent } from './facebook-audience-filter-dropdown/facebook-audience-filter-dropdown.component';
+import { AudienceFilterTagComponent } from './facebook-audience-filter-dropdown/audience-filter-tag/audience-filter-tag.component';
+import { AudienceFilterGenderComponent } from './facebook-audience-filter-dropdown/audience-filter-gender/audience-filter-gender.component';
+import { AudienceFilterInputComponent } from './facebook-audience-filter-dropdown/audience-filter-input/audience-filter-input.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +61,11 @@ import { FacebookPageMarketingCustomerDialogComponent } from './facebook-page-ma
     ClickOutsideDirective,
     MyAutofocusDirective,
     FacebookMassMessagingCreateUpdateDialogComponent,
-    FacebookPageMarketingCustomerDialogComponent
+    FacebookPageMarketingCustomerDialogComponent,
+    FacebookAudienceFilterDropdownComponent,
+    AudienceFilterTagComponent,
+    AudienceFilterGenderComponent,
+    AudienceFilterInputComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +92,10 @@ import { FacebookPageMarketingCustomerDialogComponent } from './facebook-page-ma
     FacebookPageMarketingCustomerConnectComponent,
     FacebookMassMessagingScheduleDialogComponent,
     FacebookMassMessagingCreateUpdateDialogComponent,
-    FacebookPageMarketingCustomerDialogComponent
+    FacebookPageMarketingCustomerDialogComponent,
+    AudienceFilterTagComponent, 
+    AudienceFilterGenderComponent, 
+    AudienceFilterInputComponent
   ],
   providers: [
     FacebookUserProfilesService

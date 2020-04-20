@@ -20,6 +20,14 @@ export class TagStatisticsPaged {
     tagIds: string[];
 }
 
+export class AudienceFilterItem {
+    type: string;
+    name: string;
+    formula_type: string;
+    formula_value: string;
+    formula_display: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FacebookMassMessagingService {
     apiUrl = 'api/FacebookMassMessagings';
