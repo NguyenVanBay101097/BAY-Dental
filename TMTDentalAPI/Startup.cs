@@ -192,6 +192,8 @@ namespace TMTDentalAPI
             services.AddScoped<IResBankService, ResBankService>();
             services.AddScoped<IResPartnerBankService, ResPartnerBankService>();
             services.AddScoped<IJournalReportService, JournalReportService>();
+            services.AddScoped<IServiceCardTypeService, ServiceCardTypeService>();
+            services.AddScoped<IServiceCardOrderService, ServiceCardOrderService>();
 
             services.AddScoped<ICardTypeService, CardTypeService>();
             services.AddScoped<ICardCardService, CardCardService>();
@@ -302,6 +304,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new FacebookUserProfiles());
                 mc.AddProfile(new FacebookScheduleAppointmentConfigProfile());
                 mc.AddProfile(new AccountMoveProfile());
+                mc.AddProfile(new ServiceCardTypeProfile());
+                mc.AddProfile(new ServiceCardOrderProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

@@ -26,6 +26,17 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public override Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
+        {
+            foreach(var product in entities)
+            {
+                if (string.IsNullOrEmpty(product.NameNoSign))
+                    product.NameNoSign = product.Name.RemoveSignVietnameseV2();
+            }
+
+            return base.CreateAsync(entities);
+        }
+
         public async Task<Product> GetProductForDisplayAsync(Guid id)
         {
             return await SearchQuery(x => x.Id == id)
