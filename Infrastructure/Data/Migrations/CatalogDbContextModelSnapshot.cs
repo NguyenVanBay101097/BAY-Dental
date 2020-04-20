@@ -3041,9 +3041,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("MarketingCampaignActivityId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("MessageId")
                         .HasColumnType("uniqueidentifier");
 
@@ -3068,8 +3065,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CampaignId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("MarketingCampaignActivityId");
 
                     b.HasIndex("MessageId");
 
@@ -7189,16 +7184,12 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", null)
-                        .WithMany("ActivityChilds")
-                        .HasForeignKey("MarketingCampaignActivityId");
-
                     b.HasOne("ApplicationCore.Entities.MarketingMessage", "Message")
                         .WithMany()
                         .HasForeignKey("MessageId");
 
                     b.HasOne("ApplicationCore.Entities.MarketingCampaignActivity", "Parent")
-                        .WithMany()
+                        .WithMany("ActivityChilds")
                         .HasForeignKey("ParentId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")

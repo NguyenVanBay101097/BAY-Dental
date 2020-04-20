@@ -8,32 +8,14 @@ namespace Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "MarketingCampaignActivityId",
-                table: "MarketingCampaignActivities",
-                nullable: true);
-
-            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "MarketingCampaignActivities",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MarketingCampaignActivities_MarketingCampaignActivityId",
-                table: "MarketingCampaignActivities",
-                column: "MarketingCampaignActivityId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MarketingCampaignActivities_ParentId",
                 table: "MarketingCampaignActivities",
                 column: "ParentId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_MarketingCampaignActivities_MarketingCampaignActivities_MarketingCampaignActivityId",
-                table: "MarketingCampaignActivities",
-                column: "MarketingCampaignActivityId",
-                principalTable: "MarketingCampaignActivities",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_MarketingCampaignActivities_MarketingCampaignActivities_ParentId",
@@ -47,23 +29,11 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_MarketingCampaignActivities_MarketingCampaignActivities_MarketingCampaignActivityId",
-                table: "MarketingCampaignActivities");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_MarketingCampaignActivities_MarketingCampaignActivities_ParentId",
                 table: "MarketingCampaignActivities");
 
             migrationBuilder.DropIndex(
-                name: "IX_MarketingCampaignActivities_MarketingCampaignActivityId",
-                table: "MarketingCampaignActivities");
-
-            migrationBuilder.DropIndex(
                 name: "IX_MarketingCampaignActivities_ParentId",
-                table: "MarketingCampaignActivities");
-
-            migrationBuilder.DropColumn(
-                name: "MarketingCampaignActivityId",
                 table: "MarketingCampaignActivities");
 
             migrationBuilder.DropColumn(

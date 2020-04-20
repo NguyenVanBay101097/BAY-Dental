@@ -198,13 +198,16 @@ namespace Infrastructure.Services
                 campaign.DateStart = DateTime.Now;
 
                 var parentAtivities = campaign.Activities.Where(x => x.ParentId == null).ToList();
-                
+
                 foreach (var activity in parentAtivities)
                 {
                     var date = DateTime.UtcNow;
                     var jobId = "";
                     var datetime = new DateTime();
-                    var childs = GetChildren(campaign.Activities.ToList(),activity.Id);
+                    var childs = campaign.Activities.Where(x => x.ParentId == activity.Id)
+                                .Union(campaign.Activities.Where(x => x.ParentId == activity.Id)
+                                .SelectMany(y => y.ActivityChilds)).ToList();
+
                     if (activity.TriggerType == "begin")
                     {
                         date = DateTime.UtcNow;
@@ -276,26 +279,10 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+
+
        
-
-        /// <summary>
-        /// GetAll child in parentId
-        /// </summary>
-        /// <param name="activities"></param>
-        /// <param name="parentId"></param>
-        /// <returns></returns>
-        public List<MarketingCampaignActivity> GetChildren(List<MarketingCampaignActivity> activities, Guid parentId)
-        {
-
-            var lstactivity = activities
-        .Where(x => x.ParentId == parentId)
-        .Union(activities.Where(x => x.ParentId == parentId)
-            .SelectMany(y => GetChildren(activities, y.Id))
-        ).ToList();
-
-
-            return lstactivity;
-        }
+      
 
 
         public async Task<MarketingCampaignDisplay> GetDisplay(Guid id)
@@ -351,8 +338,8 @@ namespace Infrastructure.Services
                     if (string.IsNullOrEmpty(activity.JobId))
                         continue;
                     BackgroundJob.Delete(activity.JobId);
-                   
-                   
+
+
                 }
             }
 
@@ -369,16 +356,16 @@ namespace Infrastructure.Services
                     if (string.IsNullOrEmpty(activity.JobId))
                         continue;
                     BackgroundJob.Delete(activity.JobId);
-                   
+
                 }
             }
 
             await DeleteAsync(self);
         }
 
-      
 
-       
+
+
 
 
 
