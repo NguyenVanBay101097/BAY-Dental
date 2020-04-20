@@ -12,7 +12,8 @@ namespace Umbraco.Web.Mapping
         public MarketingCampaignActivityProfile()
         {
             CreateMap<MarketingCampaignActivity, MarketingCampaignActivityDisplay>();
-            CreateMap<MarketingCampaignActivity, MarketingCampaignActivitySave>();
+            CreateMap<MarketingCampaignActivity, MarketingCampaignActivitySave>()
+                 .ForMember(x => x.TagIds, x => x.MapFrom(s => s.TagRels));
             CreateMap<MarketingCampaignActivitySave, MarketingCampaignActivity>()
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<MarketingCampaignActivity, MarketingCampaignActivitySimple>();

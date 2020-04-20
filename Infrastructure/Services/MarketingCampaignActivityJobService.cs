@@ -23,10 +23,12 @@ namespace Infrastructure.Services
     {
         private readonly ConnectionStrings _connectionStrings;
         private readonly IFacebookMessageSender _fbMessageSender;
-        public MarketingCampaignActivityJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender)
+        private readonly IFacebookUserProfileService _fbUserProfile;
+        public MarketingCampaignActivityJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender, IFacebookUserProfileService fbUserProfile)
         {
             _connectionStrings = connectionStrings?.Value;
             _fbMessageSender = fbMessageSender;
+            _fbUserProfile = fbUserProfile;
         }
 
         public async Task RunActivity(string db, Guid activityId)
@@ -131,6 +133,41 @@ namespace Infrastructure.Services
 
 
                     }
+                    else
+                    {
+                        var page = conn.Query<FacebookPage>("" +
+                        "SELECT * " +
+                        "FROM FacebookPages " +
+                        "where Id = @id" +
+                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
+
+                        if (page == null)
+                            return;
+                        if (activity.ActionType == "add_tags")
+                        {
+                            var profiles = conn.Query<FacebookUserProfile>("" +
+                            "SELECT * " +
+                            "FROM FacebookUserProfiles us " +
+                            "where us.FbPageId = @pageId  " +
+                            "", new { pageId = page.Id }).ToList();
+                            if (profiles == null)
+                                return;
+                            var tasks = profiles.Select(x => AddUserprofileTags( x, activity, conn)).ToList();
+                            var limit = 200;
+                            var offset = 0;
+                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            while (subTasks.Any())
+                            {
+                                await Task.WhenAll(subTasks);
+                                offset += limit;
+                                subTasks = tasks.Skip(offset).Take(limit).ToList();
+                            }
+                        }
+                        else if (activity.ActionType == "remove_tags")
+                        {
+
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -139,8 +176,27 @@ namespace Infrastructure.Services
             }
         }
 
+        private async Task AddUserprofileTags(FacebookUserProfile profile, MarketingCampaignActivity activity,
+            SqlConnection conn = null)
+        {          
+            if (activity.TagRels != null)
+            {
+                foreach (var tag in activity.TagRels)
+                {
+                    if (profile.TagRels.Any(x => x.TagId == tag.TagId))
+                        continue;
+                    profile.TagRels.Add(new FacebookUserProfileTagRel
+                    {
+                        TagId = tag.TagId
+                    });
 
-      
+
+                }
+                await _fbUserProfile.UpdateAsync(profile);
+            }
+            await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activity.Id, Exception = DateTime.Now, UserProfileId = profile.Id });
+        }
+
         public object GetMessageForSendApi(SqlConnection conn, Guid messageId)
         {
             var message = conn.Query<MarketingMessage>("" +
@@ -220,7 +276,7 @@ namespace Infrastructure.Services
             date = date.AddSeconds(-1);
             var sendResult = await _fbMessageSender.SendMessageMarketingTextAsync(message, profile.PSID, access_token);
             if (sendResult == null)
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = profile.Id });
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = profile.Id });
             else
                 await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Sent,MessageId,UserProfileId) values (@Id,@ActivityId,@Sent,@MessageId,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Sent = DateTime.Now, MessageId = sendResult.message_id, UserProfileId = profile.Id });
 
@@ -231,6 +287,7 @@ namespace Infrastructure.Services
             public Guid Id { get; set; }
             public string PSID { get; set; }
             public string Name { get; set; }
+            
 
         }
         public class SendFacebookMessageReponse
