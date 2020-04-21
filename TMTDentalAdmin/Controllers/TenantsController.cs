@@ -101,7 +101,7 @@ namespace TMTDentalAdmin.Controllers
                     Email = val.Email
                 });
 
-                var result = await response.Content.ReadAsAsync<BaseHandleErrorVM>();
+                var result = JsonConvert.DeserializeObject<BaseHandleErrorVM>(await response.Content.ReadAsStringAsync());
                 if (!result.success)
                 {
                     await _tenantService.DeleteAsync(tenant);
