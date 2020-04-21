@@ -7,13 +7,14 @@
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Avatar" width="70">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <img class="rounded" 
+                    [src]="dataItem.profilePic" height="40" width="40">
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="psId" title="PSID">
         </kendo-grid-column>
-        <!-- <kendo-grid-column title="Ảnh đại diện">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <img src="https://graph.facebook.com/{{dataItem.psId}}/profile_pic?height=40&amp;width=40">
-            </ng-template>
-        </kendo-grid-column> -->
         <kendo-grid-column field="name" title="Tên khách hàng">
         </kendo-grid-column>
         <kendo-grid-column field="gender" title="Giới tính">
@@ -29,16 +30,21 @@
         </kendo-grid-column>
         <kendo-grid-column field="action">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Kết nối
+                Trạng thái
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button *ngIf="!dataItem.partnerId" 
-                    class="btn btn-success btn-sm"
-                    (click)="showModalConnectPartner(dataItem, rowIndex)">Kết nối</button>
-                <button *ngIf="dataItem.partnerId" 
-                    class="btn btn-warning btn-sm"
-                    style="color: white"
-                    (click)="removePartner(dataItem, rowIndex)">Hủy kết nối</button>
+                <span *ngIf="!dataItem.partnerId">Chưa Kết nối</span>
+                <span *ngIf="dataItem.partnerId">Đã kết nối</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="selectedCustomer(dataItem.id)">
+                    <span class="far fa-edit"></span>
+                </button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

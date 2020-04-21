@@ -1,0 +1,44 @@
+<div class="px-3 py-2">
+    <a class="btn btn-sm btn-primary" [routerLink]="['form']">Thêm</a>
+</div>
+
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Mô tả">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalSent" title="Đã gửi">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.totalSent | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="totalReceived" title="Đã nhận">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.totalReceived | number}}
+                ({{100 * dataItem.totalReceived / dataItem.totalSent | number:'1.0-0'}}%)
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="totalOpened" title="Đã đọc">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.totalOpened | number}}
+                ({{100 * dataItem.totalOpened / dataItem.totalSent | number:'1.0-0'}}%)
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{stateGet(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

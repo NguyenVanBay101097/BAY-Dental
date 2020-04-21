@@ -91,6 +91,8 @@ import { FacebookConfigModule } from './facebook-config/facebook-config.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FacebookModule } from 'ngx-facebook';
 import { SocialsChannelModule } from './socials-channel/socials-channel.module';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -189,6 +191,8 @@ registerLocaleData(localeVi, 'vi');
     FacebookConfigModule,
     FacebookModule.forRoot(),
     SocialsChannelModule,
+    PickerModule,
+    EmojiModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

@@ -21,8 +21,23 @@ import { AutosizeModule } from 'ngx-autosize';
 import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
 import { SharedModule } from '../shared/shared.module';
 import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
-import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 import { FacebookUserProfilesService } from './facebook-user-profiles.service';
+import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-list/facebook-mass-messaging-list.component';
+import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
+import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
+import { FacebookMassMessagingScheduleDialogComponent } from './facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
+import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-messaging-statistics-dialog/facebook-mass-messaging-statistics-dialog.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { ClickOutsideDirective } from './click-outside.directive';
+import { MyAutofocusDirective } from './autofocus.directive';
+import { FacebookMassMessagingCreateUpdateDialogComponent } from './facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
+import { FacebookPageMarketingCustomerDialogComponent } from './facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
+import { FacebookAudienceFilterDropdownComponent } from './facebook-audience-filter-dropdown/facebook-audience-filter-dropdown.component';
+import { AudienceFilterTagComponent } from './facebook-audience-filter-dropdown/audience-filter-tag/audience-filter-tag.component';
+import { AudienceFilterGenderComponent } from './facebook-audience-filter-dropdown/audience-filter-gender/audience-filter-gender.component';
+import { AudienceFilterInputComponent } from './facebook-audience-filter-dropdown/audience-filter-input/audience-filter-input.component';
+import { FacebookAudienceFilterComponent } from './facebook-audience-filter/facebook-audience-filter.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +52,20 @@ import { FacebookUserProfilesService } from './facebook-user-profiles.service';
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     FacebookPageMarketingCustomerListComponent,
-    FacebookPageMarketingCustomerConnectComponent
+    FacebookMassMessagingListComponent,
+    FacebookMassMessagingsComponent,
+    FacebookMassMessagingCreateUpdateComponent,
+    FacebookMassMessagingScheduleDialogComponent,
+    FacebookMassMessagingStatisticsDialogComponent,
+    ClickOutsideDirective,
+    MyAutofocusDirective,
+    FacebookMassMessagingCreateUpdateDialogComponent,
+    FacebookPageMarketingCustomerDialogComponent,
+    FacebookAudienceFilterDropdownComponent,
+    AudienceFilterTagComponent,
+    AudienceFilterGenderComponent,
+    AudienceFilterInputComponent,
+    FacebookAudienceFilterComponent
   ],
   imports: [
     CommonModule,
@@ -49,7 +77,9 @@ import { FacebookUserProfilesService } from './facebook-user-profiles.service';
     MyCustomKendoModule,
     ReactiveFormsModule,
     AutosizeModule,
-    SharedModule
+    SharedModule,
+    PickerModule,
+    EmojiModule
   ],
   exports: [
   ],
@@ -59,7 +89,12 @@ import { FacebookUserProfilesService } from './facebook-user-profiles.service';
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     PartnerCreateUpdateComponent,
-    FacebookPageMarketingCustomerConnectComponent
+    FacebookMassMessagingScheduleDialogComponent,
+    FacebookMassMessagingCreateUpdateDialogComponent,
+    FacebookPageMarketingCustomerDialogComponent,
+    AudienceFilterTagComponent, 
+    AudienceFilterGenderComponent, 
+    AudienceFilterInputComponent
   ],
   providers: [
     FacebookUserProfilesService

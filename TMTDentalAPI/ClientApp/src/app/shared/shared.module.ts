@@ -41,6 +41,8 @@ import { SharedErrorDialogComponent } from './shared-error-dialog/shared-error-d
 import { AppSharedShowErrorService } from './shared-show-error.service';
 import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.component';
 import { AnchorHostDirective } from './anchor-host.directive';
+import { MyAutosizeDirective } from './autosize.directive';
+import { CharCountDirective } from './char-count.directive';
 
 @NgModule({
   declarations: [
@@ -73,7 +75,9 @@ import { AnchorHostDirective } from './anchor-host.directive';
     SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    AnchorHostDirective
+    AnchorHostDirective,
+    MyAutosizeDirective,
+    CharCountDirective
   ],
   exports: [
     HeaderComponent,
@@ -103,7 +107,9 @@ import { AnchorHostDirective } from './anchor-host.directive';
     SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    AnchorHostDirective
+    AnchorHostDirective,
+    MyAutosizeDirective,
+    CharCountDirective
   ],
   imports: [
     CommonModule,

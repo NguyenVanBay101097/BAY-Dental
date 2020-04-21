@@ -7,6 +7,9 @@ import { FacebookPageMarketingCampaignsComponent } from './facebook-page-marketi
 import { FacebookPageMarketingCampaignCreateUpdateComponent } from './facebook-page-marketing-campaign-create-update/facebook-page-marketing-campaign-create-update.component';
 import { FacebookPageMarketingCampaignListComponent } from './facebook-page-marketing-campaign-list/facebook-page-marketing-campaign-list.component';
 import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
+import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
+import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-list/facebook-mass-messaging-list.component';
+import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
 
 const routes: Routes = [
   { path: 'facebook-connect', component: FacebookComponent },
@@ -31,6 +34,20 @@ const routes: Routes = [
           {
             path: 'form',
             component: FacebookPageMarketingCampaignCreateUpdateComponent
+          },
+        ]
+      },
+      {
+        path: 'mass-messagings',
+        component: FacebookMassMessagingsComponent,
+        children: [
+          {
+            path: '',
+            component: FacebookMassMessagingListComponent
+          },
+          {
+            path: 'form',
+            component: FacebookMassMessagingCreateUpdateComponent
           },
         ]
       },

@@ -14,6 +14,14 @@ export class FacebookUserProfilesService {
     return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
+  setData(id, val: any) {
+    return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
+  }
+
+  get(id) {
+    return this.http.get(this.baseApi + this.apiUrl + "/" + id);
+  }
+
   connectPartner(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/ConnectPartner', val);
   }

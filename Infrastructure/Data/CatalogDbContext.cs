@@ -138,6 +138,10 @@ namespace Infrastructure.Data
         public DbSet<FacebookUserProfile> FacebookUserProfiles { get; set; }
         public DbSet<MarketingMessage> MarketingMessages { get; set; }
         public DbSet<MarketingMessageButton> MarketingMessageButtons { get; set; }
+        public DbSet<FacebookMassMessaging> FacebookMassMessagings { get; set; }
+        public DbSet<FacebookMessagingTrace> FacebookMessagingTraces { get; set; }
+        public DbSet<FacebookTag> FacebookTags { get; set; }
+        public DbSet<FacebookUserProfileTagRel> FacebookUserProfileTagRels { get; set; }
         public DbSet<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; }
         public DbSet<AccountMovePaymentRel> AccountMovePaymentRels { get; set; }
         public DbSet<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; }
@@ -269,6 +273,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new FacebookUserProfileConfiguration());
             builder.ApplyConfiguration(new MarketingMessageConfiguration());
             builder.ApplyConfiguration(new MarketingMessageButtonConfiguration());
+            builder.ApplyConfiguration(new FacebookMassMessagingConfiguration());
+            builder.ApplyConfiguration(new FacebookMessagingTraceConfiguration());
+            builder.ApplyConfiguration(new FacebookTagConfiguration());
+            builder.ApplyConfiguration(new FacebookUserProfileTagRelConfiguration());
             builder.ApplyConfiguration(new FacebookScheduleAppointmentConfigConifuration());
             builder.ApplyConfiguration(new SaleOrderLineInvoice2RelConfiguration());
             builder.ApplyConfiguration(new AccountMovePaymentRelConfiguration());
@@ -317,8 +325,10 @@ namespace Infrastructure.Data
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
                 builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
+
                 if (_tenant.Hostname == "localhost")
                     builder["Database"] = $"TMTDentalCatalogDb";
+
                 optionsBuilder.UseSqlServer(builder.ConnectionString);
             }
             else
@@ -326,9 +336,6 @@ namespace Infrastructure.Data
                 var defaultConnectionString = _connectionStrings.CatalogConnection;
                 optionsBuilder.UseSqlServer(defaultConnectionString);
             }
-
-            //var defaultConnectionString = _connectionStrings.CatalogConnection;
-            //optionsBuilder.UseSqlServer(defaultConnectionString);
 
             base.OnConfiguring(optionsBuilder);
         }

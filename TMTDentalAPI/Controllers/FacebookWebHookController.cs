@@ -16,10 +16,13 @@ namespace TMTDentalAPI.Controllers
     public class FacebookWebHookController : ControllerBase
     {
         private readonly IMarketingTraceService _marketingTraceService;
+        private readonly IFacebookMessagingTraceService _messagingTraceService;
 
-        public FacebookWebHookController(IMarketingTraceService marketingTraceService)
+        public FacebookWebHookController(IMarketingTraceService marketingTraceService,
+            IFacebookMessagingTraceService messagingTraceService)
         {
             _marketingTraceService = marketingTraceService;
+            _messagingTraceService = messagingTraceService;
         }
 
         [HttpPost]
@@ -28,24 +31,29 @@ namespace TMTDentalAPI.Controllers
             var wh = data.ToObject<FacebookWebHook>();
             foreach(var entry in wh.Entry)
             {
-                if (entry.Messaging != null && entry.Messaging.Length > 0)
+                if (entry.Messaging != null)
                 {
-                    var messaging = entry.Messaging[0];
-                    if (messaging.Read != null)
+                    foreach(var messaging in entry.Messaging)
                     {
-                        var watermark = messaging.Read.Watermark;
-                        var traces = await _marketingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark).ToListAsync();
-                        foreach (var trace in traces)
-                            trace.Read = watermark;
-                        await _marketingTraceService.UpdateAsync(traces);
-                    }
-                    else if (messaging.Delivery != null)
-                    {
-                        var watermark = messaging.Delivery.Watermark;
-                        var traces = await _marketingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark).ToListAsync();
-                        foreach (var trace in traces)
-                            trace.Delivery = watermark;
-                        await _marketingTraceService.UpdateAsync(traces);
+                        if (messaging.Read != null)
+                        {
+                            var watermark = messaging.Read.Watermark.ToLocalTime();
+                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
+                            foreach (var trace in traces)
+                                trace.Opened = watermark;
+
+                            await _messagingTraceService.UpdateAsync(traces);
+                        }
+                        
+                        if (messaging.Delivery != null)
+                        {
+                            var watermark = messaging.Delivery.Watermark.ToLocalTime();
+                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivered.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
+                            foreach (var trace in traces)
+                                trace.Delivered = watermark;
+
+                            await _messagingTraceService.UpdateAsync(traces);
+                        }
                     }
                 }
             }

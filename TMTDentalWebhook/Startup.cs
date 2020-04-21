@@ -31,6 +31,7 @@ namespace TMTDentalWebhook
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<FacebookOptions>(Configuration.GetSection("FacebookOptions"));
 
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));

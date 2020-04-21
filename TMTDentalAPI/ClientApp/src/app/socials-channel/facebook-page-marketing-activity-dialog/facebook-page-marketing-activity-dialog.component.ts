@@ -13,6 +13,8 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   activity: any;
+  audience_filter: any;
+  showAudienceFilter: boolean = false;
   @ViewChild(AnchorHostDirective, { static: true }) anchorHost: AnchorHostDirective;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal,
@@ -43,6 +45,8 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.formGroup.get('text').setValue(newVal);
       }
     });
+
+    this.showAudienceFilter = true;
   }
 
   onSave() {
@@ -109,5 +113,9 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   removeMessageButton(event, i) {
     event.stopPropagation();
     this.buttonsFormArray.removeAt(i);
+  }
+
+  saveAudienceFilter(event) {
+    this.audience_filter = event;
   }
 }

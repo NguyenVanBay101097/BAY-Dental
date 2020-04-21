@@ -219,6 +219,11 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookConnectService, FacebookConnectService>();
             services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();
             services.AddScoped<IFacebookUserProfileService, FacebookUserProfileService>();
+            services.AddScoped<IFacebookMassMessagingService, FacebookMassMessagingService>();
+            services.AddScoped<IFacebookMessagingTraceService, FacebookMessagingTraceService>();
+            services.AddScoped<IFacebookMessageSender, FacebookMessageSender>();
+            services.AddScoped<IFacebookMassMessageJobService, FacebookMassMessageJobService>();
+            services.AddScoped<IFacebookTagService, FacebookTagService>();
             services.AddScoped<IFacebookScheduleAppointmentConfigService, FacebookScheduleAppointmentConfigService>();
 
             services.AddMemoryCache();
@@ -300,6 +305,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new FacebookConnectProfile());
                 mc.AddProfile(new MarketingMessageButtonProfile());
                 mc.AddProfile(new FacebookUserProfiles());
+                mc.AddProfile(new FacebookMassMessagingProfile());
+                mc.AddProfile(new FacebookTagProfile());
                 mc.AddProfile(new FacebookScheduleAppointmentConfigProfile());
                 mc.AddProfile(new AccountMoveProfile());
             };

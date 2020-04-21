@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FacebookPageMarketingCustomerConnectComponent } from '../facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { FacebookPageService } from '../facebook-page.service';
@@ -7,6 +6,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
+import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -15,12 +15,12 @@ import { Subject } from 'rxjs';
 })
 export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
-  constructor(private modalService: NgbModal, 
+  constructor(private modalService: NgbModal,
     private facebookPageService: FacebookPageService,
     private facebookUserProfilesService: FacebookUserProfilesService,
     private notificationService: NotificationService) { }
 
-  dataSendMessage: any [] = [];
+  dataSendMessage: any[] = [];
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
@@ -46,7 +46,6 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       offset: this.skip,
       search: this.search || ''
     }
-    console.log(val);
     this.facebookUserProfilesService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -64,47 +63,36 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
   createFacebookUser() {
     this.facebookPageService.createFacebookUser()
-    .subscribe(res => {
-      console.log(res);
-    }, err => {
-      console.log(err);
+      .subscribe(res => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+  }
+
+  selectedCustomer(id: number[]) {
+    console.log(id);
+    let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.customerId = id;
+
+    modalRef.result.then((result) => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+      this.loadDataFromApi();
+
+    }, (reason) => {
+      
     });
   }
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
-  }
-
-  showModalConnectPartner(dataItem: any, rowIndex) {
-    let modalRef = this.modalService.open(FacebookPageMarketingCustomerConnectComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.result.then((result) => {
-      if (result) {
-        var val = {
-          "facebookUserId": dataItem.id,
-          "partnerId": result
-        }
-        console.log(val);
-        this.facebookUserProfilesService.connectPartner(val).subscribe(res => {
-          this.loading = false;
-          console.log(res);
-          //this.loadDataFromApi();
-          this.gridData.data[rowIndex].partnerId = result;
-          this.notificationService.show({
-            content: 'Kết nối thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-        }, err => {
-          console.log(err);
-          this.loading = false;
-        });
-        modalRef.close();
-      }
-    }, (reason) => {
-    });
   }
 
   removePartner(dataItem: any, rowIndex) {

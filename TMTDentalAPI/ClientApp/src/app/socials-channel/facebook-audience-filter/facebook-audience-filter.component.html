@@ -1,0 +1,46 @@
+<span class="audience-filter-content rounded border">
+    <span class="position-relative" *ngFor="let item of listAudienceFilter_Items; index as i">
+        <button class="audience-filter-item mr-2 btn btn-light btn-sm border"
+            (click)="clickAudienceFilter_Item(item)">
+            <span class="drop-select">{{item.name}}</span>
+            <span class="condition-select pl-1">{{convertFormulaType(item.formula_type)}}</span>
+            <span class="value-select pl-1">
+                <span *ngIf="!item.formula_display || item.formula_display === ''">{{item.formula_value}}</span>
+                <span *ngIf="item.formula_display && item.formula_display !== ''">{{item.formula_display}}</span>
+            </span>
+            <span class="remove" (click)="deleteAudienceFilterItem(i)">
+                <i class="fas fa-times pl-2"></i>
+            </span>
+        </button>
+        <app-facebook-audience-filter-dropdown 
+            class="position-absolute bg-white border rounded"
+            style="top: 28px; left: 0; z-index: 1;"
+            *ngIf="selectedAudienceFilter_Item === item"
+            (clickOutside)="clickOutsideAudienceFilter_Item_Picker()"
+            [audience_filter_comp_data]="audience_filter_comp_data">
+        </app-facebook-audience-filter-dropdown>
+    </span>
+    <span class="position-relative">
+        <button class="audience-filter-open btn btn-light btn-sm"
+            (click)="clickAudienceFilter()">
+            + Thêm điều kiện lọc
+        </button>
+        <div class="position-absolute bg-white border rounded"
+            style="top: 28px; left: 0; z-index: 1;"
+            *ngIf="openAudienceFilter"
+            (clickOutside)="clickOutsideAudienceFilter()">
+            <div id="dropdown-item-audience-filter">
+                <button class="dropdown-item"
+                    *ngFor="let item of listAudienceFilter_Picker"
+                    (click)="selectAudienceFilter(item)">
+                    {{item.name}}
+                </button>
+            </div>
+            <app-facebook-audience-filter-dropdown 
+                *ngIf="openAudienceFilter_Picker"
+                (click)="addAudienceFilterItem()"
+                [audience_filter_comp_data]="audience_filter_comp_data">
+            </app-facebook-audience-filter-dropdown>
+        </div>
+    </span>
+</span>

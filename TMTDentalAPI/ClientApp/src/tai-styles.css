@@ -1024,6 +1024,75 @@ td.oe_form_group_cell_label label {
     margin-bottom: 0;
 }
 
+.o_field_widget.o_field_many2one, .o_field_widget.o_field_radio, .o_field_widget.o_field_many2manytags, .o_field_widget.o_field_percent_pie, .o_field_widget.o_field_monetary, .o_field_widget.o_field_binary_file {
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: inline-flex;
+}
+
+.o_field_widget.o_field_percent_pie {
+    align-items: center;
+}
+
+.o_form_view .o_field_widget .o_field_widget, .o_form_view .btn .o_field_widget {
+    margin-bottom: 0px;
+}
+
+.o_form_view .oe_button_box .btn.oe_stat_button > .o_field_percent_pie {
+    margin-left: 6px;
+}
+
+.o_field_widget.o_field_percent_pie > .o_pie {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    border-radius: 100%;
+    overflow: hidden;
+    /* background-color: #00A09D; */
+}
+
+.o_field_widget.o_field_percent_pie .o_pie {
+    width: 44px;
+    height: 44px;
+}
+
+.o_field_widget.o_field_percent_pie > .o_pie .o_mask {
+    position: absolute;
+    top: 0;
+    left: auto;
+    bottom: auto;
+    right: 0;
+    transform-origin: 0;
+    width: 50%;
+    height: 100%;
+    background-color: white;
+}
+
+.o_field_widget.o_field_percent_pie > .o_pie .o_pie_value {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    font-weight: 700;
+    color: #875A7B;
+    font-size: 13px;
+}
+
+.o_field_widget.o_field_percent_pie .o_pie .o_pie_value {
+    position: absolute;
+    top: 4px;
+    left: auto;
+    bottom: auto;
+    right: 4px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #8f8f8f;
+    background-color: #f8f9fa;
+}
+
 .o_form_view .oe_button_box .btn.oe_stat_button > .o_button_icon {
     margin-left: 6px;
     display: inline-block;
@@ -1222,4 +1291,13 @@ td.oe_form_group_cell_label label {
 	display: -webkit-flex;
 	display: flex;
 	align-items: center;
+}
+
+span.char-count {
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    background-color: white;
+    bottom: 5px;
+    color: #ffc107!important;
 }

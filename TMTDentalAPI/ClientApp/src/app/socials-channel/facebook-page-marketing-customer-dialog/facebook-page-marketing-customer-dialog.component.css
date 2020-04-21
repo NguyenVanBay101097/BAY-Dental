@@ -1,0 +1,7 @@
+.tag-item .remove {
+    cursor: pointer;
+    transition: 0.2s;
+}
+.tag-item .remove:hover {
+    color: orangered;
+}
