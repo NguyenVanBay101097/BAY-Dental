@@ -21,7 +21,6 @@ import { AutosizeModule } from 'ngx-autosize';
 import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
 import { SharedModule } from '../shared/shared.module';
 import { FacebookPageMarketingCustomerListComponent } from './facebook-page-marketing-customer-list/facebook-page-marketing-customer-list.component';
-import { FacebookPageMarketingCustomerConnectComponent } from './facebook-page-marketing-customer-connect/facebook-page-marketing-customer-connect.component';
 import { FacebookUserProfilesService } from './facebook-user-profiles.service';
 import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-list/facebook-mass-messaging-list.component';
 import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
@@ -53,7 +52,6 @@ import { FacebookAudienceFilterComponent } from './facebook-audience-filter/face
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     FacebookPageMarketingCustomerListComponent,
-    FacebookPageMarketingCustomerConnectComponent,
     FacebookMassMessagingListComponent,
     FacebookMassMessagingsComponent,
     FacebookMassMessagingCreateUpdateComponent,
@@ -91,7 +89,6 @@ import { FacebookAudienceFilterComponent } from './facebook-audience-filter/face
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     PartnerCreateUpdateComponent,
-    FacebookPageMarketingCustomerConnectComponent,
     FacebookMassMessagingScheduleDialogComponent,
     FacebookMassMessagingCreateUpdateDialogComponent,
     FacebookPageMarketingCustomerDialogComponent,

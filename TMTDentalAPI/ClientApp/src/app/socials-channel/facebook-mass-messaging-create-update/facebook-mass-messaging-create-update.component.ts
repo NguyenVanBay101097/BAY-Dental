@@ -115,7 +115,6 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
     this.formGroup.patchValue({
       audienceFilter: this.audience_filter
     });
-    console.log(this.audience_filter);
 
     if (!this.formGroup.valid) {
       return false;
@@ -209,6 +208,5 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
   }
   saveAudienceFilter(event) {
     this.audience_filter = event;
-    console.log(this.audience_filter);
   }
 }

@@ -122,6 +122,7 @@ export class FacebookAudienceFilterComponent implements OnInit {
       if (this.clickedAudienceFilter_Item === true) {
         this.clickedAudienceFilter_Item = false;
       } else {
+        this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
         this.selectedAudienceFilter_Item = null;
       }
       this.count_clickOutside = 1;

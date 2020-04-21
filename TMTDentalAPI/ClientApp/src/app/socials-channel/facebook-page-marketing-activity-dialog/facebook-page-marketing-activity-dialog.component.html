@@ -107,6 +107,19 @@
                             </tr>
                         </tbody>
                     </table>
+                    <table class=" o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class=" o_td_label">
+                                    <label class="o_form_label">Khách hàng</label>
+                                </td>
+                                <td style="width:100%">
+                                    <app-facebook-audience-filter *ngIf="showAudienceFilter" [audience_filter_receive]="audience_filter" 
+                                        (audience_filter_send)="saveAudienceFilter($event)"></app-facebook-audience-filter>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

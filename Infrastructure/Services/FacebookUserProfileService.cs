@@ -71,6 +71,7 @@ namespace Infrastructure.Services
                     Name = x.Name,
                     PSId = x.PSID,
                     DateCreated = x.DateCreated.Value,
+                    PartnerId = x.PartnerId,
                     ProfilePic = "https://graph.facebook.com/" + x.PSID + "/picture?type=large&access_token=" + x.FbPage.PageAccesstoken,
                     Tags = _mapper.Map<IEnumerable<FacebookTagBasic>>(x.TagRels.Select(s=>s.Tag).ToList())
                 }).FirstOrDefaultAsync();

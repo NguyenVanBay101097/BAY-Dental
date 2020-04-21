@@ -10,7 +10,7 @@
             <table *ngIf="!loading" class="o_group o_inner_group">
                 <tbody>
                     <tr>
-                        <td class="o_td_label text-right" rowspan="2">
+                        <td class="o_td_label text-right" rowspan="3">
                             <img class="rounded" 
                                 [src]="dataCustomer.profilePic" height="100" width="100">
                         </td>
@@ -23,40 +23,73 @@
                     <tr>
                         <td>
                             Tags: 
-                            <span class="dropdown tag-picker">
-                                <button type="button" class="btn btn-light btn-sm mr-2 mb-1"
-                                    style="border: 1px dashed #8492a6;"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                    (click)="loadListTags()">
-                                    + Thêm nhãn
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <div class="px-2 pb-2">
-                                        <input class="form-control shadow-sm" style="min-width: 200px;" type="text" placeholder="Tìm kiếm.." 
-                                            [(ngModel)]="inputSearchTag" (ngModelChange)="this.searchTagUpdate.next($event)">
+                            <div class="border rounded px-1 pt-1">
+                                <span class="dropdown tag-picker">
+                                    <button type="button" class="btn btn-light btn-sm mr-2 mb-1"
+                                        style="border: 1px dashed #8492a6;"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                        (click)="loadListTags()">
+                                        + Thêm nhãn
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <div class="px-2 pb-2">
+                                            <input class="form-control shadow-sm" style="min-width: 200px;" type="text" placeholder="Tìm kiếm.." 
+                                                [(ngModel)]="inputSearchTag" (ngModelChange)="this.searchTagUpdate.next($event)">
+                                        </div>
+                                        <div class="px-2 pb-2" *ngIf="showButtonCreateTag">
+                                            <button class="btn btn-light btn-sm" type="button" (click)="createTag()">
+                                                Create Tag
+                                            </button>
+                                        </div>
+                                        <div id="dropdown-item-tag">
+                                            <button class="dropdown-item" type="button"
+                                                *ngFor="let item of listTags"
+                                                (click)="addTagItem(item)">
+                                                {{item.name}}
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="px-2 pb-2" *ngIf="showButtonCreateTag">
-                                        <button class="btn btn-light btn-sm" type="button" (click)="createTag()">
-                                            Create Tag
-                                        </button>
-                                    </div>
-                                    <div id="dropdown-item-tag">
-                                        <button class="dropdown-item" type="button"
-                                            *ngFor="let item of listTags"
-                                            (click)="addTagItem(item)">
-                                            {{item.name}}
-                                        </button>
-                                    </div>
-                                </div>
-                            </span>
-                            <span class="tag-item btn btn-light btn-sm border mr-2 mb-1" *ngFor="let tag of listAddTags; index as i">
-                                <span class="pl-1">
-                                    {{tag.name}}
                                 </span>
-                                <span class="remove" (click)="deleteTagItem(i)">
-                                    <i class="fas fa-times pl-2"></i>
+                                <span class="tag-item btn btn-light btn-sm border mr-2 mb-1" *ngFor="let tag of listAddTags; index as i">
+                                    <span class="pl-1">
+                                        {{tag.name}}
+                                    </span>
+                                    <span class="remove" (click)="deleteTagItem(i)">
+                                        <i class="fas fa-times pl-2"></i>
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Khách hàng: 
+                            <div class="d-flex">
+                                <kendo-combobox
+                                    [valuePrimitive]="true"
+                                    [filterable]="true"
+                                    [data]="listPartners"
+                                    [textField]="'name'"
+                                    [valueField]="'id'"
+                                    [(ngModel)]="selectedPartner"
+                                    (filterChange)="handleFilter($event); this.searchNamePhoneRefUpdate.next($event);"
+                                    placeholder="Theo tên hoặc số điện thoại"
+                                >
+                                    <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                        <table>
+                                            <tr>
+                                                <span><b>{{dataItem.name}}</b></span>
+                                            </tr>
+                                            <tr>
+                                                <span>{{dataItem.phone}}</span>
+                                            </tr>
+                                        </table>
+                                    </ng-template>
+                                </kendo-combobox>
+                                <a class="btn btn-sm btn-light border ml-1" (click)="showModalCreatePartner()">
+                                    <span class="k-icon k-i-plus"></span>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
