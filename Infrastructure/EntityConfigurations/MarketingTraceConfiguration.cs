@@ -15,10 +15,12 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany(x => x.Traces)
                 .HasForeignKey(x => x.ActivityId);
 
-            //builder.HasOne(x => x.UserProfile)
-            //.WithMany()
-            //.HasForeignKey(x => x.UserProfileId)
-            //.OnDelete(DeleteBehavior.SetNull);
+           
+
+            builder.HasOne(x => x.UserProfile)
+            .WithMany()
+            .HasForeignKey(x => x.UserProfileId)
+            .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.CreatedBy)
           .WithMany()

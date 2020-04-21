@@ -142,6 +142,7 @@ namespace Infrastructure.Data
         public DbSet<FacebookMessagingTrace> FacebookMessagingTraces { get; set; }
         public DbSet<FacebookTag> FacebookTags { get; set; }
         public DbSet<FacebookUserProfileTagRel> FacebookUserProfileTagRels { get; set; }
+        public DbSet<MarketingCampaignActivityFacebookTagRel> MarketingCampaignActivityFacebookTagRels { get; set; }
         public DbSet<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; }
         public DbSet<AccountMovePaymentRel> AccountMovePaymentRels { get; set; }
         public DbSet<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; }
@@ -277,6 +278,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new FacebookMessagingTraceConfiguration());
             builder.ApplyConfiguration(new FacebookTagConfiguration());
             builder.ApplyConfiguration(new FacebookUserProfileTagRelConfiguration());
+            builder.ApplyConfiguration(new MarketingCampaignActivityFacebookTagRelConfiguration());
             builder.ApplyConfiguration(new FacebookScheduleAppointmentConfigConifuration());
             builder.ApplyConfiguration(new SaleOrderLineInvoice2RelConfiguration());
             builder.ApplyConfiguration(new AccountMovePaymentRelConfiguration());

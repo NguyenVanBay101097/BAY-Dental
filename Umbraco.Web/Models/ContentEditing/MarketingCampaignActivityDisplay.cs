@@ -46,7 +46,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Template { get; set; }
 
         public string Text { get; set; }
+       
+        public Guid? ParentId { get; set; }
 
+        public IEnumerable<FacebookTagSimple> Tags { get; set; } = new List<FacebookTagSimple>();
         public IEnumerable<MarketingMessageButtonDisplay> Buttons { get; set; } = new List<MarketingMessageButtonDisplay>();
     }
 }

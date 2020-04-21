@@ -16,6 +16,27 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Loại hoạt động</label>
+                                </td>
+                                <td style="width: 100%;">
+                                    <div class="o_field_radio o_horizontal o_field_widget o_required_modifier">
+                                        <div class="custom-control custom-radio o_radio_item" aria-atomic="true">
+                                            <input type="radio" class="custom-control-input o_radio_input"
+                                                formControlName="activityType" value="message" id="radio53_message">
+                                            <label class="custom-control-label o_form_label" for="radio53_message">Gửi
+                                                tin nhắn</label>
+                                        </div>
+                                        <div class="custom-control custom-radio o_radio_item" aria-atomic="true">
+                                            <input type="radio" class="custom-control-input o_radio_input"
+                                                formControlName="activityType" value="action" id="radio53_action">
+                                            <label class="custom-control-label o_form_label" for="radio53_action">Hành
+                                                động server</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                             <!-- <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label">Mẫu tin</label>
@@ -33,7 +54,7 @@
                                     </div>
                                 </td>
                             </tr> -->
-                            <tr>
+                            <tr [class.d-none]="activityTypeValue !== 'message'">
                                 <td class="o_td_label">
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
@@ -43,7 +64,7 @@
                                         </textarea>
                                         <span class="text-number text-warning">{{getLimitText() | number}}</span>
                                     </div>
-                                    <div *ngIf="buttonsFormArray.length" class="button-editor-wrapper mb-2">
+                                    <!-- <div *ngIf="buttonsFormArray.length" class="button-editor-wrapper mb-2">
                                         <div *ngFor="let c of buttonsFormArray.controls;let i = index"
                                             class="button-editor" (click)="editMessageButton($event, c)">
                                             <i *ngIf="c.get('type').value == 'web_url'" class="fas fa-link"></i>
@@ -74,7 +95,7 @@
                                             <ng-template anchorHost>
                                             </ng-template>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </td>
                             </tr>
                         </tbody>

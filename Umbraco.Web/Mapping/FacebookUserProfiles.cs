@@ -13,7 +13,7 @@ namespace Umbraco.Web.Mapping
         public FacebookUserProfiles()
         {
             CreateMap<FacebookUserProfile, FacebookUserProfileBasic>()
-                 .ForMember(x => x.Tags, x => x.MapFrom(s => s.TagRels.Select(m => m.Tag)));
+                     .ForMember(x => x.Tags, x => x.MapFrom(s => s.TagRels.Select(m => m.Tag)));
 
             CreateMap<FacebookUserProfile, FacebookUserProfileSave>()
             .ForMember(x => x.TagIds, x => x.MapFrom(s => s.TagRels.Select(m => m.Tag)));

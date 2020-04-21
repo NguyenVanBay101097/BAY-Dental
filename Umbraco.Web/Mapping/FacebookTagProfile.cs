@@ -16,8 +16,6 @@ namespace Umbraco.Web.Mapping
             CreateMap<FacebookTag, FacebookTagSimple>().ReverseMap();
             CreateMap<FacebookTagSimple, FacebookTag>()
                 .ForMember(x => x.Id, x => x.Ignore());
-
-            //CreateMap<FacebookTagSimple, FacebookUserProfileTagRel>();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace ApplicationCore.Entities
 
         public string Text { get; set; }
 
+
         public ICollection<MarketingMessageButton> Buttons { get; set; } = new List<MarketingMessageButton>();
     }
 }

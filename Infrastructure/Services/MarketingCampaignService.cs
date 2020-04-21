@@ -53,7 +53,7 @@ namespace Infrastructure.Services
         public async Task<MarketingCampaign> CreateCampaign(MarketingCampaignSave val)
         {
             var campaign = _mapper.Map<MarketingCampaign>(val);
-            SaveActivities(val, campaign);
+            // SaveActivities(val, campaign);
 
             await _EnsureFacebookPage(campaign);
 
@@ -83,67 +83,95 @@ namespace Infrastructure.Services
                 throw new ArgumentNullException("campaign");
 
             campaign = _mapper.Map(val, campaign);
-            SaveActivities(val, campaign);
+            // SaveActivities(val, campaign);
 
             await _EnsureFacebookPage(campaign);
 
             await UpdateAsync(campaign);
         }
 
-        private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)
-        {
-            var existLines = campaign.Activities.ToList();
-            var lineToRemoves = new List<MarketingCampaignActivity>();
-            foreach (var existLine in existLines)
-            {
-                bool found = false;
-                foreach (var item in val.Activities)
-                {
-                    if (item.Id == existLine.Id)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
+        //private void SaveActivities(MarketingCampaignSave val, MarketingCampaign campaign)
+        //{
+        //    var Obj = GetService<IMarketingCampaignActivityService>();
+        //    var existLines = campaign.Activities.ToList();
+        //    var lineToRemoves = new List<MarketingCampaignActivity>();
+        //    foreach (var existLine in existLines)
+        //    {
+        //        bool found = false;
+        //        foreach (var item in val.Activities)
+        //        {
+        //            if (item.Id == existLine.Id)
+        //            {
+        //                found = true;
+        //                break;
+        //            }
+        //        }
 
-                if (!found)
-                    lineToRemoves.Add(existLine);
-            }
+        //        if (!found)
+        //            lineToRemoves.Add(existLine);
+        //    }
 
-            foreach (var line in lineToRemoves)
-                campaign.Activities.Remove(line);
+        //    foreach (var line in lineToRemoves)
+        //        campaign.Activities.Remove(line);
 
-            int sequence = 0;
-            foreach (var line in val.Activities)
-            {
-                if (line.Id == Guid.Empty)
-                {
-                    var act = _mapper.Map<MarketingCampaignActivity>(line);
-                    act.Sequence = sequence++;
+        //    int sequence = 0;
 
-                    var message = new MarketingMessage() { Template = line.Template };
-                    SaveMessage(message, line);
+        //    foreach (var line in val.Activities)
+        //    {
 
-                    act.Message = message;
+        //        if (line.Id == Guid.Empty)
+        //        {
+        //            var act = _mapper.Map<MarketingCampaignActivity>(line);
+        //            act.Sequence = sequence++;
 
-                    campaign.Activities.Add(act);
-                }
-                else
-                {
-                    var activity = campaign.Activities.SingleOrDefault(c => c.Id == line.Id);
-                    if (activity != null)
-                    {
-                        _mapper.Map(line, activity);
-                        if (activity.Message != null)
-                        {
-                            var message = activity.Message;
-                            SaveMessage(message, line);
-                        }
-                        activity.Sequence = sequence++;
-                    }
-                }
-            }
-        }
+        //            var message = new MarketingMessage() { Template = line.Template };
+        //            SaveMessage(message, line);
+
+        //            act.Message = message;
+        //            campaign.Activities.Add(act);
+        //            if (act.ActivityChilds.Any())
+        //            {
+        //                foreach (var item in act.ActivityChilds)
+        //                {
+        //                    item.Sequence = sequence++;
+        //                    var messageitem = new MarketingMessage() { Template = line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id).Template };
+        //                    SaveMessage(messageitem, line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id));
+        //                    item.Message = messageitem;
+        //                    campaign.Activities.Add(item);
+        //                }
+        //            }
+
+
+        //        }
+        //        else
+        //        {
+        //            var activity = campaign.Activities.SingleOrDefault(c => c.Id == line.Id);
+        //            if (activity != null)
+        //            {
+        //                _mapper.Map(line, activity);
+        //                if (activity.ActivityChilds.Any())
+        //                {
+        //                    foreach (var item in activity.ActivityChilds)
+        //                    {
+
+        //                        item.Sequence = sequence++;
+        //                        var messageitem = new MarketingMessage() { Template = line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id).Template };
+        //                        SaveMessage(messageitem, line.ActivityChilds.SingleOrDefault(x => x.Id == item.Id));
+        //                        item.Message = messageitem;
+        //                        campaign.Activities.Add(item);
+        //                    }
+        //                }
+
+        //                if (activity.Message != null)
+        //                {
+        //                    var message = activity.Message;
+        //                    SaveMessage(message, line);
+        //                }
+        //                activity.Sequence = sequence++;
+        //            }
+        //        }
+        //    }
+        //}
 
         public void SaveMessage(MarketingMessage message, MarketingCampaignActivitySave val)
         {
@@ -160,41 +188,108 @@ namespace Infrastructure.Services
 
         public async Task ActionStartCampaign(IEnumerable<Guid> ids)
         {
+            var jobService = GetService<IMarketingCampaignActivityService>();
             var states = new string[] { "draft", "stopped" };
             var self = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).Include(x => x.Activities).ToListAsync();
-            foreach(var campaign in self)
+
+            foreach (var campaign in self)
             {
                 campaign.State = "running";
                 campaign.DateStart = DateTime.Now;
-                foreach(var activity in campaign.Activities)
+
+                var parentAtivities = campaign.Activities.Where(x => x.ParentId == null).ToList();
+
+                foreach (var activity in parentAtivities)
                 {
                     var date = DateTime.UtcNow;
-                    var intervalNumber = activity.IntervalNumber ?? 0;
-                    if (activity.IntervalType == "hours")
-                        date = date.AddHours(intervalNumber);
-                    else if (activity.IntervalType == "minutes")
-                        date = date.AddMinutes(intervalNumber);
-                    else if (activity.IntervalType == "days")
-                        date = date.AddDays(intervalNumber);
-                    else if (activity.IntervalType == "months")
-                        date = date.AddMonths(intervalNumber);
-                    else if (activity.IntervalType == "weeks")
-                        date = date.AddDays(intervalNumber * 7);
+                    var jobId = "";
+                    var datetime = new DateTime();
+                    var childs = campaign.Activities.Where(x => x.ParentId == activity.Id)
+                                .Union(campaign.Activities.Where(x => x.ParentId == activity.Id)
+                                .SelectMany(y => y.ActivityChilds)).ToList();
 
-                    var jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", activity.Id), date);
-                    activity.JobId = jobId;
+                    if (activity.TriggerType == "begin" || activity.ActionType == "add_tags" || activity.ActionType == "remove_tags")
+                    {
+                        date = DateTime.UtcNow;
+                        var intervalNumber = activity.IntervalNumber ?? 0;
+                        if (activity.IntervalType == "hours")
+                            date = date.AddHours(intervalNumber);
+                        else if (activity.IntervalType == "minutes")
+                            date = date.AddMinutes(intervalNumber);
+                        else if (activity.IntervalType == "days")
+                            date = date.AddDays(intervalNumber);
+                        else if (activity.IntervalType == "months")
+                            date = date.AddMonths(intervalNumber);
+                        else if (activity.IntervalType == "weeks")
+                            date = date.AddDays(intervalNumber * 7);
+                        jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", activity.Id), date);
+                        datetime = date;
+                        activity.JobId = jobId;
+                        if (string.IsNullOrEmpty(activity.JobId))
+                            throw new Exception("Can't not schedule job");
+                        await jobService.UpdateAsync(activity);
+                        if (!childs.Any())
+                        {
+                            continue;
+                        }
+                        else
+                        {
 
-                    if (string.IsNullOrEmpty(activity.JobId))
-                        throw new Exception("Can't not schedule job");
+                            foreach (var child in childs)
+                            {
+                                if (child.TriggerType == "act" || child.TriggerType == "message_open" || activity.ActionType == "add_tags" || activity.ActionType == "remove_tags")
+                                {
+                                    date = datetime;
+                                    intervalNumber = child.IntervalNumber ?? 0;
+                                    if (child.IntervalType == "hours")
+                                        date = date.AddHours(intervalNumber);
+                                    else if (child.IntervalType == "minutes")
+                                        date = date.AddMinutes(intervalNumber);
+                                    else if (child.IntervalType == "days")
+                                        date = date.AddDays(intervalNumber);
+                                    else if (child.IntervalType == "months")
+                                        date = date.AddMonths(intervalNumber);
+                                    else if (child.IntervalType == "weeks")
+                                        date = date.AddDays(intervalNumber * 7);
+                                    jobId = BackgroundJob.Schedule(() => _activityJobService.RunActivity(_tenant != null ? _tenant.Hostname : "localhost", child.Id), date);
+
+                                    child.JobId = jobId;
+                                    datetime = date;
+                                    jobId = child.JobId;
+                                    if (string.IsNullOrEmpty(activity.JobId))
+                                        throw new Exception("Can't not schedule job");
+                                    await jobService.UpdateAsync(child);
+
+                                }
+
+
+                            }
+                        }
+                    }
+
+
+
+
                 }
+
+
+
             }
 
             await UpdateAsync(self);
         }
 
+
+
+       
+      
+
+
         public async Task<MarketingCampaignDisplay> GetDisplay(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay { 
+
+            var res = await SearchQuery(x => x.Id == id).Select(x => new MarketingCampaignDisplay
+            {
                 Id = x.Id,
                 Name = x.Name,
                 DateStart = x.DateStart,
@@ -202,27 +297,29 @@ namespace Infrastructure.Services
             }).FirstOrDefaultAsync();
 
             var activityObj = GetService<IMarketingCampaignActivityService>();
-            var activities = await activityObj.SearchQuery(x => x.CampaignId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+            var activities = await activityObj.SearchQuery(x => x.CampaignId == id)
                 .Select(x => new MarketingCampaignActivityDisplay
-            {
-                Id = x.Id,
-                ActivityType = x.ActivityType,
-                Content = x.Content,
-                IntervalNumber = x.IntervalNumber,
-                IntervalType = x.IntervalType,
-                Name = x.Name,
-                TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
-                TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
-                TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
-                Template = x.Message.Template,
-                Text = x.Message.Text,
-                Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay { 
-                    Payload = s.Payload,
-                    Title = s.Title,
-                    Type = s.Type,
-                    Url = s.Url
-                })
-            }).ToListAsync();
+                {
+                    Id = x.Id,
+                    ActivityType = x.ActivityType,
+                    Content = x.Content,
+                    IntervalNumber = x.IntervalNumber,
+                    IntervalType = x.IntervalType,
+                    Name = x.Name,
+                    TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
+                    TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
+                    TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
+                    Template = x.Message.Template,
+                    Text = x.Message.Text,
+                    ParentId = x.ParentId,
+                    Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay
+                    {
+                        Payload = s.Payload,
+                        Title = s.Title,
+                        Type = s.Type,
+                        Url = s.Url
+                    })
+                }).ToListAsync();
 
             res.Activities = activities;
             return res;
@@ -241,6 +338,8 @@ namespace Infrastructure.Services
                     if (string.IsNullOrEmpty(activity.JobId))
                         continue;
                     BackgroundJob.Delete(activity.JobId);
+
+
                 }
             }
 
@@ -257,10 +356,20 @@ namespace Infrastructure.Services
                     if (string.IsNullOrEmpty(activity.JobId))
                         continue;
                     BackgroundJob.Delete(activity.JobId);
+
                 }
             }
 
             await DeleteAsync(self);
         }
+
+
+
+
+
+
+
     }
+
+
 }

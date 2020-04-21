@@ -89,5 +89,9 @@ namespace TMTDentalAPI.Controllers
             await _marketingCampaignService.ActionStopCampaign(ids);
             return NoContent();
         }
+
+
+
+
     }
 }

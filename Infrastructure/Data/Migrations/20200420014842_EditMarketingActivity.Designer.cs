@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200420014842_EditMarketingActivity")]
+    partial class EditMarketingActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -535,30 +537,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("AmountResidual")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountResidualSigned")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountTax")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountTaxSigned")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountTotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountTotalSigned")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountUntaxed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmountUntaxedSigned")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid?>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -570,21 +548,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InvoiceOrigin")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InvoicePaymentRef")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InvoicePaymentState")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InvoiceUserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("JournalId")
                         .HasColumnType("uniqueidentifier");
@@ -609,9 +572,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -620,8 +580,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("InvoiceUserId");
 
                     b.HasIndex("JournalId");
 
@@ -640,9 +598,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AccountInternalType")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("AmountResidual")
                         .HasColumnType("decimal(18,2)");
@@ -665,23 +620,11 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateMaturity")
+                    b.Property<DateTime>("DateMaturity")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Debit")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Discount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DiscountFixed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("DiscountType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("ExcludeFromInvoiceTab")
-                        .HasColumnType("bit");
 
                     b.Property<Guid?>("FullReconcileId")
                         .HasColumnType("uniqueidentifier");
@@ -692,23 +635,14 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("JournalId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("LaboLineId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("MoveId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MoveName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentState")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("PartnerId")
@@ -717,22 +651,10 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("PaymentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("PriceSubtotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PriceTotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PriceUnit")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ProductUoMId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("PurchaseLineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("Quantity")
@@ -761,8 +683,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("JournalId");
 
-                    b.HasIndex("LaboLineId");
-
                     b.HasIndex("MoveId");
 
                     b.HasIndex("PartnerId");
@@ -773,26 +693,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("ProductUoMId");
 
-                    b.HasIndex("PurchaseLineId");
-
                     b.HasIndex("WriteById");
 
                     b.ToTable("AccountMoveLines");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountMovePaymentRel", b =>
-                {
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MoveId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PaymentId", "MoveId");
-
-                    b.HasIndex("MoveId");
-
-                    b.ToTable("AccountMovePaymentRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountPartialReconcile", b =>
@@ -1995,9 +1898,6 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AutoConfigId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -2033,8 +1933,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AutoConfigId");
 
                     b.HasIndex("CreatedById");
 
@@ -2072,48 +1970,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("FacebookTags");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.FacebookScheduleAppointmentConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("AutoScheduleAppoint")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ContentMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RecurringJobId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ScheduleNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ScheduleType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("FacebookScheduleAppointmentConfigs");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.FacebookUserProfile", b =>
@@ -5003,12 +4859,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("DiscountFixed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("DiscountType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("InvoiceStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -5030,9 +4880,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("OrderPartnerId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("PriceReduce")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PriceSubTotal")
                         .HasColumnType("decimal(18,2)");
@@ -5111,21 +4958,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("SaleOrderLines");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineInvoice2Rel", b =>
-                {
-                    b.Property<Guid>("OrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("InvoiceLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("OrderLineId", "InvoiceLineId");
-
-                    b.HasIndex("InvoiceLineId");
-
-                    b.ToTable("SaleOrderLineInvoice2Rels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineInvoiceRel", b =>
                 {
                     b.Property<Guid>("OrderLineId")
@@ -5169,21 +5001,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ProgramId");
 
                     b.ToTable("SaleOrderNoCodePromoPrograms");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPaymentRel", b =>
-                {
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SaleOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PaymentId", "SaleOrderId");
-
-                    b.HasIndex("SaleOrderId");
-
-                    b.ToTable("SaleOrderPaymentRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleSettings", b =>
@@ -6390,11 +6207,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "InvoiceUser")
-                        .WithMany()
-                        .HasForeignKey("InvoiceUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("ApplicationCore.Entities.AccountJournal", "Journal")
                         .WithMany()
                         .HasForeignKey("JournalId")
@@ -6440,11 +6252,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("JournalId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ApplicationCore.Entities.LaboOrderLine", "LaboLine")
-                        .WithMany("MoveLines")
-                        .HasForeignKey("LaboLineId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
                         .WithMany("Lines")
                         .HasForeignKey("MoveId")
@@ -6467,29 +6274,9 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductUoMId");
 
-                    b.HasOne("ApplicationCore.Entities.PurchaseOrderLine", "PurchaseLine")
-                        .WithMany("MoveLines")
-                        .HasForeignKey("PurchaseLineId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountMovePaymentRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
-                        .WithMany()
-                        .HasForeignKey("MoveId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.AccountPayment", "Payment")
-                        .WithMany("AccountMovePaymentRels")
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountPartialReconcile", b =>
@@ -6989,10 +6776,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.FacebookPage", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.FacebookScheduleAppointmentConfig", "AutoConfig")
-                        .WithMany()
-                        .HasForeignKey("AutoConfigId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -7003,17 +6786,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.FacebookTag", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.FacebookScheduleAppointmentConfig", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
@@ -8227,21 +7999,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineInvoice2Rel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.AccountMoveLine", "InvoiceLine")
-                        .WithMany("SaleLineRels")
-                        .HasForeignKey("InvoiceLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "OrderLine")
-                        .WithMany("SaleOrderLineInvoice2Rels")
-                        .HasForeignKey("OrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineInvoiceRel", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.AccountInvoiceLine", "InvoiceLine")
@@ -8283,21 +8040,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "Program")
                         .WithMany()
                         .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPaymentRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.AccountPayment", "Payment")
-                        .WithMany()
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany()
-                        .HasForeignKey("SaleOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

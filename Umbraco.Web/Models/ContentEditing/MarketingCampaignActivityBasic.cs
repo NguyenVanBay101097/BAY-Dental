@@ -1,22 +1,13 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    /// <summary>
-    /// Hoạt động
-    /// </summary>
-    public class MarketingCampaignActivity: BaseEntity
+    public class MarketingCampaignActivityBasic
     {
-        public MarketingCampaignActivity()
-        {
-            TriggerType = "begin";
-            IntervalNumber = 1;
-            IntervalType = "days";
-            ActivityType = "message";
-        }
-
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public Guid CampaignId { get; set; }
@@ -69,11 +60,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string ActionType { get; set; }
 
-        public ICollection<MarketingCampaignActivityFacebookTagRel> TagRels { get; set; } = new List<MarketingCampaignActivityFacebookTagRel>();
+        public IEnumerable<FacebookTagBasic> Tags { get; set; } = new List<FacebookTagBasic>();
 
         public Guid? ParentId { get; set; }
-        public MarketingCampaignActivity Parent { get; set; }
-        public ICollection<MarketingCampaignActivity> ActivityChilds { get; set; } = new List<MarketingCampaignActivity>();
-
+       
     }
 }
