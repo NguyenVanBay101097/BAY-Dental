@@ -91,7 +91,7 @@ namespace TMTDentalAdmin.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.PostAsJsonAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                HttpResponseMessage response = await client.PostAsJsonAsync($"https://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
                 {
                     CompanyName = val.CompanyName,
                     Name = val.Name,
