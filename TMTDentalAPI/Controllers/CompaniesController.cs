@@ -203,7 +203,16 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> SetupTenant(CompanySetupTenant val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _companyService.SetupTenant(val);
+
+            try
+            {
+                await _companyService.SetupTenant(val);
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+           
             _unitOfWork.Commit();
           
             return Ok(true);
