@@ -190,7 +190,7 @@ namespace Infrastructure.Services
         {
             _UpdateCityName(entities);
             await _GenerateRefIfEmpty(entities);
-            //_SetCompanyIfNull(entities);
+            _SetCompanyIfNull(entities);
 
             await base.CreateAsync(entities);
 
@@ -203,8 +203,9 @@ namespace Infrastructure.Services
             //Nếu khởi tạo công ty ban đầu thì CompanyId ko có giá trị mà gán vào sẽ bị lỗi insert 
             foreach(var partner in self)
             {
-                if (!partner.CompanyId.HasValue)
-                    partner.CompanyId = CompanyId;
+                var company_id = CompanyId;
+                if (!partner.CompanyId.HasValue && company_id != Guid.Empty)
+                    partner.CompanyId = company_id;
             }
         }
 

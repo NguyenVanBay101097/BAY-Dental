@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
@@ -100,10 +101,14 @@ namespace TMTDentalAdmin.Controllers
                     Email = val.Email
                 });
 
-                if (!response.IsSuccessStatusCode)
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
                 {
-                    await _tenantService.DeleteAsync(tenant);
-                    throw new Exception("Register fail");
+                    var result = await JsonSerializer.DeserializeAsync<BaseHandleErrorVM>(responseStream);
+                    if (!result.success)
+                    {
+                        await _tenantService.DeleteAsync(tenant);
+                        throw new Exception(result.message);
+                    }
                 }
             }
 

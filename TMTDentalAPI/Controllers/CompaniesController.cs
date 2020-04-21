@@ -207,15 +207,22 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _companyService.SetupTenant(val);
+                _unitOfWork.Commit();
+
+                return Ok(new BaseHandleErrorVM
+                {
+                    success = true,
+                    message = "",
+                });
             }
             catch(Exception e)
             {
-                throw new Exception(e.Message);
+                return Ok(new BaseHandleErrorVM
+                {
+                    success = true,
+                    message = e.Message,
+                });
             }
-           
-            _unitOfWork.Commit();
-          
-            return Ok(true);
         }
 
         [AllowAnonymous]
