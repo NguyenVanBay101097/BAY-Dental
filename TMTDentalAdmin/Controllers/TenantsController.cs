@@ -91,7 +91,7 @@ namespace TMTDentalAdmin.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.PostAsJsonAsync($"https://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                HttpResponseMessage response = await client.PostAsJsonAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
                 {
                     CompanyName = val.CompanyName,
                     Name = val.Name,
@@ -101,11 +101,10 @@ namespace TMTDentalAdmin.Controllers
                     Email = val.Email
                 });
 
-                var result = JsonConvert.DeserializeObject<BaseHandleErrorVM>(await response.Content.ReadAsStringAsync());
-                if (!result.success)
+                if (!response.IsSuccessStatusCode)
                 {
                     await _tenantService.DeleteAsync(tenant);
-                    throw new Exception(result.message);
+                    throw new Exception("Register fail, try later");
                 }
             }
 
