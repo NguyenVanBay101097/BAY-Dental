@@ -11,6 +11,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         /// <summary>
+        /// Loại hoạt động
+        /// message: Nhắn tin
+        /// action: Hành động
+        /// </summary>
+        public string ActivityType { get; set; }
+        /// <summary>
         /// "hours", "days", "weeks", "months"
         /// </summary>
         public string IntervalType { get; set; }
@@ -27,7 +33,14 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid CampaignId { get; set; }
 
+        /// <summary>
+        /// add_tags: Thêm tags
+        /// remove_tags: Gỡ tags
+        /// </summary>
+        public string ActionType { get; set; }
+        public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
         //public ICollection<MarketingCampaignActivitySave> ActivityChilds { get; set; } = new List<MarketingCampaignActivitySave>();
         public ICollection<MarketingMessageButtonSave> Buttons { get; set; } = new List<MarketingMessageButtonSave>();
+        
     }
 }

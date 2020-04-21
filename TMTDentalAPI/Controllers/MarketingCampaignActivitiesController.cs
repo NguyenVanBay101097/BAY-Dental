@@ -43,7 +43,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> CreateActivity(MarketingCampaignActivitySave val)
         {
             var activity = await _marketingCampaignActivityService.CreateActivity(val);
-            return Ok(activity);
+            var basic = _mapper.Map<MarketingCampaignActivityBasic>(activity);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]

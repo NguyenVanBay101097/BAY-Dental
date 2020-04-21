@@ -61,7 +61,7 @@ namespace Infrastructure.Services
         public async Task<MarketingCampaignActivityDisplay> GetActivityDisplay(Guid id)
         {
             var activity = await SearchQuery(x => x.Id == id)
-              .Include(x => x.Message).Include("Message.Buttons").Select(x=> new MarketingCampaignActivityDisplay {
+              .Include(x => x.Message).Include("Message.Buttons").Include(x => x.TagRels).Include("TagRels.Tag").Select(x=> new MarketingCampaignActivityDisplay {
                   Id = x.Id,
                   ActivityType = x.ActivityType,
                   Content = x.Content,
@@ -80,6 +80,10 @@ namespace Infrastructure.Services
                       Title = s.Title,
                       Type = s.Type,
                       Url = s.Url
+                  }),
+                  Tags = x.TagRels.Select(y=> new FacebookTagSimple { 
+                    Id = y.TagId,
+                    Name = y.Tag.Name
                   })
 
               })
@@ -90,9 +94,16 @@ namespace Infrastructure.Services
         public async Task<MarketingCampaignActivity> CreateActivity(MarketingCampaignActivitySave val)
         {
             var activity = _mapper.Map<MarketingCampaignActivity>(val);
-            var message = new MarketingMessage() { Template = val.Template };
-            SaveMessage(message, val);
-            activity.Message = message;
+            if (activity.ActivityType == "message")
+            {
+                var message = new MarketingMessage() { Template = val.Template };
+                SaveMessage(message, val);
+                activity.Message = message;
+            }
+            else
+            {
+                SaveTags(val, activity);
+            }
             await CreateAsync(activity);
 
             return activity;
@@ -105,17 +116,50 @@ namespace Infrastructure.Services
         {
             var activity = await SearchQuery(x => x.Id == id)
                .Include(x => x.Message).Include("Message.Buttons")
+               .Include(x => x.TagRels).Include("TagRels.Tag")
+
                .FirstOrDefaultAsync();
             if (activity == null)
                 throw new ArgumentNullException("activity");
            
             activity = _mapper.Map(val, activity);
-            var message = new MarketingMessage() { Template = val.Template };
-            SaveMessage(message, val);
-            activity.Message = message;
+            if(activity.ActivityType == "message")
+            {
+                var message = new MarketingMessage() { Template = val.Template };
+                SaveMessage(message, val);
+                activity.Message = message;
+            }
+            else
+            {
+                SaveTags(val, activity);
+            }
+           
 
 
             await UpdateAsync(activity);
+        }
+
+        private void SaveTags(MarketingCampaignActivitySave val, MarketingCampaignActivity res)
+        {
+            var toRemove = res.TagRels.Where(x => !val.TagIds.Any(s => s == x.TagId)).ToList();
+            foreach (var tag in toRemove)
+            {
+                res.TagRels.Remove(tag);
+            }
+            if (val.TagIds != null)
+            {
+                foreach (var tag in val.TagIds)
+                {
+                    if (res.TagRels.Any(x => x.TagId == tag))
+                        continue;
+                    res.TagRels.Add(new MarketingCampaignActivityFacebookTagRel
+                    {
+                        TagId = tag
+                    });
+
+                }
+            }
+
         }
 
         public void SaveMessage(MarketingMessage message, MarketingCampaignActivitySave val)

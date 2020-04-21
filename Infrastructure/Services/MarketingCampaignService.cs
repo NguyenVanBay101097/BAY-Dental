@@ -208,7 +208,7 @@ namespace Infrastructure.Services
                                 .Union(campaign.Activities.Where(x => x.ParentId == activity.Id)
                                 .SelectMany(y => y.ActivityChilds)).ToList();
 
-                    if (activity.TriggerType == "begin")
+                    if (activity.TriggerType == "begin" || activity.ActionType == "add_tags" || activity.ActionType == "remove_tags")
                     {
                         date = DateTime.UtcNow;
                         var intervalNumber = activity.IntervalNumber ?? 0;
@@ -237,7 +237,7 @@ namespace Infrastructure.Services
 
                             foreach (var child in childs)
                             {
-                                if (child.TriggerType == "act" || child.TriggerType == "message_open")
+                                if (child.TriggerType == "act" || child.TriggerType == "message_open" || activity.ActionType == "add_tags" || activity.ActionType == "remove_tags")
                                 {
                                     date = datetime;
                                     intervalNumber = child.IntervalNumber ?? 0;
