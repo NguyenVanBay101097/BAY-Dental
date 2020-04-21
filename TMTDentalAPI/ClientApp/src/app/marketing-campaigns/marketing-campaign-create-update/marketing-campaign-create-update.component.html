@@ -60,8 +60,7 @@
                     <div class="oe_title">
                         <label class="o_form_label oe_edit_only">Tên chiến dịch</label>
                         <h1>
-                            <input class="form-control" formcontrolname="name"
-                                [(ngModel)]="campaign.name" required>
+                            <input class="form-control" formcontrolname="name" [(ngModel)]="campaign.name" required>
                         </h1>
                     </div>
                 </div>
@@ -69,7 +68,7 @@
                     <div class="tab-content">
                         <div aria-labelledby="home-tab" class="tab-pane active" id="home" role="tabpanel">
                             <div class="mb-2"><button accesskey="A" class="btn btn-secondary btn-sm" type="button"
-                                    (click)="showCreateUpdateLineModal(null)">Thêm hoạt động mới</button></div>
+                                    (click)="showCreateUpdateLineModal(null, null)">Thêm hoạt động mới</button></div>
                             <div>
                                 <table class="table table-sm">
                                     <thead>
