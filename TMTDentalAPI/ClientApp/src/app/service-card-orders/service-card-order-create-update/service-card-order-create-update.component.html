@@ -1,0 +1,182 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/service-card-orders/list">{{title}}</a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{cardOrder.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
+                        *ngIf="['done', 'cancel'].indexOf(cardOrder.state) == -1" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" accesskey="1" *ngIf="!id" class="btn btn-primary btn-sm"
+                        (click)="onSaveConfirm()">
+                        Xác nhận
+                    </button>
+                    <button type="button" accesskey="1" *ngIf="id && cardOrder.state == 'draft'"
+                        class="btn btn-primary btn-sm" (click)="actionConfirm()">
+                        Xác nhận
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="cardOrder.invoiceStatus == 'to invoice'"
+                        (click)="actionInvoiceCreateV2()">
+                        Tạo hóa đơn
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['sale'].indexOf(cardOrder.state) !== -1" (click)="actionCreateDotKham()">
+                        Tạo đợt khám
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        *ngIf="['sale'].indexOf(cardOrder.state) !== -1" (click)="actionCreateLabo()">
+                        Tạo phiếu labo
+                    </button>
+                    <button *ngIf="['sale'].indexOf(cardOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()">
+                        Hủy phiếu
+                    </button>
+                    <button *ngIf="['sale'].indexOf(cardOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
+                        (click)="actionDone()">
+                        Khóa
+                    </button>
+                    <button *ngIf="['sale', 'done'].indexOf(cardOrder.state) !== -1" type="button"
+                        class="btn btn-secondary btn-sm" (click)="actioncardOrderPayment()">
+                        Thanh toán
+                    </button>
+                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printcardOrder()">
+                        In phiếu
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="cardOrder.state !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': cardOrder.state === 'done', 'btn-secondary': cardOrder.state !== 'done'}"
+                        type="button">
+                        Đã khóa
+                    </button>
+                    <button [disabled]="cardOrder.state !== 'sale'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': cardOrder.state === 'sale', 'btn-secondary': cardOrder.state !== 'sale'}"
+                        type="button">
+                        Đã xác nhận
+                    </button>
+                    <button [disabled]="cardOrder.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': cardOrder.state === 'draft', 'btn-secondary': cardOrder.state !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                    <button *ngIf="cardOrder.state === 'cancel'" [disabled]="cardOrder.state !== 'cancel'"
+                        class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': cardOrder.state === 'cancel', 'btn-secondary': cardOrder.state !== 'cancel'}"
+                        type="button">
+                        Đã hủy
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_not_full oe_button_box">
+                    <button type="button" *ngIf="id" (click)="actionViewInvoice()" class="btn oe_stat_button">
+                        <i class="fas fa-edit o_button_icon"></i>
+                        <div name="invoice_count" class="o_field_widget o_stat_info o_readonly_modifier">
+                            <span class="o_stat_value">{{cardOrder.invoiceCount | number}}</span>
+                            <span class="o_stat_text">Hóa đơn</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <h1>
+                        <span>{{cardOrder.name}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-combobox [class.d-none]="cardOrder.state != 'draft'"
+                                            [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                            #partnerCbx formControlName="partner" [valueField]="'id'"
+                                            (valueChange)="onChangePartner($event)">
+                                        </kendo-combobox>
+                                        <a [class.d-none]="cardOrder.state != 'draft'" title="Sửa khách hàng"
+                                            class="pl-2 py-1" type="button" *ngIf="partner"
+                                            (click)="updateCustomerModal()">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        <a [class.d-none]="cardOrder.state != 'draft'" type="button"
+                                            title="Thêm khách hàng" class="pl-2 py-1" (click)="quickCreateCustomer()">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                        <a [class.d-none]="cardOrder.state != 'draft'" title="Tìm khách hàng"
+                                            class="pl-2 py-1" type="button" (click)="searchCustomerDialog()">
+                                            <i class="fas fa-search"></i>
+                                        </a>
+                                    </div>
+                                    <a class="text-primary" (click)="updateCustomerModal()"
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.partner ? cardOrder.partner.name : ''}}</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày bán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datetimepicker [class.d-none]="cardOrder.state != 'draft'"
+                                        formControlName="dateOrderObj">
+                                    </kendo-datetimepicker>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.dateOrder | date: 'short'}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người bán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [class.d-none]="cardOrder.state != 'draft'" [data]="filteredUsers"
+                                        [textField]="'name'" [filterable]="true" #userCbx formControlName="user"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.user ? cardOrder.user.name : ''}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

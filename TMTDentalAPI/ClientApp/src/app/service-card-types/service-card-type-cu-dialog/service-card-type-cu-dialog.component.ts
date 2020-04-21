@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ServiceCardTypeService } from '../service-card-type.service';
 
 @Component({
   selector: 'app-service-card-type-cu-dialog',
@@ -7,17 +9,45 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./service-card-type-cu-dialog.component.css']
 })
 export class ServiceCardTypeCuDialogComponent implements OnInit {
-  formGroup: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  formGroup: FormGroup;
+  title: string;
+  id: string;
+
+  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal,
+    private cardTypeService: ServiceCardTypeService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       price: 0,
       amount: 0,
-      period: 'month',
+      period: ['month', Validators.required],
       nbrPeriod: 1
     });
+
+    if (this.id) {
+      this.cardTypeService.get(this.id).subscribe((result: any) => {
+        this.formGroup.patchValue(result);
+      });
+    }
+  }
+
+  onSave() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var value = this.formGroup.value;
+
+    if (this.id) {
+      this.cardTypeService.update(this.id, value).subscribe(() => {
+        this.activeModal.close(true);
+      });
+    } else {
+      this.cardTypeService.create(value).subscribe((result: any) => {
+        this.activeModal.close(true);
+      });
+    }
   }
 }
