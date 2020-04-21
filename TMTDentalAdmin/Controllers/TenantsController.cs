@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
@@ -15,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAdmin.Controllers
@@ -101,14 +101,11 @@ namespace TMTDentalAdmin.Controllers
                     Email = val.Email
                 });
 
-                using (var responseStream = await response.Content.ReadAsStreamAsync())
+                var result = await response.Content.ReadAsAsync<BaseHandleErrorVM>();
+                if (!result.success)
                 {
-                    var result = await JsonSerializer.DeserializeAsync<BaseHandleErrorVM>(responseStream);
-                    if (!result.success)
-                    {
-                        await _tenantService.DeleteAsync(tenant);
-                        throw new Exception(result.message);
-                    }
+                    await _tenantService.DeleteAsync(tenant);
+                    throw new Exception(result.message);
                 }
             }
 
