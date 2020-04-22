@@ -230,7 +230,7 @@ namespace Infrastructure.Services
                 }
                 string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
                 await conn.ExecuteAsync(processQuery, userprofile.TagRels);
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = userprofile.Id });
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = userprofile.Id });
             }
 
         }
@@ -247,6 +247,7 @@ namespace Infrastructure.Services
             if (relUsertags.Any())
             {
                 await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE TagId = @TagIds", new { TagIds = tagId });
+                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = userprofile.Id });
             }
         }
 
