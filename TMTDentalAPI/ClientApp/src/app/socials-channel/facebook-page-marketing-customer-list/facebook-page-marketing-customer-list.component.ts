@@ -76,15 +76,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     modalRef.componentInstance.customerId = id;
 
     modalRef.result.then((result) => {
-      this.notificationService.show({
-        content: 'Lưu thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
       this.loadDataFromApi();
-
     }, (reason) => {
       
     });

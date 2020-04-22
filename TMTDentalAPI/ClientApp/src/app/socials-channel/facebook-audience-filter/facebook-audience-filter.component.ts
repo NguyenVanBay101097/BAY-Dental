@@ -12,7 +12,7 @@ declare var $ :any;
 })
 export class FacebookAudienceFilterComponent implements OnInit {
   @Input() audience_filter_receive: any;
-  @Output() audience_filter_send = new EventEmitter<any>();;
+  @Output() audience_filter_send = new EventEmitter<any>();
 
   constructor() { }
 
@@ -20,7 +20,7 @@ export class FacebookAudienceFilterComponent implements OnInit {
     if (this.audience_filter_receive) {
       this.listAudienceFilter_Items = this.convertAudienceFilterItemsToArray(this.audience_filter_receive);
     }
-    console.log(this.listAudienceFilter_Items);
+    // console.log(this.listAudienceFilter_Items);
 
     $(document).on('click', '.allow-focus', function (e) {
       e.stopPropagation();

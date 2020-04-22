@@ -3,7 +3,7 @@ import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
@@ -18,12 +18,8 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   customerId: string;
   loading: boolean;
   dataCustomer: any;
-  listTags: any[];
+
   selectedTags: any[] = [];
-  listAddTags: any[] = [];
-  inputSearchTag: string;
-  searchTagUpdate = new Subject<string>();
-  showButtonCreateTag: boolean = false;
 
   listPartners: any[];
   selectedPartner: any;
@@ -40,15 +36,6 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi(this.customerId);
-
-    this.loadListTags();
-
-    this.searchTagUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadListTags();
-      });
     
     this.getPartnersList();
 
@@ -64,7 +51,6 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     this.loading = true;
     this.facebookUserProfilesService.get(id).subscribe(res => {
       this.dataCustomer = res;
-      this.listAddTags = this.dataCustomer.tags;
       this.selectedTags = this.dataCustomer.tags;
       this.selectedPartner = this.dataCustomer.partnerId;
       this.loading = false;
@@ -75,53 +61,8 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     });
   }
 
-  loadListTags() {
-    var val = new FacebookTagsPaged();
-    val.offset = 0;
-    val.limit = 10;
-    val.search = this.inputSearchTag || '';
-    this.facebookTagsService.getTags(val).subscribe(res => {
-      this.listTags = res['items'];
-      if (this.listTags.length == 0) {
-        this.showButtonCreateTag = true;
-      } else {
-        this.showButtonCreateTag = false;
-      }
-      // console.log(this.listTags);
-    }, err => {
-      console.log(err);
-    })
-  }
-
-  valueTagChange(event) {
-    event = {
-      id: null,
-      name: event
-    }
-    var result = this.listAddTags.find( ({ name }) => name === event.name );
-    if (!result) {
-      // this.listAddTags.push(item);
-      console.log(event);
-    }
-  }
-
-  createTag() {
-    var val = {
-      name: this.inputSearchTag
-    };
-    this.facebookTagsService.create(val).subscribe(res => {
-      this.notificationService.show({
-        content: 'Tạo nhãn thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.listAddTags.push(res);
-      // console.log(res);
-    }, err => {
-      console.log(err);
-    })
+  save_selectedTags(event) {
+    this.selectedTags = event;
   }
 
   onSave() {
@@ -129,13 +70,23 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
       partnerId: this.selectedPartner,
       tagIds: []
     }
-    for (let i = 0; i < this.listAddTags.length; i++) {
-      val.tagIds.push(this.listAddTags[i].id);
+    for (let i = 0; i < this.selectedTags.length; i++) {
+      val.tagIds.push(this.selectedTags[i].id);
     }
+    console.log(this.selectedTags);
+    console.log(val);
     this.facebookUserProfilesService.setData(this.customerId, val).subscribe(res => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.activeModal.close(true);
     }, err => {
       console.log(err);
+      this.activeModal.close(true);
     })
   }
 
@@ -186,4 +137,5 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   handleFilter(event) {
     this.searchNamePhoneRef = event;
   }
+
 }

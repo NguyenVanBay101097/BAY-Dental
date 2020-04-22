@@ -12,9 +12,12 @@ import { FacebookPageMarketingMessageAddButtonComponent } from '../facebook-page
 export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
+  campaignId: string;
   activity: any;
   audience_filter: any;
   showAudienceFilter: boolean = false;
+  selectedTags: any[] = [];
+
   @ViewChild(AnchorHostDirective, { static: true }) anchorHost: AnchorHostDirective;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal,
@@ -24,11 +27,15 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       activityType: 'message',
-      triggerType: 'begin',
-      text: '',
-      template: 'text',
-      intervalNumber: 1,
       intervalType: 'days',
+      intervalNumber: 1,
+      template: 'text',
+      text: '',
+      triggerType: 'begin',
+      parentId: null,
+      campaignId: this.campaignId,
+      actionType: '',
+      tagIds: [],
       buttons: this.fb.array([])
     });
 
@@ -59,7 +66,13 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
+    var tagIds = [];
+    for (let i = 0; i < this.selectedTags.length; i++) {
+      tagIds.push(this.selectedTags[i].id);
+    }
+    this.formGroup.patchValue({
+      tagIds: tagIds
+    });
     var value = this.formGroup.value;
     console.log(value);
     this.activeModal.close(value);
@@ -121,7 +134,21 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     this.buttonsFormArray.removeAt(i);
   }
 
+  save_selectedTags(event) {
+    this.selectedTags = event;
+    console.log(event);
+  }
+
   saveAudienceFilter(event) {
     this.audience_filter = event;
+  }
+
+  showTags() {
+    if (this.formGroup.value.activityType === "action") {
+      if (this.formGroup.value.actionType === "Add Tag" || this.formGroup.value.actionType === "Delete Tag") {
+        return true;
+      }
+    }
+    return false;
   }
 }

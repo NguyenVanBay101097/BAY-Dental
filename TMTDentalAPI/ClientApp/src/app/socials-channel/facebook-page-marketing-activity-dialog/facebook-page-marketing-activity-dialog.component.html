@@ -25,14 +25,12 @@
                                         <div class="custom-control custom-radio o_radio_item" aria-atomic="true">
                                             <input type="radio" class="custom-control-input o_radio_input"
                                                 formControlName="activityType" value="message" id="radio53_message">
-                                            <label class="custom-control-label o_form_label" for="radio53_message">Gửi
-                                                tin nhắn</label>
+                                            <label class="custom-control-label o_form_label" for="radio53_message">Gửi tin nhắn</label>
                                         </div>
                                         <div class="custom-control custom-radio o_radio_item" aria-atomic="true">
                                             <input type="radio" class="custom-control-input o_radio_input"
                                                 formControlName="activityType" value="action" id="radio53_action">
-                                            <label class="custom-control-label o_form_label" for="radio53_action">Hành
-                                                động server</label>
+                                            <label class="custom-control-label o_form_label" for="radio53_action">Hành động server</label>
                                         </div>
                                     </div>
                                 </td>
@@ -96,6 +94,30 @@
                                             </ng-template>
                                         </div>
                                     </div> -->
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="activityTypeValue !== 'action'">
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Loại hành động</label>
+                                </td>
+                                <td style="width:100%">
+                                    <div class="position-relative mb-2">
+                                        <select class="form-control col-8" formControlName="actionType">
+                                            <option value="" selected>--Chọn hoạt động--</option>
+                                            <option value="Add Tag">Thêm Nhãn</option>
+                                            <option value="Delete Tag">Gỡ Nhãn</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="showTags()">
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Nhãn</label>
+                                </td>
+                                <td style="width:100%">
+                                    <div class="position-relative mb-2">
+                                        <app-facebook-select-tag [selectedTags_receive]="selectedTags" (selectedTags_send)="save_selectedTags($event)"></app-facebook-select-tag>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

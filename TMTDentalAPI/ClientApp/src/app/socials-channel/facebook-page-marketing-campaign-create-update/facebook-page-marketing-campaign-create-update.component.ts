@@ -77,18 +77,42 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
   }
 
   addActivity() {
-    let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm hoạt động';
-
-    modalRef.result.then(result => {
-      var g = this.fb.group(result);
-      if (result.buttons) {
-        g.setControl('buttons', this.fb.array(result.buttons || []));
+    if (this.formGroup.value.name) {
+      var val = {
+        name: this.formGroup.value.name,
+        facebookPageId: this.formGroup.value.facebookPageId
       }
-      console.log(g);
-      this.activities.push(g);
-    }, () => {
-    });
+      if (!this.id) {
+        this.marketingCampaignService.create(val).subscribe((result: any) => {
+          this.router.navigate([this.router.url], { queryParams: { id: result.id } });
+        });
+      }
+  
+      let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thêm hoạt động';
+      modalRef.componentInstance.campaignId = this.id;
+  
+      modalRef.result.then(result => {
+        console.log(result); // 
+        //
+        var g = this.fb.group(result);
+        if (result.buttons) {
+          g.setControl('buttons', this.fb.array(result.buttons || []));
+        }
+        console.log(g);
+        this.activities.push(g);
+        console.log("this.activities", this.activities); //
+      }, () => {
+      });
+    } else {
+      this.notificationService.show({
+        content: 'Tên chiến dịch không được để trống',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
   }
 
   editActivity(activity: FormGroup) {

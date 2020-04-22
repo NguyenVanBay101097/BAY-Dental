@@ -103,7 +103,7 @@ registerLocaleData(localeVi, 'vi');
 @NgModule({
   declarations: [
     AppComponent,
-    PrintLayoutComponent,
+    PrintLayoutComponent
   ],
   imports: [
     BrowserModule,

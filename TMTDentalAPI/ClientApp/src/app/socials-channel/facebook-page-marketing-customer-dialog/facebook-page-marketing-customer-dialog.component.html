@@ -23,18 +23,7 @@
                     <tr>
                         <td>
                             Tags: 
-                            <kendo-multiselect
-                                [data]="listTags"
-                                textField="name"
-                                valueField="id"
-                                [allowCustom]="true"
-                                [(ngModel)]="selectedTags"
-                                (valueChange)="valueTagChange($event)"
-                            >
-                                <ng-template kendoMultiSelectNoDataTemplate>
-                                    <h4><span class="k-icon k-i-warning"></span><br /><br /> No data here</h4>
-                                </ng-template>
-                            </kendo-multiselect>
+                            <app-facebook-select-tag [selectedTags_receive]="selectedTags" (selectedTags_send)="save_selectedTags($event)"></app-facebook-select-tag>
                         </td>
                     </tr>
                     <tr>
