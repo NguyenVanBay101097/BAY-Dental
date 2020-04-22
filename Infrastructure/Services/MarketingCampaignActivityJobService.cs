@@ -238,25 +238,16 @@ namespace Infrastructure.Services
         public async Task RemoveUserprofileTags(Guid tagId, Guid activityId,
             SqlConnection conn = null)
         {
-            var reltags = conn.Query<FacebookUserProfileTagRel>("" +
+            var relUsertags = conn.Query<FacebookUserProfileTagRel>("" +
                 "Select * " +
                 "FROM FacebookUserProfileTagRels " +
                 "where TagId = @TagId", new { TagId = tagId }).ToList();
-
-            var TagIds = new List<Guid>();
-            //if (reltags.Any())
-            //{
-            //    var toRemove = reltags.Where(x => tags.Any(s => s.TagId == x.TagId)).ToList();
-            //    foreach (var tag in toRemove)
-            //    {
-            //        TagIds.Add(tag.TagId);
-
-            //    }
-            //    var sqlStatement = "DELETE FacebookUserProfileTagRels WHERE TagId = @TagIds";
-            //    await conn.ExecuteAsync(sqlStatement, new { TagIds = TagIds });
-
-
-            //}
+          
+          
+            if (relUsertags.Any())
+            {
+                await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE TagId = @TagIds", new { TagIds = tagId });
+            }
         }
 
         public object GetMessageForSendApi(SqlConnection conn, Guid messageId)

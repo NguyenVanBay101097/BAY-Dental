@@ -117,7 +117,6 @@ namespace Infrastructure.Services
             var activity = await SearchQuery(x => x.Id == id)
                .Include(x => x.Message).Include("Message.Buttons")
                .Include(x => x.TagRels).Include("TagRels.Tag")
-
                .FirstOrDefaultAsync();
             if (activity == null)
                 throw new ArgumentNullException("activity");
@@ -135,13 +134,15 @@ namespace Infrastructure.Services
             }
            
 
+           
+
 
             await UpdateAsync(activity);
         }
 
         private void SaveTags(MarketingCampaignActivitySave val, MarketingCampaignActivity res)
         {
-            var toRemove = res.TagRels.Where(x => !val.TagIds.Any(s => s == x.TagId)).ToList();
+            var toRemove = res.TagRels.Where(x=> !val.TagIds.Any(s=>s == x.TagId)).ToList();
             foreach (var tag in toRemove)
             {
                 res.TagRels.Remove(tag);
