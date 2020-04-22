@@ -15,5 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// cash: Thẻ tiền mặt
         /// </summary>
         public string Type { get; set; }
+
+        public decimal? Price { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -16,12 +17,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IServiceCardOrderService _cardOrderService;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
         public ServiceCardOrdersController(IServiceCardOrderService cardOrderService,
-            IMapper mapper)
+            IMapper mapper, IUserService userService)
         {
             _cardOrderService = cardOrderService;
             _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -29,6 +32,18 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _cardOrderService.GetPagedResultAsync(val);
             return Ok(res);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.Partner)
+                .Include(x => x.User).Include(x => x.CardType).FirstOrDefaultAsync();
+
+            if (order == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<ServiceCardOrderDisplay>(order));
         }
 
         [HttpPost]
@@ -63,6 +78,43 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGet()
+        {
+            var user = await _userService.GetCurrentUser();
+            var res = new ServiceCardOrderDefault();
+            res.User = _mapper.Map<ApplicationUserSimple>(user);
+
+            return Ok(res);
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> AddPartners(Guid id, IEnumerable<Guid> ids)
+        {
+            await _cardOrderService.AddPartners(id, ids);
+            return NoContent();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> RemovePartners(Guid id, IEnumerable<Guid> ids)
+        {
+            await _cardOrderService.RemovePartners(id, ids);
+            return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPartners(Guid id)
+        {
+            var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.PartnerRels)
+               .Include("PartnerRels.Partner").FirstOrDefaultAsync();
+
+            if (order == null)
+                return NotFound();
+
+            var partners = order.PartnerRels.Select(x => x.Partner);
+            return Ok(_mapper.Map<IEnumerable<PartnerSimple>>(partners));
         }
     }
 }

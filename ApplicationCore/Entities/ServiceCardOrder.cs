@@ -11,6 +11,7 @@ namespace ApplicationCore.Entities
             State = "draft";
             DateOrder = DateTime.Now;
             BuyType = "one";
+            GenerationType = "nbr_card";
         }
 
         /// <summary>
@@ -67,5 +68,13 @@ namespace ApplicationCore.Entities
         public ICollection<ServiceCardCard> Cards { get; set; } = new List<ServiceCardCard>();
 
         public ICollection<ServiceCardOrderPartnerRel> PartnerRels { get; set; } = new List<ServiceCardOrderPartnerRel>();
+
+        public decimal? PriceUnit { get; set; }
+
+        public decimal? Quantity { get; set; }
+
+        public decimal? AmountTotal { get; set; }
+
+        public string GenerationType { get; set; }
     }
 }

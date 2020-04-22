@@ -11,8 +11,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid PartnerId { get; set; }
 
-        public Guid? InheritedPartnerId { get; set; }
-
         public Guid CardTypeId { get; set; }
 
         /// <summary>
@@ -30,6 +28,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UserId { get; set; }
 
-        public string BuyType { get; set; }
+        public decimal? PriceUnit { get; set; }
+
+        public decimal? Quantity { get; set; }
+
+        public string GenerationType { get; set; }
     }
 }

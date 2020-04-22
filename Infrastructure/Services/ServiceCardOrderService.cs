@@ -58,7 +58,22 @@ namespace Infrastructure.Services
                 order.Name = await seqObj.NextByCode("service.card.order");
             }
 
+            _ComputeAmount(new List<ServiceCardOrder>() { order });
             return await CreateAsync(order);
+        }
+
+        public void _ComputeAmount(IEnumerable<ServiceCardOrder> self)
+        {
+            foreach(var order in self)
+            {
+                order.Quantity = order.Quantity ?? 1;
+                order.PriceUnit = order.PriceUnit ?? 0;
+
+                if (order.GenerationType == "nbr_card")
+                    order.AmountTotal = order.Quantity * order.PriceUnit;
+                else if (order.GenerationType == "nbr_customer")
+                    order.AmountTotal = order.PartnerRels.Count * order.PriceUnit;
+            }
         }
 
         public async Task UpdateUI(Guid id, ServiceCardOrderSave val)
@@ -66,6 +81,34 @@ namespace Infrastructure.Services
             var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             order = _mapper.Map(val, order);
 
+            _ComputeAmount(new List<ServiceCardOrder>() { order });
+            await UpdateAsync(order);
+        }
+
+        public async Task AddPartners(Guid id, IEnumerable<Guid> partner_ids)
+        {
+            var order = await SearchQuery(x => x.Id == id).Include(x => x.PartnerRels).FirstOrDefaultAsync();
+            foreach(var partner_id in partner_ids)
+            {
+                if (!order.PartnerRels.Any(x => x.PartnerId == partner_id))
+                    order.PartnerRels.Add(new ServiceCardOrderPartnerRel { PartnerId = partner_id });
+            }
+
+            _ComputeAmount(new List<ServiceCardOrder>() { order });
+            await UpdateAsync(order);
+        }
+
+        public async Task RemovePartners(Guid id, IEnumerable<Guid> partner_ids)
+        {
+            var order = await SearchQuery(x => x.Id == id).Include(x => x.PartnerRels).FirstOrDefaultAsync();
+            foreach (var partner_id in partner_ids)
+            {
+                var rel = order.PartnerRels.Where(x => x.PartnerId == partner_id).FirstOrDefault();
+                if (rel != null)
+                    order.PartnerRels.Remove(rel);
+            }
+
+            _ComputeAmount(new List<ServiceCardOrder>() { order });
             await UpdateAsync(order);
         }
 

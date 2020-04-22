@@ -25,4 +25,20 @@ export class ServiceCardOrderService {
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
+
+    defaultGet() {
+        return this.http.get(this.baseApi + this.apiUrl + "/DefaultGet");
+    }
+
+    addPartners(id: string, ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddPartners", ids);
+    }
+
+    removePartners(id: string, ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/RemovePartners", ids);
+    }
+
+    getPartners(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + "/GetPartners");
+    }
 }
