@@ -19,6 +19,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   loading: boolean;
   dataCustomer: any;
   listTags: any[];
+  selectedTags: any[] = [];
   listAddTags: any[] = [];
   inputSearchTag: string;
   searchTagUpdate = new Subject<string>();
@@ -39,6 +40,8 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi(this.customerId);
+
+    this.loadListTags();
 
     this.searchTagUpdate.pipe(
       debounceTime(400),
@@ -62,6 +65,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     this.facebookUserProfilesService.get(id).subscribe(res => {
       this.dataCustomer = res;
       this.listAddTags = this.dataCustomer.tags;
+      this.selectedTags = this.dataCustomer.tags;
       this.selectedPartner = this.dataCustomer.partnerId;
       this.loading = false;
       console.log(this.dataCustomer);
@@ -89,15 +93,16 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     })
   }
 
-  addTagItem(item) {
-    var result = this.listAddTags.find( ({ id }) => id === item.id );
-    if (!result) {
-      this.listAddTags.push(item);
+  valueTagChange(event) {
+    event = {
+      id: null,
+      name: event
     }
-  }
-
-  deleteTagItem(i) {
-    this.listAddTags.splice(i, 1);
+    var result = this.listAddTags.find( ({ name }) => name === event.name );
+    if (!result) {
+      // this.listAddTags.push(item);
+      console.log(event);
+    }
   }
 
   createTag() {

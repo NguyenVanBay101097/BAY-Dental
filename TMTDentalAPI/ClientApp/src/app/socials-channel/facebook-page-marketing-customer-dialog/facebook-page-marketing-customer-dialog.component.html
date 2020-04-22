@@ -23,42 +23,18 @@
                     <tr>
                         <td>
                             Tags: 
-                            <div class="border rounded px-1 pt-1">
-                                <span class="dropdown tag-picker">
-                                    <button type="button" class="btn btn-light btn-sm mr-2 mb-1"
-                                        style="border: 1px dashed #8492a6;"
-                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                        (click)="loadListTags()">
-                                        + Thêm nhãn
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <div class="px-2 pb-2">
-                                            <input class="form-control shadow-sm" style="min-width: 200px;" type="text" placeholder="Tìm kiếm.." 
-                                                [(ngModel)]="inputSearchTag" (ngModelChange)="this.searchTagUpdate.next($event)">
-                                        </div>
-                                        <div class="px-2 pb-2" *ngIf="showButtonCreateTag">
-                                            <button class="btn btn-light btn-sm" type="button" (click)="createTag()">
-                                                Create Tag
-                                            </button>
-                                        </div>
-                                        <div id="dropdown-item-tag">
-                                            <button class="dropdown-item" type="button"
-                                                *ngFor="let item of listTags"
-                                                (click)="addTagItem(item)">
-                                                {{item.name}}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </span>
-                                <span class="tag-item btn btn-light btn-sm border mr-2 mb-1" *ngFor="let tag of listAddTags; index as i">
-                                    <span class="pl-1">
-                                        {{tag.name}}
-                                    </span>
-                                    <span class="remove" (click)="deleteTagItem(i)">
-                                        <i class="fas fa-times pl-2"></i>
-                                    </span>
-                                </span>
-                            </div>
+                            <kendo-multiselect
+                                [data]="listTags"
+                                textField="name"
+                                valueField="id"
+                                [allowCustom]="true"
+                                [(ngModel)]="selectedTags"
+                                (valueChange)="valueTagChange($event)"
+                            >
+                                <ng-template kendoMultiSelectNoDataTemplate>
+                                    <h4><span class="k-icon k-i-warning"></span><br /><br /> No data here</h4>
+                                </ng-template>
+                            </kendo-multiselect>
                         </td>
                     </tr>
                     <tr>
