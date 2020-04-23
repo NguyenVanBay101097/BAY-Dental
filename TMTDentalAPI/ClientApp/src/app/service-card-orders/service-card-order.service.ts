@@ -41,4 +41,8 @@ export class ServiceCardOrderService {
     getPartners(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + "/GetPartners");
     }
+
+    actionConfirm(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionConfirm", ids);
+    }
 }

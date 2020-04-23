@@ -221,7 +221,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.customer = true;
-    val.searchNamePhoneRef = filter;
+    val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
 

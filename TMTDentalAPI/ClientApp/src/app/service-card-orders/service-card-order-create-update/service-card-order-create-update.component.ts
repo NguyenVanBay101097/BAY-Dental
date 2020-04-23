@@ -13,6 +13,9 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-service-card-order-create-update',
@@ -32,13 +35,16 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
 
   gridPartners: PartnerSimple[] = [];
 
+  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: ComboBoxComponent;
   @ViewChild('partner2Cbx', { static: true }) partner2Cbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private cardTypeService: ServiceCardTypeService, private userService: UserService,
     private cardOrderService: ServiceCardOrderService, private route: ActivatedRoute,
     private intlService: IntlService, private router: Router,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cardOrder = {
@@ -59,24 +65,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     this.route.queryParamMap.subscribe((param: ParamMap) => {
       this.id = param.get('id');
       if (this.id) {
-        this.cardOrderService.get(this.id).subscribe((result: any) => {
-          this.cardOrder = result;
-          this.formGroup.patchValue(result);
-
-          let dateOrder = new Date(result.dateOrder);
-          this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-          if (result.activatedDate) {
-            let activatedDate = new Date(result.activatedDate);
-            this.formGroup.get('activatedDateObj').patchValue(activatedDate);
-          }
-
-          this.filteredPartners = _.unionBy(this.filteredPartners, result.partner, 'id');
-          this.filteredCardTypes = _.unionBy(this.filteredCardTypes, result.cardType, 'id');
-          if (result.user) {
-            this.filteredUsers = _.unionBy(this.filteredUsers, result.user, 'id');
-          }
-        });
+        this.loadRecord();
       } else {
         this.cardOrderService.defaultGet().subscribe((result: any) => {
           this.formGroup.patchValue(result);
@@ -92,6 +81,63 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     this.loadFilteredUsers();
     this.loadFilteredPartners2();
     this.loadGridPartners();
+
+    this.partnerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerCbx.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.filteredPartners = result;
+      this.partnerCbx.loading = false;
+    });
+
+    this.partner2Cbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partner2Cbx.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.filteredPartners2 = result;
+      this.partner2Cbx.loading = false;
+    });
+
+    this.userCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.userCbx.loading = true)),
+      switchMap(value => this.searchUsers(value))
+    ).subscribe(result => {
+      this.filteredUsers = result;
+      this.userCbx.loading = false;
+    });
+
+    this.cardTypeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cardTypeCbx.loading = true)),
+      switchMap(value => this.searchCardTypes(value))
+    ).subscribe((result: any) => {
+      this.filteredCardTypes = result.items;
+      this.cardTypeCbx.loading = false;
+    });
+  }
+
+  loadRecord() {
+    this.cardOrderService.get(this.id).subscribe((result: any) => {
+      this.cardOrder = result;
+      this.formGroup.patchValue(result);
+
+      let dateOrder = new Date(result.dateOrder);
+      this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+      if (result.activatedDate) {
+        let activatedDate = new Date(result.activatedDate);
+        this.formGroup.get('activatedDateObj').patchValue(activatedDate);
+      }
+
+      this.filteredPartners = _.unionBy(this.filteredPartners, result.partner, 'id');
+      this.filteredCardTypes = _.unionBy(this.filteredCardTypes, result.cardType, 'id');
+      if (result.user) {
+        this.filteredUsers = _.unionBy(this.filteredUsers, result.user, 'id');
+      }
+    });
   }
 
   get generationTypeValue() {
@@ -121,7 +167,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.customer = true;
-    val.searchNamePhoneRef = filter;
+    val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
 
@@ -180,6 +226,8 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+
+        this.loadRecord();
       });
     }
   }
@@ -212,12 +260,42 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
 
     this.cardOrderService.addPartners(this.id, [value.id]).subscribe(() => {
       this.loadGridPartners();
+      this.loadRecord();
     });
   }
 
   removeCustomer(partner) {
     this.cardOrderService.removePartners(this.id, [partner.id]).subscribe(() => {
       this.loadGridPartners();
+      this.loadRecord();
     });
   }
+
+  actionConfirm() {
+    if (this.id) {
+      this.cardOrderService.actionConfirm([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  createNew() {
+    this.router.navigate(['/service-card-orders/form']);
+  }
+
+  quickCreateCustomer() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm khách hàng';
+
+    modalRef.result.then(result => {
+      var p = new PartnerSimple();
+      p.id = result.id;
+      p.name = result.name;
+      p.displayName = result.displayName;
+      this.formGroup.get('partner').patchValue(p);
+      this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
+    }, () => {
+    });
+  }
+
 }

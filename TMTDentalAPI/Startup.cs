@@ -194,6 +194,7 @@ namespace TMTDentalAPI
             services.AddScoped<IJournalReportService, JournalReportService>();
             services.AddScoped<IServiceCardTypeService, ServiceCardTypeService>();
             services.AddScoped<IServiceCardOrderService, ServiceCardOrderService>();
+            services.AddScoped<IServiceCardCardService, ServiceCardCardService>();
 
             services.AddScoped<ICardTypeService, CardTypeService>();
             services.AddScoped<ICardCardService, CardCardService>();

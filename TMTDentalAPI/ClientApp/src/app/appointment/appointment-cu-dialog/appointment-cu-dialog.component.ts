@@ -89,7 +89,7 @@ export class AppointmentCuDialogComponent implements OnInit {
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.customer = true;
-    val.searchNamePhoneRef = search;
+    val.search = search;
     return this.partnerService.getAutocompleteSimple(val);
   }
 

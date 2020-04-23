@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IServiceCardOrderService _cardOrderService;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
         public ServiceCardOrdersController(IServiceCardOrderService cardOrderService,
-            IMapper mapper, IUserService userService)
+            IMapper mapper, IUserService userService, IUnitOfWorkAsync unitOfWork)
         {
             _cardOrderService = cardOrderService;
             _mapper = mapper;
             _userService = userService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -77,6 +80,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardOrderService.ActionConfirm(ids);
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 

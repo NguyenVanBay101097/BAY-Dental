@@ -42,5 +42,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Quantity { get; set; }
 
         public string GenerationType { get; set; }
+
+        public decimal? AmountTotal { get; set; }
     }
 }

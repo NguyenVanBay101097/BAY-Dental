@@ -49,7 +49,7 @@ export class PartnerSupplierListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.supplier = true;
-    val.searchNamePhoneRef = this.search || '';
+    val.search = this.search || '';
 
     this.loading = true;
     this.partnerService.getPaged(val).pipe(

@@ -648,7 +648,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     partnerPaged.limit = this.limit;
     partnerPaged.offset = this.skip;
     if (search != null) {
-      partnerPaged.searchNamePhoneRef = search.toLowerCase();
+      partnerPaged.search = search.toLowerCase();
     }
     return this.partnerService.autocompletePartner(partnerPaged);
   }

@@ -96,7 +96,7 @@ export class StockPickingCreateUpdateComponent implements OnInit {
 
   searchPartners(search?: string) {
     var val = new PartnerPaged();
-    val.searchNamePhoneRef = search;
+    val.search = search;
 
     if (this.pickingType && this.pickingType.code === 'incoming') {
       val.supplier = true;

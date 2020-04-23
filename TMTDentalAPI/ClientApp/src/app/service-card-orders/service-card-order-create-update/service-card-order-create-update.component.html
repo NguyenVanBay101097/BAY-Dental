@@ -39,40 +39,16 @@
                         class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="cardOrder.invoiceStatus == 'to invoice'"
-                        (click)="actionInvoiceCreateV2()">
-                        Tạo hóa đơn
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['sale'].indexOf(cardOrder.state) !== -1" (click)="actionCreateDotKham()">
-                        Tạo đợt khám
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['sale'].indexOf(cardOrder.state) !== -1" (click)="actionCreateLabo()">
-                        Tạo phiếu labo
+                    <button *ngIf="['sale', 'done'].indexOf(cardOrder.state) !== -1" type="button"
+                        class="btn btn-primary btn-sm" (click)="actionOrderPayment()">
+                        Thanh toán
                     </button>
                     <button *ngIf="['sale'].indexOf(cardOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
-                        Hủy phiếu
-                    </button>
-                    <button *ngIf="['sale'].indexOf(cardOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
-                        (click)="actionDone()">
-                        Khóa
-                    </button>
-                    <button *ngIf="['sale', 'done'].indexOf(cardOrder.state) !== -1" type="button"
-                        class="btn btn-secondary btn-sm" (click)="actioncardOrderPayment()">
-                        Thanh toán
-                    </button>
-                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printcardOrder()">
-                        In phiếu
+                        Hủy đơn
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="cardOrder.state !== 'done'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': cardOrder.state === 'done', 'btn-secondary': cardOrder.state !== 'done'}"
-                        type="button">
-                        Đã khóa
-                    </button>
                     <button [disabled]="cardOrder.state !== 'sale'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': cardOrder.state === 'sale', 'btn-secondary': cardOrder.state !== 'sale'}"
                         type="button">
@@ -110,25 +86,15 @@
                                     <div class="d-flex">
                                         <kendo-combobox [class.d-none]="cardOrder.state != 'draft'"
                                             [data]="filteredPartners" [textField]="'name'" [filterable]="true"
-                                            #partnerCbx formControlName="partner" [valueField]="'id'"
-                                            (valueChange)="onChangePartner($event)">
+                                            #partnerCbx formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
-                                        <a [class.d-none]="cardOrder.state != 'draft'" title="Sửa khách hàng"
-                                            class="pl-2 py-1" type="button" *ngIf="partner"
-                                            (click)="updateCustomerModal()">
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                        <a [class.d-none]="cardOrder.state != 'draft'" type="button"
+                                        <a type="button" [class.d-none]="cardOrder.state != 'draft'"
                                             title="Thêm khách hàng" class="pl-2 py-1" (click)="quickCreateCustomer()">
                                             <i class="fas fa-plus"></i>
                                         </a>
-                                        <a [class.d-none]="cardOrder.state != 'draft'" title="Tìm khách hàng"
-                                            class="pl-2 py-1" type="button" (click)="searchCustomerDialog()">
-                                            <i class="fas fa-search"></i>
-                                        </a>
                                     </div>
-                                    <a class="text-primary" (click)="updateCustomerModal()"
-                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.partner ? cardOrder.partner.name : ''}}</a>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.partner ? cardOrder.partner.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -138,10 +104,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredCardTypes" [textField]="'name'" [filterable]="true"
-                                        #cardTypeCbx formControlName="cardType" [valueField]="'id'"
+                                    <kendo-combobox [data]="filteredCardTypes"
+                                        [class.d-none]="cardOrder.state != 'draft'" [textField]="'name'"
+                                        [filterable]="true" #cardTypeCbx formControlName="cardType" [valueField]="'id'"
                                         (valueChange)="onChangeCardType($event)">
                                     </kendo-combobox>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.cardType ? cardOrder.cardType.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -153,16 +122,18 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="o_field_radio o_vertical o_field_widget">
                                         <div class="custom-control custom-radio o_radio_item">
-                                            <input type="radio" class="custom-control-input o_radio_input"
-                                                (change)="onChangePromoCodeUsage()" formControlName="generationType"
-                                                value="nbr_card" id="radio686_nbr_card">
+                                            <input type="radio" [disableControl]="cardOrder.state != 'draft'"
+                                                class="custom-control-input o_radio_input"
+                                                formControlName="generationType" value="nbr_card"
+                                                id="radio686_nbr_card">
                                             <label class="custom-control-label o_form_label" for="radio686_nbr_card">Mua
                                                 cho chính khách hàng này</label>
                                         </div>
                                         <div class="custom-control custom-radio o_radio_item">
-                                            <input type="radio" class="custom-control-input o_radio_input"
-                                                (change)="onChangePromoCodeUsage()" formControlName="generationType"
-                                                value="nbr_customer" id="radio686_nbr_customer">
+                                            <input type="radio" [disableControl]="cardOrder.state != 'draft'"
+                                                class="custom-control-input o_radio_input"
+                                                formControlName="generationType" value="nbr_customer"
+                                                id="radio686_nbr_customer">
                                             <label class="custom-control-label o_form_label"
                                                 for="radio686_nbr_customer">Mua dành cho 1 danh sách khách hàng</label>
                                         </div>
@@ -176,8 +147,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="quantity">
+                                    <kendo-numerictextbox [class.d-none]="cardOrder.state != 'draft'" [format]="'n0'"
+                                        formControlName="quantity">
                                     </kendo-numerictextbox>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.quantity | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -205,8 +179,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="activatedDateObj">
+                                    <kendo-datepicker [class.d-none]="cardOrder.state != 'draft'"
+                                        formControlName="activatedDateObj">
                                     </kendo-datepicker>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.activatedDate | date: 'shortDate'}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -231,15 +208,18 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="priceUnit">
+                                    <kendo-numerictextbox [class.d-none]="cardOrder.state != 'draft'" [format]="'n0'"
+                                        formControlName="priceUnit">
                                     </kendo-numerictextbox>
+                                    <span
+                                        [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.priceUnit | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="o_group mb-0" [class.d-none]="generationTypeValue !== 'nbr_customer'">
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6" [class.d-none]="cardOrder.state != 'draft'">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -270,12 +250,33 @@
                                 Thao tác
                             </ng-template>
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <button class="btn btn-danger btn-sm" (click)="removeCustomer(dataItem)">
+                                <button [class.d-none]="cardOrder.state != 'draft'" class="btn btn-danger btn-sm"
+                                    (click)="removeCustomer(dataItem)">
                                     <i class="far fa-trash-alt"></i></button>
                             </ng-template>
                         </kendo-grid-column>
                     </kendo-grid>
                 </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_8">
+                    </table>
+                    <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label pb-0">
+                                    <label class="o_form_label oe_subtotal_footer_separator">
+                                        Tổng tiền
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <span
+                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{cardOrder.amountTotal | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
             </div>
         </div>
     </form>

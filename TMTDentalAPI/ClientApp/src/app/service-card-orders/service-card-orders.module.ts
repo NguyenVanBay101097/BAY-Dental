@@ -7,6 +7,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardOrderCreateUpdateComponent } from './service-card-order-create-update/service-card-order-create-update.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent],
@@ -16,7 +17,8 @@ import { ServiceCardOrderCreateUpdateComponent } from './service-card-order-crea
     ReactiveFormsModule,
     FormsModule,
     MyCustomKendoModule,
-    NgbModule
+    NgbModule,
+    SharedModule
   ]
 })
 export class ServiceCardOrdersModule { }

@@ -358,6 +358,59 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task ApplyServiceCards(SaleOrderApplyServiceCards val)
+        {
+            var order = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+            var cardObj = GetService<IServiceCardCardService>();
+            var cards = await cardObj.SearchQuery(x => val.CardIds.Contains(x.Id) && x.PartnerId == order.PartnerId)
+                .Include(x => x.CardType).ToListAsync();
+            var amount_total = order.AmountTotal;
+
+            var product_amount_apply = new Dictionary<Guid?, decimal?>();
+            foreach(var card in cards)
+            {
+                decimal? amount_apply = 0;
+                if (amount_total > card.Residual)
+                {
+                    amount_apply = card.Residual;
+                    amount_total -= amount_apply;
+
+                    product_amount_apply.Add(card.CardType.ProductId, amount_apply);
+                }
+                else
+                {
+                    amount_apply = amount_total;
+                    amount_total = 0;
+
+                    product_amount_apply.Add(card.CardType.ProductId, amount_apply);
+                    break;
+                }
+            }
+
+            var product_ids = product_amount_apply.Keys.ToArray();
+            var productObj = GetService<IProductService>();
+            var products = await productObj.SearchQuery(x => product_ids.Contains(x.Id)).ToListAsync();
+            var product_dict = products.ToDictionary(x => x.Id, x => x);
+
+            foreach(var item in product_amount_apply)
+            {
+                if (!item.Key.HasValue)
+                    continue;
+
+                var product = product_dict[item.Key.Value];
+                var price_unit = item.Value ?? 0;
+                var line = new SaleOrderLine
+                {
+                    ProductId = product.Id,
+                    ProductUOMId = product.UOMId,
+                    Name = product.Name,
+                    ProductUOMQty = 1,
+                    PriceUnit = -price_unit,
+                };
+            }
+
+        }
+
         private async Task _CreateRewardLine(SaleOrder self, SaleCouponProgram program)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();

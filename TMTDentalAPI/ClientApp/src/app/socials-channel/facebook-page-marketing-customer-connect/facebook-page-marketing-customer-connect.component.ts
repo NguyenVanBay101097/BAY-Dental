@@ -38,7 +38,7 @@ export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
     var val = new PartnerPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.searchNamePhoneRef = this.searchNamePhoneRef || '';
+    val.search = this.searchNamePhoneRef || '';
     val.customer = true;
     val.supplier = false;
     this.partnerService.getPartnerPaged(val).pipe(
@@ -83,7 +83,7 @@ export class FacebookPageMarketingCustomerConnectComponent implements OnInit {
   handleFilter(value) {
     this.searchNamePhoneRef = value;
   }
-  
+
   searchChange() {
     this.searchNamePhoneRefUpdate.pipe(
       debounceTime(400),

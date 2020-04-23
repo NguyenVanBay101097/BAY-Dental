@@ -78,7 +78,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateUI(Guid id, ServiceCardOrderSave val)
         {
-            var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == id).Include(x => x.PartnerRels).FirstOrDefaultAsync();
             order = _mapper.Map(val, order);
 
             _ComputeAmount(new List<ServiceCardOrder>() { order });
@@ -126,13 +126,16 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            //khi confirm thì sẽ ghi nhận doanh thu công nợ
+            //cấp thẻ luôn cho khách hàng, thẻ sẽ active từ lúc đó
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.PartnerRels)
+                .Include(x => x.CardType).Include("CardType.Product").ToListAsync();
 
             foreach (var order in self)
                 order.State = "sale";
             await UpdateAsync(self);
 
-            var cards = _CreateCards(self);
+            var cards = await _CreateCards(self);
             var cardObj = GetService<IServiceCardCardService>();
             await cardObj.ActionActive(cards);
 
@@ -141,18 +144,21 @@ namespace Infrastructure.Services
             await moveObj.ActionPost(moves);
         }
 
-        private IEnumerable<ServiceCardCard> _CreateCards(IEnumerable<ServiceCardOrder> self)
+        private async Task<IEnumerable<ServiceCardCard>> _CreateCards(IEnumerable<ServiceCardOrder> self)
         {
+            var cardObj = GetService<IServiceCardCardService>();
             var card_vals_list = new List<ServiceCardCard>();
             foreach(var order in self)
             {
-                if (order.BuyType == "one")
+                if (order.GenerationType == "nbr_card")
                 {
-                    var partner_id = order.InheritedPartnerId.HasValue ? order.InheritedPartnerId.Value : order.PartnerId;
-                    var card_vals = _PrepareCard(order, partner_id: partner_id);
-                    card_vals_list.Add(card_vals);
+                    for (var i = 0; i < order.Quantity; i++)
+                    {
+                        var card_vals = _PrepareCard(order, partner_id: order.PartnerId);
+                        card_vals_list.Add(card_vals);
+                    }
                 } 
-                else if (order.BuyType == "many")
+                else if (order.GenerationType == "nbr_customer")
                 {
                     foreach(var rel in order.PartnerRels)
                     {
@@ -162,6 +168,7 @@ namespace Infrastructure.Services
                 }
             }
 
+            await cardObj.CreateAsync(card_vals_list);
             return card_vals_list;
         }
 
@@ -170,6 +177,7 @@ namespace Infrastructure.Services
             return new ServiceCardCard
             {
                 CardTypeId = self.CardTypeId,
+                CardType = self.CardType,
                 PartnerId = partner_id,
                 ActivatedDate = self.ActivatedDate,
                 Amount = self.CardType.Amount,
@@ -201,12 +209,13 @@ namespace Infrastructure.Services
 
         private AccountMoveLine _PrepareInvoiceLine(ServiceCardOrder self)
         {
+            var quantity = self.GenerationType == "nbr_customer" ? self.PartnerRels.Count : self.Quantity;
             var res = new AccountMoveLine
             {
                 Name = self.CardType.Name,
                 ProductId = self.CardType.ProductId,
                 ProductUoMId = self.CardType.Product.UOMId,
-                Quantity = self.Cards.Count,
+                Quantity = quantity,
                 PriceUnit = self.CardType.Price,
             };
 

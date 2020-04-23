@@ -165,8 +165,8 @@ export class PartnerService {
             .set('limit', partnerPaged.limit.toString())
             .set('customer', partnerPaged.customer.toString())
             .set('supplier', partnerPaged.supplier.toString());
-        if (partnerPaged.searchNamePhoneRef) {
-            params = params.set('searchNamePhoneRef', partnerPaged.searchNamePhoneRef);
+        if (partnerPaged.search) {
+            params = params.set('searchNamePhoneRef', partnerPaged.search);
         };
         return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl + "?" + params);
     }
