@@ -67,99 +67,42 @@ namespace Infrastructure.Services
 
                     if (campaign == null || !campaign.FacebookPageId.HasValue)
                         return;
+                    var page = conn.Query<FacebookPage>("" +
+                        "SELECT * " +
+                        "FROM FacebookPages " +
+                        "where Id = @id" +
+                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
 
-
-
+                    if (page == null)
+                        return;
+                    var profiles = GetUserProfiles(page.Id, activity, conn);
+                    if (profiles == null)
+                        return;
                     if (activity.ActivityType == "message")
                     {
                         var message_obj = GetMessageForSendApi(conn, activity.MessageId.Value);
                         if (!activity.MessageId.HasValue)
                             return;
-                        var page = conn.Query<FacebookPage>("" +
-                        "SELECT * " +
-                        "FROM FacebookPages " +
-                        "where Id = @id" +
-                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
-
-                        if (page == null)
-                            return;
-
-                        //var profiles = conn.Query<FacebookUserProfile>("" +
-                        //    "SELECT * " +
-                        //        "FROM FacebookUserProfiles m " +
-                        //        "where m.FbPageId = @pageId and m.PartnerId in (" +
-                        //            "SELECT p.Id " +
-                        //            "FROM Partners p " +
-                        //            "where p.Customer = 1 " +
-                        //        ")", new { pageId = page.Id }).ToList();
-                        if (activity.TriggerType == "begin" || activity.TriggerType == "act")
+                        var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
                         {
-                            var profiles = conn.Query<UserProfile>("" +
-                              "SELECT us.id,us.PSId,us.Name " +
-                              "FROM FacebookUserProfiles us " +
-                              "where us.FbPageId = @pageId  " +
-                              "", new { pageId = page.Id }).ToList();
-                            if (profiles == null)
-                                return;
-                            var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
-
-                            var limit = 200;
-                            var offset = 0;
-                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            while (subTasks.Any())
-                            {
-                                await Task.WhenAll(subTasks);
-                                offset += limit;
-                                subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            }
+                            await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
                         }
-                        else
-                        {
-                            //filter list userprofile read message 
-                            var profiles = conn.Query<UserProfile>("" +
-                             "SELECT  us.id,us.PSId,us.Name " +
-                            "FROM MarketingTraces m " +
-                            "Left join FacebookUserProfiles as us on us.Id = m.UserProfileId " +
-                            "where m.ActivityId = @activityId AND m.[Read] is not null " +
-                            "", new { activityId = activity.ParentId }).ToList();
-                            if (profiles == null)
-                                return;
-                            var tasks = profiles.Select(x => SendFacebookMessage(page.PageAccesstoken, message_obj, x, activity.Id, conn)).ToList();
-                            var limit = 200;
-                            var offset = 0;
-                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            while (subTasks.Any())
-                            {
-                                await Task.WhenAll(subTasks);
-                                offset += limit;
-                                subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            }
-                        }
-
-
-
 
                     }
                     else if (activity.ActivityType == "action")
                     {
 
-                        var page = conn.Query<FacebookPage>("" +
-                        "SELECT * " +
-                        "FROM FacebookPages " +
-                        "where Id = @id" +
-                        "", new { id = campaign.FacebookPageId }).FirstOrDefault();
-
                         if (page == null)
                             return;
                         if (activity.ActionType == "add_tags")
                         {
-                            var profiles = conn.Query<UserProfile>("" +
-                              "SELECT us.id,us.PSId,us.Name " +
-                              "FROM FacebookUserProfiles us " +
-                              "where us.FbPageId = @pageId  " +
-                              "", new { pageId = page.Id }).ToList();
-                            if (profiles == null)
-                                return;
+
                             var tasks = profiles.Select(x => AddUserprofileTags(x.Id, activity.Id, conn)).ToList();
                             var limit = 200;
                             var offset = 0;
@@ -173,15 +116,11 @@ namespace Infrastructure.Services
                         }
                         else if (activity.ActionType == "remove_tags")
                         {
-                            
-                            var tags = conn.Query<MarketingCampaignActivityFacebookTagRel>(""
-                             + "SELECT * " +
-                                 "FROM MarketingCampaignActivityFacebookTagRels rel " +
-                                 "where rel.ActivityId = @id" +
-                                 "", new { id = activityId }).ToList();
-                            if (tags == null)
+
+                            var tagIds = GetTagRels(activityId, conn).Select(x=>x.TagId).ToList();
+                            if (tagIds == null)
                                 return;
-                            var tasks = tags.Select(x => RemoveUserprofileTags(x.TagId, activity.Id, conn)).ToList();
+                            var tasks = profiles.Select(x => RemoveUserprofileTags(x.Id,tagIds, conn )).ToList();
                             var limit = 200;
                             var offset = 0;
                             var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -200,6 +139,64 @@ namespace Infrastructure.Services
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        private static IEnumerable<UserProfile> GetUserProfiles(Guid pageId, MarketingCampaignActivity activity,
+            SqlConnection conn = null)
+        {
+            var iUserprofiles = new List<UserProfile>();
+            var profiles = conn.Query<UserProfile>("" +
+                              "SELECT us.id , us.PSID , us.Name " +
+                              "FROM FacebookUserProfiles us " +
+                              "where us.FbPageId = @pageId  " +
+                              "", new { pageId = pageId }).ToList();
+
+            iUserprofiles = conn.Query<UserProfile>("" +
+                                "SELECT us.id , us.PSID , us.Name " +
+                                "FROM FacebookUserProfiles us " +
+                                "where us.FbPageId = @pageId  " +
+                                "", new { pageId = pageId }).ToList();
+            if (activity.ActivityType == "message" || activity.ActionType == "remove_tags")
+            {
+                var reltags = GetTagRels(activity.Id, conn).Select(x => x.TagId).ToList();
+                if (reltags.Count > 0)
+                {
+                    iUserprofiles = conn.Query<UserProfile>("" +
+                            "SELECT us.id , us.PSID , us.Name  " +
+                           "FROM FacebookUserProfiles us " +
+                           "Left join FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id " +
+                           "where rel.TagId in @Tagids " +
+                           "group by us.id, us.PSID, us.Name " +
+                           "", new { Tagids = reltags }).ToList();
+                }
+
+            }          
+            if (activity.TriggerType == "message_open")
+            {
+                iUserprofiles = conn.Query<UserProfile>("" +
+                             "SELECT us.id , us.PSID , us.Name " +
+                            "FROM MarketingTraces m " +
+                            "Left join FacebookUserProfiles as us on us.Id = m.UserProfileId " +
+                            "where m.ActivityId = @activityId AND m.[Read] is not null " +
+                            "", new { activityId = activity.ParentId }).ToList();
+
+            }
+            var lstUserProfile = profiles.Where(x => iUserprofiles.Any(s => s.Id == x.Id)).ToList();
+
+
+            return lstUserProfile;
+
+        }
+
+        private static IEnumerable<MarketingCampaignActivityFacebookTagRel> GetTagRels(Guid activityId, SqlConnection conn = null)
+        {
+
+            var tags = conn.Query<MarketingCampaignActivityFacebookTagRel>(""
+               + "SELECT * " +
+                       "FROM MarketingCampaignActivityFacebookTagRels rel " +
+                       "where rel.ActivityId = @id" +
+                       "", new { id = activityId }).ToList();
+            return tags;
         }
 
         private async Task AddUserprofileTags(Guid profileId, Guid activityId,
@@ -230,25 +227,17 @@ namespace Infrastructure.Services
                 }
                 string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
                 await conn.ExecuteAsync(processQuery, userprofile.TagRels);
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = userprofile.Id });
+
             }
 
         }
-
-        public async Task RemoveUserprofileTags(Guid tagId, Guid activityId,
+        public async Task RemoveUserprofileTags(Guid userProfileId, IEnumerable<Guid> tagIds,
             SqlConnection conn = null)
         {
-            var relUsertags = conn.Query<FacebookUserProfileTagRel>("" +
-                "Select * " +
-                "FROM FacebookUserProfileTagRels " +
-                "where TagId = @TagId", new { TagId = tagId }).ToList();
-          
-          
-            if (relUsertags.Any())
-            {
-                await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE TagId = @TagIds", new { TagIds = tagId });
-                await conn.ExecuteAsync("insert into MarketingTraces(Id,ActivityId,Exception,UserProfileId) values (@Id,@ActivityId,@Exception,@UserProfileId)", new { Id = GuidComb.GenerateComb(), ActivityId = activityId, Exception = DateTime.Now, UserProfileId = userprofile.Id });
-            }
+            
+            await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE UserProfileId = @UserProfileId AND TagId in @TagIds ", new { UserProfileId = userProfileId, TagIds = tagIds });
+
+
         }
 
         public object GetMessageForSendApi(SqlConnection conn, Guid messageId)
@@ -342,6 +331,7 @@ namespace Infrastructure.Services
             public Guid Id { get; set; }
             public string PSID { get; set; }
             public string Name { get; set; }
+
 
 
         }
