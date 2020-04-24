@@ -265,7 +265,8 @@
                                                 <td class="text-right"
                                                     *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1">
                                                     <div>
-                                                        <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                        <button *ngIf="lineEditable(line)" type="button"
+                                                            class="btn btn-icon btn-sm btn-light mr-1"
                                                             (click)="editLine(line)">
                                                             <span class="k-icon k-i-edit"></span>
                                                         </button>
@@ -281,6 +282,11 @@
                                 </table>
                             </div>
                             <div class="oe_right">
+                                <button type="button" hasGroups [groups]="'sale.group_service_card'"
+                                    class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
+                                    *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
+                                    <span>Áp dụng thẻ</span>
+                                </button>
                                 <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
                                     class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCouponDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">

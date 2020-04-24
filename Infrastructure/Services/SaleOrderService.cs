@@ -360,38 +360,53 @@ namespace Infrastructure.Services
 
         public async Task ApplyServiceCards(SaleOrderApplyServiceCards val)
         {
-            var order = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.OrderLines).FirstOrDefaultAsync();
             var cardObj = GetService<IServiceCardCardService>();
             var cards = await cardObj.SearchQuery(x => val.CardIds.Contains(x.Id) && x.PartnerId == order.PartnerId)
-                .Include(x => x.CardType).ToListAsync();
+                .Include(x => x.CardType).Include(x => x.SaleOrderCardRels).ToListAsync();
             var amount_total = order.AmountTotal;
 
             var product_amount_apply = new Dictionary<Guid?, decimal?>();
             foreach(var card in cards)
             {
+                if (amount_total <= 0)
+                    break;
+
                 decimal? amount_apply = 0;
                 if (amount_total > card.Residual)
                 {
                     amount_apply = card.Residual;
                     amount_total -= amount_apply;
-
-                    product_amount_apply.Add(card.CardType.ProductId, amount_apply);
                 }
                 else
                 {
                     amount_apply = amount_total;
                     amount_total = 0;
-
-                    product_amount_apply.Add(card.CardType.ProductId, amount_apply);
-                    break;
                 }
+
+                card.SaleOrderCardRels.Add(new SaleOrderServiceCardCardRel
+                {
+                    SaleOrderId = order.Id,
+                    Amount = amount_apply
+                });
+
+                if (!product_amount_apply.ContainsKey(card.CardType.ProductId))
+                    product_amount_apply.Add(card.CardType.ProductId, amount_apply);
+                else
+                    product_amount_apply[card.CardType.ProductId] += amount_apply;
             }
+
+            cardObj._ComputeResidual(cards);
+            await cardObj.UpdateAsync(cards);
 
             var product_ids = product_amount_apply.Keys.ToArray();
             var productObj = GetService<IProductService>();
             var products = await productObj.SearchQuery(x => product_ids.Contains(x.Id)).ToListAsync();
             var product_dict = products.ToDictionary(x => x.Id, x => x);
 
+            var soLineObj = GetService<ISaleOrderLineService>();
+            var lines = new List<SaleOrderLine>();
             foreach(var item in product_amount_apply)
             {
                 if (!item.Key.HasValue)
@@ -399,16 +414,42 @@ namespace Infrastructure.Services
 
                 var product = product_dict[item.Key.Value];
                 var price_unit = item.Value ?? 0;
-                var line = new SaleOrderLine
+                var line = order.OrderLines.Where(x => x.ProductId == product.Id).FirstOrDefault();
+                if (line != null)
                 {
-                    ProductId = product.Id,
-                    ProductUOMId = product.UOMId,
-                    Name = product.Name,
-                    ProductUOMQty = 1,
-                    PriceUnit = -price_unit,
-                };
+                    line.PriceUnit -= price_unit;
+                    line.ProductUOMQty = 1;
+
+                    lines.Add(line);
+                }
+                else
+                {
+                    line = new SaleOrderLine
+                    {
+                        ProductId = product.Id,
+                        ProductUOMId = product.UOMId,
+                        Name = product.Name,
+                        ProductUOMQty = 1,
+                        PriceUnit = -price_unit,
+                        Order = order,
+                        IsRewardLine = true,
+                        OrderId = order.Id,
+                    };
+
+                    lines.Add(line);
+                    order.OrderLines.Add(line);
+                }
             }
 
+            soLineObj.UpdateProps(lines);
+            soLineObj.ComputeAmount(lines);
+            soLineObj._GetInvoiceQty(lines);
+            soLineObj._GetToInvoiceQty(lines);
+            soLineObj._ComputeInvoiceStatus(lines);
+
+            _AmountAll(order);
+            _GetInvoiced(new List<SaleOrder>() { order });
+            await UpdateAsync(order);
         }
 
         private async Task _CreateRewardLine(SaleOrder self, SaleCouponProgram program)
@@ -1128,8 +1169,10 @@ namespace Infrastructure.Services
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
                 .ToListAsync();
+
             var states = new string[] { "draft", "cancel" };
             foreach (var order in self)
             {
@@ -1163,6 +1206,10 @@ namespace Infrastructure.Services
                 }
                 await couponObj.UpdateAsync(coupons);
             }
+
+            var line_ids = self.SelectMany(x => x.OrderLines).Select(x => x.Id).ToList();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            await saleLineObj.Unlink(line_ids);
 
             await DeleteAsync(self);
         }

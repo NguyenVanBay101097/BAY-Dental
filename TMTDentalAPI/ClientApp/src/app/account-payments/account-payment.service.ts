@@ -69,6 +69,10 @@ export class AccountPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + '/SaleDefaultGet', ids);
     }
 
+    serviceCardOrderDefaultGet(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ServiceCardOrderDefaultGet', ids);
+    }
+
     post(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/Post', ids);
     }

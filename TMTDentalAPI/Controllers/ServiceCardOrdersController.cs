@@ -41,7 +41,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.User).Include(x => x.CardType).FirstOrDefaultAsync();
+                .Include(x => x.User).Include(x => x.CardType).Include(x => x.Move).FirstOrDefaultAsync();
 
             if (order == null)
                 return NotFound();
@@ -68,12 +68,7 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var order = await _cardOrderService.GetByIdAsync(id);
-            if (order == null)
-                return NotFound();
-
-            await _cardOrderService.DeleteAsync(order);
-
+            await _cardOrderService.Unlink(new List<Guid>() { id });
             return NoContent();
         }
 
@@ -82,6 +77,16 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             await _cardOrderService.ActionConfirm(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardOrderService.ActionCancel(ids);
             _unitOfWork.Commit();
 
             return NoContent();

@@ -97,6 +97,7 @@ namespace Infrastructure.Services
             //await groupObj.InsertSettingGroupIfNotExist("sale.group_discount_per_so_line", "Discount on lines");
             //await groupObj.InsertSettingGroupIfNotExist("sale.group_sale_coupon_promotion", "Coupon Promotion Programs");
             //await groupObj.InsertSettingGroupIfNotExist("sale.group_loyalty_card", "Loyalty Card");
+            await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
 
             //var user = UserSessionCtx.User;
             //if (!user.HasGroup("base.group_system"))

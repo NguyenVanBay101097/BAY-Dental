@@ -27,6 +27,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupMultiCompany: false,
       companySharePartner: false,
       companyShareProduct: false,
+      groupServiceCard: false
     });
 
     this.configSettingsService.defaultGet().subscribe(result => {

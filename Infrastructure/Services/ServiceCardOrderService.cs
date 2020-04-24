@@ -45,6 +45,51 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+
+            var states = new string[] { "draft", "cancel" };
+            foreach (var order in self)
+            {
+                if (!states.Contains(order.State))
+                    throw new Exception("Bạn chỉ có thể xóa đơn hàng ở trạng thái nháp hoặc hủy bỏ");
+            }
+
+            await DeleteAsync(self);
+        }
+
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Cards)
+                .ToListAsync();
+
+            var cardObj = GetService<IServiceCardCardService>();
+            var move_ids = new List<Guid>();
+            foreach (var order in self)
+            {
+                if (order.Cards.Any(x => x.Residual != x.Amount))
+                    throw new Exception("Thẻ đã được sử dụng, không thể hủy đơn");
+                if (order.MoveId.HasValue)
+                    move_ids.Add(order.MoveId.Value);
+
+                order.State = "draft";
+            }
+
+            if (move_ids.Any())
+            {
+                var moveObj = GetService<IAccountMoveService>();
+                await moveObj.ButtonDraft(move_ids);
+
+                await moveObj.Unlink(move_ids);
+            }
+
+            await cardObj.DeleteAsync(self.SelectMany(x => x.Cards).ToList());
+            await UpdateAsync(self);
+        }
+
         public async Task<ServiceCardOrder> CreateUI(ServiceCardOrderSave val)
         {
             var order = _mapper.Map<ServiceCardOrder>(val);
@@ -182,6 +227,7 @@ namespace Infrastructure.Services
                 ActivatedDate = self.ActivatedDate,
                 Amount = self.CardType.Amount,
                 Residual = self.CardType.Amount,
+                OrderId = self.Id
             };
         }
 

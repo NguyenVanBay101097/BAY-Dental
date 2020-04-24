@@ -195,6 +195,7 @@ namespace TMTDentalAPI
             services.AddScoped<IServiceCardTypeService, ServiceCardTypeService>();
             services.AddScoped<IServiceCardOrderService, ServiceCardOrderService>();
             services.AddScoped<IServiceCardCardService, ServiceCardCardService>();
+            services.AddScoped<ISaleOrderServiceCardCardRelService, SaleOrderServiceCardCardRelService>();
 
             services.AddScoped<ICardTypeService, CardTypeService>();
             services.AddScoped<ICardCardService, CardCardService>();
@@ -307,6 +308,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new AccountMoveProfile());
                 mc.AddProfile(new ServiceCardTypeProfile());
                 mc.AddProfile(new ServiceCardOrderProfile());
+                mc.AddProfile(new ServiceCardCardProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

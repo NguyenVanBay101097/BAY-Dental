@@ -264,10 +264,14 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleObj = GetService<ISaleOrderService>();
             var programObj = GetService<ISaleCouponProgramService>();
+            var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
+            var serviceCardObj = GetService<IServiceCardCardService>();
 
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon)
                 .Include(x => x.Order).Include("Order.AppliedCoupons").Include("Order.AppliedCoupons.Program")
-                .Include("Order.NoCodePromoPrograms").ToListAsync();
+                .Include("Order.NoCodePromoPrograms")
+                .Include("Order.SaleOrderCardRels").Include("Order.SaleOrderCardRels.Card")
+                .Include("Order.SaleOrderCardRels.Card.CardType").ToListAsync();
 
             if (self.Any(x => x.State != "draft" && x.State != "cancel"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
@@ -295,6 +299,12 @@ namespace Infrastructure.Services
                     }
                 }
                 await saleObj.UpdateAsync(line.Order);
+
+                var card_rels_to_unlink = line.Order.SaleOrderCardRels.Where(x => x.Card.CardType.ProductId == line.ProductId).ToList();
+                var card_ids = line.Order.SaleOrderCardRels.Select(x => x.CardId).Distinct().ToList();
+                await saleCardRelObj.DeleteAsync(card_rels_to_unlink);
+
+                await serviceCardObj._ComputeResidual(card_ids);
             }
 
             await DeleteAsync(self);

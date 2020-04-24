@@ -42,5 +42,6 @@ namespace Infrastructure.Services
         Task RecomputeResidual(IEnumerable<Guid> ids);
         Task<bool> CheckHasPromotionCanApply(Guid id);
         Task<IEnumerable<AccountMoveBasic>> GetInvoicesBasic(Guid id);
+        Task ApplyServiceCards(SaleOrderApplyServiceCards val);
     }
 }

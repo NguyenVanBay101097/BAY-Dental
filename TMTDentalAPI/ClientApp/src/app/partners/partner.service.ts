@@ -127,6 +127,10 @@ export class PartnerService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
+    getValidServiceCards(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetValidServiceCards');
+    }
+
     reportLocationCity(val: PartnerReportLocationCitySearch): Observable<PartnerReportLocationCity[]> {
         return this.http.post<PartnerReportLocationCity[]>(this.baseApi + this.apiUrl + '/ReportLocationCity', val);
     }

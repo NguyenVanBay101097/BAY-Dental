@@ -29,9 +29,33 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên">
+        <kendo-grid-column field="name" title="Mã" width="100">
         </kendo-grid-column>
-        <kendo-grid-column field="id">
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="dateOrder" title="Ngày mua" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateOrder | date : 'short'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="userName" title="Người bán" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="moveAmountTotal" title="Tổng tiền" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.moveAmountTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="moveAmountResidual" title="Còn nợ" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.moveAmountResidual | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{stateGet(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id" width="120">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

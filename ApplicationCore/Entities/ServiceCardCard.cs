@@ -39,5 +39,7 @@ namespace ApplicationCore.Entities
 
         public Guid? OrderId { get; set; }
         public ServiceCardOrder Order { get; set; }
+
+        public ICollection<SaleOrderServiceCardCardRel> SaleOrderCardRels { get; set; } = new List<SaleOrderServiceCardCardRel>();
     }
 }

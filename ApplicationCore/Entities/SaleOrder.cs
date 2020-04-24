@@ -117,5 +117,7 @@ namespace ApplicationCore.Entities
         public ICollection<SaleCoupon> AppliedCoupons { get; set; } = new List<SaleCoupon>();
 
         public ICollection<SaleCoupon> GeneratedCoupons { get; set; } = new List<SaleCoupon>();
+
+        public ICollection<SaleOrderServiceCardCardRel> SaleOrderCardRels { get; set; } = new List<SaleOrderServiceCardCardRel>();
     }
 }

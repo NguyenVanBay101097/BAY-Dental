@@ -93,6 +93,7 @@ import { FacebookModule } from 'ngx-facebook';
 import { SocialsChannelModule } from './socials-channel/socials-channel.module';
 import { ServiceCardTypesModule } from './service-card-types/service-card-types.module';
 import { ServiceCardOrdersModule } from './service-card-orders/service-card-orders.module';
+import { ServiceCardCardsModule } from './service-card-cards/service-card-cards.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -193,6 +194,7 @@ registerLocaleData(localeVi, 'vi');
     SocialsChannelModule,
     ServiceCardTypesModule,
     ServiceCardOrdersModule,
+    ServiceCardCardsModule,
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

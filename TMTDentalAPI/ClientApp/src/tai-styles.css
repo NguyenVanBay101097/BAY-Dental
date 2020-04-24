@@ -393,6 +393,13 @@ td.oe_form_group_cell_label label {
     margin-top: 5px;
 }
 
+.o_kanban_view .oe_kanban_card .oe_kanban_details ul, .o_kanban_view .o_kanban_record .oe_kanban_details ul {
+    margin-bottom: 2.5px;
+    padding-left: 0;
+    list-style: none;
+    font-size: 14px;
+}
+
 .o_kanban_view .o_kanban_group .o_kanban_header>.o_kanban_header_title .o_column_title,
 .o_kanban_group.cdk-drag-preview .o_kanban_header>.o_kanban_header_title .o_column_title {
     -webkit-box-flex: 1;

@@ -20,5 +20,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UserName { get; set; }
 
         public string State { get; set; }
+
+        public decimal? MoveAmountTotal { get; set; }
+
+        public decimal? MoveAmountResidual { get; set; }
     }
 }

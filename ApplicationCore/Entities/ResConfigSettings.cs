@@ -35,5 +35,9 @@ namespace ApplicationCore.Entities
         public bool? CompanyShareProduct { get; set; }
 
         public bool? CompanySharePartner { get; set; }
+
+        [DbColumn("implied_group", "sale.group_service_card")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupServiceCard { get; set; }
     }
 }

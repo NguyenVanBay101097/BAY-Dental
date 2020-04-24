@@ -75,6 +75,19 @@ export class ServiceCardOrderListComponent implements OnInit {
     this.router.navigate(['/service-card-orders/form'], { queryParams: { id: item.id } });
   }
 
+  stateGet(state) {
+    switch (state) {
+      case 'sale':
+        return 'Đã xác nhận';
+      case 'done':
+        return 'Đã khóa';
+      case 'cancel':
+        return 'Đã hủy';
+      default:
+        return 'Nháp';
+    }
+  }
+
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa: ' + this.title;

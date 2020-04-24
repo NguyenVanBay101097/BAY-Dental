@@ -16,6 +16,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @Component({
   selector: 'app-service-card-order-create-update',
@@ -44,7 +46,8 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     private cardTypeService: ServiceCardTypeService, private userService: UserService,
     private cardOrderService: ServiceCardOrderService, private route: ActivatedRoute,
     private intlService: IntlService, private router: Router,
-    private notificationService: NotificationService, private modalService: NgbModal) { }
+    private notificationService: NotificationService, private modalService: NgbModal,
+    private paymentService: AccountPaymentService) { }
 
   ngOnInit() {
     this.cardOrder = {
@@ -201,6 +204,21 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  saveOrUpdate() {
+    var value = this.formGroup.value;
+    value.partnerId = value.partner.id;
+    value.cardTypeId = value.cardType.id;
+    value.userId = value.user ? value.user.id : null;
+    value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    value.activatedDate = value.activatedDateObj ? this.intlService.formatDate(value.activatedDateObj, 'yyyy-MM-ddTHH:mm:ss') : null;
+
+    if (!this.id) {
+      return this.cardOrderService.create(value);
+    } else {
+      return this.cardOrderService.update(this.id, value);
+    }
+  }
+
   onSave() {
     if (!this.formGroup.valid) {
       return false;
@@ -275,6 +293,50 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       this.cardOrderService.actionConfirm([this.id]).subscribe(() => {
         this.loadRecord();
+      });
+    }
+  }
+
+  actionPayment() {
+    if (this.id) {
+      this.paymentService.serviceCardOrderDefaultGet([this.id]).subscribe(rs2 => {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.result.then(() => {
+          this.notificationService.show({
+            content: 'Thanh toán thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+
+          this.loadRecord();
+        }, () => {
+        });
+      })
+    }
+  }
+
+  actionCancel() {
+    if (this.id) {
+      this.cardOrderService.actionCancel([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  onSaveConfirm() {
+    if (!this.id) {
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
+      this.saveOrUpdate().subscribe((result: any) => {
+        this.cardOrderService.actionConfirm([result.id]).subscribe(() => {
+          this.router.navigate(['/service-card-orders/form'], { queryParams: { id: result.id } });
+        });
       });
     }
   }

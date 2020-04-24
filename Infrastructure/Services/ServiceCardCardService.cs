@@ -96,5 +96,22 @@ namespace Infrastructure.Services
             };
         }
 
+        public void _ComputeResidual(IEnumerable<ServiceCardCard> self)
+        {
+            foreach(var card in self)
+            {
+                var total_apply_sale = card.SaleOrderCardRels.Sum(x => x.Amount);
+                card.Residual = card.Amount - total_apply_sale;
+            }
+        }
+
+        public async Task<IEnumerable<ServiceCardCard>> _ComputeResidual(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrderCardRels).ToListAsync();
+            _ComputeResidual(self);
+            await UpdateAsync(self);
+
+            return self;
+        }
     }
 }

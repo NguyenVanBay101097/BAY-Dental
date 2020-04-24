@@ -45,4 +45,8 @@ export class ServiceCardOrderService {
     actionConfirm(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + "/ActionConfirm", ids);
     }
+
+    actionCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionCancel", ids);
+    }
 }

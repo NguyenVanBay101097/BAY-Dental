@@ -40,7 +40,7 @@
                         Xác nhận
                     </button>
                     <button *ngIf="['sale', 'done'].indexOf(cardOrder.state) !== -1" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionOrderPayment()">
+                        class="btn btn-primary btn-sm" (click)="actionPayment()">
                         Thanh toán
                     </button>
                     <button *ngIf="['sale'].indexOf(cardOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
@@ -271,6 +271,17 @@
                                 <td colspan="1">
                                     <span
                                         class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{cardOrder.amountTotal | number}}</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="cardOrder.state != 'draft'">
+                                <td colspan="1" class="o_td_label pb-0">
+                                    <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                        Còn nợ
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <span
+                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{cardOrder.moveAmountResidual | number}}</span>
                                 </td>
                             </tr>
                         </tbody>

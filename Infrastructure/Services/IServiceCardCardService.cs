@@ -12,5 +12,7 @@ namespace Infrastructure.Services
     {
         Task ActionActive(IEnumerable<ServiceCardCard> self);
         Task<PagedResult2<ServiceCardCardBasic>> GetPagedResultAsync(ServiceCardCardPaged val);
+        void _ComputeResidual(IEnumerable<ServiceCardCard> self);
+        Task<IEnumerable<ServiceCardCard>> _ComputeResidual(IEnumerable<Guid> ids);
     }
 }

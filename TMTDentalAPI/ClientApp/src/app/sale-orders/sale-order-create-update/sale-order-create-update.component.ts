@@ -35,6 +35,7 @@ import { from, of, Observable } from 'rxjs';
 import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confirm-dialog-v2.component';
 import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
+import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 declare var $: any;
 
 @Component({
@@ -274,6 +275,71 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         });
       }
     });
+  }
+
+  showApplyCardDialog() {
+    var partner = this.formGroup.get('partner').value;
+    if (!partner) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn khách hàng',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+
+      return false;
+    }
+
+    if (this.id) {
+      if (this.formGroup.dirty) {
+        this.saveRecord().subscribe(() => {
+          let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+          modalRef.componentInstance.orderId = this.id;
+          modalRef.componentInstance.partnerId = partner.id;
+          modalRef.result.then(() => {
+            this.loadRecord();
+          }, () => {
+          });
+        })
+      } else {
+        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        modalRef.componentInstance.orderId = this.id;
+        modalRef.componentInstance.partnerId = partner.id;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
+      }
+    } else {
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
+      this.createRecord().subscribe(result => {
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
+
+        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        modalRef.componentInstance.orderId = result.id;
+        modalRef.componentInstance.partnerId = partner.id;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
+      });
+    }
+  }
+
+  lineEditable(line: FormControl) {
+    if (line.get('isRewardLine')) {
+      return !line.get('isRewardLine').value;
+    }
+
+    return true;
   }
 
   showApplyCouponDialog() {

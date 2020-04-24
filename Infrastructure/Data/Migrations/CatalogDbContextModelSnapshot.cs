@@ -4280,6 +4280,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool?>("GroupSaleCouponPromotion")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("GroupServiceCard")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -5001,6 +5004,46 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("SaleOrderId");
 
                     b.ToTable("SaleOrderPaymentRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderServiceCardCardRel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("CardId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SaleOrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("SaleOrderId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("SaleOrderServiceCardCardRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleSettings", b =>
@@ -8272,6 +8315,29 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("SaleOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderServiceCardCardRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ServiceCardCard", "Card")
+                        .WithMany("SaleOrderCardRels")
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
+                        .WithMany("SaleOrderCardRels")
+                        .HasForeignKey("SaleOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleSettings", b =>
