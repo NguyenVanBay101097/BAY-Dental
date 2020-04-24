@@ -44,10 +44,13 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
+
             if (val.ParentId.HasValue)
-            {
-                query = SearchQuery().Where(x => x.Id == val.ParentId);
-            }
+                query = SearchQuery().Where(x => x.ParentId == val.ParentId);
+
+            if (val.CampaignId.HasValue)
+                query = SearchQuery().Where(x => x.CampaignId == val.CampaignId);
+
             var items = await _mapper.ProjectTo<MarketingCampaignActivitySimple>(query).ToListAsync();
             var totalItems = await query.CountAsync();
 
@@ -74,6 +77,7 @@ namespace Infrastructure.Services
                   Template = x.Message.Template,
                   Text = x.Message.Text,
                   ParentId = x.ParentId,
+                  TriggerType = x.TriggerType,
                   Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay
                   {
                       Payload = s.Payload,
@@ -179,7 +183,7 @@ namespace Infrastructure.Services
         {
             var messageService = GetService<IMarketingMessageService>();
             var activities = await SearchQuery(x => ids.Contains(x.Id))
-              .Include(x => x.Message).Include("Message.Buttons").ToListAsync();
+              .Include(x => x.Message).Include("Message.Buttons").Include(x=>x.ActivityChilds).ToListAsync();
             foreach(var activity in activities)
             {
                 if (string.IsNullOrEmpty(activity.JobId))

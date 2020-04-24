@@ -6,6 +6,7 @@ import { MarketingCampaignService } from 'src/app/marketing-campaigns/marketing-
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { MarketingCampaignActivitiesService } from '../marketing-campaign-activities.service';
 
 @Component({
   selector: 'app-facebook-page-marketing-campaign-create-update',
@@ -16,17 +17,18 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
   formGroup: FormGroup;
   id: string;
   campaign: any;
+  activities: any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal,
     private marketingCampaignService: MarketingCampaignService,
     private notificationService: NotificationService,
-    private router: Router, private route: ActivatedRoute) { }
+    private router: Router, private route: ActivatedRoute, 
+    private marketingCampaignActivitiesService: MarketingCampaignActivitiesService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       facebookPageId: null,
-      activities: this.fb.array([]),
     });
 
     this.campaign = new Object();
@@ -42,17 +44,10 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       })).subscribe((result: any) => {
         this.campaign = result;
         this.formGroup.patchValue(result);
-        if (result.activities) {
-          this.activities.clear();
-          result.activities.forEach(activity => {
-            var g = this.fb.group(activity);
-            if (activity.buttons) {
-              g.setControl('buttons', this.fb.array(activity.buttons || []));
-            }
-
-            this.activities.push(g);
-          });
-        }
+        this.activities = this.campaign.activities;
+        console.log("this.campaign", this.campaign);
+        console.log("this.formGroup", this.formGroup);
+        console.log("this.activities", this.activities);  //
       });
   }
 
@@ -61,17 +56,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       this.marketingCampaignService.get(this.id).subscribe((result: any) => {
         this.campaign = result;
         this.formGroup.patchValue(result);
-        if (result.activities) {
-          this.activities.clear();
-          result.activities.forEach(activity => {
-            var g = this.fb.group(activity);
-            if (activity.buttons) {
-              g.setControl('buttons', this.fb.array(activity.buttons || []));
-            }
-
-            this.activities.push(g);
-          });
-        }
+        this.activities = this.campaign.activities;
       });
     }
   }
@@ -93,15 +78,15 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       modalRef.componentInstance.campaignId = this.id;
   
       modalRef.result.then(result => {
-        console.log(result); // 
-        //
-        var g = this.fb.group(result);
-        if (result.buttons) {
-          g.setControl('buttons', this.fb.array(result.buttons || []));
+        if (result === "loading") {
+          if (this.id) {
+            this.marketingCampaignService.get(this.id).subscribe((result: any) => {
+              this.campaign = result;
+              this.formGroup.patchValue(result);
+              this.activities = this.campaign.activities;
+            });
+          }
         }
-        console.log(g);
-        this.activities.push(g);
-        console.log("this.activities", this.activities); //
       }, () => {
       });
     } else {
@@ -115,18 +100,52 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     }
   }
 
-  editActivity(activity: FormGroup) {
+  editActivity(activity) {
+    if (this.clickedDeleteActivity === true) {
+      this.clickedDeleteActivity = false;
+      return;
+    }
     let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa hoạt động';
-    modalRef.componentInstance.activity = activity.value;
+    modalRef.componentInstance.campaignId = this.id;
+    modalRef.componentInstance.activityId = activity.id;
     modalRef.result.then(result => {
-      var a = result as any;
-      activity.patchValue(result);
-      if (a.buttons) {
-        activity.setControl('buttons', this.fb.array(a.buttons || []));
+      if (result === "loading") {
+        if (this.id) {
+          this.marketingCampaignService.get(this.id).subscribe((result: any) => {
+            this.campaign = result;
+            this.formGroup.patchValue(result);
+            this.activities = this.campaign.activities;
+            // console.log("this.campaign", this.campaign);
+            // console.log("this.formGroup", this.formGroup);
+            // console.log("this.activities", this.activities);
+          });
+        }
       }
     }, () => {
     });
+  }
+  clickedDeleteActivity: boolean = false;
+  deleteActivity(activity_id) {
+    this.clickedDeleteActivity = true;
+    var alert = confirm("Bạn có muốn xóa hoạt động này không?");
+    if (alert == true) {
+      console.log("activity_id", activity_id);
+      this.marketingCampaignActivitiesService.delete(activity_id).subscribe((result: any) => {
+        this.marketingCampaignService.get(this.id).subscribe((result: any) => {
+          this.campaign = result;
+          this.formGroup.patchValue(result);
+          this.activities = this.campaign.activities;
+          this.notificationService.show({
+            content: 'Xóa hoạt động thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        });
+      });
+    }
   }
 
   getTrigger(activity: FormGroup) {
@@ -143,14 +162,6 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     } else {
       return `${intervalNumber} Ngày`;
     }
-  }
-
-  deleteActivity(index: number) {
-    this.activities.removeAt(index);
-  }
-
-  get activities() {
-    return this.formGroup.get('activities') as FormArray;
   }
 
   startCampaign() {
@@ -187,6 +198,9 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
 
     if (!this.id) {
       var value = this.formGroup.value;
+      console.log("this.campaign", this.campaign);
+      console.log("this.formGroup", this.formGroup);
+      console.log("this.activities", this.activities);
       this.marketingCampaignService.create(value).subscribe((result: any) => {
         this.notificationService.show({
           content: 'Lưu thành công',
@@ -215,5 +229,62 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
   createNew() {
     var url = this.router.url.split('?')[0];
     this.router.navigate([url]);
+  }
+
+  convertIntervalType(intervalType) {
+    switch (intervalType) {
+      case "minutes":
+        return "Phút";
+      case "hours":
+        return "Giờ";
+      case "days":
+        return "Ngày";
+      case "weeks":
+        return "Tuần";
+      case "months":
+        return "Tháng";
+    }
+  }
+
+  clickSort() {
+    /*
+    var items: any[] = [];
+    items = this.activities;
+    var dict = {};
+    for(var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (item.parentId) {
+        if (!dict[item.parentId]) {
+          dict[item.parentId] = [];
+          dict[item.parentId].push(item.id);
+        } else {
+          dict[item.parentId].push(item.id);
+        }
+      }
+    }
+    console.log(dict);
+    */
+        // var index_parentId = this.activities.findIndex(x => x.parentId == activities_copy[i].parentId);
+        // var temp = activities_copy[i];
+        // activities_copy.splice(i, 1);
+        // activities_copy.splice(index_parentId + 1, 0, temp);
+    var activities_sort = [];
+    var activities_length = this.activities.length;
+    for (let i = 0; i < activities_length; i++) {
+      if (this.activities[i].triggerType === "begin") {
+        activities_sort.push(this.activities[i]);
+      }
+    }
+    var index_parentId;
+    for (let i = 0; i < activities_length; i++) {
+      if (this.activities[i].triggerType !== "begin") {
+        index_parentId = activities_sort.findIndex(x => x.id == this.activities[i].parentId);
+        if (index_parentId >= 0) {
+          activities_sort.splice(index_parentId + 1, 0, this.activities[i]);
+        }
+      }
+    }
+    console.log(activities_sort);
+    this.activities = activities_sort;
   }
 }

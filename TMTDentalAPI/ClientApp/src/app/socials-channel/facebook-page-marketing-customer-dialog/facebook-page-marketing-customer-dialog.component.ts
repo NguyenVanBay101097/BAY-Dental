@@ -103,7 +103,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log('getPartnersList', res);
+      // console.log('getPartnersList', res);
       var res_data = res.data;
       this.listPartners = [];
       for (var i = 0; i < res_data.length; i++) {

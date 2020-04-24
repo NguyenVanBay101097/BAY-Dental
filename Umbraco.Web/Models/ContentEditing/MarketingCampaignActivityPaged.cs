@@ -18,5 +18,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public Guid? ParentId { get; set; }
+
+        public Guid? CampaignId { get; set; }
     }
 }

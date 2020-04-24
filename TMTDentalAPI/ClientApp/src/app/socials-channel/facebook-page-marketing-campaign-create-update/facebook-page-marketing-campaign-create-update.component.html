@@ -63,54 +63,29 @@
                     </tbody>
                 </table>
             </div>
-
             <div class="o_group">
                 <div class="mb-2">
                     <button accesskey="a" *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
                         class="btn btn-secondary btn-sm" type="button" (click)="addActivity()">Thêm hoạt động</button>
                 </div>
                 <div>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Tên hoạt động</th>
-                                <th>Kích hoạt</th>
-                                <th>Đã gửi</th>
-                                <th>#</th>
-                            </tr>
-                        </thead>
-                        <tbody formArrayName="activities">
-                            <ng-container *ngFor="let activity of activities.controls;let i = index">
-                                <tr [formGroup]="activity">
-                                    <td>
-                                        {{activity.get('name').value}}
-                                    </td>
-                                    <td>
-                                        {{getTrigger(activity)}}
-                                    </td>
-                                    <td>
-                                        {{activity.get('totalSent') ? activity.get('totalSent').value : 0}}
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <button type="button" class="btn btn-sm btn-success mr-2"
-                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
-                                                (click)="editActivity(activity)">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger"
-                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
-                                                (click)="deleteActivity(i)">
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                        </tbody>
-                    </table>
+                    <div *ngFor="let activity of activities" class="activity-item d-flex p-1" style="width: fit-content; "
+                        (click)="editActivity(activity)">
+                        <div class="pr-3 d-flex justify-content-end align-items-center" style="width: 90px;">
+                            <small class="font-weight-600 text-secondary">{{activity.intervalNumber}} {{convertIntervalType(activity.intervalType)}}</small>
+                        </div>
+                        <div class="btn border p-2 shadow-sm" style="cursor: pointer;">
+                            <i class="fas mx-1" [class.fa-envelope]="activity.activityType === 'message'" [class.fa-th-list]="activity.activityType === 'action'"></i>
+                            <span class="mx-1 font-weight-600">
+                                {{activity.name}}
+                            </span>
+                            <i class="activity-close fas fa-times mx-1" 
+                                (click)="deleteActivity(activity.id)"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <button type="button" class="btn btn-primary btn-sm" (click)="clickSort()">Sắp xếp</button>
         </div>
     </div>
 </div>

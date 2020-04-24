@@ -294,6 +294,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 DateStart = x.DateStart,
                 State = x.State,
+                FacebookPageId = x.FacebookPageId
             }).FirstOrDefaultAsync();
 
             var activityObj = GetService<IMarketingCampaignActivityService>();
@@ -306,6 +307,7 @@ namespace Infrastructure.Services
                     IntervalNumber = x.IntervalNumber,
                     IntervalType = x.IntervalType,
                     Name = x.Name,
+                    TriggerType = x.TriggerType,
                     TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
                     TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
                     TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),

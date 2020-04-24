@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@ang
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
 import { FacebookPageMarketingMessageAddButtonComponent } from '../facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
+import { MarketingCampaignActivitiesService } from '../marketing-campaign-activities.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-facebook-page-marketing-activity-dialog',
@@ -13,7 +15,9 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   campaignId: string;
+  activityId: string;
   activity: any;
+  activities: any;
   audience_filter: any;
   showAudienceFilter: boolean = false;
   selectedTags: any[] = [];
@@ -21,7 +25,9 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   @ViewChild(AnchorHostDirective, { static: true }) anchorHost: AnchorHostDirective;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal,
-    private componentFactoryResolver: ComponentFactoryResolver) { }
+    private componentFactoryResolver: ComponentFactoryResolver, 
+    private marketingCampaignActivitiesService: MarketingCampaignActivitiesService, 
+    private notificationService: NotificationService ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -39,17 +45,43 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
       buttons: this.fb.array([])
     });
 
-    if (this.activity) {
-      this.formGroup.patchValue(this.activity);
-      if (this.activity.buttons) {
-        this.activity.buttons.forEach(item => {
-          this.buttonsFormArray.push(this.fb.group(item));
-        });
-      }
+    if (this.activityId) {
+      this.marketingCampaignActivitiesService.getWithID(this.activityId).subscribe(res => {
+        this.activity = res;
+        this.formGroup.patchValue(this.activity);
+        this.selectedTags = this.activity.tags;
+        // console.log(this.formGroup);  //
+        // console.log(res); //
+      }, err => {
+        console.log(err);
+      });
     }
 
+    var val = {
+      CampaignId: this.campaignId
+    }
+    this.marketingCampaignActivitiesService.get(val).subscribe((res: any) => {
+      this.activities = res.items;
+      // console.log(this.activities); // 
+      if (this.activityId) {
+        this.activities.splice(this.activities.findIndex(x => x.id === this.activityId), 1);
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    // if (this.activity) {
+    //   this.formGroup.patchValue(this.activity);
+    //   console.log(this.formGroup); //
+    //   if (this.activity.buttons) {
+    //     this.activity.buttons.forEach(item => {
+    //       this.buttonsFormArray.push(this.fb.group(item));
+    //     });
+    //   }
+    // }
+
     this.formGroup.get('text').valueChanges.subscribe((val: string) => {
-      if (val.length > 640) {
+      if (val && val.length > 640) {
         var newVal = val.substr(0, 640);
         this.formGroup.get('text').setValue(newVal);
       }
@@ -74,14 +106,48 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
       tagIds: tagIds
     });
     var value = this.formGroup.value;
-    console.log(value);
-    this.activeModal.close(value);
+    console.log(value); //
+    
+    if (this.activityId) {
+      console.log(this.activityId);
+      this.marketingCampaignActivitiesService.put(this.activityId, value).subscribe(res => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.activeModal.close("loading");
+      }, err => {
+        console.log(err);
+        this.activeModal.dismiss();
+      });
+    } else {
+      this.marketingCampaignActivitiesService.post(value).subscribe(res => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.activeModal.close("loading");
+      }, err => {
+        console.log(err);
+        this.activeModal.dismiss();
+      });
+    }
   }
 
   getLimitText() {
     var limit = 640;
     var text = this.formGroup.get('text').value;
-    return limit - text.length;
+    if (text) {
+      return limit - text.length;
+    } else {
+      return limit;
+    }
   }
 
   get templateValue() {
@@ -136,7 +202,7 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
 
   save_selectedTags(event) {
     this.selectedTags = event;
-    console.log(event);
+    // console.log(event);
   }
 
   saveAudienceFilter(event) {
@@ -150,5 +216,16 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  showActivities() {
+    if (this.formGroup.value.triggerType === "act" || this.formGroup.value.triggerType === "message_open") {
+      return true;
+    }
+    return false;
+  }
+
+  changeActivity() {
+    console.log(this.formGroup.value.parentId);
   }
 }

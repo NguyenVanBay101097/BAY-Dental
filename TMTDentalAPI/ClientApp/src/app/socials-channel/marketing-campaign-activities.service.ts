@@ -9,8 +9,8 @@ export class MarketingCampaignActivitiesService {
   apiUrl = 'api/MarketingCampaignActivities';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  get() {
-    return this.http.get(this.baseApi + this.apiUrl);
+  get(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
   post(data: any) {

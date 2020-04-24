@@ -1,0 +1,10 @@
+.activity-item:hover .activity-close {
+    /* display: inline-block; */
+}
+.activity-close {
+    /* display: none; */
+    color: gainsboro;
+}
+.activity-close:hover {
+    color: gray;
+}

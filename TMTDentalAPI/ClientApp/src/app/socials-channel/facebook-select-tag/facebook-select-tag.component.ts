@@ -24,7 +24,9 @@ export class FacebookSelectTagComponent implements OnInit {
   ngOnInit() {
     this.selectedTags = this.selectedTags_receive;
 
-    this.loadListTags();
+    setTimeout(() => {
+      this.loadListTags();
+    })
 
     this.searchTagUpdate.pipe(
       debounceTime(400),

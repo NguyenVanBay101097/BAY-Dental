@@ -101,13 +101,11 @@
                                     <label class="o_form_label">Loại hành động</label>
                                 </td>
                                 <td style="width:100%">
-                                    <div class="position-relative mb-2">
-                                        <select class="form-control col-8" formControlName="actionType">
-                                            <option value="" selected>--Chọn hoạt động--</option>
-                                            <option value="Add Tag">Thêm Nhãn</option>
-                                            <option value="Delete Tag">Gỡ Nhãn</option>
-                                        </select>
-                                    </div>
+                                    <select class="form-control" formControlName="actionType">
+                                        <option value="" selected>-- Chọn loại hoạt động --</option>
+                                        <option value="Add Tag">Thêm Nhãn</option>
+                                        <option value="Delete Tag">Gỡ Nhãn</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr *ngIf="showTags()">
@@ -142,10 +140,29 @@
                                                 <option value="months">Tháng</option>
                                             </select>
                                         </div>
-                                        <div class="row">
-                                            <span>Sau khi chạy chiến dịch</span>
-                                        </div>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class=" o_td_label">
+                                    <label class="o_form_label"> &#8627; Sau khi </label>
+                                </td>
+                                <td style="width:100%">
+                                    <select class="form-control" formControlName="triggerType">
+                                        <option value="begin">Bắt đầu chiến dịch</option>
+                                        <option value="act">Hoạt động khác xảy ra</option>
+                                        <option value="message_open">Mở tin nhắn</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="showActivities()">
+                                <td class=" o_td_label">
+                                    <label class="o_form_label"> &#8627; Hoạt động </label>
+                                </td>
+                                <td style="width:100%">
+                                    <select class="form-control" formControlName="parentId" (change)="changeActivity()" required>
+                                        <option *ngFor="let activity of activities" [value]="activity.id">{{activity.name}}</option>
+                                    </select>
                                 </td>
                             </tr>
                         </tbody>
