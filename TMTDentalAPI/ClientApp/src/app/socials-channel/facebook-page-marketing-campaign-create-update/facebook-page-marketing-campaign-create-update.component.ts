@@ -310,16 +310,17 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
           activities_length = this.activities.length;
           i = i - 1;
         } else if (index_parentId < 0) {
-          
+          activities_sort.push(this.activities[i]);
+          this.activities.splice(i, 1);
+          activities_length = this.activities.length;
+          i = i - 1;
         }
       }
-      console.log(this.activities);
       i = i + 1;
-      // if (i >= activities_length && activities_length > 0) {
-      //   i = 0;
-      // } 
+      if (i >= activities_length && activities_length > 0) {
+        i = 0;
+      } 
       if (activities_length == 0) {
-        console.log(activities_sort);
         this.activities = activities_sort;
       }
     }
