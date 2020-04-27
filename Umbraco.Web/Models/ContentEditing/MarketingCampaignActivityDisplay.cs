@@ -46,6 +46,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Template { get; set; }
 
         public string Text { get; set; }
+
+        public string ActionType { get; set; }
        
         public Guid? ParentId { get; set; }
 

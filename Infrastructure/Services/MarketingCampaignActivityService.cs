@@ -68,6 +68,7 @@ namespace Infrastructure.Services
                   IntervalNumber = x.IntervalNumber,
                   IntervalType = x.IntervalType,
                   Name = x.Name,
+                  ActionType = x.ActionType,
                   TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
                   TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
                   TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
@@ -180,9 +181,27 @@ namespace Infrastructure.Services
         {
             var messageService = GetService<IMarketingMessageService>();
             var activities = await SearchQuery(x => ids.Contains(x.Id))
-              .Include(x => x.Message).Include("Message.Buttons").ToListAsync();
-            foreach(var activity in activities)
+              .Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons").ToListAsync();
+          
+            foreach (var activity in activities)
             {
+                var childs = activities.Where(x => x.ParentId == activity.Id)
+                                .Union(activities.Where(x => x.ParentId == activity.Id)
+                                .SelectMany(y => y.ActivityChilds)).ToList();
+                if (childs.Count > 0)
+                {
+                    foreach(var child in childs)
+                    {
+                        if (string.IsNullOrEmpty(child.JobId))
+                            continue;
+                        BackgroundJob.Delete(child.JobId);
+                        if (child.MessageId.HasValue)
+                            await messageService.DeleteAsync(child.Message);
+                        await DeleteAsync(child);
+                    }
+                   
+
+                }
                 if (string.IsNullOrEmpty(activity.JobId))
                     continue;
                 BackgroundJob.Delete(activity.JobId);

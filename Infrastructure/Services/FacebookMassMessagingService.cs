@@ -163,19 +163,25 @@ namespace Infrastructure.Services
             }
             else if (item.type == "Tag")
             {
+
                 Expression tagRelsExpression = Expression.PropertyOrField(parameter, "TagRels");
                 switch (item.formula_type)
                 {
                     case "eq":
                     case "neq":
-                        // find Any method
-                        var containsMethod = typeof(ICollection<FacebookUserProfileTagRel>).GetMethods()
-                            .Where(m => m.Name == "Any")
-                            .Single(m => m.GetParameters().Length == 2);
-
-                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel), "s");
-
-                        Expression left = Expression.PropertyOrField(tagRelParameter, "Name");
+                        // find Any method                       
+                        var generic = typeof(Queryable).GetMethods()
+                               .Where(m => m.Name == "Any")
+                               .Where(m => m.GetParameters().Length == 2)
+                               .Single();
+                        var containsMethod = generic.MakeGenericMethod(typeof(FacebookUserProfileTagRel));
+                    
+                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel));
+                        var tagRelPrperty = typeof(FacebookUserProfileTagRel).GetProperty("TagRels");
+                        var tagProperty = tagRelPrperty.PropertyType.GetProperty("Tag");
+                        var inner = Expression.Property(tagRelParameter, tagRelPrperty);
+                        var outer = Expression.Property(inner, tagProperty);
+                        Expression left = Expression.PropertyOrField(outer, "Name");
                         Expression right = Expression.Constant(item.formula_value);
                         Expression equalExpression = Expression.Equal(left, right);
 

@@ -117,10 +117,10 @@ namespace Infrastructure.Services
                         else if (activity.ActionType == "remove_tags")
                         {
 
-                            var tagIds = GetTagRels(activityId, conn).Select(x=>x.TagId).ToList();
+                            var tagIds = GetTagRels(activityId, conn).Select(x => x.TagId).ToList();
                             if (tagIds == null)
                                 return;
-                            var tasks = profiles.Select(x => RemoveUserprofileTags(x.Id,tagIds, conn )).ToList();
+                            var tasks = profiles.Select(x => RemoveUserprofileTags(x.Id, tagIds, conn)).ToList();
                             var limit = 200;
                             var offset = 0;
                             var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -144,33 +144,57 @@ namespace Infrastructure.Services
         private static IEnumerable<UserProfile> GetUserProfiles(Guid pageId, MarketingCampaignActivity activity,
             SqlConnection conn = null)
         {
-            var iUserprofiles = new List<UserProfile>();
+            var builder = new SqlBuilder();
+            var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM FacebookUserProfiles us /**leftjoin**/ /**where**/ /**orderby**/ ");
             var profiles = conn.Query<UserProfile>("" +
                               "SELECT us.id , us.PSID , us.Name " +
                               "FROM FacebookUserProfiles us " +
                               "where us.FbPageId = @pageId  " +
                               "", new { pageId = pageId }).ToList();
-
-            iUserprofiles = conn.Query<UserProfile>("" +
-                                "SELECT us.id , us.PSID , us.Name " +
-                                "FROM FacebookUserProfiles us " +
-                                "where us.FbPageId = @pageId  " +
-                                "", new { pageId = pageId }).ToList();
-            if (activity.ActivityType == "message" || activity.ActionType == "remove_tags")
+            builder.Select("us.id , us.PSID , us.Name ");
+            builder.Where("us.FbPageId = @PageId ", new { PageId = pageId });
+            var iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql,sqltemplate.Parameters).ToList();
+            var reltags = GetTagRels(activity.Id, conn).Select(x => x.TagId).ToList();
+            if (activity.ActivityType == "message")
             {
-                var reltags = GetTagRels(activity.Id, conn).Select(x => x.TagId).ToList();
+                // where type == "Tag"
+                
                 if (reltags.Count > 0)
                 {
-                    iUserprofiles = conn.Query<UserProfile>("" +
-                            "SELECT us.id , us.PSID , us.Name  " +
-                           "FROM FacebookUserProfiles us " +
-                           "Left join FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id " +
-                           "where rel.TagId in @Tagids " +
-                           "group by us.id, us.PSID, us.Name " +
-                           "", new { Tagids = reltags }).ToList();
+                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id");
+                    builder.Where("rel.TagId in @Tagids", new { Tagids = reltags });
+                    builder.GroupBy("us.id, us.PSID, us.Name");
+                    iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
+
                 }
 
-            }          
+                // where type == "Gender"
+                //--TODO--//
+
+                // where type == "FirstName"
+
+                //--TODO--//
+
+                // where type == "LastName"
+
+                //--TODO--//   
+            }
+
+            if (activity.ActionType == "add_tags")
+            {
+                iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
+            }
+            if (activity.ActionType == "remove_tags")
+            {
+                if (reltags.Count > 0)
+                {
+                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id");
+                    builder.Where("rel.TagId in @Tagids", new { Tagids = reltags });
+                    builder.GroupBy("us.id, us.PSID, us.Name");
+                    iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
+
+                }
+            }
             if (activity.TriggerType == "message_open")
             {
                 iUserprofiles = conn.Query<UserProfile>("" +
@@ -181,6 +205,7 @@ namespace Infrastructure.Services
                             "", new { activityId = activity.ParentId }).ToList();
 
             }
+
             var lstUserProfile = profiles.Where(x => iUserprofiles.Any(s => s.Id == x.Id)).ToList();
 
 
@@ -234,7 +259,7 @@ namespace Infrastructure.Services
         public async Task RemoveUserprofileTags(Guid userProfileId, IEnumerable<Guid> tagIds,
             SqlConnection conn = null)
         {
-            
+
             await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE UserProfileId = @UserProfileId AND TagId in @TagIds ", new { UserProfileId = userProfileId, TagIds = tagIds });
 
 
