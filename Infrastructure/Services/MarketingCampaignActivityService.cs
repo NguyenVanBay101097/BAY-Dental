@@ -197,10 +197,10 @@ namespace Infrastructure.Services
                         BackgroundJob.Delete(child.JobId);
                         if (child.MessageId.HasValue)
                             await messageService.DeleteAsync(child.Message);
-                        await DeleteAsync(child);
+                       
                     }
-                   
 
+                    await DeleteAsync(childs);
                 }
                 if (string.IsNullOrEmpty(activity.JobId))
                     continue;
