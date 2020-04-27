@@ -45,9 +45,9 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         this.campaign = result;
         this.formGroup.patchValue(result);
         this.activities = this.campaign.activities;
-        console.log("this.campaign", this.campaign);
-        console.log("this.formGroup", this.formGroup);
-        console.log("this.activities", this.activities);  //
+        // console.log("this.campaign", this.campaign);
+        // console.log("this.formGroup", this.formGroup);
+        // console.log("this.activities", this.activities);  //
       });
   }
 
@@ -268,6 +268,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         // var temp = activities_copy[i];
         // activities_copy.splice(i, 1);
         // activities_copy.splice(index_parentId + 1, 0, temp);
+    /*
     var activities_sort = [];
     var activities_length = this.activities.length;
     for (let i = 0; i < activities_length; i++) {
@@ -286,5 +287,41 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     }
     console.log(activities_sort);
     this.activities = activities_sort;
+    */
+    //
+    var activities_sort = [];
+    var activities_length = this.activities.length;
+    var i = 0;
+    var index_parentId;
+    var index_parentId_sort;
+    while (i < activities_length) {
+      console.log("i", i);
+      if (this.activities[i].triggerType === "begin") {
+        activities_sort.push(this.activities[i]);
+        this.activities.splice(i, 1);
+        activities_length = this.activities.length;
+        i = i - 1;
+      } else {
+        index_parentId = this.activities.findIndex(x => x.id == this.activities[i].parentId);
+        index_parentId_sort = activities_sort.findIndex(x => x.id == this.activities[i].parentId);
+        if (index_parentId_sort >= 0) {
+          activities_sort.splice(index_parentId_sort + 1, 0, this.activities[i]);
+          this.activities.splice(i, 1);
+          activities_length = this.activities.length;
+          i = i - 1;
+        } else if (index_parentId < 0) {
+          
+        }
+      }
+      console.log(this.activities);
+      i = i + 1;
+      // if (i >= activities_length && activities_length > 0) {
+      //   i = 0;
+      // } 
+      if (activities_length == 0) {
+        console.log(activities_sort);
+        this.activities = activities_sort;
+      }
+    }
   }
 }
