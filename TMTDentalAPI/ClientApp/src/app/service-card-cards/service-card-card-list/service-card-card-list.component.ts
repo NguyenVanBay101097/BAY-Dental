@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardCardService } from '../service-card-card.service';
 import { ServiceCardCardPaged } from '../service-card-card-paged';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-service-card-card-list',
@@ -23,12 +24,16 @@ export class ServiceCardCardListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   title = 'Thẻ dịch vụ';
+  orderId: string;
 
   constructor(private cardCardService: ServiceCardCardService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.loadDataFromApi();
+    this.route.queryParamMap.subscribe((param: ParamMap) => {
+      this.orderId = param.get('order_id');
+      this.loadDataFromApi();
+    });
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -44,6 +49,9 @@ export class ServiceCardCardListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    if (this.orderId) {
+      val.orderId = this.orderId;
+    }
 
     this.cardCardService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{

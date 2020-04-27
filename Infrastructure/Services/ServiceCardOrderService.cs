@@ -177,7 +177,12 @@ namespace Infrastructure.Services
                 .Include(x => x.CardType).Include("CardType.Product").ToListAsync();
 
             foreach (var order in self)
+            {
+                if (!order.ActivatedDate.HasValue)
+                    order.ActivatedDate = DateTime.Today;
                 order.State = "sale";
+            }
+                
             await UpdateAsync(self);
 
             var cards = await _CreateCards(self);

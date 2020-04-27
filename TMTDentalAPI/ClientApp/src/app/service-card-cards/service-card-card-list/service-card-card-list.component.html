@@ -1,21 +1,19 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Loại thẻ dịch vụ</li>
+            <li class="active">Thẻ dịch vụ</li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tên" type="text" [(ngModel)]="search"
-                        (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã thẻ, khách hàng, SĐT" type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
-                    </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -55,5 +53,22 @@
                 {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <ul class="nav nav-tabs" id="myTab_{{dataItem.id}}" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="histories_{{dataItem.id}}_tab" data-toggle="tab"
+                        href="#histories_{{dataItem.id}}" role="tab" aria-controls="info" aria-selected="true">
+                        Lịch sử áp dụng
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane py-2 fade show active" id="histories_{{dataItem.id}}" role="tabpanel">
+                    <div>
+                        <app-service-card-card-histories [item]="dataItem"></app-service-card-card-histories>
+                    </div>
+                </div>
+            </div>
+        </div>
     </kendo-grid>
 </div>

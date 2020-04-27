@@ -41,7 +41,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.User).Include(x => x.CardType).Include(x => x.Move).FirstOrDefaultAsync();
+                .Include(x => x.User).Include(x => x.CardType).Include(x => x.Move).Include(x => x.Cards).FirstOrDefaultAsync();
 
             if (order == null)
                 return NotFound();

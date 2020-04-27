@@ -5,15 +5,18 @@ import { ServiceCardCardsRoutingModule } from './service-card-cards-routing.modu
 import { ServiceCardCardListComponent } from './service-card-card-list/service-card-card-list.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
+import { ServiceCardCardHistoriesComponent } from './service-card-card-histories/service-card-card-histories.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [ServiceCardCardListComponent],
+  declarations: [ServiceCardCardListComponent, ServiceCardCardHistoriesComponent],
   imports: [
     CommonModule,
     ServiceCardCardsRoutingModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    NgbModule
   ]
 })
 export class ServiceCardCardsModule { }

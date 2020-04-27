@@ -309,6 +309,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ServiceCardTypeProfile());
                 mc.AddProfile(new ServiceCardOrderProfile());
                 mc.AddProfile(new ServiceCardCardProfile());
+                mc.AddProfile(new SaleOrderServiceCardCardRelProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

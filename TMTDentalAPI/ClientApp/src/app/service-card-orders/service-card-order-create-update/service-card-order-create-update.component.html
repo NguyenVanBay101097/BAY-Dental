@@ -68,6 +68,15 @@
                 </div>
             </div>
             <div class="o_form_sheet">
+                <div class="o_not_full oe_button_box">
+                    <button type="button" *ngIf="id" (click)="actionViewCard()" class="btn oe_stat_button">
+                        <i class="far fa-credit-card o_button_icon"></i>
+                        <div class="o_field_widget o_stat_info o_readonly_modifier">
+                            <span class="o_stat_value">{{cardOrder.cardCount | number}}</span>
+                            <span class="o_stat_text">Thẻ</span>
+                        </div>
+                    </button>
+                </div>
                 <div class="oe_title">
                     <h1>
                         <span>{{cardOrder.name}}</span>

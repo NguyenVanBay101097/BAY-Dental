@@ -48,5 +48,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? MoveAmountTotal { get; set; }
 
         public decimal? MoveAmountResidual { get; set; }
+
+        public int CardCount { get; set; }
     }
 }
