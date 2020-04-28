@@ -63,6 +63,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<FacebookTagBasic> Tags { get; set; } = new List<FacebookTagBasic>();
 
         public Guid? ParentId { get; set; }
-       
+        public string AudienceFilter { get; set; }
+
     }
 }

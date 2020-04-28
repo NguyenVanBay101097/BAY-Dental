@@ -17,6 +17,7 @@ using System.Linq.Dynamic.Core;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.Linq.Expressions;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
@@ -175,17 +176,17 @@ namespace Infrastructure.Services
                                .Where(m => m.GetParameters().Length == 2)
                                .Single();
                         var containsMethod = generic.MakeGenericMethod(typeof(FacebookUserProfileTagRel));
-                    
-                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel));
-                        var tagRelPrperty = typeof(FacebookUserProfileTagRel).GetProperty("TagRels");
-                        var tagProperty = tagRelPrperty.PropertyType.GetProperty("Tag");
-                        var inner = Expression.Property(tagRelParameter, tagRelPrperty);
-                        var outer = Expression.Property(inner, tagProperty);
-                        Expression left = Expression.PropertyOrField(outer, "Name");
+   
+                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel), "s");
+                        //var tag = Expression.Parameter(typeof(FacebookTag), "Tag");
+                        //var propertyTag = Expression.PropertyOrField(tag, "Name");
+                        Expression left = Expression.PropertyOrField(tagRelParameter, "Tag");
+                        Expression left2 = Expression.PropertyOrField( left, "Name");
                         Expression right = Expression.Constant(item.formula_value);
-                        Expression equalExpression = Expression.Equal(left, right);
+                        Expression equalExpression = Expression.Equal(left2, right);
 
-                        var containsExpression = Expression.Call(tagRelsExpression, containsMethod, equalExpression);
+                        var predicate = Expression.Lambda<Func<FacebookUserProfileTagRel, bool>>(equalExpression, tagRelParameter);
+                        var containsExpression = ExpressionUtils.CallAny(tagRelsExpression, predicate, "Any");
                         if (item.formula_type == "eq")
                             resultExpression = containsExpression;
                         else

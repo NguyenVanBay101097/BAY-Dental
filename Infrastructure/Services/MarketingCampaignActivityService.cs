@@ -85,7 +85,8 @@ namespace Infrastructure.Services
                   Tags = x.TagRels.Select(y=> new FacebookTagSimple { 
                     Id = y.TagId,
                     Name = y.Tag.Name
-                  })
+                  }),
+                  AudienceFilter = x.AudienceFilter
 
               })
               .FirstOrDefaultAsync();
@@ -180,27 +181,27 @@ namespace Infrastructure.Services
         public async Task RemoveActivity(IEnumerable<Guid> ids)
         {
             var messageService = GetService<IMarketingMessageService>();
+            var allActivities = SearchQuery().Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons");
             var activities = await SearchQuery(x => ids.Contains(x.Id))
-              .Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons").ToListAsync();
+              .Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons").ToListAsync();          
           
             foreach (var activity in activities)
             {
-                var childs = activities.Where(x => x.ParentId == activity.Id)
-                                .Union(activities.Where(x => x.ParentId == activity.Id)
-                                .SelectMany(y => y.ActivityChilds)).ToList();
+                var childs =  allActivities.Where(x => x.ParentId == activity.Id)
+                                .Union(allActivities.Where(x => x.Id == activity.Id))
+                                .SelectMany(y => y.ActivityChilds).ToList();
                 if (childs.Count > 0)
                 {
-                    foreach(var child in childs)
+                    foreach (var child in childs)
                     {
-                        if (string.IsNullOrEmpty(child.JobId))
-                            continue;
-                        BackgroundJob.Delete(child.JobId);
+                        if (!string.IsNullOrEmpty(child.JobId))
+                            BackgroundJob.Delete(child.JobId);
                         if (child.MessageId.HasValue)
                             await messageService.DeleteAsync(child.Message);
-                       
+                        Delete(child);
                     }
+                    
 
-                    await DeleteAsync(childs);
                 }
                 if (string.IsNullOrEmpty(activity.JobId))
                     continue;

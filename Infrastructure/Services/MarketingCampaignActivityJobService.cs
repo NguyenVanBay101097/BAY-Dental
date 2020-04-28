@@ -1,4 +1,8 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Dapper;
 using Facebook.ApiClient.ApiEngine;
@@ -14,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -100,10 +105,8 @@ namespace Infrastructure.Services
 
                         if (page == null)
                             return;
-                        if (activity.ActionType == "add_tags")
-                        {
-
-                            var tasks = profiles.Select(x => AddUserprofileTags(x.Id, activity.Id, conn)).ToList();
+                      
+                            var tasks = profiles.Select(x => UserprofileTags(x, activity.Id, activity.ActionType, conn)).ToList();
                             var limit = 200;
                             var offset = 0;
                             var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -113,25 +116,25 @@ namespace Infrastructure.Services
                                 offset += limit;
                                 subTasks = tasks.Skip(offset).Take(limit).ToList();
                             }
-                        }
-                        else if (activity.ActionType == "remove_tags")
-                        {
+                        //}
+                        //else if (activity.ActionType == "remove_tags")
+                        //{
 
-                            var tagIds = GetTagRels(activityId, conn).Select(x => x.TagId).ToList();
-                            if (tagIds == null)
-                                return;
-                            var tasks = profiles.Select(x => RemoveUserprofileTags(x.Id, tagIds, conn)).ToList();
-                            var limit = 200;
-                            var offset = 0;
-                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            while (subTasks.Any())
-                            {
-                                await Task.WhenAll(subTasks);
-                                offset += limit;
-                                subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            }
+                        //    var tagIds = GetTagRels(activityId, conn).Select(x => x.TagId).ToList();
+                        //    if (tagIds == null)
+                        //        return;
+                        //    var tasks = profiles.Select(x => RemoveUserprofileTags(x.Id, tagIds, conn)).ToList();
+                        //    var limit = 200;
+                        //    var offset = 0;
+                        //    var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        //    while (subTasks.Any())
+                        //    {
+                        //        await Task.WhenAll(subTasks);
+                        //        offset += limit;
+                        //        subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        //    }
 
-                        }
+                        //}
                     }
                 }
                 catch (Exception e)
@@ -141,49 +144,17 @@ namespace Infrastructure.Services
             }
         }
 
-        private static IEnumerable<UserProfile> GetUserProfiles(Guid pageId, MarketingCampaignActivity activity,
+        private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid pageId, MarketingCampaignActivity activity,
             SqlConnection conn = null)
         {
             var builder = new SqlBuilder();
             var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM FacebookUserProfiles us /**leftjoin**/ /**where**/ /**orderby**/ ");
-            var profiles = conn.Query<UserProfile>("" +
-                              "SELECT us.id , us.PSID , us.Name " +
-                              "FROM FacebookUserProfiles us " +
-                              "where us.FbPageId = @pageId  " +
-                              "", new { pageId = pageId }).ToList();
+
             builder.Select("us.id , us.PSID , us.Name ");
             builder.Where("us.FbPageId = @PageId ", new { PageId = pageId });
-            var iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql,sqltemplate.Parameters).ToList();
+            var iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
             var reltags = GetTagRels(activity.Id, conn).Select(x => x.TagId).ToList();
-            if (activity.ActivityType == "message")
-            {
-                // where type == "Tag"
-                
-                if (reltags.Count > 0)
-                {
-                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id");
-                    builder.Where("rel.TagId in @Tagids", new { Tagids = reltags });
-                    builder.GroupBy("us.id, us.PSID, us.Name");
-                    iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
 
-                }
-
-                // where type == "Gender"
-                //--TODO--//
-
-                // where type == "FirstName"
-
-                //--TODO--//
-
-                // where type == "LastName"
-
-                //--TODO--//   
-            }
-
-            if (activity.ActionType == "add_tags")
-            {
-                iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
-            }
             if (activity.ActionType == "remove_tags")
             {
                 if (reltags.Count > 0)
@@ -205,6 +176,8 @@ namespace Infrastructure.Services
                             "", new { activityId = activity.ParentId }).ToList();
 
             }
+            // lấy danh sách userprofiles theo filter
+            var profiles = GetProfilesActivity(activity, pageId, conn);
 
             var lstUserProfile = profiles.Where(x => iUserprofiles.Any(s => s.Id == x.Id)).ToList();
 
@@ -224,46 +197,175 @@ namespace Infrastructure.Services
             return tags;
         }
 
-        private async Task AddUserprofileTags(Guid profileId, Guid activityId,
-            SqlConnection conn = null)
+        private static IEnumerable<FacebookUserProfile> GetProfilesActivity(MarketingCampaignActivity self, Guid pageId, SqlConnection conn = null)
         {
-            var userprofile = conn.QueryFirstOrDefaultAsync<FacebookUserProfile>("" +
-                 "SELECT * " +
-                              "FROM FacebookUserProfiles  " +
-                              "where Id = @Id  " +
-                              "", new { Id = profileId }).Result;
-            var tags = conn.Query<MarketingCampaignActivityFacebookTagRel>(""
-                + "SELECT * " +
-                        "FROM MarketingCampaignActivityFacebookTagRels rel " +
-                        "where rel.ActivityId = @id" +
-                        "", new { id = activityId }).ToList();
-            if (tags.Any())
+            //Lấy ra những profiles sẽ gửi message
+            ISpecification<FacebookUserProfile> profileSpec = new InitialSpecification<FacebookUserProfile>(x => x.FbPageId == pageId);
+            if (!string.IsNullOrEmpty(self.AudienceFilter))
             {
-                foreach (var tag in tags)
+                var filter = JsonConvert.DeserializeObject<SimpleFilter>(self.AudienceFilter);
+                if (filter.items.Any())
                 {
-                    if (userprofile.TagRels.Any(x => x.TagId == tag.TagId))
-                        continue;
-                    userprofile.TagRels.Add(new FacebookUserProfileTagRel
+                    var itemSpecs = new List<ISpecification<FacebookUserProfile>>();
+                    foreach (var item in filter.items)
                     {
-                        TagId = tag.TagId,
-                        UserProfileId = userprofile.Id
-                    });
+                        var parameter = Expression.Parameter(typeof(FacebookUserProfile), "x");
+                        var expression = ToLamdaExpression(item, parameter);
+
+                        var predicateExpression = Expression.Lambda<Func<FacebookUserProfile, bool>>(expression, parameter);
+                        itemSpecs.Add(new InitialSpecification<FacebookUserProfile>(predicateExpression));
+                    }
+
+                    if (filter.type == "and")
+                    {
+                        ISpecification<FacebookUserProfile> tmp = new InitialSpecification<FacebookUserProfile>(x => true);
+                        foreach (var spec in itemSpecs)
+                            tmp = tmp.And(spec);
+                        profileSpec = profileSpec.And(tmp);
+                    }
+                    else
+                    {
+                        ISpecification<FacebookUserProfile> tmp = new InitialSpecification<FacebookUserProfile>(x => false);
+                        foreach (var spec in itemSpecs)
+                            tmp = tmp.Or(spec);
+                        profileSpec = profileSpec.And(tmp);
+                    }
+                }
+            }
+            var userProfiles = conn.Query<FacebookUserProfile>("" +
+                             "SELECT * " +
+                             "FROM FacebookUserProfiles us " +
+                             "where us.FbPageId = @pageId  " +
+                             "", new { pageId = pageId }).ToList();
+            var query = userProfiles.AsQueryable();
+            var result = query.Where(profileSpec.AsExpression()).ToList();
+            return result;
+        }
+
+        private static Expression ToLamdaExpression(SimpleFilterItem item, ParameterExpression parameter)
+        {
+            Expression resultExpression = null;
+            if (item.type == "Name" || item.type == "FirstName" || item.type == "LastName" || item.type == "Gender")
+            {
+                Expression left = Expression.PropertyOrField(parameter, item.type);
+                Expression right = Expression.Constant(item.formula_value);
+                switch (item.formula_type)
+                {
+                    case "contains":
+                    case "doesnotcontain":
+                    case "startswith":
+                        var nullCheckExpression = Expression.Equal(left, Expression.Constant(null, typeof(String)));
+
+                        if (item.formula_type == "contains" || item.formula_type == "doesnotcontain")
+                        {
+                            var containsMethod = typeof(String).GetMethod("Contains", new[] { typeof(String) });
+                            var containsExpression = Expression.Call(left, containsMethod, right);
+                            if (item.formula_type == "contains")
+                                resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), containsExpression);
+                            else
+                                resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), Expression.Not(containsExpression));
+                        }
+                        else if (item.formula_type == "startswith")
+                        {
+                            var startswithMethod = typeof(String).GetMethod("StartsWith", new[] { typeof(String) });
+                            var startswithExpression = Expression.Call(left, startswithMethod, right);
+                            resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), startswithExpression);
+                        }
+                        break;
+                    case "eq":
+                    case "neq":
+                        var equalCheckExpression = Expression.Equal(left, right);
+                        if (item.formula_type == "eq")
+                            resultExpression = equalCheckExpression;
+                        else
+                            resultExpression = Expression.Not(equalCheckExpression);
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                }
+            }
+            else if (item.type == "Tag")
+            {
+
+                Expression tagRelsExpression = Expression.PropertyOrField(parameter, "TagRels");
+                switch (item.formula_type)
+                {
+                    case "eq":
+                    case "neq":
+                        // find Any method                       
+                        var generic = typeof(Queryable).GetMethods()
+                               .Where(m => m.Name == "Any")
+                               .Where(m => m.GetParameters().Length == 2)
+                               .Single();
+                        var containsMethod = generic.MakeGenericMethod(typeof(FacebookUserProfileTagRel));
+
+                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel), "s");
+                        Expression left = Expression.PropertyOrField(tagRelParameter, "Tag");
+                        Expression left2 = Expression.PropertyOrField(left, "Name");
+                        Expression right = Expression.Constant(item.formula_value);
+                        Expression equalExpression = Expression.Equal(left2, right);
+
+                        var predicate = Expression.Lambda<Func<FacebookUserProfileTagRel, bool>>(equalExpression, tagRelParameter);
+                        var containsExpression = ExpressionUtils.CallAny(tagRelsExpression, predicate, "Any");
+                        if (item.formula_type == "eq")
+                            resultExpression = containsExpression;
+                        else
+                            resultExpression = Expression.Not(containsExpression);
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                }
+            }
+            else
+                throw new NotSupportedException(string.Format("Not support type {0}!", item.type));
+
+            return resultExpression;
+        }
+
+        private async Task UserprofileTags(FacebookUserProfile profile, Guid activityId, string actionType,
+            SqlConnection conn = null )
+        {
+            var tags = conn.Query<MarketingCampaignActivityFacebookTagRel>(""
+               + "SELECT * " +
+                       "FROM MarketingCampaignActivityFacebookTagRels rel " +
+                       "where rel.ActivityId = @id" +
+                       "", new { id = activityId }).ToList();
+            if (actionType == "add_tags")
+            {
+                if (tags.Any())
+                {
+                    foreach (var tag in tags)
+                    {
+                        if (profile.TagRels.Any(x => x.TagId == tag.TagId))
+                            continue;
+                        profile.TagRels.Add(new FacebookUserProfileTagRel
+                        {
+                            TagId = tag.TagId,
+                            UserProfileId = profile.Id
+                        });
+
+                    }
+                    string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
+                    await conn.ExecuteAsync(processQuery, profile.TagRels);
 
                 }
-                string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
-                await conn.ExecuteAsync(processQuery, userprofile.TagRels);
 
             }
+            else if(actionType == "remove_tags")
+            {
+                if (tags.Any())
+                {
+                    var tagids = tags.Select(x => x.TagId).ToList();
+                    await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE UserProfileId = @UserProfileId AND TagId in @TagIds ", new { UserProfileId = profile.Id, TagIds = tagids });
+                }
+                    
+               
+            }
+           
+
 
         }
-        public async Task RemoveUserprofileTags(Guid userProfileId, IEnumerable<Guid> tagIds,
-            SqlConnection conn = null)
-        {
-
-            await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE UserProfileId = @UserProfileId AND TagId in @TagIds ", new { UserProfileId = userProfileId, TagIds = tagIds });
-
-
-        }
+      
 
         public object GetMessageForSendApi(SqlConnection conn, Guid messageId)
         {
@@ -336,7 +438,7 @@ namespace Infrastructure.Services
             throw new Exception("Not support");
         }
 
-        private async Task SendFacebookMessage(string access_token, object message, UserProfile profile, Guid? activityId = null,
+        private async Task SendFacebookMessage(string access_token, object message, FacebookUserProfile profile, Guid? activityId = null,
             SqlConnection conn = null)
         {
             var now = DateTime.Now;
