@@ -31,4 +31,8 @@ export class ResConfigSettingsService {
         return this.http.get<ResConfigSettingsDisplay>(this.baseApi + this.apiUrl + '/DefaultGet');
     }
 
+    insertServiceCardData() {
+        return this.http.post(this.baseApi + this.apiUrl + '/InsertServiceCardData', {});
+    }
+
 }

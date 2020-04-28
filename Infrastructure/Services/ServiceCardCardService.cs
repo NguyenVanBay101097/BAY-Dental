@@ -62,6 +62,18 @@ namespace Infrastructure.Services
             return self;
         }
 
+        public override ISpecification<ServiceCardCard> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "service_card.service_card_card_comp_rule":
+                    return new InitialSpecification<ServiceCardCard>(x => !x.CardType.CompanyId.HasValue || x.CardType.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
+
         private async Task CreateCardSequence()
         {
             var seqObj = GetService<IIRSequenceService>();

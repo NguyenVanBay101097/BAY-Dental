@@ -207,6 +207,24 @@
       <field name="model_id" ref="sale_coupon.model_sale_coupon"/>
       <field name="global" eval="True"/>
     </record>
+
+    <record model="ir.rule" id="service_card.service_card_order_comp_rule">
+      <field name="name">Service Card Order multi-company</field>
+      <field name="model_id" ref="service_card.model_service_card_order"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="service_card.service_card_type_comp_rule">
+      <field name="name">Service Card Type multi-company</field>
+      <field name="model_id" ref="service_card.model_service_card_type"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="service_card.service_card_card_comp_rule">
+      <field name="name">Service Card Card multi-company</field>
+      <field name="model_id" ref="service_card.model_service_card_card"/>
+      <field name="global" eval="True"/>
+    </record>
   </data>
 </odoo>
 

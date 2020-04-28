@@ -49,7 +49,8 @@ namespace Infrastructure.Services
             "IRModelData",
             "LaboOrderLine",
             "PromotionRule",
-            "IrConfigParameter"
+            "IrConfigParameter",
+            "SaleOrderServiceCardCardRel"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,
@@ -133,6 +134,37 @@ namespace Infrastructure.Services
             }
 
             return result;
+        }
+
+        public async Task<IDictionary<string, IRModelAccess>> InsertIfNotExist(IDictionary<string, IRModelAccess> dict)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var new_dict = new Dictionary<string, IRModelAccess>();
+            foreach (var item in dict)
+            {
+                var reference = item.Key;
+                var model = await modelDataObj.GetRef<IRModelAccess>(reference);
+                if (model == null)
+                {
+                    model = item.Value;
+                    await CreateAsync(model);
+
+                    var referenceSplit = reference.Split(".");
+
+                    var modelData = new IRModelData()
+                    {
+                        Model = "ir.model",
+                        Name = referenceSplit[1],
+                        Module = referenceSplit[0],
+                        ResId = model.Id.ToString(),
+                    };
+                    await modelDataObj.CreateAsync(modelData);
+                }
+
+                new_dict.Add(reference, model);
+            }
+
+            return new_dict;
         }
     }
 }

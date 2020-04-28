@@ -59,6 +59,17 @@ namespace Infrastructure.Services
             await DeleteAsync(self);
         }
 
+        public override ISpecification<ServiceCardOrder> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "service_card.service_card_order_comp_rule":
+                    return new InitialSpecification<ServiceCardOrder>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {

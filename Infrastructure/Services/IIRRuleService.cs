@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     {
         IEnumerable<IRRule> _SearchRules(string model, string mode);
         Task<PagedResult2<IRRule>> GetPagedAsync(int offset = 0, int limit = 10, string filter = "");
+        Task<IDictionary<string, IRRule>> InsertIfNotExist(IDictionary<string, IRRule> dict);
     }
 }

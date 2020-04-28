@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<IRModel>> GetPagedAsync(int offset = 0, int limit = 10, string filter = "");
         Task InsertSampleData();
+        Task<IDictionary<string, IRModel>> InsertIfNotExist(IDictionary<string, IRModel> dict);
     }
 }

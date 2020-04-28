@@ -7,6 +7,11 @@ namespace Infrastructure.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "GroupServiceCard",
+                table: "ResConfigSettings",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "ServiceCardTypes",
                 columns: table => new
@@ -66,15 +71,17 @@ namespace Infrastructure.Data.Migrations
                     LastUpdated = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(nullable: false),
                     PartnerId = table.Column<Guid>(nullable: false),
-                    InheritedPartnerId = table.Column<Guid>(nullable: true),
-                    BuyType = table.Column<string>(nullable: true),
                     CardTypeId = table.Column<Guid>(nullable: false),
                     DateOrder = table.Column<DateTime>(nullable: false),
                     ActivatedDate = table.Column<DateTime>(nullable: true),
                     UserId = table.Column<string>(nullable: true),
                     MoveId = table.Column<Guid>(nullable: true),
                     State = table.Column<string>(nullable: true),
-                    CompanyId = table.Column<Guid>(nullable: false)
+                    CompanyId = table.Column<Guid>(nullable: false),
+                    PriceUnit = table.Column<decimal>(nullable: true),
+                    Quantity = table.Column<decimal>(nullable: true),
+                    AmountTotal = table.Column<decimal>(nullable: true),
+                    GenerationType = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,12 +102,6 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_ServiceCardOrders_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ServiceCardOrders_Partners_InheritedPartnerId",
-                        column: x => x.InheritedPartnerId,
-                        principalTable: "Partners",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -224,6 +225,68 @@ namespace Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SaleOrderServiceCardCardRels",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    WriteById = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: true),
+                    LastUpdated = table.Column<DateTime>(nullable: true),
+                    SaleOrderId = table.Column<Guid>(nullable: false),
+                    CardId = table.Column<Guid>(nullable: false),
+                    Amount = table.Column<decimal>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SaleOrderServiceCardCardRels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SaleOrderServiceCardCardRels_ServiceCardCards_CardId",
+                        column: x => x.CardId,
+                        principalTable: "ServiceCardCards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SaleOrderServiceCardCardRels_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SaleOrderServiceCardCardRels_SaleOrders_SaleOrderId",
+                        column: x => x.SaleOrderId,
+                        principalTable: "SaleOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SaleOrderServiceCardCardRels_AspNetUsers_WriteById",
+                        column: x => x.WriteById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SaleOrderServiceCardCardRels_CardId",
+                table: "SaleOrderServiceCardCardRels",
+                column: "CardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SaleOrderServiceCardCardRels_CreatedById",
+                table: "SaleOrderServiceCardCardRels",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SaleOrderServiceCardCardRels_SaleOrderId",
+                table: "SaleOrderServiceCardCardRels",
+                column: "SaleOrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SaleOrderServiceCardCardRels_WriteById",
+                table: "SaleOrderServiceCardCardRels",
+                column: "WriteById");
+
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceCardCards_CardTypeId",
                 table: "ServiceCardCards",
@@ -285,11 +348,6 @@ namespace Infrastructure.Data.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServiceCardOrders_InheritedPartnerId",
-                table: "ServiceCardOrders",
-                column: "InheritedPartnerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ServiceCardOrders_MoveId",
                 table: "ServiceCardOrders",
                 column: "MoveId");
@@ -333,16 +391,23 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ServiceCardCards");
+                name: "SaleOrderServiceCardCardRels");
 
             migrationBuilder.DropTable(
                 name: "ServiceCardOrderPartnerRels");
+
+            migrationBuilder.DropTable(
+                name: "ServiceCardCards");
 
             migrationBuilder.DropTable(
                 name: "ServiceCardOrders");
 
             migrationBuilder.DropTable(
                 name: "ServiceCardTypes");
+
+            migrationBuilder.DropColumn(
+                name: "GroupServiceCard",
+                table: "ResConfigSettings");
         }
     }
 }

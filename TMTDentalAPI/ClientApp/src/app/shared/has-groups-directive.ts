@@ -1,36 +1,47 @@
 import { NgControl } from '@angular/forms';
 import { Directive, Input, ElementRef, Renderer2, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { PermissionService } from './permission.service';
 
 @Directive({
     selector: '[hasGroups]'
 })
 export class HasGroupsDirective implements OnInit {
     @Input() groups: string;
-    constructor(private elementRef: ElementRef, private renderer: Renderer2) {
+    constructor(private elementRef: ElementRef, private renderer: Renderer2,
+        private permissionService: PermissionService) {
 
     }
 
     ngOnInit() {
-        var groups = [];
-        if (localStorage.getItem('groups')) {
-            groups = JSON.parse(localStorage.getItem('groups'));
+        this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
+            this.applyPermission();
+        })
+
+        this.applyPermission();
+    }
+
+    applyPermission() {
+        if (!this.groups) {
+            return false;
         }
 
-        if (this.groups) {
-            var arr = this.groups.split(',');
-            var intersect = _.intersection(groups, arr);
-            var visible = intersect.length == arr.length;
-            if (!visible) {
-                this.renderer.setStyle(
-                    this.elementRef.nativeElement,
-                    'display',
-                    'none'
-                )
-            } else {
+        var permissions = this.groups.split(',');
+        let hasDefined = this.permissionService.hasOneDefined(permissions);
 
-            }
-        } else {
+        if (!hasDefined) {
+            this.renderer.setStyle(
+                this.elementRef.nativeElement,
+                'display',
+                'none'
+            )
+        }
+        else {
+            this.renderer.setStyle(
+                this.elementRef.nativeElement,
+                'display',
+                ''
+            )
         }
     }
 }

@@ -77,6 +77,18 @@ namespace Infrastructure.Services
             return dStart.Value.AddMonths(nb);
         }
 
+        public override ISpecification<ServiceCardType> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "service_card.service_card_type_comp_rule":
+                    return new InitialSpecification<ServiceCardType>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
+
         public async Task<Product> CreateProduct(ServiceCardType self)
         {
             var productObj = GetService<IProductService>();

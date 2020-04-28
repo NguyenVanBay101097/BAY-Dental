@@ -19,10 +19,6 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.PartnerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.InheritedPartner)
-             .WithMany()
-             .HasForeignKey(x => x.InheritedPartnerId);
-
             builder.HasOne(x => x.CardType)
                 .WithMany()
                 .HasForeignKey(x => x.CardTypeId)

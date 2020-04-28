@@ -66,5 +66,36 @@ namespace Infrastructure.Services
 
             await CreateAsync(models);
         }
+
+        public async Task<IDictionary<string, IRModel>> InsertIfNotExist(IDictionary<string, IRModel> dict)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var new_dict = new Dictionary<string, IRModel>();
+            foreach (var item in dict)
+            {
+                var reference = item.Key;
+                var model = await modelDataObj.GetRef<IRModel>(reference);
+                if (model == null)
+                {
+                    model = item.Value;
+                    await CreateAsync(model);
+
+                    var referenceSplit = reference.Split(".");
+
+                    var modelData = new IRModelData()
+                    {
+                        Model = "ir.model",
+                        Name = referenceSplit[1],
+                        Module = referenceSplit[0],
+                        ResId = model.Id.ToString(),
+                    };
+                    await modelDataObj.CreateAsync(modelData);
+                }
+
+                new_dict.Add(reference, model);
+            }
+
+            return new_dict;
+        }
     }
 }

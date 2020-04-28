@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20200424045356_AddSaleOrderServiceCardCardRelTable")]
-    partial class AddSaleOrderServiceCardCardRelTable
+    [Migration("20200428044224_AddServiceCardTables")]
+    partial class AddServiceCardTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4282,6 +4282,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool?>("GroupSaleCouponPromotion")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("GroupServiceCard")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -5148,9 +5151,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("AmountTotal")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("BuyType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("CardTypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -5168,9 +5168,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("GenerationType")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("InheritedPartnerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -5207,8 +5204,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("InheritedPartnerId");
 
                     b.HasIndex("MoveId");
 
@@ -8329,7 +8324,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany()
+                        .WithMany("SaleOrderCardRels")
                         .HasForeignKey("SaleOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -8392,10 +8387,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "InheritedPartner")
-                        .WithMany()
-                        .HasForeignKey("InheritedPartnerId");
 
                     b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
                         .WithMany()

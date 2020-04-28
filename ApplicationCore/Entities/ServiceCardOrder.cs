@@ -10,7 +10,6 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             DateOrder = DateTime.Now;
-            BuyType = "one";
             GenerationType = "nbr_card";
         }
 
@@ -24,19 +23,6 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
-
-        /// <summary>
-        /// Khách hàng thừa hưởng thẻ
-        /// </summary>
-        public Guid? InheritedPartnerId { get; set; }
-        public Partner InheritedPartner { get; set; }
-
-        /// <summary>
-        /// Mua 1 hay mua nhiều
-        /// one: 1
-        /// many: nhiều
-        /// </summary>
-        public string BuyType { get; set; }
 
         public Guid CardTypeId { get; set; }
         public ServiceCardType CardType { get; set; }

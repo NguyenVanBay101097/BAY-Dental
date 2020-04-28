@@ -93,12 +93,7 @@ namespace Infrastructure.Services
                 throw new Exception("Chỉ có admin mới được thay đổi thiết lập");
 
             var groupObj = GetService<IResGroupService>();
-            //await groupObj.InsertGroupUserIfNotExist();
-            //await groupObj.InsertSettingGroupIfNotExist("sale.group_discount_per_so_line", "Discount on lines");
-            //await groupObj.InsertSettingGroupIfNotExist("sale.group_sale_coupon_promotion", "Coupon Promotion Programs");
-            //await groupObj.InsertSettingGroupIfNotExist("sale.group_loyalty_card", "Loyalty Card");
-            await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
-
+         
             //var user = UserSessionCtx.User;
             //if (!user.HasGroup("base.group_system"))
             //    throw new Exception("Chỉ có admin mới được thay đổi thiết lập");
@@ -173,6 +168,61 @@ namespace Infrastructure.Services
 
             //other fields
             await SetDefaultOtherFields(self, classified.Others);
+        }
+
+        public async Task InsertServiceCardData()
+        {
+            //insert models
+            var modelObj = GetService<IIRModelService>();
+            var model_dict = new Dictionary<string, IRModel>()
+            {
+                {"service_card.model_service_card_card", new IRModel { Name = "Thẻ dịch vụ", Model = "ServiceCardCard", Transient = false }},
+                {"service_card.model_service_card_order", new IRModel { Name = "Đơn bán thẻ dịch vụ", Model = "ServiceCardOrder", Transient = false }},
+                {"service_card.model_service_card_type", new IRModel { Name = "Loại thẻ dịch vụ", Model = "ServiceCardType", Transient = false }},
+                {"service_card.model_service_card_sale_order_service_card_card_rel", new IRModel { Name = "Sale Order Card Rel", Model = "SaleOrderServiceCardCardRel", Transient = true }},
+            };
+
+            var new_model_dict = await modelObj.InsertIfNotExist(model_dict);
+
+            //insert groups
+            var groupObj = GetService<IResGroupService>();
+            var group_dict = new Dictionary<string, ResGroup>()
+            {
+                {"sale.group_user", new ResGroup { Name = "Lễ tân" }},
+                {"sale.group_manager", new ResGroup { Name = "Bác sĩ" }},
+                {"sale.group_admin", new ResGroup { Name = "Chủ chi nhánh" }},
+            };
+
+            var new_group_dict = await groupObj.InsertIfNotExist(group_dict);
+
+            //insert ir model accesses
+            var accessObj = GetService<IIRModelAccessService>();
+            var access_dict = new Dictionary<string, IRModelAccess>()
+            {
+                {"service_card.access_service_card_card_group_user", new IRModelAccess { Name = "service_card_card group_user", Model = new_model_dict["service_card.model_service_card_card"], Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true  }},
+                {"service_card.access_service_card_type_group_user", new IRModelAccess { Name = "service_card_type group_user", Model = new_model_dict["service_card.model_service_card_type"], Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true }},
+                {"service_card.access_service_card_order_group_user", new IRModelAccess { Name = "service_card_order group_user", Model = new_model_dict["service_card.model_service_card_order"], Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true }},
+                {"service_card.access_service_card_card_group_manager", new IRModelAccess { Name = "service_card_card group_manager", Model = new_model_dict["service_card.model_service_card_card"], Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false  }},
+                {"service_card.access_service_card_type_group_manager", new IRModelAccess { Name = "service_card_type group_manager", Model = new_model_dict["service_card.model_service_card_type"], Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_order_group_manager", new IRModelAccess { Name = "service_card_order group_manager", Model = new_model_dict["service_card.model_service_card_order"], Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_card_group_admin", new IRModelAccess { Name = "service_card_card group_admin", Model = new_model_dict["service_card.model_service_card_card"], Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false  }},
+                {"service_card.access_service_card_type_group_admin", new IRModelAccess { Name = "service_card_type group_admin", Model = new_model_dict["service_card.model_service_card_type"], Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_order_group_admin", new IRModelAccess { Name = "service_card_order group_admin", Model = new_model_dict["service_card.model_service_card_order"], Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+            };
+
+            await accessObj.InsertIfNotExist(access_dict);
+
+            await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
+
+            //insert rules
+            var ruleObj = GetService<IIRRuleService>();
+            var rule_dict = new Dictionary<string, IRRule>()
+            {
+                {"service_card.service_card_order_comp_rule", new IRRule { Name = "Service Card Order multi-company", Model = new_model_dict["service_card.model_service_card_order"] }},
+                {"service_card.service_card_type_comp_rule", new IRRule { Name = "Service Card Type multi-company", Model = new_model_dict["service_card.model_service_card_type"] }},
+                {"service_card.service_card_card_comp_rule", new IRRule { Name = "Service Card Card multi-company", Model = new_model_dict["service_card.model_service_card_card"] }},
+            };
+            await ruleObj.InsertIfNotExist(rule_dict);
         }
 
         public async Task SetDefaultOtherFields<T>(T self, IList<string> fields)
