@@ -127,6 +127,10 @@ export class PartnerService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
+    getValidServiceCards(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetValidServiceCards');
+    }
+
     reportLocationCity(val: PartnerReportLocationCitySearch): Observable<PartnerReportLocationCity[]> {
         return this.http.post<PartnerReportLocationCity[]>(this.baseApi + this.apiUrl + '/ReportLocationCity', val);
     }
@@ -165,8 +169,8 @@ export class PartnerService {
             .set('limit', partnerPaged.limit.toString())
             .set('customer', partnerPaged.customer.toString())
             .set('supplier', partnerPaged.supplier.toString());
-        if (partnerPaged.searchNamePhoneRef) {
-            params = params.set('searchNamePhoneRef', partnerPaged.searchNamePhoneRef);
+        if (partnerPaged.search) {
+            params = params.set('searchNamePhoneRef', partnerPaged.search);
         };
         return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl + "?" + params);
     }

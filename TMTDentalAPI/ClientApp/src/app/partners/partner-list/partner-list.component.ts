@@ -92,7 +92,7 @@ export class PartnerListComponent implements OnInit {
     var pnPaged = new PartnerPaged();
     pnPaged.limit = this.pageSize;
     pnPaged.offset = this.skip;
-    pnPaged.searchNamePhoneRef = this.searchNamePhoneRef || '';
+    pnPaged.search = this.searchNamePhoneRef || '';
     pnPaged.customer = this.queryCustomer;
     pnPaged.supplier = this.querySupplier;
     this.partnerService.getPartnerPaged(pnPaged).pipe(
@@ -325,7 +325,7 @@ export class PartnerListComponent implements OnInit {
   //=================== SERVER Excel export ============================
   exportExcelFile() {
     var paged = new PartnerPaged();
-    paged.searchNamePhoneRef = this.searchNamePhoneRef || '';
+    paged.search = this.searchNamePhoneRef || '';
     paged.customer = this.queryCustomer;
     paged.supplier = this.querySupplier;
     this.partnerService.excelServerExport(paged).subscribe(

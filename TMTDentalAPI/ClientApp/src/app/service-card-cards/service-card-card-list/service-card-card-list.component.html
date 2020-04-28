@@ -1,0 +1,74 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Thẻ dịch vụ</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã thẻ, khách hàng, SĐT" type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Mã thẻ" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="cardTypeName" title="Loại thẻ" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="activatedDate" title="Ngày cấp" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.activatedDate | date : 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="expiredDate" title="Ngày hết hạn" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.expiredDate | date : 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="residual" title="Số dư" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.residual | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{stateGet(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <ul class="nav nav-tabs" id="myTab_{{dataItem.id}}" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="histories_{{dataItem.id}}_tab" data-toggle="tab"
+                        href="#histories_{{dataItem.id}}" role="tab" aria-controls="info" aria-selected="true">
+                        Lịch sử áp dụng
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane py-2 fade show active" id="histories_{{dataItem.id}}" role="tabpanel">
+                    <div>
+                        <app-service-card-card-histories [item]="dataItem"></app-service-card-card-histories>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </kendo-grid>
+</div>

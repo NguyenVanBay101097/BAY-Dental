@@ -71,5 +71,14 @@ namespace TMTDentalAPI.Controllers
             var res = await _configSettingsService.DefaultGet<ResConfigSettingsDisplay>();
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> InsertServiceCardData()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _configSettingsService.InsertServiceCardData();
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

@@ -91,6 +91,9 @@ import { FacebookConfigModule } from './facebook-config/facebook-config.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FacebookModule } from 'ngx-facebook';
 import { SocialsChannelModule } from './socials-channel/socials-channel.module';
+import { ServiceCardTypesModule } from './service-card-types/service-card-types.module';
+import { ServiceCardOrdersModule } from './service-card-orders/service-card-orders.module';
+import { ServiceCardCardsModule } from './service-card-cards/service-card-cards.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
@@ -191,6 +194,9 @@ registerLocaleData(localeVi, 'vi');
     FacebookConfigModule,
     FacebookModule.forRoot(),
     SocialsChannelModule,
+    ServiceCardTypesModule,
+    ServiceCardOrdersModule,
+    ServiceCardCardsModule,
     PickerModule,
     EmojiModule
   ],

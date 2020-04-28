@@ -496,6 +496,34 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids)
+        {
+            var orderObj = GetService<IServiceCardOrderService>();
+            var orders = await orderObj.SearchQuery(x => order_ids.Contains(x.Id) && x.MoveId.HasValue && x.Move.InvoicePaymentState == "not_paid")
+                .Include(x => x.Move).ToListAsync();
+
+            if (!orders.Any() || orders.Any(x => x.State != "sale" && x.State != "done"))
+                throw new Exception("Bạn chỉ có thể thanh toán cho đơn hàng đã xác nhận");
+
+            if (orders.Any(x => x.PartnerId != orders[0].PartnerId))
+                throw new Exception("Để thanh toán nhiều đơn cùng một lần, chúng phải có cùng khách hàng");
+
+            var total_amount = orders.Sum(x => x.Move.AmountResidual);
+
+            var communication = string.Join(", ", orders.Select(x => x.Name));
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount ?? 0),
+                PaymentType = total_amount > 0 ? "inbound" : "outbound",
+                PartnerId = orders[0].PartnerId,
+                PartnerType = "customer",
+                Communication = communication,
+                InvoiceIds = orders.Select(x => x.Move.Id)
+            };
+
+            return rec;
+        }
+
         public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId)
         {
             //Tính số tiền còn nợ của partner

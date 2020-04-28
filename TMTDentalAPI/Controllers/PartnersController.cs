@@ -37,7 +37,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IAccountInvoiceService _accountInvoiceService;
         private readonly IAccountPaymentService _paymentService;
-
+        private readonly IServiceCardCardService _serviceCardService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -46,7 +46,8 @@ namespace TMTDentalAPI.Controllers
             IAuthorizationService authorizationService,
             IIRModelAccessService modelAccessService,
             IAccountInvoiceService accountInvoiceService,
-            IAccountPaymentService paymentService)
+            IAccountPaymentService paymentService,
+            IServiceCardCardService serviceCardService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -57,6 +58,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _accountInvoiceService = accountInvoiceService;
             _paymentService = paymentService;
+            _serviceCardService = serviceCardService;
         }
 
         [HttpGet]
@@ -210,6 +212,12 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetValidServiceCards(Guid id)
+        {
+            var cards = await _mapper.ProjectTo<ServiceCardCardBasic>(_serviceCardService.SearchQuery(x => x.PartnerId == id && x.Residual > 0)).ToListAsync();
+            return Ok(cards);
+        }
 
         private void SaveCategories(PartnerDisplay val, Partner partner)
         {

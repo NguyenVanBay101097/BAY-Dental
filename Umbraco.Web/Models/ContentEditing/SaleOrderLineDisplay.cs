@@ -58,5 +58,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? DiscountFixed { get; set; }
 
         public decimal? QtyInvoiced { get; set; }
+
+        public bool IsRewardLine { get; set; }
     }
 }

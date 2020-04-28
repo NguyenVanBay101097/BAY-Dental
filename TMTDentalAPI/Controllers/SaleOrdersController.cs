@@ -338,5 +338,14 @@ namespace TMTDentalAPI.Controllers
             var res = _mapper.Map<IEnumerable<DotKhamBasic>>(dotKhams);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyServiceCards(SaleOrderApplyServiceCards val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ApplyServiceCards(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

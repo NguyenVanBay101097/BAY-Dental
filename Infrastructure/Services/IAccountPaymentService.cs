@@ -20,5 +20,6 @@ namespace Infrastructure.Services
         Task<AccountPayment> CreateUI(AccountPaymentSave val);
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId);
         Task ActionDraftUnlink(IEnumerable<Guid> ids);
+        Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids);
     }
 }

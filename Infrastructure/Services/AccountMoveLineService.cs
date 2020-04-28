@@ -135,9 +135,6 @@ namespace Infrastructure.Services
             var price_unit_wo_discount = self.DiscountType == "fixed" ? price_unit - (self.DiscountFixed ?? 0) :
                 price_unit * (1 - (discount ?? 0) / 100);
 
-            if (price_unit_wo_discount < 0)
-                price_unit_wo_discount = 0;
-
             var subtotal = price_unit_wo_discount * (quantity ?? 0);
             return new { PriceTotal = subtotal, PriceSubtotal = subtotal };
         }

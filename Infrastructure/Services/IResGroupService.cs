@@ -19,5 +19,6 @@ namespace Infrastructure.Services
         Task ResetSecurityData();
         Task AddAllImpliedGroupsToAllUser(IEnumerable<Guid> ids);
         IDictionary<Guid, IList<ResGroup>> _GetTransImplied(IEnumerable<Guid> ids);
+        Task<IDictionary<string, ResGroup>> InsertIfNotExist(IDictionary<string, ResGroup> dict);
     }
 }

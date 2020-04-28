@@ -23,6 +23,9 @@
 "access_sale_coupon_program_group_user","sale_coupon_program group_user","sale_coupon.model_sale_coupon_program","group_user",1,0,0,0
 "access_sale_coupon_group_user","sale_coupon group_user","sale_coupon.model_sale_coupon","group_user",1,1,0,0
 "access_res_config_settings_group_user","res_config_settings group_user","base.model_res_config_settings","group_user",1,0,0,0
+"access_service_card_card_group_user","service_card_card group_user","service_card.model_service_card_card","group_user",1,1,1,1
+"access_service_card_type_group_user","service_card_type group_user","service_card.model_service_card_type","group_user",1,1,1,1
+"access_service_card_order_group_user","service_card_order group_user","service_card.model_service_card_order","group_user",1,1,1,1
 "access_res_user_group_manager","res_user group_manager","base.model_res_user","group_manager",1,0,0,0
 "access_res_partner_group_manager","res_partner group_manager","base.model_res_partner","group_manager",1,0,0,0
 "access_partner_category_group_manager","partner_category group_manager","base.model_res_partner_category","group_manager",1,0,0,0
@@ -47,6 +50,9 @@
 "access_sale_coupon_program_group_manager","sale_coupon_program group_manager","sale_coupon.model_sale_coupon_program","group_manager",1,0,0,0
 "access_sale_coupon_group_manager","sale_coupon group_manager","sale_coupon.model_sale_coupon","group_manager",1,1,0,0
 "access_res_config_settings_group_manager","res_config_settings group_manager","base.model_res_config_settings","group_manager",1,0,0,0
+"access_service_card_card_group_manager","service_card_card group_manager","service_card.model_service_card_card","group_manager",1,0,0,0
+"access_service_card_type_group_manager","service_card_type group_manager","service_card.model_service_card_type","group_manager",1,0,0,0
+"access_service_card_order_group_manager","service_card_order group_manager","service_card.model_service_card_order","group_manager",1,0,0,0
 "access_res_user_group_admin","res_user group_admin","base.model_res_user","group_admin",1,1,1,1
 "access_res_partner_group_admin","res_partner group_admin","base.model_res_partner","group_admin",1,0,0,0
 "access_partner_category_group_admin","partner_category group_admin","base.model_res_partner_category","group_admin",1,0,0,0
@@ -71,3 +77,6 @@
 "access_sale_coupon_program_group_admin","sale_coupon_program group_admin","sale_coupon.model_sale_coupon_program","group_admin",1,1,1,1
 "access_sale_coupon_group_admin","sale_coupon group_admin","sale_coupon.model_sale_coupon","group_admin",1,1,1,1
 "access_res_config_settings_group_admin","res_config_settings group_admin","base.model_res_config_settings","group_admin",1,1,1,1
+"access_service_card_card_group_admin","service_card_card group_admin","service_card.model_service_card_card","group_admin",1,0,0,0
+"access_service_card_type_group_admin","service_card_type group_admin","service_card.model_service_card_type","group_admin",1,0,0,0
+"access_service_card_order_group_admin","service_card_order group_admin","service_card.model_service_card_order","group_admin",1,0,0,0

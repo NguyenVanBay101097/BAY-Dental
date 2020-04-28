@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { PrintService } from './print.service';
 declare var $: any;
 import * as _ from 'lodash';
+import { PermissionService } from './shared/permission.service';
 
 @Component({
   selector: 'app-root',
@@ -15,8 +16,14 @@ export class AppComponent {
   _areAccessKeyVisible = false;
 
   constructor(public authService: AuthService, private router: Router, public printService: PrintService,
-    private el: ElementRef) {
+    private el: ElementRef, private permissionService: PermissionService) {
     this.loadGroups();
+    if (this.authService.isAuthenticated()) {
+      this.authService.getGroups().subscribe((result: any) => {
+        console.log(result);
+        this.permissionService.define(result);
+      });
+    }
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
@@ -71,9 +78,8 @@ export class AppComponent {
   loadGroups() {
     this.authService.currentUser.subscribe(user => {
       if (user) {
-        this.authService.getGroups().subscribe(result => {
-          console.log('groups: ', result);
-          localStorage.setItem('groups', JSON.stringify(result));
+        this.authService.getGroups().subscribe((result: any) => {
+          this.permissionService.define(result);
         });
       }
     });

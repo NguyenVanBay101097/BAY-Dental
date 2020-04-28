@@ -48,6 +48,18 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(data.ResId);
                             return (T)(object)group;
                         }
+                    case "ir.model":
+                        {
+                            var service = GetService<IIRModelService>();
+                            var model = await service.GetByIdAsync(data.ResId);
+                            return (T)(object)model;
+                        }
+                    case "ir.model.access":
+                        {
+                            var service = GetService<IIRModelAccessService>();
+                            var access = await service.GetByIdAsync(data.ResId);
+                            return (T)(object)access;
+                        }
                     case "res.users":
                         {
                             var service = GetService<UserManager<ApplicationUser>>();

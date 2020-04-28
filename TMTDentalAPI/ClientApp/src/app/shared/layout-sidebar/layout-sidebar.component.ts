@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class LayoutSidebarComponent implements OnInit {
   activeIndex = -1;
   folded = false;
-  menuItems: { name: string, icon?: string, link?: string, children?: { name: string, link?: string, params?: Object, groups?: string }[] }[] = [
+  menuItems: { name: string, icon?: string, link?: string, groups?: string, children?: { name: string, link?: string, params?: Object, groups?: string }[] }[] = [
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
     },
@@ -54,6 +54,16 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
         { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
+      ],
+    },
+    {
+      name: 'Thẻ dịch vụ',
+      icon: 'far fa-credit-card',
+      groups: 'sale.group_service_card',
+      children: [
+        { name: 'Đơn bán thẻ', link: '/service-card-orders/list' },
+        { name: 'Loại thẻ', link: '/service-card-types' },
+        { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
     },
     // {

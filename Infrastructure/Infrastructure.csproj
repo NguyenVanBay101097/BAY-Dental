@@ -12,6 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20200424045242_AddSaleOrderServiceCardCardRelTable.cs" />
+    <Compile Remove="Data\Migrations\20200424045242_AddSaleOrderServiceCardCardRelTable.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.cs" />
     <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.Designer.cs" />
   </ItemGroup>

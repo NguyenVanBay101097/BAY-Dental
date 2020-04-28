@@ -1,7 +1,7 @@
 <div class="main-nav-wrapper" [class.collapsed]="sidebarService.collapsed" *ngIf="authService.isAuthenticated()">
     <nav class="main-nav">
         <ul class="nav flex-column">
-            <li class="nav-item" *ngFor="let item of menuItems;let i = index"
+            <li class="nav-item" *ngFor="let item of menuItems;let i = index" hasGroups [groups]="item.groups"
                 (mouseover)="sidebarService.collapsed && activeIndex = i"
                 (mouseout)="sidebarService.collapsed && activeIndex = -1" [class.active]="i === activeIndex">
                 <a class="nav-link" [routerLink]="item.link" *ngIf="item.children.length == 0">

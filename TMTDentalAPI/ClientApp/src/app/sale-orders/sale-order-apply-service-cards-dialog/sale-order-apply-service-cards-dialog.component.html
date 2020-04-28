@@ -1,0 +1,40 @@
+<header class="modal-header">
+    <h5 class="modal-title">Chọn thẻ dịch vụ<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_kanban_view o_kanban_ungrouped">
+        <div class="oe_kanban_global_click o_kanban_record" *ngFor="let card of cards"
+            [class.border-success]="selectedCards.indexOf(card) !== -1">
+            <div class="oe_kanban_details">
+                <strong class="o_kanban_record_title">
+                    <span>{{card.cardTypeName}}</span>
+                </strong>
+                <ul>
+                    <li>Mã thẻ: <span class="fw500">{{card.name}}</span></li>
+                    <li>Số dư: <span class="fw500">{{card.residual | number}}</span></li>
+                </ul>
+                <button type="button" class="btn btn-primary btn-sm" (click)="onCardClick(card)">
+                    <span *ngIf="selectedCards.indexOf(card) !== -1">Bỏ chọn</span>
+                    <span *ngIf="selectedCards.indexOf(card) === -1">Chọn</span>
+                </button>
+            </div>
+        </div>
+        <div class="o_kanban_record o_kanban_ghost"></div>
+        <div class="o_kanban_record o_kanban_ghost"></div>
+        <div class="o_kanban_record o_kanban_ghost"></div>
+        <div class="o_kanban_record o_kanban_ghost"></div>
+        <div class="o_kanban_record o_kanban_ghost"></div>
+        <div class="o_kanban_record o_kanban_ghost"></div>
+    </div>
+
+    <p *ngIf="!cards.length">Bạn không có thẻ dịch vụ nào</p>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Áp dụng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

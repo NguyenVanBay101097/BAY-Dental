@@ -111,5 +111,36 @@ namespace Infrastructure.Services
                 Items = itemsOnPage
             };
         }
+
+        public async Task<IDictionary<string, IRRule>> InsertIfNotExist(IDictionary<string, IRRule> dict)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var new_dict = new Dictionary<string, IRRule>();
+            foreach (var item in dict)
+            {
+                var reference = item.Key;
+                var model = await modelDataObj.GetRef<IRRule>(reference);
+                if (model == null)
+                {
+                    model = item.Value;
+                    await CreateAsync(model);
+
+                    var referenceSplit = reference.Split(".");
+
+                    var modelData = new IRModelData()
+                    {
+                        Model = "ir.model",
+                        Name = referenceSplit[1],
+                        Module = referenceSplit[0],
+                        ResId = model.Id.ToString(),
+                    };
+                    await modelDataObj.CreateAsync(modelData);
+                }
+
+                new_dict.Add(reference, model);
+            }
+
+            return new_dict;
+        }
     }
 }

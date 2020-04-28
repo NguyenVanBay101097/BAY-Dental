@@ -189,7 +189,38 @@ namespace Infrastructure.Services
             return group;
         }
 
-        
+        public async Task<IDictionary<string, ResGroup>> InsertIfNotExist(IDictionary<string, ResGroup> dict)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var new_dict = new Dictionary<string, ResGroup>();
+            foreach (var item in dict)
+            {
+                var reference = item.Key;
+                var model = await modelDataObj.GetRef<ResGroup>(reference);
+                if (model == null)
+                {
+                    model = item.Value;
+                    await CreateAsync(model);
+
+                    var referenceSplit = reference.Split(".");
+
+                    var modelData = new IRModelData()
+                    {
+                        Model = "res.groups",
+                        Name = referenceSplit[1],
+                        Module = referenceSplit[0],
+                        ResId = model.Id.ToString(),
+                    };
+                    await modelDataObj.CreateAsync(modelData);
+                }
+
+                new_dict.Add(reference, model);
+            }
+
+            return new_dict;
+        }
+
+
         public async Task UpdateAllGroupImpliedGroupUser(ResGroup groupUser)
         {
             var groups = await SearchQuery(x => x.Id != groupUser.Id && (x.Category == null || x.Category.Visible == false)).Include(x => x.ImpliedRels).ToListAsync();

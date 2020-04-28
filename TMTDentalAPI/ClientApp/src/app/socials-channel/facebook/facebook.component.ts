@@ -404,7 +404,7 @@ export class FacebookComponent implements OnInit {
     var val = new PartnerPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.searchNamePhoneRef = this.searchNamePhone || '';
+    val.search = this.searchNamePhone || '';
     val.customer = true;
     val.supplier = false;
     this.partnerService.getPartnerPaged(val).pipe(

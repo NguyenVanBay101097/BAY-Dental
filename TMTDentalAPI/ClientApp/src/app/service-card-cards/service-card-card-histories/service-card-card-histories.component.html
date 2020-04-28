@@ -1,0 +1,18 @@
+<kendo-grid [data]="gridView" [loading]="loading" [pageSize]="pageSize" [skip]="skip" [pageable]="true"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="saleOrderName" title="Phiếu điều trị">
+    </kendo-grid-column>
+    <kendo-grid-column field="amount" class="text-right" title="Số tiền" footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template>
+        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['amount']">
+            {{total["amount"].sum | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="dateCreated" title="Áp dụng lúc">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.dateCreated | date: 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

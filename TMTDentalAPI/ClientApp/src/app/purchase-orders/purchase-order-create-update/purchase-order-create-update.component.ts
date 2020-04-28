@@ -128,7 +128,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.supplier = true;
-    val.searchNamePhoneRef = filter;
+    val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
 
