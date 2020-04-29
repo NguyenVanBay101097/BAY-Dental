@@ -200,127 +200,128 @@ namespace Infrastructure.Services
         private static IEnumerable<FacebookUserProfile> GetProfilesActivity(MarketingCampaignActivity self, Guid pageId, SqlConnection conn = null)
         {
             //Lấy ra những profiles sẽ gửi message
-            ISpecification<FacebookUserProfile> profileSpec = new InitialSpecification<FacebookUserProfile>(x => x.FbPageId == pageId);
+            var builder = new SqlBuilder();
+            var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM FacebookUserProfiles us /**leftjoin**/ /**where**/ /**orderby**/ ");
+            builder.Select("us.* ");
+            builder.Where("us.FbPageId = @pageId ", new { pageId = pageId });
+
             if (!string.IsNullOrEmpty(self.AudienceFilter))
             {
                 var filter = JsonConvert.DeserializeObject<SimpleFilter>(self.AudienceFilter);
                 if (filter.items.Any())
                 {
-                    var itemSpecs = new List<ISpecification<FacebookUserProfile>>();
+
                     foreach (var item in filter.items)
                     {
-                        var parameter = Expression.Parameter(typeof(FacebookUserProfile), "x");
-                        var expression = ToLamdaExpression(item, parameter);
+                        if (item.type == "Name")
+                        {
+                            switch (item.formula_type)
+                            {
+                                case "contains":
+                                case "eq":
+                                    builder.Where("us.Name Like @Name ", new { Name = "%" + item.formula_value + "%" });
+                                    break;
+                                case "doesnotcontain":
+                                case "neq":
+                                    builder.Where("us.Name Not Like @Name ", new { Name = "%" + item.formula_value + "%" });
+                                    break;
+                                case "startswith":
+                                    builder.Where("us.Name Like @Name ", new { Name = item.formula_value + "%" });
+                                    break;
 
-                        var predicateExpression = Expression.Lambda<Func<FacebookUserProfile, bool>>(expression, parameter);
-                        itemSpecs.Add(new InitialSpecification<FacebookUserProfile>(predicateExpression));
+
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                            }
+                        }
+                        else if (item.type == "FirstName")
+                        {
+                            switch (item.formula_type)
+                            {
+                                case "contains":
+                                case "eq":
+                                    builder.Where("us.FirstName Like @FirstName", new { FirstName = "%" + item.formula_value + "%" });
+                                    break;
+                                case "doesnotcontain":
+                                case "neq":
+                                    builder.Where("us.FirstName Not Like @FirstName ", new { FirstName = "%" + item.formula_value + "%" });
+                                    break;
+                                case "startswith":
+                                    builder.Where("us.FirstName Like @FirstName ", new { FirstName = item.formula_value + "%" });
+                                    break;
+
+
+
+
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                            }
+                        }
+                        else if (item.type == "LastName")
+                        {
+                            switch (item.formula_type)
+                            {
+                                case "contains":
+                                case "eq":
+                                    builder.Where("us.LastName Like @LastName ", new { LastName = "%" + item.formula_value + "%" });
+                                    break;
+                                case "doesnotcontain":
+                                case "neq":
+                                    builder.Where("us.LastName Not Like @LastName ", new { LastName = "%" + item.formula_value + "%" });
+                                    break;
+                                case "startswith":
+                                    builder.Where("us.LastName Like @LastName ", new { LastName = item.formula_value + "%" });
+                                    break;
+
+
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                            }
+                        }
+                        else if (item.type == "Gender")
+                        {
+                            switch (item.formula_type)
+                            {
+
+                                case "eq":
+                                    builder.Where("us.Gender = @Gender ", new { Gender = item.formula_value });
+                                    break;
+                                case "neq":
+                                    builder.Where("us.Gender != @Gender ", new { Gender = item.formula_value });
+                                    break;
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                            }
+                        }
+                        else if (item.type == "Tag")
+                        {
+                            switch (item.formula_type)
+                            {
+
+                                case "eq":
+                                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
+                                    builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
+                                    builder.Where("tag.Name = @TagName ", new { TagName = item.formula_value });
+                                    break;
+                                case "neq":
+
+                                    break;
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+                            }
+                        }
                     }
 
-                    if (filter.type == "and")
-                    {
-                        ISpecification<FacebookUserProfile> tmp = new InitialSpecification<FacebookUserProfile>(x => true);
-                        foreach (var spec in itemSpecs)
-                            tmp = tmp.And(spec);
-                        profileSpec = profileSpec.And(tmp);
-                    }
-                    else
-                    {
-                        ISpecification<FacebookUserProfile> tmp = new InitialSpecification<FacebookUserProfile>(x => false);
-                        foreach (var spec in itemSpecs)
-                            tmp = tmp.Or(spec);
-                        profileSpec = profileSpec.And(tmp);
-                    }
+
                 }
             }
-            var userProfiles = conn.Query<FacebookUserProfile>("" +
-                             "SELECT * " +
-                             "FROM FacebookUserProfiles us " +
-                             "where us.FbPageId = @pageId  " +
-                             "", new { pageId = pageId }).ToList();
-            var query = userProfiles.AsQueryable();
-            var result = query.Where(profileSpec.AsExpression()).ToList();
-            return result;
+
+            var iUserprofiles = conn.Query<FacebookUserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
+
+            return iUserprofiles;
         }
 
-        private static Expression ToLamdaExpression(SimpleFilterItem item, ParameterExpression parameter)
-        {
-            Expression resultExpression = null;
-            if (item.type == "Name" || item.type == "FirstName" || item.type == "LastName" || item.type == "Gender")
-            {
-                Expression left = Expression.PropertyOrField(parameter, item.type);
-                Expression right = Expression.Constant(item.formula_value);
-                switch (item.formula_type)
-                {
-                    case "contains":
-                    case "doesnotcontain":
-                    case "startswith":
-                        var nullCheckExpression = Expression.Equal(left, Expression.Constant(null, typeof(String)));
-
-                        if (item.formula_type == "contains" || item.formula_type == "doesnotcontain")
-                        {
-                            var containsMethod = typeof(String).GetMethod("Contains", new[] { typeof(String) });
-                            var containsExpression = Expression.Call(left, containsMethod, right);
-                            if (item.formula_type == "contains")
-                                resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), containsExpression);
-                            else
-                                resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), Expression.Not(containsExpression));
-                        }
-                        else if (item.formula_type == "startswith")
-                        {
-                            var startswithMethod = typeof(String).GetMethod("StartsWith", new[] { typeof(String) });
-                            var startswithExpression = Expression.Call(left, startswithMethod, right);
-                            resultExpression = Expression.AndAlso(Expression.Not(nullCheckExpression), startswithExpression);
-                        }
-                        break;
-                    case "eq":
-                    case "neq":
-                        var equalCheckExpression = Expression.Equal(left, right);
-                        if (item.formula_type == "eq")
-                            resultExpression = equalCheckExpression;
-                        else
-                            resultExpression = Expression.Not(equalCheckExpression);
-                        break;
-                    default:
-                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
-                }
-            }
-            else if (item.type == "Tag")
-            {
-
-                Expression tagRelsExpression = Expression.PropertyOrField(parameter, "TagRels");
-                switch (item.formula_type)
-                {
-                    case "eq":
-                    case "neq":
-                        // find Any method                       
-                        var generic = typeof(Queryable).GetMethods()
-                               .Where(m => m.Name == "Any")
-                               .Where(m => m.GetParameters().Length == 2)
-                               .Single();
-                        var containsMethod = generic.MakeGenericMethod(typeof(FacebookUserProfileTagRel));
-
-                        var tagRelParameter = Expression.Parameter(typeof(FacebookUserProfileTagRel), "s");
-                        Expression left = Expression.PropertyOrField(tagRelParameter, "Tag");
-                        Expression left2 = Expression.PropertyOrField(left, "Name");
-                        Expression right = Expression.Constant(item.formula_value);
-                        Expression equalExpression = Expression.Equal(left2, right);
-
-                        var predicate = Expression.Lambda<Func<FacebookUserProfileTagRel, bool>>(equalExpression, tagRelParameter);
-                        var containsExpression = ExpressionUtils.CallAny(tagRelsExpression, predicate, "Any");
-                        if (item.formula_type == "eq")
-                            resultExpression = containsExpression;
-                        else
-                            resultExpression = Expression.Not(containsExpression);
-                        break;
-                    default:
-                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
-                }
-            }
-            else
-                throw new NotSupportedException(string.Format("Not support type {0}!", item.type));
-
-            return resultExpression;
-        }
+     
 
         private async Task UserprofileTags(FacebookUserProfile profile, Guid activityId, string actionType,
             SqlConnection conn = null )
