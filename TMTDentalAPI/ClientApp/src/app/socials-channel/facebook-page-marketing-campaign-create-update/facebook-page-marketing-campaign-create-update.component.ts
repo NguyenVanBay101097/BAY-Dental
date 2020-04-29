@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { MarketingCampaignActivitiesService } from '../marketing-campaign-activities.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-campaign-create-update',
@@ -45,9 +46,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         this.campaign = result;
         this.formGroup.patchValue(result);
         this.activities = this.campaign.activities;
-        // console.log("this.campaign", this.campaign);
-        // console.log("this.formGroup", this.formGroup);
-        // console.log("this.activities", this.activities);  //
+        this.sortActivities();
       });
   }
 
@@ -57,6 +56,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         this.campaign = result;
         this.formGroup.patchValue(result);
         this.activities = this.campaign.activities;
+        this.sortActivities();
       });
     }
   }
@@ -79,13 +79,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
   
       modalRef.result.then(result => {
         if (result === "loading") {
-          if (this.id) {
-            this.marketingCampaignService.get(this.id).subscribe((result: any) => {
-              this.campaign = result;
-              this.formGroup.patchValue(result);
-              this.activities = this.campaign.activities;
-            });
-          }
+          this.loadRecord();
         }
       }, () => {
       });
@@ -105,22 +99,17 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       this.clickedDeleteActivity = false;
       return;
     }
+    if (this.clickedAddChildActivity === true) {
+      this.clickedAddChildActivity = false;
+      return;
+    }
     let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa hoạt động';
     modalRef.componentInstance.campaignId = this.id;
     modalRef.componentInstance.activityId = activity.id;
     modalRef.result.then(result => {
       if (result === "loading") {
-        if (this.id) {
-          this.marketingCampaignService.get(this.id).subscribe((result: any) => {
-            this.campaign = result;
-            this.formGroup.patchValue(result);
-            this.activities = this.campaign.activities;
-            // console.log("this.campaign", this.campaign);
-            // console.log("this.formGroup", this.formGroup);
-            // console.log("this.activities", this.activities);
-          });
-        }
+        this.loadRecord();
       }
     }, () => {
     });
@@ -128,24 +117,40 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
   clickedDeleteActivity: boolean = false;
   deleteActivity(activity_id) {
     this.clickedDeleteActivity = true;
-    var alert = confirm("Bạn có muốn xóa hoạt động này không?");
-    if (alert == true) {
-      console.log("activity_id", activity_id);
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa hoạt động';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      // console.log("activity_id", activity_id);
       this.marketingCampaignActivitiesService.delete(activity_id).subscribe((result: any) => {
-        this.marketingCampaignService.get(this.id).subscribe((result: any) => {
-          this.campaign = result;
-          this.formGroup.patchValue(result);
-          this.activities = this.campaign.activities;
-          this.notificationService.show({
-            content: 'Xóa hoạt động thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+        this.loadRecord();
+        this.notificationService.show({
+          content: 'Xóa hoạt động thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
         });
       });
+    });
+  }
+  clickedAddChildActivity: boolean = false;
+  addChildActivity(activity, triggerType) {
+    this.clickedAddChildActivity = true;
+    if (!activity || !triggerType) {
+      return;
     }
+    let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = "Thêm hoạt động";
+    modalRef.componentInstance.campaignId = this.id;
+    modalRef.componentInstance.parentId = activity.id;
+    modalRef.componentInstance.triggerType = triggerType;
+    modalRef.result.then(result => {
+      if (result === "loading") {
+        this.loadRecord();
+      }
+    }, () => {
+    });
   }
 
   getTrigger(activity: FormGroup) {
@@ -246,56 +251,13 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     }
   }
 
-  clickSort() {
-    /*
-    var items: any[] = [];
-    items = this.activities;
-    var dict = {};
-    for(var i = 0; i < items.length; i++) {
-      var item = items[i];
-      if (item.parentId) {
-        if (!dict[item.parentId]) {
-          dict[item.parentId] = [];
-          dict[item.parentId].push(item.id);
-        } else {
-          dict[item.parentId].push(item.id);
-        }
-      }
-    }
-    console.log(dict);
-    */
-        // var index_parentId = this.activities.findIndex(x => x.parentId == activities_copy[i].parentId);
-        // var temp = activities_copy[i];
-        // activities_copy.splice(i, 1);
-        // activities_copy.splice(index_parentId + 1, 0, temp);
-    /*
-    var activities_sort = [];
-    var activities_length = this.activities.length;
-    for (let i = 0; i < activities_length; i++) {
-      if (this.activities[i].triggerType === "begin") {
-        activities_sort.push(this.activities[i]);
-      }
-    }
-    var index_parentId;
-    for (let i = 0; i < activities_length; i++) {
-      if (this.activities[i].triggerType !== "begin") {
-        index_parentId = activities_sort.findIndex(x => x.id == this.activities[i].parentId);
-        if (index_parentId >= 0) {
-          activities_sort.splice(index_parentId + 1, 0, this.activities[i]);
-        }
-      }
-    }
-    console.log(activities_sort);
-    this.activities = activities_sort;
-    */
-    //
+  sortActivities() {
     var activities_sort = [];
     var activities_length = this.activities.length;
     var i = 0;
     var index_parentId;
     var index_parentId_sort;
     while (i < activities_length) {
-      console.log("i", i);
       if (this.activities[i].triggerType === "begin") {
         activities_sort.push(this.activities[i]);
         this.activities.splice(i, 1);
@@ -322,7 +284,25 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       } 
       if (activities_length == 0) {
         this.activities = activities_sort;
+        this.addMarginLeft();
+        console.log(this.activities);
       }
     }
+  }
+
+  addMarginLeft() {
+    var index_parentId;
+    for (let i = 0; i < this.activities.length; i++) {
+      if (this.activities[i].triggerType === "begin") {
+        this.activities[i].marginLeft = 0;
+      } else {
+        index_parentId = this.activities.findIndex(x => x.id == this.activities[i].parentId);
+        if (index_parentId >= 0) {
+          this.activities[i].marginLeft = this.activities[index_parentId].marginLeft + 90;
+        } else {
+          this.activities[i].marginLeft = 0;
+        }
+      }
+    } 
   }
 }

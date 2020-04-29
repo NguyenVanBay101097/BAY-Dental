@@ -145,24 +145,30 @@
                             </tr>
                             <tr>
                                 <td class=" o_td_label">
-                                    <label class="o_form_label"> &#8627; Sau khi </label>
+                                    <label class="o_form_label">Sau khi </label>
                                 </td>
                                 <td style="width:100%">
                                     <select class="form-control" formControlName="triggerType">
-                                        <option value="begin">Bắt đầu chiến dịch</option>
+                                        <option value="begin">Chạy chiến dịch</option>
                                         <option value="act">Hoạt động khác xảy ra</option>
-                                        <option value="message_open">Mở tin nhắn</option>
+                                        <option value="message_open">Đọc tin nhắn</option>
                                     </select>
                                 </td>
                             </tr>
-                            <tr *ngIf="showActivities()">
+                            <tr [class.d-none]="!showActivities()">
                                 <td class=" o_td_label">
-                                    <label class="o_form_label"> &#8627; Hoạt động </label>
+                                    <label class="o_form_label">Hoạt động </label>
                                 </td>
                                 <td style="width:100%">
-                                    <select class="form-control" formControlName="parentId" (change)="changeActivity()" required>
-                                        <option *ngFor="let activity of activities" [value]="activity.id">{{activity.name}}</option>
-                                    </select>
+                                    <kendo-combobox
+                                        [data]="activities"
+                                        [textField]="'name'"
+                                        [valueField]="'id'"
+                                        [valuePrimitive]="true"
+                                        formControlName="parentId"
+                                        [required]="showActivities()"
+                                    >
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                         </tbody>

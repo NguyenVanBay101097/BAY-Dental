@@ -16,6 +16,9 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   title: string;
   campaignId: string;
   activityId: string;
+  parentId: string;
+  triggerType: string;
+  //
   activity: any;
   activities: any;
   audience_filter: any;
@@ -54,6 +57,12 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         // console.log(res); //
       }, err => {
         console.log(err);
+      });
+    }
+    if (this.parentId) {
+      this.formGroup.patchValue({
+        triggerType: this.triggerType,
+        parentId: this.parentId
       });
     }
 
@@ -98,6 +107,13 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
+
+    if (this.formGroup.value.triggerType === "begin") {
+      this.formGroup.patchValue({
+        parentId: null
+      });
+    }
+    //
     var tagIds = [];
     for (let i = 0; i < this.selectedTags.length; i++) {
       tagIds.push(this.selectedTags[i].id);
@@ -106,7 +122,6 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
       tagIds: tagIds
     });
     var value = this.formGroup.value;
-    console.log(value); //
     
     if (this.activityId) {
       console.log(this.activityId);
@@ -223,9 +238,5 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
       return true;
     }
     return false;
-  }
-
-  changeActivity() {
-    console.log(this.formGroup.value.parentId);
   }
 }

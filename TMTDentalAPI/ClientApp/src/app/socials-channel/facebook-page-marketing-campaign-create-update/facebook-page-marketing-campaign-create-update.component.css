@@ -8,3 +8,23 @@
 .activity-close:hover {
     color: gray;
 }
+.map-child {
+    background-color: rgb(240, 240, 240);
+    margin-left: -16px;
+    margin-right: -16px;
+    margin-bottom: -16px;
+}
+.el__add-child {
+    max-height: 0;
+    overflow: hidden;
+    -webkit-transition: max-height 0.8s;
+	-moz-transition: max-height 0.8s;
+    transition: max-height 0.8s;
+    cursor: pointer;
+}
+.add-child:hover .el__add-child {
+    max-height: 90px;
+}
+.el__add-child div:hover {
+    background: #e2e2e3!important;
+}
