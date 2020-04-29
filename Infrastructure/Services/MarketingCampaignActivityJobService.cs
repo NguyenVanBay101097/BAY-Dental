@@ -211,107 +211,79 @@ namespace Infrastructure.Services
                 if (filter.items.Any())
                 {
 
-                    foreach (var item in filter.items)
+                    if (filter.items.Any())
                     {
-                        if (item.type == "Name")
+
+                        var lst = filter.items.ToDictionary(x => x.type, x => x);
+                        foreach (var kvp in lst)
                         {
-                            switch (item.formula_type)
-                            {
-                                case "contains":
-                                case "eq":
-                                    builder.Where("us.Name Like @Name ", new { Name = "%" + item.formula_value + "%" });
-                                    break;
-                                case "doesnotcontain":
-                                case "neq":
-                                    builder.Where("us.Name Not Like @Name ", new { Name = "%" + item.formula_value + "%" });
-                                    break;
-                                case "startswith":
-                                    builder.Where("us.Name Like @Name ", new { Name = item.formula_value + "%" });
-                                    break;
-
-
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
-                            }
-                        }
-                        else if (item.type == "FirstName")
-                        {
-                            switch (item.formula_type)
-                            {
-                                case "contains":
-                                case "eq":
-                                    builder.Where("us.FirstName Like @FirstName", new { FirstName = "%" + item.formula_value + "%" });
-                                    break;
-                                case "doesnotcontain":
-                                case "neq":
-                                    builder.Where("us.FirstName Not Like @FirstName ", new { FirstName = "%" + item.formula_value + "%" });
-                                    break;
-                                case "startswith":
-                                    builder.Where("us.FirstName Like @FirstName ", new { FirstName = item.formula_value + "%" });
-                                    break;
-
-
-
-
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
-                            }
-                        }
-                        else if (item.type == "LastName")
-                        {
-                            switch (item.formula_type)
-                            {
-                                case "contains":
-                                case "eq":
-                                    builder.Where("us.LastName Like @LastName ", new { LastName = "%" + item.formula_value + "%" });
-                                    break;
-                                case "doesnotcontain":
-                                case "neq":
-                                    builder.Where("us.LastName Not Like @LastName ", new { LastName = "%" + item.formula_value + "%" });
-                                    break;
-                                case "startswith":
-                                    builder.Where("us.LastName Like @LastName ", new { LastName = item.formula_value + "%" });
-                                    break;
-
-
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
-                            }
-                        }
-                        else if (item.type == "Gender")
-                        {
-                            switch (item.formula_type)
+                            DynamicParameters parameters = new DynamicParameters();
+                            if (kvp.Key == "Name" || kvp.Key == "FirstName" || kvp.Key == "LastName")
                             {
 
-                                case "eq":
-                                    builder.Where("us.Gender = @Gender ", new { Gender = item.formula_value });
-                                    break;
-                                case "neq":
-                                    builder.Where("us.Gender != @Gender ", new { Gender = item.formula_value });
-                                    break;
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
-                            }
-                        }
-                        else if (item.type == "Tag")
-                        {
-                            switch (item.formula_type)
-                            {
+                                switch (kvp.Value.formula_type)
+                                {
+                                    case "contains":
+                                    case "eq":
+                                        parameters.Add($"@{kvp.Key}", "%" + kvp.Value.formula_value + "%");
+                                        builder.Where($"us.{kvp.Key} Like @{kvp.Key} ", parameters);
+                                        break;
+                                    case "doesnotcontain":
+                                    case "neq":
+                                        parameters.Add($"@{kvp.Key}", "%" + kvp.Value.formula_value + "%");
+                                        builder.Where($"us.{kvp.Key} Not Like @{kvp.Key} ", parameters);
+                                        break;
+                                    case "startswith":
+                                        parameters.Add($"@{kvp.Key}", kvp.Value.formula_value + "%");
+                                        builder.Where($"us.{kvp.Key} Like @{kvp.Key} ", parameters);
+                                        break;
 
-                                case "eq":
-                                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
-                                    builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
-                                    builder.Where("tag.Name = @TagName ", new { TagName = item.formula_value });
-                                    break;
-                                case "neq":
-                                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
-                                    builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
-                                    builder.Where("tag.Name != @TagName ", new { TagName = item.formula_value });
-                                    break;
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
+
+                                    default:
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                }
+                                //}
+
                             }
+                            else if (kvp.Key == "Gender")
+                            {
+                                switch (kvp.Value.formula_type)
+                                {
+
+                                    case "eq":
+                                        builder.Where($"us.{kvp.Key} = @{kvp.Key} ", new { kvp.Value.formula_value });
+                                        break;
+                                    case "neq":
+                                        builder.Where($"us.{kvp.Key} != @{kvp.Key} ", new { kvp.Value.formula_value });
+                                        break;
+                                    default:
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                }
+                            }
+                            else if (kvp.Key == "Tag")
+                            {
+                                switch (kvp.Value.formula_type)
+                                {
+
+                                    case "eq":
+                                        builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
+                                        builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
+                                        builder.Where("tag.Name = @TagName ", new { TagName = kvp.Value.formula_value });
+                                        break;
+                                    case "neq":
+                                        builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
+                                        builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
+                                        builder.Where("tag.Name != @TagName ", new { TagName = kvp.Value.formula_value });
+                                        break;
+                                    default:
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                }
+                            }
+
                         }
+
+
+
                     }
 
 
