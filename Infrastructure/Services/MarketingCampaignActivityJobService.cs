@@ -304,7 +304,9 @@ namespace Infrastructure.Services
                                     builder.Where("tag.Name = @TagName ", new { TagName = item.formula_value });
                                     break;
                                 case "neq":
-
+                                    builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
+                                    builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
+                                    builder.Where("tag.Name != @TagName ", new { TagName = item.formula_value });
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
