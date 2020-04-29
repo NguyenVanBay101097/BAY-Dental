@@ -10,9 +10,6 @@
 }
 .map-child {
     background-color: rgb(240, 240, 240);
-    margin-left: -16px;
-    margin-right: -16px;
-    margin-bottom: -16px;
 }
 .el__add-child {
     max-height: 0;

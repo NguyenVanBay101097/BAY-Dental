@@ -79,6 +79,8 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
 
   createNew() {
     this.router.navigate(['/facebook-management/mass-messagings/form'], { queryParams: {} });
+    this.audience_filter = null;
+    this.showAudienceFilter = false;
   }
 
   actionSchedule() {

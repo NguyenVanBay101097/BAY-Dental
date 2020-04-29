@@ -70,19 +70,30 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       if (!this.id) {
         this.marketingCampaignService.create(val).subscribe((result: any) => {
           this.router.navigate([this.router.url], { queryParams: { id: result.id } });
+          this.id = result.id;
+          let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          modalRef.componentInstance.title = 'Thêm hoạt động';
+          modalRef.componentInstance.campaignId = this.id;
+      
+          modalRef.result.then(result => {
+            if (result === "loading") {
+              this.loadRecord();
+            }
+          }, () => {
+          });
+        });
+      } else {
+        let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thêm hoạt động';
+        modalRef.componentInstance.campaignId = this.id;
+    
+        modalRef.result.then(result => {
+          if (result === "loading") {
+            this.loadRecord();
+          }
+        }, () => {
         });
       }
-  
-      let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Thêm hoạt động';
-      modalRef.componentInstance.campaignId = this.id;
-  
-      modalRef.result.then(result => {
-        if (result === "loading") {
-          this.loadRecord();
-        }
-      }, () => {
-      });
     } else {
       this.notificationService.show({
         content: 'Tên chiến dịch không được để trống',
