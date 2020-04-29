@@ -258,7 +258,7 @@ namespace Infrastructure.Services
         public override async Task UpdateAsync(IEnumerable<Partner> entities)
         {
             _UpdateCityName(entities);
-            _SetCompanyIfNull(entities);
+            //_SetCompanyIfNull(entities);
 
             await base.UpdateAsync(entities);
 

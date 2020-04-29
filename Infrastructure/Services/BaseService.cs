@@ -42,6 +42,8 @@ namespace Infrastructure.Services
             }
         }
 
+        public bool Sudo { get; set; }
+
         protected Guid CompanyId
         {
             get
@@ -198,6 +200,9 @@ namespace Infrastructure.Services
 
         public void CheckAccessRights(string model, string operation)
         {
+            if (Sudo)
+                return;
+
             var accessObj = GetService<IIRModelAccessService>();
             accessObj.Check(model, mode: operation);
         }
@@ -205,6 +210,9 @@ namespace Infrastructure.Services
         private void CheckAccessRules(IEnumerable<TEntity> entities, string operation)
         {
             if (IsUserRoot)
+                return;
+
+            if (Sudo)
                 return;
 
             if (string.IsNullOrEmpty(UserId))
@@ -222,6 +230,10 @@ namespace Infrastructure.Services
         {
             if (string.IsNullOrEmpty(UserId))
                 return null;
+
+            if (Sudo)
+                return null;
+
             string DOMAIN_RULE_CACHE_KEY = "ir.rule-{0}-{1}-{2}";
 
             var cache = GetService<IMyCache>();

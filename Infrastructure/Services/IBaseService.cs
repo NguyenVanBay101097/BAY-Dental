@@ -53,5 +53,7 @@ namespace Infrastructure.Services
         EntityEntry<T> GetEntry(T entity);
 
         Task<int> ExcuteSqlCommandAsync(string sql, params object[] parameters);
+
+        bool Sudo { get; set; }
     }
 }

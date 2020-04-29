@@ -925,6 +925,14 @@ namespace Infrastructure.Services
 
         public async Task Unlink(Company self)
         {
+            if (CompanyId == self.Id)
+                throw new Exception("Không thể xóa chi nhánh đang làm việc");
+
+            var modalDataObj = GetService<IIRModelDataService>();
+            var user_root = await modalDataObj.GetRef<ApplicationUser>("base.user_root");
+            if (user_root != null && user_root.CompanyId == self.Id)
+                throw new Exception("Không thể xóa chi nhánh của tài khoản admin");
+
             try
             {
                 var partnerId = self.PartnerId;
@@ -937,18 +945,29 @@ namespace Infrastructure.Services
                     "left join StockWarehouses wh on pt.WarehouseId = wh.Id " +
                     "where wh.CompanyId = @p0)", self.Id);
 
+                await ExcuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null where Id = @p0", self.Id);
+
                 await ExcuteSqlCommandAsync("delete StockWarehouses where CompanyId=@p0", self.Id);
                 await ExcuteSqlCommandAsync("delete StockLocations where CompanyId=@p0", self.Id);
                 await ExcuteSqlCommandAsync("delete AccountJournals where CompanyId=@p0", self.Id);
                 await ExcuteSqlCommandAsync("delete IRSequences where CompanyId=@p0", self.Id);
                 await ExcuteSqlCommandAsync("delete AccountAccounts where CompanyId=@p0", self.Id);
+
+                var partnerObj = GetService<IPartnerService>();
+                partnerObj.Sudo = true;
+                var partner_ids = await partnerObj.SearchQuery(x => x.CompanyId == self.Id).Select(x => x.Id).ToListAsync();
+                foreach (var partner_id in partner_ids)
+                    await ExcuteSqlCommandAsync("update Partners set CompanyId = null where Id = @p0", partner_id);
+
                 await ExcuteSqlCommandAsync("delete Companies where Id=@p0", self.Id);
 
-                await ExcuteSqlCommandAsync("delete Partners where Id=@p0", partnerId);
+                foreach (var partner_id in partner_ids)
+                    await ExcuteSqlCommandAsync("delete Partners where Id=@p0", partner_id);
             }
             catch(Exception e)
             {
-                throw new Exception(e.Message);
+                Console.WriteLine(e.Message);
+                throw new Exception("Dữ liệu đã phát sinh cho chi nhánh này, không thể xóa!.");
             }
         }
 
