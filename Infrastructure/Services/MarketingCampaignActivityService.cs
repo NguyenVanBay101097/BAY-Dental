@@ -119,12 +119,21 @@ namespace Infrastructure.Services
 
         public async Task UpdateActivity(Guid id, MarketingCampaignActivitySave val)
         {
+            var allActivities = SearchQuery().Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons");
             var activity = await SearchQuery(x => x.Id == id)
                .Include(x => x.Message).Include("Message.Buttons")
                .Include(x => x.TagRels).Include("TagRels.Tag")
                .FirstOrDefaultAsync();
             if (activity == null)
                 throw new ArgumentNullException("activity");
+         
+                var childs = allActivities.Where(x => x.ParentId == activity.Id)
+                                .Union(allActivities.Where(x => x.Id == activity.Id))
+                                .SelectMany(y => y.ActivityChilds).ToList();
+                if (childs.Any(x => x.Id == val.ParentId))
+                {
+                    throw new Exception($"Không thể chỉnh sửa {activity.Name} !");
+                }
            
             activity = _mapper.Map(val, activity);
             if(activity.ActivityType == "message")
