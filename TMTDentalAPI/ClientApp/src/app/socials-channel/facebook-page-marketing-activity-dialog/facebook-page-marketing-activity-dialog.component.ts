@@ -19,6 +19,10 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   parentId: string;
   triggerType: string;
   //
+  showPluginTextarea: boolean = false;
+  selectArea_start: number;
+  selectArea_end: number;
+  //
   activity: any;
   activities: any;
   audience_filter: any;
@@ -38,8 +42,6 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
       activityType: 'message',
       audienceFilter: null,
       buttons: this.fb.array([]),
-      condition: null,
-      content: null,
       intervalNumber: 1,
       intervalType: 'days',
       name: ['', Validators.required],
@@ -58,9 +60,9 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.selectedTags = this.activity.tags;
         this.audience_filter = this.activity.audienceFilter;
         this.showAudienceFilter = true;
-        console.log(this.activity); //
-        console.log(this.formGroup);  //
-        console.log(this.audience_filter);  //
+        // console.log(this.activity); //
+        // console.log(this.formGroup);  //
+        // console.log(this.audience_filter);  //
       }, err => {
         console.log(err);
       });
@@ -175,6 +177,30 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     } else {
       return limit;
     }
+  }
+
+  selectArea(event) {
+    this.selectArea_start = event.target.selectionStart;
+    this.selectArea_end = event.target.selectionEnd;
+  }
+  addContentPluginTextarea(event) {  
+    if (this.formGroup.value.text) {
+      this.formGroup.patchValue({
+        text: this.formGroup.value.text.slice(0, this.selectArea_start) + event + this.formGroup.value.text.slice(this.selectArea_end)
+      });
+      this.selectArea_start = this.selectArea_start + event.length;
+      this.selectArea_end = this.selectArea_start;
+    } else {
+      this.formGroup.patchValue({
+        text: event
+      });
+    }
+  }
+  showEmoji() {
+    this.showPluginTextarea = true;
+  }
+  hideEmoji() {
+    this.showPluginTextarea = false;
   }
 
   get templateValue() {

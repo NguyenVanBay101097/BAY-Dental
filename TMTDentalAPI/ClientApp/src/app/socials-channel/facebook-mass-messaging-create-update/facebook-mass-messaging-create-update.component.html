@@ -99,20 +99,13 @@
                             <td style="width:100%">
                                 <div class="position-relative" (clickOutside)=hideEmoji()>
                                     <textarea type="text" my-autosize charCount [limit]="640" class="form-control" id="textarea_mass"
-                                        formControlName="content" (click)="selectArea($event)" (keyup)="selectArea($event)"
-
+                                        formControlName="content" 
+                                        (click)="selectArea($event)" 
+                                        (keyup)="selectArea($event)"
                                         (focus)="showEmoji()">
                                     </textarea>
-                                    <div class="plugin-textarea dropdown position-absolute text-dark rounded border shadow-sm" style="z-index: 2;" *ngIf="emoji">
-                                        <span class="px-1" data-toggle="dropdown">
-                                            <i class="fas fa-laugh"></i>
-                                        </span>
-                                        <emoji-mart class="dropdown-menu p-0 border-0" (emojiSelect)="selectEmoji($event)"></emoji-mart>
-                                        <span class="px-1">
-                                            <i class="fas fa-user"></i>
-                                        </span>
-                                        <span class="px-1">{{num_CharLeft}}</span>
-                                    </div>
+                                    <app-facebook-plugin-textarea *ngIf="showPluginTextarea"
+                                        [num_CharLeft]="getLimitText() | number" (content_send)="addContentPluginTextarea($event)"></app-facebook-plugin-textarea>
                                 </div>
                             </td>
                         </tr>

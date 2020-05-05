@@ -18,10 +18,9 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
   formGroup: FormGroup;
   id: string;
   messaging = {};
-  emoji: boolean = false;
+  showPluginTextarea: boolean = false;
   selectArea_start: number;
   selectArea_end: number;
-  num_CharLeft: number = 640;
   audience_filter: any;
   showAudienceFilter: boolean = false;
 
@@ -51,12 +50,6 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
         this.audience_filter = this.formGroup.value.audienceFilter;
         this.showAudienceFilter = true;
       });
-
-    this.formGroup.get('content').valueChanges.subscribe((value) => {
-      if (value) {
-        this.num_CharLeft = 640 - value.length;
-      }
-    });
     
     $(document).on('click', '.allow-focus', function (e) {
       e.stopPropagation();
@@ -190,23 +183,33 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
     this.selectArea_start = event.target.selectionStart;
     this.selectArea_end = event.target.selectionEnd;
   }
-  selectEmoji(event) {
-    var icon_emoji = event.emoji.native;   
+  getLimitText() {
+    var limit = 640;
+    var text = this.formGroup.get('content').value;
+    if (text) {
+      return limit - text.length;
+    } else {
+      return limit;
+    }
+  }
+  addContentPluginTextarea(event) {  
     if (this.formGroup.value.content) {
       this.formGroup.patchValue({
-        content: this.formGroup.value.content.slice(0, this.selectArea_start) + icon_emoji + this.formGroup.value.content.slice(this.selectArea_end)
+        content: this.formGroup.value.content.slice(0, this.selectArea_start) + event + this.formGroup.value.content.slice(this.selectArea_end)
       });
+      this.selectArea_start = this.selectArea_start + event.length;
+      this.selectArea_end = this.selectArea_start;
     } else {
       this.formGroup.patchValue({
-        content: icon_emoji
+        content: event
       });
     }
   }
   showEmoji() {
-    this.emoji = true;
+    this.showPluginTextarea = true;
   }
   hideEmoji() {
-    this.emoji = false;
+    this.showPluginTextarea = false;
   }
   saveAudienceFilter(event) {
     this.audience_filter = event;

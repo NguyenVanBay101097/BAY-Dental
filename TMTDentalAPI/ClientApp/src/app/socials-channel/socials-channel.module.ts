@@ -39,6 +39,7 @@ import { AudienceFilterGenderComponent } from './facebook-audience-filter-dropdo
 import { AudienceFilterInputComponent } from './facebook-audience-filter-dropdown/audience-filter-input/audience-filter-input.component';
 import { FacebookAudienceFilterComponent } from './facebook-audience-filter/facebook-audience-filter.component';
 import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-select-tag.component';
+import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-selec
     AudienceFilterGenderComponent,
     AudienceFilterInputComponent,
     FacebookAudienceFilterComponent,
-    FacebookSelectTagComponent
+    FacebookSelectTagComponent,
+    FacebookPluginTextareaComponent
   ],
   imports: [
     CommonModule,
