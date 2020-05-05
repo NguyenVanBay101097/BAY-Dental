@@ -48,6 +48,8 @@ namespace Infrastructure.Services
             {
                 query = SearchQuery().Where(x => x.Id == val.ParentId);
             }
+            if (val.CampaignId.HasValue)
+                query = SearchQuery().Where(x => x.CampaignId == val.CampaignId);
             var items = await _mapper.ProjectTo<MarketingCampaignActivitySimple>(query).ToListAsync();
             var totalItems = await query.CountAsync();
 
@@ -75,6 +77,7 @@ namespace Infrastructure.Services
                   Template = x.Message.Template,
                   Text = x.Message.Text,
                   ParentId = x.ParentId,
+                  TriggerType = x.TriggerType,
                   Buttons = x.Message.Buttons.Select(s => new MarketingMessageButtonDisplay
                   {
                       Payload = s.Payload,

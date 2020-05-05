@@ -34,18 +34,21 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
+      actionType: '',
       activityType: 'message',
-      intervalType: 'days',
+      audienceFilter: null,
+      buttons: this.fb.array([]),
+      condition: null,
+      content: null,
       intervalNumber: 1,
+      intervalType: 'days',
+      name: ['', Validators.required],
+      parentId: null,
+      tagIds: [],
       template: 'text',
       text: '',
       triggerType: 'begin',
-      parentId: null,
       campaignId: this.campaignId,
-      actionType: '',
-      tagIds: [],
-      buttons: this.fb.array([])
     });
 
     if (this.activityId) {
@@ -53,11 +56,16 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.activity = res;
         this.formGroup.patchValue(this.activity);
         this.selectedTags = this.activity.tags;
-        // console.log(this.formGroup);  //
-        // console.log(res); //
+        this.audience_filter = this.activity.audienceFilter;
+        this.showAudienceFilter = true;
+        console.log(this.activity); //
+        console.log(this.formGroup);  //
+        console.log(this.audience_filter);  //
       }, err => {
         console.log(err);
       });
+    } else {
+      this.showAudienceFilter = true;
     }
     if (this.parentId) {
       this.formGroup.patchValue({
@@ -95,8 +103,6 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.formGroup.get('text').setValue(newVal);
       }
     });
-
-    this.showAudienceFilter = true;
   }
 
   get activityTypeValue() {
@@ -121,10 +127,16 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     this.formGroup.patchValue({
       tagIds: tagIds
     });
+    //
+    this.formGroup.patchValue({
+      audienceFilter: this.audience_filter
+    });
+    //
     var value = this.formGroup.value;
+    // console.log(value);
     
     if (this.activityId) {
-      console.log(this.activityId);
+      // console.log(this.activityId);
       this.marketingCampaignActivitiesService.put(this.activityId, value).subscribe(res => {
         this.notificationService.show({
           content: 'Lưu thành công',
