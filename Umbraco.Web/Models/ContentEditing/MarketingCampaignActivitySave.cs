@@ -41,6 +41,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
         //public ICollection<MarketingCampaignActivitySave> ActivityChilds { get; set; } = new List<MarketingCampaignActivitySave>();
         public ICollection<MarketingMessageButtonSave> Buttons { get; set; } = new List<MarketingMessageButtonSave>();
-        
+
+        public string AudienceFilter { get; set; }
+
     }
 }

@@ -75,5 +75,10 @@ namespace ApplicationCore.Entities
         public MarketingCampaignActivity Parent { get; set; }
         public ICollection<MarketingCampaignActivity> ActivityChilds { get; set; } = new List<MarketingCampaignActivity>();
 
+        /// <summary>
+        /// Điều kiện lọc những khách hàng sẽ gửi tin nhắn
+        /// </summary>
+        public string AudienceFilter { get; set; }
+
     }
 }

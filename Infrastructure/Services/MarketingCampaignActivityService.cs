@@ -68,6 +68,7 @@ namespace Infrastructure.Services
                   IntervalNumber = x.IntervalNumber,
                   IntervalType = x.IntervalType,
                   Name = x.Name,
+                  ActionType = x.ActionType,
                   TotalSent = x.Traces.Where(x => x.Sent.HasValue).Count(),
                   TotalRead = x.Traces.Where(x => x.Read.HasValue).Count(),
                   TotalDelivery = x.Traces.Where(x => x.Delivery.HasValue).Count(),
@@ -84,7 +85,8 @@ namespace Infrastructure.Services
                   Tags = x.TagRels.Select(y=> new FacebookTagSimple { 
                     Id = y.TagId,
                     Name = y.Tag.Name
-                  })
+                  }),
+                  AudienceFilter = x.AudienceFilter
 
               })
               .FirstOrDefaultAsync();
@@ -117,7 +119,6 @@ namespace Infrastructure.Services
             var activity = await SearchQuery(x => x.Id == id)
                .Include(x => x.Message).Include("Message.Buttons")
                .Include(x => x.TagRels).Include("TagRels.Tag")
-
                .FirstOrDefaultAsync();
             if (activity == null)
                 throw new ArgumentNullException("activity");
@@ -135,13 +136,15 @@ namespace Infrastructure.Services
             }
            
 
+           
+
 
             await UpdateAsync(activity);
         }
 
         private void SaveTags(MarketingCampaignActivitySave val, MarketingCampaignActivity res)
         {
-            var toRemove = res.TagRels.Where(x => !val.TagIds.Any(s => s == x.TagId)).ToList();
+            var toRemove = res.TagRels.Where(x=> !val.TagIds.Any(s=>s == x.TagId)).ToList();
             foreach (var tag in toRemove)
             {
                 res.TagRels.Remove(tag);
@@ -178,10 +181,28 @@ namespace Infrastructure.Services
         public async Task RemoveActivity(IEnumerable<Guid> ids)
         {
             var messageService = GetService<IMarketingMessageService>();
+            var allActivities = SearchQuery().Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons");
             var activities = await SearchQuery(x => ids.Contains(x.Id))
-              .Include(x => x.Message).Include("Message.Buttons").ToListAsync();
-            foreach(var activity in activities)
+              .Include(x => x.Message).Include("Message.Buttons").Include(x => x.ActivityChilds).Include("ActivityChilds.Message").Include("ActivityChilds.Message.Buttons").ToListAsync();          
+          
+            foreach (var activity in activities)
             {
+                var childs =  allActivities.Where(x => x.ParentId == activity.Id)
+                                .Union(allActivities.Where(x => x.Id == activity.Id))
+                                .SelectMany(y => y.ActivityChilds).ToList();
+                if (childs.Count > 0)
+                {
+                    foreach (var child in childs)
+                    {
+                        if (!string.IsNullOrEmpty(child.JobId))
+                            BackgroundJob.Delete(child.JobId);
+                        if (child.MessageId.HasValue)
+                            await messageService.DeleteAsync(child.Message);
+                        Delete(child);
+                    }
+                    
+
+                }
                 if (string.IsNullOrEmpty(activity.JobId))
                     continue;
                 BackgroundJob.Delete(activity.JobId);
