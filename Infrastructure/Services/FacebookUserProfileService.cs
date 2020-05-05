@@ -101,8 +101,8 @@ namespace Infrastructure.Services
         {
             if(res.PartnerId != null)
             {
-                var result = await SearchQuery(x => x.PartnerId == res.PartnerId).FirstOrDefaultAsync();
-                if (result != null)
+                var result = await SearchQuery(x => x.PartnerId == res.PartnerId ).FirstOrDefaultAsync();
+                if (result.Id != res.Id)
                 {
                     throw new Exception($"Khách hàng đã được kết nối với {result.Name}!");
                 }

@@ -38,6 +38,7 @@ import { AudienceFilterTagComponent } from './facebook-audience-filter-dropdown/
 import { AudienceFilterGenderComponent } from './facebook-audience-filter-dropdown/audience-filter-gender/audience-filter-gender.component';
 import { AudienceFilterInputComponent } from './facebook-audience-filter-dropdown/audience-filter-input/audience-filter-input.component';
 import { FacebookAudienceFilterComponent } from './facebook-audience-filter/facebook-audience-filter.component';
+import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-select-tag.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { FacebookAudienceFilterComponent } from './facebook-audience-filter/face
     AudienceFilterTagComponent,
     AudienceFilterGenderComponent,
     AudienceFilterInputComponent,
-    FacebookAudienceFilterComponent
+    FacebookAudienceFilterComponent,
+    FacebookSelectTagComponent
   ],
   imports: [
     CommonModule,

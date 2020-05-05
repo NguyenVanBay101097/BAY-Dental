@@ -39,8 +39,8 @@
                 </button>
             </div>
         </div>
-        <div class="o_form_sheet">
-            <div class="oe_title">
+        <div class="o_form_sheet px-0 pb-0" style="min-height: auto;">
+            <div class="oe_title px-3">
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên chiến dịch</label>
                     <h1>
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="o_group" *ngIf="campaign.dateStart">
+            <div class="o_group px-3" *ngIf="campaign.dateStart">
                 <table class="o_group o_inner_group o_group_col_6">
                     <tbody>
                         <tr>
@@ -63,53 +63,65 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="o_group">
-                <div class="mb-2">
+            <div class="map-child mt-3 p-3">
+                <div class="mt-1 mb-2">
                     <button accesskey="a" *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
-                        class="btn btn-secondary btn-sm" type="button" (click)="addActivity()">Thêm
-                        hoạt động</button>
+                        class="btn btn-secondary btn-sm" type="button" (click)="addActivity()">Thêm hoạt động</button>
                 </div>
-                <div>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Tên hoạt động</th>
-                                <th>Kích hoạt</th>
-                                <th>Đã gửi</th>
-                                <th>#</th>
-                            </tr>
-                        </thead>
-                        <tbody formArrayName="activities">
-                            <ng-container *ngFor="let activity of activities.controls;let i = index">
-                                <tr [formGroup]="activity">
-                                    <td>
-                                        {{activity.get('name').value}}
-                                    </td>
-                                    <td>
-                                        {{getTrigger(activity)}}
-                                    </td>
-                                    <td>
-                                        {{activity.get('totalSent') ? activity.get('totalSent').value : 0}}
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <button type="button" class="btn btn-sm btn-success mr-2"
-                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
-                                                (click)="editActivity(activity)">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger"
-                                                *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1"
-                                                (click)="deleteActivity(i)">
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                        </tbody>
-                    </table>
+                
+                <div *ngFor="let activity of activities" class="activity-item d-flex p-1" style="width: fit-content;" 
+                    [style.margin-left]="activity.marginLeft + 'px'"
+                    (click)="['draft', 'stopped'].indexOf(campaign.state) !== -1 ? editActivity(activity) : $event.stopPropagation();">
+                    <div class="d-flex justify-content-end pr-3 pt-2" style="width: 90px; cursor: default;">
+                        <small class="text-secondary">{{activity.intervalNumber}} {{convertIntervalType(activity.intervalType)}}</small>
+                    </div>
+                    <div>
+                        <div class="rounded-top border p-2 bg-white shadow-sm" style="cursor: pointer;">
+                            <div class="d-flex justify-content-between align-items-center px-1">
+                                <i class="fas bg-dark text-white" style="padding: 6px; border-radius: 2px;" [class.fa-envelope]="activity.activityType === 'message'" 
+                                    [class.fa-th-list]="activity.activityType === 'action'"></i>
+                                <div class="px-2" style="width: 300px; text-align: left;
+                                    white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis;">
+                                    <b>{{activity.name}}</b>
+                                    <small *ngIf="activity.activityType === 'message'" class="d-block" style="margin-top: -6px;">Gửi tin nhắn</small>
+                                    <small *ngIf="activity.activityType === 'action'" class="d-block" style="margin-top: -6px;">Hành động server</small>
+                                </div>
+                                <i *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1" class="activity-close fas fa-times" 
+                                    (click)="deleteActivity(activity.id)"></i>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center border-top mt-1 pt-2 px-1">
+                                <span>
+                                    Đã gửi: {{activity.totalSent}}
+                                </span>
+                                <span>
+                                    Đã nhận: {{activity.totalDelivery}}
+                                </span>
+                                <span>
+                                    Đã đọc: {{activity.totalRead}}
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="['draft', 'stopped'].indexOf(campaign.state) !== -1" 
+                            class="add-child text-center text-secondary font-weight-bold border rounded-bottom">
+                            <div (click)="addChildActivity(null, null)">
+                                <small>
+                                    <i class="fas fa-plus-square mx-1" style="cursor: default;"></i>
+                                    Thêm hoạt động con
+                                </small>
+                            </div>
+                            <div class="el__add-child border-top d-flex">
+                                <div class="flex-fill" (click)="addChildActivity(activity, 'act')"
+                                    placement="bottom" ngbTooltip="Sau hoạt động này">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                                <div *ngIf="activity.activityType === 'message'" class="flex-fill border-left" 
+                                    (click)="addChildActivity(activity, 'message_open')"
+                                    placement="bottom" ngbTooltip="Sau khi đọc tin nhắn">
+                                    <i class="fas fa-envelope-open-text"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
