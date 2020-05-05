@@ -7,7 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookMassMessagingScheduleDialogComponent } from '../facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
 import { FacebookMassMessagingCreateUpdateDialogComponent } from '../facebook-mass-messaging-create-update-dialog/facebook-mass-messaging-create-update-dialog.component';
-declare var $ :any;
+declare var $: any;
 
 @Component({
   selector: 'app-facebook-mass-messaging-create-update',
@@ -17,7 +17,7 @@ declare var $ :any;
 export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnChanges {
   formGroup: FormGroup;
   id: string;
-  messaging = {};
+  messaging: any = {};
   emoji: boolean = false;
   selectArea_start: number;
   selectArea_end: number;
@@ -57,7 +57,7 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
         this.num_CharLeft = 640 - value.length;
       }
     });
-    
+
     $(document).on('click', '.allow-focus', function (e) {
       e.stopPropagation();
     });
@@ -191,7 +191,7 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
     this.selectArea_end = event.target.selectionEnd;
   }
   selectEmoji(event) {
-    var icon_emoji = event.emoji.native;   
+    var icon_emoji = event.emoji.native;
     if (this.formGroup.value.content) {
       this.formGroup.patchValue({
         content: this.formGroup.value.content.slice(0, this.selectArea_start) + icon_emoji + this.formGroup.value.content.slice(this.selectArea_end)
