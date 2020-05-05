@@ -103,38 +103,54 @@ namespace Infrastructure.Services
                     else if (activity.ActivityType == "action")
                     {
 
-                        if (page == null)
-                            return;
-                      
-                            var tasks = profiles.Select(x => UserprofileTags(x, activity.Id, activity.ActionType, conn)).ToList();
-                            var limit = 200;
-                            var offset = 0;
-                            var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                            while (subTasks.Any())
+                        var tags = conn.Query<MarketingCampaignActivityFacebookTagRel>(""
+                        + "SELECT * " +
+                       "FROM MarketingCampaignActivityFacebookTagRels rel " +
+                       "where rel.ActivityId = @id" +
+                       "", new { id = activityId }).ToList();  
+
+                        // Get Tagrels in List Userprofiles
+                        var tagss = conn.Query<FacebookUserProfileTagRel>("" +
+                                        "Select rel.* " +
+                                        "From FacebookUserProfileTagRels rel " +
+                                        "Where rel.UserProfileId in @Id ", new { Id = profiles.Select(x => x.Id).ToList() }
+                                        ).ToList();
+                        if (tags.Any())
+                        {
+                            if (activity.ActionType == "add_tags")
                             {
-                                await Task.WhenAll(subTasks);
-                                offset += limit;
-                                subTasks = tasks.Skip(offset).Take(limit).ToList();
+                                foreach (var profile in profiles)
+                                {
+                                    foreach (var tag in tags)
+                                    {
+                                        if (tagss.Any(x => x.TagId == tag.TagId))
+                                            continue;
+                                        profile.TagRels.Add(new FacebookUserProfileTagRel
+                                        {
+                                            TagId = tag.TagId,
+                                            UserProfileId = profile.Id
+                                        });
+                                    }
+
+                                    string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
+                                    await conn.ExecuteAsync(processQuery, profile.TagRels);
+                                }
+
+
                             }
-                        //}
-                        //else if (activity.ActionType == "remove_tags")
-                        //{
+                            else if (activity.ActionType == "remove_tags")
+                            {
+                                var toRemove = tagss.Where(x => tags.Any(s => s.TagId == x.TagId)).ToList();
+                                if (toRemove.Any())
+                                {
+                                    string processQueryDelete = "DELETE FacebookUserProfileTagRels WHERE UserProfileId in @UserProfileId And TagId in @TagId";
+                                    await conn.ExecuteAsync(processQueryDelete, new { UserProfileId = toRemove.Select(x => x.UserProfileId).ToList(), TagId = toRemove.Select(x => x.TagId).ToList() });
+                                }
+                            }
+                        }
 
-                        //    var tagIds = GetTagRels(activityId, conn).Select(x => x.TagId).ToList();
-                        //    if (tagIds == null)
-                        //        return;
-                        //    var tasks = profiles.Select(x => RemoveUserprofileTags(x.Id, tagIds, conn)).ToList();
-                        //    var limit = 200;
-                        //    var offset = 0;
-                        //    var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        //    while (subTasks.Any())
-                        //    {
-                        //        await Task.WhenAll(subTasks);
-                        //        offset += limit;
-                        //        subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        //    }
+                       
 
-                        //}
                     }
                 }
                 catch (Exception e)
@@ -143,6 +159,8 @@ namespace Infrastructure.Services
                 }
             }
         }
+
+
 
         private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid pageId, MarketingCampaignActivity activity,
             SqlConnection conn = null)
@@ -154,8 +172,7 @@ namespace Infrastructure.Services
             builder.Where("us.FbPageId = @PageId ", new { PageId = pageId });
             var iUserprofiles = conn.Query<UserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
             var reltags = GetTagRels(activity.Id, conn).Select(x => x.TagId).ToList();
-
-            if (activity.ActionType == "remove_tags")
+            if ( activity.ActionType == "remove_tags")
             {
                 if (reltags.Count > 0)
                 {
@@ -166,7 +183,7 @@ namespace Infrastructure.Services
 
                 }
             }
-            if (activity.TriggerType == "message_open")
+            if ( activity.TriggerType == "message_open")
             {
                 iUserprofiles = conn.Query<UserProfile>("" +
                              "SELECT us.id , us.PSID , us.Name " +
@@ -177,8 +194,7 @@ namespace Infrastructure.Services
 
             }
             // lấy danh sách userprofiles theo filter
-            var profiles = GetProfilesActivity(activity, pageId, conn);
-
+            var profiles = GetProfilesActivity(activity, pageId, conn);        
             var lstUserProfile = profiles.Where(x => iUserprofiles.Any(s => s.Id == x.Id)).ToList();
 
 
@@ -211,136 +227,87 @@ namespace Infrastructure.Services
                 if (filter.items.Any())
                 {
 
-                    if (filter.items.Any())
+                    var lst = new Dictionary<string, string>();
+                    lst.Add("contains", "Like");
+                    lst.Add("doesnotcontain", "Not Like");
+                    lst.Add("eq", "=");
+                    lst.Add("neq", "!=");
+                    lst.Add("startswith", "Like");
+                    foreach (var item in filter.items)
                     {
-
-                        var lst = filter.items.ToDictionary(x => x.type, x => x);
-                        foreach (var kvp in lst)
+                        DynamicParameters parameters = new DynamicParameters();
+                        foreach (var kvp in lst.Where(x => x.Key == item.formula_type))
                         {
-                            DynamicParameters parameters = new DynamicParameters();
-                            if (kvp.Key == "Name" || kvp.Key == "FirstName" || kvp.Key == "LastName")
+                            if (item.type == "Name" || item.type == "FirstName" || item.type == "LastName" || item.type == "Gender")
                             {
 
-                                switch (kvp.Value.formula_type)
+                                switch (kvp.Key)
                                 {
                                     case "contains":
+                                        parameters.Add($"@{item.type}", "%" + item.formula_value + "%");
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
+                                        break;
                                     case "eq":
-                                        parameters.Add($"@{kvp.Key}", "%" + kvp.Value.formula_value + "%");
-                                        builder.Where($"us.{kvp.Key} Like @{kvp.Key} ", parameters);
+                                        parameters.Add($"@{item.type}", item.formula_value);
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
                                         break;
                                     case "doesnotcontain":
+                                        parameters.Add($"@{item.type}", "%" + item.formula_value + "%");
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
+                                        break;
                                     case "neq":
-                                        parameters.Add($"@{kvp.Key}", "%" + kvp.Value.formula_value + "%");
-                                        builder.Where($"us.{kvp.Key} Not Like @{kvp.Key} ", parameters);
+                                        parameters.Add($"@{item.type}", item.formula_value);
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
                                         break;
                                     case "startswith":
-                                        parameters.Add($"@{kvp.Key}", kvp.Value.formula_value + "%");
-                                        builder.Where($"us.{kvp.Key} Like @{kvp.Key} ", parameters);
+                                        parameters.Add($"@{item.type}", item.formula_value + "%");
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
                                         break;
 
 
                                     default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
                                 }
                                 //}
 
                             }
-                            else if (kvp.Key == "Gender")
+                            else if (item.type == "Tag")
                             {
-                                switch (kvp.Value.formula_type)
-                                {
-
-                                    case "eq":
-                                        builder.Where($"us.{kvp.Key} = @{kvp.Key} ", new { kvp.Value.formula_value });
-                                        break;
-                                    case "neq":
-                                        builder.Where($"us.{kvp.Key} != @{kvp.Key} ", new { kvp.Value.formula_value });
-                                        break;
-                                    default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
-                                }
-                            }
-                            else if (kvp.Key == "Tag")
-                            {
-                                switch (kvp.Value.formula_type)
+                                switch (kvp.Key)
                                 {
 
                                     case "eq":
                                         builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
                                         builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
-                                        builder.Where("tag.Name = @TagName ", new { TagName = kvp.Value.formula_value });
+                                        builder.Where($"tag.Name {kvp.Value} @TagName ", new { TagName = item.formula_value });
                                         break;
                                     case "neq":
                                         builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
                                         builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
-                                        builder.Where("tag.Name != @TagName ", new { TagName = kvp.Value.formula_value });
+                                        builder.Where($"tag.Name {kvp.Value} @TagName ", new { TagName = item.formula_value });
                                         break;
                                     default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
                                 }
                             }
-
                         }
 
 
-
                     }
+
 
 
                 }
             }
 
             var iUserprofiles = conn.Query<FacebookUserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
-
             return iUserprofiles;
         }
 
-     
-
-        private async Task UserprofileTags(FacebookUserProfile profile, Guid activityId, string actionType,
-            SqlConnection conn = null )
-        {
-            var tags = conn.Query<MarketingCampaignActivityFacebookTagRel>(""
-               + "SELECT * " +
-                       "FROM MarketingCampaignActivityFacebookTagRels rel " +
-                       "where rel.ActivityId = @id" +
-                       "", new { id = activityId }).ToList();
-            if (actionType == "add_tags")
-            {
-                if (tags.Any())
-                {
-                    foreach (var tag in tags)
-                    {
-                        if (profile.TagRels.Any(x => x.TagId == tag.TagId))
-                            continue;
-                        profile.TagRels.Add(new FacebookUserProfileTagRel
-                        {
-                            TagId = tag.TagId,
-                            UserProfileId = profile.Id
-                        });
-
-                    }
-                    string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
-                    await conn.ExecuteAsync(processQuery, profile.TagRels);
-
-                }
-
-            }
-            else if(actionType == "remove_tags")
-            {
-                if (tags.Any())
-                {
-                    var tagids = tags.Select(x => x.TagId).ToList();
-                    await conn.ExecuteAsync("DELETE FacebookUserProfileTagRels WHERE UserProfileId = @UserProfileId AND TagId in @TagIds ", new { UserProfileId = profile.Id, TagIds = tagids });
-                }
-                    
-               
-            }
-           
 
 
-        }
-      
+
+
 
         public object GetMessageForSendApi(SqlConnection conn, Guid messageId)
         {
@@ -433,9 +400,6 @@ namespace Infrastructure.Services
             public Guid Id { get; set; }
             public string PSID { get; set; }
             public string Name { get; set; }
-
-
-
         }
         public class SendFacebookMessageReponse
         {

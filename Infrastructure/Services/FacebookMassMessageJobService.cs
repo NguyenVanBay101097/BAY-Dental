@@ -78,12 +78,14 @@ namespace Infrastructure.Services
             }
         }
         private IEnumerable<FacebookUserProfile> GetProfilesSendMessage(FacebookMassMessaging self, FacebookPage page, SqlConnection conn = null)
+        
         {
 
             //Lấy ra những profiles sẽ gửi message
             var builder = new SqlBuilder();
             var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM FacebookUserProfiles us /**leftjoin**/ /**where**/ /**orderby**/ ");
             builder.Select("us.* ");
+            
             builder.Where("us.FbPageId = @pageId ", new { pageId = page.Id });
 
             if (!string.IsNullOrEmpty(self.AudienceFilter))
@@ -92,74 +94,74 @@ namespace Infrastructure.Services
                 if (filter.items.Any())
                 {
 
-                    var lst = filter.items.ToDictionary(x => x.type,x=>x);                 
-                        foreach (var kvp in lst)
+                    var lst = new Dictionary<string, string>();
+                    lst.Add("contains", "Like");
+                    lst.Add("doesnotcontain", "Not Like");
+                    lst.Add("eq", "=");
+                    lst.Add("neq", "!=");
+                    lst.Add("startswith", "Like");
+                    foreach (var item in filter.items)
+                    {
+                        DynamicParameters parameters = new DynamicParameters();
+                        foreach (var kvp in lst.Where(x => x.Key == item.formula_type))
                         {
-                            DynamicParameters parameters = new DynamicParameters();
-                            if (kvp.Key == "Name" || kvp.Key == "FirstName" || kvp.Key == "LastName")
+                            if (item.type == "Name" || item.type == "FirstName" || item.type == "LastName" || item.type == "Gender")
                             {
 
-                                switch (kvp.Value.formula_type)
+                                switch (kvp.Key)
                                 {
                                     case "contains":
+                                        parameters.Add($"@{item.type}", "%" + item.formula_value + "%");
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
+                                        break;
                                     case "eq":
-                                        parameters.Add($"@{kvp.Key}", "%" + kvp.Value.formula_value + "%");
-                                        builder.Where($"us.{kvp.Key} Like @{kvp.Key} ", parameters);
+                                        parameters.Add($"@{item.type}" , item.formula_value);
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
                                         break;
                                     case "doesnotcontain":
+                                        parameters.Add($"@{item.type}", "%" + item.formula_value + "%");
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
+                                        break;
                                     case "neq":
-                                        parameters.Add($"@{kvp.Key}", "%" + kvp.Value.formula_value + "%");
-                                        builder.Where($"us.{kvp.Key} Not Like @{kvp.Key} ", parameters);
+                                        parameters.Add($"@{item.type}", item.formula_value);
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
                                         break;
                                     case "startswith":
-                                        parameters.Add($"@{kvp.Key}", kvp.Value.formula_value + "%");
-                                        builder.Where($"us.{kvp.Key} Like @{kvp.Key} ", parameters);
+                                        parameters.Add($"@{item.type}" , item.formula_value + "%");
+                                        builder.Where($"us.{item.type} {kvp.Value} @{item.type} ", parameters);
                                         break;
 
 
                                     default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
                                 }
                                 //}
 
                             }
-                            else if (kvp.Key == "Gender")
+                            else if (item.type == "Tag")
                             {
-                                switch (kvp.Value.formula_type)
-                                {
-
-                                    case "eq":
-                                        builder.Where($"us.{kvp.Key} = @{kvp.Key} ", new { kvp.Value.formula_value });
-                                        break;
-                                    case "neq":
-                                        builder.Where($"us.{kvp.Key} != @{kvp.Key} ", new { kvp.Value.formula_value });
-                                        break;
-                                    default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
-                                }
-                            }
-                            else if (kvp.Key == "Tag")
-                            {
-                                switch (kvp.Value.formula_type)
+                                switch (kvp.Key)
                                 {
 
                                     case "eq":
                                         builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
                                         builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
-                                        builder.Where("tag.Name = @TagName ", new { TagName = kvp.Value.formula_value });
+                                        builder.Where($"tag.Name {kvp.Value} @TagName ", new { TagName = item.formula_value });
                                         break;
                                     case "neq":
                                         builder.LeftJoin("FacebookUserProfileTagRels as rel  On rel.UserProfileId = us.Id ");
                                         builder.LeftJoin("FacebookTags tag ON tag.Id = rel.TagId ");
-                                        builder.Where("tag.Name != @TagName ", new { TagName = kvp.Value.formula_value });
+                                        builder.Where($"tag.Name {kvp.Value} @TagName ", new { TagName = item.formula_value });
                                         break;
                                     default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", kvp.Value.formula_type));
+                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", item.formula_type));
                                 }
                             }
-
                         }
-                    
+                      
+
+                    }
+
 
 
                 }
