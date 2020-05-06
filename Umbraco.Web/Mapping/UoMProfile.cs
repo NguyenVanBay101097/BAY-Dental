@@ -14,6 +14,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<UoM, UoMBasic>().ReverseMap();
 
             CreateMap<UoM, UoMSimple>();
+            CreateMap<UoMSave, UoM>();
+            CreateMap<UoM, UoMDisplay>();
         }
     }
 }
