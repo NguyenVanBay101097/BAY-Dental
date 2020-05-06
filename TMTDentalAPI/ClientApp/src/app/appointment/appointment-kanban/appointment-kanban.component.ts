@@ -158,7 +158,6 @@ export class AppointmentKanbanComponent implements OnInit {
 
       this.appointmentByDate[key].push(item);
     }
-    // console.log(this.appointmentByDate);
   }
 
   getDateList() {
