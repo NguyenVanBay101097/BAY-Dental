@@ -30,6 +30,10 @@
                                 <i class="fas fa-mobile-alt"></i>
                                 {{appointment.partnerPhone}}
                             </small>
+                            <strong class="o_kanban_record_title" *ngIf="appointment.doctorName">
+                                <i class="fas fa-user-md mr-1"></i> 
+                                {{appointment.doctorName}}
+                            </strong>
                             <div class="o_kanban_record_description" *ngIf="appointment.note">{{appointment.note}}
                             </div>
                         </div>
