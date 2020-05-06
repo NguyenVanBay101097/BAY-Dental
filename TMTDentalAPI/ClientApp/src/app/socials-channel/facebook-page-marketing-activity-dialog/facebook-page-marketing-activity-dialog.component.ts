@@ -19,6 +19,10 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
   parentId: string;
   triggerType: string;
   //
+  showPluginTextarea: boolean = false;
+  selectArea_start: number;
+  selectArea_end: number;
+  //
   activity: any;
   activities: any;
   audience_filter: any;
@@ -34,18 +38,19 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
+      actionType: '',
       activityType: 'message',
-      intervalType: 'days',
+      audienceFilter: null,
+      buttons: this.fb.array([]),
       intervalNumber: 1,
+      intervalType: 'days',
+      name: ['', Validators.required],
+      parentId: null,
+      tagIds: [],
       template: 'text',
       text: '',
       triggerType: 'begin',
-      parentId: null,
       campaignId: this.campaignId,
-      actionType: '',
-      tagIds: [],
-      buttons: this.fb.array([])
     });
 
     if (this.activityId) {
@@ -53,11 +58,16 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.activity = res;
         this.formGroup.patchValue(this.activity);
         this.selectedTags = this.activity.tags;
+        this.audience_filter = this.activity.audienceFilter;
+        this.showAudienceFilter = true;
+        // console.log(this.activity); //
         // console.log(this.formGroup);  //
-        // console.log(res); //
+        // console.log(this.audience_filter);  //
       }, err => {
         console.log(err);
       });
+    } else {
+      this.showAudienceFilter = true;
     }
     if (this.parentId) {
       this.formGroup.patchValue({
@@ -95,8 +105,6 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
         this.formGroup.get('text').setValue(newVal);
       }
     });
-
-    this.showAudienceFilter = true;
   }
 
   get activityTypeValue() {
@@ -121,10 +129,16 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     this.formGroup.patchValue({
       tagIds: tagIds
     });
+    //
+    this.formGroup.patchValue({
+      audienceFilter: this.audience_filter
+    });
+    //
     var value = this.formGroup.value;
+    // console.log(value);
     
     if (this.activityId) {
-      console.log(this.activityId);
+      // console.log(this.activityId);
       this.marketingCampaignActivitiesService.put(this.activityId, value).subscribe(res => {
         this.notificationService.show({
           content: 'Lưu thành công',
@@ -163,6 +177,30 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     } else {
       return limit;
     }
+  }
+
+  selectArea(event) {
+    this.selectArea_start = event.target.selectionStart;
+    this.selectArea_end = event.target.selectionEnd;
+  }
+  addContentPluginTextarea(event) {  
+    if (this.formGroup.value.text) {
+      this.formGroup.patchValue({
+        text: this.formGroup.value.text.slice(0, this.selectArea_start) + event + this.formGroup.value.text.slice(this.selectArea_end)
+      });
+      this.selectArea_start = this.selectArea_start + event.length;
+      this.selectArea_end = this.selectArea_start;
+    } else {
+      this.formGroup.patchValue({
+        text: event
+      });
+    }
+  }
+  showEmoji() {
+    this.showPluginTextarea = true;
+  }
+  hideEmoji() {
+    this.showPluginTextarea = false;
   }
 
   get templateValue() {

@@ -1,4 +1,5 @@
 .plugin-textarea {
+    z-index: 2;
     right: 0; 
     font-size: 0.8rem; 
     background: white;

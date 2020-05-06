@@ -57,10 +57,15 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td style="width:100%">
-                                    <div class="position-relative mb-2">
-                                        <textarea autosize class="form-control activity-text" formControlName="text">
+                                    <div class="position-relative mb-2" (clickOutside)=hideEmoji()>
+                                        <textarea autosize class="form-control activity-text" formControlName="text" 
+                                            (click)="selectArea($event)" 
+                                            (keyup)="selectArea($event)"
+                                            (focus)="showEmoji()">
                                         </textarea>
                                         <span class="text-number text-warning">{{getLimitText() | number}}</span>
+                                        <app-facebook-plugin-textarea *ngIf="showPluginTextarea"
+                                            [num_CharLeft]="getLimitText() | number" (content_send)="addContentPluginTextarea($event)"></app-facebook-plugin-textarea>
                                     </div>
                                     <!-- <div *ngIf="buttonsFormArray.length" class="button-editor-wrapper mb-2">
                                         <div *ngFor="let c of buttonsFormArray.controls;let i = index"

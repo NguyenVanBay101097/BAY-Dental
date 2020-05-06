@@ -296,7 +296,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       if (activities_length == 0) {
         this.activities = activities_sort;
         this.addMarginLeft();
-        console.log(this.activities);
+        // console.log(this.activities);
       }
     }
   }
