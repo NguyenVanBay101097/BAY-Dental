@@ -36,7 +36,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
                                         formControlName="color" />
-                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.color}}</span>
+                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.color}}&nbsp;</span>
                                 </td>
                             </tr>
                             <tr>
@@ -48,7 +48,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <textarea type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
                                         formControlName="note"></textarea>
-                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.note}}</span>
+                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.note}}&nbsp;</span>
                                 </td>
                             </tr>
                         </tbody>
