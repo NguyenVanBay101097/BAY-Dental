@@ -20,9 +20,7 @@ export class UomCrUpComponent implements OnInit {
   title: string;
   filterdCategories: UoMCategoryBasic[] = [];
   uom: UoMDisplay;
-  flag = false;
-  noteBigger = false;
-  noteSmaller = false;
+
   constructor(
     private uoMService: UomService,
     private activeModal: NgbActiveModal,
@@ -66,30 +64,10 @@ export class UomCrUpComponent implements OnInit {
     }
   }
 
-
-  chooesUoMType(value) {
-    if (value == 'reference') {
-      this.flag = false
-      this.noteSmaller = false;
-      this.noteBigger = false;
-    }
-    if (value == 'bigger') {
-      this.flag = true
-      this.noteBigger = true;
-      this.noteSmaller = false;
-    }
-    if (value == 'smaller') {
-      this.flag = true
-      this.noteSmaller = true;
-      this.noteBigger = false;
-    }
-  }
-
   loadFormApi() {
     this.uoMService.get(this.id).subscribe(
       result => {
         this.formGroup.patchValue(result);
-        this.chooesUoMType(result.uomType);
       }
     )
   }
