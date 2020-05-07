@@ -29,8 +29,12 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            val = _uoMService.CheckRoundingAndCalculateFactor(val);
+            if (val.FactorInv >= 0 && val.UOMType == "bigger")
+            {
+                val.Factor = 1 / val.FactorInv.Value;
+            }
             var uom = _mapper.Map<UoM>(val);
+            _uoMService.CheckRoundingAndCalculateFactor(uom);
             var res = await _uoMService.CreateAsync(uom);
             return Ok(res);
         }
@@ -43,8 +47,12 @@ namespace TMTDentalAPI.Controllers
             var uom = await _uoMService.GetByIdAsync(id);
             if (uom == null)
                 return NotFound();
-            val = _uoMService.CheckRoundingAndCalculateFactor(val);
+            if (val.FactorInv >= 0 && val.UOMType == "bigger")
+            {
+                val.Factor = 1 / val.FactorInv.Value;
+            }
             uom = _mapper.Map(val, uom);
+            _uoMService.CheckRoundingAndCalculateFactor(uom);
             await _uoMService.UpdateAsync(uom);
 
             return NoContent();

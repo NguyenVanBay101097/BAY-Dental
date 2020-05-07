@@ -21,19 +21,17 @@ namespace Infrastructure.Services
         {
         }
 
-        public UoMSave CheckRoundingAndCalculateFactor(UoMSave uom)
+        public void CheckRoundingAndCalculateFactor(UoM uom)
         {
             if (uom.Rounding < 0)
             {
                 throw new Exception("Thuộc tính 'làm tròn' phải lớn hơn không");
             }
-            if (!uom.FactorInv.HasValue || uom.FactorInv <= 0)
+            if (uom.Factor <= 0)
             {
                 throw new Exception("Thuộc tính 'tỉ lệ' phải lớn hơn không");
             }
-            if (uom.UOMType == "bigger")
-                uom.Factor = 1 / uom.FactorInv.Value;
-            return uom;
+            
         }
 
         public async Task<UoM> DefaultUOM()
