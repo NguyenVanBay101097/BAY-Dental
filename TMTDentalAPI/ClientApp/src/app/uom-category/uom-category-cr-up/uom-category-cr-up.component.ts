@@ -19,7 +19,6 @@ export class UomCategoryCrUpComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private uoMCategoryService: UomCategoryService,
-    private activeRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -38,6 +37,10 @@ export class UomCategoryCrUpComponent implements OnInit {
         this.formGroup.patchValue(result);
       }
     )
+  }
+
+  onCancel() {
+    this.activeModal.close();
   }
 
   onSave() {
