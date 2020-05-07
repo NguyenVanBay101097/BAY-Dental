@@ -225,7 +225,6 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     val.priceSubtotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
     val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
-    console.log(val);
     this.activeModal.close(val);
   }
 
