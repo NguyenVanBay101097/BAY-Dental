@@ -96,6 +96,7 @@ import { ServiceCardOrdersModule } from './service-card-orders/service-card-orde
 import { ServiceCardCardsModule } from './service-card-cards/service-card-cards.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { UomCategoryModule } from './uom-category/uom-category.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -106,7 +107,7 @@ registerLocaleData(localeVi, 'vi');
 @NgModule({
   declarations: [
     AppComponent,
-    PrintLayoutComponent
+    PrintLayoutComponent,
   ],
   imports: [
     BrowserModule,
@@ -198,7 +199,10 @@ registerLocaleData(localeVi, 'vi');
     ServiceCardOrdersModule,
     ServiceCardCardsModule,
     PickerModule,
-    EmojiModule
+    EmojiModule,
+    // thắng import
+    UomCategoryModule
+    // end
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
