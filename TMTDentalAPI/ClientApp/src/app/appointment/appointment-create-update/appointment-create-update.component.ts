@@ -460,7 +460,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         rs => {
           this.formCreate.patchValue(rs);
           if (this.timeConfig == null) {
-            let date = new Date();
+            let date = new Date(rs.date);
             this.formCreate.get('dateObj').patchValue(date);
           }
 

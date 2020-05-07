@@ -51,7 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public AppointmentDisplay()
         {
-            Date = DateTime.Today;
+            Date = DateTime.Now;
             State = "confirmed";
         }
 
