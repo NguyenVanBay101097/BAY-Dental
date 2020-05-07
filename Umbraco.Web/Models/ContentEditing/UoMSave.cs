@@ -15,12 +15,15 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public string Name { get; set; }
 
+        //làm tròn
         public decimal Rounding { get; set; }
 
         public bool Active { get; set; }
 
+        //ti lệ
         public decimal Factor { get; set; }
 
+        //loại
         public string UOMType { get; set; }
 
         public Guid CategoryId { get; set; }

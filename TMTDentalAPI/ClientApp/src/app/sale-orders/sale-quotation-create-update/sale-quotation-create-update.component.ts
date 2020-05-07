@@ -29,6 +29,8 @@ import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
+import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 
 @Component({
   selector: 'app-sale-quotation-create-update',
@@ -43,17 +45,29 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   id: string;
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
+  filteredEmployees: EmployeeSimple[] = [];
   filteredPricelists: ProductPriceListBasic[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
 
-  constructor(private fb: FormBuilder, private partnerService: PartnerService,
-    private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
-    private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
-    private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService) {
+  constructor(
+    private fb: FormBuilder,
+    private partnerService: PartnerService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private saleOrderService: SaleOrderService,
+    private productService: ProductService,
+    private intlService: IntlService,
+    private modalService: NgbModal,
+    private router: Router,
+    private notificationService: NotificationService,
+    private cardCardService: CardCardService,
+    private pricelistService: PriceListService,
+    private employeeService:EmployeeService
+    ) {
   }
 
   ngOnInit() {
@@ -88,6 +102,15 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     ).subscribe(result => {
       this.filteredUsers = result;
       this.userCbx.loading = false;
+    });
+
+    this.employeeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.employeeCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result;
+      this.employeeCbx.loading = false;
     });
 
     // this.pricelistCbx.filterChange.asObservable().pipe(
@@ -229,6 +252,12 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     var val = new UserPaged();
     val.search = filter;
     return this.userService.autocompleteSimple(val);
+  }
+
+  searchEmployees(filter?: string) {
+    var val = new EmployeePaged();
+    val.search = filter;
+    return this.employeeService.getEmployeeSimpleList(val);
   }
 
   searchPricelists(filter?: string) {
