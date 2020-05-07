@@ -76,5 +76,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("Autocomplete")]
+        public async Task<IActionResult> Autocomplete(UoMCategoryPaged val)
+        {
+            var res = await _uoMCategoryService.GetAutocompleteAsync(val);
+            return Ok(res);
+        }
+
     }
 }

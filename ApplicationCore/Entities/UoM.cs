@@ -23,7 +23,7 @@ namespace ApplicationCore.Entities
 
         public bool Active { get; set; }
 
-        public decimal Factor { get; set; }
+        public double Factor { get; set; }
 
         public string UOMType { get; set; }
 

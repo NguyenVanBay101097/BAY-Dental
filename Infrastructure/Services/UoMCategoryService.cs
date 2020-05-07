@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,10 +16,32 @@ namespace Infrastructure.Services
 {
     public class UoMCategoryService : BaseService<UoMCategory>, IUoMCategoryService
     {
-
-        public UoMCategoryService(IAsyncRepository<UoMCategory> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public UoMCategoryService(IAsyncRepository<UoMCategory> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<UoMCategoryBasic>> GetAutocompleteAsync(UoMCategoryPaged val)
+        {
+            var query = GetQueryPaged(val);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            return _mapper.Map<IEnumerable<UoMCategoryBasic>>(items);
+        }
+
+        private IQueryable<UoMCategory> GetQueryPaged(UoMCategoryPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            query = query.OrderBy(s => s.DateCreated);
+            return query;
         }
 
         public async Task<PagedResult2<UoMCategory>> GetPagedResultAsync(UoMCategoryPaged val)

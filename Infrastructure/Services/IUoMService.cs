@@ -11,8 +11,6 @@ namespace Infrastructure.Services
     public interface IUoMService: IBaseService<UoM>
     {
         Task<UoM> DefaultUOM();
-        Task<PagedResult2<UoM>> GetPagedResultAsync(UoMPaged val);
-
-        void CheckRoundingAndCalculateFactor(UoM uom);
+        Task<PagedResult2<UoMBasic>> GetPagedResultAsync(UoMPaged val);
     }
 }

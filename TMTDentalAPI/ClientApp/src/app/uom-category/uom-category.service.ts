@@ -48,4 +48,8 @@ export class UomCategoryService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
+  autocomplete(val: UoMCategoryPaged): Observable<UoMCategoryBasic[]> {
+    return this.http.post<UoMCategoryBasic[]>(this.base_api + this.apiUrl + '/autocomplete', val);
+}
+
 }

@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,22 +17,35 @@ namespace Infrastructure.Services
     public class UoMService : BaseService<UoM>, IUoMService
     {
 
-        public UoMService(IAsyncRepository<UoM> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public UoMService(IAsyncRepository<UoM> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
-        public void CheckRoundingAndCalculateFactor(UoM uom)
+        public override Task<IEnumerable<UoM>> CreateAsync(IEnumerable<UoM> entities)
         {
-            if (uom.Rounding < 0)
+            CheckRoundingAndFactor(entities);
+            return base.CreateAsync(entities);
+        }
+
+        public override Task UpdateAsync(IEnumerable<UoM> entities)
+        {
+            CheckRoundingAndFactor(entities);
+            return base.UpdateAsync(entities);
+        }
+
+        public void CheckRoundingAndFactor(IEnumerable<UoM> self)
+        {
+            foreach (var uom in self)
             {
-                throw new Exception("Thuộc tính 'làm tròn' phải lớn hơn không");
+                if (uom.Rounding <= 0)
+                    throw new Exception("Thuộc tính 'làm tròn' phải lớn hơn không");
+
+                if (uom.Factor == 0)
+                    throw new Exception("Thuộc tính 'tỉ lệ' phải khác không");
             }
-            if (uom.Factor <= 0)
-            {
-                throw new Exception("Thuộc tính 'tỉ lệ' phải lớn hơn không");
-            }
-            
         }
 
         public async Task<UoM> DefaultUOM()
@@ -40,7 +54,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<PagedResult2<UoM>> GetPagedResultAsync(UoMPaged val)
+        public async Task<PagedResult2<UoMBasic>> GetPagedResultAsync(UoMPaged val)
         {
             ISpecification<UoM> spec = new InitialSpecification<UoM>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
@@ -48,10 +62,19 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<UoM>(x => x.Name.Contains(val.Search)));
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated), limit: val.Limit, offSet: val.Offset);
-            var items = await query.ToListAsync();
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            //var items = await _mapper.ProjectTo<UoMBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var items = await query.Select(x => new UoMBasic
+            {
+                Id = x.Id,
+                Active = x.Active,
+                CateName = x.Category.Name,
+                Name= x.Name,
+                UOMType = x.UOMType
+            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
-            return new PagedResult2<UoM>(totalItems, val.Offset, val.Limit)
+
+            return new PagedResult2<UoMBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };

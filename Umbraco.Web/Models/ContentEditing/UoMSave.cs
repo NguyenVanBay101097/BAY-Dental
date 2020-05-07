@@ -21,7 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Active { get; set; }
 
         //ti lệ
-        public decimal Factor { get; set; }
+        public double Factor { get; set; }
+        public double? FactorInv { get; set; }
 
         //loại
         public string UOMType { get; set; }
@@ -30,6 +31,5 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string MeasureType { get; set; }
 
-        public decimal? FactorInv { get; set; }
     }
 }

@@ -97,6 +97,7 @@ import { ServiceCardCardsModule } from './service-card-cards/service-card-cards.
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { UomCategoryModule } from './uom-category/uom-category.module';
+import { UomModule } from './uom/uom.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -201,7 +202,8 @@ registerLocaleData(localeVi, 'vi');
     PickerModule,
     EmojiModule,
     // thắng import
-    UomCategoryModule
+    UomCategoryModule,
+    UomModule
     // end
   ],
   providers: [

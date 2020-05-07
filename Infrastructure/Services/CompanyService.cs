@@ -624,7 +624,7 @@ namespace Infrastructure.Services
                         }
                         else if (field_name == "factor")
                         {
-                            uom.Factor = XmlConvert.ToDecimal(field.GetAttribute("eval"));
+                            uom.Factor = XmlConvert.ToDouble(field.GetAttribute("eval"));
                         }
                         else if (field_name == "rounding")
                         {
@@ -633,7 +633,7 @@ namespace Infrastructure.Services
                         else if (field_name == "factor_inv")
                         {
                             uom.UOMType = "bigger";
-                            uom.Factor = 1 / XmlConvert.ToDecimal(field.GetAttribute("eval"));
+                            uom.Factor = 1 / XmlConvert.ToDouble(field.GetAttribute("eval"));
                         }
                         else if (field_name == "uom_type")
                         {

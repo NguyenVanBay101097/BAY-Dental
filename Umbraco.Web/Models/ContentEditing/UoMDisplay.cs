@@ -13,7 +13,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool Active { get; set; }
 
-        public decimal Factor { get; set; }
+        public double Factor { get; set; }
+
+        public double? FactorInv { get; set; }
 
         public string UOMType { get; set; }
 

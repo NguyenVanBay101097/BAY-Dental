@@ -27,32 +27,27 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UoMSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-            if (val.FactorInv >= 0 && val.UOMType == "bigger")
-            {
-                val.Factor = 1 / val.FactorInv.Value;
-            }
             var uom = _mapper.Map<UoM>(val);
-            _uoMService.CheckRoundingAndCalculateFactor(uom);
+            if (val.UOMType == "bigger")
+                uom.Factor = val.FactorInv.HasValue && val.FactorInv.Value != 0 ? 1 / val.FactorInv.Value : 0;
             var res = await _uoMService.CreateAsync(uom);
-            return Ok(res);
+
+            var basic = _mapper.Map<UoMBasic>(res);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, UoMSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
             var uom = await _uoMService.GetByIdAsync(id);
             if (uom == null)
                 return NotFound();
-            if (val.FactorInv >= 0 && val.UOMType == "bigger")
-            {
-                val.Factor = 1 / val.FactorInv.Value;
-            }
+
             uom = _mapper.Map(val, uom);
-            _uoMService.CheckRoundingAndCalculateFactor(uom);
+
+            if (val.UOMType == "bigger")
+                uom.Factor = val.FactorInv.HasValue && val.FactorInv.Value != 0 ? 1 / val.FactorInv.Value : 0;
+
             await _uoMService.UpdateAsync(uom);
 
             return NoContent();
@@ -76,8 +71,9 @@ namespace TMTDentalAPI.Controllers
                 .FirstOrDefaultAsync();
             if (type == null)
                 return NotFound();
-
+            
             var res = _mapper.Map<UoMDisplay>(type);
+            res.FactorInv = res.Factor != 0 ? 1 / res.Factor : 0;
             return Ok(res);
         }
 
