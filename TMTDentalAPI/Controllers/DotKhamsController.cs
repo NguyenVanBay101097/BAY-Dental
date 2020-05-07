@@ -136,6 +136,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultInAppointment(DotKhamAppointmentDefaultGet val)
+        {
+            var res = await _dotKhamService.DefaulGetInAppointment(val);
+            return Ok(res);
+        }
+
+
         [HttpPost("{id}/GetToaThuocs")]
         public async Task<IActionResult> GetToaThuocs(Guid id)
         {

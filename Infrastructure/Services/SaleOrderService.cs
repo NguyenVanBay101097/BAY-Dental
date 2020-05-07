@@ -1851,6 +1851,8 @@ namespace Infrastructure.Services
 
             return invoice_vals;
         }
+
+      
     }
 
     public class SaleOrderSearchPromotionRuleItem

@@ -17,5 +17,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<AppointmentBasic>> SearchRead(AppointmentSearch val);
         Task<PagedResult2<AppointmentBasic>> SearchReadByDate(AppointmentSearchByDate val);
         Task<AppointmentBasic> GetBasic(Guid id);
+        Task checkDotkhamInAppointment(Guid id);
     }
 }

@@ -1,3 +1,4 @@
+
 import { PartnerSimple } from '../partners/partner-simple';
 import { LocaleDateTimeFormats } from '@progress/kendo-angular-intl';
 import { EmployeeSimple } from '../employees/employee';
@@ -76,6 +77,7 @@ export class AppointmentSearchByDate {
     offset: number;
     limit: number;
 }
+
 
 export class SchedulerConfig {
     slotFillWeek: number;//độ dài của 1 event trên ô chứa nó

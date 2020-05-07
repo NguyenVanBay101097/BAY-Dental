@@ -118,6 +118,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SaleOrderId { get; set; }
     }
 
+    public class DotKhamAppointmentDefaultGet
+    {
+        public Guid? InvoiceId { get; set; }
+        public Guid? SaleOrderId { get; set; }
+        public Guid? AppointmentId { get; set; }
+    }
+
     public class ProductWithStepList
     {
         public Guid ProductId { get; set; }

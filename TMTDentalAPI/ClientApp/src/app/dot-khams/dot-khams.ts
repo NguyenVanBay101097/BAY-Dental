@@ -1,3 +1,5 @@
+import { AppointmentBasic } from 'src/app/appointment/appointment';
+import { AppComponent } from './../app.component';
 import { PartnerSimple } from '../partners/partner-simple';
 
 import { UserSimple } from '../users/user-simple';
@@ -6,6 +8,13 @@ import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 export class DotKhamDefaultGet {
     invoiceId: string;
     saleOrderId: string;
+}
+
+export class DotKhamAppointmentDefaultGet
+{
+    invoiceId: string;
+    saleOrderId: string;
+    appointmentId : string;
 }
 
 export class DotKhamBasic {
@@ -49,6 +58,8 @@ export class DotKhamDisplay {
     lines: [];
     saleOrderId: string;
     saleOrder: SaleOrderBasic;
+    appointmentId: string;
+    appointment : AppointmentBasic;
 }
 
 export class DotKhamPaging {

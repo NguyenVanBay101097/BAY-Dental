@@ -143,4 +143,5 @@ export class SaleOrderService {
     getInvoices(id) {
         return this.http.get(this.baseApi + this.apiUrl + `/${id}/GetInvoices`);
     }
+  
 }

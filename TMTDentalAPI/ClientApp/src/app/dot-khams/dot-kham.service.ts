@@ -30,7 +30,9 @@ export class DotKhamService {
     defaultGet(val: DotKhamDefaultGet): Observable<DotKhamDisplay> {
         return this.http.post<DotKhamDisplay>(this.baseApi + this.apiUrl + "/defaultget", val);
     }
-
+    defaultGetAppointment(val: DotKhamDefaultGet): Observable<DotKhamDisplay> {
+        return this.http.post<DotKhamDisplay>(this.baseApi + this.apiUrl + "/DefaultInAppointment", val);
+    }
     get(id): Observable<DotKhamDisplay> {
         return this.http.get<DotKhamDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
