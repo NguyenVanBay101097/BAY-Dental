@@ -16,7 +16,7 @@ export class UomCategoryListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = 'Đợn vị tính';
+  title = 'Nhóm đơn vị tính';
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();

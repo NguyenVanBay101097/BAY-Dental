@@ -12,5 +12,7 @@ namespace Infrastructure.Services
     {
         Task<UoM> DefaultUOM();
         Task<PagedResult2<UoM>> GetPagedResultAsync(UoMPaged val);
+
+        UoMSave CheckRoundingAndCalculateFactor(UoMSave uom);
     }
 }

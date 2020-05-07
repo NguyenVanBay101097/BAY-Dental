@@ -29,5 +29,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CategoryId { get; set; }
 
         public string MeasureType { get; set; }
+
+        public decimal? FactorInv { get; set; }
     }
 }

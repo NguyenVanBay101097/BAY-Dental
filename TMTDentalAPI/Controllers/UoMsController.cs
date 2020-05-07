@@ -29,8 +29,9 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            var type = _mapper.Map<UoM>(val);
-            var res = await _uoMService.CreateAsync(type);
+            val = _uoMService.CheckRoundingAndCalculateFactor(val);
+            var uom = _mapper.Map<UoM>(val);
+            var res = await _uoMService.CreateAsync(uom);
             return Ok(res);
         }
 
@@ -39,15 +40,16 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var type = await _uoMService.GetByIdAsync(id);
-            if (type == null)
+            var uom = await _uoMService.GetByIdAsync(id);
+            if (uom == null)
                 return NotFound();
-
-            type = _mapper.Map(val, type);
-            await _uoMService.UpdateAsync(type);
+            val = _uoMService.CheckRoundingAndCalculateFactor(val);
+            uom = _mapper.Map(val, uom);
+            await _uoMService.UpdateAsync(uom);
 
             return NoContent();
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
