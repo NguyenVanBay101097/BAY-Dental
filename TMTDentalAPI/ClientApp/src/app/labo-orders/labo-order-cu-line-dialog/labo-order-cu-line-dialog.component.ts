@@ -91,7 +91,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       this.loadFilteredProducts();
       this.loadToothCategories();
     });
-
+    
   }
 
   onSelected(tooth: ToothDisplay) {

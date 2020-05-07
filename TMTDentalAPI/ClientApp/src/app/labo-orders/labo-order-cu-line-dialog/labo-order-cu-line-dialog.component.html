@@ -18,10 +18,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredProducts" ngbAutofocus [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [data]="filteredProducts" [class.d-none]="lineState == 'purchase'"
+                                        ngbAutofocus [textField]="'name'" [filterable]="true"
                                         (valueChange)="onChangeProduct($event)" #productCbx formControlName="product"
                                         [valueField]="'id'">
                                     </kendo-combobox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.product ? line.product.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -31,7 +34,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="color" />
+                                    <input type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
+                                        formControlName="color" />
+                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.color}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -41,7 +46,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                    <textarea type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
+                                        formControlName="note"></textarea>
+                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.note}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -55,8 +62,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="productQty">
+                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'"
+                                        [format]="'n0'" formControlName="productQty">
                                     </kendo-numerictextbox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.productQty | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -66,8 +76,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="priceUnit">
+                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'"
+                                        [format]="'n0'" formControlName="priceUnit">
                                     </kendo-numerictextbox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.priceUnit | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -93,10 +106,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [data]="filteredToothCategories"
+                                        [class.d-none]="lineState == 'purchase'" [textField]="'name'" [filterable]="true"
                                         formControlName="toothCategory" (valueChange)="onChangeToothCategory($event)"
                                         #toothCategoryCbx [valueField]="'id'">
                                     </kendo-combobox>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
                                 </td>
                             </tr>
                         </tbody>
