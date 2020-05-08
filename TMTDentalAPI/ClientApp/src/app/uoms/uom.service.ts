@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UoMCategoryBasic } from '../uom-category/uom-category.service';
+import { UoMCategoryBasic } from '../uom-categories/uom-category.service';
 import { Observable } from 'rxjs';
 
 export class UoMPaged {

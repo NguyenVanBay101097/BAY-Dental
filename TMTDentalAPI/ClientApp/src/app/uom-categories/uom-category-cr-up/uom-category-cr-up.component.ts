@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UomCategoryService, UoMCategoryBasic } from '../uom-category.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-uom-category-cr-up',

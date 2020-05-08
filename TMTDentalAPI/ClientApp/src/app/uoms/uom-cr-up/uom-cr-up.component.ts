@@ -4,7 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { UoMCategoryBasic, UoMCategoryPaged, UomCategoryService } from 'src/app/uom-category/uom-category.service';
+import { UoMCategoryBasic, UoMCategoryPaged, UomCategoryService } from 'src/app/uom-categories/uom-category.service';
 
 @Component({
   selector: 'app-uom-cr-up',

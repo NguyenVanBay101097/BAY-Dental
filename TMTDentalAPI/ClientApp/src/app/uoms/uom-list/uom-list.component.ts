@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { UoMCategoryPaged } from 'src/app/uom-category/uom-category.service';
+import { UoMCategoryPaged } from 'src/app/uom-categories/uom-category.service';
 import { UoMPaged, UomService } from '../uom.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UomCrUpComponent } from '../uom-cr-up/uom-cr-up.component';

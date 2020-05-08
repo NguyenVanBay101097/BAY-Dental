@@ -96,8 +96,8 @@ import { ServiceCardOrdersModule } from './service-card-orders/service-card-orde
 import { ServiceCardCardsModule } from './service-card-cards/service-card-cards.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
-import { UomCategoryModule } from './uom-category/uom-category.module';
-import { UomModule } from './uom/uom.module';
+import { UomCategoryModule } from './uom-categories/uom-category.module';
+import { UomModule } from './uoms/uom.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
