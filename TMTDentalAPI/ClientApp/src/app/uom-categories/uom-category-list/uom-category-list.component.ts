@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { UomCategoryService, UoMCategoryPaged } from '../uom-category.service';
 import { UomCategoryCrUpComponent } from '../uom-category-cr-up/uom-category-cr-up.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -38,6 +38,10 @@ export class UomCategoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
+  }
 
   loadDataFromApi() {
     this.loading = true;

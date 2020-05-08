@@ -37,7 +37,7 @@ export class UomCategoryService {
   }
 
   getPaged(value): Observable<UoMCategoryPaging> {
-    return this.http.get<UoMCategoryPaging>(this.base_api + this.apiUrl);
+    return this.http.get<UoMCategoryPaging>(this.base_api + this.apiUrl, { params: value });
   }
 
   get(id): Observable<UoMCategoryBasic> {
@@ -50,6 +50,6 @@ export class UomCategoryService {
 
   autocomplete(val: UoMCategoryPaged): Observable<UoMCategoryBasic[]> {
     return this.http.post<UoMCategoryBasic[]>(this.base_api + this.apiUrl + '/autocomplete', val);
-}
+  }
 
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { UoMCategoryPaged } from 'src/app/uom-categories/uom-category.service';
 import { UoMPaged, UomService } from '../uom.service';
@@ -15,7 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UomListComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 20;
+  limit = 5;
   skip = 0;
   title = 'Đơn vị tính';
   loading = false;
@@ -34,7 +34,6 @@ export class UomListComponent implements OnInit {
       .subscribe(value => {
         this.loadDataFromApi();
       });
-
     this.loadDataFromApi();
   }
 
@@ -66,6 +65,11 @@ export class UomListComponent implements OnInit {
       this.loadDataFromApi();
     }, () => {
     });
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
   }
 
   editItem(item) {
