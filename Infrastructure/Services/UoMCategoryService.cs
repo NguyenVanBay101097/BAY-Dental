@@ -44,7 +44,7 @@ namespace Infrastructure.Services
             return query;
         }
 
-        public async Task<PagedResult2<UoMCategory>> GetPagedResultAsync(UoMCategoryPaged val)
+        public async Task<PagedResult2<UoMCategoryBasic>> GetPagedResultAsync(UoMCategoryPaged val)
         {
             ISpecification<UoMCategory> spec = new InitialSpecification<UoMCategory>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
@@ -52,10 +52,10 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<UoMCategory>(x => x.Name.Contains(val.Search)));
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated), limit: val.Limit, offSet: val.Offset);
-            var items = await query.ToListAsync();
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var items = await _mapper.ProjectTo<UoMCategoryBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
-            return new PagedResult2<UoMCategory>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<UoMCategoryBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };

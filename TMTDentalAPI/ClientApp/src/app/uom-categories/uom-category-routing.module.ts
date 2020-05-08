@@ -4,7 +4,7 @@ import { UomCategoryListComponent } from './uom-category-list/uom-category-list.
 
 const routes: Routes = [
   {
-    path: 'uom-category', component: UomCategoryListComponent
+    path: 'uom-categories', component: UomCategoryListComponent
   }
 ];
 

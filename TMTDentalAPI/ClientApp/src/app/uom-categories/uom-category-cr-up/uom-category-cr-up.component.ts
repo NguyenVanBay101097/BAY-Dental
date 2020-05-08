@@ -39,7 +39,7 @@ export class UomCategoryCrUpComponent implements OnInit {
   }
 
   onCancel() {
-    this.activeModal.close();
+    this.activeModal.dismiss();
   }
 
   onSave() {

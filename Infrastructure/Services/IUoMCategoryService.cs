@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface IUoMCategoryService : IBaseService<UoMCategory>
     {
-        Task<PagedResult2<UoMCategory>> GetPagedResultAsync(UoMCategoryPaged val);
+        Task<PagedResult2<UoMCategoryBasic>> GetPagedResultAsync(UoMCategoryPaged val);
         Task<IEnumerable<UoMCategoryBasic>> GetAutocompleteAsync(UoMCategoryPaged val);
     }
 }

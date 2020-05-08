@@ -56,24 +56,15 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<UoMBasic>> GetPagedResultAsync(UoMPaged val)
         {
-            ISpecification<UoM> spec = new InitialSpecification<UoM>(x => true);
+            ISpecification<UoM> spec = new InitialSpecification<UoM>(x => x.Active == true);
             if (!string.IsNullOrEmpty(val.Search))
             {
                 spec = spec.And(new InitialSpecification<UoM>(x => x.Name.Contains(val.Search)));
             }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-            //var items = await _mapper.ProjectTo<UoMBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
-            var items = await query.Select(x => new UoMBasic
-            {
-                Id = x.Id,
-                Active = x.Active,
-                CateName = x.Category.Name,
-                Name= x.Name,
-                UOMType = x.UOMType
-            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await _mapper.ProjectTo<UoMBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
-
             return new PagedResult2<UoMBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items

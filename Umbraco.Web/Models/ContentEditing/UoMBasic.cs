@@ -14,6 +14,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string UOMType { get; set; }
 
-        public string CateName { get; set; }
+        public string CategoryName { get; set; }
     }
 }

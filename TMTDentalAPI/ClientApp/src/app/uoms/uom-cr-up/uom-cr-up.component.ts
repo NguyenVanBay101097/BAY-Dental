@@ -36,7 +36,7 @@ export class UomCrUpComponent implements OnInit {
       active: true,
       factor: [1, Validators.required],
       factorInv: 0,
-      routing: [0.0100]
+      rounding: [0.0100]
     });
 
     if (this.id) {
@@ -89,7 +89,7 @@ export class UomCrUpComponent implements OnInit {
   }
 
   onCancel() {
-    this.activeModal.close();
+    this.activeModal.dismiss();
   }
 
   onSave() {

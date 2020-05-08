@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { UomListComponent } from './uom-list/uom-list.component';
 
 const routes: Routes = [
-  { path: 'uom', component: UomListComponent }
+  { path: 'uoms', component: UomListComponent }
 ];
 
 @NgModule({

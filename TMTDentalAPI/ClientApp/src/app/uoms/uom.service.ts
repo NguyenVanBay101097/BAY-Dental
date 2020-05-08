@@ -13,7 +13,7 @@ export class UoMBasic {
   id: string;
   name: string;
   uomType: string;
-  cateName: string;
+  categoryName: string;
   active: boolean;
 }
 
@@ -24,7 +24,7 @@ export class UoMDisplay {
   categoryId: string;
   factor: number;
   factorInv: number;
-  routing: number;
+  rounding: number;
   category: UoMCategoryBasic;
   active: boolean;
 }
@@ -55,7 +55,7 @@ export class UomService {
   }
 
   getPaged(value): Observable<UoMPaging> {
-    return this.http.get<UoMPaging>(this.base_api + this.apiUrl);
+    return this.http.get<UoMPaging>(this.base_api + this.apiUrl, { params: value });
   }
 
   get(id): Observable<UoMDisplay> {
