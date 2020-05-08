@@ -15,6 +15,7 @@ import { ProductStepDisplay } from '../product-step';
 import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UoMBasic, UomService, UoMPaged } from 'src/app/uoms/uom.service';
 
 @Component({
   selector: 'app-product-product-cu-dialog',
@@ -27,12 +28,19 @@ export class ProductProductCuDialogComponent implements OnInit {
   id: string;
   productForm: FormGroup;
   filterdCategories: ProductCategoryBasic[] = [];
+  filterdUoMs: UoMBasic[] = [];
   opened = false;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private productService: ProductService,
-    private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal) {
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    private productCategoryService: ProductCategoryService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private uoMService: UomService
+  ) {
   }
 
   ngOnInit() {
@@ -62,7 +70,12 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
       });
 
+      this.searchUoMs('').subscribe(result => {
+        this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
+      });
+
       this.categCbxFilterChange();
+      this.uoMCbxFilterChange();
     });
   }
 
@@ -96,6 +109,23 @@ export class ProductProductCuDialogComponent implements OnInit {
       this.filterdCategories = result;
       this.categCbx.loading = false;
     });
+  }
+
+  uoMCbxFilterChange() {
+    this.uoMCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.categCbx.loading = true)),
+      switchMap(value => this.searchUoMs(value))
+    ).subscribe(result => {
+      this.filterdUoMs = result;
+      this.categCbx.loading = false;
+    });
+  }
+
+  searchUoMs(q?: string) {
+    var val = new UoMPaged();
+    val.search = q || '';
+    return this.uoMService.autocomplete(val);
   }
 
   searchCategories(q?: string) {

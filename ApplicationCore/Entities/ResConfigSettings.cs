@@ -17,6 +17,10 @@ namespace ApplicationCore.Entities
         [DbColumn("field_type", "boolean")]
         public bool? GroupSaleCouponPromotion { get; set; }
 
+        [DbColumn("implied_group", "product.group_uom")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupUoM { get; set; }
+
         [DbColumn("implied_group", "sale.group_loyalty_card")]
         [DbColumn("field_type", "boolean")]
         public bool? GroupLoyaltyCard { get; set; }

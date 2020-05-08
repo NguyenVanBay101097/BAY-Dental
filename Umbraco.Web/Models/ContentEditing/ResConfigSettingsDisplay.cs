@@ -27,6 +27,10 @@ namespace Umbraco.Web.Models.ContentEditing
         [DbColumn("field_type", "boolean")]
         public bool? GroupMultiCompany { get; set; }
 
+        [DbColumn("implied_group", "product.group_uom")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupUoM { get; set; }
+
         /// <summary>
         /// Share product to all companies
         /// </summary>

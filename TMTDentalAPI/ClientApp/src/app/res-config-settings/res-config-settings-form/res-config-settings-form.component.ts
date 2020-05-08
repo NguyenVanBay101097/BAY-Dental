@@ -29,7 +29,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       companySharePartner: false,
       companyShareProduct: false,
       groupServiceCard: false,
-      groupServiceDoM: false
+      groupUoM: false
     });
 
     this.configSettingsService.defaultGet().subscribe(result => {

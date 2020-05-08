@@ -70,5 +70,26 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
+
+        public async Task<IEnumerable<UoMBasic>> GetAutocompleteAsync(UoMPaged val)
+        {
+            var query = GetQueryPaged(val);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            return _mapper.Map<IEnumerable<UoMBasic>>(items);
+        }
+
+        private IQueryable<UoM> GetQueryPaged(UoMPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            query = query.OrderBy(s => s.DateCreated);
+            return query;
+        }
     }
 }

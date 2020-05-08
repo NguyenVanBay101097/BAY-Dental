@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<UoM> DefaultUOM();
         Task<PagedResult2<UoMBasic>> GetPagedResultAsync(UoMPaged val);
+        Task<IEnumerable<UoMBasic>> GetAutocompleteAsync(UoMPaged val);
     }
 }

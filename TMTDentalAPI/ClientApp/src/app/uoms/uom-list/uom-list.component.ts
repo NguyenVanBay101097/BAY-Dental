@@ -15,7 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UomListComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 5;
+  limit = 20;
   skip = 0;
   title = 'Đơn vị tính';
   loading = false;

@@ -66,5 +66,8 @@ export class UomService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
+  autocomplete(val: UoMPaged): Observable<UoMBasic[]> {
+    return this.http.post<UoMBasic[]>(this.base_api + this.apiUrl + '/autocomplete', val);
+  }
 
 }

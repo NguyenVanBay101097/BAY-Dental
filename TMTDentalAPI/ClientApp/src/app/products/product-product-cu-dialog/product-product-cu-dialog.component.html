@@ -85,6 +85,19 @@
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đơn vị
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-combobox [data]="filterdUoMs" [textField]="'name'"
+                                                    [filterable]="true" #uoMCbx formControlName="uomId"
+                                                    [valueField]="'id'">
+                                                </kendo-combobox>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
