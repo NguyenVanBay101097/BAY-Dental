@@ -75,7 +75,7 @@ export class ProductProductCuDialogComponent implements OnInit {
       });
 
       this.categCbxFilterChange();
-      this.uoMCbxFilterChange();
+      // this.uoMCbxFilterChange();
     });
   }
 
@@ -111,16 +111,16 @@ export class ProductProductCuDialogComponent implements OnInit {
     });
   }
 
-  uoMCbxFilterChange() {
-    this.uoMCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap(value => this.searchUoMs(value))
-    ).subscribe(result => {
-      this.filterdUoMs = result;
-      this.categCbx.loading = false;
-    });
-  }
+  // uoMCbxFilterChange() {
+  //   this.uoMCbx.filterChange.asObservable().pipe(
+  //     debounceTime(300),
+  //     tap(() => (this.categCbx.loading = true)),
+  //     switchMap(value => this.searchUoMs(value))
+  //   ).subscribe(result => {
+  //     this.filterdUoMs = result;
+  //     this.categCbx.loading = false;
+  //   });
+  // }
 
   searchUoMs(q?: string) {
     var val = new UoMPaged();
