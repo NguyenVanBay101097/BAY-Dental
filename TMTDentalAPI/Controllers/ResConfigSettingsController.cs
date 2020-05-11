@@ -45,6 +45,10 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             var config = _mapper.Map<ResConfigSettings>(val);
             config.CompanyId = CompanyId;
+
+            if (val.ProductListpriceRestrictCompany == true)
+                await _configSettingsService.InsertFieldForProductListPriceRestrictCompanies();
+
             await _configSettingsService.CreateAsync(config);
 
             var basic = _mapper.Map<ResConfigSettingsBasic>(config);

@@ -36,6 +36,13 @@ namespace ApplicationCore.Entities
 
         public bool? CompanySharePartner { get; set; }
 
+        /// <summary>
+        /// Giá bán của product sẽ riêng theo từng chi nhánh
+        /// </summary>
+        [DbColumn("config_parameter", "product.listprice_restrict_company")]
+        [DbColumn("field_type", "boolean")]
+        public bool? ProductListpriceRestrictCompany { get; set; }
+
         [DbColumn("implied_group", "sale.group_service_card")]
         [DbColumn("field_type", "boolean")]
         public bool? GroupServiceCard { get; set; }

@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { ResConfigSettingsService } from '../res-config-settings.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { PermissionService } from 'src/app/shared/permission.service';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -28,12 +27,20 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupMultiCompany: false,
       companySharePartner: false,
       companyShareProduct: false,
-      groupServiceCard: false
+      groupServiceCard: false,
+      productListpriceRestrictCompany: false
     });
 
     this.configSettingsService.defaultGet().subscribe(result => {
       this.formGroup.patchValue(result);
     });
+  }
+
+  onChangeCompanyShareProduct() {
+    var companyShareProduct = this.companyShareProductValue;
+    if (companyShareProduct == false) {
+      this.formGroup.get('productListpriceRestrictCompany').setValue(companyShareProduct);
+    }
   }
 
   onSave() {
@@ -65,5 +72,9 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
   get groupMultiCompany() {
     return this.formGroup.get('groupMultiCompany').value;
+  }
+
+  get companyShareProductValue() {
+    return this.formGroup.get('companyShareProduct').value;
   }
 }

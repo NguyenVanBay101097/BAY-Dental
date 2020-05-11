@@ -21,6 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public bool? CompanyShareProduct { get; set; }
 
+        public bool? ProductListpriceRestrictCompany { get; set; }
+
         public bool? CompanySharePartner { get; set; }
 
         public bool? GroupServiceCard { get; set; }

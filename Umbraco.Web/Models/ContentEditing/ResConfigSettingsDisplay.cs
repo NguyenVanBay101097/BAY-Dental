@@ -32,6 +32,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public bool? CompanyShareProduct { get; set; }
 
+        /// <summary>
+        /// Giá bán của product sẽ riêng theo từng chi nhánh
+        /// </summary>
+        [DbColumn("config_parameter", "product.listprice_restrict_company")]
+        [DbColumn("field_type", "boolean")]
+        public bool? ProductListpriceRestrictCompany { get; set; }
+
         public bool? CompanySharePartner { get; set; }
 
         [DbColumn("implied_group", "sale.group_service_card")]

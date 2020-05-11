@@ -11,5 +11,6 @@ namespace Infrastructure.Services
         Task Excute<T>(T self);
         Task<T> DefaultGet<T>();
         Task InsertServiceCardData();
+        Task InsertFieldForProductListPriceRestrictCompanies();
     }
 }
