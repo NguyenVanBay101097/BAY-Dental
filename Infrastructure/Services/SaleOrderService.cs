@@ -461,11 +461,15 @@ namespace Infrastructure.Services
 
             saleLineObj.UpdateProps(lines);
             saleLineObj.ComputeAmount(lines);
+            saleLineObj._GetInvoiceQty(lines);
+            saleLineObj._GetToInvoiceQty(lines);
+            saleLineObj._ComputeInvoiceStatus(lines);
 
             foreach (var line in lines)
                 self.OrderLines.Add(line);
 
             _AmountAll(self);
+            _GetInvoiced(new List<SaleOrder>() { self });
             await UpdateAsync(self);
         }
 
@@ -764,28 +768,7 @@ namespace Infrastructure.Services
 
         private IList<SaleOrderLine> _GetPaidOrderLines(SaleOrder self)
         {
-            var lstOrderline = new List<SaleOrderLine>();
-            if(self.State == "draft")
-            {
-                lstOrderline = self.OrderLines.Where(x => !x.IsRewardLine).ToList();
-
-            }
-            else
-            {
-                var lines = self.OrderLines.Where(x => !x.IsRewardLine).ToList();
-               
-                foreach(var line in lines)
-                {
-                    if(line.QtyInvoiced > 0)
-                    {
-                        continue;
-                    }
-                    lstOrderline.Add(line);
-                }
-            }
-            if (lstOrderline.Count() == 0)
-                throw new Exception("Áp dụng mã coupon hoặc khuyến mãi thất bại !!!");
-            return lstOrderline;
+            return self.OrderLines.Where(x => !x.IsRewardLine && !(x.QtyInvoiced > 0)).ToList();
         }
 
         public async Task ApplyPromotion(Guid id)

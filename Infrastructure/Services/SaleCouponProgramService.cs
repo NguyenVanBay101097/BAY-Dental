@@ -288,8 +288,8 @@ namespace Infrastructure.Services
                 message.Error = "Mã khuyến mãi đã hết hạn";
             else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
                 message.Error = "Mã khuyến mãi không thể cộng dồn.";
-            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
-            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
+                message.Error = "Chiết khấu tổng không thể cộng dồn";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
             else
