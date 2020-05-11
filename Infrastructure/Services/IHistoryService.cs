@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<HistorySimple>> GetAutocompleteAsync(HistoryPaged val);
         Task<IEnumerable<HistorySimple>> GetResultNotLimitAsync(HistoryPaged val);
         Task<bool> CheckDuplicate(Guid? id,HistorySimple val);
-        Task ImportExcelHistories(HistoryImportExcelBaseViewModel val);
+       
 
     }
 }

@@ -23,6 +23,7 @@ export class HistoryImportExcelDialogComponent implements OnInit {
   }
 
   onSave() {
+    debugger
     if (!this.fileBase64 || this.fileBase64 === '') {
       return;
     }
@@ -31,16 +32,14 @@ export class HistoryImportExcelDialogComponent implements OnInit {
     this.actionImport(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
-      } else {
+      }else{
         this.errors = result.errors;
       }
     });
   }
 
-  actionImport(val: any) {
-   
-      return this.historyService.importExcel(val);
-    
+  actionImport(val: any) {   
+      return this.historyService.importExcel(val);   
   }
 
   onCancel() {
