@@ -1,3 +1,4 @@
+import { HistoryImportExcelBaseViewModel } from './../history.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HistoryService } from '../history.service';
@@ -9,6 +10,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { HistoriesCreateUpdateComponent } from '../histories-create-update/histories-create-update.component';
 import { HistoryPaged } from '../history';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialog/history-import-excel-dialog.component';
 
 @Component({
   selector: 'app-histories-list',
@@ -82,6 +84,15 @@ export class HistoriesListComponent implements OnInit {
       },
       er => { }
     )
+  }
+
+  importFromExcel() {
+    let modalRef = this.modalService.open(HistoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Import excel';
+    modalRef.result.then(() => {
+      this.getList();
+    }, () => {
+    });
   }
 
   delete(id) {
