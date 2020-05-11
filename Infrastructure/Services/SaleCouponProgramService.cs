@@ -320,6 +320,7 @@ namespace Infrastructure.Services
 
         public bool _IsGlobalDiscountProgram(SaleCouponProgram self)
         {
+           
             return self.PromoApplicability == "on_current_order" && self.RewardType == "discount"
                 && self.DiscountType == "percentage" && self.DiscountApplyOn == "on_order";
         }

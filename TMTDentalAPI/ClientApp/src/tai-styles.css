@@ -1037,6 +1037,11 @@ td.oe_form_group_cell_label label {
     display: inline-flex;
 }
 
+.o_field_widget.o_field_radio.o_vertical {
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+}
+
 .o_field_widget.o_field_percent_pie {
     align-items: center;
 }
