@@ -178,13 +178,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("GetCustomerInvoices/{id}")]
-        public async Task<IActionResult> GetCustomerInvoices(Guid id)
-        {
-            var res = await _dotKhamService.GetCustomerInvoices(id);
-            return Ok(res);
-        }
-
         [HttpGet("{id}/VisibleSteps")]
         public async Task<IActionResult> VisibleSteps(Guid id, string show = "dotkham")
         {

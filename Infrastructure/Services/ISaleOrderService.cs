@@ -43,5 +43,6 @@ namespace Infrastructure.Services
         Task<bool> CheckHasPromotionCanApply(Guid id);
         Task<IEnumerable<AccountMoveBasic>> GetInvoicesBasic(Guid id);
         Task ApplyServiceCards(SaleOrderApplyServiceCards val);
+    
     }
 }

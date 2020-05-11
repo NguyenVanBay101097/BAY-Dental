@@ -34,7 +34,6 @@ import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/ap
   entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
   providers: [
     AppointmentService,
-    // AppointmentVMService
   ]
 })
 export class AppointmentModule { }

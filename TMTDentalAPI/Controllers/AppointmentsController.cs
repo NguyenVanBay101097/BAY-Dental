@@ -49,14 +49,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get([FromQuery]AppointmentPaged appointmentPaged)
         {
             var result = await _appointmentService.GetPagedResultAsync(appointmentPaged);
-            /*await PatchMulti(result)*/;
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _appointmentService.GetAppointmentDisplayAsync(id);    
+            var res = await _appointmentService.GetAppointmentDisplayAsync(id);
             return Ok(res);
         }
 
@@ -102,7 +101,7 @@ namespace TMTDentalAPI.Controllers
                 if (entity == null)
                 {
                     return NotFound();
-                }               
+                }
                 var patch = new JsonPatchDocument<AppointmentPatch>();
                 patch.Replace(x => x.State, "expired");
                 var entityMap = _mapper.Map<AppointmentPatch>(entity);
@@ -191,7 +190,7 @@ namespace TMTDentalAPI.Controllers
             var appointments = await _appointmentService.SearchQuery(x => x.Date >= now && x.Date <= date && !x.AppointmentMailMessageRels.Any()).Include(x => x.User).ToListAsync();
             var user = await _userManager.FindByIdAsync(UserId);
             var messages = new List<MailMessage>();
-            foreach(var ap in appointments)
+            foreach (var ap in appointments)
             {
                 var message = new MailMessage()
                 {
@@ -218,7 +217,7 @@ namespace TMTDentalAPI.Controllers
             await _appointmentService.UpdateAsync(appointments);
 
             var formatMessages = await _mailMessageService.MessageFormat(messages.Select(x => x.Id).ToList());
-            foreach(var message in formatMessages)
+            foreach (var message in formatMessages)
             {
                 await _notificationHubService.BroadcastNotificationAsync(message);
             }
@@ -233,12 +232,5 @@ namespace TMTDentalAPI.Controllers
             var res = await _appointmentService.GetBasic(id);
             return Ok(res);
         }
-
-        //[HttpPut("CountAppointment")]
-        //public async Task<IActionResult> HandleExpiredAppointments()
-        //{
-        //    var res = await _appointmentService.CountAppointment(dateFromTo);
-        //    return Ok(res);
-        //}
     }
 }

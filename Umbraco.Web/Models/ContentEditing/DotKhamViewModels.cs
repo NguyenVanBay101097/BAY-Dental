@@ -22,9 +22,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
 
-        public Guid? InvoiceId { get; set; }
-        public AccountInvoiceBasic Invoice { get; set; }
-
         /// <summary>
         /// Nhân viên
         /// </summary>
@@ -37,6 +34,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày khám
         /// </summary>
         public DateTime Date { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class DotKhamPaged
@@ -114,7 +113,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class DotKhamDefaultGet
     {
-        public Guid? InvoiceId { get; set; }
         public Guid? SaleOrderId { get; set; }
     }
 
