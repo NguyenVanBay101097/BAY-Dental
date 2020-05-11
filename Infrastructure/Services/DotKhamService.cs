@@ -141,17 +141,6 @@ namespace Infrastructure.Services
             var user = await userManager.FindByIdAsync(UserId);
             res.UserId = user.Id;
             res.User = _mapper.Map<ApplicationUserSimple>(user);
-            if (val.InvoiceId.HasValue)
-            {
-                var invoiceObj = GetService<IAccountInvoiceService>();
-                var invoice = await invoiceObj.SearchQuery(x => x.Id == val.InvoiceId).FirstOrDefaultAsync();
-                res.InvoiceId = invoice.Id;
-                res.PartnerId = invoice.PartnerId;
-                res.Invoice = _mapper.Map<AccountInvoiceCbx>(invoice);
-                var partnerObj = GetService<IPartnerService>();
-                var partner = partnerObj.SearchQuery(x => x.Id == invoice.PartnerId).FirstOrDefault();
-                res.Partner = _mapper.Map<PartnerSimple>(partner);
-            }
 
             if (val.SaleOrderId.HasValue)
             {
@@ -165,48 +154,6 @@ namespace Infrastructure.Services
                 res.Partner = _mapper.Map<PartnerSimple>(partner);
             }
             return res;
-        }
-
-        public async Task<DotKhamDisplay> DefaulGetInAppointment(DotKhamAppointmentDefaultGet val)
-        {
-            var res = new DotKhamDisplay();
-            res.CompanyId = CompanyId;
-            var userManager = GetService<UserManager<ApplicationUser>>();
-            var user = await userManager.FindByIdAsync(UserId);
-            res.UserId = user.Id;
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
-            if (val.InvoiceId.HasValue)
-            {
-                var invoiceObj = GetService<IAccountInvoiceService>();
-                var invoice = await invoiceObj.SearchQuery(x => x.Id == val.InvoiceId).FirstOrDefaultAsync();
-                res.InvoiceId = invoice.Id;
-                res.PartnerId = invoice.PartnerId;
-                res.Invoice = _mapper.Map<AccountInvoiceCbx>(invoice);
-                var partnerObj = GetService<IPartnerService>();
-                var partner = partnerObj.SearchQuery(x => x.Id == invoice.PartnerId).FirstOrDefault();
-                res.Partner = _mapper.Map<PartnerSimple>(partner);
-            }         
-            if (val.AppointmentId.HasValue)
-            {
-                var dotkham = await SearchQuery(x => x.AppointmentId == val.AppointmentId ).FirstOrDefaultAsync();
-                var appointObj = GetService<IAppointmentService>();
-                var appointment = await appointObj.SearchQuery(x => x.Id == val.AppointmentId).FirstOrDefaultAsync();              
-                var saleObj = GetService<ISaleOrderService>();
-                var saleOrder = await saleObj.SearchQuery(x => x.Id == val.SaleOrderId).FirstOrDefaultAsync();
-                res.SaleOrderId = dotkham.SaleOrderId;
-                res.SaleOrder = _mapper.Map<SaleOrderBasic>(dotkham.SaleOrder);
-                var partnerObj = GetService<IPartnerService>();
-                var partner = partnerObj.SearchQuery(x => x.Id == appointment.PartnerId).FirstOrDefault();
-                res.Partner = _mapper.Map<PartnerSimple>(partner);
-            }
-            return res;
-        }
-        public async Task<IEnumerable<AccountInvoiceCbx>> GetCustomerInvoices(Guid customerId)
-        {
-            var invServiceObj = GetService<IAccountInvoiceService>();
-            var inv = await invServiceObj.SearchQuery(x => x.PartnerId == customerId).OrderByDescending(x=>x.LastUpdated).ToListAsync();
-            var invCbx = _mapper.Map<IEnumerable<AccountInvoiceCbx>>(inv);
-            return invCbx;
         }
 
         private async Task InsertDotKhamSequence()

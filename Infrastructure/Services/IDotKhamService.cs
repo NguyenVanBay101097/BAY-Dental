@@ -13,10 +13,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<DotKham>> GetPagedResultAsync(DotKhamPaged val);
         Task ActionConfirm(Guid id);
         Task<DotKhamDisplay> DefaultGet(DotKhamDefaultGet val);
-        Task<DotKhamDisplay> DefaulGetInAppointment(DotKhamAppointmentDefaultGet val);
         Task<DotKham> GetDotKhamForDisplayAsync(Guid id);
         Task<IEnumerable<DotKham>> GetDotKhamsForInvoice(Guid invoiceId);
-        Task<IEnumerable<AccountInvoiceCbx>> GetCustomerInvoices(Guid customerId);
         Task<IEnumerable<DotKham>> GetDotKhamsForSaleOrder(Guid saleOrderId);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);

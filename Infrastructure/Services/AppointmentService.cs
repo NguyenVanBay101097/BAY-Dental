@@ -295,21 +295,5 @@ namespace Infrastructure.Services
                 PartnerPhone = x.Partner.Phone
             }).FirstOrDefaultAsync();
         }
-
-        public async Task checkDotkhamInAppointment(Guid id)
-        {
-            var dotkhamObj = GetService<DotKhamService>();
-            var result = await dotkhamObj.SearchQuery(x => x.AppointmentId == id).FirstOrDefaultAsync();
-            if (result != null)
-            {
-                throw new Exception("Lịch hẹn đã tồn tại đợt khám !!!");
-                
-            }
-           
-        }
-        public async Task CreateDotkham()
-        {
-            var dotkhamObj = GetService<DotKhamService>();
-        }
     }
 }

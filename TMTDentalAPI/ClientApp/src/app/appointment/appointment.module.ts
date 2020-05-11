@@ -19,10 +19,9 @@ import { AppointmentCalendarComponent } from './appointment-calendar/appointment
 import { AppointmentVMService } from './appointment-vm.service';
 import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kanban.component';
 import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
-import { AppointmentCreateDotKhamComponent } from './appointment-create-dot-kham/appointment-create-dot-kham.component';
 
 @NgModule({
-  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent, AppointmentCalendarComponent, AppointmentKanbanComponent, AppointmentDetailDialogComponent, AppointmentCreateDotKhamComponent],
+  declarations: [AppointmentListComponent, AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent, AppointmentCalendarComponent, AppointmentKanbanComponent, AppointmentDetailDialogComponent],
   imports: [
     CommonModule,
     AppointmentRoutingModule,
@@ -32,10 +31,9 @@ import { AppointmentCreateDotKhamComponent } from './appointment-create-dot-kham
     SharedModule,
     NgbModule
   ],
-  entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent,AppointmentCreateDotKhamComponent],
+  entryComponents: [AppointmentCreateUpdateComponent, PartnerInfoComponent, EmployeeInfoComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
   providers: [
     AppointmentService,
-    // AppointmentVMService
   ]
 })
 export class AppointmentModule { }

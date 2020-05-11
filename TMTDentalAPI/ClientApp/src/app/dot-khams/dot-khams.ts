@@ -10,13 +10,6 @@ export class DotKhamDefaultGet {
     saleOrderId: string;
 }
 
-export class DotKhamAppointmentDefaultGet
-{
-    invoiceId: string;
-    saleOrderId: string;
-    appointmentId : string;
-}
-
 export class DotKhamBasic {
     id: string;
     name: string;
@@ -59,7 +52,7 @@ export class DotKhamDisplay {
     saleOrderId: string;
     saleOrder: SaleOrderBasic;
     appointmentId: string;
-    appointment : AppointmentBasic;
+    appointment: AppointmentBasic;
 }
 
 export class DotKhamPaging {

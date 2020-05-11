@@ -15,8 +15,6 @@ import { DotkhamEntitySearchBy, DotKhamPaged } from 'src/app/dot-khams/dot-khams
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Router } from '@angular/router';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
-import { ToggleType } from '@angular/material/button-toggle';
-import { AppointmentCreateDotKhamComponent } from '../appointment-create-dot-kham/appointment-create-dot-kham.component';
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -200,47 +198,32 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   createDotKham(id) {
-   
     var paged = new DotKhamPaged;
     paged.appointmentId = id;
-    this.dotkhamService.getPaged(paged).subscribe(
-      rs=>{
-        if (rs.items.length) {
-          this.dotkhamService.getSearchedDotKham(paged).subscribe(
-            rs => {              
-              let modalRef = this.modalService.open(AppointmentCreateDotKhamComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-              modalRef.componentInstance.title = 'Tạo đợt khám';
-              modalRef.componentInstance.appointmentId = id;            
-              modalRef.result.then(result => {
-                if (result.view) {
-                  this.router.navigate(['/dot-khams/edit/', result.result.id]);
-                } else {
-                  this.loadData();
-                }
-              }, () => {
-              });
-            }
-          )
-        } else {
-          this.notificationService.show({
-            content: 'Chưa có đợt khám từ lịch hẹn này !!!',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'error', icon: true }
-          });
+    paged.limit = 1;
+    this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
+      if (rs.items.length) {
+        console.log(rs.items);
+        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Tạo đợt khám';
+        modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
 
-         
-        }
+        modalRef.result.then(result => {
+          if (result.view) {
+            this.router.navigate(['/dot-khams/edit/', result.result.id]);
+          } else {
+          }
+        }, () => {
+        });
+      } else {
+        this.notificationService.show({
+          content: 'Không có đợt khám nào từ lịch hẹn này.',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
       }
-    )
-
+    });
   }
-
-  dropDownToggle(event: Event) {
-    console.log(event);
-    event.stopPropagation();
-    this.dropdownMenuBtn.dropdown();
-  }
-
 }

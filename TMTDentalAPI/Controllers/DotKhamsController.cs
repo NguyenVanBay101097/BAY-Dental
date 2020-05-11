@@ -136,14 +136,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> DefaultInAppointment(DotKhamAppointmentDefaultGet val)
-        {
-            var res = await _dotKhamService.DefaulGetInAppointment(val);
-            return Ok(res);
-        }
-
-
         [HttpPost("{id}/GetToaThuocs")]
         public async Task<IActionResult> GetToaThuocs(Guid id)
         {
@@ -183,13 +175,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetAppointments(Guid id)
         {
             var res = await _laboOrderLineService.GetAllForDotKham(id);
-            return Ok(res);
-        }
-
-        [HttpGet("GetCustomerInvoices/{id}")]
-        public async Task<IActionResult> GetCustomerInvoices(Guid id)
-        {
-            var res = await _dotKhamService.GetCustomerInvoices(id);
             return Ok(res);
         }
 

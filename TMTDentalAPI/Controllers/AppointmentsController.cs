@@ -49,8 +49,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get([FromQuery]AppointmentPaged appointmentPaged)
         {
             var result = await _appointmentService.GetPagedResultAsync(appointmentPaged);
-            /*await PatchMulti(result)*/
-            ;
             return Ok(result);
         }
 
@@ -234,19 +232,5 @@ namespace TMTDentalAPI.Controllers
             var res = await _appointmentService.GetBasic(id);
             return Ok(res);
         }
-
-        //[HttpPut("CountAppointment")]
-        //public async Task<IActionResult> HandleExpiredAppointments()
-        //{
-        //    var res = await _appointmentService.CountAppointment(dateFromTo);
-        //    return Ok(res);
-        //}
-
-        //[HttpPost("{id}/[action]")]
-        //public async Task<IActionResult> CreateDotkham(Guid id)
-        //{
-        //    var res = _appointmentService.checkDotkhamInAppointment(id);
-        //    return NoContent();
-        //}
     }
 }
