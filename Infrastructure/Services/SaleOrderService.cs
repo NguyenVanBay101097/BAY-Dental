@@ -674,7 +674,7 @@ namespace Infrastructure.Services
         public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
         {
             var applied_programs = self.NoCodePromoPrograms.Select(x => x.Program)
-                .Concat(self.AppliedCoupons.Select(x => x.Program));
+                .Concat(self.AppliedCoupons.Select(x => x.Program)).Where(x=>x.ProgramType == "coupon_program");
             if (self.CodePromoProgram != null)
                 applied_programs = applied_programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
             var programObj = GetService<ISaleCouponProgramService>();
@@ -1582,14 +1582,14 @@ namespace Infrastructure.Services
                 .Include(x => x.CodePromoProgram).ToListAsync();
             foreach(var order in self)
             {
-                if(order.AppliedCoupons != null)
-                {
-                    foreach(var coupon in order.AppliedCoupons)
-                    {
-                        throw new Exception($"Không thể thêm khuyến mãi do đã tồn tại Coupon : {coupon.Program.Name} trên tổng tiền  !!!");
-                    }
+                //if(order.AppliedCoupons != null)
+                //{
+                //    foreach(var coupon in order.AppliedCoupons)
+                //    {
+                //        throw new Exception($"Không thể thêm khuyến mãi do đã tồn tại Coupon : {coupon.Program.Name} trên tổng tiền  !!!");
+                //    }
                    
-                }
+                //}
                 await _RemoveInvalidRewardLines(order);
                 await _CreateNewNoCodePromoRewardLines(order);
                 await _UpdateExistingRewardLines(order);
