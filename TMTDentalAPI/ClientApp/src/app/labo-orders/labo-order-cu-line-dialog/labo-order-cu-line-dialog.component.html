@@ -36,7 +36,8 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
                                         formControlName="color" />
-                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.color}}&nbsp;</span>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.color}}&nbsp;</span>
                                 </td>
                             </tr>
                             <tr>
@@ -48,7 +49,8 @@
                                 <td colspan="1" style="width: 100%;">
                                     <textarea type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
                                         formControlName="note"></textarea>
-                                    <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.note}}&nbsp;</span>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.note}}&nbsp;</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -107,9 +109,10 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredToothCategories"
-                                        [class.d-none]="lineState == 'purchase'" [textField]="'name'" [filterable]="true"
-                                        formControlName="toothCategory" (valueChange)="onChangeToothCategory($event)"
-                                        #toothCategoryCbx [valueField]="'id'">
+                                        [class.d-none]="lineState == 'purchase'" [textField]="'name'"
+                                        [filterable]="true" formControlName="toothCategory"
+                                        (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="line"
                                         [class.d-none]="lineState != 'purchase'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
@@ -136,8 +139,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker formControlName="warrantyPeriodObj">
-                                    </kendo-datetimepicker>
+                                    <kendo-datepicker formControlName="warrantyPeriodObj">
+                                    </kendo-datepicker>
                                 </td>
                             </tr>
                         </tbody>

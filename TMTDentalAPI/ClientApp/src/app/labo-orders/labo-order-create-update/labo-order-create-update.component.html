@@ -144,9 +144,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [format]="'dd/MM/yyyy HH:mm'"
+                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
                                         [class.d-none]="laboOrder.state != 'draft'" formControlName="dateOrderObj">
-                                    </kendo-datetimepicker>
+                                    </kendo-datepicker>
                                     <span
                                         [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.dateOrder | date: 'short'}}</span>
                                 </td>
@@ -158,8 +158,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="datePlannedObj">
-                                    </kendo-datetimepicker>
+                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="datePlannedObj">
+                                    </kendo-datepicker>
                                 </td>
                             </tr>
                         </tbody>

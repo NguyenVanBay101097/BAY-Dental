@@ -44,7 +44,6 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       color: null,
       note: null,
       warrantyCode: null,
-      warrantyPeriod: null,
       warrantyPeriodObj: null,
       state: 'draft'
     });
@@ -91,7 +90,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       this.loadFilteredProducts();
       this.loadToothCategories();
     });
-    
+
   }
 
   onSelected(tooth: ToothDisplay) {
