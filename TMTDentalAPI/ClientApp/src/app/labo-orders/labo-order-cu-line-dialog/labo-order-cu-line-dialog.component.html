@@ -18,13 +18,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredProducts" [class.d-none]="lineState != 'draft'"
+                                    <kendo-combobox [data]="filteredProducts" [class.d-none]="lineState == 'purchase'"
                                         ngbAutofocus [textField]="'name'" [filterable]="true"
                                         (valueChange)="onChangeProduct($event)" #productCbx formControlName="product"
                                         [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState == 'draft'">{{line.product ? line.product.name : ''}}</span>
+                                        [class.d-none]="lineState != 'purchase'">{{line.product ? line.product.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -34,9 +34,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" [class.d-none]="lineState != 'draft'"
+                                    <input type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
                                         formControlName="color" />
-                                    <span *ngIf="line" [class.d-none]="lineState == 'draft'">{{line.color}}</span>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.color}}&nbsp;</span>
                                 </td>
                             </tr>
                             <tr>
@@ -46,9 +47,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" [class.d-none]="lineState != 'draft'"
+                                    <textarea type="text" class="form-control" [class.d-none]="lineState == 'purchase'"
                                         formControlName="note"></textarea>
-                                    <span *ngIf="line" [class.d-none]="lineState == 'draft'">{{line.note}}</span>
+                                    <span *ngIf="line"
+                                        [class.d-none]="lineState != 'purchase'">{{line.note}}&nbsp;</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -62,11 +64,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState != 'draft'"
+                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'"
                                         [format]="'n0'" formControlName="productQty">
                                     </kendo-numerictextbox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState == 'draft'">{{line.productQty | number}}</span>
+                                        [class.d-none]="lineState != 'purchase'">{{line.productQty | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -76,11 +78,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState != 'draft'"
+                                    <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'"
                                         [format]="'n0'" formControlName="priceUnit">
                                     </kendo-numerictextbox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState == 'draft'">{{line.priceUnit | number}}</span>
+                                        [class.d-none]="lineState != 'purchase'">{{line.priceUnit | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -107,17 +109,18 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredToothCategories"
-                                        [class.d-none]="lineState != 'draft'" [textField]="'name'" [filterable]="true"
-                                        formControlName="toothCategory" (valueChange)="onChangeToothCategory($event)"
-                                        #toothCategoryCbx [valueField]="'id'">
+                                        [class.d-none]="lineState == 'purchase'" [textField]="'name'"
+                                        [filterable]="true" formControlName="toothCategory"
+                                        (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="line"
-                                        [class.d-none]="lineState == 'draft'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
+                                        [class.d-none]="lineState != 'purchase'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <!-- <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -141,7 +144,7 @@
                                 </td>
                             </tr>
                         </tbody>
-                    </table> -->
+                    </table>
                 </div>
 
                 <div class="teeth-map">
