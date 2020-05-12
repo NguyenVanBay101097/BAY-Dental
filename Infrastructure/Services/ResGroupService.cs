@@ -294,7 +294,7 @@ namespace Infrastructure.Services
             await ExcuteSqlCommandAsync("delete ResGroupsUsersRels");
             await ExcuteSqlCommandAsync("delete ResGroups");
             await ExcuteSqlCommandAsync("delete IrModuleCategories");
-            await ExcuteSqlCommandAsync("delete IRModelDatas where Model = 'res.groups' or Model = 'ir.module.category' or Model='ir.rule'");
+            await ExcuteSqlCommandAsync("delete IRModelDatas where Model = 'res.groups' or Model = 'ir.module.category' or Model='ir.rule' or Model='ir.model'");
 
             //insert lại dữ liệu
             await InsertSecurityData();
@@ -342,6 +342,8 @@ namespace Infrastructure.Services
 
             var modelDict = GetModelDict();
             await modelObj.CreateAsync(modelDict.Values);
+
+            modelDataList.AddRange(GetModelData(modelDict, "ir.model"));
 
             var groupDict = new Dictionary<string, ResGroup>();
             var ruleDict = new Dictionary<string, IRRule>();

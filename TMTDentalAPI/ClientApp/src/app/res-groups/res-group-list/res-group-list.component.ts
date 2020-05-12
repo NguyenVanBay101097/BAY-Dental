@@ -5,6 +5,8 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ResGroupService, ResGroupPaged, ResGroupBasic } from '../res-group.service';
 import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-res-group-list',
@@ -25,7 +27,7 @@ export class ResGroupListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private resGroupService: ResGroupService, private dialogService: DialogService,
-    private router: Router) {
+    private router: Router, private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -41,8 +43,13 @@ export class ResGroupListComponent implements OnInit {
   }
 
   resetData() {
-    this.resGroupService.resetSecurityData().subscribe(() => {
-      this.loadDataFromApi();
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Reset dữ liệu phân quyền';
+    modalRef.componentInstance.body = 'Những thiết lập nhóm quyền trên người dùng sẽ mất, bạn có chắc chắn?';
+    modalRef.result.then(() => {
+      this.resGroupService.resetSecurityData().subscribe(() => {
+        this.loadDataFromApi();
+      });
     });
   }
 
@@ -81,31 +88,15 @@ export class ResGroupListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    const dialog: DialogRef = this.dialogService.open({
-      title: 'Xóa nhóm quyền',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      actions: [
-        { text: 'Hủy bỏ', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ],
-      width: 450,
-      height: 200,
-      minWidth: 250
-    });
-
-    dialog.result.subscribe((result) => {
-      if (result instanceof DialogCloseResult) {
-        console.log('close');
-      } else {
-        console.log('action', result);
-        if (result['value']) {
-          this.resGroupService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          }, err => {
-            console.log(err);
-          });
-        }
-      }
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa nhóm quyền';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.resGroupService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
     });
   }
 }
