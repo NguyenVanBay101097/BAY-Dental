@@ -70,7 +70,9 @@ namespace Infrastructure.Services
                     //tính giá của sản phẩm trước khi áp dụng bảng giá
                     if (pricelist.DiscountPolicy == "without_discount")
                     {
-                        var new_list_price = product.ListPrice;
+                        var new_list_price = await product.GetListPrice(GetService<IProductService>(), GetService<IIrConfigParameterService>(),
+                        GetService<IIRPropertyService>());
+
                         res.PriceUnit = new_list_price;
                         if (new_list_price != 0)
                         {
@@ -83,7 +85,8 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                    res.PriceUnit = product.ListPrice;
+                    res.PriceUnit = await product.GetListPrice(GetService<IProductService>(), GetService<IIrConfigParameterService>(),
+                        GetService<IIRPropertyService>());
                 }
             }
 

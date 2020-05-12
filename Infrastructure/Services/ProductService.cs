@@ -26,7 +26,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public override Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
+        public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
         {
             foreach(var product in entities)
             {
@@ -34,7 +34,23 @@ namespace Infrastructure.Services
                     product.NameNoSign = product.Name.RemoveSignVietnameseV2();
             }
 
-            return base.CreateAsync(entities);
+            await base.CreateAsync(entities);
+
+            await _SetListPrice(entities);
+
+            return entities;
+        }
+
+        private async Task _SetListPrice(IEnumerable<Product> self)
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
+            if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
+                return;
+
+            var propertyObj = GetService<IIRPropertyService>();
+            var list = self;
+            propertyObj.set_multi("list_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)x.ListPrice));
         }
 
         public async Task<Product> GetProductForDisplayAsync(Guid id)

@@ -60,6 +60,10 @@ namespace Infrastructure.Services
                 return new Dictionary<Guid, ComputePriceRuleResValue>();
 
             var categObj = GetService<IProductCategoryService>();
+            var productObj = GetService<IProductService>();
+            var irConfigObj = GetService<IIrConfigParameterService>();
+            var propertyObj = GetService<IIRPropertyService>();
+
             var categ_ids = new HashSet<Guid>();
             foreach (var p in products)
             {
@@ -88,7 +92,7 @@ namespace Infrastructure.Services
                 var qty_in_product_uom = qty;
                 results.Add(product.Id, new ComputePriceRuleResValue());
                 ProductPricelistItem suitable_rule = null;
-                var price = product.ListPrice;
+                var price = await product.GetListPrice(productObj, irConfigObj, propertyObj);
                 foreach (var rule in items)
                 {
                     if (rule.MinQuantity != 0 && qty_in_product_uom < rule.MinQuantity)
@@ -109,8 +113,6 @@ namespace Infrastructure.Services
                         if (cat == null)
                             continue;
                     }
-
-                    price = product.ListPrice;
 
                     if (price != 0)
                     {
