@@ -96,5 +96,18 @@ namespace TMTDentalAPI.Controllers
             var result = await _partnerCategoryService.GetAutocompleteAsync(val);
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionImport(PartnerCategoryImportExcelViewModel val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var result = await _partnerCategoryService.Import(val);
+
+            if (result.Success)
+                _unitOfWork.Commit();
+
+            return Ok(result);
+        }
     }
 }

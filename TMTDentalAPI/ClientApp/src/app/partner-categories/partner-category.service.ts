@@ -56,4 +56,8 @@ export class PartnerCategoryService {
     autocomplete(val: PartnerCategoryPaged): Observable<PartnerCategoryBasic[]> {
         return this.http.post<PartnerCategoryBasic[]>(this.baseApi + this.apiUrl + '/autocomplete', val);
     }
+
+    actionImport(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionImport', val);
+    }
 }

@@ -7,22 +7,28 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PartnerCategoryService } from './partner-category.service';
 import { PartnerCategoryCuDialogComponent } from './partner-category-cu-dialog/partner-category-cu-dialog.component';
 import { PartnerCategoryListComponent } from './partner-category-list/partner-category-list.component';
+import { PartnerCategoryImportComponent } from './partner-category-import/partner-category-import.component';
+import { SharedModule } from '../shared/shared.module';
+import { CustomComponentModule } from '../common/common.module';
 
 
 @NgModule({
-  declarations: [PartnerCategoryCuDialogComponent, PartnerCategoryListComponent],
+  declarations: [PartnerCategoryCuDialogComponent, PartnerCategoryListComponent, PartnerCategoryImportComponent],
   imports: [
     CommonModule,
     PartnerCategoriesRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    SharedModule,
+    CustomComponentModule
   ],
   providers: [
     PartnerCategoryService
   ],
   entryComponents: [
-    PartnerCategoryCuDialogComponent
+    PartnerCategoryCuDialogComponent,
+    PartnerCategoryImportComponent
   ]
 })
 export class PartnerCategoriesModule { }
