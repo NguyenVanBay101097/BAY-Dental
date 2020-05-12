@@ -15,10 +15,6 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.PartnerId);
 
-            builder.HasOne(x => x.CardOrder)
-           .WithMany(x => x.PartnerRels)
-           .HasForeignKey(x => x.CardOrderId);
-
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

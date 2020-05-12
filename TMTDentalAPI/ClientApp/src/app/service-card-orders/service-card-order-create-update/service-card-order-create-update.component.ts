@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { CardTypeBasic } from 'src/app/card-types/card-type.service';
 import { UserSimple } from 'src/app/users/user-simple';
@@ -30,21 +30,14 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
   cardOrder: any;
   formGroup: FormGroup;
   filteredPartners: PartnerSimple[];
-  filteredPartners2: PartnerSimple[];
-  filteredCardTypes: CardTypeBasic[];
   filteredUsers: UserSimple[];
   id: string;
   title = 'Đơn bán thẻ dịch vụ';
 
-  gridPartners: PartnerSimple[] = [];
-
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: ComboBoxComponent;
-  @ViewChild('partner2Cbx', { static: true }) partner2Cbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private partnerService: PartnerService,
-    private cardTypeService: ServiceCardTypeService, private userService: UserService,
+  constructor(private fb: FormBuilder, private partnerService: PartnerService, private userService: UserService,
     private cardOrderService: ServiceCardOrderService, private route: ActivatedRoute,
     private intlService: IntlService, private router: Router,
     private notificationService: NotificationService, private modalService: NgbModal,
@@ -57,13 +50,10 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
 
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
-      cardType: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
-      activatedDateObj: null,
       user: null,
-      priceUnit: 0,
-      quantity: 1,
-      generationType: 'nbr_card'
+      orderLines: this.fb.array([]),
+      companyId: null,
     });
 
     this.route.queryParamMap.subscribe((param: ParamMap) => {
@@ -81,10 +71,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     });
 
     this.loadFilteredPartners();
-    this.loadFilteredCardTypes();
     this.loadFilteredUsers();
-    this.loadFilteredPartners2();
-    this.loadGridPartners();
 
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -95,15 +82,6 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       this.partnerCbx.loading = false;
     });
 
-    this.partner2Cbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.partner2Cbx.loading = true)),
-      switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners2 = result;
-      this.partner2Cbx.loading = false;
-    });
-
     this.userCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.userCbx.loading = true)),
@@ -112,15 +90,10 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       this.filteredUsers = result;
       this.userCbx.loading = false;
     });
+  }
 
-    this.cardTypeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.cardTypeCbx.loading = true)),
-      switchMap(value => this.searchCardTypes(value))
-    ).subscribe((result: any) => {
-      this.filteredCardTypes = result.items;
-      this.cardTypeCbx.loading = false;
-    });
+  get orderLines() {
+    return this.formGroup.get('orderLines') as FormArray;
   }
 
   loadRecord() {
@@ -137,15 +110,10 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       }
 
       this.filteredPartners = _.unionBy(this.filteredPartners, result.partner, 'id');
-      this.filteredCardTypes = _.unionBy(this.filteredCardTypes, result.cardType, 'id');
       if (result.user) {
         this.filteredUsers = _.unionBy(this.filteredUsers, result.user, 'id');
       }
     });
-  }
-
-  get generationTypeValue() {
-    return this.formGroup.get('generationType').value;
   }
 
   loadFilteredPartners() {
@@ -154,37 +122,11 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-  loadGridPartners() {
-    if (this.id) {
-      this.cardOrderService.getPartners(this.id).subscribe((result: any) => {
-        this.gridPartners = result;
-      });
-    }
-  }
-
-  loadFilteredPartners2() {
-    this.searchPartners().subscribe(result => {
-      this.filteredPartners2 = _.unionBy(this.filteredPartners2, result, 'id');
-    });
-  }
-
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.customer = true;
     val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
-  }
-
-  loadFilteredCardTypes() {
-    this.searchCardTypes().subscribe((result: any) => {
-      this.filteredCardTypes = _.unionBy(this.filteredCardTypes, result.items, 'id');
-    });
-  }
-
-  searchCardTypes(filter?: string) {
-    var val = new ServiceCardTypePaged();
-    val.search = filter || '';
-    return this.cardTypeService.getPaged(val);
   }
 
   loadFilteredUsers() {
@@ -197,12 +139,6 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     var val = new UserPaged();
     val.search = filter || '';
     return this.userService.autocompleteSimple(val);
-  }
-
-  onChangeCardType(value) {
-    if (value) {
-      this.formGroup.get('priceUnit').setValue(value.price);
-    }
   }
 
   saveOrUpdate() {
@@ -249,45 +185,6 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
       });
     }
-  }
-
-  addCustomer() {
-    if (!this.id) {
-      this.notificationService.show({
-        content: 'Bạn cần lưu lại trước khi thêm khách hàng',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-
-      return false;
-    }
-
-    var value = this.partner2Cbx.value;
-    if (!value) {
-      this.notificationService.show({
-        content: 'Vui lòng chọn 1 khách hàng',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-
-      return false;
-    }
-
-    this.cardOrderService.addPartners(this.id, [value.id]).subscribe(() => {
-      this.loadGridPartners();
-      this.loadRecord();
-    });
-  }
-
-  removeCustomer(partner) {
-    this.cardOrderService.removePartners(this.id, [partner.id]).subscribe(() => {
-      this.loadGridPartners();
-      this.loadRecord();
-    });
   }
 
   actionConfirm() {

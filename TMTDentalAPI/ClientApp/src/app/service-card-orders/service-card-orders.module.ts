@@ -8,9 +8,10 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardOrderCreateUpdateComponent } from './service-card-order-create-update/service-card-order-create-update.component';
 import { SharedModule } from '../shared/shared.module';
+import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-dialog/service-card-order-line-dialog.component';
 
 @NgModule({
-  declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent],
+  declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent, ServiceCardOrderLineDialogComponent],
   imports: [
     CommonModule,
     ServiceCardOrdersRoutingModule,

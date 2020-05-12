@@ -13,8 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<ServiceCardOrderBasic>> GetPagedResultAsync(ServiceCardOrderPaged val);
         Task<ServiceCardOrder> CreateUI(ServiceCardOrderSave val);
         Task UpdateUI(Guid id, ServiceCardOrderSave val);
-        Task AddPartners(Guid id, IEnumerable<Guid> partner_ids);
-        Task RemovePartners(Guid id, IEnumerable<Guid> partner_ids);
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);

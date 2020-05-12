@@ -97,9 +97,6 @@ namespace Infrastructure.Services
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search)));
 
-            if (val.OrderId.HasValue)
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.OrderId == val.OrderId));
-
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             var items = await _mapper.ProjectTo<ServiceCardCardBasic>(query).ToListAsync();

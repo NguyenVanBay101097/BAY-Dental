@@ -10,7 +10,6 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             DateOrder = DateTime.Now;
-            GenerationType = "nbr_card";
         }
 
         /// <summary>
@@ -24,18 +23,10 @@ namespace ApplicationCore.Entities
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
 
-        public Guid CardTypeId { get; set; }
-        public ServiceCardType CardType { get; set; }
-
         /// <summary>
         /// Ngày bán
         /// </summary>
         public DateTime DateOrder { get; set; }
-
-        /// <summary>
-        /// Ngày cấp thẻ
-        /// </summary>
-        public DateTime? ActivatedDate { get; set; }
 
         /// <summary>
         /// Người bán
@@ -43,24 +34,15 @@ namespace ApplicationCore.Entities
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
-        public Guid? MoveId { get; set; }
-        public AccountMove Move { get; set; }
-
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
-        public ICollection<ServiceCardCard> Cards { get; set; } = new List<ServiceCardCard>();
-
-        public ICollection<ServiceCardOrderPartnerRel> PartnerRels { get; set; } = new List<ServiceCardOrderPartnerRel>();
-
-        public decimal? PriceUnit { get; set; }
-
-        public decimal? Quantity { get; set; }
-
         public decimal? AmountTotal { get; set; }
 
-        public string GenerationType { get; set; }
+        public decimal? AmountResidual { get; set; }
+
+        public ICollection<ServiceCardOrderLine> OrderLines { get; set; } = new List<ServiceCardOrderLine>();
     }
 }

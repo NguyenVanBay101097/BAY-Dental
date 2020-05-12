@@ -19,6 +19,8 @@
   <ItemGroup>
     <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.cs" />
     <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.cs" />
+    <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

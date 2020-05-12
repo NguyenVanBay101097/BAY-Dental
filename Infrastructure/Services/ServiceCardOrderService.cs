@@ -74,20 +74,22 @@ namespace Infrastructure.Services
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.Cards)
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.Order")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .ToListAsync();
 
-            var cardObj = GetService<IServiceCardCardService>();
-            var move_ids = new List<Guid>();
-            foreach (var order in self)
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var move_ids = new List<Guid>().AsEnumerable();
+            foreach (var sale in self)
             {
-                if (order.Cards.Any(x => x.Residual != x.Amount))
-                    throw new Exception("Thẻ đã được sử dụng, không thể hủy đơn");
-                if (order.MoveId.HasValue)
-                    move_ids.Add(order.MoveId.Value);
-
-                order.State = "draft";
+                foreach (var line in sale.OrderLines)
+                    move_ids = move_ids.Union(line.OrderLineInvoiceRels.Select(x => x.InvoiceLine.Move.Id).Distinct().ToList());
             }
+
+            await UpdateAsync(self);
 
             if (move_ids.Any())
             {
@@ -97,74 +99,131 @@ namespace Infrastructure.Services
                 await moveObj.Unlink(move_ids);
             }
 
-            await cardObj.DeleteAsync(self.SelectMany(x => x.Cards).ToList());
+            foreach (var sale in self)
+            {
+                foreach (var line in sale.OrderLines)
+                {
+                    line.State = "draft";
+                }
+
+                sale.State = "draft";
+            }
+
             await UpdateAsync(self);
         }
 
         public async Task<ServiceCardOrder> CreateUI(ServiceCardOrderSave val)
         {
             var order = _mapper.Map<ServiceCardOrder>(val);
-            order.CompanyId = CompanyId;
-
-            var seqObj = GetService<IIRSequenceService>();
-            order.Name = await seqObj.NextByCode("service.card.order");
-            if (string.IsNullOrEmpty(order.Name))
+            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
             {
-                await _CreateSequence();
+                var seqObj = GetService<IIRSequenceService>();
                 order.Name = await seqObj.NextByCode("service.card.order");
+                if (string.IsNullOrEmpty(order.Name))
+                {
+                    await _CreateSequence();
+                    order.Name = await seqObj.NextByCode("service.card.order");
+                }
             }
 
-            _ComputeAmount(new List<ServiceCardOrder>() { order });
+            _SaveOrderLines(val, order);
+
+            var lineObj = GetService<IServiceCardOrderLineService>();
+            lineObj.PrepareLines(order.OrderLines);
+
+            _ComputeResidual(new List<ServiceCardOrder>() { order });
+            _AmountAll(new List<ServiceCardOrder>() { order });
+
             return await CreateAsync(order);
         }
 
-        public void _ComputeAmount(IEnumerable<ServiceCardOrder> self)
+        private void _AmountAll(IEnumerable<ServiceCardOrder> self)
         {
             foreach(var order in self)
             {
-                order.Quantity = order.Quantity ?? 1;
-                order.PriceUnit = order.PriceUnit ?? 0;
+                var totalAmountUntaxed = 0M;
 
-                if (order.GenerationType == "nbr_card")
-                    order.AmountTotal = order.Quantity * order.PriceUnit;
-                else if (order.GenerationType == "nbr_customer")
-                    order.AmountTotal = order.PartnerRels.Count * order.PriceUnit;
+                foreach (var line in order.OrderLines)
+                {
+                    totalAmountUntaxed += line.PriceSubTotal;
+                }
+
+                order.AmountTotal = Math.Round(totalAmountUntaxed);
+            }
+        }
+
+        public void _ComputeResidual(IEnumerable<ServiceCardOrder> self)
+        {
+            foreach (var order in self)
+            {
+                var invoices = order.OrderLines.SelectMany(x => x.OrderLineInvoiceRels)
+                    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
+                decimal? residual = 0M;
+                foreach (var invoice in invoices)
+                {
+                    if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
+                        continue;
+                    if (invoice.Type == "out_invoice")
+                        residual += invoice.AmountResidual;
+                    else
+                        residual -= invoice.AmountResidual;
+                }
+
+                order.AmountResidual = residual;
+            }
+        }
+
+
+        private void _SaveOrderLines(ServiceCardOrderSave val, ServiceCardOrder order)
+        {
+            var existLines = order.OrderLines.ToList();
+            var lineToRemoves = new List<ServiceCardOrderLine>();
+            foreach (var existLine in existLines)
+            {
+                bool found = false;
+                foreach (var item in val.OrderLines)
+                {
+                    if (item.Id == existLine.Id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+                order.OrderLines.Remove(line);
+
+            int sequence = 0;
+            foreach (var line in val.OrderLines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
+                    saleLine.Sequence = sequence++;
+                    order.OrderLines.Add(saleLine);
+                }
+                else
+                {
+                    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                    if (saleLine != null)
+                    {
+                        _mapper.Map(line, saleLine);
+                        saleLine.Sequence = sequence++;
+                    }
+                }
             }
         }
 
         public async Task UpdateUI(Guid id, ServiceCardOrderSave val)
         {
-            var order = await SearchQuery(x => x.Id == id).Include(x => x.PartnerRels).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             order = _mapper.Map(val, order);
 
-            _ComputeAmount(new List<ServiceCardOrder>() { order });
-            await UpdateAsync(order);
-        }
-
-        public async Task AddPartners(Guid id, IEnumerable<Guid> partner_ids)
-        {
-            var order = await SearchQuery(x => x.Id == id).Include(x => x.PartnerRels).FirstOrDefaultAsync();
-            foreach(var partner_id in partner_ids)
-            {
-                if (!order.PartnerRels.Any(x => x.PartnerId == partner_id))
-                    order.PartnerRels.Add(new ServiceCardOrderPartnerRel { PartnerId = partner_id });
-            }
-
-            _ComputeAmount(new List<ServiceCardOrder>() { order });
-            await UpdateAsync(order);
-        }
-
-        public async Task RemovePartners(Guid id, IEnumerable<Guid> partner_ids)
-        {
-            var order = await SearchQuery(x => x.Id == id).Include(x => x.PartnerRels).FirstOrDefaultAsync();
-            foreach (var partner_id in partner_ids)
-            {
-                var rel = order.PartnerRels.Where(x => x.PartnerId == partner_id).FirstOrDefault();
-                if (rel != null)
-                    order.PartnerRels.Remove(rel);
-            }
-
-            _ComputeAmount(new List<ServiceCardOrder>() { order });
+            _AmountAll(new List<ServiceCardOrder>() { order });
             await UpdateAsync(order);
         }
 
@@ -182,48 +241,99 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            //khi confirm thì sẽ ghi nhận doanh thu công nợ
-            //cấp thẻ luôn cho khách hàng, thẻ sẽ active từ lúc đó
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.PartnerRels)
-                .Include(x => x.CardType).Include("CardType.Product").ToListAsync();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines)
+                .ToListAsync();
 
             foreach (var order in self)
             {
-                if (!order.ActivatedDate.HasValue)
-                    order.ActivatedDate = DateTime.Today;
                 order.State = "sale";
+                foreach (var line in order.OrderLines)
+                {
+                    line.State = "sale";
+                }
             }
-                
-            await UpdateAsync(self);
+
+            var invoices = await _CreateInvoices(self);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
 
             var cards = await _CreateCards(self);
             var cardObj = GetService<IServiceCardCardService>();
             await cardObj.ActionActive(cards);
 
-            var moves = await _CreateInvoices(self);
+            _ComputeResidual(self);
+            await UpdateAsync(self);
+        }
+
+        public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<ServiceCardOrder> self, bool final = false)
+        {
+            //param final: if True, refunds will be generated if necessary
+
+            var saleLineObj = GetService<IServiceCardOrderLineService>();
+            var invoice_vals_list = new List<AccountMove>();
+            foreach (var order in self)
+            {
+                // Invoice values.
+                var invoice_vals = await _PrepareInvoice(order);
+
+                //Invoice line values (keep only necessary sections)
+                foreach (var line in order.OrderLines)
+                {
+                    invoice_vals.InvoiceLines.Add(saleLineObj.PrepareInvoiceLine(line));
+                }
+
+                if (!invoice_vals.InvoiceLines.Any())
+                    throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+
+                invoice_vals_list.Add(invoice_vals);
+            }
+
+            if (!invoice_vals_list.Any())
+                throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+
+            //3) Manage 'final' parameter: transform out_invoice to out_refund if negative.
+            var out_invoice_vals_list = new List<AccountMove>();
+            var refund_invoice_vals_list = new List<AccountMove>();
+            if (final)
+            {
+                foreach (var invoice_vals in invoice_vals_list)
+                {
+                    if (invoice_vals.InvoiceLines.Sum(x => x.Quantity * x.PriceUnit) < 0)
+                    {
+                        foreach (var l in invoice_vals.InvoiceLines)
+                            l.Quantity = -l.Quantity;
+                        invoice_vals.Type = "out_refund";
+                        refund_invoice_vals_list.Add(invoice_vals);
+                    }
+                    else
+                        out_invoice_vals_list.Add(invoice_vals);
+                }
+            }
+            else
+                out_invoice_vals_list = invoice_vals_list;
+
             var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(moves);
+            var moves = await moveObj.CreateMoves(out_invoice_vals_list, default_type: "out_invoice");
+            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "out_refund"));
+
+            return moves;
         }
 
         private async Task<IEnumerable<ServiceCardCard>> _CreateCards(IEnumerable<ServiceCardOrder> self)
         {
             var cardObj = GetService<IServiceCardCardService>();
+            var saleLineObj = GetService<IServiceCardOrderLineService>();
+
             var card_vals_list = new List<ServiceCardCard>();
             foreach(var order in self)
             {
-                if (order.GenerationType == "nbr_card")
+                foreach(var line in order.OrderLines)
                 {
-                    for (var i = 0; i < order.Quantity; i++)
+                    for (var i = 0; i < line.ProductUOMQty; i++)
                     {
-                        var card_vals = _PrepareCard(order, partner_id: order.PartnerId);
-                        card_vals_list.Add(card_vals);
-                    }
-                } 
-                else if (order.GenerationType == "nbr_customer")
-                {
-                    foreach(var rel in order.PartnerRels)
-                    {
-                        var card_vals = _PrepareCard(order, partner_id: rel.PartnerId);
+                        var card_vals = saleLineObj.PrepareCard(line);
                         card_vals_list.Add(card_vals);
                     }
                 }
@@ -231,57 +341,6 @@ namespace Infrastructure.Services
 
             await cardObj.CreateAsync(card_vals_list);
             return card_vals_list;
-        }
-
-        private ServiceCardCard _PrepareCard(ServiceCardOrder self, Guid? partner_id = null)
-        {
-            return new ServiceCardCard
-            {
-                CardTypeId = self.CardTypeId,
-                CardType = self.CardType,
-                PartnerId = partner_id,
-                ActivatedDate = self.ActivatedDate,
-                Amount = self.CardType.Amount,
-                Residual = self.CardType.Amount,
-                OrderId = self.Id
-            };
-        }
-
-        private async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<ServiceCardOrder> self)
-        {
-            var moveObj = GetService<IAccountMoveService>();
-            var invoice_vals_list = new List<AccountMove>();
-            foreach (var order in self)
-            {
-                // Invoice values.
-                var invoice_vals = await _PrepareInvoice(order);
-
-                invoice_vals.InvoiceLines.Add(_PrepareInvoiceLine(order));
-               
-                await moveObj.CreateMoves(new List<AccountMove>() { invoice_vals }, default_type: "out_invoice");
-
-                order.MoveId = invoice_vals.Id;
-                invoice_vals_list.Add(invoice_vals);
-            }
-
-            await UpdateAsync(self);
-
-            return invoice_vals_list;
-        }
-
-        private AccountMoveLine _PrepareInvoiceLine(ServiceCardOrder self)
-        {
-            var quantity = self.GenerationType == "nbr_customer" ? self.PartnerRels.Count : self.Quantity;
-            var res = new AccountMoveLine
-            {
-                Name = self.CardType.Name,
-                ProductId = self.CardType.ProductId,
-                ProductUoMId = self.CardType.Product.UOMId,
-                Quantity = quantity,
-                PriceUnit = self.CardType.Price,
-            };
-
-            return res;
         }
 
         private async Task<AccountMove> _PrepareInvoice(ServiceCardOrder self)
