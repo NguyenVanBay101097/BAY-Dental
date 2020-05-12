@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -18,11 +22,13 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IHistoryService _service;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public HistoriesController(IMapper mapper, IHistoryService service)
+        public HistoriesController(IMapper mapper, IHistoryService service, IUnitOfWorkAsync unitOfWork)
         {
             _mapper = mapper;
             _service = service;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -97,6 +103,72 @@ namespace TMTDentalAPI.Controllers
             var result = await _service.GetResultNotLimitAsync(val);
             var entity = _mapper.Map<IEnumerable<HistorySimple>>(result);
             return Ok(entity);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ImportExcel(HistoryImportExcelBaseViewModel val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+           
+            await _unitOfWork.BeginTransactionAsync();
+
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<History>();
+
+            var errors = new List<string>();
+
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    {
+                        var errs = new List<string>();
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        //var active = Convert.ToString(worksheet.Cells[row, 2].Value);
+
+                        if (string.IsNullOrEmpty(name))
+                            errs.Add("Tên tiểu sử bệnh là bắt buộc");
+
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+
+
+                        var item = new History
+                        {
+                            Name = name,
+                            Active = true,
+                        };
+                        data.Add(item);
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new { success = false, errors });
+
+            var vals = new List<History>();
+            foreach (var item in data)
+            {
+                var pd = new History();
+                pd.Name = item.Name;
+                vals.Add(pd);
+            }
+
+            await _service.CreateAsync(vals);
+
+            _unitOfWork.Commit();
+
+            return Ok(new { success = true });
         }
     }
 }

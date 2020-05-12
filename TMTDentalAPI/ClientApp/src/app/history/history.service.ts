@@ -3,9 +3,13 @@ import { HistoryPaged, PagedResult2, HistorySimple } from './history';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
+export class HistoryImportExcelBaseViewModel {
+  fileBase64: string;
+}
 @Injectable({
   providedIn: 'root'
 })
+
 export class HistoryService {
 
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -38,5 +42,8 @@ export class HistoryService {
 
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  }
+  importExcel(val: HistoryImportExcelBaseViewModel) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ImportExcel", val);
   }
 }
