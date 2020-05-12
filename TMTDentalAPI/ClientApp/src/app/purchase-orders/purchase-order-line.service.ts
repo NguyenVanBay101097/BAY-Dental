@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { UoMDisplay } from '../uoms/uom.service';
 
 export class PurchaseOrderLineOnChangeProduct {
     productId: string;
@@ -10,6 +11,9 @@ export class PurchaseOrderLineOnChangeProductResult {
     name: string;
     priceUnit: number;
     productUOMId: string;
+    productUOM: UoMDisplay;
+    productUOMPOId: string;
+    productUOMPO: UoMDisplay;
 }
 
 @Injectable()

@@ -77,6 +77,13 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
+
+            if (val.FilterId.HasValue)
+            {
+                var uom = await GetByIdAsync(val.FilterId.Value);
+                query = query.Where(x=>x.CategoryId == uom.CategoryId);
+            }
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             return _mapper.Map<IEnumerable<UoMBasic>>(items);

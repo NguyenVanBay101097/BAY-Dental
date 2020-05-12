@@ -19,16 +19,22 @@ namespace Infrastructure.Services
     public class ProductService : BaseService<Product>, IProductService
     {
         private readonly IMapper _mapper;
-        public ProductService(IAsyncRepository<Product> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+        private readonly IUoMService _uoMService;
+        public ProductService(
+            IAsyncRepository<Product> repository,
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper,
+            IUoMService uoMService
+            )
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _uoMService = uoMService;
         }
 
         public override Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
         {
-            foreach(var product in entities)
+            foreach (var product in entities)
             {
                 if (string.IsNullOrEmpty(product.NameNoSign))
                     product.NameNoSign = product.Name.RemoveSignVietnameseV2();
@@ -99,7 +105,8 @@ namespace Infrastructure.Services
                 PurchasePrice = x.PurchasePrice ?? 0,
                 CategId = x.CategId,
                 QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
-                Type2 = x.Type2
+                Type2 = x.Type2,
+
             });
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -130,6 +137,7 @@ namespace Infrastructure.Services
             };
         }
 
+
         public async Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids)
         {
             var res = ids.ToDictionary(x => x, x => 0M);
@@ -153,7 +161,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
 
             var items = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
-                .Select(x => new ProductLaboBasic {
+                .Select(x => new ProductLaboBasic
+                {
                     Id = x.Id,
                     Name = x.Name,
                     PurchasePrice = x.PurchasePrice
@@ -198,8 +207,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)
         {
-           var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-            x.NameNoSign.Contains(val.Search)));
+            var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
+             x.NameNoSign.Contains(val.Search)));
             if (val.KeToaOK.HasValue)
                 query = query.Where(x => x.KeToaOK == val.KeToaOK);
             if (val.IsLabo.HasValue)
@@ -226,7 +235,17 @@ namespace Infrastructure.Services
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
             if (!product.CompanyId.HasValue)
                 product.CompanyId = CompanyId;
-            if (val.StepList.Any())
+
+            var uom = await _uoMService.GetByIdAsync(product.UOMId);
+            if (uom == null)
+                product.UOMId = Guid.Parse("a9a32274-32f5-48f0-b399-08d7f1694494");
+
+            var uompo = await _uoMService.GetByIdAsync(product.UOMPOId);
+            if (uompo == null)
+                product.UOMPOId = Guid.Parse("a9a32274-32f5-48f0-b399-08d7f1694494");
+          
+
+            ; if (val.StepList.Any())
             {
                 var order = 1;
                 foreach (var step in val.StepList)
@@ -295,7 +314,7 @@ namespace Infrastructure.Services
         public async Task CreateProduct(IEnumerable<ProductDisplay> vals)
         {
             var self = new List<Product>();
-            foreach(var val in vals)
+            foreach (var val in vals)
             {
                 var product = _mapper.Map<Product>(val);
                 product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
@@ -499,6 +518,7 @@ namespace Infrastructure.Services
 
             return res;
         }
+
 
         //public override ISpecification<Product> RuleDomainGet(IRRule rule)
         //{

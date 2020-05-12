@@ -3,8 +3,8 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
-import { DotKhamBasic } from '../dot-khams/dot-khams';
-import { ProductSimple } from '../products/product-simple';
+import { UoMDisplay } from '../uoms/uom.service';
+import { ProductUoMBasic } from '../products/product.service';
 
 export class PurchaseOrderPaged {
     limit: number;
@@ -44,12 +44,17 @@ export class PurchaseOrderLineDisplay {
     id: string;
     name: string;
     productId: string;
-    product: ProductSimple;
+    product: ProductUoMBasic;
     productQty: number;
     priceUnit: number;
     priceSubtotal: number;
     state: string;
+    uomFactor: number;
     productUOMId: string;
+    productUOM: UoMDisplay;
+
+    productUOMPO: UoMDisplay;
+    productUOMPOId: string;
     discount: number;
 }
 

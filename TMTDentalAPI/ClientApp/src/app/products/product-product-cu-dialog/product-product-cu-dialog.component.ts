@@ -29,9 +29,12 @@ export class ProductProductCuDialogComponent implements OnInit {
   productForm: FormGroup;
   filterdCategories: ProductCategoryBasic[] = [];
   filterdUoMs: UoMBasic[] = [];
-  opened = false;
+  filterdUoMPOs: UoMBasic[] = [];
+  categoryIdSave: string;
+  opened = true;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
+  @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -49,8 +52,8 @@ export class ProductProductCuDialogComponent implements OnInit {
       saleOK: false,
       purchaseOK: true,
       categ: [null, Validators.required],
-      uomId: null,
-      uompoId: null,
+      uom: null,
+      uompo: null,
       type: 'consu',
       type2: 'product',
       listPrice: 1,
@@ -74,8 +77,13 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
       });
 
+      this.searchUoMs('').subscribe(result => {
+        this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
+      });
+
       this.categCbxFilterChange();
-      // this.uoMCbxFilterChange();
+      this.uoMCbxFilterChange();
+      this.uoMPOCbxFilterChange()
     });
   }
 
@@ -100,6 +108,7 @@ export class ProductProductCuDialogComponent implements OnInit {
     }
   }
 
+
   categCbxFilterChange() {
     this.categCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -111,20 +120,61 @@ export class ProductProductCuDialogComponent implements OnInit {
     });
   }
 
-  // uoMCbxFilterChange() {
-  //   this.uoMCbx.filterChange.asObservable().pipe(
-  //     debounceTime(300),
-  //     tap(() => (this.categCbx.loading = true)),
-  //     switchMap(value => this.searchUoMs(value))
-  //   ).subscribe(result => {
-  //     this.filterdUoMs = result;
-  //     this.categCbx.loading = false;
-  //   });
-  // }
 
-  searchUoMs(q?: string) {
+
+  uoMCbxFilterChange() {
+    this.uoMCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.uoMCbx.loading = true)),
+      switchMap(value => this.searchUoMs(value))
+    ).subscribe(result => {
+      this.filterdUoMs = result;
+      this.uoMCbx.loading = false;
+    });
+  }
+
+  uoMPOCbxFilterChange() {
+    this.uoMPOCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.uoMPOCbx.loading = true)),
+      switchMap(value => this.searchUoMs(value))
+    ).subscribe(result => {
+      this.filterdUoMPOs = result;
+      this.uoMPOCbx.loading = false;
+    });
+  }
+
+  uoMChange(event) {
+
+    if (event && event.id) {
+      this.filterdUoMPOs = [];
+      this.searchUoMs('', event.id).subscribe(result => {
+        this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
+      });
+      if (event.categoryId != this.categoryIdSave) {
+        this.productForm.get('uompoId').setValue(null);
+        this.categoryIdSave = event.categoryId;
+      }
+    }
+  }
+
+  uoMPOChange(event) {
+    if (event && event.id) {
+      this.filterdUoMs = [];
+      this.searchUoMs('', event.id).subscribe(result => {
+        this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
+      });
+      if (event.categoryId != this.categoryIdSave) {
+        this.productForm.get('uomId').setValue(null);
+        this.categoryIdSave = event.categoryId;
+      }
+    }
+  }
+
+  searchUoMs(q?: string, filterId?) {
     var val = new UoMPaged();
     val.search = q || '';
+    val.filterId = filterId;
     return this.uoMService.autocomplete(val);
   }
 
@@ -174,6 +224,10 @@ export class ProductProductCuDialogComponent implements OnInit {
   getBodyData() {
     var data = this.productForm.value;
     data.categId = data.categ.id;
+    if (data.uom)
+      data.uOMId = data.uom.id;
+    if (data.uompo)
+      data.uOMPOId = data.uompo.id;
     return data;
   }
 

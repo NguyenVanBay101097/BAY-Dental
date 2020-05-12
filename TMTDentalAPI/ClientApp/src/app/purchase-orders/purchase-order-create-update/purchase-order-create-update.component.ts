@@ -9,10 +9,13 @@ import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operato
 import { PartnerService } from 'src/app/partners/partner.service';
 import * as _ from 'lodash';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { PurchaseOrderLineService, PurchaseOrderLineOnChangeProduct } from '../purchase-order-line.service';
+import { PurchaseOrderLineService, PurchaseOrderLineOnChangeProduct, PurchaseOrderLineOnChangeProductResult } from '../purchase-order-line.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
+import { UoMDisplay } from 'src/app/uoms/uom.service';
 declare var $: any;
 
 @Component({
@@ -27,9 +30,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   type: string;
-
+  purchaseOrderLineOnChangeProductResult: PurchaseOrderLineOnChangeProductResult = new PurchaseOrderLineOnChangeProductResult();
   purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
-
+  hasDefined = false;
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
@@ -39,11 +42,22 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
+  uomByProduct: { [id: string]: UoMDisplay[] } = {}
 
-  constructor(private fb: FormBuilder, private productService: ProductService, private route: ActivatedRoute,
-    private purchaseOrderService: PurchaseOrderService, private partnerService: PartnerService,
-    private purchaseLineService: PurchaseOrderLineService, private intlService: IntlService, private notificationService: NotificationService,
-    private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    private route: ActivatedRoute,
+    private purchaseOrderService: PurchaseOrderService,
+    private partnerService: PartnerService,
+    private purchaseLineService: PurchaseOrderLineService,
+    private intlService: IntlService,
+    private notificationService: NotificationService,
+    private router: Router,
+    private permissionService: PermissionService,
+    private authService: AuthService
+  ) {
+
   }
 
   ngOnInit() {
@@ -99,13 +113,23 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     $('#productSearchInput').focus(function () {
       $(this).select();
     });
+
+    this.authService.getGroups().subscribe((result: any) => {
+      this.permissionService.define(result);
+      this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+    });
   }
 
   loadRecord() {
     if (this.id) {
       this.purchaseOrderService.get(this.id).subscribe(result => {
         this.purchaseOrder = result;
-        this.formGroup.patchValue(result);
+        this.purchaseOrder.orderLines.forEach(item => {
+          item.productUOMPO = item.product.uompo;
+          item.productUOMPOId = item.product.uompo.id;
+          item.uomFactor = item.productUOM.factor;
+        })
+        this.formGroup.patchValue(this.purchaseOrder);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
@@ -263,16 +287,23 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       productSimple.id = product.id;
       productSimple.name = product.name;
       this.purchaseLineService.onChangeProduct(val).subscribe(result => {
+        // this.uomByProduct[product.id] = [];
+        // this.uomByProduct[product.id].push(result.productUOM)
+        // this.uomByProduct[product.id].push(result.productUOMPO)
         var group = this.fb.group({
           name: result.name,
           priceUnit: result.priceUnit,
           productUOMId: result.productUOMId,
+          uomFactor: result.productUOM.factor,
+          productUOM: result.productUOM,
+          productUOMPO: result.productUOMPO,
           product: productSimple,
           productId: product.id,
           priceSubtotal: null,
           productQty: 1,
           discount: 0,
         });
+
         this.orderLines.push(group);
         this.focusLastRow();
       });
@@ -288,9 +319,14 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   computeLinePriceSubtotal(line: AbstractControl) {
     var priceUnit = line.get('priceUnit').value || 0;
+    if (line.get('uomFactor'))
+      var factor = line.get('uomFactor').value || 1;
+    else {
+      factor = 1;
+    }
     var productQty = line.get('productQty').value || 0;
     var discount = line.get('discount').value || 0;
-    return priceUnit * (1 - discount / 100) * productQty;
+    return priceUnit * (1 - discount / 100) * productQty * (1 / factor);
   }
 
   onSave() {
@@ -313,6 +349,14 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
+    val.orderLines.forEach(element => {
+      if (element.uomFactor == element.productUOMPO.factor) {
+        var temp;
+        temp = element.productUOM;
+        element.productUOM = element.productUOMPO;
+        element.productUOMPO = temp;
+      }
+    });
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     var data = Object.assign(this.purchaseOrder, val);

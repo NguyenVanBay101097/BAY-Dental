@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 export class UoMPaged {
   search: string;
   limit: number;
+  filterId: string;
   offset: number;
 }
 
@@ -14,6 +15,7 @@ export class UoMBasic {
   name: string;
   uomType: string;
   categoryName: string;
+  categoryId: string;
   active: boolean;
 }
 

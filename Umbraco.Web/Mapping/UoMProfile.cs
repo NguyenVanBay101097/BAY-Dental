@@ -12,10 +12,10 @@ namespace Umbraco.Web.Mapping
         public UoMProfile()
         {
             CreateMap<UoM, UoMBasic>().ReverseMap();
-
             CreateMap<UoM, UoMSimple>();
             CreateMap<UoMSave, UoM>();
             CreateMap<UoM, UoMDisplay>();
+            CreateMap<UoMDisplay, UoM>();
         }
     }
 }

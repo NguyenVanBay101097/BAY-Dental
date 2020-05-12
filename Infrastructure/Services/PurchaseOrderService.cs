@@ -84,6 +84,8 @@ namespace Infrastructure.Services
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
+                .Include("OrderLines.Product.UOMPO")
+                .Include("OrderLines.ProductUOM")
                 .FirstOrDefaultAsync();
             var res = _mapper.Map<PurchaseOrderDisplay>(labo);
             res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);

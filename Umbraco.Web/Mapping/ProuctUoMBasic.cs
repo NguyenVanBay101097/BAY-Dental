@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Umbraco.Web.Models.ContentEditing;
 
-namespace Umbraco.Web.Models.ContentEditing
+namespace Umbraco.Web.Mapping
 {
-    public class ProductSimple
+    public class ProuctUoMBasic
     {
         public Guid Id { get; set; }
 

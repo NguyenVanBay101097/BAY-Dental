@@ -15,6 +15,9 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ProductServiceCuDialogComponent } from '../product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductServiceImportDialogComponent } from '../product-service-import-dialog/product-service-import-dialog.component';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
+import { HasGroupsDirective } from 'src/app/shared/has-groups-directive';
+import { PermissionService } from 'src/app/shared/permission.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-product-product-list',
@@ -36,10 +39,19 @@ export class ProductProductListComponent implements OnInit {
   searchCateg: ProductCategoryBasic;
   filteredCategs: ProductCategoryBasic[];
   searchUpdate = new Subject<string>();
+  hasDefined: boolean;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild(HasGroupsDirective, { static: false }) hasGroup: HasGroupsDirective;
 
-  constructor(private productService: ProductService, public intl: IntlService, private productCategoryService: ProductCategoryService,
-    private route: ActivatedRoute, private modalService: NgbModal) { }
+  constructor(
+    private productService: ProductService,
+    public intl: IntlService,
+    private productCategoryService: ProductCategoryService,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private permissionService: PermissionService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -58,6 +70,10 @@ export class ProductProductListComponent implements OnInit {
       this.categCbx.loading = false;
     });
 
+    setTimeout(() => {
+      this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+    }, 100);
+
     this.loadDataFromApi();
     this.loadFilteredCategs();
   }
@@ -66,6 +82,7 @@ export class ProductProductListComponent implements OnInit {
     this.skip = event.skip;
     this.loadDataFromApi();
   }
+
 
   loadDataFromApi() {
     this.loading = true;

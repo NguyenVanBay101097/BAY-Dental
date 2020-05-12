@@ -55,6 +55,11 @@
                     {{dataItem.qtyAvailable | number}}
                 </ng-template>
             </kendo-grid-column>
+            <!-- <kendo-grid-column *ngIf="hasDefined" field="qtyAvailable" class="text-right" title="Đơn vị" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.qtyAvailable | number}}
+                </ng-template>
+            </kendo-grid-column> -->
             <kendo-grid-column field="id" width="100">
                 <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                     Thao tác

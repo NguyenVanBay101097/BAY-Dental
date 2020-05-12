@@ -20,12 +20,7 @@ namespace ApplicationCore.Entities
 
         public string NameNoSign { get; set; }
 
-        /// <summary>
-        /// Đơn vị chính của sản phẩm
-        /// </summary>
-        public Guid UOMId { get; set; }
-        public UoM UOM { get; set; }
-
+      
         /// <summary>
         /// Nhóm sản phẩm
         /// </summary>
@@ -52,9 +47,18 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Đơn vị mua hàng
+        /// uomPo là đơn vị mua
+        /// uom đơn vị mặc định
         /// </summary>
         public Guid UOMPOId { get; set; }
         public UoM UOMPO { get; set; }
+
+        /// <summary>
+        /// Đơn vị chính của sản phẩm
+        /// </summary>
+        public Guid UOMId { get; set; }
+        public UoM UOM { get; set; }
+
 
         /// <summary>
         /// Loại sản phẩm
