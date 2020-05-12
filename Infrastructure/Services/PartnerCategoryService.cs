@@ -154,7 +154,7 @@ namespace Infrastructure.Services
 
                         var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                         if (string.IsNullOrWhiteSpace(name))
-                            errs.Add("Tên khách hàng là bắt buộc");
+                            errs.Add("Tên nhóm khách hàng là bắt buộc");
 
                         if (errs.Any())
                         {
