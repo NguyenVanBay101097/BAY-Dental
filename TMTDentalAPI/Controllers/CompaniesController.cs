@@ -145,7 +145,6 @@ namespace TMTDentalAPI.Controllers
             var company = await _companyService.SearchQuery(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
             if (company == null)
                 return NotFound();
-
             company = _mapper.Map(val, company);
             company.Partner.Street = val.Street;
             company.Partner.CityCode = val.City != null ? val.City.Code : string.Empty;
@@ -233,6 +232,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (!string.IsNullOrEmpty(val.Logo) && ImageHelper.IsBase64String(val.Logo))
             {
+                
                 var fileName = Path.GetRandomFileName() + "." + ImageHelper.GetImageExtension(val.Logo);
                 var uploadResult = await _uploadService.UploadBinaryAsync(val.Logo, fileName: fileName);
                 if (uploadResult != null)

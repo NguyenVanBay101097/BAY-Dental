@@ -34,6 +34,7 @@ namespace Infrastructure.Services
         Task ActionConvertToOrder(Guid id);
         Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id);
         bool _IsGlobalDiscountAlreadyApplied(SaleOrder self);
+        bool _IsGlobalDiscountPromotionAlreadyApplied(SaleOrder self);
         bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program);
         IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self);
         Task<IEnumerable<SaleCouponProgram>> _GetApplicablePrograms(SaleOrder self);

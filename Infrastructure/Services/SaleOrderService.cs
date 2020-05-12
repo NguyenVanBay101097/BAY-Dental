@@ -673,12 +673,20 @@ namespace Infrastructure.Services
             return programs;
         }
 
-       
+        public bool _IsGlobalDiscountPromotionAlreadyApplied(SaleOrder self)
+        {
+            var applied_programs = self.NoCodePromoPrograms.Select(x => x.Program)
+                .Concat(self.AppliedCoupons.Select(x => x.Program)).Where(x => x.ProgramType == "promotion_program");
+            if (self.CodePromoProgram != null)
+                applied_programs = applied_programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
+            var programObj = GetService<ISaleCouponProgramService>();
+            return applied_programs.Where(x => programObj._IsGlobalDiscountProgram(x)).Any();
+        }
 
         public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
         {
             var applied_programs = self.NoCodePromoPrograms.Select(x => x.Program)
-                .Concat(self.AppliedCoupons.Select(x => x.Program)).Where(x=>x.ProgramType == "coupon_program");
+                .Concat(self.AppliedCoupons.Select(x => x.Program)).Where(x => x.ProgramType == "coupon_program");
             if (self.CodePromoProgram != null)
                 applied_programs = applied_programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
             var programObj = GetService<ISaleCouponProgramService>();
