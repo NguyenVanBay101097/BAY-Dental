@@ -11,6 +11,9 @@ export class ProductCategoryFilter {
     pageSize: number;
     filter: string;
 }
+export class ProductCategoryImportExcelBaseViewModel {
+    fileBase64: string;
+}
 
 export class ProductCategoryBasic {
     id: string;
@@ -90,5 +93,17 @@ export class ProductCategoryService {
 
     autocomplete(val: ProductCategoryPaged): Observable<ProductCategoryBasic[]> {
         return this.http.post<ProductCategoryBasic[]>(this.baseApi + this.apiUrl + '/autocomplete', val);
+    }
+    
+    importCategoryService(val: ProductCategoryImportExcelBaseViewModel) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ImportCategoryService", val);
+    }
+
+    importCategoryMedicine(val: ProductCategoryImportExcelBaseViewModel) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ImportCategoryMedicine", val);
+    }
+
+    importCategoryProduct(val: ProductCategoryImportExcelBaseViewModel) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ImportCategoryProduct", val);
     }
 }

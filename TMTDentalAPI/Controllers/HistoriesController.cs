@@ -128,9 +128,7 @@ namespace TMTDentalAPI.Controllers
                     for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                     {
                         var errs = new List<string>();
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        //var active = Convert.ToString(worksheet.Cells[row, 2].Value);
-
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);                      
                         if (string.IsNullOrEmpty(name))
                             errs.Add("Tên tiểu sử bệnh là bắt buộc");
 
@@ -155,7 +153,6 @@ namespace TMTDentalAPI.Controllers
 
             if (errors.Any())
                 return Ok(new { success = false, errors });
-
             var vals = new List<History>();
             foreach (var item in data)
             {

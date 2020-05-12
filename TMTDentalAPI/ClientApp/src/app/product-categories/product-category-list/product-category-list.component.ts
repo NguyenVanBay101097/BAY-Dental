@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ProductCategoryImportExcelDialogComponent } from '../product-category-import-excel-dialog/product-category-import-excel-dialog.component';
 
 @Component({
   selector: 'app-product-category-list',
@@ -69,6 +70,23 @@ export class ProductCategoryListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  importFromExcel() {
+    let modalRef = this.modalService.open(ProductCategoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Import excel';
+    modalRef.componentInstance.type = this.type;
+    if (this.type == 'service') {
+      modalRef.componentInstance.type = 'service';
+    } else if (this.type == 'product') {
+      modalRef.componentInstance.type = 'product';
+    } else if (this.type == 'medicine') {
+      modalRef.componentInstance.type = 'medicine';
+    }
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    }); 
   }
 
   pageChange(event: PageChangeEvent): void {
