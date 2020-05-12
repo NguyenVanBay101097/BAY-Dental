@@ -26,7 +26,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public override Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
+        public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
         {
             foreach(var product in entities)
             {
@@ -34,7 +34,23 @@ namespace Infrastructure.Services
                     product.NameNoSign = product.Name.RemoveSignVietnameseV2();
             }
 
-            return base.CreateAsync(entities);
+            await base.CreateAsync(entities);
+
+            await _SetListPrice(entities);
+
+            return entities;
+        }
+
+        private async Task _SetListPrice(IEnumerable<Product> self)
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
+            if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
+                return;
+
+            var propertyObj = GetService<IIRPropertyService>();
+            var list = self;
+            propertyObj.set_multi("list_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)x.ListPrice));
         }
 
         public async Task<Product> GetProductForDisplayAsync(Guid id)
@@ -112,15 +128,14 @@ namespace Infrastructure.Services
                 query2 = query2.Where(x => types.Contains(x.Type));
             }
 
-            //chung 1 group thì dùng toán tử or
-            if (val.SaleOK.HasValue || val.PurchaseOK.HasValue || val.KeToaOK.HasValue || val.IsLabo.HasValue)
-                query2 = query2.Where(x => x.SaleOK == val.SaleOK || x.PurchaseOK == val.PurchaseOK || x.KeToaOK == val.KeToaOK || x.IsLabo == val.IsLabo);
-
             if (!string.IsNullOrEmpty(val.Type2))
                 query2 = query2.Where(x => x.Type2 == val.Type2);
 
             var items = await query2.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
+
+            //Tính lại giá bán
+            await _ProcessListPrice(items);
 
             var totalItems = await query2.CountAsync();
 
@@ -128,6 +143,19 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        private async Task _ProcessListPrice(List<ProductBasic2> items)
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
+            if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
+                return;
+
+            var propertyObj = GetService<IIRPropertyService>();
+            var dict = propertyObj.get_multi("list_price", "product.product", items.Select(x => x.Id.ToString()).ToList());
+            foreach (var item in items)
+                item.ListPrice = Convert.ToDecimal(dict[item.Id.ToString()]);
         }
 
         public async Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids)
@@ -241,6 +269,8 @@ namespace Infrastructure.Services
 
             //_SetStandardPrice(product, val.StandardPrice);
 
+            await _SetListPrice(product, val.ListPrice);
+
             return await CreateAsync(product);
         }
 
@@ -324,6 +354,8 @@ namespace Infrastructure.Services
 
             SaveProductSteps(product, val.StepList);
             //_SetStandardPrice(product, val.StandardPrice);
+
+            await _SetListPrice(product, val.ListPrice);
             await UpdateAsync(product);
         }
 
@@ -391,7 +423,32 @@ namespace Infrastructure.Services
             var res = _mapper.Map<ProductDisplay>(product);
 
             //res.StandardPrice = _GetStandardPrice(product);
+            res.ListPrice = await _GetListPrice(product);
             return res;
+        }
+
+        public async Task _SetListPrice(Product self, decimal list_price)
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
+            if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
+                return;
+
+            var propertyObj = GetService<IIRPropertyService>();
+            var list = new List<Product>() { self };
+            propertyObj.set_multi("list_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)list_price));
+        }
+
+        private async Task<decimal> _GetListPrice(Product self)
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
+            if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
+                return self.ListPrice;
+
+            var propertyObj = GetService<IIRPropertyService>();
+            var val = propertyObj.get("list_price", "product.product", res_id: $"product.product,{self.Id.ToString()}");
+            return Convert.ToDecimal(val);
         }
 
         public double _GetStandardPrice(Product self)

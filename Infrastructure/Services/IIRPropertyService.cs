@@ -10,5 +10,6 @@ namespace Infrastructure.Services
         void set_multi(string name, string model, IDictionary<string, object> values, object default_value = null,
          Guid? force_company = null);
         object get(string name, string model, string res_id = null, Guid? force_company = null);
+        IDictionary<string, object> get_multi(string name, string model, IEnumerable<string> ids, Guid? force_company = null);
     }
 }

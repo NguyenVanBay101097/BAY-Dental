@@ -58,6 +58,8 @@ namespace Infrastructure.Services
                 {
                     if (field_type == "decimal")
                         res.GetType().GetProperty(name).SetValue(res, Convert.ToDecimal(value));
+                    else if (field_type == "boolean")
+                        res.GetType().GetProperty(name).SetValue(res, Convert.ToBoolean(value));
                 }
             }
 
@@ -163,6 +165,8 @@ namespace Infrastructure.Services
                 var valueStr = "";
                 if (field_type == "decimal")
                     valueStr = Convert.ToDecimal(value).ToString();
+                else if (field_type == "boolean")
+                    valueStr = Convert.ToBoolean(value).ToString();
                 await irConfigParameter.SetParam(item.ConfigParameter, valueStr);
             }
 
@@ -223,6 +227,26 @@ namespace Infrastructure.Services
                 {"service_card.service_card_card_comp_rule", new IRRule { Name = "Service Card Card multi-company", Model = new_model_dict["service_card.model_service_card_card"] }},
             };
             await ruleObj.InsertIfNotExist(rule_dict);
+        }
+
+        public async Task InsertFieldForProductListPriceRestrictCompanies()
+        {
+            var fieldObj = GetService<IIRModelFieldService>();
+            var field = await fieldObj.SearchQuery(x => x.Name == "list_price" && x.Model == "product.product").FirstOrDefaultAsync();
+            if (field == null)
+            {
+                var modelObj = GetService<IIRModelService>();
+                var model = await modelObj.SearchQuery(x => x.Model == "Product").FirstOrDefaultAsync();
+                field = new IRModelField
+                {
+                    IRModelId = model.Id,
+                    Model = "product.product",
+                    Name = "list_price",
+                    TType = "decimal",
+                };
+
+                await fieldObj.CreateAsync(field);
+            }
         }
 
         public async Task SetDefaultOtherFields<T>(T self, IList<string> fields)

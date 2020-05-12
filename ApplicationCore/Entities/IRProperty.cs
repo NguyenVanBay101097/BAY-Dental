@@ -38,5 +38,7 @@ namespace ApplicationCore.Entities
 
         [NotMapped]
         public object Value { get; set; }
+
+        public decimal? ValueDecimal { get; set; }
     }
 }

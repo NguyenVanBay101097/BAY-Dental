@@ -38,6 +38,7 @@ namespace Infrastructure.Services
                 var dict = new Dictionary<string, string>();
                 dict.Add("char", "value_text");
                 dict.Add("float", "value_float");
+                dict.Add("decimal", "value_decimal");
                 dict.Add("boolean", "value_integer");
                 dict.Add("integer", "value_integer");
                 dict.Add("binary", "value_binary");
@@ -94,14 +95,11 @@ namespace Infrastructure.Services
             }
             else if (field == "value_float")
             {
-                if (value.GetType() == typeof(decimal) || value.GetType() == typeof(decimal?))
-                {
-                    values.ValueFloat = (double)((decimal)(value ?? 0));
-                }
-                else if (value.GetType() == typeof(double) || value.GetType() == typeof(double?))
-                {
-                    values.ValueFloat = (double)(value ?? 0);
-                }
+                values.ValueFloat = Convert.ToDouble(value);
+            }
+            else if (field == "value_decimal")
+            {
+                values.ValueDecimal = Convert.ToDecimal(value);
             }
             else if (field == "value_text")
             {
@@ -153,28 +151,31 @@ namespace Infrastructure.Services
             var field_id = field != null ? field.Id : (Guid?)null;
             var company_id = force_company ?? CompanyId;
             var res_ids = values.Keys.Select(x => x);
-            //invoke stored procedure
-            //prepare parameters
-            var resIds = new SqlParameter();
-            resIds.ParameterName = "ResIds";
-            resIds.Value = string.Join(";", res_ids);
-            resIds.DbType = DbType.String;
 
-            var fieldId = new SqlParameter();
-            fieldId.ParameterName = "FieldId";
-            fieldId.Value = field_id.ToString();
-            fieldId.DbType = DbType.String;
+            ////invoke stored procedure
+            ////prepare parameters
+            //var resIds = new SqlParameter();
+            //resIds.ParameterName = "ResIds";
+            //resIds.Value = string.Join(";", res_ids);
+            //resIds.DbType = DbType.String;
 
-            var companyId = new SqlParameter();
-            companyId.ParameterName = "CompanyId";
-            companyId.Value = company_id.ToString();
-            companyId.DbType = DbType.String;
+            //var fieldId = new SqlParameter();
+            //fieldId.ParameterName = "FieldId";
+            //fieldId.Value = field_id.ToString();
+            //fieldId.DbType = DbType.String;
 
-            var props = SqlQuery(
-                "SearchIrProperty",
-                resIds,
-                fieldId,
-                companyId);
+            //var companyId = new SqlParameter();
+            //companyId.ParameterName = "CompanyId";
+            //companyId.Value = company_id.ToString();
+            //companyId.DbType = DbType.String;
+
+            //var props = SqlQuery(
+            //    "SearchIrProperty",
+            //    resIds,
+            //    fieldId,
+            //    companyId);
+
+            var props = SearchQuery(x => res_ids.Contains(x.ResId) && x.FieldId == field_id && x.CompanyId == company_id).ToList();
 
             //modify existing properties
             foreach (var prop in props)
@@ -343,8 +344,10 @@ namespace Infrastructure.Services
                 return self.ValueText;
             else if (self.Type == "float")
                 return self.ValueFloat;
+            else if (self.Type == "decimal")
+                return self.ValueDecimal;
             else if (self.Type == "boolean")
-                return Convert.ToBoolean(self.ValueInteger ?? 0);
+                return Convert.ToBoolean(self.ValueText);
             else if (self.Type == "integer")
                 return self.ValueInteger;
             else if (self.Type == "binary")
