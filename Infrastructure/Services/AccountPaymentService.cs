@@ -30,6 +30,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.AccountMovePaymentRels)
                 .Include(x => x.SaleOrderPaymentRels)
+                .Include(x => x.CardOrderPaymentRels)
                 .Include("AccountMovePaymentRels.Move")
                 .Include("AccountMovePaymentRels.Move.Lines")
                 .Include("AccountMovePaymentRels.Move.Lines.Account")
@@ -108,6 +109,19 @@ namespace Infrastructure.Services
 
                         var invoices = moves.Concat(sale_moves);
                         await _AutoReconcile(rec, invoices);
+                    }
+                    else if (rec.CardOrderPaymentRels.Any())
+                    {
+                        //tìm tất cả các moves của các sale orders
+                        var sale_order_ids = rec.CardOrderPaymentRels.Select(x => x.CardOrderId).ToList();
+                        var sale_moves = await moveObj.SearchQuery(x => x.Lines.Any(s => s.CardOrderLineRels.Any(m => sale_order_ids.Contains(m.OrderLine.OrderId))))
+                            .Include(x => x.Lines).Include("Lines.Account").ToListAsync();
+
+                        var invoices = moves.Concat(sale_moves);
+                        await _AutoReconcile(rec, invoices);
+
+                        var cardOrderObj = GetService<IServiceCardOrderService>();
+                        await cardOrderObj.UpdateResidual(sale_order_ids);
                     }
                     else
                     {
@@ -499,7 +513,7 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids)
         {
             var orderObj = GetService<IServiceCardOrderService>();
-            var orders = await orderObj.SearchQuery(x => order_ids.Contains(x.Id)).ToListAsync();
+            var orders = await orderObj.SearchQuery(x => order_ids.Contains(x.Id) && x.AmountResidual > 0).ToListAsync();
 
             if (!orders.Any() || orders.Any(x => x.State != "sale" && x.State != "done"))
                 throw new Exception("Bạn chỉ có thể thanh toán cho đơn hàng đã xác nhận");
@@ -507,16 +521,17 @@ namespace Infrastructure.Services
             if (orders.Any(x => x.PartnerId != orders[0].PartnerId))
                 throw new Exception("Để thanh toán nhiều đơn cùng một lần, chúng phải có cùng khách hàng");
 
-            var total_amount = 0M;
+            var total_amount = orders.Sum(x => x.AmountResidual);
 
             var communication = string.Join(", ", orders.Select(x => x.Name));
             var rec = new AccountRegisterPaymentDisplay
             {
-                Amount = Math.Abs(total_amount),
+                Amount = Math.Abs(total_amount ?? 0),
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
                 PartnerId = orders[0].PartnerId,
                 PartnerType = "customer",
                 Communication = communication,
+                ServiceCardOrderIds = order_ids
             };
 
             return rec;
@@ -578,6 +593,9 @@ namespace Infrastructure.Services
 
             foreach (var order_id in val.SaleOrderIds)
                 payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order_id });
+
+            foreach (var order_id in val.ServiceCardOrderIds)
+                payment.CardOrderPaymentRels.Add(new ServiceCardOrderPaymentRel { CardOrderId = order_id });
 
             return await CreateAsync(payment);
         }

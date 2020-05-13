@@ -1,19 +1,23 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Thẻ dịch vụ</li>
+            <li class="active">{{title}}</li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã thẻ, khách hàng, SĐT" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-light btn-sm" (click)="exportExcelFile()">
+                        <i class="fas fa-download"></i>&nbsp;Xuất excel</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="buttonActiveAll()">Cấp thẻ toàn bộ
+                    </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -27,9 +31,9 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Mã thẻ" width="120">
+        <kendo-grid-column field="name" title="Số thẻ" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+        <kendo-grid-column field="barcode" title="Mã vạch" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="cardTypeName" title="Loại thẻ" width="150">
         </kendo-grid-column>

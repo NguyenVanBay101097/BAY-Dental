@@ -18,18 +18,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
 
-        public Guid CardTypeId { get; set; }
-        public ServiceCardTypeBasic CardType { get; set; }
-
         /// <summary>
         /// Ngày bán
         /// </summary>
         public DateTime DateOrder { get; set; }
-
-        /// <summary>
-        /// Ngày cấp thẻ
-        /// </summary>
-        public DateTime? ActivatedDate { get; set; }
 
         /// <summary>
         /// Người bán
@@ -37,17 +29,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
 
-        public decimal? PriceUnit { get; set; }
+        public Guid CompanyId { get; set; }
 
-        public decimal? Quantity { get; set; }
-
-        public string GenerationType { get; set; }
+        public IEnumerable<ServiceCardOrderLineDisplay> OrderLines { get; set; } = new List<ServiceCardOrderLineDisplay>();
 
         public decimal? AmountTotal { get; set; }
 
-        public decimal? MoveAmountTotal { get; set; }
-
-        public decimal? MoveAmountResidual { get; set; }
+        public decimal? AmountResidual { get; set; }
 
         public int CardCount { get; set; }
     }

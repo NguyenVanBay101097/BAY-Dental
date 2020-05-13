@@ -10,6 +10,7 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ServiceCardTypePaged } from 'src/app/service-card-types/service-card-type-paged';
 import { ServiceCardTypeService } from 'src/app/service-card-types/service-card-type.service';
+import { ServiceCardOrderLineService } from '../service-card-order-line.service';
 
 @Component({
   selector: 'app-service-card-order-line-dialog',
@@ -25,7 +26,7 @@ export class ServiceCardOrderLineDialogComponent implements OnInit {
   title: string;
 
   constructor(private fb: FormBuilder, private cardTypeService: ServiceCardTypeService,
-    public activeModal: NgbActiveModal) { }
+    public activeModal: NgbActiveModal, private saleLineService: ServiceCardOrderLineService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -125,9 +126,11 @@ export class ServiceCardOrderLineDialogComponent implements OnInit {
     return this.formGroup.get('discountFixed').value;
   }
 
-  onChangeProduct(value: any) {
+  onChangeCardType(value: any) {
     if (value) {
-
+      this.saleLineService.onChangeProduct({ cardTypeId: value.id }).subscribe((result: any) => {
+        this.formGroup.patchValue(result);
+      });
     }
   }
 
@@ -138,8 +141,7 @@ export class ServiceCardOrderLineDialogComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.productId = val.product.id;
-    val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
+    val.cardTypeId = val.cardType.id;
     val.priceSubTotal = this.getPriceSubTotal();
     this.activeModal.close(val);
   }

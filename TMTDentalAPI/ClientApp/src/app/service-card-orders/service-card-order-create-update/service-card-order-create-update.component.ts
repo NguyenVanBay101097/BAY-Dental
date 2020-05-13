@@ -15,10 +15,11 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, mergeMap } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ServiceCardOrderLineDialogComponent } from '../service-card-order-line-dialog/service-card-order-line-dialog.component';
 
 @Component({
   selector: 'app-service-card-order-create-update',
@@ -54,6 +55,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       user: null,
       orderLines: this.fb.array([]),
       companyId: null,
+      amountTotal: 0
     });
 
     this.route.queryParamMap.subscribe((param: ParamMap) => {
@@ -61,6 +63,19 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       if (this.id) {
         this.loadRecord();
       } else {
+        this.cardOrder = {
+          state: 'draft'
+        };
+
+        this.formGroup = this.fb.group({
+          partner: [null, Validators.required],
+          dateOrderObj: [null, Validators.required],
+          user: null,
+          orderLines: this.fb.array([]),
+          companyId: null,
+          amountTotal: 0
+        });
+
         this.cardOrderService.defaultGet().subscribe((result: any) => {
           this.formGroup.patchValue(result);
 
@@ -96,6 +111,15 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get('orderLines') as FormArray;
   }
 
+  computeAmountTotal() {
+    let total = 0;
+    this.orderLines.controls.forEach(line => {
+      total += line.get('priceSubTotal').value;
+    });
+
+    this.formGroup.get('amountTotal').patchValue(total);
+  }
+
   loadRecord() {
     this.cardOrderService.get(this.id).subscribe((result: any) => {
       this.cardOrder = result;
@@ -104,15 +128,19 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       let dateOrder = new Date(result.dateOrder);
       this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-      if (result.activatedDate) {
-        let activatedDate = new Date(result.activatedDate);
-        this.formGroup.get('activatedDateObj').patchValue(activatedDate);
-      }
-
       this.filteredPartners = _.unionBy(this.filteredPartners, result.partner, 'id');
       if (result.user) {
         this.filteredUsers = _.unionBy(this.filteredUsers, result.user, 'id');
       }
+
+      let control = this.formGroup.get('orderLines') as FormArray;
+      control.clear();
+      result.orderLines.forEach(line => {
+        var g = this.fb.group(line);
+        control.push(g);
+      });
+
+      this.formGroup.markAsPristine();
     });
   }
 
@@ -163,10 +191,8 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
 
     var value = this.formGroup.value;
     value.partnerId = value.partner.id;
-    value.cardTypeId = value.cardType.id;
     value.userId = value.user ? value.user.id : null;
     value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    value.activatedDate = value.activatedDateObj ? this.intlService.formatDate(value.activatedDateObj, 'yyyy-MM-ddTHH:mm:ss') : null;
 
     if (!this.id) {
       this.cardOrderService.create(value).subscribe((result: any) => {
@@ -185,6 +211,28 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
       });
     }
+  }
+
+  onSaveConfirm() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var value = this.formGroup.value;
+    value.partnerId = value.partner.id;
+    value.userId = value.user ? value.user.id : null;
+    value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+
+    this.cardOrderService.create(value)
+      .pipe(
+        mergeMap((r: any) => {
+          this.id = r.id;
+          return this.cardOrderService.actionConfirm([r.id]);
+        })
+      )
+      .subscribe(r => {
+        this.router.navigate(['/service-card-orders/form'], { queryParams: { id: this.id } });
+      });
   }
 
   actionConfirm() {
@@ -223,6 +271,65 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  getDiscountNumber(line: FormGroup) {
+    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    if (discountType == 'fixed') {
+      return line.get('discountFixed').value;
+    } else {
+      return line.get('discount').value;
+    }
+  }
+
+  getDiscountTypeDisplay(line: FormGroup) {
+    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    if (discountType == 'fixed') {
+      return "";
+    } else {
+      return '%';
+    }
+  }
+
+  showAddLineModal() {
+    let modalRef = this.modalService.open(ServiceCardOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm chi tiết';
+
+    modalRef.result.then(result => {
+      let line = result as any;
+      this.orderLines.push(this.fb.group(line));
+      this.orderLines.markAsDirty();
+
+      this.computeAmountTotal();
+    }, () => {
+    });
+  }
+
+  editLine(line: FormGroup) {
+    let modalRef = this.modalService.open(ServiceCardOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa chi tiết';
+    modalRef.componentInstance.line = line.value;
+
+    modalRef.result.then(result => {
+      line.patchValue(result);
+      this.orderLines.markAsDirty();
+
+      this.computeAmountTotal();
+    }, () => {
+    });
+  }
+
+  get amountTotalValue() {
+    return this.formGroup.get('amountTotal').value;
+  }
+
+  deleteLine(index: number) {
+    this.orderLines.removeAt(index);
+    this.orderLines.markAsDirty();
+
+    this.computeAmountTotal();
+  }
+
+
+
   actionCancel() {
     if (this.id) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -231,20 +338,6 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       modalRef.result.then(() => {
         this.cardOrderService.actionCancel([this.id]).subscribe(() => {
           this.loadRecord();
-        });
-      });
-    }
-  }
-
-  onSaveConfirm() {
-    if (!this.id) {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.saveOrUpdate().subscribe((result: any) => {
-        this.cardOrderService.actionConfirm([result.id]).subscribe(() => {
-          this.router.navigate(['/service-card-orders/form'], { queryParams: { id: result.id } });
         });
       });
     }

@@ -40,19 +40,16 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.User).FirstOrDefaultAsync();
-
-            if (order == null)
-                return NotFound();
-
-            return Ok(_mapper.Map<ServiceCardOrderDisplay>(order));
+            var res = await _cardOrderService.GetDisplay(id);
+            return Ok(res);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(ServiceCardOrderSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var order = await _cardOrderService.CreateUI(val);
+            _unitOfWork.Commit();
 
             var basic = _mapper.Map<ServiceCardOrderBasic>(order);
             return Ok(basic);
@@ -61,7 +58,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ServiceCardOrderSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _cardOrderService.UpdateUI(id, val);
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 

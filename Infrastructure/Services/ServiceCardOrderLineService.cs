@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -73,11 +75,28 @@ namespace Infrastructure.Services
             {
                 CardTypeId = self.CardTypeId,
                 CardType = self.CardType,
-                PartnerId = self.OrderPartnerId,
                 Amount = self.CardType.Amount,
                 Residual = self.CardType.Amount,
                 SaleLineId = self.Id
             };
+        }
+
+        public async Task<ServiceCardOrderLineOnChangeCardTypeResponse> OnChangeCardType(ServiceCardOrderLineOnChangeCardType val)
+        {
+            decimal price_unit = 0M;
+            if (val.CardTypeId.HasValue)
+            {
+                var cardTypeObj = GetService<IServiceCardTypeService>();
+                var cardType = await cardTypeObj.GetByIdAsync(val.CardTypeId.Value);
+                price_unit = cardType.Price ?? 0;
+            }
+
+            var res = new ServiceCardOrderLineOnChangeCardTypeResponse()
+            {
+                PriceUnit = price_unit
+            };
+
+            return res;
         }
     }
 }

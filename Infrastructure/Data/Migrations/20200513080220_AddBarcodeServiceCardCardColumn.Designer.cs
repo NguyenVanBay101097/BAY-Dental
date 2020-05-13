@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200513080220_AddBarcodeServiceCardCardColumn")]
+    partial class AddBarcodeServiceCardCardColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5484,21 +5486,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ServiceCardOrderLineInvoiceRels");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrderPaymentRel", b =>
-                {
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CardOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PaymentId", "CardOrderId");
-
-                    b.HasIndex("CardOrderId");
-
-                    b.ToTable("ServiceCardOrderPaymentRels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ServiceCardType", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8776,21 +8763,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ServiceCardOrderLine", "OrderLine")
                         .WithMany("OrderLineInvoiceRels")
                         .HasForeignKey("OrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrderPaymentRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ServiceCardOrder", "CardOrder")
-                        .WithMany()
-                        .HasForeignKey("CardOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.AccountPayment", "Payment")
-                        .WithMany("CardOrderPaymentRels")
-                        .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

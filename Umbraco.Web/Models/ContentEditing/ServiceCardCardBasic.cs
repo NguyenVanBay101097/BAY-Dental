@@ -21,6 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? ExpiredDate { get; set; }
 
+        public string Barcode { get; set; }
+
         /// <summary>
         /// Số tiền trong thẻ
         /// </summary>

@@ -21,6 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UserId { get; set; }
 
+        public Guid CompanyId { get; set; }
+
         public IEnumerable<ServiceCardOrderLineSave> OrderLines { get; set; } = new List<ServiceCardOrderLineSave>();
     }
 }

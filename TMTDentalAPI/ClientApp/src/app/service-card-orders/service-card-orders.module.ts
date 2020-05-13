@@ -20,6 +20,9 @@ import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-d
     MyCustomKendoModule,
     NgbModule,
     SharedModule
+  ],
+  entryComponents: [
+    ServiceCardOrderLineDialogComponent
   ]
 })
 export class ServiceCardOrdersModule { }

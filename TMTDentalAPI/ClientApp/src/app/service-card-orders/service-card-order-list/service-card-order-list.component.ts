@@ -25,7 +25,7 @@ export class ServiceCardOrderListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  title = 'Đơn bán thẻ dịch vụ';
+  title = 'Đơn bán thẻ tiền mặt';
 
   constructor(private cardOrderService: ServiceCardOrderService,
     private modalService: NgbModal, private router: Router) { }

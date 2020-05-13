@@ -13,4 +13,12 @@ export class ServiceCardCardService {
     getHistories(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetHistories');
     }
+
+    buttonActive(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ButtonActive', ids);
+    }
+
+    exportExcel(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ExportExcel', data, { responseType: 'blob' });
+    }
 }

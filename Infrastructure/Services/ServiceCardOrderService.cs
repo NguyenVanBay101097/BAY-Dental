@@ -76,17 +76,28 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Order")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
+                .Include("OrderLines.Cards")
+                .Include("OrderLines.OrderLineInvoiceRels")
+                .Include("OrderLines.OrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.OrderLineInvoiceRels.InvoiceLine.Move")
                 .ToListAsync();
 
             var saleLineObj = GetService<ISaleOrderLineService>();
             var move_ids = new List<Guid>().AsEnumerable();
+            var card_ids = new List<Guid>().AsEnumerable();
             foreach (var sale in self)
             {
+                if (sale.AmountResidual < sale.AmountTotal)
+                    throw new Exception("Không thể hủy đơn hàng đã có thanh toán");
+
                 foreach (var line in sale.OrderLines)
+                {
+                    if (line.Cards.Any(x => x.State == "in_use"))
+                        throw new Exception("Không thể hủy đơn hàng đã có thẻ tiền mặt đang sử dụng");
+
                     move_ids = move_ids.Union(line.OrderLineInvoiceRels.Select(x => x.InvoiceLine.Move.Id).Distinct().ToList());
+                    card_ids = card_ids.Union(line.Cards.Select(x => x.Id)).ToList();
+                }
             }
 
             await UpdateAsync(self);
@@ -99,12 +110,16 @@ namespace Infrastructure.Services
                 await moveObj.Unlink(move_ids);
             }
 
+            if (card_ids.Any())
+            {
+                var cardObj = GetService<IServiceCardCardService>();
+                await cardObj.Unlink(card_ids);
+            }
+
             foreach (var sale in self)
             {
                 foreach (var line in sale.OrderLines)
-                {
                     line.State = "draft";
-                }
 
                 sale.State = "draft";
             }
@@ -135,6 +150,19 @@ namespace Infrastructure.Services
             _AmountAll(new List<ServiceCardOrder>() { order });
 
             return await CreateAsync(order);
+        }
+
+        public async Task<ServiceCardOrderDisplay> GetDisplay(Guid id)
+        {
+            var res = await _mapper.ProjectTo<ServiceCardOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (res == null)
+                throw new Exception("Not found");
+
+            var saleLineObj = GetService<IServiceCardOrderLineService>();
+            res.OrderLines = await _mapper.ProjectTo<ServiceCardOrderLineDisplay>(saleLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+
+            res.CardCount = res.OrderLines.Sum(x => x.CardCount);
+            return res;
         }
 
         private void _AmountAll(IEnumerable<ServiceCardOrder> self)
@@ -204,6 +232,7 @@ namespace Infrastructure.Services
                 {
                     var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
                     saleLine.Sequence = sequence++;
+                    saleLine.Order = order;
                     order.OrderLines.Add(saleLine);
                 }
                 else
@@ -220,10 +249,17 @@ namespace Infrastructure.Services
 
         public async Task UpdateUI(Guid id, ServiceCardOrderSave val)
         {
-            var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines).FirstOrDefaultAsync();
             order = _mapper.Map(val, order);
 
+            _SaveOrderLines(val, order);
+
+            var lineObj = GetService<IServiceCardOrderLineService>();
+            lineObj.PrepareLines(order.OrderLines);
+
+            _ComputeResidual(new List<ServiceCardOrder>() { order });
             _AmountAll(new List<ServiceCardOrder>() { order });
+
             await UpdateAsync(order);
         }
 
@@ -243,7 +279,7 @@ namespace Infrastructure.Services
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines)
+                .Include(x => x.OrderLines).Include("OrderLines.CardType").Include("OrderLines.CardType.Product")
                 .ToListAsync();
 
             foreach (var order in self)
@@ -261,7 +297,17 @@ namespace Infrastructure.Services
 
             var cards = await _CreateCards(self);
             var cardObj = GetService<IServiceCardCardService>();
-            await cardObj.ActionActive(cards);
+            await cardObj.ButtonConfirm(cards);
+
+            _ComputeResidual(self);
+            await UpdateAsync(self);
+        }
+
+        public async Task UpdateResidual(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines)
+                .Include("OrderLines.OrderLineInvoiceRels").Include("OrderLines.OrderLineInvoiceRels.InvoiceLine")
+                .Include("OrderLines.OrderLineInvoiceRels.InvoiceLine.Move").ToListAsync();
 
             _ComputeResidual(self);
             await UpdateAsync(self);

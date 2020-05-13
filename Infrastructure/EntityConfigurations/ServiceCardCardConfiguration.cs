@@ -19,7 +19,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.PartnerId);
 
             builder.HasOne(x => x.SaleLine)
-              .WithMany()
+              .WithMany(x => x.Cards)
               .HasForeignKey(x => x.SaleLineId);
 
             builder.HasOne(x => x.CardType)

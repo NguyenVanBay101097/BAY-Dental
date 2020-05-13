@@ -23,7 +23,7 @@ export class ServiceCardCardListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  title = 'Thẻ dịch vụ';
+  title = 'Thẻ tiền mặt';
   orderId: string;
 
   constructor(private cardCardService: ServiceCardCardService,
@@ -41,6 +41,31 @@ export class ServiceCardCardListComponent implements OnInit {
       .subscribe(() => {
         this.loadDataFromApi();
       });
+  }
+
+  exportExcelFile() {
+    var paged = new ServiceCardCardPaged();
+    paged.limit = -1;
+    paged.offset = 0;
+    paged.search = this.search || '';
+    if (this.orderId) {
+      paged.orderId = this.orderId;
+    }
+
+    this.cardCardService.exportExcel(paged).subscribe((rs: any) => {
+      let filename = 'ExportedExcelFile';
+      let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement('a');
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   loadDataFromApi() {
@@ -69,6 +94,8 @@ export class ServiceCardCardListComponent implements OnInit {
 
   stateGet(state) {
     switch (state) {
+      case 'confirmed':
+        return 'Chờ cấp thẻ';
       case 'in_use':
         return 'Đang sử dụng';
       default:
@@ -90,6 +117,22 @@ export class ServiceCardCardListComponent implements OnInit {
   }
 
   deleteItem(item) {
+  }
+
+  buttonActiveAll() {
+    var val = new ServiceCardCardPaged();
+    val.limit = -1;
+    val.offset = 0;
+    if (this.orderId) {
+      val.orderId = this.orderId;
+    }
+
+    this.cardCardService.getPaged(val).subscribe((res: any) => {
+      var ids = res.items.map(x => x.id);
+      this.cardCardService.buttonActive(ids).subscribe(() => {
+        this.loadDataFromApi();
+      })
+    });
   }
 }
 

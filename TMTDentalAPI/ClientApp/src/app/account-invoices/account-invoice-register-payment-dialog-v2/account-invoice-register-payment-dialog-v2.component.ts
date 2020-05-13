@@ -39,6 +39,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       partnerId: null,
       invoiceIds: null,
       saleOrderIds: null,
+      serviceCardOrderIds: null,
     });
 
     if (this.defaultVal) {

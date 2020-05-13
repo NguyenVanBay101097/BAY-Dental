@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class ServiceCardOrderLineSave
+    public class ServiceCardOrderLineDisplay
     {
         public Guid Id { get; set; }
 
@@ -15,11 +15,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Discount { get; set; }
 
         public Guid? CardTypeId { get; set; }
+        public ServiceCardTypeBasic CardType { get; set; }
 
         public int? Sequence { get; set; }
 
         public string DiscountType { get; set; }
 
         public decimal? DiscountFixed { get; set; }
+
+        public decimal PriceSubTotal { get; set; }
+
+        public decimal PriceTotal { get; set; }
+
+        public int CardCount { get; set; }
     }
 }

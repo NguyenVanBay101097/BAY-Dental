@@ -152,7 +152,8 @@ namespace Infrastructure.Data
         public DbSet<ServiceCardOrderLineInvoiceRel> ServiceCardOrderLineInvoiceRels { get; set; }
         public DbSet<ServiceCardCard> ServiceCardCards { get; set; }
         public DbSet<SaleOrderServiceCardCardRel> SaleOrderServiceCardCardRels { get; set; }
-        
+        public DbSet<ServiceCardOrderPaymentRel> ServiceCardOrderPaymentRels { get; set; }
+
 
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -295,6 +296,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ServiceCardOrderLineInvoiceRelConfiguration());
             builder.ApplyConfiguration(new ServiceCardCardConfiguration());
             builder.ApplyConfiguration(new SaleOrderServiceCardCardRelConfiguration());
+            builder.ApplyConfiguration(new ServiceCardOrderPaymentRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

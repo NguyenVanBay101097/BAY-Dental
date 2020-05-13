@@ -16,5 +16,7 @@ namespace Infrastructure.Services
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
+        Task<ServiceCardOrderDisplay> GetDisplay(Guid id);
+        Task UpdateResidual(IEnumerable<Guid> ids);
     }
 }

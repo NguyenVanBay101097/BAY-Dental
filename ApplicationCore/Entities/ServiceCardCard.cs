@@ -35,11 +35,22 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? Residual { get; set; }
 
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Chờ cấp thẻ
+        /// in_use: Đang sử dụng
+        /// locked: Đã khóa
+        /// cancelled: Đã hủy
+        /// </summary>
         public string State { get; set; }
 
         public Guid? SaleLineId { get; set; }
         public ServiceCardOrderLine SaleLine { get; set; }
 
+        /// <summary>
+        /// Mã vạch
+        /// </summary>
+        public string Barcode { get; set; }
 
         public ICollection<SaleOrderServiceCardCardRel> SaleOrderCardRels { get; set; } = new List<SaleOrderServiceCardCardRel>();
     }
