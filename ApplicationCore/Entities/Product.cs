@@ -59,6 +59,10 @@ namespace ApplicationCore.Entities
         public Guid UOMId { get; set; }
         public UoM UOM { get; set; }
 
+        /// <summary>
+        /// Danh sách UoMs được chọn trong việc mua hàng
+        /// </summary>
+        public ICollection<ProductUoMRel> ProductUoMRels { get; set; } = new List<ProductUoMRel>();
 
         /// <summary>
         /// Loại sản phẩm

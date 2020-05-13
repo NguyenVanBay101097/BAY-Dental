@@ -129,8 +129,14 @@ import { CharCountDirective } from './char-count.directive';
   ],
   providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService],
   entryComponents: [
-    ConfirmDialogComponent, ChangePasswordDialogComponent, ImageViewerComponent, UserProfileEditComponent,
-    SharedDemoDataDialogComponent, SharedErrorDialogComponent, ConfirmDialogV2Component
+    ConfirmDialogComponent,
+    ChangePasswordDialogComponent,
+    ImageViewerComponent,
+    UserProfileEditComponent,
+    SharedDemoDataDialogComponent,
+    SharedErrorDialogComponent,
+    ConfirmDialogV2Component,
+    SharedDemoDataDialogComponent
   ],
 })
 export class SharedModule { }

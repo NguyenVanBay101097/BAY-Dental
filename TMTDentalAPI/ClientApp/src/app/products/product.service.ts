@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { Product } from './product';
+import { Product, ProductSave } from './product';
 import { ProductPaging } from './product-paging';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
@@ -48,7 +48,7 @@ export class ProductBasic2 {
 export class ProductUoMBasic {
     id: string;
     name: string;
-    uompo: UoMDisplay;
+    purchasePrice: number;
 }
 
 export class ProductPaging2 {
@@ -121,12 +121,12 @@ export class ProductService {
         return this.http.post<Product>(this.baseApi + this.apiUrl + "/DefaultProductStepGet", {});
     }
 
-    create(product: Product) {
+    create(product: ProductSave) {
         return this.http.post(this.baseApi + this.apiUrl, product);
     }
 
 
-    update(id: string, product: Product) {
+    update(id: string, product: ProductSave) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, product);
     }
 

@@ -152,7 +152,7 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
       });
       if (event.categoryId != this.categoryIdSave) {
-        this.productForm.get('uompoId').setValue(null);
+        this.productForm.get('uompo').setValue(null);
         this.categoryIdSave = event.categoryId;
       }
     }
@@ -165,7 +165,7 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
       });
       if (event.categoryId != this.categoryIdSave) {
-        this.productForm.get('uomId').setValue(null);
+        this.productForm.get('uom').setValue(null);
         this.categoryIdSave = event.categoryId;
       }
     }
@@ -174,7 +174,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   searchUoMs(q?: string, filterId?) {
     var val = new UoMPaged();
     val.search = q || '';
-    val.filterId = filterId;
+    val.categId = filterId;
     return this.uoMService.autocomplete(val);
   }
 
@@ -200,7 +200,6 @@ export class ProductProductCuDialogComponent implements OnInit {
     if (!this.productForm.valid) {
       return;
     }
-
     this.saveOrUpdate().subscribe(result => {
       if (result) {
         this.activeModal.close(result);
@@ -224,10 +223,15 @@ export class ProductProductCuDialogComponent implements OnInit {
   getBodyData() {
     var data = this.productForm.value;
     data.categId = data.categ.id;
-    if (data.uom)
+    data.UoMIds = [];
+    if (data.uom) {
       data.uOMId = data.uom.id;
-    if (data.uompo)
+      data.UoMIds.push(data.uom.id)
+    }
+    if (data.uompo) {
       data.uOMPOId = data.uompo.id;
+      data.UoMIds.push(data.uompo.id)
+    }
     return data;
   }
 

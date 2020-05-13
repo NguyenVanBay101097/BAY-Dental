@@ -8,21 +8,26 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IProductService: IBaseService<Product>
+    public interface IProductService : IBaseService<Product>
     {
         Task<PagedResult<Product>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "");
         Task<Product> GetProductForDisplayAsync(Guid id);
         Task<IEnumerable<ProductSimple>> GetProductsAutocomplete(string filter = "");
         Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val);
-        Task<Product> CreateProduct(ProductDisplay val);
-        Task UpdateProduct(Guid id, ProductDisplay val);
+
+        //Task<Product> CreateProduct(ProductDisplay val);
+        Task<Product> CreateProduct(ProductSave val);
+        //Task UpdateProduct(Guid id, ProductDisplay val);
+        Task UpdateProduct(Guid id, ProductSave val);
+
         Task<ProductDisplay> GetProductDisplay(Guid id);
         Task<double> GetStandardPrice(Guid id);
         Task<PagedResult2<ProductBasic2>> GetPagedResultAsync(ProductPaged val);
 
         Task<ProductDisplay> DefaultGet();
 
-        Task CreateProduct(IEnumerable<ProductDisplay> vals);
+        //Task CreateProduct(IEnumerable<ProductDisplay> vals);
+        Task CreateProduct(IEnumerable<ProductSave> vals);
 
         Task<ProductDisplay> DefaultProductStepGet();
 

@@ -40,5 +40,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? LaboPrice { get; set; }
 
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
+        public IEnumerable<Guid> UoMIds { get; set; } = new List<Guid>();
     }
 }

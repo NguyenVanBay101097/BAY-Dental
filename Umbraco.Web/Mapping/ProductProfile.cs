@@ -2,6 +2,7 @@
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -23,9 +24,12 @@ namespace Umbraco.Web.Mapping
             CreateMap<Product, ProductSimple>();
 
             CreateMap<Product, ProductLaboBasic>();
-            CreateMap<Product, ProuctUoMBasic>();
+            CreateMap<Product, ProductUoMBasic>().ForMember(x => x.UoMs, x => x.MapFrom(m => m.ProductUoMRels.Select(s => s.UoM)));
             CreateMap<Product, ProductLaboDisplay>();
             CreateMap<ProductLaboSave, Product>();
+
+            //Thắng
+            CreateMap<ProductSave, Product>();
         }
     }
 }

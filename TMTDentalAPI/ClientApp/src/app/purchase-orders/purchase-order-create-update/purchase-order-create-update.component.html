@@ -184,23 +184,20 @@
                                                 *ngIf="purchaseOrder.state != 'draft'">{{line.get('productQty').value | number}}</span>
                                         </td>
                                         <td *ngIf="hasDefined" class="align-middle">
-                                            <select formControlName="uomFactor" class="form-control">
+                                            <!-- <select formControlName="uomFactor" class="form-control">
                                                 <option value="{{line.get('productUOM').value.factor}}">
                                                     {{line.get('productUOM').value.name}}
                                                 </option>
                                                 <option value="{{line.get('productUOMPO').value.factor}}">
                                                     {{line.get('productUOMPO').value.name}}
                                                 </option>
-                                            </select>
+                                            </select> -->
+                                            <label (click)="clickUoM(line.get('product').value.id, line)"
+                                                class="form-control">{{line.get('productUOM').value.name}}</label>
                                         </td>
-                                        <!-- <td *ngIf="hasDefined" class="align-middle">
-                                            <kendo-combobox [data]="uomByProduct[line.get('product').value.id]"
-                                                [textField]="'name'" [filterable]="true" formControlName="uomId"
-                                                [valueField]="'id'">
-                                            </kendo-combobox>
-                                        </td> -->
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                (valueChange)="changePrice($event,line)"
                                                 *ngIf="purchaseOrder.state == 'draft'" formControlName="priceUnit"
                                                 style="width: 120px;" [spinners]="false">
                                             </kendo-numerictextbox>

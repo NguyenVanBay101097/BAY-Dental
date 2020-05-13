@@ -16,6 +16,8 @@ import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { UoMDisplay } from 'src/app/uoms/uom.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
 declare var $: any;
 
 @Component({
@@ -55,7 +57,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private notificationService: NotificationService,
     private router: Router,
     private permissionService: PermissionService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: NgbModal
   ) {
 
   }
@@ -76,8 +79,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     } else {
       this.purchaseOrderService.defaultGet({ type: this.type }).subscribe(result => {
         this.purchaseOrder = result;
-        this.formGroup.patchValue(result);
 
+        this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
@@ -124,11 +127,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       this.purchaseOrderService.get(this.id).subscribe(result => {
         this.purchaseOrder = result;
-        this.purchaseOrder.orderLines.forEach(item => {
-          item.productUOMPO = item.product.uompo;
-          item.productUOMPOId = item.product.uompo.id;
-          item.uomFactor = item.productUOM.factor;
-        })
         this.formGroup.patchValue(this.purchaseOrder);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -287,16 +285,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       productSimple.id = product.id;
       productSimple.name = product.name;
       this.purchaseLineService.onChangeProduct(val).subscribe(result => {
-        // this.uomByProduct[product.id] = [];
-        // this.uomByProduct[product.id].push(result.productUOM)
-        // this.uomByProduct[product.id].push(result.productUOMPO)
         var group = this.fb.group({
           name: result.name,
           priceUnit: result.priceUnit,
           productUOMId: result.productUOMId,
-          uomFactor: result.productUOM.factor,
           productUOM: result.productUOM,
-          productUOMPO: result.productUOMPO,
           product: productSimple,
           productId: product.id,
           priceSubtotal: null,
@@ -310,6 +303,30 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  clickUoM(productId, line: AbstractControl) {
+    let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Chọn đơn vị';
+    modalRef.componentInstance.productId = productId;
+    modalRef.result.then(
+      res => {
+        if (res) {
+          var value = {
+            productId: productId,
+            uomId: res.id
+          }
+
+          this.purchaseLineService.onChangeUoMProduct(value).subscribe(result => {
+            line.patchValue(result);
+          });
+        }
+      }, () => {
+      });
+  }
+
+  changePrice(price, line: AbstractControl) {
+    line.get('oldPriceUnit').patchValue(price)
+  }
+
   focusLastRow() {
     setTimeout(() => {
       var $lastTr = $('tr:last', $('#table_details tbody'));
@@ -319,14 +336,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   computeLinePriceSubtotal(line: AbstractControl) {
     var priceUnit = line.get('priceUnit').value || 0;
-    if (line.get('uomFactor'))
-      var factor = line.get('uomFactor').value || 1;
-    else {
-      factor = 1;
-    }
     var productQty = line.get('productQty').value || 0;
     var discount = line.get('discount').value || 0;
-    return priceUnit * (1 - discount / 100) * productQty * (1 / factor);
+    return priceUnit * (1 - discount / 100) * productQty;
   }
 
   onSave() {
@@ -349,14 +361,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.orderLines.forEach(element => {
-      if (element.uomFactor == element.productUOMPO.factor) {
-        var temp;
-        temp = element.productUOM;
-        element.productUOM = element.productUOMPO;
-        element.productUOMPO = temp;
-      }
-    });
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     var data = Object.assign(this.purchaseOrder, val);

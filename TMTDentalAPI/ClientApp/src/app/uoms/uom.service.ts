@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 export class UoMPaged {
   search: string;
   limit: number;
-  filterId: string;
+  categId: string;
+  productId: string;
   offset: number;
 }
 

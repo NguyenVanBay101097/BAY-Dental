@@ -67,6 +67,7 @@ export class UomCrUpComponent implements OnInit {
   loadFormApi() {
     this.uoMService.get(this.id).subscribe(
       result => {
+        debugger
         this.formGroup.patchValue(result);
       }
     )

@@ -27,6 +27,8 @@ namespace ApplicationCore.Entities
 
         public string UOMType { get; set; }
 
+        public ICollection<ProductUoMRel> ProductUoMRels { get; set; } = new List<ProductUoMRel>();
+
         public Guid CategoryId { get; set; }
 
         public UoMCategory Category { get; set; }

@@ -47,6 +47,7 @@ export class PurchaseOrderLineDisplay {
     product: ProductUoMBasic;
     productQty: number;
     priceUnit: number;
+    oldPriceUnit: number;
     priceSubtotal: number;
     state: string;
     uomFactor: number;

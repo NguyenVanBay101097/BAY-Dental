@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,10 +30,33 @@ namespace Infrastructure.Services
                 var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value).Include(x => x.UOM).Include(x => x.UOMPO).FirstOrDefaultAsync();
                 res.PriceUnit = product.PurchasePrice ?? 0;
                 res.Name = product.Name;
-                res.ProductUOMId = product.UOMId;
-                res.ProductUOM = _mapper.Map<UoMDisplay>(product.UOM);
-                res.ProductUOMPOId = product.UOMPOId;
-                res.ProductUOMPO = _mapper.Map<UoMDisplay>(product.UOMPO);
+                res.ProductUOMId = product.UOMPOId;
+
+                res.PriceUnit = Math.Round(res.PriceUnit * decimal.Parse((product.UOMPO.Factor != 0 ? 1 / product.UOMPO.Factor : 0).ToString()),1);
+                res.ProductUOM = _mapper.Map<UoMDisplay>(product.UOMPO);
+            }
+
+            return res;
+        }
+
+        public async Task<PurchaseOrderLineOnChangeProductResult> OnChangeUoMProduct(PurchaseOrderLineOnChangeProduct val)
+        {
+            var res = new PurchaseOrderLineOnChangeProductResult();
+            if (val.ProductId.HasValue && val.UOMId.HasValue)
+            {
+
+                var productObj = GetService<IProductService>();
+                var uomOjb = GetService<IUoMService>();
+                var uom = await uomOjb.SearchQuery(x => x.Id == val.UOMId.Value).FirstOrDefaultAsync();
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value)
+                    .Include(x => x.UOM)
+                    .Include(x => x.UOMPO)
+                    .FirstOrDefaultAsync();
+                res.PriceUnit = product.PurchasePrice ?? 0;
+                res.Name = product.Name;
+                res.ProductUOMId = uom.Id;
+                res.PriceUnit = Math.Round(res.PriceUnit * decimal.Parse((uom.Factor != 0 ? 1 / uom.Factor : 0).ToString()),1);
+                res.ProductUOM = _mapper.Map<UoMDisplay>(uom);
             }
 
             return res;
