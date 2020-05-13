@@ -18,6 +18,7 @@ export class AppointmentBasic {
     partnerName: string;
     doctorName: string;
     partnerPhone: string;
+    userName: string;
 }
 
 export class AppointmentDisplay extends AppointmentBasic {
@@ -99,6 +100,7 @@ export class SchedulerConfig {
 
 export class AppointmentDefaultGet {
     dotKhamId: string;
+    userId:string;
 }
 
 export class AppointmentPaging {

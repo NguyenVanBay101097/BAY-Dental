@@ -137,10 +137,10 @@ namespace Infrastructure.Services
         {
             var res = new DotKhamDisplay();
             res.CompanyId = CompanyId;
-            var userManager = GetService<UserManager<ApplicationUser>>();
-            var user = await userManager.FindByIdAsync(UserId);
-            res.UserId = user.Id;
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
+            //var userManager = GetService<UserManager<ApplicationUser>>();
+            //var user = await userManager.FindByIdAsync(UserId);
+            //res.UserId = user.Id;
+            //res.User = _mapper.Map<ApplicationUserSimple>(user);
 
             if (val.SaleOrderId.HasValue)
             {

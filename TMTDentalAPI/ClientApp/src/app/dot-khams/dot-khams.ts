@@ -83,6 +83,8 @@ export class DotKhamStepSave {
 export class DotKhamPatch {
     dotKhamId: string;
     appointmentId: string;
+    
+   
 }
 
 export class DotkhamEntitySearchBy {

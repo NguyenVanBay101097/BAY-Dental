@@ -10,7 +10,7 @@ import { AccountInvoiceCbx, AccountInvoiceService } from 'src/app/account-invoic
 import { Observable, pipe } from 'rxjs';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { UserSimple } from 'src/app/users/user-simple';
-import { UserService } from 'src/app/users/user.service';
+import { UserService, UserPaged } from 'src/app/users/user.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { DotKhamLineService, DotKhamLineDisplay, DotKhamLineBasic } from '../dot-kham-line.service';
 import { DotKhamLineOperationService } from '../dot-kham-line-operation.service';
@@ -56,6 +56,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   id: string;//id đợt khám
   invoiceId: string;//id hóa đơn
   invoiceState: string;//Trạng thái của hóa đơn
+  userId: string;
 
   dotKhamForm: FormGroup;
   filteredPartners: PartnerSimple[];
@@ -68,6 +69,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   @ViewChild('invoiceCbx', { static: true }) invoiceCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('inputFile', { static: true }) inputFile: ElementRef;
   // @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   opened = false;
@@ -87,6 +89,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   customerSimpleFilter: PartnerSimple[] = [];
   doctorSimpleFilter: EmployeeSimple[] = [];
   assistantSimpleFilter: EmployeeSimple[] = [];
+  userSimpleFilter: UserSimple[] = [];
   productSimpleList: ProductSimple[] = [];
   productSimpleFilteredList: ProductSimple[] = [];
   skip: number = 0;
@@ -123,10 +126,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       date: null,
       note: null,
       companyId: null,
-      user: null,
+      user: [null, Validators.required],
       state: null,
-      doctor: [null, Validators.required],
-      assistant: null,
       saleOrderId: null,
       step: null,
       product: null,
@@ -135,8 +136,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       filter: "dotkham"
     });
 
-    this.getDoctorList();
-    this.getAssistantList();
+    // this.getDoctorList();
+    // this.getAssistantList();
+    this.getUserList();
+
     this.getActiveRoute();
 
     this.filterChangeCombobox();
@@ -185,7 +188,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       this.assistantSimpleFilter = _.unionBy(this.assistantSimpleFilter, [result.assistant], 'id');
     }
     if (result.user) {
-      this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+      this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [result.user], 'id');
     }
   }
 
@@ -537,9 +540,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
   }
 
-  searchUsers(search?: string) {
-    return this.userService.autocomplete(search);
-  }
+ 
 
   get getName() {
     return this.dotKhamForm.get('name').value;
@@ -640,6 +641,12 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     return this.partnerService.autocomplete2(val);
   }
 
+  searchUsers(filter: string){
+    var val = new UserPaged();
+    val.search = filter;
+    return this.userService.autocompleteSimple(val);
+  }
+
   searchCustomers(search) {
     var partnerPaged = new PartnerPaged();
     partnerPaged.employee = false;
@@ -652,6 +659,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
     return this.partnerService.autocompletePartner(partnerPaged);
   }
+
+ 
 
   searchInvoices(search?: string) {
     return this.accountInvoiceService.getOpenPaid(search);
@@ -696,7 +705,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
 
     if (this.id) {
+      debugger
+      var val = this.dotKhamForm.value;
       var data = this.prepareData();
+      data.userId = val.user ? val.user.id : data.userId;
       this.dotKhamService.update(this.id, data).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thay đổi thành công',
@@ -800,25 +812,36 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   filterChangeCombobox() {
-    this.doctorCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.doctorCbx.loading = true),
-      switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
-    ).subscribe(
-      rs => {
-        this.doctorSimpleFilter = rs;
-        this.doctorCbx.loading = false;
-      }
-    )
+    // this.doctorCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => this.doctorCbx.loading = true),
+    //   switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
+    // ).subscribe(
+    //   rs => {
+    //     this.doctorSimpleFilter = rs;
+    //     this.doctorCbx.loading = false;
+    //   }
+    // )
 
-    this.assistantCbx.filterChange.asObservable().pipe(
+    // this.assistantCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => this.assistantCbx.loading = true),
+    //   switchMap(val => this.searchAssitants(val.toString().toLowerCase()))
+    // ).subscribe(
+    //   rs => {
+    //     this.assistantSimpleFilter = rs;
+    //     this.assistantCbx.loading = false;
+    //   }
+    // )
+
+    this.userCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.assistantCbx.loading = true),
-      switchMap(val => this.searchAssitants(val.toString().toLowerCase()))
+      tap(() => this.userCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.assistantSimpleFilter = rs;
-        this.assistantCbx.loading = false;
+        this.userSimpleFilter = rs;
+        this.userCbx.loading = false;
       }
     )
   }
@@ -901,6 +924,15 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     this.employeeService.getEmployeeSimpleList(empPn).subscribe(
       rs => {
         this.assistantSimpleFilter = rs;
+      });
+  }
+  getUserList() {
+    var userlst = new UserPaged;
+    userlst.limit = this.limit;
+    userlst.offset = this.skip;
+    this.userService.autocompleteSimple(userlst).subscribe(
+      rs => {
+        this.userSimpleFilter = rs;
       });
   }
 
@@ -1015,7 +1047,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
           var dkpatch = new DotKhamPatch;
           dkpatch.appointmentId = rs['id'];
           console.log(rs);
-          dkpatch.dotKhamId = this.id;
+          dkpatch.dotKhamId = this.id;     
           var ar = [];
           for (var p in dkpatch) {
             var o = { op: 'replace', path: '/' + p, value: dkpatch[p] };
