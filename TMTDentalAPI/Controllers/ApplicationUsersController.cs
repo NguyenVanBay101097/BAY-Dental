@@ -118,14 +118,16 @@ namespace TMTDentalAPI.Controllers
                     user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
             }
 
-            var result = await _userManager.CreateAsync(user, val.Password);
+            //var result = await _userManager.CreateAsync(user, val.Password);
+            var result = await _userManager.CreateAsync(user);
 
             if (!result.Succeeded)
             {
                 if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
                     throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
                 else
-                    throw new Exception("Lỗi chưa xác định, vui lòng liên hệ với người quản trị phần mềm");
+                    //throw new Exception("Lỗi chưa xác định, vui lòng liên hệ với người quản trị phần mềm");
+                    throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
             }
 
             _unitOfWork.Commit();
