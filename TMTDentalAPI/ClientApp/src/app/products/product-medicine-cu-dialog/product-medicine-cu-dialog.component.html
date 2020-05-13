@@ -46,6 +46,32 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <tr hasGroups [groups]="'product.group_uom'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đơn vị mặc định
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-combobox [data]="filterdUoMs" [textField]="'name'"
+                                                    [filterable]="true" #uoMCbx formControlName="uom"
+                                                    [valueField]="'id'" (valueChange)="uoMChange($event)">
+                                                </kendo-combobox>
+                                            </td>
+                                        </tr>
+                                        <tr hasGroups [groups]="'product.group_uom'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đơn vị mua
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-combobox [data]="filterdUoMPOs" [textField]="'name'"
+                                                    [filterable]="true" #uoMPOCbx formControlName="uompo"
+                                                    [valueField]="'id'" (valueChange)="uoMPOChange($event)">
+                                                </kendo-combobox>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">

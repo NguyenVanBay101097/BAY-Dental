@@ -107,7 +107,8 @@ namespace Infrastructure.Services
                 CategId = x.CategId,
                 QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
                 Type2 = x.Type2,
-
+                UOM = _mapper.Map<UoMBasic>(x.UOM),
+                UOMId = x.UOMId
             });
 
             if (!string.IsNullOrEmpty(val.Search))

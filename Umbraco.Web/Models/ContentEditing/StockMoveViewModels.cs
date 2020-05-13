@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal ProductUOMQty { get; set; }
 
+        public Guid? ProductUOMId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
         /// <summary>
         /// sản phẩm di chuyển
         /// </summary>

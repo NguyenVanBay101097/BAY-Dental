@@ -103,6 +103,7 @@
                                 <tr>
                                     <th width="50">STT</th>
                                     <th width="200">Sản phẩm</th>
+                                    <th width="100">đơn vị</th>
                                     <th width="80" class="text-right">Số lượng</th>
                                     <th width="60" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">#</th>
                                 </tr>
@@ -111,7 +112,11 @@
                                 <ng-container *ngFor="let line of moveLines.controls; let i=index">
                                     <tr [formGroupName]="i">
                                         <td class="align-middle">{{ i + 1 }}</td>
-                                        <td class="align-middle">{{ line.get('product').value.name}}</td>
+                                        <td class="align-middle">{{line.get('product').value.name}}</td>
+                                        <td style="cursor: pointer;"
+                                            (click)="onChangeUoMProduct(line.get('product').value.id,line)"
+                                            class="align-middle">
+                                            {{line.get('productUOM').value.name}}</td>
                                         <td class="align-middle text-right">
                                             <kendo-numerictextbox [min]="0" [format]="'n2'"
                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"

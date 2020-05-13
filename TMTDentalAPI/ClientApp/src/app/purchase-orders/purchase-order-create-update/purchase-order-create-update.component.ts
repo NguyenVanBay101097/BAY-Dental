@@ -304,23 +304,25 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   clickUoM(productId, line: AbstractControl) {
-    let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-    modalRef.componentInstance.title = 'Chọn đơn vị';
-    modalRef.componentInstance.productId = productId;
-    modalRef.result.then(
-      res => {
-        if (res) {
-          var value = {
-            productId: productId,
-            uomId: res.id
-          }
+    if (this.purchaseOrder && this.purchaseOrder.state != "purchase") {
+      let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+      modalRef.componentInstance.title = 'Chọn đơn vị';
+      modalRef.componentInstance.productId = productId;
+      modalRef.result.then(
+        res => {
+          if (res) {
+            var value = {
+              productId: productId,
+              uomId: res.id
+            }
 
-          this.purchaseLineService.onChangeUoMProduct(value).subscribe(result => {
-            line.patchValue(result);
-          });
-        }
-      }, () => {
-      });
+            this.purchaseLineService.onChangeUoMProduct(value).subscribe(result => {
+              line.patchValue(result);
+            });
+          }
+        }, () => {
+        });
+    }
   }
 
   changePrice(price, line: AbstractControl) {

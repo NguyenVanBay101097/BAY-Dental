@@ -116,6 +116,7 @@
                                     <th width="50">STT</th>
                                     <th width="200">Sản phẩm</th>
                                     <th width="80" class="text-right">Số lượng</th>
+                                    <th width="80" class="text-center">Đơn vị</th>
                                     <th width="120" class="text-right">Đơn giá</th>
                                     <th width="60" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">#</th>
                                 </tr>
@@ -133,6 +134,9 @@
                                             <span
                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{ line.get('productUOMQty').value | number}}</span>
                                         </td>
+                                        <td style="cursor: pointer;"
+                                            (click)="onChangeUoMProduct(line.get('product').value.id,line)"
+                                            class="align-middle">{{line.get('productUOM').value.name}}</td>
                                         <td class="align-middle text-right">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"

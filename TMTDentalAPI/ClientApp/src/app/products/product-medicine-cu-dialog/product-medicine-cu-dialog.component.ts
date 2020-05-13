@@ -15,6 +15,7 @@ import { ProductStepDisplay } from '../product-step';
 import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UoMPaged, UoMBasic, UomService } from 'src/app/uoms/uom.service';
 
 @Component({
   selector: 'app-product-medicine-cu-dialog',
@@ -27,12 +28,23 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   id: string;
   productForm: FormGroup;
   filterdCategories: ProductCategoryBasic[] = [];
+  filterdUoMs: UoMBasic[] = [];
+  filterdUoMPOs: UoMBasic[] = [];
+  categoryIdSave: string;
   opened = false;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
+  @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private productService: ProductService,
-    private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal) {
+
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    private productCategoryService: ProductCategoryService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private uoMService: UomService
+  ) {
   }
 
   ngOnInit() {
@@ -41,8 +53,8 @@ export class ProductMedicineCuDialogComponent implements OnInit {
       saleOK: false,
       purchaseOK: false,
       categ: [null, Validators.required],
-      uomId: null,
-      uompoId: null,
+      uom: null,
+      uompo: null,
       type: 'consu',
       type2: 'medicine',
       listPrice: 1,
@@ -62,7 +74,18 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
       });
 
+
+      this.searchUoMs('').subscribe(result => {
+        this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
+      });
+
+      this.searchUoMs('').subscribe(result => {
+        this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
+      });
+
       this.categCbxFilterChange();
+      this.uoMCbxFilterChange()
+      this.uoMPOCbxFilterChange()
     });
   }
 
@@ -77,6 +100,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         if (result.categ) {
           this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
         }
+
         this.productForm.patchValue(result);
         this.productForm.get('type').setValue('consu');
         this.productForm.get('type2').setValue('medicine');
@@ -85,6 +109,63 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.productForm.get('keToaOK').setValue(true);
       });
     }
+  }
+
+
+  uoMCbxFilterChange() {
+    this.uoMCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.uoMCbx.loading = true)),
+      switchMap(value => this.searchUoMs(value))
+    ).subscribe(result => {
+      this.filterdUoMs = result;
+      this.uoMCbx.loading = false;
+    });
+  }
+
+  uoMPOCbxFilterChange() {
+    this.uoMPOCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.uoMPOCbx.loading = true)),
+      switchMap(value => this.searchUoMs(value))
+    ).subscribe(result => {
+      this.filterdUoMPOs = result;
+      this.uoMPOCbx.loading = false;
+    });
+  }
+
+  uoMChange(event) {
+
+    if (event && event.id) {
+      this.filterdUoMPOs = [];
+      this.searchUoMs('', event.id).subscribe(result => {
+        this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
+      });
+      if (event.categoryId != this.categoryIdSave) {
+        this.productForm.get('uompo').setValue(null);
+        this.categoryIdSave = event.categoryId;
+      }
+    }
+  }
+
+  uoMPOChange(event) {
+    if (event && event.id) {
+      this.filterdUoMs = [];
+      this.searchUoMs('', event.id).subscribe(result => {
+        this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
+      });
+      if (event.categoryId != this.categoryIdSave) {
+        this.productForm.get('uom').setValue(null);
+        this.categoryIdSave = event.categoryId;
+      }
+    }
+  }
+
+  searchUoMs(q?: string, filterId?) {
+    var val = new UoMPaged();
+    val.search = q || '';
+    val.categId = filterId;
+    return this.uoMService.autocomplete(val);
   }
 
   categCbxFilterChange() {
@@ -144,6 +225,11 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   getBodyData() {
     var data = this.productForm.value;
     data.categId = data.categ.id;
+    data.uoMIds = [];
+    data.uomId = data.uom.id;
+    data.uompoId = data.uompo.id;
+    data.uoMIds.push(data.uompo.id);
+    data.uoMIds.push(data.uom.id);
     return data;
   }
 

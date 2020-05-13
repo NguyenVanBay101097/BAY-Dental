@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { ProductSimple } from './product-simple';
 import { ProductStepDisplay, ProductDisplayAndStep } from './product-step';
 import { PagedResult2 } from '../core/paged-result-2';
-import { UoMDisplay } from '../uoms/uom.service';
+import { UoMDisplay, UoMBasic } from '../uoms/uom.service';
 
 export class ProductFilter {
     search: string;
@@ -43,6 +43,8 @@ export class ProductBasic2 {
     type: string;
     defaultCode: string;
     qtyAvailable: number;
+    uomId: string;
+    uom: UoMBasic;
 }
 
 export class ProductUoMBasic {

@@ -57,9 +57,14 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             _modelAccessService.Check("StockPicking", "Create");
+            foreach (var line in val.MoveLines)
+            {
+                if (line.ProductUOM != null)
+                    line.ProductUOM = null;
+            }
             var picking = _mapper.Map<StockPicking>(val);
             SaveMoveLines(val, picking);
-
+           
             await _unitOfWork.BeginTransactionAsync();
             await _stockPickingService.CreateAsync(picking);
             _unitOfWork.Commit();
