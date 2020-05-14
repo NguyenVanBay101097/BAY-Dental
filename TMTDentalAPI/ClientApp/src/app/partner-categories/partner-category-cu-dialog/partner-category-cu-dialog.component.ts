@@ -33,15 +33,13 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   ngOnInit() {
     this.myform = this.fb.group({
       name: ['', Validators.required],
-      parent: null,
     });
 
     if (this.id) {
-      this.partnerCategoryService.get(this.id).subscribe((result) => {
-        this.myform.patchValue(result);
-        if (result.parent) {
-          this.filterdCategories = _.unionBy(this.filterdCategories, [result.parent], 'id');
-        }
+      setTimeout(() => {
+        this.partnerCategoryService.get(this.id).subscribe((result) => {
+          this.myform.patchValue(result);
+        });
       });
     }
 

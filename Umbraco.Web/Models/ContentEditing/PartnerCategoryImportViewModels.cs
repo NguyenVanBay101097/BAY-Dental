@@ -6,7 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PartnerCategoryRowExcel
     {
-        public string completeName { get; set; }
         public string Name { get; set; }
     }
 

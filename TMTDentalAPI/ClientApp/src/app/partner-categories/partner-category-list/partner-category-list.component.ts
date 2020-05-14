@@ -96,7 +96,7 @@ export class PartnerCategoryListComponent implements OnInit {
   }
 
   deleteItem(item: PartnerCategoryBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: Nhóm khách hàng';
     modalRef.result.then(() => {
       this.partnerCategoryService.delete(item.id).subscribe(() => {

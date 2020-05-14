@@ -164,7 +164,6 @@ namespace Infrastructure.Services
 
                         data.Add(new PartnerCategoryRowExcel
                         {
-                            completeName = name,
                             Name = name
                         });
                     }
@@ -181,19 +180,11 @@ namespace Infrastructure.Services
             {
                 var partnerCategory = new PartnerCategory();
                 partnerCategory.Name = item.Name;
-                partnerCategory.CompleteName = item.completeName;
 
                 partnerCategories_to_insert.Add(partnerCategory);
             }
 
-            try
-            {
-                await CreateAsync(partnerCategories_to_insert);
-            }
-            catch (Exception e)
-            {
-                return new PartnerCategoryImportResponse { Success = false, Errors = new List<string>() { e.Message } };
-            }
+            await CreateAsync(partnerCategories_to_insert);
 
             return new PartnerCategoryImportResponse { Success = true };
         }
