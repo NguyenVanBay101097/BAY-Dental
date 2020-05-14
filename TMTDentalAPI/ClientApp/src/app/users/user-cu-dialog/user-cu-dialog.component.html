@@ -23,6 +23,32 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
+                                        Điện thoại
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="tel" (focusout)="onFocusoutPhoneNumber($event)" class="form-control"
+                                        formControlName="phoneNumber" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Email
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="email" (focusout)="onFocusoutEmail($event)" class="form-control"
+                                        formControlName="email" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
                                         Tài khoản
                                     </label>
                                 </td>
@@ -40,20 +66,6 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input type="password" class="form-control" formControlName="passWord"
                                         autocomplete="new-password" />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Email
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="email" class="form-control" formControlName="email" />
                                 </td>
                             </tr>
                         </tbody>
