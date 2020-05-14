@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ProductCategoryImportExcelDialogComponent } from '../product-category-import-excel-dialog/product-category-import-excel-dialog.component';
 
 @Component({
   selector: 'app-product-category-list',
@@ -71,6 +72,17 @@ export class ProductCategoryListComponent implements OnInit {
     })
   }
 
+  importFromExcel() {
+    let modalRef = this.modalService.open(ProductCategoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Import excel';
+    modalRef.componentInstance.type = this.type;
+
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
+
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
@@ -111,7 +123,7 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: ' + this.getTypeTitle();
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {

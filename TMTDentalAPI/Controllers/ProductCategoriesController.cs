@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -98,6 +102,61 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _productCategoryService.GetAutocompleteAsync(val);
             return Ok(res);
+        }
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ImportExcel(ProductCategoryImportExcelBaseViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ProductCategoryServiceImportExcelRow>();         
+            var errors = new List<string>();
+            await _unitOfWork.BeginTransactionAsync();
+
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    {
+                        var errs = new List<string>();
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);                       
+                        if (string.IsNullOrEmpty(name))
+                            errs.Add("Tên nhóm dịch vụ là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        var item = new ProductCategoryServiceImportExcelRow
+                        {
+                            Name = name
+                           
+                        };
+
+                        data.Add(item);
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new { success = false, errors });
+
+            var vals = new List<ProductCategory>();          
+            foreach (var item in data)
+            {
+                var pd = new ProductCategory();              
+                pd.Name = item.Name;
+                pd.Type = val.Type;
+                vals.Add(pd);
+            }
+
+            await _productCategoryService.CreateAsync(vals);
+
+            _unitOfWork.Commit();
+
+            return Ok(new { success = true });
         }
     }
 }

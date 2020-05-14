@@ -301,8 +301,6 @@ namespace Infrastructure.Services
             return message;
         }
 
-      
-
         //public _FilterProgramsOnProducts(IEnumerable<SaleCouponProgram> self, SaleOrder order)
         //{
         //    //To get valid programs according to product list.
