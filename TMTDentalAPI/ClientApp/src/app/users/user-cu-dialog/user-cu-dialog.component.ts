@@ -30,7 +30,7 @@ export class UserCuDialogComponent implements OnInit {
   ngOnInit() {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
-      userName: null,
+      userName: [null, Validators.required],
       passWord: null,
       email: null,
       companyId: null,
@@ -38,6 +38,7 @@ export class UserCuDialogComponent implements OnInit {
       companies: [[]],
       avatar: null,
       groups: [[]],
+      phoneNumber: null
     });
 
     setTimeout(() => {
@@ -86,6 +87,22 @@ export class UserCuDialogComponent implements OnInit {
     this.resGroupService.getPaged(val).subscribe(result => {
       this.listGroups = _.unionBy(this.listGroups, result.items, 'id');
     });
+  }
+
+  onFocusoutPhoneNumber(event) {
+    var phone_number = this.userForm.get('phoneNumber').value;
+    var user_name = this.userForm.get('userName').value;
+    if (phone_number && !user_name) {
+      this.userForm.get('userName').setValue(phone_number);
+    }
+  }
+
+  onFocusoutEmail(event) {
+    var email = this.userForm.get('email').value;
+    var user_name = this.userForm.get('userName').value;
+    if (email && !user_name) {
+      this.userForm.get('userName').setValue(email);
+    }
   }
 
   onSave() {

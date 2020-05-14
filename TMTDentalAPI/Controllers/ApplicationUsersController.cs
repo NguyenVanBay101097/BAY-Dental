@@ -118,7 +118,6 @@ namespace TMTDentalAPI.Controllers
                     user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
             }
 
-            //var result = await _userManager.CreateAsync(user, val.Password);
             var result = await _userManager.CreateAsync(user);
 
             if (!result.Succeeded)
@@ -126,9 +125,16 @@ namespace TMTDentalAPI.Controllers
                 if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
                     throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
                 else
-                    //throw new Exception("Lỗi chưa xác định, vui lòng liên hệ với người quản trị phần mềm");
                     throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
             }
+
+            if (!string.IsNullOrEmpty(val.Password))
+            {
+                var addResult = await _userManager.AddPasswordAsync(user, val.Password);
+                if (!addResult.Succeeded)
+                    throw new Exception($"Add password fail");
+            }
+                
 
             _unitOfWork.Commit();
 
@@ -204,8 +210,13 @@ namespace TMTDentalAPI.Controllers
 
             if (!string.IsNullOrEmpty(val.Password))
             {
-                await _userManager.RemovePasswordAsync(user);
-                await _userManager.AddPasswordAsync(user, val.Password);
+                var removeResult = await _userManager.RemovePasswordAsync(user);
+                if (!removeResult.Succeeded)
+                    throw new Exception($"Remove password fail");
+
+                var addResult = await _userManager.AddPasswordAsync(user, val.Password);
+                if (!addResult.Succeeded)
+                    throw new Exception($"Add password fail");
             }
 
             var partner = user.Partner;

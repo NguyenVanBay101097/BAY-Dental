@@ -30,6 +30,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Password { get; set; }
 
+        public string PhoneNumber { get; set; }
+
         public string Email { get; set; }
 
         public Guid CompanyId { get; set; }
