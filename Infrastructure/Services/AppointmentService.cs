@@ -134,23 +134,20 @@ namespace Infrastructure.Services
             var res = new AppointmentDisplay();
             res.CompanyId = CompanyId;
             res.UserId = UserId;
-            var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
-            var user = await userManager.FindByIdAsync(UserId);
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
             if (val.DotKhamId.HasValue)
             {
                 var dkObj = GetService<IDotKhamService>();
                 var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner)
-                    .Include(x => x.Doctor).FirstOrDefaultAsync();
+                    .Include(x => x.Doctor).Include(x=>x.User).FirstOrDefaultAsync();
                 res.DotKhamId = dk.Id;
                 if (dk.PartnerId.HasValue)
                     res.PartnerId = dk.PartnerId.Value;
                 if (dk.Partner != null)
                     res.Partner = _mapper.Map<PartnerSimple>(dk.Partner);
-                if (dk.Doctor != null)
+                if (dk.User != null)
                 {
-                    res.DoctorId = dk.Doctor.Id;
-                    res.Doctor = _mapper.Map<EmployeeSimple>(dk.Doctor);
+                    res.UserId = dk.User.Id;
+                    res.User = _mapper.Map<ApplicationUserSimple>(dk.User);
                 }
             }
 
@@ -271,7 +268,8 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 State = x.State,
                 Note = x.Note,
-                PartnerPhone = x.Partner.Phone
+                PartnerPhone = x.Partner.Phone,
+                UserName = x.User.Name
             }).ToListAsync();
 
             var count = await query.CountAsync();
@@ -292,7 +290,8 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 State = x.State,
                 Note = x.Note,
-                PartnerPhone = x.Partner.Phone
+                PartnerPhone = x.Partner.Phone,
+                UserName = x.User.Name
             }).FirstOrDefaultAsync();
         }
     }

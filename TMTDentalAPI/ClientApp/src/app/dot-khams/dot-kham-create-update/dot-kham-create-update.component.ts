@@ -10,7 +10,7 @@ import { AccountInvoiceCbx, AccountInvoiceService } from 'src/app/account-invoic
 import { Observable, pipe } from 'rxjs';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { UserSimple } from 'src/app/users/user-simple';
-import { UserService } from 'src/app/users/user.service';
+import { UserService, UserPaged } from 'src/app/users/user.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { DotKhamLineService, DotKhamLineDisplay, DotKhamLineBasic } from '../dot-kham-line.service';
 import { DotKhamLineOperationService } from '../dot-kham-line-operation.service';
@@ -56,6 +56,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   id: string;//id đợt khám
   invoiceId: string;//id hóa đơn
   invoiceState: string;//Trạng thái của hóa đơn
+  userId: string;
 
   dotKhamForm: FormGroup;
   filteredPartners: PartnerSimple[];
@@ -68,6 +69,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   @ViewChild('invoiceCbx', { static: true }) invoiceCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('inputFile', { static: true }) inputFile: ElementRef;
   // @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   opened = false;
@@ -87,6 +89,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   customerSimpleFilter: PartnerSimple[] = [];
   doctorSimpleFilter: EmployeeSimple[] = [];
   assistantSimpleFilter: EmployeeSimple[] = [];
+  userSimpleFilter: UserSimple[] = [];
   productSimpleList: ProductSimple[] = [];
   productSimpleFilteredList: ProductSimple[] = [];
   skip: number = 0;
@@ -123,10 +126,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       date: null,
       note: null,
       companyId: null,
-      user: null,
+      user: [null, Validators.required],
       state: null,
-      doctor: [null, Validators.required],
-      assistant: null,
       saleOrderId: null,
       step: null,
       product: null,
@@ -135,8 +136,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       filter: "dotkham"
     });
 
-    this.getDoctorList();
-    this.getAssistantList();
+    // this.getDoctorList();
+    // this.getAssistantList();
+    this.getUserList();
+
     this.getActiveRoute();
 
     this.filterChangeCombobox();
@@ -185,7 +188,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       this.assistantSimpleFilter = _.unionBy(this.assistantSimpleFilter, [result.assistant], 'id');
     }
     if (result.user) {
-      this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+      this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [result.user], 'id');
     }
   }
 
@@ -226,7 +229,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       this.dotKhamForm.get('invoice').enable();
       this.dotKhamService.defaultGet(defaultVal).subscribe(
         rs1 => {
-          console.log(rs1);
           this.dotKhamService.getCustomerInvoices(rs1.partnerId).subscribe(
             rs2 => {
               this.customerInvoicesList = rs2;
@@ -311,18 +313,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
   }
 
-  // loadAppointments() {
-  //   if (this.id) {
-  //     var val = new AppointmentPaged();
-  //     val.limit = 0;
-  //     val.dotKhamId = this.id;
-  //     this.appointmentService.getPaged(val).subscribe(result => {
-  //       console.log(this.appointments);
-  //       this.appointments = result.items;
-  //     });
-  //   }
-  // }
-
   loadLaboOrders() {
     if (this.id) {
       this.dotKhamService.getLaboOrders(this.id).subscribe(result => {
@@ -331,20 +321,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
   }
 
-  // loadDotKhamLines() {
-  //   if (this.id) {
-  //     this.dotKhamService.getDotKhamLines2(this.id).subscribe(result => {
-  //       console.log(result);
-  //       this.dotKhamLinesList = result;
-  //     })
-  //   }
-  // }
-
   loadDotKhamSteps() {
     if (this.id) {
       this.dotKhamService.getDotKhamStepsByDKId2(this.id, this.getDotKhamFilter).subscribe(result => {
         this.dotKhamStepsList = result;
-        console.log(result);//Tên dịch vụ tham chiếu đến tên của invoiceLine
       })
     }
   }
@@ -537,9 +517,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
   }
 
-  searchUsers(search?: string) {
-    return this.userService.autocomplete(search);
-  }
+
 
   get getName() {
     return this.dotKhamForm.get('name').value;
@@ -640,6 +618,12 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     return this.partnerService.autocomplete2(val);
   }
 
+  searchUsers(filter: string) {
+    var val = new UserPaged();
+    val.search = filter;
+    return this.userService.autocompleteSimple(val);
+  }
+
   searchCustomers(search) {
     var partnerPaged = new PartnerPaged();
     partnerPaged.employee = false;
@@ -652,6 +636,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
     return this.partnerService.autocompletePartner(partnerPaged);
   }
+
+
 
   searchInvoices(search?: string) {
     return this.accountInvoiceService.getOpenPaid(search);
@@ -696,7 +682,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
 
     if (this.id) {
+      debugger
+      var val = this.dotKhamForm.value;
       var data = this.prepareData();
+      data.userId = val.user ? val.user.id : data.userId;
       this.dotKhamService.update(this.id, data).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thay đổi thành công',
@@ -800,25 +789,36 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   filterChangeCombobox() {
-    this.doctorCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.doctorCbx.loading = true),
-      switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
-    ).subscribe(
-      rs => {
-        this.doctorSimpleFilter = rs;
-        this.doctorCbx.loading = false;
-      }
-    )
+    // this.doctorCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => this.doctorCbx.loading = true),
+    //   switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
+    // ).subscribe(
+    //   rs => {
+    //     this.doctorSimpleFilter = rs;
+    //     this.doctorCbx.loading = false;
+    //   }
+    // )
 
-    this.assistantCbx.filterChange.asObservable().pipe(
+    // this.assistantCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => this.assistantCbx.loading = true),
+    //   switchMap(val => this.searchAssitants(val.toString().toLowerCase()))
+    // ).subscribe(
+    //   rs => {
+    //     this.assistantSimpleFilter = rs;
+    //     this.assistantCbx.loading = false;
+    //   }
+    // )
+
+    this.userCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.assistantCbx.loading = true),
-      switchMap(val => this.searchAssitants(val.toString().toLowerCase()))
+      tap(() => this.userCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.assistantSimpleFilter = rs;
-        this.assistantCbx.loading = false;
+        this.userSimpleFilter = rs;
+        this.userCbx.loading = false;
       }
     )
   }
@@ -903,6 +903,15 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         this.assistantSimpleFilter = rs;
       });
   }
+  getUserList() {
+    var userlst = new UserPaged;
+    userlst.limit = this.limit;
+    userlst.offset = this.skip;
+    this.userService.autocompleteSimple(userlst).subscribe(
+      rs => {
+        this.userSimpleFilter = rs;
+      });
+  }
 
   closeWindow(id) {
     this.window = this.injector.get<WindowRef>(WindowRef);
@@ -948,60 +957,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     return this.dotKhamForm.get('appointment').value ? this.dotKhamForm.get('appointment').value : '';
   }
 
-  // get getAppointmentId() {
-  //   console.log(this.dotKhamForm.get('appointmentId').value);
-  //   return this.dotKhamForm.get('appointmentId').value;
-  // }
-
-  // appointmentCreate() {
-  //   const windowRef = this.windowService.open({
-  //     title: 'Lịch hẹn',
-  //     content: AppointmentCreateUpdateComponent,
-  //     resizable: false,
-  //   });
-  //   const instance = windowRef.content.instance;
-  //   this.opened = true;
-  //   if (this.getAppointment) {
-  //     instance.appointId = this.getAppointment.id;
-  //   }
-  //   instance.dotKhamId = this.id
-
-  //   windowRef.result.subscribe((result) => {
-  //     this.opened = false;
-  //     if (result instanceof WindowCloseResult) {
-  //       console.log(1);
-  //     } else {
-  //       if (result['id']) {
-  //         var dkpatch = new DotKhamPatch;
-  //         dkpatch.appointmentId = result['id'];
-  //         console.log(result);
-  //         dkpatch.dotKhamId = this.id;
-  //         var ar = [];
-  //         for (var p in dkpatch) {
-  //           var o = { op: 'replace', path: '/' + p, value: dkpatch[p] };
-  //           ar.push(o);
-  //         }
-
-  //         this.dotKhamService.patch(this.id, ar).subscribe(
-  //           rs => {
-  //             this.getActiveRoute();
-  //           }
-  //         )
-  //       } else {
-  //         console.log(3);
-  //         this.getActiveRoute();
-  //       }
-  //       this.notificationService.show({
-  //         content: 'Cập nhật thành công',
-  //         hideAfter: 3000,
-  //         position: { horizontal: 'center', vertical: 'top' },
-  //         animation: { type: 'fade', duration: 400 },
-  //         type: { style: 'success', icon: true }
-  //       });
-  //     }
-  //   });
-  // }
-
   appointmentCreateModal() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (this.getAppointment) {
@@ -1014,7 +969,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         if (rs.id) {
           var dkpatch = new DotKhamPatch;
           dkpatch.appointmentId = rs['id'];
-          console.log(rs);
           dkpatch.dotKhamId = this.id;
           var ar = [];
           for (var p in dkpatch) {
@@ -1082,7 +1036,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
     var formData = new FormData();
 
-    console.log(file_node.files);
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
       formData.append('files', file);
@@ -1095,10 +1048,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         // this.getImageIds();
         rs.forEach(e => {
           if (this.getFileMineType(e.mineType) == 'image') {
-            console.log(1);
             this.imagesPreview.push(e);
           } else {
-            console.log(2);
             this.filesPreview.push(e);
           }
         })
@@ -1145,7 +1096,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
     dialogRef.result.subscribe(
       rs => {
-        console.log(rs);
         if (!(rs instanceof DialogCloseResult)) {
           if (rs['value']) {
             this.dotKhamService.deleteAttachment(item.id).subscribe(
@@ -1187,7 +1137,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   getFileMineType(mine: string) {
     var type = mine.substring(0, mine.indexOf('/'));
-    console.log(type);
     return type;
   }
 

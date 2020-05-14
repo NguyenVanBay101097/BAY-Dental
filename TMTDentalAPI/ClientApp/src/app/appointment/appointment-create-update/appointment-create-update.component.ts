@@ -1,3 +1,5 @@
+import { UserPaged, UserService } from './../../users/user.service';
+import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
@@ -19,6 +21,7 @@ import { Router } from '@angular/router';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { UserSimple } from 'src/app/users/user-simple';
 
 class DatePickerLimit {
   min: Date;
@@ -32,12 +35,15 @@ class DatePickerLimit {
 
 export class AppointmentCreateUpdateComponent implements OnInit {
 
-  @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
+  // @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
 
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
-  doctorSimpleFilter: EmployeeSimple[] = [];
+  //doctorSimpleFilter: EmployeeSimple[] = [];
+  userSimpleFilter: UserSimple[] = [];
+
   stateFilter = [{ text: 'Đang hẹn', value: 'confirmed', disabled: false }, { text: 'Đang chờ', value: 'waiting', disabled: false }, { text: 'Hoàn tất', value: 'done', disabled: false },
   { text: 'Quá hạn', value: 'expired', disabled: true }, { text: 'Đã hủy', value: 'cancel', disabled: false }];
 
@@ -62,6 +68,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private service: AppointmentService, private employeeService: EmployeeService,
     private partnerService: PartnerService, private intlService: IntlService,
+    private userService: UserService,
     private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal,
     private router: Router, private errorService: AppSharedShowErrorService) { }
 
@@ -71,7 +78,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.formCreate = this.fb.group({
       name: null,
       partner: [null, Validators.required],
-      user: null,
+      user: [null, Validators.required],
       userId: null,
       date: null,
       dateObj: [null, Validators.required],
@@ -97,7 +104,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }
 
     setTimeout(() => {
-      this.getDoctorList();
+      this.getUserList();
       this.getCustomerList();
       this.filterChangeCombobox();
       this.setDateLimit();
@@ -118,17 +125,15 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appoint = this.formCreate.value;
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.userId = appoint.user ? appoint.user.id : null;
-    appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
+    // appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
       rs => {
-        console.log(rs);
         this.isChange = true;
         this.closeModal(rs);
       },
       er => {
-        console.log(er);
         this.errorService.show(er);
       },
     )
@@ -150,16 +155,15 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   createDoctorDialog() {
-    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm bác sĩ';
-    modalRef.componentInstance.isDoctor = true;
 
     modalRef.result.then(result => {
-      var p = new EmployeeSimple();
+      var p = new UserSimple();
       p.id = result.id;
       p.name = result.name;
-      this.formCreate.get('doctor').patchValue(p);
-      this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [p], 'id');
+      this.formCreate.get('user').patchValue(p);
+      this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [p], 'id');
     }, () => {
     });
   }
@@ -191,14 +195,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
     )
 
-    this.doctorCbx.filterChange.asObservable().pipe(
+    this.userCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.doctorCbx.loading = true),
-      switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
+      tap(() => this.userCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.doctorSimpleFilter = rs;
-        this.doctorCbx.loading = false;
+        this.userSimpleFilter = rs;
+        this.userCbx.loading = false;
       }
     )
   }
@@ -252,15 +256,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.partnerService.autocompletePartner(partnerPaged);
   }
 
-  searchDoctors(search) {
-    var empPaged = new EmployeePaged();
-    empPaged.position = "doctor";
-    empPaged.limit = this.limit;
-    empPaged.offset = this.skip;
+  searchUsers(search) {
+    var userPaged = new UserPaged();
+    userPaged.limit = this.limit;
+    userPaged.offset = this.skip;
     if (search != null) {
-      empPaged.search = search.toLowerCase();
+      userPaged.search = search.toLowerCase();
     }
-    return this.employeeService.getEmployeeSimpleList(empPaged);
+    return this.userService.autocompleteSimple(userPaged);
   }
 
   searchAssitants(search) {
@@ -274,14 +277,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.employeeService.getEmployeeSimpleList(empPaged);
   }
 
-  getDoctorList() {
-    var empPn = new EmployeePaged;
-    empPn.isDoctor = true;
-    empPn.limit = this.limit;
-    empPn.offset = this.skip;
-    this.employeeService.getEmployeeSimpleList(empPn).subscribe(
+  getUserList() {
+    var userPn = new UserPaged;
+    userPn.limit = this.limit;
+    userPn.offset = this.skip;
+    this.userService.autocompleteSimple(userPn).subscribe(
       rs => {
-        this.doctorSimpleFilter = rs;
+        this.userSimpleFilter = rs;
       });
   }
 
@@ -456,6 +458,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       if (this.dotKhamId) {
         a.dotKhamId = this.dotKhamId;
       }
+
+      a.userId = '10407d1c-966a-422a-bfae-fe5ddfb7033f';
+
       this.service.defaultGet(a).subscribe(
         rs => {
           this.formCreate.patchValue(rs);
@@ -468,8 +473,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
           }
 
-          if (rs.doctor) {
-            this.doctorSimpleFilter = _.unionBy(this.doctorSimpleFilter, [rs.doctor], 'id');
+          if (rs.user) {
+            this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [rs.user], 'id');
           }
         }
       )

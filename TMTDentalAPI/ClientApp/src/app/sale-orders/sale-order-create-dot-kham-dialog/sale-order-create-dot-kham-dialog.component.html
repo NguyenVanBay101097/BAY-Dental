@@ -18,16 +18,22 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredDoctors" ngbAutofocus [textField]="'name'"
-                                        [filterable]="true" #doctorCbx formControlName="doctor" [valueField]="'id'">
-                                        <ng-template kendoDropDownListNoDataTemplate>
-                                            <a class="btn btn-light btn-sm" (click)="createDoctorDialog()">Thêm bác
-                                                sĩ</a>
-                                        </ng-template>
+                                    <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true"
+                                        #userCbx formControlName="user" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                </td>
+                            </tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Phụ tá
@@ -42,8 +48,7 @@
                                         </ng-template>
                                     </kendo-combobox>
                                 </td>
-                            </tr>
-                           
+                            </tr> -->
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -57,16 +62,6 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datetimepicker formControlName="dateObj">
                                     </kendo-datetimepicker>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
                                 </td>
                             </tr>
                         </tbody>

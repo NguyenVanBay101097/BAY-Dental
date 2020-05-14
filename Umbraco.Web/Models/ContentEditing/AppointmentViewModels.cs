@@ -24,6 +24,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Bác sĩ
@@ -68,10 +69,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
 
         /// <summary>
-        /// Người hẹn
+        ///  Bác sĩ
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
+       
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ

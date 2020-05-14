@@ -90,18 +90,7 @@
                                         </kendo-combobox>
                                     </div> -->
                                 </td>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ngày khám
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <!-- <kendo-dateinput formControlName="dateObj" [format]="'dd-MM-yyyy HH:mm'">
-                                                                    </kendo-dateinput> -->
-                                    {{dotKhamForm.get('date').value | date : 'short'}}
-                                </td>
-                            </tr>
+                           
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -121,6 +110,18 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày khám
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <!-- <kendo-dateinput formControlName="dateObj" [format]="'dd-MM-yyyy HH:mm'">
+                                                                    </kendo-dateinput> -->
+                                    {{dotKhamForm.get('date').value | date : 'short'}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Bác sĩ
                                     </label>
@@ -129,22 +130,22 @@
                                     <!-- <span *ngIf="getDoctor && id">{{getDoctor.name}}</span> -->
                                     <div>
                                         <div class="d-flex">
-                                            <kendo-combobox formControlName="doctor" [filterable]="true"
-                                                [data]="doctorSimpleFilter" #doctorCbx [valueField]="'id'"
+                                           
+                                    <kendo-combobox formControlName="user" [filterable]="true"
+                                                [data]="userSimpleFilter" #userCbx [valueField]="'id'"
                                                 [textField]="'name'">
                                             </kendo-combobox>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
+                            <!-- <tr>
                                     <label class="o_form_label o_form_label_help">
                                         Phụ tá
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <!-- <span *ngIf="getAssistant && id">{{getAssistant.name}}</span> -->
+                                    <span *ngIf="getAssistant && id">{{getAssistant.name}}</span>
                                     <div>
                                         <div class="d-flex">
                                             <kendo-combobox formControlName="assistant" [filterable]="true"
@@ -154,8 +155,8 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
+                            </tr> -->
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Người tạo
@@ -163,12 +164,12 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     {{dotKhamForm.get('user').value ? dotKhamForm.get('user').value.name : ''}}
-                                    <!-- <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
+                                    <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true" #userCbx
                                         [valueNormalizer]="valueNormalizer" [allowCustom]="true" formControlName="user"
                                         [valueField]="'id'">
-                                    </kendo-combobox> -->
+                                    </kendo-combobox>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
