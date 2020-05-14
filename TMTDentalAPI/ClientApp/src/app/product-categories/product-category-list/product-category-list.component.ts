@@ -76,17 +76,11 @@ export class ProductCategoryListComponent implements OnInit {
     let modalRef = this.modalService.open(ProductCategoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = this.type;
-    if (this.type == 'service') {
-      modalRef.componentInstance.type = 'service';
-    } else if (this.type == 'product') {
-      modalRef.componentInstance.type = 'product';
-    } else if (this.type == 'medicine') {
-      modalRef.componentInstance.type = 'medicine';
-    }
+
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
-    }); 
+    });
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -129,7 +123,7 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: ' + this.getTypeTitle();
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {

@@ -12,7 +12,7 @@ export class ProductCategoryImportExcelDialogComponent implements OnInit {
   type: string;
   errors: string[];
   title: string;
-  constructor(private productCategoryService : ProductCategoryService, public activeModal: NgbActiveModal) { }
+  constructor(private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
   }
@@ -26,25 +26,15 @@ export class ProductCategoryImportExcelDialogComponent implements OnInit {
     }
     var val = new ProductCategoryImportExcelBaseViewModel();
     val.fileBase64 = this.fileBase64;
-    this.actionImport(val).subscribe((result: any) => {
+    val.type = this.type;
+
+    this.productCategoryService.importExcel(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
       } else {
         this.errors = result.errors;
       }
     });
-  }
-
-  actionImport(val: any) {
-    if (this.type == 'service') {
-      return this.productCategoryService.importCategoryService(val);
-    } else if (this.type == 'medicine') {
-      return this.productCategoryService.importCategoryMedicine(val);
-    } else if (this.type == 'product') {
-      return this.productCategoryService.importCategoryProduct(val);
-    } else {
-
-    }
   }
 
   onCancel() {

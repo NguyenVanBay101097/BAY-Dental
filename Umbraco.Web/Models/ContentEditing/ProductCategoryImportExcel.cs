@@ -8,10 +8,14 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
     }
+
     public class ProductCategoryImportExcelBaseViewModel
     {
         public string FileBase64 { get; set; }
+
+        public string Type { get; set; }
     }
+
     public class ProductCategoryServiceImportExcelRow
     {
         public string Name { get; set; }
