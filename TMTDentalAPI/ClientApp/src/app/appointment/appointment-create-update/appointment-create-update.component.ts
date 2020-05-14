@@ -42,7 +42,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
   //doctorSimpleFilter: EmployeeSimple[] = [];
-  userSimpleFilter: UserSimple[] =[];
+  userSimpleFilter: UserSimple[] = [];
 
   stateFilter = [{ text: 'Đang hẹn', value: 'confirmed', disabled: false }, { text: 'Đang chờ', value: 'waiting', disabled: false }, { text: 'Hoàn tất', value: 'done', disabled: false },
   { text: 'Quá hạn', value: 'expired', disabled: true }, { text: 'Đã hủy', value: 'cancel', disabled: false }];
@@ -130,12 +130,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
       rs => {
-        console.log(rs);
         this.isChange = true;
         this.closeModal(rs);
       },
       er => {
-        console.log(er);
         this.errorService.show(er);
       },
     )
@@ -460,9 +458,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       if (this.dotKhamId) {
         a.dotKhamId = this.dotKhamId;
       }
-      
-        a.userId = '10407d1c-966a-422a-bfae-fe5ddfb7033f';
-     
+
+      a.userId = '10407d1c-966a-422a-bfae-fe5ddfb7033f';
+
       this.service.defaultGet(a).subscribe(
         rs => {
           this.formCreate.patchValue(rs);

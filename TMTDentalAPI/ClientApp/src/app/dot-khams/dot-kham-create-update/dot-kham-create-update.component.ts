@@ -229,7 +229,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
       this.dotKhamForm.get('invoice').enable();
       this.dotKhamService.defaultGet(defaultVal).subscribe(
         rs1 => {
-          console.log(rs1);
           this.dotKhamService.getCustomerInvoices(rs1.partnerId).subscribe(
             rs2 => {
               this.customerInvoicesList = rs2;
@@ -314,18 +313,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
   }
 
-  // loadAppointments() {
-  //   if (this.id) {
-  //     var val = new AppointmentPaged();
-  //     val.limit = 0;
-  //     val.dotKhamId = this.id;
-  //     this.appointmentService.getPaged(val).subscribe(result => {
-  //       console.log(this.appointments);
-  //       this.appointments = result.items;
-  //     });
-  //   }
-  // }
-
   loadLaboOrders() {
     if (this.id) {
       this.dotKhamService.getLaboOrders(this.id).subscribe(result => {
@@ -334,20 +321,10 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
   }
 
-  // loadDotKhamLines() {
-  //   if (this.id) {
-  //     this.dotKhamService.getDotKhamLines2(this.id).subscribe(result => {
-  //       console.log(result);
-  //       this.dotKhamLinesList = result;
-  //     })
-  //   }
-  // }
-
   loadDotKhamSteps() {
     if (this.id) {
       this.dotKhamService.getDotKhamStepsByDKId2(this.id, this.getDotKhamFilter).subscribe(result => {
         this.dotKhamStepsList = result;
-        console.log(result);//Tên dịch vụ tham chiếu đến tên của invoiceLine
       })
     }
   }
@@ -540,7 +517,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
   }
 
- 
+
 
   get getName() {
     return this.dotKhamForm.get('name').value;
@@ -641,7 +618,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     return this.partnerService.autocomplete2(val);
   }
 
-  searchUsers(filter: string){
+  searchUsers(filter: string) {
     var val = new UserPaged();
     val.search = filter;
     return this.userService.autocompleteSimple(val);
@@ -660,7 +637,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     return this.partnerService.autocompletePartner(partnerPaged);
   }
 
- 
+
 
   searchInvoices(search?: string) {
     return this.accountInvoiceService.getOpenPaid(search);
@@ -980,60 +957,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     return this.dotKhamForm.get('appointment').value ? this.dotKhamForm.get('appointment').value : '';
   }
 
-  // get getAppointmentId() {
-  //   console.log(this.dotKhamForm.get('appointmentId').value);
-  //   return this.dotKhamForm.get('appointmentId').value;
-  // }
-
-  // appointmentCreate() {
-  //   const windowRef = this.windowService.open({
-  //     title: 'Lịch hẹn',
-  //     content: AppointmentCreateUpdateComponent,
-  //     resizable: false,
-  //   });
-  //   const instance = windowRef.content.instance;
-  //   this.opened = true;
-  //   if (this.getAppointment) {
-  //     instance.appointId = this.getAppointment.id;
-  //   }
-  //   instance.dotKhamId = this.id
-
-  //   windowRef.result.subscribe((result) => {
-  //     this.opened = false;
-  //     if (result instanceof WindowCloseResult) {
-  //       console.log(1);
-  //     } else {
-  //       if (result['id']) {
-  //         var dkpatch = new DotKhamPatch;
-  //         dkpatch.appointmentId = result['id'];
-  //         console.log(result);
-  //         dkpatch.dotKhamId = this.id;
-  //         var ar = [];
-  //         for (var p in dkpatch) {
-  //           var o = { op: 'replace', path: '/' + p, value: dkpatch[p] };
-  //           ar.push(o);
-  //         }
-
-  //         this.dotKhamService.patch(this.id, ar).subscribe(
-  //           rs => {
-  //             this.getActiveRoute();
-  //           }
-  //         )
-  //       } else {
-  //         console.log(3);
-  //         this.getActiveRoute();
-  //       }
-  //       this.notificationService.show({
-  //         content: 'Cập nhật thành công',
-  //         hideAfter: 3000,
-  //         position: { horizontal: 'center', vertical: 'top' },
-  //         animation: { type: 'fade', duration: 400 },
-  //         type: { style: 'success', icon: true }
-  //       });
-  //     }
-  //   });
-  // }
-
   appointmentCreateModal() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (this.getAppointment) {
@@ -1046,8 +969,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         if (rs.id) {
           var dkpatch = new DotKhamPatch;
           dkpatch.appointmentId = rs['id'];
-          console.log(rs);
-          dkpatch.dotKhamId = this.id;     
+          dkpatch.dotKhamId = this.id;
           var ar = [];
           for (var p in dkpatch) {
             var o = { op: 'replace', path: '/' + p, value: dkpatch[p] };
@@ -1114,7 +1036,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
     var formData = new FormData();
 
-    console.log(file_node.files);
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
       formData.append('files', file);
@@ -1127,10 +1048,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
         // this.getImageIds();
         rs.forEach(e => {
           if (this.getFileMineType(e.mineType) == 'image') {
-            console.log(1);
             this.imagesPreview.push(e);
           } else {
-            console.log(2);
             this.filesPreview.push(e);
           }
         })
@@ -1177,7 +1096,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     });
     dialogRef.result.subscribe(
       rs => {
-        console.log(rs);
         if (!(rs instanceof DialogCloseResult)) {
           if (rs['value']) {
             this.dotKhamService.deleteAttachment(item.id).subscribe(
@@ -1219,7 +1137,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   getFileMineType(mine: string) {
     var type = mine.substring(0, mine.indexOf('/'));
-    console.log(type);
     return type;
   }
 

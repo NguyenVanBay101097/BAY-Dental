@@ -59,8 +59,6 @@ namespace Infrastructure.Services
 
         public void WriteProperty(IRProperty values)
         {
-            var key = GetCacheKey(values);
-            _cacheManager.Remove(key); //clear cache
             Update(_UpdateValues(values));
         }
 
@@ -193,6 +191,9 @@ namespace Infrastructure.Services
                 {
                     prop.Value = value;
                     WriteProperty(prop);
+
+                    var key = GetCacheKey(prop);
+                    _cacheManager.Remove(key); //clear cache
                 }
 
                 values.Remove(id);
@@ -215,6 +216,9 @@ namespace Infrastructure.Services
                         Type = field != null ? field.TType : "many2one",
                     };
                     CreateProperty(_UpdateValues(prop));
+
+                    var key = GetCacheKey(prop);
+                    _cacheManager.Remove(key); //clear cache
                 }
             }
         }

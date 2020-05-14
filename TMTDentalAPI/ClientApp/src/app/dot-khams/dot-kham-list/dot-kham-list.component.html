@@ -39,32 +39,16 @@
             {{dataItem.partner ? dataItem.partner.name : ''}}
         </ng-template>
     </kendo-grid-column>
-    <!-- <kendo-grid-column field="invoice" title="Hóa đơn điều trị">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.invoice ? dataItem.invoice.number : ''}}
-        </ng-template>
-    </kendo-grid-column> -->
     <kendo-grid-column field="date" title="Ngày khám">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.date | date : 'short'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="user" title="Người tạo">
+    <kendo-grid-column field="user" title="Bác sĩ">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.user ? dataItem.user.name : ''}}
         </ng-template>
     </kendo-grid-column>
-    <!-- <kendo-grid-column field="id">
-        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-            Thao tác
-        </ng-template>
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button class="btn btn-primary btn-sm" (click)="editItem(dataItem)">Sửa</button>&nbsp;<button
-                class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">Xóa</button>
-        </ng-template>
-    </kendo-grid-column> -->
-    <kendo-grid-messages pagerItems="dòng" noRecords="Không có đợt khám để hiển thị" pagerOf="/">
-    </kendo-grid-messages>
 </kendo-grid>
 
 <!-- <div class="k-overlay" *ngIf="windowOpened"></div> -->

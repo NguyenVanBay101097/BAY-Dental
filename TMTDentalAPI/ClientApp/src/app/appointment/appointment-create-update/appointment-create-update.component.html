@@ -53,12 +53,8 @@
                                     <label class="o_form_label">Bác sĩ</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="user" [filterable]="true"
-                                        [data]="userSimpleFilter" #userCbx [valueField]="'id'" [textField]="'name'">
-                                        <ng-template kendoDropDownListNoDataTemplate>
-                                            <a class="btn btn-light btn-sm" (click)="createDoctorDialog()">Thêm bác
-                                                sĩ '{{userCbx.text}}'</a>
-                                        </ng-template>
+                                    <kendo-combobox formControlName="user" [filterable]="true" [data]="userSimpleFilter"
+                                        #userCbx [valueField]="'id'" [textField]="'name'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
