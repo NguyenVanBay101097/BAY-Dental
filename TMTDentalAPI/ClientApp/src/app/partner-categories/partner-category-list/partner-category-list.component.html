@@ -12,6 +12,9 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="createItem()">Thêm</button>
+                <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
+                    <i class="fas fa-upload"></i> Import
+                </button>
             </div>
         </div>
         <div class="o_cp_sidebar">
@@ -36,7 +39,7 @@
 
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column field="completeName" title="Tên">
+    <kendo-grid-column field="name" title="Tên">
     </kendo-grid-column>
     <kendo-grid-column field="id">
         <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

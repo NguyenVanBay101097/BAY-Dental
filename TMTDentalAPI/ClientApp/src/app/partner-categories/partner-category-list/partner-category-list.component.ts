@@ -7,6 +7,7 @@ import { PartnerCategoryService, PartnerCategoryPaged, PartnerCategoryBasic } fr
 import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PartnerCategoryImportComponent } from '../partner-category-import/partner-category-import.component';
 
 @Component({
   selector: 'app-partner-category-list',
@@ -38,6 +39,14 @@ export class PartnerCategoryListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
+  }
+
+  importFromExcel() {
+    const modalRef = this.modalService.open(PartnerCategoryImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
   loadDataFromApi() {
@@ -87,7 +96,7 @@ export class PartnerCategoryListComponent implements OnInit {
   }
 
   deleteItem(item: PartnerCategoryBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: Nhóm khách hàng';
     modalRef.result.then(() => {
       this.partnerCategoryService.delete(item.id).subscribe(() => {

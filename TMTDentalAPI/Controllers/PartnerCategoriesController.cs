@@ -56,7 +56,7 @@ namespace TMTDentalAPI.Controllers
 
             var category = _mapper.Map<PartnerCategory>(val);
             await _unitOfWork.BeginTransactionAsync();
-            await _partnerCategoryService.CreatePartnerCategoryAsync(category);
+            await _partnerCategoryService.CreateAsync(category);
             _unitOfWork.Commit();
 
             return CreatedAtAction(nameof(Get), new { id = category.Id }, val);
@@ -73,7 +73,7 @@ namespace TMTDentalAPI.Controllers
 
             category = _mapper.Map(val, category);
             await _unitOfWork.BeginTransactionAsync();
-            await _partnerCategoryService.UpdatePartnerCategoryAsync(category);
+            await _partnerCategoryService.UpdateAsync(category);
             _unitOfWork.Commit();
 
             return NoContent();
@@ -94,6 +94,19 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Autocomplete(PartnerCategoryPaged val)
         {
             var result = await _partnerCategoryService.GetAutocompleteAsync(val);
+            return Ok(result);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionImport(PartnerCategoryImportExcelViewModel val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var result = await _partnerCategoryService.Import(val);
+
+            if (result.Success)
+                _unitOfWork.Commit();
+
             return Ok(result);
         }
     }

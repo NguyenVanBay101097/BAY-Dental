@@ -11,6 +11,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using System.IO;
+using OfficeOpenXml;
 
 namespace Infrastructure.Services
 {
@@ -132,6 +134,59 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<PartnerCategoryBasic>>(items)
             };
+        }
+
+        public async Task<PartnerCategoryImportResponse> Import(PartnerCategoryImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<PartnerCategoryRowExcel>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var errs = new List<string>();
+
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        if (string.IsNullOrWhiteSpace(name))
+                            errs.Add("Tên nhóm khách hàng là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        data.Add(new PartnerCategoryRowExcel
+                        {
+                            Name = name
+                        });
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return new PartnerCategoryImportResponse { Success = false, Errors = errors };
+
+            var data_to_insert = data;
+
+            var partnerCategories_to_insert = new List<PartnerCategory>();
+            foreach (var item in data_to_insert)
+            {
+                var partnerCategory = new PartnerCategory();
+                partnerCategory.Name = item.Name;
+
+                partnerCategories_to_insert.Add(partnerCategory);
+            }
+
+            await CreateAsync(partnerCategories_to_insert);
+
+            return new PartnerCategoryImportResponse { Success = true };
         }
     }
 }

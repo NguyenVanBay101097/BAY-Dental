@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerCategoryBasic>> GetAutocompleteAsync(PartnerCategoryPaged val);
         Task<PartnerCategory> CreatePartnerCategoryAsync(PartnerCategory categ);
         Task UpdatePartnerCategoryAsync(PartnerCategory categ);
+        Task<PartnerCategoryImportResponse> Import(PartnerCategoryImportExcelViewModel val);
     }
 }
