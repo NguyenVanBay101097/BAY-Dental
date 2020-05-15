@@ -50,7 +50,11 @@ namespace Infrastructure.Services
             "LaboOrderLine",
             "PromotionRule",
             "IrConfigParameter",
-            "SaleOrderServiceCardCardRel"
+            "SaleOrderServiceCardCardRel",
+            "ServiceCardOrderLine",
+            "IRModelData",
+            "IRModelField",
+            "IRProperty"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,

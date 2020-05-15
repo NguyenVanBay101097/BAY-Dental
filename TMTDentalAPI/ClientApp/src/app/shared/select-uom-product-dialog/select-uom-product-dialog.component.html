@@ -6,7 +6,7 @@
 
 <div class="modal-body o_act_window">
     <div class="p-3">
-        <kendo-grid [selectable]="true" [data]="gridData" [loading]="loading" (selectionChange)="selectUOM($event)">
+        <kendo-grid [selectable]="true" [data]="gridData" (selectionChange)="selectUOM($event)">
             <kendo-grid-column field="name" title="Tên nhóm đơn vị" width="250">
             </kendo-grid-column>
             <kendo-grid-column field="categoryName" title="Nhóm" width="250">

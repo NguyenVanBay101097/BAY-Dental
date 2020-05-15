@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel } from '../product.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-product-import-excel-dialog',
@@ -13,7 +14,8 @@ export class ProductImportExcelDialogComponent implements OnInit {
   type: string;
   errors: string[];
   title: string;
-  constructor(private productService: ProductService, public activeModal: NgbActiveModal) { }
+  constructor(private productService: ProductService, public activeModal: NgbActiveModal,
+    private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
   }
@@ -34,6 +36,8 @@ export class ProductImportExcelDialogComponent implements OnInit {
       } else {
         this.errors = result.errors;
       }
+    }, err => {
+      this.errorService.show(err);
     });
   }
 

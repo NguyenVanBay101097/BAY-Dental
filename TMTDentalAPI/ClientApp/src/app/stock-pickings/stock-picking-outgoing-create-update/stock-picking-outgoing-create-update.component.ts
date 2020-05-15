@@ -13,7 +13,6 @@ import { StockMoveService, StockMoveOnChangeProduct } from 'src/app/stock-moves/
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductBasic2, ProductService } from 'src/app/products/product.service';
 import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
-import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var jquery: any;
@@ -132,24 +131,6 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       line.get('productUOMId').setValue(res.id);
     }, () => {
     });
-  }
-
-
-  onChangeUoMProduct(productId, line: AbstractControl) {
-    if (this.picking.state != "done") {
-      let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-      modalRef.componentInstance.title = 'Chọn đơn vị';
-      modalRef.componentInstance.productId = productId;
-      modalRef.result.then(
-        res => {
-          if (res) {
-            line.get('productUOM').patchValue(res);
-            line.get('productUOMId').patchValue(res.id);
-          }
-        }, () => {
-        });
-    }
-
   }
 
   onChangeProduct(value: ProductBasic2) {

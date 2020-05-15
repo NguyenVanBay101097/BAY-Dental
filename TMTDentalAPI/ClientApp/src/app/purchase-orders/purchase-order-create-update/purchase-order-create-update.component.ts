@@ -17,7 +17,6 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { UoMDisplay } from 'src/app/uoms/uom.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var $: any;
 

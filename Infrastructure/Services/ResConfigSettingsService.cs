@@ -21,6 +21,7 @@ namespace Infrastructure.Services
         {
             var groupObj = GetService<IResGroupService>();
             await groupObj.InsertSettingGroupIfNotExist("product.group_uom", "Group UoM");
+            await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
 
             //var irValueObj = DependencyResolver.Current.GetService<IRValuesService>();
             var classified = await _GetClassifiedFields<T>();
@@ -206,15 +207,15 @@ namespace Infrastructure.Services
             var accessObj = GetService<IIRModelAccessService>();
             var access_dict = new Dictionary<string, IRModelAccess>()
             {
-                {"service_card.access_service_card_card_group_user", new IRModelAccess { Name = "service_card_card group_user", Model = new_model_dict["service_card.model_service_card_card"], Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true  }},
-                {"service_card.access_service_card_type_group_user", new IRModelAccess { Name = "service_card_type group_user", Model = new_model_dict["service_card.model_service_card_type"], Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true }},
-                {"service_card.access_service_card_order_group_user", new IRModelAccess { Name = "service_card_order group_user", Model = new_model_dict["service_card.model_service_card_order"], Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true }},
-                {"service_card.access_service_card_card_group_manager", new IRModelAccess { Name = "service_card_card group_manager", Model = new_model_dict["service_card.model_service_card_card"], Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false  }},
-                {"service_card.access_service_card_type_group_manager", new IRModelAccess { Name = "service_card_type group_manager", Model = new_model_dict["service_card.model_service_card_type"], Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
-                {"service_card.access_service_card_order_group_manager", new IRModelAccess { Name = "service_card_order group_manager", Model = new_model_dict["service_card.model_service_card_order"], Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
-                {"service_card.access_service_card_card_group_admin", new IRModelAccess { Name = "service_card_card group_admin", Model = new_model_dict["service_card.model_service_card_card"], Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false  }},
-                {"service_card.access_service_card_type_group_admin", new IRModelAccess { Name = "service_card_type group_admin", Model = new_model_dict["service_card.model_service_card_type"], Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
-                {"service_card.access_service_card_order_group_admin", new IRModelAccess { Name = "service_card_order group_admin", Model = new_model_dict["service_card.model_service_card_order"], Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_card_group_user", new IRModelAccess { Name = "service_card_card group_user", ModelId = new_model_dict["service_card.model_service_card_card"].Id, Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true  }},
+                {"service_card.access_service_card_type_group_user", new IRModelAccess { Name = "service_card_type group_user", ModelId = new_model_dict["service_card.model_service_card_type"].Id, Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true }},
+                {"service_card.access_service_card_order_group_user", new IRModelAccess { Name = "service_card_order group_user", ModelId = new_model_dict["service_card.model_service_card_order"].Id, Group = new_group_dict["sale.group_user"], PermRead = true, PermWrite = true, PermCreate = true, PermUnlink = true }},
+                {"service_card.access_service_card_card_group_manager", new IRModelAccess { Name = "service_card_card group_manager", ModelId = new_model_dict["service_card.model_service_card_card"].Id, Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false  }},
+                {"service_card.access_service_card_type_group_manager", new IRModelAccess { Name = "service_card_type group_manager", ModelId = new_model_dict["service_card.model_service_card_type"].Id, Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_order_group_manager", new IRModelAccess { Name = "service_card_order group_manager", ModelId = new_model_dict["service_card.model_service_card_order"].Id, Group = new_group_dict["sale.group_manager"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_card_group_admin", new IRModelAccess { Name = "service_card_card group_admin", ModelId = new_model_dict["service_card.model_service_card_card"].Id, Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false  }},
+                {"service_card.access_service_card_type_group_admin", new IRModelAccess { Name = "service_card_type group_admin", ModelId = new_model_dict["service_card.model_service_card_type"].Id, Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
+                {"service_card.access_service_card_order_group_admin", new IRModelAccess { Name = "service_card_order group_admin", ModelId = new_model_dict["service_card.model_service_card_order"].Id, Group = new_group_dict["sale.group_admin"], PermRead = true, PermWrite = false, PermCreate = false, PermUnlink = false }},
             };
 
             await accessObj.InsertIfNotExist(access_dict);
@@ -225,9 +226,9 @@ namespace Infrastructure.Services
             var ruleObj = GetService<IIRRuleService>();
             var rule_dict = new Dictionary<string, IRRule>()
             {
-                {"service_card.service_card_order_comp_rule", new IRRule { Name = "Service Card Order multi-company", Model = new_model_dict["service_card.model_service_card_order"] }},
-                {"service_card.service_card_type_comp_rule", new IRRule { Name = "Service Card Type multi-company", Model = new_model_dict["service_card.model_service_card_type"] }},
-                {"service_card.service_card_card_comp_rule", new IRRule { Name = "Service Card Card multi-company", Model = new_model_dict["service_card.model_service_card_card"] }},
+                {"service_card.service_card_order_comp_rule", new IRRule { Name = "Service Card Order multi-company", ModelId = new_model_dict["service_card.model_service_card_order"].Id }},
+                {"service_card.service_card_type_comp_rule", new IRRule { Name = "Service Card Type multi-company", ModelId = new_model_dict["service_card.model_service_card_type"].Id }},
+                {"service_card.service_card_card_comp_rule", new IRRule { Name = "Service Card Card multi-company", ModelId = new_model_dict["service_card.model_service_card_card"].Id }},
             };
             await ruleObj.InsertIfNotExist(rule_dict);
         }

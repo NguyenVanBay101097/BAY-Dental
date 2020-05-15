@@ -36,7 +36,6 @@ import { HasGroupsDirective } from './has-groups-directive';
 import { UserProfileEditComponent } from './user-profile-edit/user-profile-edit.component';
 import { SharedSaleOrderGridComponent } from './shared-sale-order-grid/shared-sale-order-grid.component';
 import { SharedPartnerGridComponent } from './shared-partner-grid/shared-partner-grid.component';
-import { SharedDemoDataDialogComponent } from './shared-demo-data-dialog/shared-demo-data-dialog.component';
 import { SharedErrorDialogComponent } from './shared-error-dialog/shared-error-dialog.component';
 import { AppSharedShowErrorService } from './shared-show-error.service';
 import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.component';
@@ -73,7 +72,6 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
-    SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
     AnchorHostDirective,
@@ -106,7 +104,6 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
-    SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
     AnchorHostDirective,
@@ -136,10 +133,8 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
     ChangePasswordDialogComponent,
     ImageViewerComponent,
     UserProfileEditComponent,
-    SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    SharedDemoDataDialogComponent,
     SelectUomProductDialogComponent
   ],
 })

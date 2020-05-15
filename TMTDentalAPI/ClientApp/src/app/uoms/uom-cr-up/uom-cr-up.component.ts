@@ -24,7 +24,7 @@ export class UomCrUpComponent implements OnInit {
 
   constructor(
     private uoMService: UomService,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private uomCategoryService: UomCategoryService,
     private fb: FormBuilder, private showErrorService: AppSharedShowErrorService
   ) { }

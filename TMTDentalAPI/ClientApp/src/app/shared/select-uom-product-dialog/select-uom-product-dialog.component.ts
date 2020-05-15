@@ -10,6 +10,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class SelectUomProductDialogComponent implements OnInit {
   gridData: any[];
   productId: string;
+  title: string;
   constructor(private productService: ProductService, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {

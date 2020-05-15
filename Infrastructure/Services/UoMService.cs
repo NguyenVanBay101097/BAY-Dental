@@ -43,10 +43,13 @@ namespace Infrastructure.Services
         {
             foreach(var uom in self)
             {
-                if (string.IsNullOrEmpty(uom.MeasureType) || (uom.Category != null && uom.Category.Id != uom.CategoryId))
+                if (string.IsNullOrEmpty(uom.MeasureType))
                 {
-                    var categObj = GetService<IUoMCategoryService>();
-                    uom.Category = categObj.GetById(uom.CategoryId);
+                    if (uom.Category == null || (uom.Category.Id != uom.CategoryId && uom.CategoryId != Guid.Empty))
+                    {
+                        var categObj = GetService<IUoMCategoryService>();
+                        uom.Category = categObj.GetById(uom.CategoryId);
+                    }
 
                     uom.MeasureType = uom.Category.MeasureType;
                 }

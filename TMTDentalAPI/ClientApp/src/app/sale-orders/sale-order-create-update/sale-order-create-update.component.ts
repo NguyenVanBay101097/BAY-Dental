@@ -325,7 +325,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
         modalRef.componentInstance.orderId = result.id;
-        modalRef.componentInstance.partnerId = partner.id;
+        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {

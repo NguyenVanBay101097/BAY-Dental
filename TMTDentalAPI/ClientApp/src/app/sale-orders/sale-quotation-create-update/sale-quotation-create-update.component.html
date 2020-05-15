@@ -156,21 +156,6 @@
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.user ? saleOrder.user.name : ''}}</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Nhân viên tư vấn 
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="saleOrder.state != 'draft'" [data]="filteredemployees"
-                                        [textField]="'name'" [filterable]="true" #employeeCbx formControlName="employee"
-                                        [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <span
-                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.employee ? saleOrder.employee.name : ''}}</span>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>

@@ -17,7 +17,6 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var jquery: any;
 declare var $: any;
@@ -151,22 +150,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
         this.moveLines.push(this.fb.group(line));
       });
     });
-  }
-
-  onChangeUoMProduct(productId, line: AbstractControl) {
-    if (this.picking.state != "done") {
-      let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-      modalRef.componentInstance.title = 'Chọn đơn vị';
-      modalRef.componentInstance.productId = productId;
-      modalRef.result.then(
-        res => {
-          if (res) {
-            line.get('productUOM').patchValue(res);
-            line.get('productUOMId').patchValue(res.id);
-          }
-        }, () => {
-        });
-    }
   }
 
   changeUoM(line: AbstractControl) {

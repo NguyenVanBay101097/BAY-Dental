@@ -109,13 +109,22 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
             }
 
-            var group_ids = val.Groups.Select(x => x.Id).ToList();
-            var dict = _resGroupService._GetTransImplied(group_ids);
-            foreach(var group_id in group_ids)
+            var to_add = val.Groups.Select(x => x.Id).ToList();
+            var add_dict = _resGroupService._GetTransImplied(to_add);
+
+            foreach (var group_id in to_add)
             {
-                var groups = dict[group_id];
-                foreach(var group in groups)
-                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
+                if (rel2 == null)
+                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
+
+                var groups = add_dict[group_id];
+                foreach (var group in groups)
+                {
+                    var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
+                    if (rel == null)
+                        user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                }
             }
 
             var result = await _userManager.CreateAsync(user);
@@ -279,7 +288,7 @@ namespace TMTDentalAPI.Controllers
         {
             var companyId = CompanyId;
             var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-            x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search)) && x.CompanyId == companyId)
+            x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search)) && (x.ResCompanyUsersRels.Any(x => x.CompanyId == companyId) || x.CompanyId == companyId))
                 .OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new ApplicationUserSimple
                 {
