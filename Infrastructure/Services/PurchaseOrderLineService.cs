@@ -1,6 +1,9 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,9 +14,11 @@ namespace Infrastructure.Services
 {
     public class PurchaseOrderLineService : BaseService<PurchaseOrderLine>, IPurchaseOrderLineService
     {
-        public PurchaseOrderLineService(IAsyncRepository<PurchaseOrderLine> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public PurchaseOrderLineService(IAsyncRepository<PurchaseOrderLine> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
             : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public async Task<PurchaseOrderLineOnChangeProductResult> OnChangeProduct(PurchaseOrderLineOnChangeProduct val)
@@ -22,10 +27,30 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.GetByIdAsync(val.ProductId.Value);
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value).Include(x => x.UOM).Include(x => x.UOMPO).FirstOrDefaultAsync();
                 res.PriceUnit = product.PurchasePrice ?? 0;
                 res.Name = product.Name;
-                res.ProductUOMId = product.UOMId;
+                res.ProductUOMId = product.UOMPOId;
+                res.ProductUOM = _mapper.Map<UoMBasic>(product.UOMPO);
+            }
+
+            return res;
+        }
+
+        public async Task<PurchaseOrderLineOnChangeUOMResult> OnChangeUOM(PurchaseOrderLineOnChangeUOM val)
+        {
+            var res = new PurchaseOrderLineOnChangeUOMResult();
+            if (val.ProductId.HasValue && val.ProductUOMId.HasValue)
+            {
+                var productObj = GetService<IProductService>();
+                var uomObj = GetService<IUoMService>();
+                var uom = await uomObj.GetByIdAsync(val.ProductUOMId);
+
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value)
+                    .Include(x => x.UOMPO)
+                    .FirstOrDefaultAsync();
+
+                res.PriceUnit = Math.Round(uomObj.ComputePrice(product.UOMPO, product.PurchasePrice ?? 0, uom));
             }
 
             return res;

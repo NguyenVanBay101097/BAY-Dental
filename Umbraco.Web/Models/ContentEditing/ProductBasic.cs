@@ -14,7 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Đơn vị chính của sản phẩm
         /// </summary>
         public Guid UOMId { get; set; }
-        public UoMSimple UOM { get; set; }
+        public UoMBasic UOM { get; set; }
 
         /// <summary>
         /// Nhóm sản phẩm
@@ -39,7 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Đơn vị mua hàng
         /// </summary>
         public Guid UOMPOId { get; set; }
-        public UoMSimple UOMPO { get; set; }
+        public UoMBasic UOMPO { get; set; }
 
         /// <summary>
         /// Loại sản phẩm
@@ -106,6 +106,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type2 { get; set; }
 
         public decimal? PurchasePrice { get; set; }
+
+        public Guid? UOMId { get; set; }
+
+        public string UOMName { get; set; }
     }
 
     public class ProductPaged

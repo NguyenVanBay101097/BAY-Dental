@@ -116,7 +116,7 @@
                                     <th width="50">STT</th>
                                     <th width="200">Sản phẩm</th>
                                     <th width="80" class="text-right">Số lượng</th>
-                                    <th width="120" class="text-right">Đơn giá</th>
+                                    <th width="80" hasGroups [groups]="'product.group_uom'">Đơn vị</th>
                                     <th width="60" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">#</th>
                                 </tr>
                             </thead>
@@ -133,13 +133,12 @@
                                             <span
                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{ line.get('productUOMQty').value | number}}</span>
                                         </td>
-                                        <td class="align-middle text-right">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        <td class="align-middle" hasGroups [groups]="'product.group_uom'">
+                                            <a class="text-primary"
                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
-                                                formControlName="priceUnit" style="width: 120px;" [spinners]="false">
-                                            </kendo-numerictextbox>
+                                                (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
                                             <span
-                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{ line.get('priceUnit').value | number}}</span>
+                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{line.get('productUOM').value.name}}</span>
                                         </td>
                                         <td class="align-middle"
                                             *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">

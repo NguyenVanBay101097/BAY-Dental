@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,10 +15,13 @@ namespace Infrastructure.Services
 {
     public class StockMoveService : BaseService<StockMove>, IStockMoveService
     {
+        private readonly IMapper _mapper;
 
-        public StockMoveService(IAsyncRepository<StockMove> repository, IHttpContextAccessor httpContextAccessor)
+        public StockMoveService(IAsyncRepository<StockMove> repository, IHttpContextAccessor httpContextAccessor,
+            IMapper mapper)
         : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public async Task ActionDone(IEnumerable<StockMove> self)
@@ -30,7 +34,7 @@ namespace Infrastructure.Services
                 if (move.ProductUOMQty <= 0)
                     continue;
                 var quantObj = GetService<IStockQuantService>();
-                var quants = await quantObj.QuantsGetReservation(move.ProductUOMQty, move);
+                var quants = await quantObj.QuantsGetReservation(move.ProductQty ?? 0, move);
                 await quantObj.QuantsMove(quants, move, move.LocationDest);
                 move.State = "done";
             }
@@ -108,9 +112,11 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.GetByIdAsync(val.ProductId);
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.UOM).FirstOrDefaultAsync();
                 res.Name = product.Name;
+                res.ProductUOM = _mapper.Map<UoMBasic>(product.UOM);
             }
+
             return res;
         }
 
@@ -133,9 +139,21 @@ namespace Infrastructure.Services
 
         private void _ComputeProductQty(IEnumerable<StockMove> moves)
         {
+            var uomObj = GetService<IUoMService>();
+            var productObj = GetService<IProductService>();
             foreach (var move in moves)
-                move.ProductQty = move.ProductUOMQty;
+            {
+                if (move.ProductUOM == null || move.ProductUOM.Id != move.ProductUOMId)
+                    move.ProductUOM = uomObj.GetById(move.ProductUOMId);
+
+                if (move.Product == null || move.Product.Id != move.ProductId || move.Product.UOM == null)
+                    move.Product = productObj.SearchQuery(x => x.Id == move.ProductId).Include(x => x.UOM).FirstOrDefault();
+
+                move.ProductQty = uomObj.ComputeQtyObj(move.ProductUOM, move.ProductUOMQty, move.Product.UOM);
+            }
+               
         }
+
 
         public override Task<IEnumerable<StockMove>> CreateAsync(IEnumerable<StockMove> entities)
         {

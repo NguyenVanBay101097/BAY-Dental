@@ -9,5 +9,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public bool Active { get; set; }
+
+        public string UOMType { get; set; }
+
+        public string CategoryName { get; set; }
+
+        public Guid? CategoryId { get; set; }
     }
 }

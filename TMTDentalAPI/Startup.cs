@@ -144,6 +144,7 @@ namespace TMTDentalAPI
             services.AddScoped<IAccountFullReconcileService, AccountFullReconcileService>();
             services.AddScoped<IAccountPartialReconcileService, AccountPartialReconcileService>();
             services.AddScoped<IUoMService, UoMService>();
+            services.AddScoped<IUoMCategoryService, UoMCategoryService>();
             services.AddScoped<IToothCategoryService, ToothCategoryService>();
             services.AddScoped<IToothService, ToothService>();
             services.AddScoped<IRoutingService, RoutingService>();
@@ -244,6 +245,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ProductCategoryProfile());
                 mc.AddProfile(new ProductProfile());
                 mc.AddProfile(new UoMProfile());
+                mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
                 mc.AddProfile(new ProvinceProfile());

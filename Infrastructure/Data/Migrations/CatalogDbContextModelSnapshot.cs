@@ -4054,6 +4054,21 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ProductSteps");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ProductUoMRel", b =>
+                {
+                    b.Property<Guid>("UoMId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UoMId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductUoMRels");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.PromotionProgram", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4470,6 +4485,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("GroupServiceCard")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("GroupUoM")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastUpdated")
@@ -6173,8 +6191,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Factor")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Factor")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -8019,6 +8037,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ProductUoMRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany("ProductUoMRels")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.UoM", "UoM")
+                        .WithMany("ProductUoMRels")
+                        .HasForeignKey("UoMId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PromotionProgram", b =>

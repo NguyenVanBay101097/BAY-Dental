@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         void _ComputeAmount(IEnumerable<PurchaseOrderLine> self);
         void _ComputeQtyInvoiced(IEnumerable<PurchaseOrderLine> self);
         AccountMoveLine _PrepareAccountMoveLine(PurchaseOrderLine self, AccountMove move);
+        Task<PurchaseOrderLineOnChangeUOMResult> OnChangeUOM(PurchaseOrderLineOnChangeUOM val);
     }
 }

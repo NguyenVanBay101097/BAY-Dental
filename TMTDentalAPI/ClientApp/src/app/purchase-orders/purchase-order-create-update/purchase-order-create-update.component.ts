@@ -9,10 +9,16 @@ import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operato
 import { PartnerService } from 'src/app/partners/partner.service';
 import * as _ from 'lodash';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { PurchaseOrderLineService, PurchaseOrderLineOnChangeProduct } from '../purchase-order-line.service';
+import { PurchaseOrderLineService, PurchaseOrderLineOnChangeProduct, PurchaseOrderLineOnChangeProductResult } from '../purchase-order-line.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
+import { UoMDisplay } from 'src/app/uoms/uom.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
+import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var $: any;
 
 @Component({
@@ -27,9 +33,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   type: string;
-
+  purchaseOrderLineOnChangeProductResult: PurchaseOrderLineOnChangeProductResult = new PurchaseOrderLineOnChangeProductResult();
   purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
-
+  hasDefined = false;
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
@@ -39,11 +45,23 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
+  uomByProduct: { [id: string]: UoMDisplay[] } = {}
 
-  constructor(private fb: FormBuilder, private productService: ProductService, private route: ActivatedRoute,
-    private purchaseOrderService: PurchaseOrderService, private partnerService: PartnerService,
-    private purchaseLineService: PurchaseOrderLineService, private intlService: IntlService, private notificationService: NotificationService,
-    private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    private route: ActivatedRoute,
+    private purchaseOrderService: PurchaseOrderService,
+    private partnerService: PartnerService,
+    private purchaseLineService: PurchaseOrderLineService,
+    private intlService: IntlService,
+    private notificationService: NotificationService,
+    private router: Router,
+    private permissionService: PermissionService,
+    private authService: AuthService,
+    private modalService: NgbModal
+  ) {
+
   }
 
   ngOnInit() {
@@ -62,8 +80,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     } else {
       this.purchaseOrderService.defaultGet({ type: this.type }).subscribe(result => {
         this.purchaseOrder = result;
-        this.formGroup.patchValue(result);
 
+        this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
@@ -99,13 +117,18 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     $('#productSearchInput').focus(function () {
       $(this).select();
     });
+
+    this.authService.getGroups().subscribe((result: any) => {
+      this.permissionService.define(result);
+      this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+    });
   }
 
   loadRecord() {
     if (this.id) {
       this.purchaseOrderService.get(this.id).subscribe(result => {
         this.purchaseOrder = result;
-        this.formGroup.patchValue(result);
+        this.formGroup.patchValue(this.purchaseOrder);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
@@ -267,16 +290,39 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
           name: result.name,
           priceUnit: result.priceUnit,
           productUOMId: result.productUOMId,
+          productUOM: result.productUOM,
           product: productSimple,
           productId: product.id,
           priceSubtotal: null,
           productQty: 1,
           discount: 0,
         });
+
         this.orderLines.push(group);
         this.focusLastRow();
       });
     }
+  }
+
+  changeUoM(line: AbstractControl) {
+    var product = line.get('product').value;
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Chọn đơn vị';
+    modalRef.componentInstance.productId = product.id;
+    modalRef.result.then((res: any) => {
+      var uom = line.get('productUOM').value;
+      if (uom.id != res.id) {
+        line.get('productUOM').setValue(res);
+        this.purchaseLineService.onChangeUOM({ productId: product.id, productUOMId: res.id }).subscribe((result: any) => {
+          line.patchValue(result);
+        });
+      }
+    }, () => {
+    });
+  }
+
+  changePrice(price, line: AbstractControl) {
+    line.get('oldPriceUnit').patchValue(price)
   }
 
   focusLastRow() {

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
@@ -16,6 +16,9 @@ import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-li
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
+import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var jquery: any;
 declare var $: any;
 
@@ -41,11 +44,20 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute,
-    private windowService: WindowService, private intlService: IntlService,
-    private stockPickingService: StockPickingService, private router: Router, private partnerService: PartnerService,
-    private notificationService: NotificationService, private pickingTypeService: StockPickingTypeService,
-    private stockMoveService: StockMoveService, private productService: ProductService) { }
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private windowService: WindowService,
+    private intlService: IntlService,
+    private stockPickingService: StockPickingService,
+    private router: Router,
+    private partnerService: PartnerService,
+    private notificationService: NotificationService,
+    private pickingTypeService: StockPickingTypeService,
+    private stockMoveService: StockMoveService,
+    private productService: ProductService,
+    private modalService: NgbModal
+  ) { }
 
   ngOnInit() {
     this.pickingForm = this.fb.group({
@@ -141,6 +153,34 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     });
   }
 
+  onChangeUoMProduct(productId, line: AbstractControl) {
+    if (this.picking.state != "done") {
+      let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+      modalRef.componentInstance.title = 'Chọn đơn vị';
+      modalRef.componentInstance.productId = productId;
+      modalRef.result.then(
+        res => {
+          if (res) {
+            line.get('productUOM').patchValue(res);
+            line.get('productUOMId').patchValue(res.id);
+          }
+        }, () => {
+        });
+    }
+  }
+
+  changeUoM(line: AbstractControl) {
+    var product = line.get('product').value;
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Chọn đơn vị';
+    modalRef.componentInstance.productId = product.id;
+    modalRef.result.then((res: any) => {
+      line.get('productUOM').setValue(res);
+      line.get('productUOMId').setValue(res.id);
+    }, () => {
+    });
+  }
+
   onChangeProduct(value: ProductBasic2) {
     var item = new StockMoveDisplay();
     item.product = new ProductSimple();
@@ -148,6 +188,8 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     item.productId = value.id;
     item.product.name = value.name;
     item.name = value.name;
+    item.productUOMId = value.uomId;
+    item.productUOM = value.uom;
     item.productUOMQty = 1;
     item.priceUnit = 0;
     let flag = true;

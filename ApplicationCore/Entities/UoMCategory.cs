@@ -11,6 +11,10 @@ namespace ApplicationCore.Entities
     {
         public string Name { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string MeasureType { get; set; }
     }
 }

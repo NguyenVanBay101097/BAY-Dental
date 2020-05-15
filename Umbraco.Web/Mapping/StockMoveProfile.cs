@@ -13,7 +13,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<StockMoveDisplay, StockMove>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Product, x => x.Ignore());
+                .ForMember(x => x.Product, x => x.Ignore())
+                .ForMember(x => x.ProductUOM, x => x.Ignore());
             CreateMap<StockMove, StockMoveDisplay>();
         }
     }

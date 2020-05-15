@@ -19,6 +19,9 @@ namespace Infrastructure.Services
 
         public virtual async Task<T> DefaultGet<T>()
         {
+            var groupObj = GetService<IResGroupService>();
+            await groupObj.InsertSettingGroupIfNotExist("product.group_uom", "Group UoM");
+
             //var irValueObj = DependencyResolver.Current.GetService<IRValuesService>();
             var classified = await _GetClassifiedFields<T>();
             var res = Activator.CreateInstance<T>();
@@ -95,7 +98,7 @@ namespace Infrastructure.Services
                 throw new Exception("Chỉ có admin mới được thay đổi thiết lập");
 
             var groupObj = GetService<IResGroupService>();
-         
+
             //var user = UserSessionCtx.User;
             //if (!user.HasGroup("base.group_system"))
             //    throw new Exception("Chỉ có admin mới được thay đổi thiết lập");

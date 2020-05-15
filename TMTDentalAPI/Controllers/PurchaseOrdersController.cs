@@ -49,6 +49,10 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
+            foreach (var item in val.OrderLines.ToList())
+            {
+                item.ProductUOM = null;
+            }
             var labo = await _purchaseOrderService.CreateLabo(val);
             _unitOfWork.Commit();
             val.Id = labo.Id;

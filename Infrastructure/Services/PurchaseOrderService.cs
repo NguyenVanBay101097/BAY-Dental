@@ -18,11 +18,13 @@ namespace Infrastructure.Services
     public class PurchaseOrderService : BaseService<PurchaseOrder>, IPurchaseOrderService
     {
         private readonly IMapper _mapper;
-        public PurchaseOrderService(IAsyncRepository<PurchaseOrder> repository, IHttpContextAccessor httpContextAccessor,
+        private readonly IUoMService _uoMService;
+        public PurchaseOrderService(IAsyncRepository<PurchaseOrder> repository, IHttpContextAccessor httpContextAccessor, IUoMService uoMService,
             IMapper mapper)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _uoMService = uoMService;
         }
 
         public async Task<PagedResult2<PurchaseOrderBasic>> GetPagedResultAsync(PurchaseOrderPaged val)
@@ -41,8 +43,8 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<PurchaseOrder>(x => typeArr.Contains(x.Type)));
             }
             if (val.PartnerId.HasValue)
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x=>x.PartnerId.Equals(val.PartnerId)));
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Type == val.Type));
+                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.PartnerId.Equals(val.PartnerId)));
+            spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Type == val.Type));
             if (val.DateOrderFrom.HasValue)
             {
                 var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
@@ -84,6 +86,7 @@ namespace Infrastructure.Services
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
+                .Include("OrderLines.ProductUOM")
                 .FirstOrDefaultAsync();
             var res = _mapper.Map<PurchaseOrderDisplay>(labo);
             res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
@@ -135,7 +138,7 @@ namespace Infrastructure.Services
             if (string.IsNullOrEmpty(purchase.Name) || purchase.Name == "/")
             {
                 var sequenceObj = GetService<IIRSequenceService>();
-                if (purchase.Type == "refund") 
+                if (purchase.Type == "refund")
                     purchase.Name = await sequenceObj.NextByCode("purchase.refund");
                 else
                     purchase.Name = await sequenceObj.NextByCode("purchase.order");
@@ -245,6 +248,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines).Include("OrderLines.Product")
+                .Include("OrderLines.ProductUOM").Include("OrderLines.Product.UOM")
                 .Include(x => x.PickingType).Include(x => x.PickingType.DefaultLocationDest)
                 .Include(x => x.PickingType.DefaultLocationSrc)
                 .ToListAsync();
@@ -280,7 +284,7 @@ namespace Infrastructure.Services
                     order.InvoiceStatus = "no";
                     continue;
                 }
-                  
+
                 if (order.OrderLines.Any(x => (x.QtyInvoiced ?? 0) < x.ProductQty))
                     order.InvoiceStatus = "to invoice";
                 else if (order.OrderLines.All(x => (x.QtyInvoiced ?? 0) >= x.ProductQty))
@@ -299,6 +303,7 @@ namespace Infrastructure.Services
                 var invoice_vals = await PrepareInvoice(order);
                 foreach (var poLine in order.OrderLines)
                 {
+
                     invoice_vals.InvoiceLines.Add(poLineObj._PrepareAccountMoveLine(poLine, invoice_vals));
                 }
 
@@ -324,7 +329,7 @@ namespace Infrastructure.Services
             var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice");
             if (journal == null)
                 throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
-        
+
             return new AccountMove()
             {
                 Type = self.Type == "refund" ? "in_refund" : "in_invoice",
@@ -345,6 +350,7 @@ namespace Infrastructure.Services
             {
                 if (order.OrderLines.Any(x => x.Product.Type == "product" || x.Product.Type == "consu"))
                 {
+
                     StockPicking picking = _PreparePicking(order);
                     await pickingObj.CreateAsync(picking);
 
@@ -497,7 +503,7 @@ namespace Infrastructure.Services
                 PickingId = picking.Id,
                 PartnerId = self.Order.PartnerId,
                 PurchaseLineId = self.Id,
-                PriceUnit = (double)priceUnit,
+                PriceUnit = priceUnit,
                 PickingTypeId = self.Order.PickingTypeId,
                 WarehouseId = self.Order.PickingType.WarehouseId,
                 CompanyId = self.Order.CompanyId,
@@ -507,10 +513,13 @@ namespace Infrastructure.Services
             res.Add(template);
             return res;
         }
-
-        private decimal _GetStockMovePriceUnit(PurchaseOrderLine line)
+        private double _GetStockMovePriceUnit(PurchaseOrderLine line)
         {
-            var priceUnit = line.PriceUnit;
+            var priceUnit = (double)line.PriceUnit;
+            if (line.ProductUOM.Id != line.Product.UOMId)
+            {
+                priceUnit *= line.ProductUOM.Factor / line.Product.UOM.Factor;
+            }
             return priceUnit;
         }
 

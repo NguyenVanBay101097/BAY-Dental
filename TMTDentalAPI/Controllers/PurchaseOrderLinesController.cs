@@ -25,5 +25,12 @@ namespace TMTDentalAPI.Controllers
             var res = await _purchaseLineService.OnChangeProduct(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> OnChangeUOM(PurchaseOrderLineOnChangeUOM val)
+        {
+            var res = await _purchaseLineService.OnChangeUOM(val);
+            return Ok(res);
+        }
     }
 }

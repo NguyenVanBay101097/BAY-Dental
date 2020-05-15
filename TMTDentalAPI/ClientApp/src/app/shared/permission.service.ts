@@ -28,7 +28,6 @@ export class PermissionService {
     public hasOneDefined(permissions: Array<string>): boolean {
         if (!Array.isArray(permissions))
             throw "permissions parameter is not array.";
-
         return permissions.some(v => {
             if (typeof v === "string")
                 return this._permissionStore.indexOf(v.toLowerCase()) >= 0;

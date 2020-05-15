@@ -25,7 +25,6 @@ export class HasGroupsDirective implements OnInit {
         if (!this.groups) {
             return false;
         }
-
         var permissions = this.groups.split(',');
         let hasDefined = this.permissionService.hasOneDefined(permissions);
 

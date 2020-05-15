@@ -30,6 +30,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ProductAdvanceSearchComponent } from './product-advance-search/product-advance-search.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductServiceImportDialogComponent } from './product-service-import-dialog/product-service-import-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [ProductListComponent, ProductDialogComponent, ProductImportExcelDialogComponent, ProductSearchListComponent, ProductGridComponent, ProductServiceListComponent, ProductServiceFormComponent, ProductServiceCuDialogComponent, ProductAdvanceFilterComponent, ProductMedicineListComponent, ProductMedicineCuDialogComponent, ProductMedicineFormComponent, ProductLaboFormComponent, ProductLaboCuDialogComponent, ProductLaboListComponent, ProductProductListComponent, ProductProductCuDialogComponent, ProductProductFormComponent, ProductStepCuDialogComponent, ProductStepFormComponent, ProductAdvanceSearchComponent, ProductServiceImportDialogComponent],
@@ -41,6 +42,7 @@ import { ProductServiceImportDialogComponent } from './product-service-import-di
     FormsModule,
     CustomComponentModule,
     DragDropModule,
+    SharedModule,
     NgbModule
   ],
   exports: [

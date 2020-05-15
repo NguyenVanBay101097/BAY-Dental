@@ -27,6 +27,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupMultiCompany: false,
       companySharePartner: false,
       companyShareProduct: false,
+      groupUoM: false,
       groupServiceCard: false,
       productListpriceRestrictCompany: false
     });
@@ -45,6 +46,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
   onSave() {
     var val = this.formGroup.value;
+    debugger
     if (val.groupServiceCard) {
       this.configSettingsService.insertServiceCardData().subscribe(() => {
         this.configSettingsService.create(val).subscribe(result => {

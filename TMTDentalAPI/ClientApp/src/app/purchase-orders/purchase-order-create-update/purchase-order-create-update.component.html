@@ -158,6 +158,7 @@
                                     <th width="50">STT</th>
                                     <th width="200">Hàng hóa</th>
                                     <th width="80">SL</th>
+                                    <th width="120" hasGroups [groups]="'product.group_uom'">ĐVT</th>
                                     <th width="120">Đơn giá</th>
                                     <th width="60">CK(%)</th>
                                     <th width="120" class="text-right">Thành tiền</th>
@@ -182,8 +183,15 @@
                                             <span
                                                 *ngIf="purchaseOrder.state != 'draft'">{{line.get('productQty').value | number}}</span>
                                         </td>
+                                        <td class="align-middle" hasGroups [groups]="'product.group_uom'">
+                                            <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
+                                                (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
+                                            <span
+                                                *ngIf="purchaseOrder.state != 'draft'">{{line.get('productUOM').value.name}}</span>
+                                        </td>
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                (valueChange)="changePrice($event,line)"
                                                 *ngIf="purchaseOrder.state == 'draft'" formControlName="priceUnit"
                                                 style="width: 120px;" [spinners]="false">
                                             </kendo-numerictextbox>

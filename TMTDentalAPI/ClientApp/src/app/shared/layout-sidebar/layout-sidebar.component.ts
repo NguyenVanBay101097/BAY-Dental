@@ -96,6 +96,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Tiểu sử bệnh', link: '/histories' },
         // { name: 'Ngân hàng', link: '/res-banks' },
         // { name: 'Tài khoản ngân hàng', link: '/res-partner-banks' },
+        { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
+        { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
         { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
         { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },

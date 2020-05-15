@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
@@ -13,6 +13,9 @@ import { StockMoveService, StockMoveOnChangeProduct } from 'src/app/stock-moves/
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductBasic2, ProductService } from 'src/app/products/product.service';
 import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
+import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var jquery: any;
 declare var $: any;
 
@@ -34,11 +37,20 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   productList: ProductBasic2[] = [];
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute,
-    private windowService: WindowService, private intlService: IntlService,
-    private stockPickingService: StockPickingService, private router: Router, private partnerService: PartnerService,
-    private notificationService: NotificationService, private pickingTypeService: StockPickingTypeService,
-    private stockMoveService: StockMoveService, private productService: ProductService) { }
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private windowService: WindowService,
+    private intlService: IntlService,
+    private stockPickingService: StockPickingService,
+    private router: Router,
+    private partnerService: PartnerService,
+    private notificationService: NotificationService,
+    private pickingTypeService: StockPickingTypeService,
+    private stockMoveService: StockMoveService,
+    private productService: ProductService,
+    private modalService: NgbModal
+  ) { }
 
   ngOnInit() {
     this.pickingForm = this.fb.group({
@@ -110,26 +122,66 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     });
   }
 
-  onChangeProduct(value: ProductBasic2) {
-    var item = new StockMoveDisplay();
-    item.product = new ProductSimple();
-    item.product.id = value.id;
-    item.productId = value.id;
-    item.product.name = value.name;
-    item.name = value.name;
-    item.productUOMQty = 1;
-    let flag = true;
-    this.moveLines.controls.forEach(line => {
-      if (line.get('productId').value == item.productId) {
-        line.get('productUOMQty').setValue(line.get('productUOMQty').value + 1);
-        flag = false;
-        return;
-      }
-    })
+  changeUoM(line: AbstractControl) {
+    var product = line.get('product').value;
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Chọn đơn vị';
+    modalRef.componentInstance.productId = product.id;
+    modalRef.result.then((res: any) => {
+      line.get('productUOM').setValue(res);
+      line.get('productUOMId').setValue(res.id);
+    }, () => {
+    });
+  }
 
-    if (flag) {
-      this.moveLines.push(this.fb.group(item));
-      this.focusLastRow();
+
+  onChangeUoMProduct(productId, line: AbstractControl) {
+    if (this.picking.state != "done") {
+      let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+      modalRef.componentInstance.title = 'Chọn đơn vị';
+      modalRef.componentInstance.productId = productId;
+      modalRef.result.then(
+        res => {
+          if (res) {
+            line.get('productUOM').patchValue(res);
+            line.get('productUOMId').patchValue(res.id);
+          }
+        }, () => {
+        });
+    }
+
+  }
+
+  onChangeProduct(value: ProductBasic2) {
+    var product = value;
+    var index = _.findIndex(this.moveLines.controls, o => {
+      return o.get('product').value.id == product.id && o.get('productUOMId').value == product.uomId;
+    });
+
+    if (index !== -1) {
+      var control = this.moveLines.controls[index];
+      control.patchValue({ productQty: control.get('productQty').value + 1 });
+    } else {
+      var val = new StockMoveOnChangeProduct();
+      val.productId = product.id;
+
+      var productSimple = new ProductSimple();
+      productSimple.id = product.id;
+      productSimple.name = product.name;
+
+      this.stockMoveService.onChangeProduct(val).subscribe((result: any) => {
+        var group = this.fb.group({
+          name: result.name,
+          productUOMId: result.productUOM.id,
+          productUOM: result.productUOM,
+          product: productSimple,
+          productId: product.id,
+          productUOMQty: 1
+        });
+
+        this.moveLines.push(group);
+        this.focusLastRow();
+      });
     }
   }
 

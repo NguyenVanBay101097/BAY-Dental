@@ -6,6 +6,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,16 +20,22 @@ namespace Infrastructure.Services
     public class ProductService : BaseService<Product>, IProductService
     {
         private readonly IMapper _mapper;
-        public ProductService(IAsyncRepository<Product> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+        private readonly IUoMService _uoMService;
+        public ProductService(
+            IAsyncRepository<Product> repository,
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper,
+            IUoMService uoMService
+            )
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _uoMService = uoMService;
         }
 
         public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
         {
-            foreach(var product in entities)
+            foreach (var product in entities)
             {
                 if (string.IsNullOrEmpty(product.NameNoSign))
                     product.NameNoSign = product.Name.RemoveSignVietnameseV2();
@@ -115,7 +122,9 @@ namespace Infrastructure.Services
                 PurchasePrice = x.PurchasePrice ?? 0,
                 CategId = x.CategId,
                 QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
-                Type2 = x.Type2
+                Type2 = x.Type2,
+                UOMId = x.UOMId,
+                UOMName = x.UOM.Name
             });
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -181,7 +190,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
 
             var items = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
-                .Select(x => new ProductLaboBasic {
+                .Select(x => new ProductLaboBasic
+                {
                     Id = x.Id,
                     Name = x.Name,
                     PurchasePrice = x.PurchasePrice
@@ -226,8 +236,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)
         {
-           var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-            x.NameNoSign.Contains(val.Search)));
+            var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
+             x.NameNoSign.Contains(val.Search)));
             if (val.KeToaOK.HasValue)
                 query = query.Where(x => x.KeToaOK == val.KeToaOK);
             if (val.IsLabo.HasValue)
@@ -251,7 +261,6 @@ namespace Infrastructure.Services
         public async Task<Product> CreateProduct(ProductDisplay val)
         {
             var product = _mapper.Map<Product>(val);
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
             if (!product.CompanyId.HasValue)
                 product.CompanyId = CompanyId;
             if (val.StepList.Any())
@@ -292,59 +301,6 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task<Product> CreateProduct(ProductLaboSave val)
-        {
-            var product = _mapper.Map<Product>(val);
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-            product.Type2 = "labo";
-            product.SaleOK = false;
-            product.PurchaseOK = false;
-
-            var companyId = CompanyId;
-            product.CompanyId = companyId;
-
-            var uomObj = GetService<IUoMService>();
-            var productCategObj = GetService<IProductCategoryService>();
-            var uom = await uomObj.DefaultUOM();
-            if (uom == null)
-                throw new Exception("Not found default uom");
-            product.UOMId = uom.Id;
-            product.UOMPOId = uom.Id;
-
-            var categ = await productCategObj.SearchQuery(x => x.Name == "Labo" && x.Type == "labo").FirstOrDefaultAsync();
-            if (categ == null)
-            {
-                categ = new ProductCategory() { Name = "Labo", Type = "labo" };
-                await productCategObj.CreateAsync(categ);
-            }
-            product.CategId = categ.Id;
-
-            return await CreateAsync(product);
-        }
-
-        public async Task CreateProduct(IEnumerable<ProductDisplay> vals)
-        {
-            var self = new List<Product>();
-            foreach(var val in vals)
-            {
-                var product = _mapper.Map<Product>(val);
-                product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-                var companyId = CompanyId;
-                product.ProductCompanyRels = new List<ProductCompanyRel>()
-                {
-                    new ProductCompanyRel
-                    {
-                        CompanyId = companyId,
-                        ProductId = product.Id,
-                        StandardPrice = (double)val.StandardPrice
-                    }
-                };
-                self.Add(product);
-            }
-
-            await CreateAsync(self);
-        }
-
         public async Task UpdateProduct(Guid id, ProductDisplay val)
         {
             var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).FirstOrDefaultAsync();
@@ -353,10 +309,66 @@ namespace Infrastructure.Services
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             SaveProductSteps(product, val.StepList);
+            await UpdateAsync(product);
+        }
+
+        public async Task<Product> CreateProduct(ProductSave val)
+        {
+            var product = _mapper.Map<Product>(val);
+
+            _SaveUoMRels(product, val);
+
+            if (val.StepList.Any())
+            {
+                var order = 1;
+                foreach (var step in val.StepList)
+                {
+                    product.Steps.Add(new ProductStep
+                    {
+                        Order = order++,
+                        Name = step.Name
+                    });
+                }
+            }
+
+            return await CreateAsync(product);
+        }
+
+        public async Task UpdateProduct(Guid id, ProductSave val)
+        {
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps)
+                .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
+
+            product = _mapper.Map(val, product);
+            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
+
+            SaveProductSteps(product, val.StepList);
+            _SaveUoMRels(product, val);
+
             //_SetStandardPrice(product, val.StandardPrice);
 
             await _SetListPrice(product, val.ListPrice);
             await UpdateAsync(product);
+        }
+
+        private void _SaveUoMRels(Product product, ProductSave val)
+        {
+            var rels_remove = new List<ProductUoMRel>();
+            var uom_ids = new List<Guid>() { val.UOMId, val.UOMPOId };
+            foreach(var rel in product.ProductUoMRels)
+            {
+                if (!uom_ids.Contains(rel.UoMId))
+                    rels_remove.Add(rel);
+            }
+
+            foreach (var rel in rels_remove)
+                product.ProductUoMRels.Remove(rel);
+
+            foreach(var uom_id in uom_ids)
+            {
+                if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
+                    product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
+            }
         }
 
         private void SaveProductSteps(Product product, IEnumerable<ProductStepDisplay> val)
@@ -474,22 +486,18 @@ namespace Infrastructure.Services
         public async Task<ProductDisplay> DefaultGet()
         {
             var uomObj = GetService<IUoMService>();
-            var productCategObj = GetService<IProductCategoryService>();
             var uom = await uomObj.DefaultUOM();
-            //var categ = await productCategObj.DefaultCategory();
             var res = new ProductDisplay();
             if (uom != null)
             {
                 res.UOMId = uom.Id;
+                res.UOM = _mapper.Map<UoMBasic>(uom);
+
                 res.UOMPOId = uom.Id;
+                res.UOMPO = _mapper.Map<UoMBasic>(uom);
             }
 
             res.CompanyId = CompanyId;
-
-            //if (categ != null)
-            //{
-            //    res.Categ = _mapper.Map<ProductCategoryBasic>(categ);
-            //}
 
             return res;
         }
@@ -556,6 +564,9 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+
+
 
         //public override ISpecification<Product> RuleDomainGet(IRRule rule)
         //{

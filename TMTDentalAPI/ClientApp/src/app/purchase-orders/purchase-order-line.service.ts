@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { UoMDisplay } from '../uoms/uom.service';
 
 export class PurchaseOrderLineOnChangeProduct {
     productId: string;
@@ -10,6 +11,9 @@ export class PurchaseOrderLineOnChangeProductResult {
     name: string;
     priceUnit: number;
     productUOMId: string;
+    productUOM: UoMDisplay;
+    productUOMPOId: string;
+    productUOMPO: UoMDisplay;
 }
 
 @Injectable()
@@ -19,5 +23,9 @@ export class PurchaseOrderLineService {
 
     onChangeProduct(val: PurchaseOrderLineOnChangeProduct): Observable<PurchaseOrderLineOnChangeProductResult> {
         return this.http.post<PurchaseOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
+    }
+
+    onChangeUOM(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/OnChangeUOM', val);
     }
 }

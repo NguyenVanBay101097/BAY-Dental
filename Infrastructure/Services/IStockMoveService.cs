@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     {
         Task ActionDone(IEnumerable<StockMove> self);
         Task<StockMoveOnChangeProductResult> OnChangeProduct(StockMoveOnChangeProduct val);
+        void _Compute(IEnumerable<StockMove> self);
     }
 }

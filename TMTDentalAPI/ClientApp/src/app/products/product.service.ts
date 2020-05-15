@@ -1,13 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { Product } from './product';
+import { Product, ProductSave } from './product';
 import { ProductPaging } from './product-paging';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { ProductSimple } from './product-simple';
 import { ProductStepDisplay, ProductDisplayAndStep } from './product-step';
 import { PagedResult2 } from '../core/paged-result-2';
+import { UoMDisplay, UoMBasic } from '../uoms/uom.service';
 
 export class ProductFilter {
     search: string;
@@ -42,6 +43,14 @@ export class ProductBasic2 {
     type: string;
     defaultCode: string;
     qtyAvailable: number;
+    uomId: string;
+    uom: UoMBasic;
+}
+
+export class ProductUoMBasic {
+    id: string;
+    name: string;
+    purchasePrice: number;
 }
 
 export class ProductPaging2 {
@@ -114,12 +123,12 @@ export class ProductService {
         return this.http.post<Product>(this.baseApi + this.apiUrl + "/DefaultProductStepGet", {});
     }
 
-    create(product: Product) {
+    create(product: ProductSave) {
         return this.http.post(this.baseApi + this.apiUrl, product);
     }
 
 
-    update(id: string, product: Product) {
+    update(id: string, product: ProductSave) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, product);
     }
 
@@ -175,5 +184,13 @@ export class ProductService {
 
     getStepByProductId(id): Observable<ProductStepDisplay[]> {
         return this.http.get<ProductStepDisplay[]>(this.baseApi + "api/ProductSteps/" + id);
+    }
+
+    onChangeUOM(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/OnChangeUOM", data);
+    }
+
+    getUOMs(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + "/GetUOMs");
     }
 }

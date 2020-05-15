@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { ProductSimple } from '../products/product-simple';
 import { PartnerSimple } from '../partners/partner-simple';
+import { UoMBasic } from '../uoms/uom.service';
 
 export class StockPickingDisplay {
     id: string;
@@ -52,6 +53,8 @@ export class StockMoveDisplay {
     product: ProductSimple;
     sequence: number;
     productUOMQty: number;
+    productUOM: UoMBasic;
+    productUOMId: string;
     priceUnit: number;
 }
 

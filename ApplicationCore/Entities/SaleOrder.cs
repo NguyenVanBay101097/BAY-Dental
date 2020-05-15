@@ -110,6 +110,9 @@ namespace ApplicationCore.Entities
         public Guid? OrderId { get; set; }
         public SaleOrder Order { get; set; }
 
+        //public Guid? EmployeeId { get; set; }
+        //public Employee Employee { get; set; }
+
         public ICollection<SaleOrderNoCodePromoProgram> NoCodePromoPrograms { get; set; } = new List<SaleOrderNoCodePromoProgram>();
         public Guid? CodePromoProgramId { get; set; }
         public SaleCouponProgram CodePromoProgram { get; set; }

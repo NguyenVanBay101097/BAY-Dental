@@ -1,0 +1,111 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tên đơn vị</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nhóm đơn vị</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="form-control" [data]="filterdCategories" [textField]="'name'"
+                                        [filterable]="true" #cateCbx formControlName="categoryId" [valueField]="'id'"
+                                        [valuePrimitive]="true">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Loại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select formControlName="uomType" class="form-control"
+                                        (change)="onChangeUoMType($event.currentTarget.value)">
+                                        <option value="bigger">Lớn hơn đơn
+                                            vị
+                                            gốc</option>
+                                        <option value="reference">Là
+                                            đơn
+                                            vị gốc của nhóm này</option>
+                                        <option value="smaller">Nhỏ hơn
+                                            đơn
+                                            vị gốc</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="uomTypeValue == 'reference'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tỉ lệ</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [class.d-none]="uomTypeValue != 'smaller'"
+                                        class="form-control" formControlName="factor" [min]="0" [format]="'n5'">
+                                    </kendo-numerictextbox>
+                                    <kendo-numerictextbox [class.d-none]="uomTypeValue != 'bigger'" class="form-control"
+                                        formControlName="factorInv" [min]="0" [format]="'n5'">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <p [class.d-none]="uomTypeValue != 'smaller'" class="text-muted">
+                                        Ví dụ: 1 * (đơn vị gốc) = tỉ lệ * (đơn vị này)
+                                    </p>
+                                    <p [class.d-none]="uomTypeValue != 'bigger'" class="text-muted">
+                                        Ví dụ: 1 * (đơn vị này) = tỉ lệ * (đơn vị gốc)
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Hiệu lực</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="checkbox">
+                                        <input type="checkbox" formControlName="active">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Làm tròn</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox class="form-control" formControlName="rounding" [min]="0"
+                                        [format]="'n2'">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

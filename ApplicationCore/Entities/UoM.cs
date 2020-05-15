@@ -23,9 +23,11 @@ namespace ApplicationCore.Entities
 
         public bool Active { get; set; }
 
-        public decimal Factor { get; set; }
+        public double Factor { get; set; }
 
         public string UOMType { get; set; }
+
+        public ICollection<ProductUoMRel> ProductUoMRels { get; set; } = new List<ProductUoMRel>();
 
         public Guid CategoryId { get; set; }
 

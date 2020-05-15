@@ -165,6 +165,10 @@ namespace Infrastructure.Data
         public DbSet<FacebookScheduleAppointmentConfig> FacebookScheduleAppointmentConfigs { get; set; }
 
 
+        //nguyen thang
+        public DbSet<ProductUoMRel> ProductUoMRels { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -293,6 +297,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ServiceCardCardConfiguration());
             builder.ApplyConfiguration(new ServiceCardOrderPartnerRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderServiceCardCardRelConfiguration());
+            builder.ApplyConfiguration(new ProductUoMRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
