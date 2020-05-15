@@ -18,14 +18,14 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.PartnerId);
 
+            builder.HasOne(x => x.SaleLine)
+              .WithMany(x => x.Cards)
+              .HasForeignKey(x => x.SaleLineId);
+
             builder.HasOne(x => x.CardType)
                 .WithMany()
                 .HasForeignKey(x => x.CardTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(x => x.Order)
-                .WithMany(x => x.Cards)
-                .HasForeignKey(x => x.OrderId);
 
             builder.HasOne(x => x.CreatedBy)
         .WithMany()

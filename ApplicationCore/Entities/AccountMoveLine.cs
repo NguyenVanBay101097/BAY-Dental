@@ -96,5 +96,7 @@ namespace ApplicationCore.Entities
         public string DiscountType { get; set; }
 
         public decimal? DiscountFixed { get; set; }
+
+        public ICollection<ServiceCardOrderLineInvoiceRel> CardOrderLineRels { get; set; } = new List<ServiceCardOrderLineInvoiceRel>();
     }
 }

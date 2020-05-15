@@ -12,6 +12,9 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public ApplicationUserSimple User { get; set; }
+
         public DateTime DateOrder { get; set; }
+
+        public Guid CompanyId { get; set; }
     }
 }

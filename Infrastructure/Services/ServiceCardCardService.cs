@@ -17,6 +17,7 @@ namespace Infrastructure.Services
     public class ServiceCardCardService : BaseService<ServiceCardCard>, IServiceCardCardService
     {
         private readonly IMapper _mapper;
+        private static readonly Random _random = new Random();
 
         public ServiceCardCardService(IAsyncRepository<ServiceCardCard> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
@@ -25,11 +26,15 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task ActionActive(IEnumerable<ServiceCardCard> self)
+        public async Task ActionActive(IEnumerable<Guid> ids)
         {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.CardType).ToListAsync();
             var cardTypeObj = GetService<IServiceCardTypeService>();
             foreach(var card in self)
             {
+                if (card.State == "in_use")
+                    continue;
+
                 if (!card.ActivatedDate.HasValue)
                     card.ActivatedDate = DateTime.Today;
                 var active_date = card.ActivatedDate.Value;
@@ -41,6 +46,14 @@ namespace Infrastructure.Services
 
             await UpdateAsync(self);
         }
+
+        public async Task ButtonConfirm(IEnumerable<ServiceCardCard> self)
+        {
+            foreach (var card in self)
+                card.State = "confirmed";
+            await UpdateAsync(self);
+        }
+
 
         public override async Task<IEnumerable<ServiceCardCard>> CreateAsync(IEnumerable<ServiceCardCard> self)
         {
@@ -56,10 +69,50 @@ namespace Infrastructure.Services
                         card.Name = await seqObj.NextByCode("sequence_seq_service_card_nb");
                     }
                 }
+
+                if (string.IsNullOrEmpty(card.Barcode))
+                    card.Barcode = RandomBarcode();
             }
 
             await base.CreateAsync(self);
+
+            foreach (var card in self)
+                await _CheckBarcodeUnique(card.Barcode);
+
             return self;
+        }
+
+        private async Task _CheckBarcodeUnique(string barcode)
+        {
+            if (string.IsNullOrEmpty(barcode))
+                return;
+
+            var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Đã có thẻ dịch vụ với mã vạch {barcode}");
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var card in self)
+            {
+                if (card.State == "in_use")
+                    throw new Exception("Không thể xóa thẻ tiền mặt đang sử dụng");
+            }
+
+            await DeleteAsync(self);
+        }
+
+        private string RandomBarcode()
+        {
+            var size = 13;
+            var builder = new StringBuilder();
+            for (var i = 0; i < size; i++)
+            {
+                builder.Append(_random.Next(0, 9));
+            }
+            return builder.ToString();
         }
 
         public override ISpecification<ServiceCardCard> RuleDomainGet(IRRule rule)
@@ -98,11 +151,14 @@ namespace Infrastructure.Services
                 x.Partner.Phone.Contains(val.Search)));
 
             if (val.OrderId.HasValue)
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.OrderId == val.OrderId));
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.SaleLine.OrderId == val.OrderId.Value));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await _mapper.ProjectTo<ServiceCardCardBasic>(query).ToListAsync();
+            if (val.Limit <= 0)
+                val.Limit = int.MaxValue;
+
+            var items = await _mapper.ProjectTo<ServiceCardCardBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ServiceCardCardBasic>(totalItems, val.Offset, val.Limit)
@@ -127,6 +183,21 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             return self;
+        }
+
+        public async Task<ServiceCardCard> CheckCode(string code)
+        {
+            var card = await SearchQuery(x => x.Barcode == code).FirstOrDefaultAsync();
+            if (card == null)
+                throw new Exception($"Không tìm thấy thẻ nào với mã vạch {code}");
+
+            if (card.State != "in_use")
+                throw new Exception($"Thẻ không khả dụng");
+
+            if (card.Residual == 0)
+                throw new Exception($"Số dư của thẻ bằng 0");
+
+            return card;
         }
     }
 }

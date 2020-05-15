@@ -57,7 +57,7 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
-      name: 'Thẻ dịch vụ',
+      name: 'Thẻ tiền mặt',
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',
       children: [

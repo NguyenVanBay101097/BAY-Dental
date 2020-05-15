@@ -148,10 +148,12 @@ namespace Infrastructure.Data
         public DbSet<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; }
         public DbSet<ServiceCardType> ServiceCardTypes { get; set; }
         public DbSet<ServiceCardOrder> ServiceCardOrders { get; set; }
+        public DbSet<ServiceCardOrderLine> ServiceCardOrderLines { get; set; }
+        public DbSet<ServiceCardOrderLineInvoiceRel> ServiceCardOrderLineInvoiceRels { get; set; }
         public DbSet<ServiceCardCard> ServiceCardCards { get; set; }
-        public DbSet<ServiceCardOrderPartnerRel> ServiceCardOrderPartnerRels { get; set; }
         public DbSet<SaleOrderServiceCardCardRel> SaleOrderServiceCardCardRels { get; set; }
-        
+        public DbSet<ServiceCardOrderPaymentRel> ServiceCardOrderPaymentRels { get; set; }
+
 
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -294,9 +296,11 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleOrderPaymentRelConfiguration());
             builder.ApplyConfiguration(new ServiceCardTypeConfiguration());
             builder.ApplyConfiguration(new ServiceCardOrderConfiguration());
+            builder.ApplyConfiguration(new ServiceCardOrderLineConfiguration());
+            builder.ApplyConfiguration(new ServiceCardOrderLineInvoiceRelConfiguration());
             builder.ApplyConfiguration(new ServiceCardCardConfiguration());
-            builder.ApplyConfiguration(new ServiceCardOrderPartnerRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderServiceCardCardRelConfiguration());
+            builder.ApplyConfiguration(new ServiceCardOrderPaymentRelConfiguration());
             builder.ApplyConfiguration(new ProductUoMRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

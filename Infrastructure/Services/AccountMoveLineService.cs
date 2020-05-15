@@ -538,8 +538,8 @@ namespace Infrastructure.Services
             if (invoiceIds.Any())
             {
                 await invObj._ComputeAmount(invoiceIds);
+
                 //Tìm sale orders để tính lại residual
-             
                 var saleLineObj = GetService<ISaleOrderLineService>();
                 var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
                     .Select(x => x.OrderId).Distinct().ToListAsync();
@@ -547,6 +547,16 @@ namespace Infrastructure.Services
                 {
                     var saleObj = GetService<ISaleOrderService>();
                     await saleObj.RecomputeResidual(saleOrderIds);
+                }
+
+                //Tìm service card orders để tính lại residual
+                var cardOrderLineObj = GetService<IServiceCardOrderLineService>();
+                var cardOrderIds = await cardOrderLineObj.SearchQuery(x => x.OrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
+                    .Select(x => x.OrderId).Distinct().ToListAsync();
+                if (cardOrderIds.Any())
+                {
+                    var saleObj = GetService<IServiceCardOrderService>();
+                    await saleObj.UpdateResidual(cardOrderIds);
                 }
             }
         }

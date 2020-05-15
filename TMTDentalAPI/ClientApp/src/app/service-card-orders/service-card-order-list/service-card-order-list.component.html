@@ -40,14 +40,14 @@
         </kendo-grid-column>
         <kendo-grid-column field="userName" title="Người bán" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="moveAmountTotal" title="Tổng tiền" class="text-right" width="120">
+        <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.moveAmountTotal | number}}
+                {{dataItem.amountTotal | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="moveAmountResidual" title="Còn nợ" class="text-right" width="120">
+        <kendo-grid-column field="amountResidual" title="Còn nợ" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.moveAmountResidual | number}}
+                {{dataItem.amountResidual | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="120">

@@ -24,7 +24,7 @@ export class ServiceCardTypeListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  title = 'Loại thẻ dịch vụ';
+  title = 'Loại thẻ tiền mặt';
 
   constructor(private cardTypeService: ServiceCardTypeService,
     private modalService: NgbModal) { }

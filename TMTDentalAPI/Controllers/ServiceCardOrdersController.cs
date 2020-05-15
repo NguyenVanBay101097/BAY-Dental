@@ -40,19 +40,16 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.User).Include(x => x.CardType).Include(x => x.Move).Include(x => x.Cards).FirstOrDefaultAsync();
-
-            if (order == null)
-                return NotFound();
-
-            return Ok(_mapper.Map<ServiceCardOrderDisplay>(order));
+            var res = await _cardOrderService.GetDisplay(id);
+            return Ok(res);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(ServiceCardOrderSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var order = await _cardOrderService.CreateUI(val);
+            _unitOfWork.Commit();
 
             var basic = _mapper.Map<ServiceCardOrderBasic>(order);
             return Ok(basic);
@@ -61,7 +58,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ServiceCardOrderSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _cardOrderService.UpdateUI(id, val);
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 
@@ -98,35 +98,9 @@ namespace TMTDentalAPI.Controllers
             var user = await _userService.GetCurrentUser();
             var res = new ServiceCardOrderDefault();
             res.User = _mapper.Map<ApplicationUserSimple>(user);
+            res.CompanyId = CompanyId;
 
             return Ok(res);
-        }
-
-        [HttpPost("{id}/[action]")]
-        public async Task<IActionResult> AddPartners(Guid id, IEnumerable<Guid> ids)
-        {
-            await _cardOrderService.AddPartners(id, ids);
-            return NoContent();
-        }
-
-        [HttpPost("{id}/[action]")]
-        public async Task<IActionResult> RemovePartners(Guid id, IEnumerable<Guid> ids)
-        {
-            await _cardOrderService.RemovePartners(id, ids);
-            return NoContent();
-        }
-
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetPartners(Guid id)
-        {
-            var order = await _cardOrderService.SearchQuery(x => x.Id == id).Include(x => x.PartnerRels)
-               .Include("PartnerRels.Partner").FirstOrDefaultAsync();
-
-            if (order == null)
-                return NotFound();
-
-            var partners = order.PartnerRels.Select(x => x.Partner);
-            return Ok(_mapper.Map<IEnumerable<PartnerSimple>>(partners));
         }
     }
 }

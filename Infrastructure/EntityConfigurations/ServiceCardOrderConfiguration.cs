@@ -19,11 +19,6 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.PartnerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.CardType)
-                .WithMany()
-                .HasForeignKey(x => x.CardTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(x => x.Company)
               .WithMany()
               .HasForeignKey(x => x.CompanyId)
@@ -32,10 +27,6 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.User)
               .WithMany()
               .HasForeignKey(x => x.UserId);
-
-            builder.HasOne(x => x.Move)
-              .WithMany()
-              .HasForeignKey(x => x.MoveId);
 
             builder.HasOne(x => x.CreatedBy)
         .WithMany()

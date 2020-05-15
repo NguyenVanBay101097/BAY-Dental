@@ -52,6 +52,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; } = new List<SaleOrderPaymentRel>();
 
+        public ICollection<ServiceCardOrderPaymentRel> CardOrderPaymentRels { get; set; } = new List<ServiceCardOrderPaymentRel>();
+
         [NotMapped]
         public AccountAccount DestinationAccount { get; set; }
     }

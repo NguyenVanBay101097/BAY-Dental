@@ -294,18 +294,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+          let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
           modalRef.componentInstance.orderId = this.id;
-          modalRef.componentInstance.partnerId = partner.id;
+          modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
           modalRef.result.then(() => {
             this.loadRecord();
           }, () => {
           });
         })
       } else {
-        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
         modalRef.componentInstance.orderId = this.id;
-        modalRef.componentInstance.partnerId = partner.id;
+        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
