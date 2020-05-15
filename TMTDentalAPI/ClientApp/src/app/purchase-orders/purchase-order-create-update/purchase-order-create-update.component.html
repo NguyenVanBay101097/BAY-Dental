@@ -158,7 +158,7 @@
                                     <th width="50">STT</th>
                                     <th width="200">Hàng hóa</th>
                                     <th width="80">SL</th>
-                                    <th *ngIf="hasDefined" width="120">Đơn vị</th>
+                                    <th width="120" hasGroups [groups]="'product.group_uom'">ĐVT</th>
                                     <th width="120">Đơn giá</th>
                                     <th width="60">CK(%)</th>
                                     <th width="120" class="text-right">Thành tiền</th>
@@ -183,17 +183,11 @@
                                             <span
                                                 *ngIf="purchaseOrder.state != 'draft'">{{line.get('productQty').value | number}}</span>
                                         </td>
-                                        <td *ngIf="hasDefined" class="align-middle">
-                                            <!-- <select formControlName="uomFactor" class="form-control">
-                                                <option value="{{line.get('productUOM').value.factor}}">
-                                                    {{line.get('productUOM').value.name}}
-                                                </option>
-                                                <option value="{{line.get('productUOMPO').value.factor}}">
-                                                    {{line.get('productUOMPO').value.name}}
-                                                </option>
-                                            </select> -->
-                                            <label (click)="clickUoM(line.get('product').value.id, line)"
-                                                class="form-control">{{line.get('productUOM').value.name}}</label>
+                                        <td class="align-middle" hasGroups [groups]="'product.group_uom'">
+                                            <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
+                                                (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
+                                            <span
+                                                *ngIf="purchaseOrder.state != 'draft'">{{line.get('productUOM').value.name}}</span>
                                         </td>
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"

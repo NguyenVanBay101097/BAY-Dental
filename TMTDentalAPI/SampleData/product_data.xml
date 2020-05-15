@@ -36,7 +36,7 @@
       <field name="category_id" ref="product_uom_categ_unit"/>
       <field name="name">Cái</field>
       <field name="factor" eval="1.0"/>
-      <field name="rounding" eval="0.001"/>
+      <field name="rounding" eval="0.01"/>
     </record>
     <record id="product_uom_dozen" model="product.uom">
       <field name="category_id" ref="product_uom_categ_unit"/>
@@ -48,7 +48,7 @@
       <field name="category_id" ref="product_uom_categ_kgm"/>
       <field name="name">kg</field>
       <field name="factor" eval="1"/>
-      <field name="rounding" eval="0.001"/>
+      <field name="rounding" eval="0.01"/>
     </record>
     <record id="product_uom_gram" model="product.uom">
       <field name="category_id" ref="product_uom_categ_kgm"/>

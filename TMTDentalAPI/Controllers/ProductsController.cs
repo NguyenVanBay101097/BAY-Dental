@@ -61,70 +61,18 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create(ProductDisplay val)
-        //{
-        //    if (null == val || !ModelState.IsValid)
-        //        return BadRequest();
-
-        //    var product = await _productService.CreateProduct(val);
-
-        //    val.Id = product.Id;
-
-        //    return Ok(val);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> Create(ProductSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
             var product = await _productService.CreateProduct(val);
 
             var res = _mapper.Map<ProductDisplay>(product);
-
             return Ok(res);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ProductSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            await _productService.UpdateProduct(id, val);
-
-            return NoContent();
-        }
-
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(Guid id, ProductDisplay val)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest();
-        //    await _productService.UpdateProduct(id, val);
-
-        //    return NoContent();
-        //}
-
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> CreateLabo(ProductLaboSave val)
-        {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-            var product = await _productService.CreateProduct(val);
-
-            var basic = _mapper.Map<ProductLaboBasic>(product);
-            return Ok(basic);
-        }
-
-        [HttpPut("{id}/[action]")]
-        public async Task<IActionResult> UpdateLabo(Guid id, ProductLaboSave val)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest();
             await _productService.UpdateProduct(id, val);
 
             return NoContent();
@@ -587,6 +535,38 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return Ok(new { success = true });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> OnChangeUOM(ProductOnChangeUOM val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var uom = val.UOMId.HasValue ? (await _uomService.GetByIdAsync(val.UOMId)) : null;
+            var uom_po = val.UOMPOId.HasValue ? (await _uomService.GetByIdAsync(val.UOMPOId)) : null;
+            if (uom != null && uom_po == null)
+                uom_po = uom;
+            if (uom != null && uom_po != null && uom.CategoryId != uom_po.CategoryId)
+                uom_po = uom;
+
+            var res = new ProductOnChangeUOMResponse
+            {
+                UOM = uom != null ? _mapper.Map<UoMBasic>(uom) : null,
+                UOMPO = uom_po != null ? _mapper.Map<UoMBasic>(uom_po) : null
+            };
+
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetUOMs(Guid id)
+        {
+            var res = await _mapper.ProjectTo<UoMBasic>(_productService.SearchQuery(x => x.Id == id)
+                .SelectMany(x => x.ProductUoMRels).Select(x => x.UoM)).ToListAsync();
+            return Ok(res);
         }
     }
 }

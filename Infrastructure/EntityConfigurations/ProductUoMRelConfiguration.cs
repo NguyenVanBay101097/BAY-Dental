@@ -14,11 +14,11 @@ namespace Infrastructure.EntityConfigurations
             builder.HasKey(x => new { x.UoMId, x.ProductId });
 
             builder.HasOne(x => x.Product)
-                .WithMany(x=>x.ProductUoMRels)
+                .WithMany(x => x.ProductUoMRels)
                 .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.UoM)
-                .WithMany(x=>x.ProductUoMRels)
+                .WithMany(x => x.ProductUoMRels)
                 .HasForeignKey(x => x.UoMId);
         }
     }

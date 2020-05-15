@@ -1,8 +1,6 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProductService } from '../product.service';
-import { Product } from '../product';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
@@ -69,37 +67,65 @@ export class ProductProductCuDialogComponent implements OnInit {
     setTimeout(() => {
       this.default();
 
-      this.searchCategories('').subscribe(result => {
+      this.searchCategories().subscribe(result => {
         this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
       });
 
-      this.searchUoMs('').subscribe(result => {
-        this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
-      });
-
-      this.searchUoMs('').subscribe(result => {
-        this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
+      this.searchUoMs().subscribe((result: any) => {
+        this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
       });
 
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
-      this.uoMPOCbxFilterChange()
+      this.uoMPOCbxFilterChange();
     });
+  }
+
+  searchUoMPOs(q?: string) {
+    var uom = this.productForm.get('uom').value;
+    var paged = new UoMPaged();
+    paged.categoryId = uom ? uom.categoryId : null;
+    paged.search = q || '';
+
+    return this.uoMService.getPaged(paged);
   }
 
   default() {
     if (this.id) {
-      this.productService.get(this.id).subscribe(result => {
-        this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+      this.productService.get(this.id).subscribe((result: any) => {
         this.productForm.patchValue(result);
+
+        this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ], 'id');
+
+        this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
+
+        if (result.uompo) {
+          this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
+            this.filterdUoMPOs = result2.items;
+            this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, [result.uompo], 'id');
+          });
+        }
       });
     } else {
-      this.productService.defaultGet().subscribe(result => {
+      this.productService.defaultGet().subscribe((result: any) => {
+        this.productForm.patchValue(result);
+
         if (result.categ) {
           this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
         }
-        this.productForm.patchValue(result);
-        this.productForm.get('type').setValue('consu');
+
+        if (result.uom) {
+          this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
+        }
+
+        if (result.uompo) {
+          this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
+            this.filterdUoMPOs = result2.items;
+            this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, [result.uompo], 'id');
+          });
+        }
+
+        this.productForm.get('type').setValue('product');
         this.productForm.get('type2').setValue('product');
         this.productForm.get('saleOK').setValue(false);
         this.productForm.get('purchaseOK').setValue(true);
@@ -121,14 +147,13 @@ export class ProductProductCuDialogComponent implements OnInit {
   }
 
 
-
   uoMCbxFilterChange() {
     this.uoMCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.uoMCbx.loading = true)),
       switchMap(value => this.searchUoMs(value))
-    ).subscribe(result => {
-      this.filterdUoMs = result;
+    ).subscribe((result: any) => {
+      this.filterdUoMs = result.items;
       this.uoMCbx.loading = false;
     });
   }
@@ -137,45 +162,44 @@ export class ProductProductCuDialogComponent implements OnInit {
     this.uoMPOCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.uoMPOCbx.loading = true)),
-      switchMap(value => this.searchUoMs(value))
-    ).subscribe(result => {
-      this.filterdUoMPOs = result;
+      switchMap(value => this.searchUoMPOs(value))
+    ).subscribe((result: any) => {
+      console.log(result);
+      this.filterdUoMPOs = result.items;
       this.uoMPOCbx.loading = false;
     });
   }
 
-  uoMChange(event) {
+  uoMChange(value) {
+    if (value) {
+      var uom = this.productForm.get('uom').value;
+      var uom_po = this.productForm.get('uompo').value;
+      var data = {
+        uomId: uom != null ? uom.id : null,
+        uomPOId: uom_po != null ? uom_po.id : null
+      };
 
-    if (event && event.id) {
-      this.filterdUoMPOs = [];
-      this.searchUoMs('', event.id).subscribe(result => {
-        this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, result, 'id');
+      this.productService.onChangeUOM(data).subscribe((result: any) => {
+        this.productForm.patchValue(result);
+
+        if (result.uom) {
+          this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
+        }
+
+        if (result.uompo) {
+          this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
+            this.filterdUoMPOs = result2.items;
+            this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, [result.uompo], 'id');
+          });
+        }
       });
-      if (event.categoryId != this.categoryIdSave) {
-        this.productForm.get('uompo').setValue(null);
-        this.categoryIdSave = event.categoryId;
-      }
     }
   }
 
-  uoMPOChange(event) {
-    if (event && event.id) {
-      this.filterdUoMs = [];
-      this.searchUoMs('', event.id).subscribe(result => {
-        this.filterdUoMs = _.unionBy(this.filterdUoMs, result, 'id');
-      });
-      if (event.categoryId != this.categoryIdSave) {
-        this.productForm.get('uom').setValue(null);
-        this.categoryIdSave = event.categoryId;
-      }
-    }
-  }
-
-  searchUoMs(q?: string, filterId?) {
+  searchUoMs(q?: string) {
     var val = new UoMPaged();
     val.search = q || '';
-    val.categId = filterId;
-    return this.uoMService.autocomplete(val);
+    return this.uoMService.getPaged(val);
   }
 
   searchCategories(q?: string) {
@@ -223,15 +247,8 @@ export class ProductProductCuDialogComponent implements OnInit {
   getBodyData() {
     var data = this.productForm.value;
     data.categId = data.categ.id;
-    data.UoMIds = [];
-    if (data.uom) {
-      data.uOMId = data.uom.id;
-      data.UoMIds.push(data.uom.id)
-    }
-    if (data.uompo) {
-      data.uOMPOId = data.uompo.id;
-      data.UoMIds.push(data.uompo.id)
-    }
+    data.uomId = data.uom.id;
+    data.uompoId = data.uompo.id;
     return data;
   }
 

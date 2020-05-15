@@ -248,7 +248,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines).Include("OrderLines.Product")
-                .Include("OrderLines.ProductUOM")
+                .Include("OrderLines.ProductUOM").Include("OrderLines.Product.UOM")
                 .Include(x => x.PickingType).Include(x => x.PickingType.DefaultLocationDest)
                 .Include(x => x.PickingType.DefaultLocationSrc)
                 .ToListAsync();
@@ -503,19 +503,23 @@ namespace Infrastructure.Services
                 PickingId = picking.Id,
                 PartnerId = self.Order.PartnerId,
                 PurchaseLineId = self.Id,
-                PriceUnit = (double)priceUnit,
+                PriceUnit = priceUnit,
                 PickingTypeId = self.Order.PickingTypeId,
                 WarehouseId = self.Order.PickingType.WarehouseId,
                 CompanyId = self.Order.CompanyId,
                 Sequence = self.Sequence ?? 0,
-                ProductUOMQty = Math.Round(self.ProductQty * decimal.Parse((self.ProductUOM != null && self.ProductUOM.Factor != 0 ? 1 / self.ProductUOM.Factor : 0).ToString()), 0)
+                ProductUOMQty = self.ProductQty
             };
             res.Add(template);
             return res;
         }
-        private decimal _GetStockMovePriceUnit(PurchaseOrderLine line)
+        private double _GetStockMovePriceUnit(PurchaseOrderLine line)
         {
-            var priceUnit = line.PriceUnit;
+            var priceUnit = (double)line.PriceUnit;
+            if (line.ProductUOM.Id != line.Product.UOMId)
+            {
+                priceUnit *= line.ProductUOM.Factor / line.Product.UOM.Factor;
+            }
             return priceUnit;
         }
 

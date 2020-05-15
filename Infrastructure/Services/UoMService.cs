@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +28,29 @@ namespace Infrastructure.Services
         public override Task<IEnumerable<UoM>> CreateAsync(IEnumerable<UoM> entities)
         {
             CheckRoundingAndFactor(entities);
+            _UpdateProps(entities);
             return base.CreateAsync(entities);
         }
 
         public override Task UpdateAsync(IEnumerable<UoM> entities)
         {
             CheckRoundingAndFactor(entities);
+            _UpdateProps(entities);
             return base.UpdateAsync(entities);
+        }
+
+        private void _UpdateProps(IEnumerable<UoM> self)
+        {
+            foreach(var uom in self)
+            {
+                if (string.IsNullOrEmpty(uom.MeasureType) || (uom.Category != null && uom.Category.Id != uom.CategoryId))
+                {
+                    var categObj = GetService<IUoMCategoryService>();
+                    uom.Category = categObj.GetById(uom.CategoryId);
+
+                    uom.MeasureType = uom.Category.MeasureType;
+                }
+            }
         }
 
         public void CheckRoundingAndFactor(IEnumerable<UoM> self)
@@ -41,10 +58,10 @@ namespace Infrastructure.Services
             foreach (var uom in self)
             {
                 if (uom.Rounding <= 0)
-                    throw new Exception("Thuộc tính 'làm tròn' phải lớn hơn không");
+                    throw new Exception("Thuộc tính 'làm tròn' phải lớn hơn 0");
 
                 if (uom.Factor == 0)
-                    throw new Exception("Thuộc tính 'tỉ lệ' phải khác không");
+                    throw new Exception("Thuộc tính 'tỉ lệ' phải khác 0");
             }
         }
 
@@ -58,9 +75,10 @@ namespace Infrastructure.Services
         {
             ISpecification<UoM> spec = new InitialSpecification<UoM>(x => x.Active == true);
             if (!string.IsNullOrEmpty(val.Search))
-            {
                 spec = spec.And(new InitialSpecification<UoM>(x => x.Name.Contains(val.Search)));
-            }
+
+            if (val.CategoryId.HasValue)
+                spec = spec.And(new InitialSpecification<UoM>(x => x.CategoryId == val.CategoryId));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<UoMBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
@@ -71,38 +89,38 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<UoMBasic>> GetAutocompleteAsync(UoMPaged val)
+        public decimal ComputePrice(UoM fromUOM, decimal price, UoM toUOM)
         {
-            var query = GetQueryPaged(val);
-
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
-
-            if (val.CategId.HasValue)
-            {
-                var uom = await GetByIdAsync(val.CategId.Value);
-                query = query.Where(x => x.CategoryId == uom.CategoryId);
-            }
-
-            if (val.ProductId.HasValue)
-            {
-                query = query.Where(x => x.ProductUoMRels.Any(s=>s.ProductId == val.ProductId.Value));
-            }
-
-            var items = await _mapper.ProjectTo<UoMBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
-
-            return items;
+            if (fromUOM == null || price == 0 || toUOM == null)
+                return price;
+            if (fromUOM.CategoryId != toUOM.CategoryId)
+                return price;
+            var amount = (double)price * fromUOM.Factor;
+            if (toUOM != null)
+                amount = amount / toUOM.Factor;
+            return (decimal)amount;
         }
 
-
-        private IQueryable<UoM> GetQueryPaged(UoMPaged val)
+        public decimal ComputeQty(Guid fromUOMId, decimal qty, Guid toUOMId, string roundingMethod = "UP")
         {
-            var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
+            var fromUOM = GetById(fromUOMId);
+            var toUOM = GetById(toUOMId);
+            if (fromUOM == null || qty == 0 || toUOM == null)
+            {
+                return qty;
+            }
 
-            query = query.OrderBy(s => s.DateCreated);
-            return query;
+            return ComputeQtyObj(fromUOM, qty, toUOM, roundingMethod: roundingMethod);
+        }
+
+        public decimal ComputeQtyObj(UoM fromUOM, decimal qty, UoM toUOM, string roundingMethod = "UP")
+        {
+            if (fromUOM.CategoryId != toUOM.CategoryId)
+                throw new Exception("Conversion from Product UoM to Default UoM is not possible as they both belong to different Category!.");
+            var amount = (double)qty / fromUOM.Factor;
+            amount = amount * toUOM.Factor;
+            amount = FloatUtils.FloatRound(amount, precisionRounding: (double)(toUOM.Rounding), roundingMethod: roundingMethod);
+            return (decimal)amount;
         }
     }
 }

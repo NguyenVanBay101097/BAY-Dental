@@ -44,7 +44,7 @@ export class UomListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     this.uoMService.getPaged(val).pipe(
-      map(response =>
+      map((response: any) =>
         (<GridDataResult>{
           data: response.items,
           total: response.totalItems

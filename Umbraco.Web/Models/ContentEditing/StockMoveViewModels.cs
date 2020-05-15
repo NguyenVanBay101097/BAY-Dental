@@ -41,5 +41,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class StockMoveOnChangeProductResult
     {
         public string Name { get; set; }
+        public UoMBasic ProductUOM { get; set; }
     }
 }

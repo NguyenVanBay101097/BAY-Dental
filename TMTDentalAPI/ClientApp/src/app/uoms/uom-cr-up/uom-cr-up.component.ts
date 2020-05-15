@@ -5,6 +5,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { UoMCategoryBasic, UoMCategoryPaged, UomCategoryService } from 'src/app/uom-categories/uom-category.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-uom-cr-up',
@@ -25,7 +26,7 @@ export class UomCrUpComponent implements OnInit {
     private uoMService: UomService,
     private activeModal: NgbActiveModal,
     private uomCategoryService: UomCategoryService,
-    private fb: FormBuilder
+    private fb: FormBuilder, private showErrorService: AppSharedShowErrorService
   ) { }
 
   ngOnInit() {
@@ -40,8 +41,11 @@ export class UomCrUpComponent implements OnInit {
     });
 
     if (this.id) {
-      this.loadFormApi();
+      setTimeout(() => {
+        this.loadFormApi();
+      });
     }
+
     this.cateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.cateCbx.loading = true)),
@@ -51,7 +55,9 @@ export class UomCrUpComponent implements OnInit {
       this.cateCbx.loading = false;
     });
 
-    this.loadUoMCategory();
+    setTimeout(() => {
+      this.loadUoMCategory();
+    });
   }
 
   get uomTypeValue() {
@@ -67,7 +73,6 @@ export class UomCrUpComponent implements OnInit {
   loadFormApi() {
     this.uoMService.get(this.id).subscribe(
       result => {
-        debugger
         this.formGroup.patchValue(result);
       }
     )
@@ -94,27 +99,25 @@ export class UomCrUpComponent implements OnInit {
   }
 
   onSave() {
-    if (this.formGroup.invalid)
+    if (this.formGroup.invalid) {
       return false;
+    }
 
     var value = this.formGroup.value;
-    if (value)
-      value.measureType = value.name;
 
     if (this.id) {
-      this.uoMService.update(this.id, value).subscribe(
-        () => {
-          value.id = this.id;
-          this.activeModal.close(value);
-        }
-      )
+      this.uoMService.update(this.id, value).subscribe(() => {
+        value.id = this.id;
+        this.activeModal.close(value);
+      }, err => {
+        this.showErrorService.show(err);
+      });
     } else {
-      this.uoMService.create(value).subscribe(
-        result => {
-          console.log(result);
-          this.activeModal.close(result);
-        }
-      )
+      this.uoMService.create(value).subscribe(result => {
+        this.activeModal.close(result);
+      }, err => {
+        this.showErrorService.show(err);
+      });
     }
   }
 

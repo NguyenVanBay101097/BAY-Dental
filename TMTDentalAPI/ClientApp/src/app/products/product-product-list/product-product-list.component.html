@@ -41,11 +41,14 @@
             (pageChange)="pageChange($event)">
             <kendo-grid-column field="name" title="Tên vật tư" width="250">
             </kendo-grid-column>
-            <kendo-grid-column field="defaultCode" title="Mã vật tư" width="100">
+            <kendo-grid-column field="defaultCode" title="Mã vật tư" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column [hidden]="!permissionService.hasOneDefined(['product.group_uom'])" field="uomName"
+                title="ĐVT" width="120">
             </kendo-grid-column>
             <kendo-grid-column field="categName" title="Nhóm vật tư" width="150">
             </kendo-grid-column>
-            <kendo-grid-column field="purchasePrice" class="text-right" title="Giá nhập" width="150">
+            <kendo-grid-column field="purchasePrice" class="text-right" title="Giá mua" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.purchasePrice | number}}
                 </ng-template>
@@ -55,11 +58,6 @@
                     {{dataItem.qtyAvailable | number}}
                 </ng-template>
             </kendo-grid-column>
-            <!-- <kendo-grid-column *ngIf="hasDefined" field="qtyAvailable" class="text-right" title="Đơn vị" width="100">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.qtyAvailable | number}}
-                </ng-template>
-            </kendo-grid-column> -->
             <kendo-grid-column field="id" width="100">
                 <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                     Thao tác

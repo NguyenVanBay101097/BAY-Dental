@@ -25,7 +25,7 @@ export class PurchaseOrderLineService {
         return this.http.post<PurchaseOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
     }
 
-    onChangeUoMProduct(val): Observable<PurchaseOrderLineOnChangeProductResult> {
-        return this.http.post<PurchaseOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeUoMProduct', val);
+    onChangeUOM(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/OnChangeUOM', val);
     }
 }

@@ -11,8 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public UoMProfile()
         {
-            CreateMap<UoM, UoMBasic>().ReverseMap();
-            CreateMap<UoM, UoMSimple>();
+            CreateMap<UoM, UoMBasic>();
             CreateMap<UoMSave, UoM>();
             CreateMap<UoM, UoMDisplay>();
             CreateMap<UoMDisplay, UoM>();

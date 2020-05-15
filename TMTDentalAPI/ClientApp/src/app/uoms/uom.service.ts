@@ -1,12 +1,12 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { UoMCategoryBasic } from '../uom-categories/uom-category.service';
 import { Observable } from 'rxjs';
 
 export class UoMPaged {
   search: string;
   limit: number;
-  categId: string;
+  categoryId: string;
   productId: string;
   offset: number;
 }
@@ -57,8 +57,8 @@ export class UomService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, value);
   }
 
-  getPaged(value): Observable<UoMPaging> {
-    return this.http.get<UoMPaging>(this.base_api + this.apiUrl, { params: value });
+  getPaged(val: any) {
+    return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id): Observable<UoMDisplay> {

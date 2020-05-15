@@ -15,6 +15,7 @@ import { ProductPaged, ProductBasic2, ProductService } from 'src/app/products/pr
 import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
 import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var jquery: any;
 declare var $: any;
 
@@ -121,6 +122,19 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     });
   }
 
+  changeUoM(line: AbstractControl) {
+    var product = line.get('product').value;
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Chọn đơn vị';
+    modalRef.componentInstance.productId = product.id;
+    modalRef.result.then((res: any) => {
+      line.get('productUOM').setValue(res);
+      line.get('productUOMId').setValue(res.id);
+    }, () => {
+    });
+  }
+
+
   onChangeUoMProduct(productId, line: AbstractControl) {
     if (this.picking.state != "done") {
       let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
@@ -139,27 +153,35 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   onChangeProduct(value: ProductBasic2) {
-    var item = new StockMoveDisplay();
-    item.product = new ProductSimple();
-    item.product.id = value.id;
-    item.productId = value.id;
-    item.product.name = value.name;
-    item.name = value.name;
-    item.productUOM = value.uom;
-    item.productUOMId = value.uomId
-    item.productUOMQty = 1;
-    let flag = true;
-    this.moveLines.controls.forEach(line => {
-      if (line.get('productId').value == item.productId) {
-        line.get('productUOMQty').setValue(line.get('productUOMQty').value + 1);
-        flag = false;
-        return;
-      }
-    })
+    var product = value;
+    var index = _.findIndex(this.moveLines.controls, o => {
+      return o.get('product').value.id == product.id && o.get('productUOMId').value == product.uomId;
+    });
 
-    if (flag) {
-      this.moveLines.push(this.fb.group(item));
-      this.focusLastRow();
+    if (index !== -1) {
+      var control = this.moveLines.controls[index];
+      control.patchValue({ productQty: control.get('productQty').value + 1 });
+    } else {
+      var val = new StockMoveOnChangeProduct();
+      val.productId = product.id;
+
+      var productSimple = new ProductSimple();
+      productSimple.id = product.id;
+      productSimple.name = product.name;
+
+      this.stockMoveService.onChangeProduct(val).subscribe((result: any) => {
+        var group = this.fb.group({
+          name: result.name,
+          productUOMId: result.productUOM.id,
+          productUOM: result.productUOM,
+          product: productSimple,
+          productId: product.id,
+          productUOMQty: 1
+        });
+
+        this.moveLines.push(group);
+        this.focusLastRow();
+      });
     }
   }
 

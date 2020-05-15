@@ -7,6 +7,11 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PurchaseOrderLineOnChangeProduct
     {
         public Guid? ProductId { get; set; }
-        public Guid? UOMId { get; set; }
+    }
+
+    public class PurchaseOrderLineOnChangeUOM
+    {
+        public Guid? ProductId { get; set; }
+        public Guid? ProductUOMId { get; set; }
     }
 }

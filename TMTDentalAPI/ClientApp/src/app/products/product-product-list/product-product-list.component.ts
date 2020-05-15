@@ -39,7 +39,6 @@ export class ProductProductListComponent implements OnInit {
   searchCateg: ProductCategoryBasic;
   filteredCategs: ProductCategoryBasic[];
   searchUpdate = new Subject<string>();
-  hasDefined: boolean;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild(HasGroupsDirective, { static: false }) hasGroup: HasGroupsDirective;
 
@@ -49,7 +48,7 @@ export class ProductProductListComponent implements OnInit {
     private productCategoryService: ProductCategoryService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private permissionService: PermissionService,
+    public permissionService: PermissionService,
     private authService: AuthService
   ) { }
 
@@ -69,10 +68,6 @@ export class ProductProductListComponent implements OnInit {
       this.filteredCategs = result;
       this.categCbx.loading = false;
     });
-
-    setTimeout(() => {
-      this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
-    }, 100);
 
     this.loadDataFromApi();
     this.loadFilteredCategs();

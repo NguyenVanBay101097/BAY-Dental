@@ -1,0 +1,28 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="p-3">
+        <kendo-grid [selectable]="true" [data]="gridData" [loading]="loading" (selectionChange)="selectUOM($event)">
+            <kendo-grid-column field="name" title="Tên nhóm đơn vị" width="250">
+            </kendo-grid-column>
+            <kendo-grid-column field="categoryName" title="Nhóm" width="250">
+            </kendo-grid-column>
+            <kendo-grid-column field="uomType" title="Loại" width="250">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <label *ngIf="dataItem.uomType=='reference'">Đơn vị gốc của nhóm này</label>
+                    <label *ngIf="dataItem.uomType=='bigger'">Lớn hơn đơn vị gốc</label>
+                    <label *ngIf="dataItem.uomType=='smaller'">Nhỏ hơn đơn vị gốc</label>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

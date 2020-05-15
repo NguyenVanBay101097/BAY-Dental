@@ -15,9 +15,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<ProductSimple>> GetProductsAutocomplete(string filter = "");
         Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val);
 
-        //Task<Product> CreateProduct(ProductDisplay val);
         Task<Product> CreateProduct(ProductSave val);
-        //Task UpdateProduct(Guid id, ProductDisplay val);
         Task UpdateProduct(Guid id, ProductSave val);
 
         Task<ProductDisplay> GetProductDisplay(Guid id);
@@ -26,9 +24,6 @@ namespace Infrastructure.Services
 
         Task<ProductDisplay> DefaultGet();
 
-        //Task CreateProduct(IEnumerable<ProductDisplay> vals);
-        Task CreateProduct(IEnumerable<ProductSave> vals);
-
         Task<ProductDisplay> DefaultProductStepGet();
 
         Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self,
@@ -36,8 +31,6 @@ namespace Infrastructure.Services
             Guid? partnerId = null, decimal quantity = 1,
             DateTime? date = null);
 
-        Task<Product> CreateProduct(ProductLaboSave val);
-        Task UpdateProduct(Guid id, ProductLaboSave val);
         Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val);
         Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids);
     }

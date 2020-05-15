@@ -185,4 +185,12 @@ export class ProductService {
     getStepByProductId(id): Observable<ProductStepDisplay[]> {
         return this.http.get<ProductStepDisplay[]>(this.baseApi + "api/ProductSteps/" + id);
     }
+
+    onChangeUOM(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/OnChangeUOM", data);
+    }
+
+    getUOMs(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + "/GetUOMs");
+    }
 }

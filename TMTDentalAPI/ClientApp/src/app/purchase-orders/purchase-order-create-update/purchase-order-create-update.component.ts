@@ -18,6 +18,7 @@ import { PermissionService } from 'src/app/shared/permission.service';
 import { UoMDisplay } from 'src/app/uoms/uom.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedDemoDataDialogComponent } from 'src/app/shared/shared-demo-data-dialog/shared-demo-data-dialog.component';
+import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 declare var $: any;
 
 @Component({
@@ -303,26 +304,21 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  clickUoM(productId, line: AbstractControl) {
-    if (this.purchaseOrder && this.purchaseOrder.state != "purchase") {
-      let modalRef = this.modalService.open(SharedDemoDataDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-      modalRef.componentInstance.title = 'Chọn đơn vị';
-      modalRef.componentInstance.productId = productId;
-      modalRef.result.then(
-        res => {
-          if (res) {
-            var value = {
-              productId: productId,
-              uomId: res.id
-            }
-
-            this.purchaseLineService.onChangeUoMProduct(value).subscribe(result => {
-              line.patchValue(result);
-            });
-          }
-        }, () => {
+  changeUoM(line: AbstractControl) {
+    var product = line.get('product').value;
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Chọn đơn vị';
+    modalRef.componentInstance.productId = product.id;
+    modalRef.result.then((res: any) => {
+      var uom = line.get('productUOM').value;
+      if (uom.id != res.id) {
+        line.get('productUOM').setValue(res);
+        this.purchaseLineService.onChangeUOM({ productId: product.id, productUOMId: res.id }).subscribe((result: any) => {
+          line.patchValue(result);
         });
-    }
+      }
+    }, () => {
+    });
   }
 
   changePrice(price, line: AbstractControl) {

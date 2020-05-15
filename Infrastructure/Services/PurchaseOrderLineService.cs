@@ -31,32 +31,26 @@ namespace Infrastructure.Services
                 res.PriceUnit = product.PurchasePrice ?? 0;
                 res.Name = product.Name;
                 res.ProductUOMId = product.UOMPOId;
-
-                res.PriceUnit = Math.Round(res.PriceUnit * decimal.Parse((product.UOMPO.Factor != 0 ? 1 / product.UOMPO.Factor : 0).ToString()),1);
-                res.ProductUOM = _mapper.Map<UoMDisplay>(product.UOMPO);
+                res.ProductUOM = _mapper.Map<UoMBasic>(product.UOMPO);
             }
 
             return res;
         }
 
-        public async Task<PurchaseOrderLineOnChangeProductResult> OnChangeUoMProduct(PurchaseOrderLineOnChangeProduct val)
+        public async Task<PurchaseOrderLineOnChangeUOMResult> OnChangeUOM(PurchaseOrderLineOnChangeUOM val)
         {
-            var res = new PurchaseOrderLineOnChangeProductResult();
-            if (val.ProductId.HasValue && val.UOMId.HasValue)
+            var res = new PurchaseOrderLineOnChangeUOMResult();
+            if (val.ProductId.HasValue && val.ProductUOMId.HasValue)
             {
-
                 var productObj = GetService<IProductService>();
-                var uomOjb = GetService<IUoMService>();
-                var uom = await uomOjb.SearchQuery(x => x.Id == val.UOMId.Value).FirstOrDefaultAsync();
+                var uomObj = GetService<IUoMService>();
+                var uom = await uomObj.GetByIdAsync(val.ProductUOMId);
+
                 var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value)
-                    .Include(x => x.UOM)
                     .Include(x => x.UOMPO)
                     .FirstOrDefaultAsync();
-                res.PriceUnit = product.PurchasePrice ?? 0;
-                res.Name = product.Name;
-                res.ProductUOMId = uom.Id;
-                res.PriceUnit = Math.Round(res.PriceUnit * decimal.Parse((uom.Factor != 0 ? 1 / uom.Factor : 0).ToString()),1);
-                res.ProductUOM = _mapper.Map<UoMDisplay>(uom);
+
+                res.PriceUnit = Math.Round(uomObj.ComputePrice(product.UOMPO, product.PurchasePrice ?? 0, uom));
             }
 
             return res;

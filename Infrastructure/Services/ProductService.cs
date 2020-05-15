@@ -107,8 +107,8 @@ namespace Infrastructure.Services
                 CategId = x.CategId,
                 QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
                 Type2 = x.Type2,
-                UOM = _mapper.Map<UoMBasic>(x.UOM),
-                UOMId = x.UOMId
+                UOMId = x.UOMId,
+                UOMName = x.UOM.Name
             });
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -230,39 +230,13 @@ namespace Infrastructure.Services
                 Name = x.Name
             }).ToListAsync();
         }
-        //cũ
+
         public async Task<Product> CreateProduct(ProductDisplay val)
         {
             var product = _mapper.Map<Product>(val);
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
             if (!product.CompanyId.HasValue)
                 product.CompanyId = CompanyId;
-
-            var uom = await _uoMService.GetByIdAsync(product.UOMId);
-            if (uom == null)
-            {
-                product.UOMId = Guid.Parse("a9a32274-32f5-48f0-b399-08d7f1694494");
-                product.ProductUoMRels.Add(new ProductUoMRel
-                {
-                    ProductId = product.Id,
-                    UoMId = product.UOMId
-                });
-            }
-
-            var uompo = await _uoMService.GetByIdAsync(product.UOMPOId);
-            if (uompo == null)
-            {
-                product.UOMPOId = Guid.Parse("a9a32274-32f5-48f0-b399-08d7f1694494");
-                product.ProductUoMRels.Add(new ProductUoMRel
-                {
-                    ProductId = product.Id,
-                    UoMId = product.UOMPOId
-                });
-            }
-
-
-
-            ; if (val.StepList.Any())
+            if (val.StepList.Any())
             {
                 var order = 1;
                 foreach (var step in val.StepList)
@@ -274,8 +248,6 @@ namespace Infrastructure.Services
                     });
                 }
             }
-
-            //_SetStandardPrice(product, val.StandardPrice);
 
             return await CreateAsync(product);
         }
@@ -298,61 +270,6 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task<Product> CreateProduct(ProductLaboSave val)
-        {
-            var product = _mapper.Map<Product>(val);
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-            product.Type2 = "labo";
-            product.SaleOK = false;
-            product.PurchaseOK = false;
-
-            var companyId = CompanyId;
-            product.CompanyId = companyId;
-
-            var uomObj = GetService<IUoMService>();
-            var productCategObj = GetService<IProductCategoryService>();
-            var uom = await uomObj.DefaultUOM();
-            if (uom == null)
-                throw new Exception("Not found default uom");
-            product.UOMId = uom.Id;
-            product.UOMPOId = uom.Id;
-
-            var categ = await productCategObj.SearchQuery(x => x.Name == "Labo" && x.Type == "labo").FirstOrDefaultAsync();
-            if (categ == null)
-            {
-                categ = new ProductCategory() { Name = "Labo", Type = "labo" };
-                await productCategObj.CreateAsync(categ);
-            }
-            product.CategId = categ.Id;
-
-            return await CreateAsync(product);
-        }
-
-        //cũ
-        public async Task CreateProduct(IEnumerable<ProductDisplay> vals)
-        {
-            var self = new List<Product>();
-            foreach (var val in vals)
-            {
-                var product = _mapper.Map<Product>(val);
-                product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-                var companyId = CompanyId;
-                product.ProductCompanyRels = new List<ProductCompanyRel>()
-                {
-                    new ProductCompanyRel
-                    {
-                        CompanyId = companyId,
-                        ProductId = product.Id,
-                        StandardPrice = (double)val.StandardPrice
-                    }
-                };
-                self.Add(product);
-            }
-
-            await CreateAsync(self);
-        }
-
-        //cũ
         public async Task UpdateProduct(Guid id, ProductDisplay val)
         {
             var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).FirstOrDefaultAsync();
@@ -361,65 +278,14 @@ namespace Infrastructure.Services
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             SaveProductSteps(product, val.StepList);
-            //_SetStandardPrice(product, val.StandardPrice);
             await UpdateAsync(product);
-        }
-
-        public async Task CreateProduct(IEnumerable<ProductSave> vals)
-        {
-            var self = new List<Product>();
-            foreach (var val in vals)
-            {
-                var product = _mapper.Map<Product>(val);
-                product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-                var companyId = CompanyId;
-                product.ProductCompanyRels = new List<ProductCompanyRel>()
-                {
-                    new ProductCompanyRel
-                    {
-                        CompanyId = companyId,
-                        ProductId = product.Id,
-                        StandardPrice = (double)val.StandardPrice
-                    }
-                };
-                self.Add(product);
-            }
-            await CreateAsync(self);
         }
 
         public async Task<Product> CreateProduct(ProductSave val)
         {
-            Product product = new Product();
-            product = _mapper.Map<Product>(val);
-            product.Id = GuidComb.GenerateComb();
-            var uomObj = GetService<IUoMService>();
-            var uom = await uomObj.DefaultUOM();
+            var product = _mapper.Map<Product>(val);
 
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-            if (!product.CompanyId.HasValue)
-                product.CompanyId = CompanyId;
-
-            if (!val.UOMId.HasValue && uom != null)
-            {
-                product.UOMId = uom.Id;
-                product.ProductUoMRels.Add(new ProductUoMRel
-                {
-                    ProductId = product.Id,
-                    UoMId = product.UOMId
-                });
-            }
-
-            if (!val.UOMPOId.HasValue && uom != null)
-                product.UOMPOId = uom.Id;
-
-            foreach (var id in val.UoMIds.ToList())
-            {
-                product.ProductUoMRels.Add(new ProductUoMRel
-                {
-                    ProductId = product.Id,
-                    UoMId = id
-                });
-            }
+            _SaveUoMRels(product, val);
 
             if (val.StepList.Any())
             {
@@ -434,23 +300,42 @@ namespace Infrastructure.Services
                 }
             }
 
-            //_SetStandardPrice(product, val.StandardPrice);
-
             return await CreateAsync(product);
         }
 
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).FirstOrDefaultAsync();
-            var companyId = CompanyId;
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps)
+                .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
+
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
+
             SaveProductSteps(product, val.StepList);
-            //_SetStandardPrice(product, val.StandardPrice);
+            _SaveUoMRels(product, val);
+
             await UpdateAsync(product);
         }
 
+        private void _SaveUoMRels(Product product, ProductSave val)
+        {
+            var rels_remove = new List<ProductUoMRel>();
+            var uom_ids = new List<Guid>() { val.UOMId, val.UOMPOId };
+            foreach(var rel in product.ProductUoMRels)
+            {
+                if (!uom_ids.Contains(rel.UoMId))
+                    rels_remove.Add(rel);
+            }
 
+            foreach (var rel in rels_remove)
+                product.ProductUoMRels.Remove(rel);
+
+            foreach(var uom_id in uom_ids)
+            {
+                if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
+                    product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
+            }
+        }
 
         private void SaveProductSteps(Product product, IEnumerable<ProductStepDisplay> val)
         {
@@ -542,22 +427,18 @@ namespace Infrastructure.Services
         public async Task<ProductDisplay> DefaultGet()
         {
             var uomObj = GetService<IUoMService>();
-            var productCategObj = GetService<IProductCategoryService>();
             var uom = await uomObj.DefaultUOM();
-            //var categ = await productCategObj.DefaultCategory();
             var res = new ProductDisplay();
             if (uom != null)
             {
                 res.UOMId = uom.Id;
+                res.UOM = _mapper.Map<UoMBasic>(uom);
+
                 res.UOMPOId = uom.Id;
+                res.UOMPO = _mapper.Map<UoMBasic>(uom);
             }
 
             res.CompanyId = CompanyId;
-
-            //if (categ != null)
-            //{
-            //    res.Categ = _mapper.Map<ProductCategoryBasic>(categ);
-            //}
 
             return res;
         }

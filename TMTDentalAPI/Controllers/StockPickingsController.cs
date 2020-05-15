@@ -21,14 +21,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IIRModelAccessService _modelAccessService;
+        private readonly IStockMoveService _stockMoveService;
 
         public StockPickingsController(IStockPickingService stockPickingService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService)
+            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService)
         {
             _stockPickingService = stockPickingService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _modelAccessService = modelAccessService;
+            _stockMoveService = stockMoveService;
         }
 
         [HttpGet]
@@ -56,14 +58,10 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("StockPicking", "Create");
-            foreach (var line in val.MoveLines)
-            {
-                if (line.ProductUOM != null)
-                    line.ProductUOM = null;
-            }
+           
             var picking = _mapper.Map<StockPicking>(val);
             SaveMoveLines(val, picking);
+            _stockMoveService._Compute(picking.MoveLines);
            
             await _unitOfWork.BeginTransactionAsync();
             await _stockPickingService.CreateAsync(picking);
@@ -78,14 +76,14 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("StockPicking", "Write");
             var picking = await _stockPickingService.GetPickingForDisplay(id);
             if (picking == null)
                 return NotFound();
 
             picking = _mapper.Map(val, picking);
-
             SaveMoveLines(val, picking);
+
+            _stockMoveService._Compute(picking.MoveLines);
 
             await _stockPickingService.UpdateAsync(picking);
 

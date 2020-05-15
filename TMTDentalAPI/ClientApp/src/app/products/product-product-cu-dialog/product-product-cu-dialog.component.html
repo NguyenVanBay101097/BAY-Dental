@@ -77,6 +77,9 @@
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Giá mua
+                                                    <i class="fas fa-question-circle text-primary" placement="bottom"
+                                                        triggers="mouseenter:mouseleave"
+                                                        ngbPopover="Giá mua theo đơn vị mua" popoverTitle="Giá mua"></i>
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
@@ -107,7 +110,7 @@
                                             <td colspan="1" style="width: 100%;">
                                                 <kendo-combobox [data]="filterdUoMPOs" [textField]="'name'"
                                                     [filterable]="true" #uoMPOCbx formControlName="uompo"
-                                                    [valueField]="'id'" (valueChange)="uoMPOChange($event)">
+                                                    [valueField]="'id'">
                                                 </kendo-combobox>
                                             </td>
                                         </tr>

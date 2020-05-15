@@ -43,6 +43,7 @@ import { ConfirmDialogV2Component } from './confirm-dialog-v2/confirm-dialog-v2.
 import { AnchorHostDirective } from './anchor-host.directive';
 import { MyAutosizeDirective } from './autosize.directive';
 import { CharCountDirective } from './char-count.directive';
+import { SelectUomProductDialogComponent } from './select-uom-product-dialog/select-uom-product-dialog.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { CharCountDirective } from './char-count.directive';
     ConfirmDialogV2Component,
     AnchorHostDirective,
     MyAutosizeDirective,
-    CharCountDirective
+    CharCountDirective,
+    SelectUomProductDialogComponent
   ],
   exports: [
     HeaderComponent,
@@ -109,7 +111,8 @@ import { CharCountDirective } from './char-count.directive';
     ConfirmDialogV2Component,
     AnchorHostDirective,
     MyAutosizeDirective,
-    CharCountDirective
+    CharCountDirective,
+    SelectUomProductDialogComponent
   ],
   imports: [
     CommonModule,
@@ -136,7 +139,8 @@ import { CharCountDirective } from './char-count.directive';
     SharedDemoDataDialogComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    SharedDemoDataDialogComponent
+    SharedDemoDataDialogComponent,
+    SelectUomProductDialogComponent
   ],
 })
 export class SharedModule { }
