@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiDomain: '/',
-  uploadDomain: 'http://statics.tdental.vn/',
+  uploadDomain: 'https://statics.tdental.vn/',
 };

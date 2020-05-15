@@ -50,7 +50,6 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
 
   constructor(
@@ -66,8 +65,8 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     private notificationService: NotificationService,
     private cardCardService: CardCardService,
     private pricelistService: PriceListService,
-    private employeeService:EmployeeService
-    ) {
+    private employeeService: EmployeeService
+  ) {
   }
 
   ngOnInit() {
@@ -102,15 +101,6 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     ).subscribe(result => {
       this.filteredUsers = result;
       this.userCbx.loading = false;
-    });
-
-    this.employeeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.employeeCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value))
-    ).subscribe(result => {
-      this.filteredEmployees = result;
-      this.employeeCbx.loading = false;
     });
 
     // this.pricelistCbx.filterChange.asObservable().pipe(

@@ -165,28 +165,35 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   }
 
   onChangeProduct(value: ProductBasic2) {
-    var item = new StockMoveDisplay();
-    item.product = new ProductSimple();
-    item.product.id = value.id;
-    item.productId = value.id;
-    item.product.name = value.name;
-    item.name = value.name;
-    item.productUOMId = value.uomId;
-    item.productUOM = value.uom;
-    item.productUOMQty = 1;
-    item.priceUnit = 0;
-    let flag = true;
-    this.moveLines.controls.forEach(line => {
-      if (line.get('productId').value == item.productId) {
-        line.get('productUOMQty').setValue(line.get('productUOMQty').value + 1);
-        flag = false;
-        return;
-      }
-    })
+    var product = value;
+    var index = _.findIndex(this.moveLines.controls, o => {
+      return o.get('product').value.id == product.id && o.get('productUOMId').value == product.uomId;
+    });
 
-    if (flag) {
-      this.moveLines.push(this.fb.group(item));
-      this.focusLastRow();
+    if (index !== -1) {
+      var control = this.moveLines.controls[index];
+      control.patchValue({ productQty: control.get('productQty').value + 1 });
+    } else {
+      var val = new StockMoveOnChangeProduct();
+      val.productId = product.id;
+
+      var productSimple = new ProductSimple();
+      productSimple.id = product.id;
+      productSimple.name = product.name;
+
+      this.stockMoveService.onChangeProduct(val).subscribe((result: any) => {
+        var group = this.fb.group({
+          name: result.name,
+          productUOMId: result.productUOM.id,
+          productUOM: result.productUOM,
+          product: productSimple,
+          productId: product.id,
+          productUOMQty: 1
+        });
+
+        this.moveLines.push(group);
+        this.focusLastRow();
+      });
     }
   }
 
@@ -255,21 +262,9 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     return this.pickingForm.get('moveLines') as FormArray;
   }
 
-  checkQtyPriceValid() {
-    var index = _.findIndex(this.moveLines.controls, o => {
-      return o.get('productUOMQty').value == null || o.get('priceUnit').value == null
-    });
-    return index !== -1 ? false : true;
-  }
-
   onSaveOrUpdate() {
-    if (!this.checkQtyPriceValid()) {
-      alert('Vui lòng nhập số lượng và đơn giá');
-      return;
-    }
-
     if (!this.pickingForm.valid) {
-      return;
+      return false;
     }
 
     var val = this.pickingForm.value;
@@ -296,13 +291,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   actionDone() {
     if (this.id) {
       if (this.pickingForm.dirty) {
-        //update and done
-
-        if (!this.checkQtyPriceValid()) {
-          alert('Vui lòng nhập số lượng và đơn giá');
-          return;
-        }
-
         if (!this.pickingForm.valid) {
           return;
         }
@@ -323,11 +311,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
         });
       }
     } else {
-      if (!this.checkQtyPriceValid()) {
-        alert('Vui lòng nhập số lượng và đơn giá');
-        return;
-      }
-
       //save and done
       if (!this.pickingForm.valid) {
         return;
