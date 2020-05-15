@@ -5,21 +5,32 @@
 </header>
 
 <div class="modal-body o_act_window">
+    <div class="px-3 py-3" [formGroup]="checkCodeFormGroup">
+        <div class="input-group">
+            <input type="text" class="form-control" formControlName="code" placeholder="Quét thẻ" #codeInput>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" (click)="checkCode()">Xác thực</button>
+            </div>
+        </div>
+    </div>
+
     <div class="o_kanban_view o_kanban_ungrouped">
-        <div class="oe_kanban_global_click o_kanban_record" *ngFor="let card of cards"
-            [class.border-success]="selectedCards.indexOf(card) !== -1">
-            <div class="oe_kanban_details">
-                <strong class="o_kanban_record_title">
-                    <span>{{card.cardTypeName}}</span>
-                </strong>
-                <ul>
-                    <li>Mã thẻ: <span class="fw500">{{card.name}}</span></li>
-                    <li>Số dư: <span class="fw500">{{card.residual | number}}</span></li>
-                </ul>
-                <button type="button" class="btn btn-primary btn-sm" (click)="onCardClick(card)">
-                    <span *ngIf="selectedCards.indexOf(card) !== -1">Bỏ chọn</span>
-                    <span *ngIf="selectedCards.indexOf(card) === -1">Chọn</span>
-                </button>
+        <div class="oe_kanban_global_click o_kanban_record" *ngFor="let card of cards;let i = index">
+            <div>
+                <div class="oe_kanban_details">
+                    <strong class="o_kanban_record_title">
+                        <span>{{card.cardTypeName}}</span>
+                    </strong>
+                    <ul>
+                        <li>Mã thẻ: <span class="fw500">{{card.name}}</span></li>
+                        <li>Số dư: <span class="fw500">{{card.residual | number}}</span></li>
+                    </ul>
+                </div>
+                <div class="o_dropdown_kanban dropdown">
+                    <button type="button" title="Xóa" class="btn o-no-caret dropdown-toggle" (click)="removeCard(i)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="o_kanban_record o_kanban_ghost"></div>
@@ -30,7 +41,15 @@
         <div class="o_kanban_record o_kanban_ghost"></div>
     </div>
 
-    <p *ngIf="!cards.length">Bạn không có thẻ dịch vụ nào</p>
+    <div class="px-3 form-group">
+        <div [formGroup]="applyFormGroup">
+            <label>Số tiền trừ vào thẻ</label>
+            <div>
+                <kendo-numerictextbox [format]="'n0'" formControlName="amount">
+                </kendo-numerictextbox>
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer class="modal-footer">

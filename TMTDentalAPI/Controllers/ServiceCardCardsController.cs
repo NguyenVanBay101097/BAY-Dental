@@ -100,5 +100,16 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> CheckCode(string code)
+        {
+            if (string.IsNullOrEmpty(code))
+                return BadRequest();
+
+            var card = await _cardCardService.CheckCode(code);
+            var res = _mapper.Map<ServiceCardCardBasic>(card);
+            return Ok(res);
+        }
     }
 }

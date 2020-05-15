@@ -362,10 +362,12 @@ namespace Infrastructure.Services
         {
             var order = await SearchQuery(x => x.Id == val.Id)
                 .Include(x => x.OrderLines).FirstOrDefaultAsync();
+
             var cardObj = GetService<IServiceCardCardService>();
-            var cards = await cardObj.SearchQuery(x => val.CardIds.Contains(x.Id) && x.PartnerId == order.PartnerId)
+            var cards = await cardObj.SearchQuery(x => val.CardIds.Contains(x.Id))
                 .Include(x => x.CardType).Include(x => x.SaleOrderCardRels).ToListAsync();
-            var amount_total = order.AmountTotal;
+
+            var amount_total = val.Amount;
 
             var product_amount_apply = new Dictionary<Guid?, decimal?>();
             foreach(var card in cards)
@@ -373,10 +375,10 @@ namespace Infrastructure.Services
                 if (amount_total <= 0)
                     break;
 
-                decimal? amount_apply = 0;
+                decimal amount_apply = 0;
                 if (amount_total > card.Residual)
                 {
-                    amount_apply = card.Residual;
+                    amount_apply = card.Residual ?? 0;
                     amount_total -= amount_apply;
                 }
                 else

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SaleOrderService } from '../sale-order.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { ServiceCardCardService } from 'src/app/service-card-cards/service-card-card.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-sale-order-apply-service-cards-dialog',
@@ -11,46 +13,77 @@ import { PartnerService } from 'src/app/partners/partner.service';
   styleUrls: ['./sale-order-apply-service-cards-dialog.component.css']
 })
 export class SaleOrderApplyServiceCardsDialogComponent implements OnInit {
+  amountTotal: number;
   orderId: string;
-  partnerId: string;
 
   cards: any[] = [];
-  selectedCards: any[] = [];
+
+  checkCodeFormGroup: FormGroup;
+  applyFormGroup: FormGroup;
+  @ViewChild('codeInput', { static: true }) codeInput: ElementRef;
+
   constructor(private saleOrderService: SaleOrderService, public activeModal: NgbActiveModal,
     private errorService: AppSharedShowErrorService,
-    private partnerService: PartnerService) { }
+    private partnerService: PartnerService, private fb: FormBuilder,
+    private cardService: ServiceCardCardService) { }
 
   ngOnInit() {
-    this.loadValidCards();
-  }
+    this.checkCodeFormGroup = this.fb.group({
+      code: [null, Validators.required]
+    });
 
-  loadValidCards() {
-    this.partnerService.getValidServiceCards(this.partnerId).subscribe((result: any) => {
-      this.cards = result;
-      this.cards.forEach(card => {
-        this.onCardClick(card);
-      });
+    this.applyFormGroup = this.fb.group({
+      amount: [0, Validators.required]
     });
   }
 
-  onCardClick(card) {
-    var index = this.selectedCards.indexOf(card);
-    if (index != -1) {
-      this.selectedCards.splice(index, 1);
-    } else {
-      this.selectedCards.push(card);
+  checkCode() {
+    if (!this.checkCodeFormGroup.valid) {
+      return false;
     }
+
+    var value = this.checkCodeFormGroup.value;
+
+    this.cardService.checkCode(value).subscribe((result: any) => {
+      var index = _.findIndex(this.cards, x => x.id == result.id);
+      if (index === -1) {
+        this.cards.push(result);
+      }
+
+      this.checkCodeFormGroup.get('code').setValue('');
+      this.codeInput.nativeElement.focus();
+
+      this.suggestSetAmount();
+    }, err => {
+      this.errorService.show(err);
+    });
+  }
+
+  removeCard(index) {
+    this.cards.splice(index, 1);
+    this.suggestSetAmount();
+  }
+
+  suggestSetAmount() {
+    var total = _.sumBy(this.cards, x => x.residual);
+    var amount = Math.min(total, this.amountTotal);
+    this.applyFormGroup.get('amount').setValue(amount);
   }
 
   onSave() {
-    if (!this.selectedCards.length) {
-      alert('Vui lòng chọn tối thiểu 1 thẻ');
+    if (!this.cards.length) {
+      alert('Vui lòng quét tối thiểu 1 thẻ');
+      return false;
+    }
+
+    if (!this.applyFormGroup.valid) {
       return false;
     }
 
     var val = {
       id: this.orderId,
-      cardIds: this.selectedCards.map(x => x.id)
+      cardIds: this.cards.map(x => x.id),
+      amount: this.applyFormGroup.get('amount').value
     };
 
     this.saleOrderService.applyServiceCards(val).subscribe(() => {

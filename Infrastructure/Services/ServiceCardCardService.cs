@@ -184,5 +184,20 @@ namespace Infrastructure.Services
 
             return self;
         }
+
+        public async Task<ServiceCardCard> CheckCode(string code)
+        {
+            var card = await SearchQuery(x => x.Barcode == code).FirstOrDefaultAsync();
+            if (card == null)
+                throw new Exception($"Không tìm thấy thẻ nào với mã vạch {code}");
+
+            if (card.State != "in_use")
+                throw new Exception($"Thẻ không khả dụng");
+
+            if (card.Residual == 0)
+                throw new Exception($"Số dư của thẻ bằng 0");
+
+            return card;
+        }
     }
 }

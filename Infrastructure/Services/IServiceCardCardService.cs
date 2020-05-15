@@ -16,5 +16,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<ServiceCardCard>> _ComputeResidual(IEnumerable<Guid> ids);
         Task ButtonConfirm(IEnumerable<ServiceCardCard> self);
         Task Unlink(IEnumerable<Guid> ids);
+        Task<ServiceCardCard> CheckCode(string code);
     }
 }
