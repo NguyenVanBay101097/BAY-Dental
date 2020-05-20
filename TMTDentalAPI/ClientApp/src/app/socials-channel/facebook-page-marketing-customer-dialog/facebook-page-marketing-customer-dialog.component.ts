@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject, Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
 import { PartnerService } from 'src/app/partners/partner.service';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-dialog',
@@ -16,66 +19,69 @@ import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-custo
 })
 export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   customerId: string;
-  loading: boolean;
-  dataCustomer: any;
+  profile: any = {};
+  formGroup: FormGroup;
+  title = 'Người tương tác';
 
-  selectedTags: any[] = [];
-
-  listPartners: any[];
-  selectedPartner: any;
-  searchNamePhoneRef: string;
-  searchNamePhoneRefUpdate = new Subject<string>();
+  filteredPartners: PartnerSimple[];
+  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private facebookUserProfilesService: FacebookUserProfilesService,
-    private facebookTagsService: FacebookTagsService, 
     private partnerService: PartnerService,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService,
+    private fb: FormBuilder) { }
 
   ngOnInit() {
-    this.loadDataFromApi(this.customerId);
-    
-    this.getPartnersList();
+    this.formGroup = this.fb.group({
+      partner: null
+    });
 
-    this.searchNamePhoneRefUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.getPartnersList();
+    setTimeout(() => {
+      this.loadDataFromApi(this.customerId);
+      this.loadFilteredPartners();
+
+      this.partnerCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.partnerCbx.loading = true)),
+        switchMap(value => this.searchPartners(value))
+      ).subscribe(result => {
+        this.filteredPartners = result;
+        this.partnerCbx.loading = false;
       });
-  }
-  
-  loadDataFromApi(id) {
-    this.loading = true;
-    this.facebookUserProfilesService.get(id).subscribe(res => {
-      this.dataCustomer = res;
-      this.selectedTags = this.dataCustomer.tags;
-      this.selectedPartner = this.dataCustomer.partnerId;
-      this.loading = false;
-      console.log(this.dataCustomer);
-    }, err => {
-      console.log(err);
-      this.loading = false;
     });
   }
 
-  save_selectedTags(event) {
-    this.selectedTags = event;
+  loadFilteredPartners() {
+    this.searchPartners().subscribe(result => {
+      this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
+    });
+  }
+
+  searchPartners(filter?: string) {
+    var val = new PartnerPaged();
+    val.customer = true;
+    val.search = filter;
+    return this.partnerService.getAutocompleteSimple(val);
+  }
+
+  loadDataFromApi(id) {
+    this.facebookUserProfilesService.get(id).subscribe((res: any) => {
+      this.profile = res;
+      this.formGroup.patchValue(res);
+      if (res.partner) {
+        this.filteredPartners = _.unionBy(this.filteredPartners, [res.partner], 'id');
+      }
+    });
   }
 
   onSave() {
-    var val = {
-      partnerId: this.selectedPartner,
-      tagIds: []
-    }
-    for (let i = 0; i < this.selectedTags.length; i++) {
-      val.tagIds.push(this.selectedTags[i].id);
-    }
-    console.log(this.selectedTags);
-    console.log(val);
-    this.facebookUserProfilesService.setData(this.customerId, val).subscribe(res => {
+    var value = this.formGroup.value;
+    value.partnerId = value.partner ? value.partner.id : null;
+
+    this.facebookUserProfilesService.update(this.customerId, value).subscribe(() => {
       this.notificationService.show({
         content: 'Lưu thành công',
         hideAfter: 3000,
@@ -83,59 +89,11 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
+
       this.activeModal.close(true);
     }, err => {
       console.log(err);
       this.activeModal.close(true);
     })
   }
-
-  getPartnersList() {
-    var val = new PartnerPaged();
-    val.limit = 10;
-    val.offset = 0;
-    val.search = this.searchNamePhoneRef || '';
-    val.customer = true;
-
-    this.partnerService.getPaged(val).pipe(
-      map(response => (<any>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      // console.log('getPartnersList', res);
-      var res_data = res.data;
-      this.listPartners = [];
-      for (var i = 0; i < res_data.length; i++) {
-        this.listPartners.push({
-          'id': res_data[i].id,
-          'name': res_data[i].name,
-          'phone': res_data[i].phone,
-        });
-      }
-    }, err => {
-      console.log(err);
-    }
-    )
-  }
-
-  showModalCreatePartner() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm khách hàng';
-
-    modalRef.result.then(res => {
-      this.listPartners.push({ 
-        'id': res.id,
-        'name': res.name,
-        'phone': res.phone,
-      });
-      this.selectedPartner = res.id;
-    }, () => {
-    });
-  }
-
-  handleFilter(event) {
-    this.searchNamePhoneRef = event;
-  }
-
 }

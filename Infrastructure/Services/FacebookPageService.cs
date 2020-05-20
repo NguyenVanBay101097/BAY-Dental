@@ -24,6 +24,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using ZaloDotNetSDK;
+using ZaloDotNetSDK.oa;
 
 namespace Infrastructure.Services
 {
@@ -216,9 +218,9 @@ namespace Infrastructure.Services
             pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
             pagedRequest.AddPageLimit(25);
 
-            var res = new List<FacebookSenders>();
+            var res = new List<ApiPagedConversationsDataItem>();
             var lstCus = new List<string>();
-            var pagedRequestResponse = await pagedRequest.ExecutePageAsync<FacebookSenders>();
+            var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsDataItem>();
             if (pagedRequestResponse.GetExceptions().Any())
             {
                 errorMaessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
@@ -237,7 +239,7 @@ namespace Infrastructure.Services
                         //add vào data
                         res.AddRange(pagedRequestResponse.GetResultData());
                     }
-                    PSid = res.Select(x => x.Senders.Data[0].Id).ToList();
+                    PSid = res.Select(x => x.Participants.Data[0].Id).ToList();
 
                 }
 
@@ -252,7 +254,7 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="FBpageId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<FacebookCustomer>> CheckCustomerNew(Guid FBpageId)
+        public async Task<IEnumerable<ApiUserProfileResponse>> CheckCustomerNew(Guid FBpageId)
         {
             var facebookuser = GetService<IFacebookUserProfileService>();
             var page = SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
@@ -260,53 +262,242 @@ namespace Infrastructure.Services
                 throw new Exception($"trang {page.PageName} vui lòng kiểm tra lại !");
 
             var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
-            var lstFBCus = new List<FacebookCustomer>().AsEnumerable();
+            var lstFBCus = new List<ApiUserProfileResponse>().AsEnumerable();
             var lstPsid = await GetListPSId(FBpageId);
             var lstFBUser = facebookuser.SearchQuery().Select(x => x.PSID).ToList();
             var lstCusNew = lstPsid.Except(lstFBUser);
             if (lstCusNew.Any())
-            {                             
-                    var tasks = lstCusNew.Select(id => LoadFacebookCustomer(id, page.PageAccesstoken));
-                    lstFBCus = await Task.WhenAll(tasks); 
-               
+            {
+                var tasks = lstCusNew.Select(id => _LoadUserProfile(id, page.PageAccesstoken));
+                lstFBCus = await Task.WhenAll(tasks);
+
             }
-            if(lstCusNew.Count() == 0)
+
+            if (lstCusNew.Count() == 0)
             {
                 throw new Exception($"không tìm thấy khách hàng mới từ Fanpage {page.PageName} !");
             }
+
             return lstFBCus;
-
-
         }
 
-
-        public async Task<FacebookCustomer> LoadFacebookCustomer(string id, string accesstoken)
+        public async Task<ApiUserProfileResponse> _LoadUserProfile(string psid, string access_token)
         {
-
-            var apiClient = new ApiClient(accesstoken, FacebookApiVersions.V6_0);
-            var errorMaessage = "";
-            var getRequestUrl = $"{id}?fields=id,name,first_name,last_name";
+            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
+            var getRequestUrl = $"{psid}?fields=id,name,first_name,last_name,profile_pic";
             var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
-            getRequest.AddQueryParameter("access_token", accesstoken);
-            var response = (await getRequest.ExecuteAsync<FacebookCustomer>());
-            if (response.GetExceptions().Any())
+            var response = (await getRequest.ExecuteAsync<ApiUserProfileResponse>());
+            if (!response.GetExceptions().Any())
             {
-                errorMaessage = string.Join("; ", response.GetExceptions().Select(x => x.Message));
-                return null;
+                return response.GetResult();
             }
-            else
-            {
-                var result = response.GetResult();
-                var facebookCus = new FacebookCustomer
-                {
-                    PSId = result.PSId,
-                    Name = result.Name,
-                    FirstName = result.FirstName,
-                    LastName = result.LastName,
-                };
-                return facebookCus;
 
+            return null;
+        }
+
+        /// <summary>
+        /// Đồng bộ khách hàng tương tác
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task SyncUsers(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var fb_pages = self.Where(x => x.Type == "facebook").ToList();
+            if (fb_pages.Any())
+                await SyncFacebookUsers(fb_pages);
+
+            var zl_pages = self.Where(x => x.Type == "zalo").ToList();
+            if (zl_pages.Any())
+                await SyncZaloUsers(zl_pages);
+        }
+
+        private async Task SyncZaloUsers(IEnumerable<FacebookPage> self)
+        {
+            foreach (var page in self)
+            {
+                //Lấy danh sách người quan tâm
+                var user_ids = _GetFollowersZaloOA(page);
+
+                var profiles = await _GetProfileFollowers(page, user_ids);
+
+                await _ProcessProfilesZalo(page, profiles);
             }
+        }
+
+        private async Task _ProcessProfilesZalo(FacebookPage self, IEnumerable<GetProfileOfFollowerResponse> profiles)
+        {
+            profiles = profiles.Where(x => x != null && x.data != null).ToList();
+
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            var limit = 100;
+            var offset = 0;
+            var tmp = profiles.Skip(offset).Take(limit).ToList();
+            var dict = profiles.ToDictionary(x => x.data.user_id.ToString(), x => x.data);
+            while (tmp.Any())
+            {
+                var user_ids = tmp.Select(x => x.data.user_id.ToString()).ToList();
+                var exist_psids = await userProfileObj.SearchQuery(x => user_ids.Contains(x.PSID) && x.FbPageId == self.Id).Select(x => x.PSID).ToListAsync();
+                user_ids = user_ids.Except(exist_psids).ToList();
+
+                var list = new List<FacebookUserProfile>();
+                foreach (var psid in user_ids)
+                {
+                    var user_info = dict[psid];
+                    list.Add(new FacebookUserProfile
+                    {
+                        Name = user_info.display_name,
+                        Avatar = user_info.avatar,
+                        FbPageId = self.Id,
+                        PSID = user_info.user_id.ToString(),
+                    });
+                }
+
+                await userProfileObj.CreateAsync(list);
+
+                offset += limit;
+                tmp = profiles.Skip(offset).Take(limit).ToList();
+            }
+        }
+
+        public Task<GetProfileOfFollowerResponse> _GetProfileZalo(FacebookPage self, string user_id)
+        {
+            return Task.Run(() =>
+            {
+                var zaloClient = new ZaloClient(self.PageAccesstoken);
+                var res = zaloClient.getProfileOfFollower(user_id).ToObject<GetProfileOfFollowerResponse>();
+                return res;
+            });
+        }
+
+        private async Task<IEnumerable<GetProfileOfFollowerResponse>> _GetProfileFollowers(FacebookPage self, IEnumerable<string> user_ids)
+        {
+            var tasks = user_ids.Select(x => _GetProfileZalo(self, x));
+            return await Task.WhenAll(tasks);
+        }
+
+        private IEnumerable<string> _GetFollowersZaloOA(FacebookPage self)
+        {
+            var zaloClient = new ZaloClient(self.PageAccesstoken);
+            var offset = 0;
+            var count = 25;
+            var res = zaloClient.getListFollower(offset, count).ToObject<GetFollowersResponse>();
+
+            var list = new List<string>().AsEnumerable();
+            while (res.data != null)
+            {
+                var tmp_ids = res.data.followers.Select(x => x.user_id);
+                list = list.Union(tmp_ids);
+
+                offset += count;
+                res = zaloClient.getListFollower(offset, count).ToObject<GetFollowersResponse>();
+            }
+
+            return list;
+        }
+
+        private async Task SyncFacebookUsers(IEnumerable<FacebookPage> self)
+        {
+            foreach (var page in self)
+            {
+                //Tìm tất cả psid từ conversations
+                var psids = await _FindPSIDsFromConversations(page);
+
+                var user_infos = await _GetUserInfosFromPSIDs(page, psids);
+
+                await _ProcessUserInfos(page, user_infos);
+            }
+        }
+
+        private async Task _ProcessUserInfos(FacebookPage self, IEnumerable<ApiUserProfileResponse> user_infos)
+        {
+            user_infos = user_infos.Where(x => x != null).ToList();
+
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            var limit = 100;
+            var offset = 0;
+            var tmp = user_infos.Skip(offset).Take(limit).ToList();
+            var dict = user_infos.ToDictionary(x => x.PSId, x => x);
+            while (tmp.Any())
+            {
+                var psids = tmp.Select(x => x.PSId).ToList();
+                var exist_psids = await userProfileObj.SearchQuery(x => psids.Contains(x.PSID) && x.FbPageId == self.Id).Select(x => x.PSID).ToListAsync();
+                psids = psids.Except(exist_psids).ToList();
+
+                var list = new List<FacebookUserProfile>();
+                foreach (var psid in psids)
+                {
+                    var user_info = dict[psid];
+                    list.Add(new FacebookUserProfile
+                    {
+                        Name = user_info.Name,
+                        FirstName = user_info.FirstName,
+                        LastName = user_info.LastName,
+                        Avatar = user_info.ProfilePic,
+                        FbPageId = self.Id,
+                        PSID = user_info.PSId,
+                        Gender = user_info.Gender
+                    });
+                }
+
+                await userProfileObj.CreateAsync(list);
+
+                offset += limit;
+                tmp = user_infos.Skip(offset).Take(limit).ToList();
+            }
+        }
+
+        private async Task<IEnumerable<ApiUserProfileResponse>> _GetUserInfosFromPSIDs(FacebookPage self, IEnumerable<string> psids)
+        {
+            var tasks = psids.Select(id => _LoadUserProfile(id, self.PageAccesstoken));
+            return await Task.WhenAll(tasks);
+        }
+
+        private async Task<IEnumerable<string>> _FindPSIDsFromConversations(FacebookPage self)
+        {
+            var psids = new List<string>().AsEnumerable();
+
+            var apiClient = new ApiClient(self.PageAccesstoken, FacebookApiVersions.V6_0);
+            var pagedRequestUrl = $"{self.PageId}/conversations?fields=participants";
+            var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
+            pagedRequest.AddQueryParameter("access_token", self.PageAccesstoken);
+            pagedRequest.AddPageLimit(1);
+
+            var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsDataItem>();
+            if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
+            {
+                var tmp = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
+                psids = psids.Union(tmp);
+
+                //kiểm tra nếu có phân trang
+                while (pagedRequestResponse.IsNextPageDataAvailable())
+                {
+                    //lấy dữ liệu lần lượt các trang kế
+                    pagedRequestResponse = pagedRequestResponse.GetNextPageData();
+
+                    if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
+                    {
+                        var tmp2 = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
+                        psids = psids.Union(tmp2);
+                    }
+                }
+            }
+
+            return psids;
+        }
+
+        private IEnumerable<string> _GetPSIDsFromApiConversationsResponse(FacebookPage self, IEnumerable<ApiPagedConversationsDataItem> items)
+        {
+            var res = new HashSet<string>();
+            var participants = items.SelectMany(x => x.Participants.Data);
+            foreach (var participant in participants)
+            {
+                if (participant.Id == self.PageId)
+                    continue;
+                res.Add(participant.Id);
+            }
+
+            return res;
         }
 
         public async Task<List<FacebookUserProfile>> CreateFacebookUser()
@@ -340,19 +531,11 @@ namespace Infrastructure.Services
                     await facebookuser.CheckPsid(fbuser.PSID);
                     await facebookuser.CreateAsync(fbuser);
                     lstFBUser.Add(fbuser);
-
-
                 }
             }
 
             return lstFBUser;
-
         }
-
-
-
-
-
 
         /// <summary>
         /// Automation Config
@@ -456,12 +639,9 @@ namespace Infrastructure.Services
                          "", new { Id = page.AutoConfigId }
                         ).FirstOrDefault();
 
-
                     if (fbshedule == null)
                         return;
 
-                   
-                   
                     var date = DateTime.Now;
                     if (fbshedule.ScheduleType == "minutes")
                     {
@@ -513,10 +693,6 @@ namespace Infrastructure.Services
                             subTasks = tasks.Skip(offset).Take(limit).ToList();
                         }
                     }
-
-
-
-
                 }
                 catch
                 {
@@ -537,7 +713,6 @@ namespace Infrastructure.Services
             request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
             request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
 
-
             var response = await request.ExecuteAsync<SendFacebookMessage>();
 
             if (response.GetExceptions().Any())
@@ -552,13 +727,6 @@ namespace Infrastructure.Services
                 return result;
 
             }
-
-
-
         }
-
-
     }
-   
-
 }

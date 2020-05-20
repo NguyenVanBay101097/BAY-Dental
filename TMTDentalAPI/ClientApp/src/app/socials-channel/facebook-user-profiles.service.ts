@@ -14,7 +14,7 @@ export class FacebookUserProfilesService {
     return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
-  setData(id, val: any) {
+  update(id, val: any) {
     return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
   }
 

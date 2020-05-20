@@ -8,15 +8,11 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        public string PsId { get; set; }
-
         public string Name { get; set; }
-
-        public string Phone { get; set; }
 
         public Guid? PartnerId { get; set; }
         public PartnerBasic Partner { get; set; }
 
-        public IEnumerable<FacebookTagBasic> Tags { get; set; } = new List<FacebookTagBasic>();
+        public string Avatar { get; set; }
     }
 }

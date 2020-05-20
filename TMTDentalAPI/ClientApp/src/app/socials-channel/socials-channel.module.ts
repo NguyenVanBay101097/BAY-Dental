@@ -40,6 +40,7 @@ import { AudienceFilterInputComponent } from './facebook-audience-filter-dropdow
 import { FacebookAudienceFilterComponent } from './facebook-audience-filter/facebook-audience-filter.component';
 import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-select-tag.component';
 import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
+import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/face
     AudienceFilterInputComponent,
     FacebookAudienceFilterComponent,
     FacebookSelectTagComponent,
-    FacebookPluginTextareaComponent
+    FacebookPluginTextareaComponent,
+    FacebookPageListComponent
   ],
   imports: [
     CommonModule,
