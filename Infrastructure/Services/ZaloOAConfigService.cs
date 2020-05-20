@@ -19,33 +19,38 @@ namespace Infrastructure.Services
         {
         }
 
-        public async Task<ZaloOAConfig> SaveConfig(ZaloOAConfigSave val)
+        public async Task<FacebookPage> SaveConfig(ZaloOAConfigSave val)
         {
             var accessToken = val.AccessToken;
             var zaloClient = new ZaloClient(accessToken);
             var profile = zaloClient.getProfileOfOfficialAccount().ToObject<GetProfileOAResponse>();
             if (profile.error != 0)
                 throw new Exception("access token invalid");
+            var pageObj = GetService<IFacebookPageService>();
 
-            var config = await SearchQuery().FirstOrDefaultAsync();
-            if (config != null)
+            var oa_id = profile.data.oa_id.ToString();
+            var page = await pageObj.SearchQuery(x => x.PageId == oa_id).FirstOrDefaultAsync();
+
+            if (page != null)
             {
-                config.Name = profile.data.name;
-                config.Avatar = profile.data.avatar;
-                config.AccessToken = accessToken;
-                await UpdateAsync(config);
-                return config;
+                page.PageName = profile.data.name;
+                page.Avatar = profile.data.avatar;
+                page.PageAccesstoken = accessToken;
+                await pageObj.UpdateAsync(page);
+                return page;
             }
             else
             {
-                config = new ZaloOAConfig
+                page = new FacebookPage
                 {
-                    AccessToken = accessToken,
-                    Name = profile.data.name,
-                    Avatar = profile.data.avatar
+                    PageAccesstoken = accessToken,
+                    PageName = profile.data.name,
+                    Avatar = profile.data.avatar,
+                    PageId = oa_id,
+                    Type = "zalo"
                 };
 
-                return await CreateAsync(config);
+                return await pageObj.CreateAsync(page);
             }
         }
     }

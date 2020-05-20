@@ -44,8 +44,8 @@ namespace TMTDentalAPI.Controllers
         {
             if (val == null || !ModelState.IsValid)
                 return BadRequest();
-            var config = await _zaloOAConfigService.SaveConfig(val);
-            var basic = _mapper.Map<ZaloOAConfigBasic>(config);
+            var page = await _zaloOAConfigService.SaveConfig(val);
+            var basic = _mapper.Map<FacebookPageBasic>(page);
             return Ok(basic);
         }
 

@@ -66,14 +66,15 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
     },
-    // {
-    //   name: 'Facebook marketing',
-    //   icon: 'fab fa-facebook-f',
-    //   children: [
-    //     { name: 'Kết nối facebook page', link: '/facebook-connect' },
-    //     { name: 'Tổng quan', link: '/facebook-dashboard' },
-    //   ],
-    // },
+    {
+      name: 'T-Care',
+      icon: 'fab fa-facebook-f',
+      children: [
+        { name: 'Kết nối facebook page', link: '/facebook-connect' },
+        { name: 'Kết nối Zalo', link: '/zalo-config' },
+        { name: 'Tổng quan', link: '/facebook-dashboard' },
+      ],
+    },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',

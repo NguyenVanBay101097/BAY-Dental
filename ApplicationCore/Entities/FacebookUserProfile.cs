@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+
     public class FacebookUserProfile: BaseEntity
     {
         public string Name { get; set; }
@@ -13,6 +14,8 @@ namespace ApplicationCore.Entities
         public string LastName { get; set; }
 
         public string Gender { get; set; }
+
+        public string Avatar { get; set; }
 
         public string PSID { get; set; }
 
