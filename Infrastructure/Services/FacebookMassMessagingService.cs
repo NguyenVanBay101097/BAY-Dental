@@ -248,7 +248,6 @@ namespace Infrastructure.Services
                 Id = x.UserProfile.Id,
                 Name = x.UserProfile.Name,
                 PSId = x.UserProfile.PSID,
-                ProfilePic = "https://graph.facebook.com/" + x.UserProfile.PSID + "/picture?type=square&access_token=" + x.UserProfile.FbPage.PageAccesstoken
             }).ToListAsync();
 
             var total = await query.CountAsync();

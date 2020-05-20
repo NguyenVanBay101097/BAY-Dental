@@ -72,7 +72,7 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Kết nối facebook page', link: '/facebook-connect' },
         { name: 'Kết nối Zalo', link: '/zalo-config' },
-        { name: 'Tổng quan', link: '/facebook-dashboard' },
+        { name: 'Danh sách kênh', link: '/channels' },
       ],
     },
     {

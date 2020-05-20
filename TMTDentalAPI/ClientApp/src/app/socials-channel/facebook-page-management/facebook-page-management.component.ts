@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FacebookPageService } from '../facebook-page.service';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-facebook-page-management',
@@ -8,10 +9,25 @@ import { FacebookPageService } from '../facebook-page.service';
 })
 export class FacebookPageManagementComponent implements OnInit {
   switchPage: any;
-  constructor(private facebookPageService: FacebookPageService) { }
+  page: any = {};
+  id: string;
+  constructor(private facebookPageService: FacebookPageService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.loadSwitchPage();
+    this.loadData();
+  }
+
+  loadData() {
+    this.route.paramMap.subscribe((param: ParamMap) => {
+      this.id = param.get('id');
+      this.loadPage(this.id);
+    });
+  }
+
+  loadPage(id) {
+    this.facebookPageService.get(id).subscribe((result: any) => {
+      this.page = result;
+    });
   }
 
   loadSwitchPage() {

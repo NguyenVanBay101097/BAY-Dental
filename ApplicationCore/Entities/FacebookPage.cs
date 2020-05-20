@@ -31,6 +31,5 @@ namespace ApplicationCore.Entities
 
         public Guid? AutoConfigId { get; set; }
         public FacebookScheduleAppointmentConfig AutoConfig { get; set; }
-        //
     }
 }

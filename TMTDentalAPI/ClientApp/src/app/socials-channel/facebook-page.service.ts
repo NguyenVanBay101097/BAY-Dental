@@ -10,6 +10,10 @@ export class FacebookPageService {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
+    get(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id);
+    }
+
     selectPage(id: string) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/SelectPage', {});
     }
@@ -20,5 +24,9 @@ export class FacebookPageService {
 
     getSwitchPage() {
         return this.http.get(this.baseApi + this.apiUrl + '/GetSwitchPage');
+    }
+
+    syncUsers(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/SyncUsers', ids);
     }
 }
