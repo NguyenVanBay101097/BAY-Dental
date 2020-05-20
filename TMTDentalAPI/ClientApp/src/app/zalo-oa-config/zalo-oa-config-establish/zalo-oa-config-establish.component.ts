@@ -1,40 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import { ZaloOAConfigService, ZaloOAConfigSave, ZaloOAConfigBasic } from '../zalo-oa-config.service';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { Component, OnInit } from "@angular/core";
+import {
+  ZaloOAConfigService,
+  ZaloOAConfigSave,
+  ZaloOAConfigBasic,
+} from "../zalo-oa-config.service";
+import { FormGroup, FormBuilder } from "@angular/forms";
+import { NotificationService } from "@progress/kendo-angular-notification";
 
 @Component({
-  selector: 'app-zalo-oa-config-establish',
-  templateUrl: './zalo-oa-config-establish.component.html',
-  styleUrls: ['./zalo-oa-config-establish.component.css'],
+  selector: "app-zalo-oa-config-establish",
+  templateUrl: "./zalo-oa-config-establish.component.html",
+  styleUrls: ["./zalo-oa-config-establish.component.css"],
   host: {
-    class: 'o_action o_view_controller'
-  }
+    class: "o_action o_view_controller",
+  },
 })
 export class ZaloOaConfigEstablishComponent implements OnInit {
-
   config: ZaloOAConfigBasic;
   formGroup: FormGroup;
+  private mywindow;
 
-  constructor(private fb: FormBuilder, private zaloOAConfigService: ZaloOAConfigService,
-    private notificationService: NotificationService) {
-  }
+  constructor(
+    private fb: FormBuilder,
+    private zaloOAConfigService: ZaloOAConfigService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       autoSendBirthdayMessage: false,
-      birthdayMessageContent: null
+      birthdayMessageContent: null,
     });
 
     this.loadConfig();
   }
 
   get autoSendBirthdayMessage() {
-    return this.formGroup.get('autoSendBirthdayMessage').value;
+    return this.formGroup.get("autoSendBirthdayMessage").value;
   }
 
   loadConfig() {
-    this.zaloOAConfigService.get().subscribe(result => {
+    this.zaloOAConfigService.get().subscribe((result) => {
       this.config = result;
       if (this.config) {
         this.formGroup.patchValue(this.config);
@@ -43,14 +49,22 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
   }
 
   connectZalo() {
-    var url = 'https://oauth.zaloapp.com/v3/oa/permission?app_id=210286079830365439&redirect_uri=https://zalo.kiotapi.com';
+    var url =
+      "https://oauth.zaloapp.com/v3/oa/permission?app_id=833510070534844532&redirect_uri=https://zalo.kiotapi.com";
     this.popupWindow(url, url, window, 650, 500);
-    window.addEventListener('message', event => {
+    window.addEventListener("message", (event) => {
       var data = JSON.parse(event.data);
+      console.log(data.data.access_token);
       var val = new ZaloOAConfigSave();
       val.accessToken = data.data.access_token;
-      this.zaloOAConfigService.create(val).subscribe(result => {
-        this.config = result;
+      this.zaloOAConfigService.create(val).subscribe((result) => {
+        this.notificationService.show({
+          content: "Kết nối thành công !",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
       });
     });
   }
@@ -62,9 +76,20 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
   }
 
   popupWindow(url, title, win, w, h) {
-    const y = win.top.outerHeight / 2 + win.top.screenY - (h / 2);
-    const x = win.top.outerWidth / 2 + win.top.screenX - (w / 2);
-    return win.open(url, title, 'toolbar=no, status=no, menubar=no, scrollbars=no, resizable=no, width=' + w + ', height=' + h + ', top=' + y + ', left=' + x);
+    const y = win.top.outerHeight / 2 + win.top.screenY - h / 2;
+    const x = win.top.outerWidth / 2 + win.top.screenX - w / 2;
+    return win.open(
+      url,
+      title,
+      "toolbar=no, status=no, menubar=no, scrollbars=no, resizable=no, width=" +
+        w +
+        ", height=" +
+        h +
+        ", top=" +
+        y +
+        ", left=" +
+        x
+    );
   }
 
   onSave() {
@@ -72,14 +97,13 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
       var val = this.formGroup.value;
       this.zaloOAConfigService.update(this.config.id, val).subscribe(() => {
         this.notificationService.show({
-          content: 'Lưu thành công',
+          content: "Lưu thành công",
           hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
         });
       });
     }
-
   }
 }

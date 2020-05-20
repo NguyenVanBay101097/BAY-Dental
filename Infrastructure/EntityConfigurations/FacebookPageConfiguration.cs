@@ -11,11 +11,6 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<FacebookPage> builder)
         {
-            builder.Property(x => x.UserId).IsRequired();
-            builder.Property(x => x.UserAccesstoken).IsRequired();
-            builder.Property(x => x.PageId).IsRequired();
-            builder.Property(x => x.PageAccesstoken).IsRequired();
-
             builder.HasOne(x => x.AutoConfig)
       .WithMany()
       .HasForeignKey(x => x.AutoConfigId);
