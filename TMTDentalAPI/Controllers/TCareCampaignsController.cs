@@ -37,5 +37,27 @@ namespace TMTDentalAPI.Controllers
             var basic = _mapper.Map<TCareCampaignBasic>(campaign);
             return Ok(basic);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var campaign = await _campaignService.GetByIdAsync(id);
+            var res = _mapper.Map<TCareCampaignBasic>(campaign);
+            return Ok(res);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, TCareCampaignNameCreateVM val)
+        {
+            var campain = await _campaignService.GetByIdAsync(id);
+            if (campain == null)
+            {
+                return BadRequest();
+            }
+            campain.Name = val.Name;
+            campain.GraphXml = val.GraphXml;
+            await _campaignService.UpdateAsync(campain);
+            return NoContent();
+        }
     }
 }

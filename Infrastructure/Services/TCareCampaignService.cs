@@ -44,7 +44,11 @@ namespace Infrastructure.Services
 
         public async Task<TCareCampaign> NameCreate(TCareCampaignNameCreateVM val)
         {
-            var campaign = new TCareCampaign() { Name = val.Name };
+            var campaign = new TCareCampaign()
+            {
+                Name = val.Name,
+                GraphXml = val.GraphXml
+            };
             return await CreateAsync(campaign);
         }
     }

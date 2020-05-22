@@ -12,6 +12,10 @@ namespace ApplicationCore.Entities
         public Guid CampaignId { get; set; }
         public TCareCampaign Campaign { get; set; }
 
+        /// <summary>
+        /// birthday 
+        /// 
+        /// </summary>
         public string Type { get; set; }
 
         public ICollection<TCareProperty> Properties { get; set; } = new List<TCareProperty>();

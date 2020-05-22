@@ -6052,6 +6052,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("GraphXml")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -9237,7 +9240,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.TCareRule", "Rule")
-                        .WithMany()
+                        .WithMany("Properties")
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

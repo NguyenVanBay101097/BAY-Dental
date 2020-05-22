@@ -10,5 +10,7 @@ namespace ApplicationCore.Entities
     public class TCareCampaign: BaseEntity
     {
         public string Name { get; set; }
+
+        public string GraphXml { get; set; }
     }
 }
