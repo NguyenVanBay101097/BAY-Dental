@@ -10,6 +10,8 @@ namespace ApplicationCore.Entities
         public string PageName { get; set; }
         public string PageAccessToken { get; set; }
 
+        public string Picture { get; set; }
+
         public Guid ConnectId { get; set; }
         public FacebookConnect Connect { get; set; }
     }

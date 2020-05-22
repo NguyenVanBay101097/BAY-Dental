@@ -14,6 +14,10 @@ export class FacebookPageService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id);
     }
 
+    delete(id: string) {
+        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
     selectPage(id: string) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/SelectPage', {});
     }

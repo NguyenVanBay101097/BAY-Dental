@@ -67,6 +67,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            var page = await _facebookPageService.GetByIdAsync(id);
+            if (page == null)
+                return NotFound();
+            await _facebookPageService.DeleteAsync(page);
+
+            return NoContent();
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> SyncUsers(IEnumerable<Guid> ids)
         {

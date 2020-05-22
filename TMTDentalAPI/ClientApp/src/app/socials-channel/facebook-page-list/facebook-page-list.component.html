@@ -27,7 +27,17 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
+        <kendo-grid-column field="avatar" title="Hình" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <img *ngIf="dataItem.avatar" [src]="dataItem.avatar" width="50" height="50" />
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="pageName" title="Tên" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="type" title="Loại" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getTypeDisplay(dataItem.type)}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
