@@ -21,6 +21,8 @@
     <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.Designer.cs" />
     <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.cs" />
     <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.cs" />
+    <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

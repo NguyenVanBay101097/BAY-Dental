@@ -1,11 +1,21 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class TCareMessaging : BaseEntity
+    public class TCareMessagingSave
     {
+        public TCareMessagingSave()
+        {
+            MethodType = "interval";
+            IntervalType = "minutes";
+            IntervalNumber = 0;
+            Content = "";
+        }
+
+
         /// <summary>
         /// phương thức :
         /// interval : trước thời gian
@@ -37,10 +47,7 @@ namespace ApplicationCore.Entities
         public string ChannelType { get; set; }
 
         public Guid? ChannelSocialId { get; set; }
-        public FacebookPage ChannelSocial { get; set; }
-
-
         public Guid TCareCampaignId { get; set; }
-        public TCareCampaign TCareCampaign { get; set; }
+        
     }
 }
