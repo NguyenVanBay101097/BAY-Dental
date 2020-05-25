@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using Dapper;
+using Hangfire;
 using Infrastructure.Data;
 using Microsoft.Extensions.Options;
 using System;
@@ -32,10 +33,32 @@ namespace Infrastructure.Services
                     conn.Open();
 
                     var campaigns = conn.Query("SELECT * FROM TCareCampaigns").ToList();
-                    foreach(var campaign in campaigns)
+                    foreach (var campaign in campaigns)
                     {
-                        var rules = conn.Query<TCareRule>("SELECT * FROM TCareRules WHERE CampaignId = @id", new { id = campaign.Id}).ToList();
-                        var partner_ids = SearchPartnerRules(rules, conn);
+                        var messagings = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaign.Id }).ToList();
+                        var messaging = messagings.FirstOrDefault();
+                        if (messaging == null)
+                            continue;
+
+                        if (messaging.MethodType == "interval")
+                        {
+                            var date = DateTime.UtcNow;
+                            var intervalNumber = messaging.IntervalNumber ?? 0;
+                            if (messaging.IntervalType == "hours")
+                                date = date.AddHours(intervalNumber);
+                            else if (messaging.IntervalType == "minutes")
+                                date = date.AddMinutes(intervalNumber);
+                            else if (messaging.IntervalType == "days")
+                                date = date.AddDays(intervalNumber);
+                            else if (messaging.IntervalType == "months")
+                                date = date.AddMonths(intervalNumber);
+                            else if (messaging.IntervalType == "weeks")
+                                date = date.AddDays(intervalNumber * 7);
+                        } 
+                        else if (messaging.MethodType == "schedule")
+                        {
+                            var date = messaging.SheduleDate.HasValue ? messaging.SheduleDate.Value.ToUniversalTime() : DateTime.UtcNow;
+                        }
                     }
                 }
                 catch (Exception e)

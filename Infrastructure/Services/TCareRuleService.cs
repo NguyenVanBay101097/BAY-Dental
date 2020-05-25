@@ -95,5 +95,33 @@ namespace Infrastructure.Services
 
             await UpdateAsync(rule);
         }
+
+        public async Task UpdateProductSpecificPurchaseRule(Guid id, TCareRuleProductSpecificPurchaseUpdate val)
+        {
+            var rule = await SearchQuery(x => x.Id == id).Include(x => x.Properties).FirstOrDefaultAsync();
+            var type_dict = new Dictionary<string, string>()
+            {
+                { "BeforeDays", "Integer" }
+            };
+
+            foreach (var prop in val.GetType().GetProperties())
+            {
+                var property = rule.Properties.FirstOrDefault(x => x.Name == prop.Name);
+                var value = prop.GetValue(val);
+                if (property == null)
+                {
+                    property = new TCareProperty() { Name = prop.Name, Type = type_dict[prop.Name] };
+                    _UpdatePropValues(property, value);
+
+                    rule.Properties.Add(property);
+                }
+                else
+                {
+                    _UpdatePropValues(property, value);
+                }
+            }
+
+            await UpdateAsync(rule);
+        }
     }
 }

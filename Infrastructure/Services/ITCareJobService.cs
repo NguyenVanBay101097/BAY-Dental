@@ -6,5 +6,6 @@ namespace Infrastructure.Services
 {
     public interface ITCareJobService
     {
+        void Run(string db);
     }
 }
