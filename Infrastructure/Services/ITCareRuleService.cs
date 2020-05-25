@@ -11,6 +11,6 @@ namespace Infrastructure.Services
     {
         Task<object> GetDisplay(Guid id);
         Task<TCareRule> CreateRule(TCareRuleSave val);
-        Task UpdateRule(Guid id, TCareRuleSave val);
+        Task UpdateBirthdayRule(Guid id, TCareRuleBirthdayUpdate val);
     }
 }
