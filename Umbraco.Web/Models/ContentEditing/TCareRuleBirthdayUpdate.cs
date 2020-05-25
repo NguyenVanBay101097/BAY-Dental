@@ -4,10 +4,8 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class TCareRuleSave
+    public class TCareRuleBirthdayUpdate
     {
-        public string Type { get; set; }
-
-        public Guid CampaignId { get; set; }
+        public int? BeforeDays { get; set; }
     }
 }

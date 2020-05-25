@@ -40,7 +40,11 @@ namespace Infrastructure.Services
             var pageObj = GetService<IFacebookPageService>();
             foreach(var page in self)
             {
-                var fbPage = await pageObj.CreateAsync(new FacebookPage
+                var fbPage = await pageObj.SearchQuery(x => x.PageId == page.PageId).FirstOrDefaultAsync();
+                if (fbPage != null)
+                    continue;
+
+                fbPage = await pageObj.CreateAsync(new FacebookPage
                 {
                     PageId = page.PageId,
                     PageName = page.PageName,
@@ -48,6 +52,7 @@ namespace Infrastructure.Services
                     UserAccesstoken = page.Connect.FbUserAccessToken,
                     UserId = page.Connect.FbUserId,
                     UserName = page.Connect.FbUserName,
+                    Avatar = page.Picture,
                     Type = "facebook",
                 });
 

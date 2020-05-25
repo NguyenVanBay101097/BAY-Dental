@@ -384,7 +384,7 @@ namespace Infrastructure.Services
             var res = zaloClient.getListFollower(offset, count).ToObject<GetFollowersResponse>();
 
             var list = new List<string>().AsEnumerable();
-            while (res.data != null)
+            while (res.data != null && res.data.followers.Any())
             {
                 var tmp_ids = res.data.followers.Select(x => x.user_id);
                 list = list.Union(tmp_ids);

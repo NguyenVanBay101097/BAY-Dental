@@ -51,37 +51,7 @@ namespace Infrastructure.Services
         public async Task<TCareRule> CreateRule(TCareRuleSave val)
         {
             var rule = _mapper.Map<TCareRule>(val);
-            foreach(var prop in val.Properties)
-            {
-                var property = new TCareProperty() { Name = prop.Name, Type = prop.Type };
-                _UpdatePropValues(property, prop.Value);
-
-                rule.Properties.Add(property);
-            }
-
             return await CreateAsync(rule);
-        }
-
-        public async Task UpdateRule(Guid id, TCareRuleSave val)
-        {
-            var rule = await SearchQuery(x => x.Id == id).Include(x => x.Properties).FirstOrDefaultAsync();
-            foreach (var prop in val.Properties)
-            {
-                var property = rule.Properties.FirstOrDefault(x => x.Name == prop.Name);
-                if (property == null)
-                {
-                    property = new TCareProperty() { Name = prop.Name, Type = prop.Type };
-                    _UpdatePropValues(property, prop.Value);
-
-                    rule.Properties.Add(property);
-                }
-                else
-                {
-                    _UpdatePropValues(property, prop.Value);
-                }
-            }
-
-            await UpdateAsync(rule);
         }
 
         public void _UpdatePropValues(TCareProperty prop, object value)
@@ -96,6 +66,34 @@ namespace Infrastructure.Services
                 prop.ValueDateTime = Convert.ToDateTime(value);
             else if (prop.Type == "Integer")
                 prop.ValueInteger = Convert.ToInt32(value);
+        }
+
+        public async Task UpdateBirthdayRule(Guid id, TCareRuleBirthdayUpdate val)
+        {
+            var rule = await SearchQuery(x => x.Id == id).Include(x => x.Properties).FirstOrDefaultAsync();
+            var type_dict = new Dictionary<string, string>()
+            {
+                { "BeforeDays", "Integer" }
+            };
+
+            foreach(var prop in val.GetType().GetProperties())
+            {
+                var property = rule.Properties.FirstOrDefault(x => x.Name == prop.Name);
+                var value = prop.GetValue(val);
+                if (property == null)
+                {
+                    property = new TCareProperty() { Name = prop.Name, Type = type_dict[prop.Name] };
+                    _UpdatePropValues(property, value);
+
+                    rule.Properties.Add(property);
+                }
+                else
+                {
+                    _UpdatePropValues(property, value);
+                }
+            }
+
+            await UpdateAsync(rule);
         }
     }
 }

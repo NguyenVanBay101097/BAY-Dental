@@ -39,13 +39,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, TCareRuleSave val)
-        {
-            await _ruleService.UpdateRule(id, val);
-            return NoContent();
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
@@ -54,6 +47,13 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             await _ruleService.DeleteAsync(rule);
+            return NoContent();
+        }
+
+        [HttpPut("{id}/[action]")]
+        public async Task<IActionResult> Birthday(Guid id, TCareRuleBirthdayUpdate val)
+        {
+            await _ruleService.UpdateBirthdayRule(id, val);
             return NoContent();
         }
     }

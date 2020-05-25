@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FacebookPageService } from '../facebook-page.service';
 import { FacebookPagePaged } from '../facebook-page-paged';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-list',
@@ -73,7 +74,26 @@ export class FacebookPageListComponent implements OnInit {
     this.router.navigate(['/channel/' + item.id]);
   }
 
-  deleteItem(item) {
+  deleteItem(item: any) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa kênh';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.facebookPageService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    });
+  }
+
+  getTypeDisplay(type) {
+    switch (type) {
+      case 'facebook':
+        return 'Facebook Page';
+      case 'zalo':
+        return 'Zalo Official Account';
+      default:
+        return '';
+    }
   }
 }
 

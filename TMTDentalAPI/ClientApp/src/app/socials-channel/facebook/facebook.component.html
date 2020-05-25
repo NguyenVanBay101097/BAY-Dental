@@ -42,9 +42,7 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item" *ngFor="let item of connect.pages; let i = index" (click)="selectPage(item)">
                 <div fxFlex="none">
-                    <img class="page_avatar"
-                        src="https://graph.facebook.com/{{item.pageId}}/picture?height=100&amp;width=100"
-                        [alt]="item.pageName">
+                    <img class="page_avatar" [src]="item.picture" [alt]="item.pageName">
                 </div>
                 <div fxFlex>
                     <div class="page_name">{{item.pageName}}</div>
