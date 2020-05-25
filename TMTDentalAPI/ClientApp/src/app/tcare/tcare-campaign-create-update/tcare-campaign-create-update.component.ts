@@ -108,8 +108,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       var editor = new mxEditor();
       var graph = editor.graph;
       that.editorDefind = editor;
-      var model = graph.getModel();
-      var parent = graph.getDefaultParent();
       graph.setCellsMovable(true);
       graph.setAutoSizeCells(true);
       graph.setPanning(true);
@@ -126,9 +124,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       // Does not allow dangling edges  
       graph.setAllowDanglingEdges(false);
-
-      //defind port
-
 
       // Sets the graph container and configures the editor
       editor.setGraphContainer(container);
@@ -151,15 +146,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       }
 
-
-      // Defines the default group to be used for grouping. The
-      // default group is a field in the mxEditor instance that
-      // is supposed to be a cell which is cloned for new cells.
-      // The groupBorderSize is used to define the spacing between
-      // the children of a group and the group bounds.
       var group = new mxCell('Group', new mxGeometry(), 'group');
       group.setVertex(false);
-      group.setConnectable(false);
       editor.defaultGroup = group;
       editor.groupBorderSize = 20;
       // Disables drag-and-drop into non-swimlanes.
@@ -187,36 +175,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           return true;
       }
 
-      // Returns a shorter label if the cell is collapsed and no
-      // label for expanded groups
-      graph.getLabel = function (cell) {
-        var tmp = mxGraph.prototype.getLabel.apply(this, arguments); // "supercall"
 
-        if (this.isCellLocked(cell)) {
-          // Returns an empty label but makes sure an HTML
-          // element is created for the label (for event
-          // processing wrt the parent label)
-          return '';
-        }
-        else if (this.isCellCollapsed(cell)) {
-          var index = tmp.indexOf('</h1>');
-
-          if (index > 0) {
-            tmp = tmp.substring(0, index + 5);
-          }
-        }
-
-        return tmp;
-      }
-
-      var layout = new mxParallelEdgeLayout(graph);
-      var layoutMgr = new mxLayoutManager(graph);
-
-      layoutMgr.getLayout = function (cell) {
-        if (cell.getChildCount() > 0) {
-          return layout;
-        }
-      };
       // Disables HTML labels for swimlanes to avoid conflict
       // for the event processing on the child cells. HTML
       // labels consume events before underlying cells get the
@@ -325,7 +284,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             img.parentNode.removeChild(img);
           }
         }
-
         this.images = null;
       };
 
@@ -415,38 +373,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       that.addToolbarButton(editor, toolbar, 'redo', '', './assets/editors/images/redo.png');
       toolbar.appendChild(spacer.cloneNode(true));
       that.addToolbarButton(editor, toolbar, 'show', 'Show', './assets/editors/images/camera.png');
-      that.addToolbarButton(editor, toolbar, 'print', 'Print', './assets/editors/images/printer.png');
+
       toolbar.appendChild(spacer.cloneNode(true));
-      // that.addToolbarButton(editor, toolbar, 'export', 'Save', './assets/editors/images/export1.png');
-      // that.addToolbarButton(editor, toolbar, 'import', 'Load', './assets/editors/images/export1.png');
-
-      // Defines a new export action
-      editor.addAction('export', function (editor, cell) {
-        var textarea = document.createElement('textarea');
-        textarea.style.width = '400px';
-        textarea.style.height = '400px';
-        var enc = new mxCodec(mxUtils.createXmlDocument());
-        var node = enc.encode(editor.graph.getModel());
-        textarea.value = mxUtils.getPrettyXml(node);
-        that.showModalWindow(graph, 'XML', textarea, 410, 440);
-      });
-
-      //import a flowchart
-      editor.addAction('import', function (editor) {
-        that.load(editor)
-      });
-
-
-      // ---
-
-      // Adds toolbar buttons into the status bar at the bottom
-      // of the window.
-      status.appendChild(spacer.cloneNode(true));
-
-      // that.addToolbarButton(editor, status, 'enterGroup', 'Enter', './assets/editors/images/view_next.png', true);
-      // that.addToolbarButton(editor, status, 'exitGroup', 'Exit', './assets/editors/images/view_previous.png', true);
-
-      status.appendChild(spacer.cloneNode(true));
 
       that.addToolbarButton(editor, status, 'zoomIn', '', './assets/editors/images/zoom_in.png', true);
       that.addToolbarButton(editor, status, 'zoomOut', '', './assets/editors/images/zoom_out.png', true);
@@ -474,16 +402,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     this.tcareService.update(this.id, val).subscribe(
       () => { }
     );
-  }
-
-  makeid(length): string {
-    var result = '';
-    var characters = '1234567890';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
   }
 
   load(editor) {
@@ -532,39 +450,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     });
     mxUtils.write(button, label);
     toolbar.appendChild(button);
-  }
-
-  showModalWindow(graph, title, content, width, height) {
-    var background = document.createElement('div');
-    background.style.position = 'absolute';
-    background.style.left = '0px';
-    background.style.top = '0px';
-    background.style.right = '0px';
-    background.style.bottom = '0px';
-    background.style.background = 'black';
-    mxUtils.setOpacity(background, 50);
-    document.body.appendChild(background);
-
-    if (mxClient.IS_IE) {
-      new mxDivResizer(background);
-    }
-
-    var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
-    var y = Math.max(10, (document.body.scrollHeight ||
-      document.documentElement.scrollHeight) / 2 - height * 2 / 3);
-    var wnd = new mxWindow(title, content, x, y, width, height, false, true);
-    wnd.setClosable(true);
-
-    // Fades the background out after after the window has been closed
-    wnd.addListener(mxEvent.DESTROY, function (evt) {
-      graph.setEnabled(true);
-      mxEffects.fadeOut(background, 50, true,
-        10, 30, true);
-    });
-
-    graph.setEnabled(false);
-    graph.tooltipHandler.hide();
-    wnd.setVisible(true);
   }
 
   addSidebarIcon(graph, sidebar, label, image, typeShape?) {
@@ -716,7 +601,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             });
         })
         menu.addItem('Add Sequences', './assets/editors/images/icons/stage-icon.png', function () {
-          that.addChild(graph, cell, cell.style, 'add-stage');
+
         });
       }
     } else {
@@ -727,126 +612,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         graph.zoomActual();
       });
     }
-  }
-
-  addChild(graph, cell, typeShape?, action?) {
-    var that = this;
-    var model = graph.getModel();
-    var parent = graph.getDefaultParent();
-    var vertex;
-    // var labelAction = '<div style="position: relative;">' +
-    //   '<img src="./assets/editors/images/action-play-pic.png" style = "height: 88px; width: 90px;"/>' +
-    //   '<div style ="position: absolute; width: 90px;top: 77px; text-align: center;"><h5>Hành động</h5></div>' +
-    //   '</div>';
-    var lableStage = '<div style="position: relative; ">' +
-      '<img src="./assets/editors/images/steps.png" style="width:121px; background-color: #3ecc67; padding: 10px; border-radius: 13px; height: 120px">' +
-      '<div style ="position: absolute; text-align: center; width: 120px;"><h5>Giai đoạn</h5></div>' +
-      '</div>';
-
-    // var lableSameTime = '<div style="position: relative;">' +
-    //   '<img src="./assets/editors/images/plus.png" style="height: 50px; width: 50px;">' +
-    //   '<div style ="position: absolute; text-align: center; top:58px; left: -14px; width: 60px;"><h5>Đồng thời</h5></div>' +
-    //   '</div>';
-
-
-    var vertexAction;
-    model.beginUpdate();
-    try {
-      // if (action == "add-action") {
-      //   vertex = graph.insertVertex(parent, null, labelAction, cell.geometry.x + 200, cell.geometry.y + that.offsetY, 90, 60, 'action');
-      //   var edge = graph.insertEdge(parent, null, '', cell, vertex);
-      //   edge.geometry.x = 100;
-      //   edge.geometry.y = 0;
-      //   edge.geometry.offset = new mxPoint(0, -20);
-      // }
-
-      // if (action == "add-sametime") {
-      //   vertex = graph.insertVertex(parent, that.makeid(9), lableSameTime, cell.geometry.x + 200, cell.geometry.y + that.offsetY, 90, 60, 'same-time');
-      //   var edge = graph.insertEdge(parent, that.makeid(9), '', cell, vertex);
-      //   edge.geometry.x = 1;
-      //   edge.geometry.y = 0;
-      //   edge.geometry.offset = new mxPoint(0, -20);
-      // }
-
-      // if (action == "add-stage") {
-      //   vertexAction = graph.insertVertex(parent, that.makeid(9), labelAction, cell.geometry.x + 220, cell.geometry.y + that.offsetY, 90, 60, 'action')
-      //   var edgeAction = graph.insertEdge(parent, that.makeid(9), '', cell, vertexAction);
-      //   edgeAction.geometry.x = 1;
-      //   edgeAction.geometry.y = 0;
-      //   edgeAction.geometry.offset = new mxPoint(0, -20);
-
-      //   var stage = new ProjectTaskTypeSave();
-      //   stage.name = "Giai đoạn";
-      //   stage.projectIds = [];
-      //   stage.projectIds.push(that.id);
-      //   that.stageService.create(stage).subscribe(
-      //     result => {
-      //       vertex = graph.insertVertex(parent, result.id, cell.value, cell.geometry.x + 400, cell.geometry.y, cell.geometry.width, cell.geometry.height, typeShape);
-      //       vertex.mxTransient.push('name');
-      //       vertex.mxTransient.push('priority');
-      //       vertex.name = result.name;
-      //       vertex.priority = "normal";
-      //       vertex.geometry.alternateBounds = new mxRectangle(0, 0, 120, 119);
-
-      //       var edge = graph.insertEdge(parent, that.makeid(9), '', vertexAction, vertex);
-      //       edge.geometry.x = 1;
-      //       edge.geometry.y = 0;
-      //       edge.geometry.offset = new mxPoint(0, -20);
-
-      //       var enc = new mxCodec(mxUtils.createXmlDocument());
-      //       var node = enc.encode(graph.getModel());
-      //       var value = new ProjectProjectSave();
-      //       value.xml = mxUtils.getPrettyXml(node);
-      //       value.name = that.formGroup.get('name').value;
-      //       value.projectType = "project-process";
-      //       that.projectService.update(that.id, value).subscribe(
-      //         () => { }
-      //       );
-      //     });
-
-
-      // }
-
-      // if (action == "action-stage") {
-      //   var stage = new ProjectTaskTypeSave();
-      //   stage.name = "Giai đoạn";
-      //   stage.projectIds = [];
-      //   stage.projectIds.push(that.id);
-      //   that.stageService.create(stage).subscribe(
-      //     result => {
-      //       vertex = graph.insertVertex(parent, result.id, lableStage, cell.geometry.x + 200, cell.geometry.y - that.offsetY, 120, 119, 'stage');
-      //       vertex.mxTransient.push('name');
-      //       vertex.mxTransient.push('priority');
-      //       vertex.name = result.name;
-      //       vertex.priority = "normal";
-      //       vertex.geometry.alternateBounds = new mxRectangle(0, 0, 120, 119);
-
-      //       var edge = graph.insertEdge(parent, that.makeid(9), '', cell, vertex);
-      //       edge.geometry.x = 1;
-      //       edge.geometry.y = 0;
-      //       edge.geometry.offset = new mxPoint(0, -20);
-
-      //       var enc = new mxCodec(mxUtils.createXmlDocument());
-      //       var node = enc.encode(graph.getModel());
-      //       var value = new ProjectProjectSave();
-      //       value.xml = mxUtils.getPrettyXml(node);
-      //       value.name = that.formGroup.get('name').value;
-      //       value.projectType = "project-process";
-      //       that.projectService.update(that.id, value).subscribe(
-      //         () => { }
-      //       );
-      //     });
-
-
-      // }
-
-      // addOverlays(graph, vertex, true);
-    }
-    finally {
-      model.endUpdate();
-    }
-
-    return vertex;
   }
 
   onSave() {
