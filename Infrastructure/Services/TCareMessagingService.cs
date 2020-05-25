@@ -28,6 +28,7 @@ namespace Infrastructure.Services
                 .Include(x => x.TCareCampaign)
                 .Select(x => new TCareMessagingDisplay
                 {
+                    Id = x.Id,
                     MethodType = x.MethodType,
                     IntervalType = x.IntervalType,
                     IntervalNumber = x.IntervalNumber,

@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     {
         Task<SendFacebookMessageReponse> SendMessageTagTextAsync(string text, string psid, string access_token, string tag = "ACCOUNT_UPDATE");
         Task<SendFacebookMessageReponse> SendMessageMarketingTextAsync(object message, string psid, string access_token, string tag = "ACCOUNT_UPDATE");
+        Task<SendFacebookMessageReponse> SendMessageTCareTextAsync(string message, string psid, string access_token, string tag = "ACCOUNT_UPDATE");
     }
 }
