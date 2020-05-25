@@ -235,6 +235,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareCampaignService, TCareCampaignService>();
             services.AddScoped<ITCareRuleService, TCareRuleService>();
             services.AddScoped<ITCarePropertyService, TCarePropertyService>();
+            services.AddScoped<ITCareMessagingService, TCareMessagingService>();
 
             services.AddMemoryCache();
 
@@ -327,6 +328,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ServiceCardOrderLineProfile());
                 mc.AddProfile(new TCareCampaignProfile());
                 mc.AddProfile(new TCareRuleProfile());
+                mc.AddProfile(new TCareMessagingProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

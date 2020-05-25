@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class TCareMessaging : BaseEntity
+    public class TCareMessagingDisplay
     {
+        public Guid Id { get; set; }
         /// <summary>
         /// phương thức :
         /// interval : trước thời gian
@@ -36,9 +38,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string ChannelType { get; set; }
 
-        public Guid? ChannelSocialId { get; set; }
-        public FacebookPage ChannelSocial { get; set; }
-
+        public Guid ChannelSocialId { get; set; }
+        public FacebookPageSimple ChannelSocial { get; set; }
 
         public Guid TCareCampaignId { get; set; }
         public TCareCampaign TCareCampaign { get; set; }

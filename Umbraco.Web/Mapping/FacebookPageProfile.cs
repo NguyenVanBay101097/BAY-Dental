@@ -17,6 +17,10 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore());
 
             CreateMap<FacebookPageLinkSave, FacebookPage>();
+
+            CreateMap<FacebookPage, FacebookPageSimple>();
+            CreateMap<FacebookPageSimple, FacebookPage>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }
