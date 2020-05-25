@@ -59,5 +59,15 @@ namespace TMTDentalAPI.Controllers
             await _campaignService.UpdateAsync(campain);
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var campaign = await _campaignService.GetByIdAsync(id);
+            if (campaign == null)
+                return BadRequest();
+            await _campaignService.DeleteAsync(campaign);
+            return NoContent();
+        }
     }
 }
