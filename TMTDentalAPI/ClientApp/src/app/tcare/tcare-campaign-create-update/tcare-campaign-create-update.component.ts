@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TcareService, TCareRuleSave, TCareCampaignBasic, TCareCampaignDisplay, TCareCampaignSave } from '../tcare.service';
-import { TcareCampaignDialogRuleComponent } from '../tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component';
+import { TcareCampaignDialogRuleBirthdayComponent } from '../tcare-campaign-dialog-rule-birthday/tcare-campaign-dialog-rule-birthday.component';
 
 declare var mxGeometry: any;
 declare var mxUtils: any;
@@ -895,7 +895,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       }
       if (cell.style == "birthday") {
         menu.addItem('Cài đặt', './assets/editors/images/icons/settings.png', function () {
-          let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+          let modalRef = that.modalService.open(TcareCampaignDialogRuleBirthdayComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
           modalRef.componentInstance.title = 'Cài đặt';
           modalRef.componentInstance.cell = cell;
           modalRef.result.then(

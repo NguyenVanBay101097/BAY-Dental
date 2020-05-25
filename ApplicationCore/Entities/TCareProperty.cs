@@ -10,7 +10,6 @@ namespace ApplicationCore.Entities
         public TCareRule Rule { get; set; }
 
         public string Name { get; set; }
-
         /// <summary>
         /// Text, Integer, DateTime, Decimal, Double, Many2One
         /// </summary>

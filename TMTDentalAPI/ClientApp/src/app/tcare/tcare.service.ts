@@ -87,4 +87,12 @@ export class TcareService {
   createTCareRule(val: TCareRuleSave): Observable<TCareRuleBasic> {
     return this.http.post<TCareRuleBasic>(this.base_api + this.apiUrlRules, val);
   }
+
+  updateTCareRuleBirthday(id, val: TCareRuleSave) {
+    return this.http.put(`${this.base_api + this.apiUrlRules}/${id}/Birthday/`, val);
+  }
+
+  getTcareRuleBirthday(id) {
+    return this.http.get(this.base_api + this.apiUrlRules + '/' + id);
+  }
 }
