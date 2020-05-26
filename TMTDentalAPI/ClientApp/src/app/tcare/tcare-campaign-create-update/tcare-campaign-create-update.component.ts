@@ -601,7 +601,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             });
         })
         menu.addItem('Add Sequences', './assets/editors/images/icons/stage-icon.png', function () {
-
+          that.addChild(graph, cell, cell.style, 'add-stage');
         });
       }
     } else {
@@ -612,6 +612,126 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         graph.zoomActual();
       });
     }
+  }
+
+  addChild(graph, cell, typeShape?, action?) {
+    var that = this;
+    var model = graph.getModel();
+    var parent = graph.getDefaultParent();
+    var vertex;
+    // var labelAction = '<div style="position: relative;">' +
+    //   '<img src="./assets/editors/images/action-play-pic.png" style = "height: 88px; width: 90px;"/>' +
+    //   '<div style ="position: absolute; width: 90px;top: 77px; text-align: center;"><h5>Hành động</h5></div>' +
+    //   '</div>';
+    var lableStage = '<div style="position: relative; ">' +
+      '<img src="./assets/editors/images/steps.png" style="width:121px; background-color: #3ecc67; padding: 10px; border-radius: 13px; height: 120px">' +
+      '<div style ="position: absolute; text-align: center; width: 120px;"><h5>Giai đoạn</h5></div>' +
+      '</div>';
+
+    // var lableSameTime = '<div style="position: relative;">' +
+    //   '<img src="./assets/editors/images/plus.png" style="height: 50px; width: 50px;">' +
+    //   '<div style ="position: absolute; text-align: center; top:58px; left: -14px; width: 60px;"><h5>Đồng thời</h5></div>' +
+    //   '</div>';
+
+
+    var vertexAction;
+    model.beginUpdate();
+    try {
+      // if (action == "add-action") {
+      //   vertex = graph.insertVertex(parent, null, labelAction, cell.geometry.x + 200, cell.geometry.y + that.offsetY, 90, 60, 'action');
+      //   var edge = graph.insertEdge(parent, null, '', cell, vertex);
+      //   edge.geometry.x = 100;
+      //   edge.geometry.y = 0;
+      //   edge.geometry.offset = new mxPoint(0, -20);
+      // }
+
+      // if (action == "add-sametime") {
+      //   vertex = graph.insertVertex(parent, that.makeid(9), lableSameTime, cell.geometry.x + 200, cell.geometry.y + that.offsetY, 90, 60, 'same-time');
+      //   var edge = graph.insertEdge(parent, that.makeid(9), '', cell, vertex);
+      //   edge.geometry.x = 1;
+      //   edge.geometry.y = 0;
+      //   edge.geometry.offset = new mxPoint(0, -20);
+      // }
+
+      // if (action == "add-stage") {
+      //   vertexAction = graph.insertVertex(parent, that.makeid(9), labelAction, cell.geometry.x + 220, cell.geometry.y + that.offsetY, 90, 60, 'action')
+      //   var edgeAction = graph.insertEdge(parent, that.makeid(9), '', cell, vertexAction);
+      //   edgeAction.geometry.x = 1;
+      //   edgeAction.geometry.y = 0;
+      //   edgeAction.geometry.offset = new mxPoint(0, -20);
+
+      //   var stage = new ProjectTaskTypeSave();
+      //   stage.name = "Giai đoạn";
+      //   stage.projectIds = [];
+      //   stage.projectIds.push(that.id);
+      //   that.stageService.create(stage).subscribe(
+      //     result => {
+      //       vertex = graph.insertVertex(parent, result.id, cell.value, cell.geometry.x + 400, cell.geometry.y, cell.geometry.width, cell.geometry.height, typeShape);
+      //       vertex.mxTransient.push('name');
+      //       vertex.mxTransient.push('priority');
+      //       vertex.name = result.name;
+      //       vertex.priority = "normal";
+      //       vertex.geometry.alternateBounds = new mxRectangle(0, 0, 120, 119);
+
+      //       var edge = graph.insertEdge(parent, that.makeid(9), '', vertexAction, vertex);
+      //       edge.geometry.x = 1;
+      //       edge.geometry.y = 0;
+      //       edge.geometry.offset = new mxPoint(0, -20);
+
+      //       var enc = new mxCodec(mxUtils.createXmlDocument());
+      //       var node = enc.encode(graph.getModel());
+      //       var value = new ProjectProjectSave();
+      //       value.xml = mxUtils.getPrettyXml(node);
+      //       value.name = that.formGroup.get('name').value;
+      //       value.projectType = "project-process";
+      //       that.projectService.update(that.id, value).subscribe(
+      //         () => { }
+      //       );
+      //     });
+
+
+      // }
+
+      // if (action == "action-stage") {
+      //   var stage = new ProjectTaskTypeSave();
+      //   stage.name = "Giai đoạn";
+      //   stage.projectIds = [];
+      //   stage.projectIds.push(that.id);
+      //   that.stageService.create(stage).subscribe(
+      //     result => {
+      //       vertex = graph.insertVertex(parent, result.id, lableStage, cell.geometry.x + 200, cell.geometry.y - that.offsetY, 120, 119, 'stage');
+      //       vertex.mxTransient.push('name');
+      //       vertex.mxTransient.push('priority');
+      //       vertex.name = result.name;
+      //       vertex.priority = "normal";
+      //       vertex.geometry.alternateBounds = new mxRectangle(0, 0, 120, 119);
+
+      //       var edge = graph.insertEdge(parent, that.makeid(9), '', cell, vertex);
+      //       edge.geometry.x = 1;
+      //       edge.geometry.y = 0;
+      //       edge.geometry.offset = new mxPoint(0, -20);
+
+      //       var enc = new mxCodec(mxUtils.createXmlDocument());
+      //       var node = enc.encode(graph.getModel());
+      //       var value = new ProjectProjectSave();
+      //       value.xml = mxUtils.getPrettyXml(node);
+      //       value.name = that.formGroup.get('name').value;
+      //       value.projectType = "project-process";
+      //       that.projectService.update(that.id, value).subscribe(
+      //         () => { }
+      //       );
+      //     });
+
+
+      // }
+
+      // addOverlays(graph, vertex, true);
+    }
+    finally {
+      model.endUpdate();
+    }
+
+    return vertex;
   }
 
   onSave() {
