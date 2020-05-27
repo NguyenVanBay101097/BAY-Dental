@@ -107,6 +107,25 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_tcare" formControlName="groupTCare"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_tcare" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_tcare">TCare</label>
+                                <div class="text-muted">
+                                    Tạo kịch bản chăm sóc khách hàng
+                                </div>
+                                <div *ngIf="groupTCareValue == true">
+                                    <label>Tự động chạy tất cả kịch bản mỗi ngày vào lúc</label>
+                                    <kendo-timepicker formControlName="tCareRunAtObj"></kendo-timepicker>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <h2>Đa chi nhánh</h2>
