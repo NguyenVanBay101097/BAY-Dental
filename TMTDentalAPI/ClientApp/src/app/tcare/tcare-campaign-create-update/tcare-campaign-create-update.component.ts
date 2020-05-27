@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Renderer2 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -44,7 +44,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   offsetY = 30;
   formGroup: FormGroup;
   priority = null;
-  title = "Cài đặt kịch bản";
+  title = "Kịch bản";
   campaign: TCareCampaignDisplay;
 
   constructor(
@@ -53,7 +53,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     @Inject('BASE_API') private base_url: string,
     private modalService: NgbModal,
     private tcareService: TcareService,
-    private router: Router
+    private router: Router,
+    private renderer2: Renderer2
   ) { }
 
   ngOnInit() {
@@ -168,7 +169,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       graph.isValidConnection = function (source, target) {
         var styleSource = this.getModel().getStyle(source);
         var styleTarget = this.getModel().getStyle(target);
-        if (styleSource == styleTarget)
+
+        if (styleSource == styleTarget || !styleTarget)
           return false;
 
         else
@@ -190,11 +192,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         return !this.isSwimlane(cell);
       }
 
-      // To disable the folding icon, use the following code:
-
-      graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-        return that.createPopupMenu(graph, menu, cell, evt);
-      };
+      //Add ContextMenu
+      // graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+      //   return that.createPopupMenu(graph, menu, cell, evt);
+      // };
 
       // Shows a "modal" window when double clicking a vertex.
       graph.dblClick = function (evt, cell) {
@@ -209,7 +210,26 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             this.startEditingAtCell(cell);
           }
           else {
-            return;
+            if (cell.style == "sequences") {
+              let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+              modalRef.componentInstance.title = 'Cài đặt';
+              modalRef.componentInstance.cell = cell;
+              modalRef.componentInstance.campaignId = that.id;
+              modalRef.result.then(
+                result => {
+
+                });
+            }
+            if (cell.style == "birthday") {
+              let modalRef = that.modalService.open(TcareCampaignDialogRuleBirthdayComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+              modalRef.componentInstance.title = 'Cài đặt';
+              modalRef.componentInstance.cell = cell;
+              modalRef.result.then(
+                result => {
+
+                });
+            }
+            else { return false; }
           }
         }
 
@@ -500,20 +520,22 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     }
 
     // Creates the image which is used as the sidebar icon (drag source)
-    var img = document.createElement('img');
+    var div = that.renderer2.createElement('div');
+    that.renderer2.addClass(div, 'sidebar-icon')
+    var lab = that.renderer2.createElement('lable');
+    var content = that.renderer2.createText(typeShape);
+    that.renderer2.appendChild(lab, content);
+    var img = that.renderer2.createElement('img');
     img.setAttribute('src', image);
     img.style.width = '48px';
     img.style.height = '48px';
-    img.style.margin = "16px";
     img.title = typeShape;
-    sidebar.appendChild(img);
-    var dragElt = document.createElement('div');
-    dragElt.style.border = 'dashed black 1px';
-    dragElt.style.width = '120px';
-    dragElt.style.height = '120px';
-
-    // Creates the image which is used as the drag icon (preview)
-    var ds = mxUtils.makeDraggable(img, graph, funct, dragElt, 0, 0, true, true);
+    that.renderer2.appendChild(div, img);
+    that.renderer2.appendChild(div, lab);
+    sidebar.appendChild(div);
+    // When drag Icon image
+    var dragImage = div.cloneNode(true);
+    var ds = mxUtils.makeDraggable(img, graph, funct, dragImage, 0, 0, true, true);
     ds.setGuidesEnabled(true);
   }
 
