@@ -1,1 +1,108 @@
-<p>tcare-campaign-dialog-sequences works!</p>
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_12">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 0" colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nội dung gửi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea formControlName="content"
+                                        placeholder="Nhập nội dung bạn muốn gửi đến khách hàng" rows="3"
+                                        class="form-control"></textarea>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Hình thức gửi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="radio-inline">
+                                        <input type="radio" name="methodType" id="exampleRadios3" value="interval"
+                                            (click)="chossesMethodType('interval')" formControlName="methodType">
+                                        <label class="radio-inline" for="exampleRadios3">
+                                            Thời gian cụ thể
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline">
+                                        <input type="radio" name="methodType" id="exampleRadios1" value="shedule"
+                                            (click)="chossesMethodType('shedule')" formControlName="methodType">
+                                        <label class="radio-inline" for="exampleRadios1">
+                                            Thời gian
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"></label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div *ngIf="type == 'interval'" class="form-group" style="display: inline-flex;">
+                                        <kendo-numerictextbox [placeholder]="'Chọn kênh'" class="form-control"
+                                            formControlName="intervalNumber" [min]="0" [format]="'n0'">
+                                        </kendo-numerictextbox>
+                                        <select class="form-control" formControlName="intervalType" id="sel1"
+                                            style="margin-left: 10px;">
+                                            <option value="minutes">minutes</option>
+                                            <option value="hours">hours</option>
+                                            <option value="weeks">weeks</option>
+                                            <option value="months">months</option>
+                                        </select>
+
+                                    </div>
+                                    <div *ngIf="type == 'shedule'" class="form-group">
+                                        <kendo-datetimepicker [format]="'MM/dd/yyyy HH:mm'"
+                                            formControlName="sheduleDate">
+                                        </kendo-datetimepicker>
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Kênh gửi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" style="display: inline-flex;">
+                                    <kendo-combobox style="min-width: 78%;" class="form-control"
+                                        [data]="filterdChannelSocials" [textField]="'pageName'" [filterable]="true"
+                                        #channelSocialCbx formControlName="channelSocialId" [valueField]="'id'"
+                                        [valuePrimitive]="true">
+                                    </kendo-combobox>
+
+                                    <select class="form-control" formControlName="channelType" id="sel1"
+                                        style="min-width: 102px; margin-left: 10px;">
+                                        <option value="priority">Ưu tiên</option>
+                                        <option value="fixed">Cố định</option>
+                                    </select>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
