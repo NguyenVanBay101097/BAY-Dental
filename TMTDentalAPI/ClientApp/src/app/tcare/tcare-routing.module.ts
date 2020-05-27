@@ -4,8 +4,8 @@ import { TcareCampaignCreateUpdateComponent } from './tcare-campaign-create-upda
 import { TcareCampaignListComponent } from './tcare-campaign-list/tcare-campaign-list.component';
 
 const routes: Routes = [
-  { path: 'tcare/:id', component: TcareCampaignCreateUpdateComponent },
-  { path: 'tcare', component: TcareCampaignListComponent }
+  { path: 'tcare-campaign/:id', component: TcareCampaignCreateUpdateComponent },
+  { path: 'tcare-campaigns', component: TcareCampaignListComponent }
 ];
 
 @NgModule({

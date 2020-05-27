@@ -1,10 +1,17 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TcareService, TCareRuleSave, TCareCampaignBasic, TCareCampaignDisplay, TCareCampaignSave, TCareMessageSave } from '../tcare.service';
-import { TcareCampaignDialogRuleBirthdayComponent } from '../tcare-campaign-dialog-rule-birthday/tcare-campaign-dialog-rule-birthday.component';
-import { TcareCampaignDialogSequencesComponent } from '../tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component';
+import { Component, OnInit, Inject, Renderer2 } from "@angular/core";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import {
+  TcareService,
+  TCareRuleSave,
+  TCareCampaignBasic,
+  TCareCampaignDisplay,
+  TCareCampaignSave,
+  TCareMessageSave,
+} from "../tcare.service";
+import { TcareCampaignDialogRuleBirthdayComponent } from "../tcare-campaign-dialog-rule-birthday/tcare-campaign-dialog-rule-birthday.component";
+import { TcareCampaignDialogSequencesComponent } from "../tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component";
 
 declare var mxGeometry: any;
 declare var mxUtils: any;
@@ -34,9 +41,9 @@ declare var mxParallelEdgeLayout: any;
 declare var mxLayoutManager: any;
 
 @Component({
-  selector: 'app-tcare-campaign-create-update',
-  templateUrl: './tcare-campaign-create-update.component.html',
-  styleUrls: ['./tcare-campaign-create-update.component.css']
+  selector: "app-tcare-campaign-create-update",
+  templateUrl: "./tcare-campaign-create-update.component.html",
+  styleUrls: ["./tcare-campaign-create-update.component.css"],
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit {
   editorDefind: any;
@@ -44,41 +51,42 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   offsetY = 30;
   formGroup: FormGroup;
   priority = null;
-  title = "Cài đặt kịch bản";
+  title = "kịch bản";
   campaign: TCareCampaignDisplay;
 
   constructor(
     private activeRoute: ActivatedRoute,
     private fb: FormBuilder,
-    @Inject('BASE_API') private base_url: string,
+    @Inject("BASE_API") private base_url: string,
     private modalService: NgbModal,
     private tcareService: TcareService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private renderer2: Renderer2
+  ) {}
 
   ngOnInit() {
     this.campaign = new TCareCampaignDisplay();
-    this.id = this.activeRoute.params['_value'].id;
+    this.id = this.activeRoute.params["_value"].id;
     this.formGroup = this.fb.group({
-      name: ['', Validators.required]
-    })
+      name: ["", Validators.required],
+    });
 
     this.main(
-      document.getElementById('graphContainer'),
-      document.getElementById('outlineContainer'),
-      document.getElementById('toolbarContainer'),
-      document.getElementById('sidebarContainer'),
-      document.getElementById('statusContainer')
+      document.getElementById("graphContainer"),
+      document.getElementById("outlineContainer"),
+      document.getElementById("toolbarContainer"),
+      document.getElementById("sidebarContainer_sequences"),
+      document.getElementById("sidebarContainer_goals"),
+      document.getElementById("statusContainer")
     );
   }
 
-  main(container, outline, toolbar, sidebar, status) {
+  main(container, outline, toolbar, sidebar_sequences, sidebar_goals, status) {
     var that = this;
     if (!mxClient.isBrowserSupported()) {
       // Displays an error message if the browser is not supported.
-      mxUtils.error('Browser is not supported!', 200, false);
-    }
-    else {
+      mxUtils.error("Browser is not supported!", 200, false);
+    } else {
       mxConstants.MIN_HOTSPOT_SIZE = 16;
       mxConstants.DEFAULT_HOTSPOT = 1;
       // Enables guides
@@ -93,11 +101,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       // Workaround for Internet Explorer ignoring certain CSS directives
       if (mxClient.IS_QUIRKS) {
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
         new mxDivResizer(container);
         new mxDivResizer(outline);
         new mxDivResizer(toolbar);
-        new mxDivResizer(sidebar);
+        new mxDivResizer(sidebar_sequences);
+        new mxDivResizer(sidebar_goals);
         new mxDivResizer(status);
       }
 
@@ -118,35 +127,37 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       graph.setDropEnabled(false);
 
       // Uses the port icon while connections are previewed
-      mxConnectionHandler.prototype.connectImage = new mxImage(that.base_url + 'assets/editors/images/connector.gif', 16, 16);
+      mxConnectionHandler.prototype.connectImage = new mxImage(
+        that.base_url + "assets/editors/images/connector.gif",
+        16,
+        16
+      );
       // Centers the port icon on the target port
       graph.connectionHandler.targetConnectImage = true;
 
-      // Does not allow dangling edges  
+      // Does not allow dangling edges
       graph.setAllowDanglingEdges(false);
 
       // Sets the graph container and configures the editor
       editor.setGraphContainer(container);
-      var config = mxUtils.load(
-        './assets/editors/config/keyhandler-commons.xml').
-        getDocumentElement();
+      var config = mxUtils
+        .load("./assets/editors/config/keyhandler-commons.xml")
+        .getDocumentElement();
       editor.configure(config);
 
       var iconTolerance = 20;
-      var splash = document.getElementById('splash');
+      var splash = document.getElementById("splash");
       if (splash != null) {
         try {
           mxEvent.release(splash);
           mxEffects.fadeOut(splash, 100, true);
-        }
-        catch (e) {
-
+        } catch (e) {
           // mxUtils is not available (library not loaded)
           splash.parentNode.removeChild(splash);
         }
       }
 
-      var group = new mxCell('Group', new mxGeometry(), 'group');
+      var group = new mxCell("Group", new mxGeometry(), "group");
       group.setVertex(false);
       editor.defaultGroup = group;
       editor.groupBorderSize = 20;
@@ -158,7 +169,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       // Disables drilling into non-swimlanes.
       graph.isValidRoot = function (cell) {
         return this.isValidDropTarget(cell);
-      }
+      };
 
       // Does not allow selection of locked cells
       graph.isCellSelectable = function (cell) {
@@ -166,15 +177,32 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       };
 
       graph.isValidConnection = function (source, target) {
+        const source_id = source.id;
+        const target_id = target.id;
+        var source_edge_length = 0;
+        if (source.edges) {
+          source_edge_length = source.edges.length;
+        }
+
+        for (let i = 0; i < source_edge_length; i++) {
+          if (
+            source_id == source.edges[i].source.id &&
+            target_id == source.edges[i].target.id
+          ) {
+            return false;
+          }
+          if (
+            source_id == source.edges[i].target.id &&
+            target_id == source.edges[i].source.id
+          ) {
+            return false;
+          }
+        }
         var styleSource = this.getModel().getStyle(source);
         var styleTarget = this.getModel().getStyle(target);
-        if (styleSource == styleTarget)
-          return false;
-
-        else
-          return true;
-      }
-
+        if (styleSource == styleTarget || !styleTarget) return false;
+        return true;
+      };
 
       // Disables HTML labels for swimlanes to avoid conflict
       // for the event processing on the child cells. HTML
@@ -188,28 +216,59 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       // See also: configureStylesheet.
       graph.isHtmlLabel = function (cell) {
         return !this.isSwimlane(cell);
-      }
+      };
 
-      // To disable the folding icon, use the following code:
-
+      //Add ContextMenu
       graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-        return that.createPopupMenu(graph, menu, cell, evt);
+        return that.createPopupMenu(editor, graph, menu, cell, evt);
       };
 
       // Shows a "modal" window when double clicking a vertex.
       graph.dblClick = function (evt, cell) {
         // Do not fire a DOUBLE_CLICK event here as mxEditor will
         // consume the event and start the in-place editor.
-        if (this.isEnabled() &&
+        if (
+          this.isEnabled() &&
           !mxEvent.isConsumed(evt) &&
           cell != null &&
-          this.isCellEditable(cell)) {
-          if (this.model.isEdge(cell) ||
-            !this.isHtmlLabel(cell)) {
+          this.isCellEditable(cell)
+        ) {
+          if (this.model.isEdge(cell) || !this.isHtmlLabel(cell)) {
             this.startEditingAtCell(cell);
-          }
-          else {
-            return;
+          } else {
+            if (cell.style == "sequences") {
+              let modalRef = that.modalService.open(
+                TcareCampaignDialogSequencesComponent,
+                {
+                  size: "lg",
+                  windowClass: "o_technical_modal",
+                  scrollable: true,
+                  backdrop: "static",
+                  keyboard: false,
+                }
+              );
+              modalRef.componentInstance.title = "Cài đặt tiến trình";
+              modalRef.componentInstance.cell = cell;
+              modalRef.componentInstance.campaignId = that.id;
+              modalRef.result.then((result) => {});
+            }
+            if (cell.style == "birthday") {
+              let modalRef = that.modalService.open(
+                TcareCampaignDialogRuleBirthdayComponent,
+                {
+                  size: "lg",
+                  windowClass: "o_technical_modal",
+                  scrollable: true,
+                  backdrop: "static",
+                  keyboard: false,
+                }
+              );
+              modalRef.componentInstance.title = "Cài đặt sinh nhật";
+              modalRef.componentInstance.cell = cell;
+              modalRef.result.then((result) => {});
+            } else {
+              return false;
+            }
           }
         }
 
@@ -236,46 +295,49 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         this.images = [];
         var graph = value.view.graph;
         // Delete
-        var img = mxUtils.createImage('./assets/editors/images/delete2.png');
-        img.setAttribute('title', 'Delete');
-        img.style.position = 'absolute';
-        img.style.cursor = 'pointer';
-        img.style.width = '16px';
-        img.style.height = '16px';
-        img.style.left = (value.x + value.width) + 'px';
-        img.style.top = (value.y - 16) + 'px';
+        var img = mxUtils.createImage("./assets/editors/images/delete2.png");
+        img.setAttribute("title", "Delete");
+        img.style.position = "absolute";
+        img.style.cursor = "pointer";
+        img.style.width = "16px";
+        img.style.height = "16px";
+        img.style.left = value.x + value.width - 5 + "px";
+        img.style.top = value.y - 10 + "px";
 
-        mxEvent.addGestureListeners(img,
+        mxEvent.addGestureListeners(
+          img,
           mxUtils.bind(this, function (evt) {
             mxEvent.consume(evt);
           })
         );
 
-        //xóa stage 
-        mxEvent.addListener(img, 'click',
+        //xóa stage
+        mxEvent.addListener(
+          img,
+          "click",
           mxUtils.bind(this, function (evt) {
             graph.removeCells([value.cell]);
             mxEvent.consume(evt);
             this.destroy();
-            if (value.cell.style == "sequences") {
-              that.tcareService.deleteTCareMessage(value.cell.id).subscribe(
-                () => {
+            if (value.cell.style == "Sequences") {
+              that.tcareService
+                .deleteTCareMessage(value.cell.id)
+                .subscribe(() => {
                   that.updateCampaign(graph);
-                }
-              )
+                });
             }
-            if (value.cell.style == "birthday") {
-              that.tcareService.deleteTCareRuleBirthday(value.cell.id).subscribe(
-                () => {
+            if (value.cell.style == "Birthday") {
+              that.tcareService
+                .deleteTCareRuleBirthday(value.cell.id)
+                .subscribe(() => {
                   that.updateCampaign(graph);
-                }
-              )
+                });
             }
           })
         );
         value.view.graph.container.appendChild(img);
         this.images.push(img);
-      };
+      }
 
       mxIconSet.prototype.destroy = function () {
         if (this.images != null) {
@@ -288,98 +350,147 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       };
 
       //Mouse listener
-      graph.addMouseListener(
-        {
-          currentState: null,
-          currentIconSet: null,
-          mouseDown: function (sender, me) {
-            // Hides icons on mouse down
-            if (this.currentState != null) {
-              this.dragLeave(me.getEvent(), this.currentState);
-              this.currentState = null;
-            }
-          },
-          mouseMove: function (sender, me) {
-            if (this.currentState != null && (me.getState() == this.currentState ||
-              me.getState() == null)) {
-              var tol = iconTolerance;
-              var tmp = new mxRectangle(me.getGraphX() - tol,
-                me.getGraphY() - tol, 2 * tol, 2 * tol);
+      graph.addMouseListener({
+        currentState: null,
+        currentIconSet: null,
+        mouseDown: function (sender, me) {
+          // Hides icons on mouse down
+          if (this.currentState != null) {
+            this.dragLeave(me.getEvent(), this.currentState);
+            this.currentState = null;
+          }
+        },
+        mouseMove: function (sender, me) {
+          if (
+            this.currentState != null &&
+            (me.getState() == this.currentState || me.getState() == null)
+          ) {
+            var tol = iconTolerance;
+            var tmp = new mxRectangle(
+              me.getGraphX() - tol,
+              me.getGraphY() - tol,
+              2 * tol,
+              2 * tol
+            );
 
-              if (mxUtils.intersects(tmp, this.currentState)) {
-                return;
-              }
-            }
-
-            var tmp = graph.view.getState(me.getCell());
-
-            // Ignores everything but vertices
-            if (graph.isMouseDown || (tmp != null && !graph.getModel().isVertex(tmp.cell))) {
-              tmp = null;
-            }
-
-            if (tmp != this.currentState) {
-              if (this.currentState != null) {
-                this.dragLeave(me.getEvent(), this.currentState);
-              }
-
-              this.currentState = tmp;
-
-              if (this.currentState != null) {
-                this.dragEnter(me.getEvent(), this.currentState);
-              }
-            }
-          },
-          mouseUp: function (sender, me) { },
-          dragEnter: function (evt, state) {
-            if (this.currentIconSet == null) {
-              this.currentIconSet = new mxIconSet(state);
-            }
-          },
-          dragLeave: function (evt, state) {
-            if (this.currentIconSet != null) {
-              this.currentIconSet.destroy();
-              this.currentIconSet = null;
+            if (mxUtils.intersects(tmp, this.currentState)) {
+              return;
             }
           }
-        });
 
-      //thêm 1 birthday
-      that.addSidebarIcon(graph, sidebar,
-        '<div style="position: relative;">' +
-        '<img src="./assets/editors/images/birthday.png" style="height: 70px; width: 70px;">' +
-        `<div style ="position:absolute; width: 70px; content:'/a'; white-space: initial;"><h5>Sinh nhật</h5></div>` +
-        '</div>',
-        './assets/editors/images/birthday.png', 'birthday');
+          var tmp = graph.view.getState(me.getCell());
+
+          // Ignores everything but vertices
+          if (
+            graph.isMouseDown ||
+            (tmp != null && !graph.getModel().isVertex(tmp.cell))
+          ) {
+            tmp = null;
+          }
+
+          if (tmp != this.currentState) {
+            if (this.currentState != null) {
+              this.dragLeave(me.getEvent(), this.currentState);
+            }
+
+            this.currentState = tmp;
+
+            if (this.currentState != null) {
+              this.dragEnter(me.getEvent(), this.currentState);
+            }
+          }
+        },
+        mouseUp: function (sender, me) {},
+        dragEnter: function (evt, state) {
+          if (this.currentIconSet == null) {
+            this.currentIconSet = new mxIconSet(state);
+          }
+        },
+        dragLeave: function (evt, state) {
+          if (this.currentIconSet != null) {
+            this.currentIconSet.destroy();
+            this.currentIconSet = null;
+          }
+        },
+      });
 
       // thêm 1 step
-      that.addSidebarIcon(graph, sidebar,
+      that.addSidebarIcon(
+        graph,
+        sidebar_sequences,
         '<div style="position: relative; ">' +
-        '<img src="./assets/editors/images/steps.png" style="width:121px; background-color: #3ecc67; padding: 10px; border-radius: 13px; height: 120px">' +
-        `<div style ="position:absolute; width: 120px; content: '/a'; white-space: initial;"><h5>Sequences</h5></div>` +
-        '</div>',
-        './assets/editors/images/steps.png', 'sequences');
+          '<img src="./assets/editors/images/steps.png" style="height: 35px; width: 35px; object-fit: cover;">' +
+          '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Sequence</b></div>' +
+          "</div>",
+        "./assets/editors/images/steps.png",
+        "sequences"
+      );
 
-      var spacer = document.createElement('div');
-      spacer.style.display = 'inline';
-      spacer.style.padding = '8px';
+      //thêm 1 birthday
+      that.addSidebarIcon(
+        graph,
+        sidebar_goals,
+        '<div style="position: relative;">' +
+          '<img src="./assets/editors/images/birthday.png" style="height: 35px; width: 35px; object-fit: cover;">' +
+          '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Sinh nhật</b></div>' +
+          "</div>",
+        "./assets/editors/images/birthday.png",
+        "birthday"
+      );
 
+      var spacer = document.createElement("div");
+      spacer.style.display = "inline";
+      spacer.style.padding = "8px";
 
-      that.addToolbarButton(editor, toolbar, 'cut', 'Cut', './assets/editors/images/cut.png');
-      that.addToolbarButton(editor, toolbar, 'copy', 'Copy', './assets/editors/images/copy.png');
-      that.addToolbarButton(editor, toolbar, 'paste', 'Paste', './assets/editors/images/paste.png');
+      that.addToolbarButton(
+        editor,
+        toolbar,
+        "undo",
+        "",
+        "./assets/editors/images/undo.png"
+      );
+      that.addToolbarButton(
+        editor,
+        toolbar,
+        "redo",
+        "",
+        "./assets/editors/images/redo.png"
+      );
+
       toolbar.appendChild(spacer.cloneNode(true));
-      that.addToolbarButton(editor, toolbar, 'undo', '', './assets/editors/images/undo.png');
-      that.addToolbarButton(editor, toolbar, 'redo', '', './assets/editors/images/redo.png');
-      toolbar.appendChild(spacer.cloneNode(true));
-      that.addToolbarButton(editor, toolbar, 'show', 'Show', './assets/editors/images/camera.png');
 
-      toolbar.appendChild(spacer.cloneNode(true));
-
-      that.addToolbarButton(editor, status, 'zoomIn', '', './assets/editors/images/zoom_in.png', true);
-      that.addToolbarButton(editor, status, 'zoomOut', '', './assets/editors/images/zoom_out.png', true);
-      that.addToolbarButton(editor, status, 'actualSize', '', './assets/editors/images/view_1_1.png', true);
-      that.addToolbarButton(editor, status, 'fit', '', './assets/editors/images/fit_to_size.png', true);
+      that.addToolbarButton(
+        editor,
+        toolbar,
+        "zoomIn",
+        "",
+        "./assets/editors/images/zoom_in.png",
+        true
+      );
+      that.addToolbarButton(
+        editor,
+        toolbar,
+        "zoomOut",
+        "",
+        "./assets/editors/images/zoom_out.png",
+        true
+      );
+      that.addToolbarButton(
+        editor,
+        toolbar,
+        "actualSize",
+        "",
+        "./assets/editors/images/view_1_1.png",
+        true
+      );
+      that.addToolbarButton(
+        editor,
+        toolbar,
+        "fit",
+        "",
+        "./assets/editors/images/fit_to_size.png",
+        true
+      );
 
       // Creates the outline (navigator, overview) for moving
       // around the graph in the top, right corner of the window.
@@ -399,51 +510,46 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     var val = new TCareCampaignSave();
     val.graphXml = mxUtils.getPrettyXml(node);
     val.name = this.campaign.name;
-    this.tcareService.update(this.id, val).subscribe(
-      () => { }
-    );
+    this.tcareService.update(this.id, val).subscribe(() => {});
   }
 
   load(editor) {
     let that = this;
-    this.tcareService.get(this.id).subscribe(
-      result => {
-        this.campaign = result;
-        that.formGroup.get('name').patchValue(result.name);
-        if (result.graphXml) {
-          editor.graph.getModel().beginUpdate();
-          try {
-            var xml = result.graphXml;
-            var doc = mxUtils.parseXml(xml);
-            var dec = new mxCodec(doc);
-            dec.decode(doc.documentElement, editor.graph.getModel());
-          }
-          finally {
-            editor.graph.getModel().endUpdate();
-          }
+    this.tcareService.get(this.id).subscribe((result) => {
+      this.campaign = result;
+      that.formGroup.get("name").patchValue(result.name);
+      if (result.graphXml) {
+        editor.graph.getModel().beginUpdate();
+        try {
+          var xml = result.graphXml;
+          var doc = mxUtils.parseXml(xml);
+          var dec = new mxCodec(doc);
+          dec.decode(doc.documentElement, editor.graph.getModel());
+        } finally {
+          editor.graph.getModel().endUpdate();
         }
       }
-    )
+    });
   }
 
   addToolbarButton(editor, toolbar, action, label, image, isTransparent?) {
-    var button = document.createElement('button');
-    button.style.fontSize = '10';
+    var button = document.createElement("button");
+    button.style.fontSize = "10";
     if (image != null) {
-      var img = document.createElement('img');
-      img.setAttribute('src', image);
-      img.style.width = '16px';
-      img.style.height = '16px';
-      img.style.verticalAlign = 'middle';
-      img.style.marginRight = '2px';
+      var img = document.createElement("img");
+      img.setAttribute("src", image);
+      img.style.width = "16px";
+      img.style.height = "16px";
+      img.style.verticalAlign = "middle";
+      img.style.marginRight = "2px";
       button.appendChild(img);
     }
     if (isTransparent) {
-      button.style.background = 'transparent';
-      button.style.color = '#FFFFFF';
-      button.style.border = 'none';
+      button.style.background = "transparent";
+      button.style.color = "#FFFFFF";
+      button.style.border = "none";
     }
-    mxEvent.addListener(button, 'click', function (evt) {
+    mxEvent.addListener(button, "click", function (evt) {
       setTimeout(() => {
         editor.execute(action);
       }, 100);
@@ -468,52 +574,78 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         if (typeShape == "sequences") {
           var valueMessage = new TCareMessageSave();
           valueMessage.tCareCampaignId = that.id;
-          that.tcareService.createTCareMessage(valueMessage).subscribe(
-            result => {
+          that.tcareService
+            .createTCareMessage(valueMessage)
+            .subscribe((result) => {
               console.log(result);
-              v1 = graph.insertVertex(parent, result.id, label, x, y, 120, 119, typeShape);
-              v1.mxTransient.push('name');
+              v1 = graph.insertVertex(
+                parent,
+                result.id,
+                label,
+                x,
+                y,
+                110,
+                40,
+                typeShape
+              );
+              v1.mxTransient.push("name");
               v1.name = typeShape;
               that.updateCampaign(graph);
-            }
-          )
+            });
         }
 
         if (typeShape == "birthday") {
           var value = new TCareRuleSave();
           value.campaignid = that.id;
           value.type = typeShape;
-          that.tcareService.createTCareRule(value).subscribe(
-            result => {
-              v1 = graph.insertVertex(parent, result.id, label, x, y, 70, 70, typeShape);
-              v1.mxTransient.push('name');
-              v1.name = typeShape;
-              that.updateCampaign(graph);
-            }
-          )
+          that.tcareService.createTCareRule(value).subscribe((result) => {
+            v1 = graph.insertVertex(
+              parent,
+              result.id,
+              label,
+              x,
+              y,
+              40,
+              40,
+              typeShape
+            );
+            v1.mxTransient.push("name");
+            v1.name = typeShape;
+            that.updateCampaign(graph);
+          });
         }
-      }
-      finally {
+      } finally {
         model.endUpdate();
       }
       graph.setSelectionCell(v1);
-    }
+    };
 
     // Creates the image which is used as the sidebar icon (drag source)
-    var img = document.createElement('img');
-    img.setAttribute('src', image);
-    img.style.width = '48px';
-    img.style.height = '48px';
-    img.style.margin = "16px";
+    var div = that.renderer2.createElement("div");
+    that.renderer2.addClass(div, "sidebar-icon");
+    var lab = that.renderer2.createElement("label");
+    var content = that.renderer2.createText(typeShape);
+    that.renderer2.appendChild(lab, content);
+    var img = that.renderer2.createElement("img");
+    img.setAttribute("src", image);
+    img.style.width = "35px";
+    img.style.height = "35px";
     img.title = typeShape;
-    sidebar.appendChild(img);
-    var dragElt = document.createElement('div');
-    dragElt.style.border = 'dashed black 1px';
-    dragElt.style.width = '120px';
-    dragElt.style.height = '120px';
-
-    // Creates the image which is used as the drag icon (preview)
-    var ds = mxUtils.makeDraggable(img, graph, funct, dragElt, 0, 0, true, true);
+    that.renderer2.appendChild(div, img);
+    that.renderer2.appendChild(div, lab);
+    sidebar.appendChild(div);
+    // When drag Icon image
+    var dragImage = div.cloneNode(true);
+    var ds = mxUtils.makeDraggable(
+      img,
+      graph,
+      funct,
+      dragImage,
+      0,
+      0,
+      true,
+      true
+    );
     ds.setGuidesEnabled(true);
   }
 
@@ -523,16 +655,16 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
-    style[mxConstants.STYLE_GRADIENTCOLOR] = '#41B9F5';
-    style[mxConstants.STYLE_FILLCOLOR] = '#8CCDF5';
-    style[mxConstants.STYLE_STROKECOLOR] = '#1B78C8';
-    style[mxConstants.STYLE_FONTCOLOR] = '#000000';
+    style[mxConstants.STYLE_GRADIENTCOLOR] = "#41B9F5";
+    style[mxConstants.STYLE_FILLCOLOR] = "#8CCDF5";
+    style[mxConstants.STYLE_STROKECOLOR] = "#1B78C8";
+    style[mxConstants.STYLE_FONTCOLOR] = "#000000";
     style[mxConstants.STYLE_ROUNDED] = true;
-    style[mxConstants.STYLE_OPACITY] = '80';
-    style[mxConstants.STYLE_FONTSIZE] = '12';
+    // style[mxConstants.STYLE_OPACITY] = '80';
+    style[mxConstants.STYLE_FONTSIZE] = "12";
     style[mxConstants.STYLE_FONTSTYLE] = 0;
-    style[mxConstants.STYLE_IMAGE_WIDTH] = '48';
-    style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
+    // style[mxConstants.STYLE_IMAGE_WIDTH] = '40';
+    // style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
     graph.getStylesheet().putDefaultVertexStyle(style);
 
     style = new Object();
@@ -540,77 +672,65 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-    style[mxConstants.STYLE_FILLCOLOR] = '#FF9103';
-    style[mxConstants.STYLE_GRADIENTCOLOR] = '#F8C48B';
-    style[mxConstants.STYLE_STROKECOLOR] = '#E86A00';
-    style[mxConstants.STYLE_FONTCOLOR] = '#000000';
+    style[mxConstants.STYLE_FILLCOLOR] = "#FF9103";
+    style[mxConstants.STYLE_GRADIENTCOLOR] = "#F8C48B";
+    style[mxConstants.STYLE_STROKECOLOR] = "#E86A00";
+    style[mxConstants.STYLE_FONTCOLOR] = "#000000";
     style[mxConstants.STYLE_ROUNDED] = true;
-    style[mxConstants.STYLE_OPACITY] = '80';
-    style[mxConstants.STYLE_STARTSIZE] = '30';
-    style[mxConstants.STYLE_FONTSIZE] = '16';
+    style[mxConstants.STYLE_OPACITY] = "80";
+    style[mxConstants.STYLE_STARTSIZE] = "30";
+    style[mxConstants.STYLE_FONTSIZE] = "16";
     style[mxConstants.STYLE_FONTSTYLE] = 1;
-    graph.getStylesheet().putCellStyle('group', style);
+    graph.getStylesheet().putCellStyle("group", style);
 
     style = new Object();
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-    style[mxConstants.STYLE_FONTCOLOR] = '#774400';
+    style[mxConstants.STYLE_FONTCOLOR] = "#774400";
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
-    style[mxConstants.STYLE_PERIMETER_SPACING] = '6';
+    style[mxConstants.STYLE_PERIMETER_SPACING] = "6";
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
-    style[mxConstants.STYLE_FONTSIZE] = '10';
+    style[mxConstants.STYLE_FONTSIZE] = "10";
     style[mxConstants.STYLE_FONTSTYLE] = 2;
-    style[mxConstants.STYLE_IMAGE_WIDTH] = '16';
-    style[mxConstants.STYLE_IMAGE_HEIGHT] = '16';
-    graph.getStylesheet().putCellStyle('port', style);
+    style[mxConstants.STYLE_IMAGE_WIDTH] = "16";
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = "16";
+    graph.getStylesheet().putCellStyle("port", style);
 
     style = graph.getStylesheet().getDefaultEdgeStyle();
-    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = '#FFFFFF';
-    style[mxConstants.STYLE_STROKEWIDTH] = '2';
+    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "#FFFFFF";
+    style[mxConstants.STYLE_STROKEWIDTH] = "2";
     style[mxConstants.STYLE_ROUNDED] = true;
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.SideToSide;
-    graph.alternateEdgeStyle = 'elbow=vertical';
+    graph.alternateEdgeStyle = "elbow=vertical";
   }
 
-  createPopupMenu(graph, menu, cell, evt) {
+  createPopupMenu(editor, graph, menu, cell, evt) {
     var that = this;
     if (cell != null) {
-      if (cell.style == "sequences") {
-        menu.addItem('Cài đặt', './assets/editors/images/icons/settings.png', function () {
-          let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-          modalRef.componentInstance.title = 'Cài đặt';
-          modalRef.componentInstance.cell = cell;
-          modalRef.componentInstance.campaignId = that.id;
-          modalRef.result.then(
-            result => {
-
-            });
-        });
-        menu.addItem('Add condition', './assets/editors/images/icons/action-mail.png', function () {
-          mxUtils.alert('Hành động');
-        });
-      }
-      if (cell.style == "birthday") {
-        menu.addItem('Cài đặt', './assets/editors/images/icons/settings.png', function () {
-          let modalRef = that.modalService.open(TcareCampaignDialogRuleBirthdayComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-          modalRef.componentInstance.title = 'Cài đặt';
-          modalRef.componentInstance.cell = cell;
-          modalRef.result.then(
-            result => {
-
-            });
-        })
-        menu.addItem('Add Sequences', './assets/editors/images/icons/stage-icon.png', function () {
-          that.addChild(graph, cell, cell.style, 'add-stage');
-        });
+      if (cell.style) {
+        menu.addItem("Cut", "./assets/editors/images/cut.png",
+          function () {
+            editor.execute("cut");
+          }
+        );
+        menu.addItem("Copy", "./assets/editors/images/copy.png",
+          function () {
+            editor.execute("copy");
+          }
+        );
       }
     } else {
-      menu.addItem('Fit', './assets/editors/images/zoom.gif', function () {
+      menu.addItem("Paste", "./assets/editors/images/paste.png", function () {
+        editor.execute("paste");
+      });
+      menu.addItem("Fit", "./assets/editors/images/zoom.gif", function () {
         graph.fit();
       });
-      menu.addItem('Actual', './assets/editors/images/zoomactual.gif', function () {
-        graph.zoomActual();
-      });
+      menu.addItem("Actual", "./assets/editors/images/zoomactual.gif",
+        function () {
+          graph.zoomActual();
+        }
+      );
     }
   }
 
@@ -623,16 +743,16 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     //   '<img src="./assets/editors/images/action-play-pic.png" style = "height: 88px; width: 90px;"/>' +
     //   '<div style ="position: absolute; width: 90px;top: 77px; text-align: center;"><h5>Hành động</h5></div>' +
     //   '</div>';
-    var lableStage = '<div style="position: relative; ">' +
+    var lableStage =
+      '<div style="position: relative; ">' +
       '<img src="./assets/editors/images/steps.png" style="width:121px; background-color: #3ecc67; padding: 10px; border-radius: 13px; height: 120px">' +
       '<div style ="position: absolute; text-align: center; width: 120px;"><h5>Giai đoạn</h5></div>' +
-      '</div>';
+      "</div>";
 
     // var lableSameTime = '<div style="position: relative;">' +
     //   '<img src="./assets/editors/images/plus.png" style="height: 50px; width: 50px;">' +
     //   '<div style ="position: absolute; text-align: center; top:58px; left: -14px; width: 60px;"><h5>Đồng thời</h5></div>' +
     //   '</div>';
-
 
     var vertexAction;
     model.beginUpdate();
@@ -644,7 +764,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //   edge.geometry.y = 0;
       //   edge.geometry.offset = new mxPoint(0, -20);
       // }
-
       // if (action == "add-sametime") {
       //   vertex = graph.insertVertex(parent, that.makeid(9), lableSameTime, cell.geometry.x + 200, cell.geometry.y + that.offsetY, 90, 60, 'same-time');
       //   var edge = graph.insertEdge(parent, that.makeid(9), '', cell, vertex);
@@ -652,14 +771,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //   edge.geometry.y = 0;
       //   edge.geometry.offset = new mxPoint(0, -20);
       // }
-
       // if (action == "add-stage") {
       //   vertexAction = graph.insertVertex(parent, that.makeid(9), labelAction, cell.geometry.x + 220, cell.geometry.y + that.offsetY, 90, 60, 'action')
       //   var edgeAction = graph.insertEdge(parent, that.makeid(9), '', cell, vertexAction);
       //   edgeAction.geometry.x = 1;
       //   edgeAction.geometry.y = 0;
       //   edgeAction.geometry.offset = new mxPoint(0, -20);
-
       //   var stage = new ProjectTaskTypeSave();
       //   stage.name = "Giai đoạn";
       //   stage.projectIds = [];
@@ -672,12 +789,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //       vertex.name = result.name;
       //       vertex.priority = "normal";
       //       vertex.geometry.alternateBounds = new mxRectangle(0, 0, 120, 119);
-
       //       var edge = graph.insertEdge(parent, that.makeid(9), '', vertexAction, vertex);
       //       edge.geometry.x = 1;
       //       edge.geometry.y = 0;
       //       edge.geometry.offset = new mxPoint(0, -20);
-
       //       var enc = new mxCodec(mxUtils.createXmlDocument());
       //       var node = enc.encode(graph.getModel());
       //       var value = new ProjectProjectSave();
@@ -688,10 +803,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //         () => { }
       //       );
       //     });
-
-
       // }
-
       // if (action == "action-stage") {
       //   var stage = new ProjectTaskTypeSave();
       //   stage.name = "Giai đoạn";
@@ -705,12 +817,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //       vertex.name = result.name;
       //       vertex.priority = "normal";
       //       vertex.geometry.alternateBounds = new mxRectangle(0, 0, 120, 119);
-
       //       var edge = graph.insertEdge(parent, that.makeid(9), '', cell, vertex);
       //       edge.geometry.x = 1;
       //       edge.geometry.y = 0;
       //       edge.geometry.offset = new mxPoint(0, -20);
-
       //       var enc = new mxCodec(mxUtils.createXmlDocument());
       //       var node = enc.encode(graph.getModel());
       //       var value = new ProjectProjectSave();
@@ -721,13 +831,9 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //         () => { }
       //       );
       //     });
-
-
       // }
-
       // addOverlays(graph, vertex, true);
-    }
-    finally {
+    } finally {
       model.endUpdate();
     }
 
@@ -742,16 +848,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     var enc = new mxCodec(mxUtils.createXmlDocument());
     var node = enc.encode(this.editorDefind.graph.getModel());
     value.graphXml = mxUtils.getPrettyXml(node);
-    value.projectType = 'project-process';
+    value.projectType = "project-process";
     //api update
     if (this.id) {
-      this.tcareService.update(this.id, value).subscribe(
-        () => {
-          console.log('Thành công');
-          this.router.navigateByUrl('tcare');
-        }
-      )
+      this.tcareService.update(this.id, value).subscribe(() => {
+        console.log("Thành công");
+        this.router.navigateByUrl("tcare-campaigns");
+      });
     }
   }
-
 }
