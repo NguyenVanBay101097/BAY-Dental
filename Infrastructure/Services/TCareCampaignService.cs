@@ -3,8 +3,11 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Hangfire;
+using Hangfire.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +20,12 @@ namespace Infrastructure.Services
     public class TCareCampaignService : BaseService<TCareCampaign>, ITCareCampaignService
     {
         private readonly IMapper _mapper;
-
-        public TCareCampaignService(IAsyncRepository<TCareCampaign> repository, IHttpContextAccessor httpContextAccessor,
+        private readonly AppTenant _tenant;
+        public TCareCampaignService(IAsyncRepository<TCareCampaign> repository, IHttpContextAccessor httpContextAccessor, ITenant<AppTenant> tenant,
             IMapper mapper)
             : base(repository, httpContextAccessor)
         {
+            _tenant = tenant?.Value;
             _mapper = mapper;
         }
 
@@ -47,9 +51,64 @@ namespace Infrastructure.Services
             var campaign = new TCareCampaign()
             {
                 Name = val.Name,
-                GraphXml = val.GraphXml
+                GraphXml = val.GraphXml,
+                SheduleStart = val.SheduleStart,
+                State = "draft"
             };
             return await CreateAsync(campaign);
+        }
+
+        public async Task ActionStartCampaign(IEnumerable<Guid> ids)
+        {
+            var jobService = GetService<ITCareJobService>();
+            var states = new string[] { "draft", "stopped" };
+            var campaigns = await SearchQuery(x =>  ids.Contains(x.Id) && states.Contains(x.State)).ToListAsync();
+
+            foreach (var campaign in campaigns)
+            {
+                campaign.State = "running";
+                var runAt = Convert.ToDateTime(campaign.SheduleStart);
+                var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+                if (campaign.RecurringJobId == null)
+                {
+                    campaign.RecurringJobId = $"{tenant}-{campaign.Name}-RecurringJob";
+
+                }              
+                RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(_tenant != null ? _tenant.Hostname : "localhost", campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+
+            }
+           
+
+            await UpdateAsync(campaigns);
+        }
+
+        public async Task ActionStopCampaign(IEnumerable<Guid> ids)
+        {
+            var states = new string[] { "running" };
+            var campaigns = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).ToListAsync();
+            List<RecurringJobDto> list;
+            foreach (var campaign in campaigns)
+            {
+                campaign.State = "stopped";
+                campaign.SheduleStart = null;
+                using (var connection = JobStorage.Current.GetConnection())
+                {
+                    list = connection.GetRecurringJobs();
+                }
+                var job = list?.FirstOrDefault(j => j.Id == campaign.RecurringJobId);  // jobId is the recurring job ID, whatever that is
+                if (job != null && !string.IsNullOrEmpty(job.LastJobId))
+                {
+                    BackgroundJob.Delete(job.LastJobId);
+                    RecurringJob.RemoveIfExists(job.LastJobId);
+                }
+                RecurringJob.RemoveIfExists(job.Id = campaign.RecurringJobId);
+
+                campaign.RecurringJobId = null;
+
+            }
+                
+
+            await UpdateAsync(campaigns);
         }
     }
 }

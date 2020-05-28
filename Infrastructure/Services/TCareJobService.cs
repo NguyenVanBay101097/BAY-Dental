@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Umbraco.Web.Models.ContentEditing;
 using ZaloDotNetSDK;
 
 namespace Infrastructure.Services
@@ -31,7 +32,7 @@ namespace Infrastructure.Services
             _fbMessageSender = fbMessageSender;
         }
 
-        public void Run(string db)
+        public void Run(string db, Guid campaignId)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             builder["Database"] = $"TMTDentalCatalogDb__{db}";
@@ -43,40 +44,39 @@ namespace Infrastructure.Services
                 {
                     conn.Open();
                     var date = DateTime.UtcNow;
-                    var campaigns = conn.Query("SELECT * FROM TCareCampaigns").ToList();
-                    foreach (var campaign in campaigns)
+                    var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+
+                    var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
+                    //var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaign.Id }).FirstOrDefault();
+
+                    if (campaignXml.MessageXML.MethodType == "interval")
                     {
-                       
-                        var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaign.Id }).FirstOrDefault();
-                        var campaignXml = ConvertXmlCampaign(campaign.Xml);
-                        if (messaging.MethodType == "interval")
-                        {
-                            var intervalNumber = messaging.IntervalNumber ?? 0;
-                            if (messaging.IntervalType == "hours")
-                                date = date.AddHours(intervalNumber);
-                            else if (messaging.IntervalType == "minutes")
-                                date = date.AddMinutes(intervalNumber);
-                            else if (messaging.IntervalType == "days")
-                                date = date.AddDays(intervalNumber);
-                            else if (messaging.IntervalType == "months")
-                                date = date.AddMonths(intervalNumber);
-                            else if (messaging.IntervalType == "weeks")
-                                date = date.AddDays((intervalNumber) * 7);
-                            
-                            var jobId = BackgroundJob.Schedule(() => SendMessageSocial(messaging.TCareCampaignId, messaging.Content,db), date);
-                            if (string.IsNullOrEmpty(jobId))
-                                throw new Exception("Can't not schedule job");
-                        }
-                        else
-                        {
-                            if (!messaging.SheduleDate.HasValue)
-                                throw new Exception("Không tìm thấy thời gian cố định . Vui lòng kiểm tra lại !!!");
-                            date = messaging.SheduleDate.Value;
-                            var jobId = BackgroundJob.Schedule(() => SendMessageSocial(messaging.TCareCampaignId, messaging.Content, db), date);
-                            if (string.IsNullOrEmpty(jobId))
-                                throw new Exception("Can't not schedule job");
-                        }
+                        var intervalNumber = campaignXml.MessageXML.IntervalNumber ?? 0;
+                        if (campaignXml.MessageXML.IntervalType == "hours")
+                            date = date.AddHours(intervalNumber);
+                        else if (campaignXml.MessageXML.IntervalType == "minutes")
+                            date = date.AddMinutes(intervalNumber);
+                        else if (campaignXml.MessageXML.IntervalType == "days")
+                            date = date.AddDays(intervalNumber);
+                        else if (campaignXml.MessageXML.IntervalType == "months")
+                            date = date.AddMonths(intervalNumber);
+                        else if (campaignXml.MessageXML.IntervalType == "weeks")
+                            date = date.AddDays((intervalNumber) * 7);
+
+                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, campaignXml.MessageXML.Content, db), date);
+                        if (string.IsNullOrEmpty(jobId))
+                            throw new Exception("Can't not schedule job");
                     }
+                    else
+                    {
+                        if (!campaignXml.MessageXML.SheduleDate.HasValue)
+                            throw new Exception("Không tìm thấy thời gian cố định . Vui lòng kiểm tra lại !!!");
+                        date = campaignXml.MessageXML.SheduleDate.Value;
+                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, campaignXml.MessageXML.Content, db), date);
+                        if (string.IsNullOrEmpty(jobId))
+                            throw new Exception("Can't not schedule job");
+                    }
+
                 }
                 catch (Exception e)
                 {
@@ -85,50 +85,67 @@ namespace Infrastructure.Services
             }
         }
 
-        public IEnumerable<Guid> SearchPartnerRules(IEnumerable<TCareRule> rules, SqlConnection conn)
+        //public IEnumerable<Guid> SearchPartnerRules(IEnumerable<RuleXml> rules, SqlConnection conn)
+        //{
+        //    IEnumerable<Guid> res = null;
+        //    foreach (var rule in rules)
+        //    {
+        //        var tmp = SearchPartnerIds(rule, conn);
+        //        if (res == null)
+        //        {
+        //            res = tmp;
+        //            continue;
+        //        }
+
+        //        res = res.Intersect(tmp);
+        //    }
+
+        //    return res;
+        //}
+
+        public CampaignXml ConvertXmlCampaign(string xmlFilePath)
         {
-            IEnumerable<Guid> res = null;
-            foreach (var rule in rules)
+            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlFilePath));
+            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+
+            //if(resultingMessage == null)
+            //    throw new Exception("")
+
+            var campaignXml = new CampaignXml
             {
-                var tmp = SearchPartnerIds(rule, conn);
-                if (res == null)
+                RuleXml = new RuleXml
                 {
-                    res = tmp;
-                    continue;
+                    Name = resultingMessage.Root.MxCell[3].Name,
+                    beforeDays = resultingMessage.Root.MxCell[3].BeforeDays,
+                },
+                MessageXML = new MessageXML
+                {
+                    MethodType = resultingMessage.Root.MxCell[4].MethodType,
+                    IntervalType = resultingMessage.Root.MxCell[4].IntervalType,
+                    IntervalNumber = int.Parse(resultingMessage.Root.MxCell[4].IntervalNumber),
+                    Content = resultingMessage.Root.MxCell[4].Content,
+                    ChannelType = resultingMessage.Root.MxCell[4].ChannelType,
+                    SheduleDate = resultingMessage.Root.MxCell[4].SheduleDate,
+                    ChannelSocialId = Guid.Parse(resultingMessage.Root.MxCell[4].ChannelSocialId),
+
                 }
+            };
 
-                res = res.Intersect(tmp);
-            }
-
-            return res;
-        }
-
-        public TCareCampaign ConvertXmlCampaign(string xmlFilePath)
-        {
-            var doc = new XmlDocument();
-            doc.LoadXml(xmlFilePath);
-            var text = doc;
-
-            string contents = File.ReadAllText(xmlFilePath);          
-            XmlSerializer serializer = new XmlSerializer(typeof(TCareCampaign));
-
-            StreamReader reader = new StreamReader(contents);
-            var campaignXml = (TCareCampaign)serializer.Deserialize(reader);
-            reader.Close();
 
             return campaignXml;
         }
 
-        public IEnumerable<Guid> SearchPartnerIds(TCareRule rule, SqlConnection conn)
+        public IEnumerable<Guid> SearchPartnerIds(RuleXml rule, SqlConnection conn)
         {
-            if (rule.Type == "birthday")
+            if (rule.Name == "rule")
             {
                 var today = DateTime.Today;
-                var properties = conn.Query<TCareProperty>("SELECT * FROM TCareProperties WHERE RuleId = @id", new { id = rule.Id }).ToList();
+                //var properties = conn.Query<TCareProperty>("SELECT * FROM TCareProperties WHERE RuleId = @id", new { id = rule.Id }).ToList();
                 var beforeDays = 0;
-                var prop = properties.FirstOrDefault(x => x.Name == "BeforeDays");
-                if (prop != null)
-                    beforeDays = prop.ValueInteger ?? 0;
+                //var prop = properties.FirstOrDefault(x => x.Name == "BeforeDays");
+                //if (prop != null)
+                //    beforeDays = prop.ValueInteger ?? 0;
                 var date = today.AddDays(beforeDays);
 
                 var partner_ids = conn.Query<Guid>("SELECT Id FROM Partners WHERE Customer = 1 AND BirthDay = @day AND BirthMonth = @month", new { day = date.Day, month = date.Month }).ToList();
@@ -153,11 +170,14 @@ namespace Infrastructure.Services
 
                     var lstpartnerId = new List<Guid>();
                     var profiles = new List<FacebookUserProfile>().AsEnumerable();
-                    //Get list rules in campaign
-                    var rules = conn.Query<TCareRule>("SELECT * FROM TCareRules WHERE CampaignId = @id", new { id = campaignId }).ToList();
+                    var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+                    if (campaign == null)
+                        return;
+                    var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
+                   
 
                     //Get partnerIds in list rules
-                    var partner_ids = SearchPartnerRules(rules, conn);
+                    var partner_ids = SearchPartnerIds(campaignXml.RuleXml, conn);
                     //if (partner_ids.Count() == 0)
                     //    continue;
 
@@ -245,7 +265,7 @@ namespace Infrastructure.Services
                     Console.WriteLine(e);
                 }
             }
-            
+
 
 
 
@@ -266,7 +286,7 @@ namespace Infrastructure.Services
             var iUserprofiles = conn.Query<FacebookUserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
             // lấy danh sách userprofiles theo filter
             //var profiles = GetProfilesActivity(activity, pageId, conn);
-            var lstUserProfile = iUserprofiles.Where(x => partIds.Any(s=> s == x.PartnerId )).ToList();
+            var lstUserProfile = iUserprofiles.Where(x => partIds.Any(s => s == x.PartnerId)).ToList();
 
             return lstUserProfile;
 
@@ -314,102 +334,51 @@ namespace Infrastructure.Services
         public string Content { get; set; }
     }
 
-    
+    public class CampaignXml
+    {
+        public RuleXml RuleXml { get; set; }
 
-    //[Serializable()]
-    //public class TCareCampaignXml
-    //{
-    //    [XmlArray("TCareRules")]
-    //    [XmlArrayItem("TCareRule", typeof(TCareRule))]
-    //    public TCareRule TCareRule { get; set; }
+        public MessageXML MessageXML { get; set; }
+    }
 
-    //    [XmlElement("TCareMessaging")]
-    //    public TCareMessaging TCareMessaging { get; set; }
+    public class RuleXml
+    {
+        public string Name { get; set; }
+        public string beforeDays { get; set; }
+    }
 
-    //}
+    public class MessageXML
+    {
+        /// <summary>
+        /// phương thức :
+        /// interval : trước thời gian
+        /// shedule : lên lịch ngày giờ cụ thể
+        /// </summary>
+        public string MethodType { get; set; }
 
-    //public class TCareRule
-    //{
+        /// <summary>
+        /// MethodType : interval
+        /// "minutes" , "hours" , "weeks", "months"
+        /// </summary>
+        public string IntervalType { get; set; }
 
-    //    public string Type { get; set; }
+        public int? IntervalNumber { get; set; }
 
-    //    [XmlArray("Properties")]
-    //    [XmlArrayItem("TCareProperty", typeof(TCareProperty))]
-    //    public TCareProperty TCareProperty { get; set; }
-    //}
+        /// <summary>
+        /// MethodType : shedule
+        /// </summary>
+        public DateTime? SheduleDate { get; set; }
 
-    //public class TCareProperty {
+        public string Content { get; set; }
 
-    //    [XmlElement("Name")]
-    //    public string Name { get; set; }
+        //--Kenh gui ---//
 
-    //    [XmlElement("Type")]
-    //    /// <summary>
-    //    /// Text, Integer, DateTime, Decimal, Double, Many2One
-    //    /// </summary>
-    //    public string Type { get; set; }
+        /// <summary>
+        ///  priority : ưu tiên
+        ///  fixed : cố định
+        /// </summary>
+        public string ChannelType { get; set; }
 
-    //    [XmlElement("ValueText")]
-    //    public string ValueText { get; set; }
-
-    //    [XmlElement("ValueInteger")]
-    //    public int? ValueInteger { get; set; }
-
-    //    [XmlElement("ValueDateTime")]
-    //    public DateTime? ValueDateTime { get; set; }
-
-    //    [XmlElement("ValueDecimal")]
-    //    public decimal? ValueDecimal { get; set; }
-
-    //    [XmlElement("ValueDouble")]
-    //    public double? ValueDouble { get; set; }
-
-
-    //    [XmlElement("ValueReference")]
-    //    public string ValueReference { get; set; }
-
-    //}
-
-    //public class TCareMessaging
-    //{
-    //    /// <summary>
-    //    /// phương thức :
-    //    /// interval : trước thời gian
-    //    /// shedule : lên lịch ngày giờ cụ thể
-    //    /// </summary>
-    //    [XmlElement("MethodType")]
-    //    public string MethodType { get; set; }
-
-    //    /// <summary>
-    //    /// MethodType : interval
-    //    /// "minutes" , "hours" , "weeks", "months"
-    //    /// </summary>
-    //    [XmlElement("IntervalType")]
-    //    public string IntervalType { get; set; }
-
-    //    [XmlElement("IntervalNumber")]
-    //    public int? IntervalNumber { get; set; }
-
-    //    /// <summary>
-    //    /// MethodType : shedule
-    //    /// </summary>
-    //    [XmlElement("SheduleDate")]
-    //    public DateTime? SheduleDate { get; set; }
-
-
-    //    [XmlElement("Content")]
-    //    public string Content { get; set; }
-
-    //    //--Kenh gui ---//
-
-    //    /// <summary>
-    //    ///  priority : ưu tiên
-    //    ///  fixed : cố định
-    //    /// </summary>
-    //    [XmlElement("ChannelType")]
-    //    public string ChannelType { get; set; }
-
-    //    [XmlElement("ChannelSocialId")]
-    //    public Guid? ChannelSocialId { get; set; }
-    //}
+        public Guid? ChannelSocialId { get; set; }
+    }
 }

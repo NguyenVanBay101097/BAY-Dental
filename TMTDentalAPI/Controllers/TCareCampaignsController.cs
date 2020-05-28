@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
+using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
@@ -56,6 +61,8 @@ namespace TMTDentalAPI.Controllers
             }
             campain.Name = val.Name;
             campain.GraphXml = val.GraphXml;
+            campain.SheduleStart = val.SheduleStart;
+            campain.State = campain.State;
             await _campaignService.UpdateAsync(campain);
             return NoContent();
         }
@@ -67,6 +74,20 @@ namespace TMTDentalAPI.Controllers
             if (campaign == null)
                 return BadRequest();
             await _campaignService.DeleteAsync(campaign);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionStartCampaign(IEnumerable<Guid> ids)
+        {
+            await _campaignService.ActionStartCampaign(ids);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionStopCampaign(IEnumerable<Guid> ids)
+        {
+            await _campaignService.ActionStopCampaign(ids);
             return NoContent();
         }
     }

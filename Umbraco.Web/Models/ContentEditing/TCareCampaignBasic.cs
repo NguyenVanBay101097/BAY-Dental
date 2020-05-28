@@ -11,5 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string GraphXml { get; set; }
+
+        public string State { get; set; }
     }
 }
