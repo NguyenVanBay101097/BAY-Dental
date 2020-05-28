@@ -10,7 +10,7 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { TcareCampaignDialogSequencesComponent } from './tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component';
 import { TcareCampaignCreateDialogComponent } from './tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
 import { TcareCampaignListComponent } from './tcare-campaign-list/tcare-campaign-list.component';
-import { TcareCampaignDialogRuleBirthdayComponent } from './tcare-campaign-dialog-rule-birthday/tcare-campaign-dialog-rule-birthday.component';
+import { TcareCampaignDialogRuleComponent } from './tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,8 @@ import { TcareCampaignDialogRuleBirthdayComponent } from './tcare-campaign-dialo
     TcareCampaignDialogSequencesComponent,
     TcareCampaignCreateDialogComponent,
     TcareCampaignListComponent,
-    TcareCampaignDialogRuleBirthdayComponent],
+    TcareCampaignDialogRuleComponent
+  ],
   imports: [
     CommonModule,
     NgbModalModule,
@@ -29,7 +30,7 @@ import { TcareCampaignDialogRuleBirthdayComponent } from './tcare-campaign-dialo
   ],
   providers: [TcareService],
   entryComponents: [
-    TcareCampaignDialogRuleBirthdayComponent,
+    TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,
     TcareCampaignCreateDialogComponent
   ]
