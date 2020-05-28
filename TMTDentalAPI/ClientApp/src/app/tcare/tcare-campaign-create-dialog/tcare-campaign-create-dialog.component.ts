@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class TcareCampaignCreateDialogComponent implements OnInit {
 
+  title:string;
   formGroup: FormGroup
 
   constructor(
