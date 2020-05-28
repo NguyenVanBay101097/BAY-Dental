@@ -18,7 +18,7 @@ namespace ApplicationCore.Entities
 
         public string GraphXml { get; set; }
 
-        public string SheduleStart { get; set; }
+        public int SheduleStart { get; set; }
 
         /// <summary>
         /// draft : mới 
