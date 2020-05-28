@@ -10,9 +10,12 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using ZaloDotNetSDK;
 
 namespace Infrastructure.Services
@@ -43,8 +46,9 @@ namespace Infrastructure.Services
                     var campaigns = conn.Query("SELECT * FROM TCareCampaigns").ToList();
                     foreach (var campaign in campaigns)
                     {
-                        
+                       
                         var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaign.Id }).FirstOrDefault();
+                        var campaignXml = ConvertXmlCampaign(campaign.Xml);
                         if (messaging.MethodType == "interval")
                         {
                             var intervalNumber = messaging.IntervalNumber ?? 0;
@@ -97,6 +101,22 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+
+        public TCareCampaign ConvertXmlCampaign(string xmlFilePath)
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xmlFilePath);
+            var text = doc;
+
+            string contents = File.ReadAllText(xmlFilePath);          
+            XmlSerializer serializer = new XmlSerializer(typeof(TCareCampaign));
+
+            StreamReader reader = new StreamReader(contents);
+            var campaignXml = (TCareCampaign)serializer.Deserialize(reader);
+            reader.Close();
+
+            return campaignXml;
         }
 
         public IEnumerable<Guid> SearchPartnerIds(TCareRule rule, SqlConnection conn)
@@ -293,4 +313,103 @@ namespace Infrastructure.Services
         public string ZaloId { get; set; }
         public string Content { get; set; }
     }
+
+    
+
+    //[Serializable()]
+    //public class TCareCampaignXml
+    //{
+    //    [XmlArray("TCareRules")]
+    //    [XmlArrayItem("TCareRule", typeof(TCareRule))]
+    //    public TCareRule TCareRule { get; set; }
+
+    //    [XmlElement("TCareMessaging")]
+    //    public TCareMessaging TCareMessaging { get; set; }
+
+    //}
+
+    //public class TCareRule
+    //{
+
+    //    public string Type { get; set; }
+
+    //    [XmlArray("Properties")]
+    //    [XmlArrayItem("TCareProperty", typeof(TCareProperty))]
+    //    public TCareProperty TCareProperty { get; set; }
+    //}
+
+    //public class TCareProperty {
+
+    //    [XmlElement("Name")]
+    //    public string Name { get; set; }
+
+    //    [XmlElement("Type")]
+    //    /// <summary>
+    //    /// Text, Integer, DateTime, Decimal, Double, Many2One
+    //    /// </summary>
+    //    public string Type { get; set; }
+
+    //    [XmlElement("ValueText")]
+    //    public string ValueText { get; set; }
+
+    //    [XmlElement("ValueInteger")]
+    //    public int? ValueInteger { get; set; }
+
+    //    [XmlElement("ValueDateTime")]
+    //    public DateTime? ValueDateTime { get; set; }
+
+    //    [XmlElement("ValueDecimal")]
+    //    public decimal? ValueDecimal { get; set; }
+
+    //    [XmlElement("ValueDouble")]
+    //    public double? ValueDouble { get; set; }
+
+
+    //    [XmlElement("ValueReference")]
+    //    public string ValueReference { get; set; }
+
+    //}
+
+    //public class TCareMessaging
+    //{
+    //    /// <summary>
+    //    /// phương thức :
+    //    /// interval : trước thời gian
+    //    /// shedule : lên lịch ngày giờ cụ thể
+    //    /// </summary>
+    //    [XmlElement("MethodType")]
+    //    public string MethodType { get; set; }
+
+    //    /// <summary>
+    //    /// MethodType : interval
+    //    /// "minutes" , "hours" , "weeks", "months"
+    //    /// </summary>
+    //    [XmlElement("IntervalType")]
+    //    public string IntervalType { get; set; }
+
+    //    [XmlElement("IntervalNumber")]
+    //    public int? IntervalNumber { get; set; }
+
+    //    /// <summary>
+    //    /// MethodType : shedule
+    //    /// </summary>
+    //    [XmlElement("SheduleDate")]
+    //    public DateTime? SheduleDate { get; set; }
+
+
+    //    [XmlElement("Content")]
+    //    public string Content { get; set; }
+
+    //    //--Kenh gui ---//
+
+    //    /// <summary>
+    //    ///  priority : ưu tiên
+    //    ///  fixed : cố định
+    //    /// </summary>
+    //    [XmlElement("ChannelType")]
+    //    public string ChannelType { get; set; }
+
+    //    [XmlElement("ChannelSocialId")]
+    //    public Guid? ChannelSocialId { get; set; }
+    //}
 }
