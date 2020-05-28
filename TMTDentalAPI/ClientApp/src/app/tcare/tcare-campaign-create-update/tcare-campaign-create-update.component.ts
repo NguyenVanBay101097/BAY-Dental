@@ -398,7 +398,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       that.addSidebarIcon(graph, sidebar_goals,
         '<div style="position: relative;">' +
         '<img src="./assets/editors/images/birthday.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Sinh nhật</b></div>' +
+        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Điều kiện</b></div>' +
         "</div>",
         "./assets/editors/images/birthday.png", "rule");
 
@@ -450,7 +450,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         } else {
           var label = '<div style="position: relative;">' +
             '<img src="./assets/editors/images/birthday.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-            '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Sinh nhật</b></div>' +
+            '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Điều kiện</b></div>' +
             "</div>";
           var parent = editor.graph.getDefaultParent();
           editor.graph.getModel().beginUpdate();
@@ -506,10 +506,18 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       var model = graph.getModel();
 
       var v1 = null;
-
+      var lableRead = '<div style="position: relative;">' +
+        '<img src="./assets/editors/images/icons/read-message.png" style="height: 35px; width: 35px; object-fit: cover;">' +
+        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Đã đọc</b></div>' +
+        "</div>";
+      var lableUnRead = '<div style="position: relative;">' +
+        '<img src="./assets/editors/images/icons/unread-message.png" style="height: 35px; width: 35px; object-fit: cover;">' +
+        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Chưa đọc</b></div>' +
+        "</div>";
       model.beginUpdate();
       try {
         if (typeShape == "sequences") {
+
           v1 = graph.insertVertex(parent, '', label, x, y, 110, 40, typeShape);
           v1.mxTransient.push("name");
           v1.mxTransient.push("methodType");
@@ -520,8 +528,22 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           v1.mxTransient.push("channelSocialId");
           v1.mxTransient.push("channelType");
           v1.mxTransient.push("tCareCampaignId");
+          v1.mxTransient.push("parentId");
           v1.name = typeShape;
           v1.tCareCampaignId = that.id;
+
+          var v_read = graph.insertVertex(parent, '', lableRead, x + 200, y + 50, 40, 40, 'read');
+          v_read.mxTransient.push("parentId");
+          v_read.mxTransient.push("name");
+          v_read.name = 'read'
+          graph.insertEdge(parent, '', '', v1, v_read);
+
+          var v_unread = graph.insertVertex(parent, '', lableUnRead, x + 200, y - 50, 40, 40, 'unread');
+          v_unread.mxTransient.push("parentId");
+          v_unread.mxTransient.push("name");
+          v_unread.name = 'unread'
+          graph.insertEdge(parent, '', '', v1, v_unread);
+
         }
 
         if (typeShape == "rule") {
