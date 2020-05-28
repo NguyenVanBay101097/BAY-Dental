@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class TcareCampaignCreateDialogComponent implements OnInit {
 
+  title:string;
   formGroup: FormGroup
 
   constructor(
@@ -33,7 +34,7 @@ export class TcareCampaignCreateDialogComponent implements OnInit {
     var value = this.formGroup.value;
     this.tcareService.nameCreate(value).subscribe(
       result => {
-        this.router.navigateByUrl(`tcare/${result.id}`);
+        this.router.navigateByUrl(`tcare-campaign/${result.id}`);
         this.activeModal.close();
       }
     )

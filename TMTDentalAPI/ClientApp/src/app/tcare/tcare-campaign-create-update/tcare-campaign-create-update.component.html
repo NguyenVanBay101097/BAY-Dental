@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/tcare">{{title}}</a>
+                <a routerLink="/tcare-campaigns">{{title}}</a>
             </li>
         </ol>
         <div class="o_cp_left">
@@ -47,18 +47,23 @@
             </div>
         </div>
         <div class="col-2" style="padding-right:0">
-            <div id="sidebarContainer"
-                style="overflow:hidden;min-height: 555px; height: 555px; padding-top:10px;padding-left:4px; background-color: #e7efde;">
+            <div id="sidebarContainer" class="border shadow-sm"
+                style="overflow:hidden;min-height: 555px; height: 555px; padding:10px; ">
+                <div>
+                    <div>
+                        <div class="my-1"><b style="font-size: 0.9rem;">Sequences:</b></div>
+                        <div class="border p-1" id="sidebarContainer_sequences"></div>
+                    </div>
+                    <div>
+                        <div class="my-1"><b style="font-size: 0.9rem;">Goals:</b></div>
+                        <div class="border p-1" id="sidebarContainer_goals"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-10" style="padding-left:0">
             <div id="graphContainer"
                 style="overflow:hidden;min-height: 555px; height: 555px; background-image:url('./assets/editors/images/grid.gif');cursor:default;">
-            </div>
-        </div>
-        <div class="col-12">
-            <div id="statusContainer"
-                style="text-align:right;overflow:hidden;max-height:37px;height:37px;right:0px;color:white;padding:6px;background-image:url('./assets/editors/images/toolbar_bg.gif');">
             </div>
         </div>
         <div id="outlineContainer"

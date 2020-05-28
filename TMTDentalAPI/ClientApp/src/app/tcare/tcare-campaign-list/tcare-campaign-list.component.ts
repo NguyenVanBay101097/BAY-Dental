@@ -76,7 +76,7 @@ export class TcareCampaignListComponent implements OnInit {
   }
 
   editItem(item) {
-    this.router.navigateByUrl(`tcare/${item.id}`);
+    this.router.navigateByUrl(`tcare-campaign/${item.id}`);
   }
 
   deleteItem(item) {
