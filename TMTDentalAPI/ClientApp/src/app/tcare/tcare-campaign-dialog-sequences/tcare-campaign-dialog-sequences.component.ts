@@ -54,8 +54,12 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     });
 
     this.loadSocialChannel();
-    if (this.cell.id)
+    if (this.cell) {
+      if (this.cell.methodType)
+        this.type = this.cell.methodType;
       this.loadFormApi();
+    }
+
   }
 
   chossesMethodType(val) {
@@ -63,17 +67,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   loadFormApi() {
-    if (this.cell && this.cell.id) {
-      this.tcareService.getTcareMessage(this.cell.id).subscribe(
-        result => {
-          this.type = result.methodType;
-          this.formGroup.patchValue(result)
-          if (result.methodType == "shedule")
-            this.formGroup.get('sheduleDate').patchValue(new Date(result.sheduleDate));
-
-        }
-      )
-    }
+    this.formGroup.patchValue(this.cell);
   }
 
   loadSocialChannel() {
@@ -93,19 +87,15 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   onSave() {
-    if (this.formGroup.invalid || !this.cell || !this.cell.id)
-      return false;
-
     var value = this.formGroup.value;
-    if (this.campaignId)
-      value.tCareCampaignId = this.campaignId;
-
-    this.tcareService.updateTCareMessage(this.cell.id, value).subscribe(
-      retult => {
-        console.log('thành công');
-        this.activeModal.close();
-      }
-    )
+    this.cell.methodType = value.methodType;
+    this.cell.intervalType = value.intervalType;
+    this.cell.intervalNumber = value.intervalNumber;
+    this.cell.sheduleDate = value.sheduleDate;
+    this.cell.content = value.content;
+    this.cell.channelSocialId = value.channelSocialId;
+    this.cell.channelType = value.channelType;
+    this.activeModal.close(this.cell);
   }
 
 }

@@ -61,11 +61,11 @@ export class TCareMessageDisplay {
   intervalNumber: number;
   sheduleDate: string;
   content: string;
-  ChannelType: string;
-  ChannelSocialId: string;
-  ChannelSocial: ChannelSocial
-  TCareCampaignId: string;
-  TCareCampaign: TCareCampaignBasic
+  channelType: string;
+  channelSocialId: string;
+  channelSocial: ChannelSocial
+  tCareCampaignId: string;
+  tCareCampaign: TCareCampaignBasic
 }
 
 
