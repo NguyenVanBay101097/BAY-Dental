@@ -26,6 +26,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? CompanySharePartner { get; set; }
 
         public bool? GroupServiceCard { get; set; }
+
         public bool? GroupUoM { get; set; }
+
+        public bool? GroupTCare { get; set; }
+
+        public DateTime? TCareRunAt { get; set; }
     }
 }

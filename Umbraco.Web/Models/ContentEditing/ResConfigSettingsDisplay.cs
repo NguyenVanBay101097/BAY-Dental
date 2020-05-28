@@ -48,5 +48,16 @@ namespace Umbraco.Web.Models.ContentEditing
         [DbColumn("implied_group", "sale.group_service_card")]
         [DbColumn("field_type", "boolean")]
         public bool? GroupServiceCard { get; set; }
+
+        [DbColumn("implied_group", "tcare.group_tcare")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupTCare { get; set; }
+
+        /// <summary>
+        /// Chạy tất cả kịch bản mỗi ngày vào lúc
+        /// </summary>
+        [DbColumn("config_parameter", "tcare.run_at")]
+        [DbColumn("field_type", "datetime")]
+        public DateTime? TCareRunAt { get; set; }
     }
 }
