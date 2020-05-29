@@ -51,35 +51,32 @@ namespace Infrastructure.Services
             var campaign = new TCareCampaign()
             {
                 Name = val.Name,
-                GraphXml = val.GraphXml,
-                SheduleStart = val.SheduleStart,
                 State = "draft"
             };
             return await CreateAsync(campaign);
         }
 
-        public async Task ActionStartCampaign(IEnumerable<Guid> ids)
+        public async Task ActionStartCampaign(TCareCampaignStart val)
         {
             var jobService = GetService<ITCareJobService>();
             var states = new string[] { "draft", "stopped" };
-            var campaigns = await SearchQuery(x =>  ids.Contains(x.Id) && states.Contains(x.State)).ToListAsync();
+            var campaign = await SearchQuery(x => x.Id == val.Id && states.Contains(x.State)).FirstOrDefaultAsync();
 
-            foreach (var campaign in campaigns)
+            campaign.State = "running";
+            var runAt = val.SheduleStart.Value;
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            if (campaign.RecurringJobId == null)
             {
-                campaign.State = "running";
-                var runAt = Convert.ToDateTime(campaign.SheduleStart);
-                var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-                if (campaign.RecurringJobId == null)
-                {
-                    campaign.RecurringJobId = $"{tenant}-{campaign.Name}-RecurringJob";
-
-                }              
-                RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(_tenant != null ? _tenant.Hostname : "localhost", campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+                //đặt tên lưu lại trong hangfire
+                campaign.RecurringJobId = $"{tenant}-{campaign.Name}-RecurringJob";
 
             }
-           
+            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(_tenant != null ? _tenant.Hostname : "localhost", campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
 
-            await UpdateAsync(campaigns);
+
+
+
+            await UpdateAsync(campaign);
         }
 
         public async Task ActionStopCampaign(IEnumerable<Guid> ids)
@@ -93,6 +90,7 @@ namespace Infrastructure.Services
                 campaign.SheduleStart = null;
                 using (var connection = JobStorage.Current.GetConnection())
                 {
+                    //truy vấn danh sách RecurringJob
                     list = connection.GetRecurringJobs();
                 }
                 var job = list?.FirstOrDefault(j => j.Id == campaign.RecurringJobId);  // jobId is the recurring job ID, whatever that is
@@ -106,7 +104,7 @@ namespace Infrastructure.Services
                 campaign.RecurringJobId = null;
 
             }
-                
+
 
             await UpdateAsync(campaigns);
         }

@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class TCareCampaignNameCreateVM
+    public class TCareCampaignSave
     {
         public string Name { get; set; }
-
-
+        public string GraphXml { get; set; }
     }
 }

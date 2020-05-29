@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20200528094353_AddColumnCampaign")]
-    partial class AddColumnCampaign
+    [Migration("20200529025028_EditColumnTCareCampaign")]
+    partial class EditColumnTCareCampaign
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -6076,8 +6076,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("RecurringJobId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SheduleStart")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("SheduleStart")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");

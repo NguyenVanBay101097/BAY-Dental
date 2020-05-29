@@ -6074,8 +6074,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("RecurringJobId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SheduleStart")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("SheduleStart")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");

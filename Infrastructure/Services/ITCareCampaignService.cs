@@ -13,7 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<TCareCampaignBasic>> GetPagedResultAsync(TCareCampaignPaged val);
         Task<TCareCampaign> NameCreate(TCareCampaignNameCreateVM val);
 
-        Task ActionStartCampaign(IEnumerable<Guid> ids);
+        Task ActionStartCampaign(TCareCampaignStart val);
         Task ActionStopCampaign(IEnumerable<Guid> ids);
     }
 }

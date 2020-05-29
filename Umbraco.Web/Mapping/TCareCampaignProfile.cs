@@ -12,6 +12,10 @@ namespace Umbraco.Web.Mapping
         public TCareCampaignProfile()
         {
             CreateMap<TCareCampaign, TCareCampaignBasic>();
+            CreateMap<TCareCampaignSave, TCareCampaign>()
+                .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<TCareCampaignStart, TCareCampaign>();
+
         }
     }
 }
