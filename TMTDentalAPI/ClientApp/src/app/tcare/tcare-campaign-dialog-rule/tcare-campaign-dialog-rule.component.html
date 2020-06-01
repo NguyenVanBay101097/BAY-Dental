@@ -9,21 +9,68 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group" [class.o_group_col_6]="!getTypeConditionValue()">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Trước sinh nhật</label>
+                                <td style="padding-right: 20px;">
+                                    <select class="form-control" formControlName="typeCondition"
+                                        (change)="handleTypeConditionChange($event)">
+                                        <option value="" disabled>-- Chọn điều kiện --</option>
+                                        <option value="birthday">Sinh nhật</option>
+                                        <option value="lastTreatmentDay">Ngày điều trị cuối</option>
+                                        <option value="partnerGroup">Nhóm khách hàng</option>
+                                        <option value="service">Dịch vụ sử dụng</option>
+                                        <option value="serviceGroup">Nhóm dịch vụ sử dụng</option>
+                                    </select>
                                 </td>
-                                <td colspan="1" style="width: 100%; padding-right: 15px;">
-                                    <kendo-numerictextbox class="form-control" formControlName="beforeDays" [min]="0"
-                                        [format]="'n0'">
+                                <td *ngIf="getTypeConditionValue()" style="padding-right: 20px;">
+                                    <select class="form-control" formControlName="flagCondition">
+                                        <option *ngFor="let item of listFlagCondition; index as i;" [value]="item">
+                                            {{convertFlagCondition(item)}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td *ngIf="getTypeConditionValue() && isDay(formGroup.get('typeCondition').value)"
+                                    class="max-w-100px" style="padding-right: 0;">
+                                    <kendo-numerictextbox class="form-control" [value]="numbericValueCondition"
+                                        (valueChange)="handleNumbericValueConditionChange($event)"
+                                        [min]="0" [format]="'n0'">
                                     </kendo-numerictextbox>
                                 </td>
-                                <td>ngày</td>
+                                <td *ngIf="getTypeConditionValue() && !isDay(formGroup.get('typeCondition').value)"
+                                    class="min-w-200px" style="padding-right: 0;">
+                                    <kendo-combobox [data]="listData" [textField]="'name'" [valueField]="'id'"
+                                        [filterable]="true"
+                                        [placeholder]="'-- ' + placeholderValueCondition() + ' --'"
+                                        (valueChange)="handleValueConditionChange($event)">
+                                    </kendo-combobox>
+                                </td>
+                                <td *ngIf="getTypeConditionValue()"
+                                    style="vertical-align: middle; padding: 0; text-align: right;">
+                                    <span>{{unitCondition()}}</span>
+                                </td>
                             </tr>
                         </tbody>
+                        <tfoot *ngIf="getTypeConditionValue()">
+                            <tr>
+                                <td colspan="4" style="text-align: right;">
+                                    <button type="button" class="btn btn-primary btn-sm" (click)="onAdd()"
+                                        accesskey="a">Thêm điều kiện</button>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
+                </div>
+                <div *ngIf="listTags.length" class="o_group border rounded p-2">
+                    <button *ngFor="let tag of listTags; index as i;" class="mr-2 btn btn-light btn-sm border"
+                        (click)="clickTag(tag, i)">
+                        <span>{{convertTypeCondition(tag.typeCondition)}}</span>
+                        <u class="pl-1">{{convertFlagCondition(tag.flagCondition)}}</u>
+                        <u class="pl-1">{{isDay(tag.typeCondition) ? tag.valueCondition : tag.nameCondition}}</u>
+                        <span class="remove" (click)="deleteTag(i)">
+                            <i class="fas fa-times pl-2"></i>
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>

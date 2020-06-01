@@ -1,0 +1,13 @@
+.max-w-100px {
+    max-width: 100px;
+}
+.min-w-200px {
+    min-width: 200px;
+}
+.remove {
+    cursor: pointer;
+    transition: 0.2s;
+}
+.remove:hover {
+    color: orangered;
+}
