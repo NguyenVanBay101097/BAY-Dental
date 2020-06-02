@@ -6,6 +6,7 @@ using Facebook.ApiClient.Interfaces;
 using Hangfire;
 using Infrastructure.Data;
 using Microsoft.Extensions.Options;
+using MyERP.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Umbraco.Web.Models.ContentEditing;
 using ZaloDotNetSDK;
+using ZaloDotNetSDK.oa;
 
 namespace Infrastructure.Services
 {
@@ -46,33 +48,34 @@ namespace Infrastructure.Services
                     var date = DateTime.UtcNow;
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
 
-                    var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
+                    //var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
+                    XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                    MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                    MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
                     //var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaign.Id }).FirstOrDefault();
 
-                    if (campaignXml.MessageXML.MethodType == "interval")
+                    if (CampaignXML.Root.Sequences.Methodtype == "interval")
                     {
-                        var intervalNumber = campaignXml.MessageXML.IntervalNumber ?? 0;
-                        if (campaignXml.MessageXML.IntervalType == "hours")
+                        var intervalNumber = int.Parse(CampaignXML.Root.Sequences.Intervalnumber);
+                        if (CampaignXML.Root.Sequences.Intervaltype == "hours")
                             date = date.AddHours(intervalNumber);
-                        else if (campaignXml.MessageXML.IntervalType == "minutes")
+                        else if (CampaignXML.Root.Sequences.Intervaltype == "minutes")
                             date = date.AddMinutes(intervalNumber);
-                        else if (campaignXml.MessageXML.IntervalType == "days")
+                        else if (CampaignXML.Root.Sequences.Intervaltype == "days")
                             date = date.AddDays(intervalNumber);
-                        else if (campaignXml.MessageXML.IntervalType == "months")
+                        else if (CampaignXML.Root.Sequences.Intervaltype == "months")
                             date = date.AddMonths(intervalNumber);
-                        else if (campaignXml.MessageXML.IntervalType == "weeks")
+                        else if (CampaignXML.Root.Sequences.Intervaltype == "weeks")
                             date = date.AddDays((intervalNumber) * 7);
 
-                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, campaignXml.MessageXML.Content, db), date);
+                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId,db), date);
                         if (string.IsNullOrEmpty(jobId))
                             throw new Exception("Can't not schedule job");
                     }
                     else
-                    {
-                        if (!campaignXml.MessageXML.SheduleDate.HasValue)
-                            throw new Exception("Không tìm thấy thời gian cố định . Vui lòng kiểm tra lại !!!");
-                        date = campaignXml.MessageXML.SheduleDate.Value;
-                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, campaignXml.MessageXML.Content, db), date);
+                    {                       
+                        date = DateTime.Parse(CampaignXML.Root.Sequences.Sheduledate);
+                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId,db), date);
                         if (string.IsNullOrEmpty(jobId))
                             throw new Exception("Can't not schedule job");
                     }
@@ -85,77 +88,256 @@ namespace Infrastructure.Services
             }
         }
 
-        //public IEnumerable<Guid> SearchPartnerRules(IEnumerable<RuleXml> rules, SqlConnection conn)
+
+
+        //public CampaignXml ConvertXmlCampaign(string xmlFilePath)
         //{
-        //    IEnumerable<Guid> res = null;
-        //    foreach (var rule in rules)
+        //    XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+        //    MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlFilePath));
+        //    MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+
+        //    //if(resultingMessage == null)
+        //    //    throw new Exception("")
+
+        //    var campaignXml = new CampaignXml
         //    {
-        //        var tmp = SearchPartnerIds(rule, conn);
-        //        if (res == null)
+        //        RuleXml = new RuleXml
         //        {
-        //            res = tmp;
-        //            continue;
+        //            Condition = resultingMessage.Root.Rule.Condition,
+        //            Logic = resultingMessage.Root.Rule.Logic,
+        //        },
+        //        MessageXML = new MessageXML
+        //        {
+        //            Tcarecampaignid = resultingMessage.Root.Sequences.Tcarecampaignid,
+        //            Parentid = resultingMessage.Root.Sequences.Parentid,
+        //            Messagereadid = resultingMessage.Root.Sequences.Messagereadid,
+        //            Messageunreadid = resultingMessage.Root.Sequences.Messageunreadid,
+        //            Content = resultingMessage.Root.Sequences.Content,
+        //            Channeltype = resultingMessage.Root.Sequences.Channeltype,
+        //            Intervalnumber = int.Parse(resultingMessage.Root.Sequences.Intervalnumber),
+        //            Intervaltype = resultingMessage.Root.Sequences.Intervaltype,
+        //            Methodtype = resultingMessage.Root.Sequences.Methodtype,
+        //            Channelsocialid = Guid.Parse(resultingMessage.Root.Sequences.ChannelsocialId),
+
         //        }
+        //    };
 
-        //        res = res.Intersect(tmp);
-        //    }
 
-        //    return res;
+        //    return campaignXml;
         //}
 
-        public CampaignXml ConvertXmlCampaign(string xmlFilePath)
+
+        /// <summary>
+        /// check Rule And
+        /// </summary>
+        /// <param name="rules"></param>
+        /// <param name="conn"></param>
+        /// <returns></returns>
+        public IEnumerable<Guid> SearchAndPartnerIds(IEnumerable<Condition> conditions, SqlConnection conn)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlFilePath));
-            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-
-            //if(resultingMessage == null)
-            //    throw new Exception("")
-
-            var campaignXml = new CampaignXml
+            var partnerIds = new List<Guid>();
+            var builder = new SqlBuilder();
+            var lst = new Dictionary<string, string>();
+            lst.Add("eq", "=");
+            lst.Add("neq", "!=");
+            var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM Partners pn /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ ");
+            builder.Select("pn.Id ");
+            builder.Where("pn.Customer = 1 ");
+            foreach (var condition in conditions)
             {
-                RuleXml = new RuleXml
+                switch (condition.Typecondition)
                 {
-                    Name = resultingMessage.Root.MxCell[3].Name,
-                    beforeDays = resultingMessage.Root.MxCell[3].BeforeDays,
-                },
-                MessageXML = new MessageXML
+                    case "birthday":
+                        var today = DateTime.Today;
+                        var date = today.AddDays(int.Parse(condition.Valuecondition));
+                        builder.Where("pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month });
+                        //var partner_ids = conn.Query<Guid>("SELECT Id FROM Partners WHERE Customer = 1 AND BirthDay = @day AND BirthMonth = @month", new { day = date.Day, month = date.Month }).ToList();
+                        // var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();     
+                        break;
+                    case "lastTreatmentDay":
+                        builder.LeftJoin("SaleOrders sale ON sale.PartnerId = pn.Id");
+                        builder.Where("sale.State = 'sale' ");
+                        builder.GroupBy(" pn.Id ");
+                        builder.Having("(Max(sale.DateOrder) <  DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Valuecondition) });
+                        break;
+                    case "groupPartner":
+                        builder.LeftJoin("PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id");
+                        builder.LeftJoin("PartnerCategories cpt On cpt.id = rel.CategoryId");
+                        foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
+                        {
+                            switch (kvp.Key)
+                            {
+                                case "eq":
+                                    builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    break;
+                                case "neq":
+                                    builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    break;
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
+                            }
+                        }
+                        break;
+                    case "service":
+
+                        foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
+                        {
+                            switch (kvp.Key)
+                            {
+                                case "eq":
+                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                        "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        "Left join Products sp On sp.Id = orlines.ProductId " +
+                                        $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    break;
+                                case "neq":
+                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                        "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        "Left join Products sp On sp.Id = orlines.ProductId " +
+                                        $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    break;
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
+                            }
+                        }
+                        break;
+                    case "groupService":
+                        foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
+                        {
+                            switch (kvp.Key)
+                            {
+                                case "eq":
+                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    break;
+                                case "neq":
+                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                        "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        "Left join Products sp On sp.Id = orlines.ProductId " +
+                                        "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                        $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    break;
+                                default:
+                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
+                            }
+                        }
+                        break;
+                }
+
+            }
+            var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
+            return partner_ids;
+        }
+
+        /// <summary>
+        /// check Rule Or
+        /// </summary>
+        /// <param name="rules"></param>
+        /// <param name="conn"></param>
+        /// <returns></returns>
+        public IEnumerable<Guid> SearchOrPartnerIds(IEnumerable<Condition> conditions, SqlConnection conn)
+        {
+            var partnerIds = new List<Guid>();
+            var builder = new SqlBuilder();
+            var lst = new Dictionary<string, string>();
+            lst.Add("eq", "=");
+            lst.Add("neq", "!=");
+            var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM Partners pn /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ ");
+            builder.Select("pn.Id ");
+            builder.Where("pn.Customer = 1 ");
+            foreach (var condition in conditions)
+            {
+                if (condition.Typecondition == "birthday")
                 {
-                    MethodType = resultingMessage.Root.MxCell[4].MethodType,
-                    IntervalType = resultingMessage.Root.MxCell[4].IntervalType,
-                    IntervalNumber = int.Parse(resultingMessage.Root.MxCell[4].IntervalNumber),
-                    Content = resultingMessage.Root.MxCell[4].Content,
-                    ChannelType = resultingMessage.Root.MxCell[4].ChannelType,
-                    SheduleDate = resultingMessage.Root.MxCell[4].SheduleDate,
-                    ChannelSocialId = Guid.Parse(resultingMessage.Root.MxCell[4].ChannelSocialId),
+                    var today = DateTime.Today;
+                    var date = today.AddDays(int.Parse(condition.Valuecondition));
+                    builder.OrWhere("pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month });
+                    //var partner_ids = conn.Query<Guid>("SELECT Id FROM Partners WHERE Customer = 1 AND BirthDay = @day AND BirthMonth = @month", new { day = date.Day, month = date.Month }).ToList();
+                    // var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();          
+                }
+                else if (condition.Typecondition == "lastTreatmentDay")
+                {
+                    builder.LeftJoin("left join SaleOrders sale ON sale.PartnerId = pn.Id");
+                    builder.Where("sale.State = 'sale' ");
+                    builder.GroupBy("pn.Id ");
+                    builder.Having("(Max(sale.DateOrder) <  DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Valuecondition) });
 
                 }
-            };
-
-
-            return campaignXml;
-        }
-
-        public IEnumerable<Guid> SearchPartnerIds(RuleXml rule, SqlConnection conn)
-        {
-            if (rule.Name == "rule")
-            {
-                var today = DateTime.Today;
-                //var properties = conn.Query<TCareProperty>("SELECT * FROM TCareProperties WHERE RuleId = @id", new { id = rule.Id }).ToList();
-                var beforeDays = 0;
-                //var prop = properties.FirstOrDefault(x => x.Name == "BeforeDays");
-                //if (prop != null)
-                //    beforeDays = prop.ValueInteger ?? 0;
-                var date = today.AddDays(beforeDays);
-
-                var partner_ids = conn.Query<Guid>("SELECT Id FROM Partners WHERE Customer = 1 AND BirthDay = @day AND BirthMonth = @month", new { day = date.Day, month = date.Month }).ToList();
-                return partner_ids;
+                else if (condition.Typecondition == "groupPartner")
+                {
+                    builder.LeftJoin("PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id");
+                    builder.LeftJoin("PartnerCategories cpt On cpt.id = rel.CategoryId");
+                    foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
+                    {
+                        switch (kvp.Key)
+                        {
+                            case "eq":
+                                builder.OrWhere($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                break;
+                            case "neq":
+                                builder.OrWhere($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                break;
+                            default:
+                                throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
+                        }
+                    }
+                }
+                else if (condition.Typecondition == "service")
+                {
+                    foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
+                    {
+                        switch (kvp.Key)
+                        {
+                            case "eq":
+                                builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                break;
+                            case "neq":
+                                builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                break;
+                            default:
+                                throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
+                        }
+                    }
+                }
+                else if (condition.Typecondition == "groupService")
+                {
+                    foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
+                    {
+                        switch (kvp.Key)
+                        {
+                            case "eq":
+                                builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                "Left join Products sp On sp.Id = orlines.ProductId " +
+                                "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                $"Where csp.Id {kvp.Value} @groupserviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupserviceId = condition.Valuecondition });
+                                break;
+                            case "neq":
+                                builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                    $"Where csp.Id {kvp.Value} @groupserviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupserviceId = condition.Valuecondition });
+                                break;
+                            default:
+                                throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
+                        }
+                    }
+                }
             }
-
-            return new List<Guid>();
+            var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
+            return partner_ids;
         }
-
-        public async Task SendMessageSocial(Guid? campaignId = null, string content = null,
+        public async Task SendMessageSocial(Guid? campaignId = null,
             string db = null)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
@@ -168,38 +350,51 @@ namespace Infrastructure.Services
                 {
                     conn.Open();
 
-                    var lstpartnerId = new List<Guid>();
+                    var partner_ids = new List<Guid>().AsEnumerable();
                     var profiles = new List<FacebookUserProfile>().AsEnumerable();
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
                     if (campaign == null)
                         return;
-                    var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
-                   
+                    //var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
+                    XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                    MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                    MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+                    /// kiem tra dieu kien  and hoac or
+                    if (resultingMessage.Root.Rule.Logic == "and")
+                    {
+                        partner_ids = SearchAndPartnerIds(resultingMessage.Root.Rule.Condition, conn);
+                    }
+                    else
+                    {
+                        partner_ids = SearchOrPartnerIds(resultingMessage.Root.Rule.Condition, conn);
+                    }
+
+
 
                     //Get partnerIds in list rules
-                    var partner_ids = SearchPartnerIds(campaignXml.RuleXml, conn);
+
                     //if (partner_ids.Count() == 0)
                     //    continue;
 
-                    var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaignId }).FirstOrDefault();
-                    if (messaging == null)
+                    //var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaignId }).FirstOrDefault();
+                    if (resultingMessage.Root.Sequences.Content == null)
                         return;
 
                     var channelSocial = conn.Query<FacebookPage>("" +
                          "SELECT * " +
                          "FROM FacebookPages " +
                          "where Id = @id" +
-                         "", new { id = messaging.ChannelSocialId }).FirstOrDefault();
+                         "", new { id = resultingMessage.Root.Sequences.ChannelsocialId }).FirstOrDefault();
 
                     if (channelSocial == null)
                         return;
 
-                    profiles = GetUserProfiles(messaging.ChannelSocialId.Value, partner_ids, conn);
+                    profiles = GetUserProfiles(Guid.Parse(resultingMessage.Root.Sequences.ChannelsocialId), partner_ids, conn);
                     if (profiles == null)
                         return;
                     if (channelSocial.Type == "facebook")
                     {
-                        var tasks = profiles.Select(x => SendMessageFacebookTextAsync(content, x.PSID, channelSocial.PageAccesstoken)).ToList();
+                        var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequences.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequences.Tcarecampaignid))).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -212,21 +407,30 @@ namespace Infrastructure.Services
                     }
                     else if (channelSocial.Type == "zalo")
                     {
-                        var zaloClient = new ZaloClient(channelSocial.PageAccesstoken);
-                        var tasks = profiles.Select(x => zaloClient.sendTextMessageToUserId(x.PSID, content)).ToList();
+                       
+                        var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequences.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequences.Tcarecampaignid))).ToList();
+                        var limit = 200;
+                        var offset = 0;
+                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        while (subTasks.Any())
+                        {
+                            await Task.WhenAll(subTasks);
+                            offset += limit;
+                            subTasks = tasks.Skip(offset).Take(limit).ToList();
+                        }
                     }
 
                     //lấy ra partnerids của danh sách profiles mới gửi
                     partner_ids = partner_ids.Where(x => !profiles.Any(s => s.PartnerId == x)).ToList();
 
                     // check điều kiện kênh ưu tiên
-                    if (messaging.ChannelType == "priority")
+                    if (resultingMessage.Root.Sequences.Channeltype == "priority")
                     {
                         var channelSocials = conn.Query<FacebookPage>("" +
                              "SELECT * " +
                              "FROM FacebookPages " +
                              "where Id != @id" +
-                             "", new { id = messaging.ChannelSocialId }).ToList();
+                             "", new { id = resultingMessage.Root.Sequences.ChannelsocialId }).ToList();
 
                         foreach (var channel in channelSocials)
                         {
@@ -237,7 +441,7 @@ namespace Infrastructure.Services
                                 return;
                             if (channel.Type == "facebook")
                             {
-                                var tasks = profiles.Select(x => SendMessageFacebookTextAsync(content, x.PSID, channel.PageAccesstoken)).ToList();
+                                var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequences.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequences.Tcarecampaignid))).ToList();
                                 var limit = 200;
                                 var offset = 0;
                                 var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -250,8 +454,17 @@ namespace Infrastructure.Services
                             }
                             else if (channel.Type == "zalo")
                             {
-                                var zaloClient = new ZaloClient(channelSocial.PageAccesstoken);
-                                var tasks = profiles.Select(x => zaloClient.sendTextMessageToUserId(x.PSID, content)).ToList();
+                                
+                                var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequences.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequences.Tcarecampaignid))).ToList();
+                                var limit = 200;
+                                var offset = 0;
+                                var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                                while (subTasks.Any())
+                                {
+                                    await Task.WhenAll(subTasks);
+                                    offset += limit;
+                                    subTasks = tasks.Skip(offset).Take(limit).ToList();
+                                }
                             }
                             partner_ids = partner_ids.Where(x => !profiles.Any(s => s.PartnerId == x)).ToList();
                         }
@@ -294,36 +507,37 @@ namespace Infrastructure.Services
 
 
 
-        private async Task<SendFacebookMessageReponse> SendMessageFacebookTextAsync(string message, string psid, string access_token, string tag = "ACCOUNT_UPDATE")
+        public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token , Guid campaignId)
         {
-            var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
-            var url = $"/me/messages";
+            var now = DateTime.Now;
+            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            date = date.AddSeconds(-1);
+           
+            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
+            if (sendResult == null)
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PartnerId = profile.PartnerId, Type = "facebook" });
+            else
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PartnerId = profile.PartnerId, Type = "facebook" });
+           
 
-            var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
-            request.AddParameter("message_type", "MESSAGE_TAG");
-            request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = psid }));
-            request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
-            request.AddParameter("tag", tag);
-
-            try
-            {
-                var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
-                if (response.GetExceptions().Any())
-                {
-                    return null;
-                }
-                else
-                {
-                    var result = response.GetResult();
-                    return result;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
-            }
         }
+
+        public async Task SendMessageAndTraceZalo(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId)
+        {
+            var now = DateTime.Now;
+            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            date = date.AddSeconds(-1);
+            var zaloClient = new ZaloClient(access_token);
+            var sendResult = zaloClient.sendTextMessageToUserId( profile.PSID, text).Root.ToObject<RootZalo>().data;
+            if (sendResult == null)
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PartnerId = profile.PartnerId, Type = "zalo" });
+            else
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PartnerId = profile.PartnerId, Type = "zalo" });
+
+
+        }
+
+
     }
 
 
@@ -343,42 +557,47 @@ namespace Infrastructure.Services
 
     public class RuleXml
     {
-        public string Name { get; set; }
-        public string beforeDays { get; set; }
+        public List<Condition> Condition { get; set; } = new List<Condition>();
+        public string Logic { get; set; }
     }
+
+    public class RootZalo
+    {
+        public RootMessageZalo data { get; set; }
+    }
+
+    public class RootMessageZalo
+    {
+        public string message_id { get; set; }
+    }
+
 
     public class MessageXML
     {
-        /// <summary>
-        /// phương thức :
-        /// interval : trước thời gian
-        /// shedule : lên lịch ngày giờ cụ thể
-        /// </summary>
-        public string MethodType { get; set; }
 
-        /// <summary>
-        /// MethodType : interval
-        /// "minutes" , "hours" , "weeks", "months"
-        /// </summary>
-        public string IntervalType { get; set; }
+        public string Tcarecampaignid { get; set; }
 
-        public int? IntervalNumber { get; set; }
+        public string Parentid { get; set; }
 
-        /// <summary>
-        /// MethodType : shedule
-        /// </summary>
-        public DateTime? SheduleDate { get; set; }
+        public string Messagereadid { get; set; }
+
+        public string Messageunreadid { get; set; }
+
+        public Guid? Channelsocialid { get; set; }
+
+        public string Channeltype { get; set; }
 
         public string Content { get; set; }
 
-        //--Kenh gui ---//
+        public int? Intervalnumber { get; set; }
 
-        /// <summary>
-        ///  priority : ưu tiên
-        ///  fixed : cố định
-        /// </summary>
-        public string ChannelType { get; set; }
+        public string Intervaltype { get; set; }
 
-        public Guid? ChannelSocialId { get; set; }
+        public string Methodtype { get; set; }
+
+        public DateTime? Sheduledate { get; set; }
+
+        public string Id { get; set; }
+        public string Xmlns { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    
+
 
     [XmlRoot(ElementName = "mxCell")]
     public class MxCell
@@ -15,33 +15,9 @@ namespace Umbraco.Web.Models.ContentEditing
         [XmlAttribute(AttributeName = "parent")]
         public string Parent { get; set; }
         [XmlElement(ElementName = "mxGeometry")]
-        public MxGeometry MxGeometry { get; set; }
+        public MxGeometry2 MxGeometry2 { get; set; }
         [XmlAttribute(AttributeName = "value")]
         public string Value { get; set; }
-        [XmlAttribute(AttributeName = "style")]
-        public string Style { get; set; }
-        [XmlAttribute(AttributeName = "vertex")]
-        public string Vertex { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "beforeDays")]
-        public string BeforeDays { get; set; }
-        [XmlElement(ElementName = "sheduleDate")]
-        public DateTime SheduleDate { get; set; }
-        [XmlAttribute(AttributeName = "tCareCampaignId")]
-        public string TCareCampaignId { get; set; }
-        [XmlAttribute(AttributeName = "methodType")]
-        public string MethodType { get; set; }
-        [XmlAttribute(AttributeName = "intervalType")]
-        public string IntervalType { get; set; }
-        [XmlAttribute(AttributeName = "intervalNumber")]
-        public string IntervalNumber { get; set; }
-        [XmlAttribute(AttributeName = "content")]
-        public string Content { get; set; }
-        [XmlAttribute(AttributeName = "channelSocialId")]
-        public string ChannelSocialId { get; set; }
-        [XmlAttribute(AttributeName = "channelType")]
-        public string ChannelType { get; set; }
         [XmlAttribute(AttributeName = "source")]
         public string Source { get; set; }
         [XmlAttribute(AttributeName = "target")]
@@ -50,7 +26,22 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Edge { get; set; }
     }
 
-    [XmlRoot(ElementName = "mxGeometry")]
+    [XmlRoot(ElementName = "condition", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class Condition
+    {
+        [XmlAttribute(AttributeName = "namecondition")]
+        public string Namecondition { get; set; }
+        [XmlAttribute(AttributeName = "typecondition")]
+        public string Typecondition { get; set; }
+        [XmlAttribute(AttributeName = "flagcondition")]
+        public string Flagcondition { get; set; }
+        [XmlAttribute(AttributeName = "valuecondition")]
+        public string Valuecondition { get; set; }
+        [XmlAttribute(AttributeName = "ruleid")]
+        public string Ruleid { get; set; }
+    }
+
+    [XmlRoot(ElementName = "mxGeometry", Namespace = "http://www.w3.org/1999/xhtml")]
     public class MxGeometry
     {
         [XmlAttribute(AttributeName = "x")]
@@ -63,15 +54,127 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Height { get; set; }
         [XmlAttribute(AttributeName = "as")]
         public string As { get; set; }
-        [XmlAttribute(AttributeName = "relative")]
-        public string Relative { get; set; }
     }
 
-    [XmlRoot(ElementName = "Date")]
-    public class Date
+    [XmlRoot(ElementName = "mxCell", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class MxCell2
     {
+        [XmlElement(ElementName = "mxGeometry", Namespace = "http://www.w3.org/1999/xhtml")]
+        public MxGeometry MxGeometry { get; set; }
+        [XmlAttribute(AttributeName = "style")]
+        public string Style { get; set; }
+        [XmlAttribute(AttributeName = "parent")]
+        public string Parent { get; set; }
+        [XmlAttribute(AttributeName = "vertex")]
+        public string Vertex { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "isRoot")]
+        public string IsRoot { get; set; }
+    }
+
+    [XmlRoot(ElementName = "rule", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class Rule
+    {
+        [XmlElement(ElementName = "condition", Namespace = "http://www.w3.org/1999/xhtml")]
+        public List<Condition> Condition { get; set; }
+        [XmlElement(ElementName = "mxCell", Namespace = "http://www.w3.org/1999/xhtml")]
+        public MxCell2 MxCell2 { get; set; }
+        [XmlAttribute(AttributeName = "xmlns")]
+        public string Xmlns { get; set; }
+        [XmlAttribute(AttributeName = "logic")]
+        public string Logic { get; set; }
+        [XmlAttribute(AttributeName = "id")]
+        public string Id { get; set; }
+    }
+
+    [XmlRoot(ElementName = "sequences", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class Sequences
+    {
+        [XmlElement(ElementName = "mxCell", Namespace = "http://www.w3.org/1999/xhtml")]
+        public MxCell2 MxCell2 { get; set; }
+        [XmlAttribute(AttributeName = "xmlns")]
+        public string Xmlns { get; set; }
+        [XmlAttribute(AttributeName = "tcarecampaignid")]
+        public string Tcarecampaignid { get; set; }
+        [XmlAttribute(AttributeName = "parentid")]
+        public string Parentid { get; set; }
+        [XmlAttribute(AttributeName = "parent")]
+        public string Parent { get; set; }
+        [XmlAttribute(AttributeName = "messagereadid")]
+        public string Messagereadid { get; set; }
+        [XmlAttribute(AttributeName = "messageunreadid")]
+        public string Messageunreadid { get; set; }
+        [XmlAttribute(AttributeName = "channeltype")]
+        public string Channeltype { get; set; }
+        [XmlAttribute(AttributeName = "content")]
+        public string Content { get; set; }
+        [XmlAttribute(AttributeName = "intervalnumber")]
+        public string Intervalnumber { get; set; }
+        [XmlAttribute(AttributeName = "intervaltype")]
+        public string Intervaltype { get; set; }
+        [XmlAttribute(AttributeName = "methodtype")]
+        public string Methodtype { get; set; }
+        [XmlAttribute(AttributeName = "sheduledate")]
+        public string Sheduledate { get; set; }
+        [XmlAttribute(AttributeName = "channelsocialId")]
+        public string ChannelsocialId { get; set; }
+        [XmlAttribute(AttributeName = "id")]
+        public string Id { get; set; }
+    }
+
+    [XmlRoot(ElementName = "mxGeometry")]
+    public class MxGeometry2
+    {
+        [XmlAttribute(AttributeName = "relative")]
+        public string Relative { get; set; }
         [XmlAttribute(AttributeName = "as")]
         public string As { get; set; }
+    }
+
+    [XmlRoot(ElementName = "tag", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class Tag
+    {
+        [XmlAttribute(AttributeName = "id")]
+        public string Id { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "tagid")]
+        public string Tagid { get; set; }
+    }
+
+    [XmlRoot(ElementName = "message_read", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class Message_read
+    {
+        [XmlElement(ElementName = "tag", Namespace = "http://www.w3.org/1999/xhtml")]
+        public List<Tag> Tag { get; set; }
+        [XmlElement(ElementName = "mxCell", Namespace = "http://www.w3.org/1999/xhtml")]
+        public MxCell2 MxCell2 { get; set; }
+        [XmlAttribute(AttributeName = "xmlns")]
+        public string Xmlns { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "parent")]
+        public string Parent { get; set; }
+        [XmlAttribute(AttributeName = "id")]
+        public string Id { get; set; }
+    }
+
+    [XmlRoot(ElementName = "message_unread", Namespace = "http://www.w3.org/1999/xhtml")]
+    public class Message_unread
+    {
+        [XmlElement(ElementName = "tag", Namespace = "http://www.w3.org/1999/xhtml")]
+        public List<Tag> Tag { get; set; }
+        [XmlElement(ElementName = "mxCell", Namespace = "http://www.w3.org/1999/xhtml")]
+        public MxCell2 MxCell2 { get; set; }
+        [XmlAttribute(AttributeName = "xmlns")]
+        public string Xmlns { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "parent")]
+        public string Parent { get; set; }
+        [XmlAttribute(AttributeName = "id")]
+        public string Id { get; set; }
     }
 
     [XmlRoot(ElementName = "root")]
@@ -79,6 +182,14 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         [XmlElement(ElementName = "mxCell")]
         public List<MxCell> MxCell { get; set; }
+        [XmlElement(ElementName = "rule", Namespace = "http://www.w3.org/1999/xhtml")]
+        public Rule Rule { get; set; }
+        [XmlElement(ElementName = "sequences", Namespace = "http://www.w3.org/1999/xhtml")]
+        public Sequences Sequences { get; set; }
+        [XmlElement(ElementName = "message_read", Namespace = "http://www.w3.org/1999/xhtml")]
+        public Message_read Message_read { get; set; }
+        [XmlElement(ElementName = "message_unread", Namespace = "http://www.w3.org/1999/xhtml")]
+        public Message_unread Message_unread { get; set; }
     }
 
     [XmlRoot(ElementName = "mxGraphModel")]

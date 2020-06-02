@@ -20,6 +20,7 @@ namespace ApplicationCore.Entities
 
         public DateTime? SheduleStart { get; set; }
 
+        public ICollection<TCareMessagingTrace> Traces { get; set; } = new List<TCareMessagingTrace>();
         /// <summary>
         /// draft : mới 
         /// running : đang chạy
