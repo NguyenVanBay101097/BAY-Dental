@@ -9,13 +9,27 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="d-flex align-items-center">
+                                    <span>Chỉ khách hàng phù hợp với </span>
+                                    <select class="form-control ml-2" style="width: fit-content;"
+                                        formControlName="logic">
+                                        <option value="and">Tất cả điều kiện</option>
+                                        <option value="or">Bất kì điều kiện nào</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <table class="o_group o_inner_group" [class.o_group_col_6]="!getTypeConditionValue()">
                         <tbody>
                             <tr>
                                 <td style="padding-right: 20px;">
                                     <select class="form-control" formControlName="typeCondition"
                                         (change)="handleTypeConditionChange($event)">
-                                        <option value="" disabled>-- Chọn điều kiện --</option>
+                                        <option value="">-- Chọn điều kiện --</option>
                                         <option value="birthday">Sinh nhật</option>
                                         <option value="lastTreatmentDay">Ngày điều trị cuối</option>
                                         <option value="partnerGroup">Nhóm khách hàng</option>
@@ -74,6 +88,7 @@
                         <span>{{convertTypeCondition(tag.typeCondition)}}</span>
                         <u class="pl-1">{{convertFlagCondition(tag.flagCondition)}}</u>
                         <u class="pl-1">{{isDay(tag.typeCondition) ? tag.valueCondition : tag.nameCondition}}</u>
+                        <span *ngIf="isDay(tag.typeCondition)" class="pl-1">ngày</span>
                         <span class="remove" (click)="deleteTag(i)">
                             <i class="fas fa-times pl-2"></i>
                         </span>

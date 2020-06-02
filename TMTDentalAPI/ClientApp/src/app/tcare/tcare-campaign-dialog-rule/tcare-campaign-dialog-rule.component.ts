@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TcareService } from '../tcare.service';
+import { TcareService, TCareRule } from '../tcare.service';
 import { PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { map } from 'rxjs/operators';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -17,7 +17,6 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 export class TcareCampaignDialogRuleComponent implements OnInit {
 
   title: string;
-  cell: any;
   formGroup: FormGroup;
   isDisabledCondition: boolean = true;
   limit: number = 20;
@@ -28,6 +27,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   listTags: any = [];
   selectedTag: any;
   numbericValueCondition: number = 0;
+  TCareRule: TCareRule;
 
   constructor(
     private fb: FormBuilder,
@@ -40,26 +40,22 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
+      logic: "and",
       typeCondition: "",
       flagCondition: "",
       valueCondition: 0,
       nameCondition: "",
       selectedValueCondition: null,
-      days: [0],
     });
-
-    if (this.cell)
-      this.loadFormApi();
-  }
-
-  loadFormApi() {
-    this.formGroup.patchValue(this.cell);
   }
 
   onSave() {
-    this.cell.beforeDays = this.formGroup.get('days').value;
-    this.activeModal.close(this.cell);
-    console.log(this.listTags);
+    this.TCareRule = {
+      logic: this.formGroup.get('logic').value,
+      conditions: this.listTags
+    }
+    console.log(this.TCareRule);
+    this.activeModal.close(this.TCareRule);
   }
 
   unitCondition() {
