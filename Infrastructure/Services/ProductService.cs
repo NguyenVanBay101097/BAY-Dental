@@ -197,12 +197,28 @@ namespace Infrastructure.Services
             //Tính lại giá bán
             await _ProcessListPrice(items);
 
+            //Tính tồn kho
+            _CalcQtyAvailable(items);
+
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ProductBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
+        }
+
+        private void _CalcQtyAvailable(IEnumerable<ProductBasic> items)
+        {
+            var compute_items = items.Where(x => x.Type == "product");
+            if (!compute_items.Any())
+                return;
+
+            var company_id = CompanyId;
+            var qty_available_dict = ProductAvailable(ids: compute_items.Select(x => x.Id).ToList(), company_id: company_id);
+
+            foreach (var item in compute_items)
+                item.QtyAvailable = qty_available_dict[item.Id].QtyAvailable;
         }
 
         private async Task _ProcessListPrice(List<ProductBasic> items)
@@ -584,7 +600,6 @@ namespace Infrastructure.Services
             return res;
         }
 
-
         public async Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self,
             Guid pricelistId,
             Guid? partnerId = null, decimal quantity = 1,
@@ -618,9 +633,6 @@ namespace Infrastructure.Services
             return res;
         }
 
-
-
-
         //public override ISpecification<Product> RuleDomainGet(IRRule rule)
         //{
         //    var companyId = CompanyId;
@@ -632,5 +644,232 @@ namespace Infrastructure.Services
         //            return null;
         //    }
         //}
+
+        public IDictionary<Guid, ProductAvailableRes> ProductAvailable(IEnumerable<Guid> ids = null, Guid? location_id = null, Guid? warehouse_id = null, Guid? company_id = null,
+        DateTime? from_date = null, DateTime? to_date = null)
+        {
+            return _ComputeQuantitiesDict(ids: ids, from_date: from_date, to_date: to_date, location_id: location_id, warehouse_id: warehouse_id, company_id: company_id);
+        }
+
+        public IDictionary<Guid, ProductAvailableRes> _ComputeQuantitiesDict(IEnumerable<Guid> ids = null, DateTime? from_date = null,
+   DateTime? to_date = null, Guid? location_id = null, Guid? warehouse_id = null, Guid? company_id = null)
+        {
+            var locationObj = GetService<IStockLocationService>();
+            var quantObj = GetService<IStockQuantService>();
+            var moveObj = GetService<IStockMoveService>();
+
+            var domain_res = _GetDomainLocations(location_id: location_id, warehouse_id: warehouse_id, company_id: company_id);
+            var domain_quant_loc = domain_res.domain_quant_loc;
+            var domain_move_in_loc = domain_res.domain_move_in_loc;
+            var domain_move_out_loc = domain_res.domain_move_out_loc;
+
+            var domain_quant = domain_quant_loc;
+            var domain_move_in = domain_move_in_loc;
+            var domain_move_out = domain_move_out_loc;
+            if (ids != null)
+            {
+                domain_quant = domain_quant_loc.And(new InitialSpecification<StockQuant>(x => ids.Contains(x.ProductId)));
+                domain_move_in = domain_move_in_loc.And(new InitialSpecification<StockMove>(x => ids.Contains(x.ProductId)));
+                domain_move_out = domain_move_out_loc.And(new InitialSpecification<StockMove>(x => ids.Contains(x.ProductId)));
+            }
+
+            var dates_in_the_past = false;
+            if (to_date.HasValue && to_date < DateTime.Now)
+                dates_in_the_past = true;
+
+            if (from_date.HasValue)
+            {
+                domain_move_in_loc = domain_move_in_loc.And(new InitialSpecification<StockMove>(x => x.Date >= from_date));
+                domain_move_out_loc = domain_move_out_loc.And(new InitialSpecification<StockMove>(x => x.Date >= from_date));
+            }
+
+            if (to_date.HasValue)
+            {
+                domain_move_in_loc = domain_move_in_loc.And(new InitialSpecification<StockMove>(x => x.Date <= to_date));
+                domain_move_out_loc = domain_move_out_loc.And(new InitialSpecification<StockMove>(x => x.Date <= to_date));
+            }
+
+            var states = new string[] { "done", "cancel", "draft" };
+            var domain_move_in_todo = domain_move_in.And(new InitialSpecification<StockMove>(x => !states.Contains(x.State)));
+            var domain_move_out_todo = domain_move_out.And(new InitialSpecification<StockMove>(x => !states.Contains(x.State)));
+
+            var quants_res = quantObj.SearchQuery(domain_quant.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
+            {
+                ProductId = x.Key,
+                Qty = x.Sum(s => s.Qty),
+            }).ToDictionary(x => x.ProductId, x => x.Qty);
+
+            var movesIn = moveObj.SearchQuery(domain: domain_move_in_todo.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
+            {
+                ProductId = x.Key,
+                Qty = x.Sum(s => s.ProductQty),
+            }).ToDictionary(x => x.ProductId, x => x.Qty);
+
+            var movesOut = moveObj.SearchQuery(domain_move_out_todo.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
+           {
+               ProductId = x.Key,
+               Qty = x.Sum(s => s.ProductQty),
+           }).ToDictionary(x => x.ProductId, x => x.Qty);
+
+            var moves_in_res_past = new Dictionary<Guid, decimal?>();
+            var moves_out_res_past = new Dictionary<Guid, decimal?>();
+            if (dates_in_the_past)
+            {
+                //Calculate the moves that were done before now to calculate back in time (as most questions will be recent ones)
+                var domain_move_in_done = domain_move_in.And(new InitialSpecification<StockMove>(x => x.State == "done" && x.Date > to_date));
+                var domain_move_out_done = domain_move_out.And(new InitialSpecification<StockMove>(x => x.State == "done" && x.Date > to_date));
+
+                moves_in_res_past = moveObj.SearchQuery(domain_move_in_done.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
+                    {
+                        ProductId = x.Key,
+                        Qty = x.Sum(s => s.ProductQty),
+                    }).ToDictionary(x => x.ProductId, x => x.Qty);
+
+                moves_out_res_past = moveObj.SearchQuery(domain_move_out_done.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
+                    {
+                        ProductId = x.Key,
+                        Qty = x.Sum(s => s.ProductQty),
+                    }).ToDictionary(x => x.ProductId, x => x.Qty);
+            }
+
+            var res = new Dictionary<Guid, ProductAvailableRes>();
+
+            ISpecification<Product> product_domain = new InitialSpecification<Product>(x => true);
+            if (ids != null)
+                product_domain = product_domain.And(new InitialSpecification<Product>(x => ids.Contains(x.Id)));
+
+            var self = SearchQuery(product_domain.AsExpression()).Select(x => new
+            {
+                Id = x.Id,
+                UOMRounding = x.UOM.Rounding
+            }).ToList();
+
+            foreach (var product in self)
+            {
+                res.Add(product.Id, new ProductAvailableRes());
+                decimal qty_available = 0;
+                if (dates_in_the_past)
+                {
+                    qty_available = (quants_res.ContainsKey(product.Id) ? quants_res[product.Id] : 0) -
+                        (moves_in_res_past.ContainsKey(product.Id) ? (moves_in_res_past[product.Id] ?? 0) : 0) +
+                        (moves_out_res_past.ContainsKey(product.Id) ? (moves_out_res_past[product.Id] ?? 0) : 0);
+                }
+                else
+                    qty_available = (quants_res.ContainsKey(product.Id) ? quants_res[product.Id] : 0);
+                res[product.Id].QtyAvailable = qty_available; //(decimal)FloatUtils.FloatRound((double)qty_available, precisionRounding: (double?)product.UOMRounding);
+                res[product.Id].IncomingQty = movesIn.ContainsKey(product.Id) ? (movesIn[product.Id] ?? 0) : 0;//(decimal)FloatUtils.FloatRound((double)(movesIn.ContainsKey(product.Id) ? (movesIn[product.Id] ?? 0) : 0), precisionRounding: (double?)product.UOMRounding);
+                res[product.Id].OutgoingQty = movesOut.ContainsKey(product.Id) ? (movesOut[product.Id] ?? 0) : 0; //(decimal)FloatUtils.FloatRound((double)(movesOut.ContainsKey(product.Id) ? (movesOut[product.Id] ?? 0) : 0), precisionRounding: (double?)product.UOMRounding);
+                res[product.Id].VirtualAvailable = qty_available + res[product.Id].IncomingQty - res[product.Id].OutgoingQty;//(decimal)FloatUtils.FloatRound((double)(qty_available + res[product.Id].IncomingQty - res[product.Id].OutgoingQty), precisionRounding: (double?)product.UOMRounding);
+            }
+
+            return res;
+        }
+
+        private GetDomainLoctionsRes _GetDomainLocations(Guid? location_id = null, Guid? warehouse_id = null, Guid? company_id = null)
+        {
+            var locationObj = GetService<StockLocationService>();
+            var warehouseObj = GetService<IStockWarehouseService>();
+            var location_ids = new List<Guid>();
+            if (location_id.HasValue)
+            {
+                location_ids.Add(location_id.Value);
+            }
+            else
+            {
+                if (warehouse_id.HasValue)
+                {
+                    var wh = warehouseObj.GetById(warehouse_id.Value);
+                    location_ids.Add(wh.LocationId);
+                }
+                else if (company_id.HasValue)
+                {
+                    var whs = warehouseObj.SearchQuery(x => x.CompanyId == company_id).ToList();
+                    foreach (var wh in whs)
+                        location_ids.Add(wh.ViewLocationId);
+                }
+                else
+                {
+                    var whs = warehouseObj.SearchQuery().ToList();
+                    foreach (var wh in whs)
+                        location_ids.Add(wh.ViewLocationId);
+                }
+            }
+
+            return _GetDomainLocationsNew(location_ids, company_id: company_id);
+        }
+
+        private GetDomainLoctionsRes _GetDomainLocationsNew(IList<Guid> location_ids, Guid? company_id = null, bool compute_child = true)
+        {
+            var locObj = GetService<IStockLocationService>();
+            var opt = compute_child ? "child_of" : "in";
+            ISpecification<StockQuant> quant_domain = new InitialSpecification<StockQuant>(x => true);
+            ISpecification<StockMove> move_domain = new InitialSpecification<StockMove>(x => true);
+
+            if (company_id.HasValue)
+            {
+                quant_domain = quant_domain.And(new InitialSpecification<StockQuant>(x => x.CompanyId == company_id));
+                move_domain = move_domain.And(new InitialSpecification<StockMove>(x => x.CompanyId == company_id));
+            }
+
+            ISpecification<StockQuant> loc_domain = new InitialSpecification<StockQuant>(x => false);
+            ISpecification<StockMove> move_loc_domain = new InitialSpecification<StockMove>(x => false);
+            ISpecification<StockMove> move_dest_loc_domain = new InitialSpecification<StockMove>(x => false);
+
+            ISpecification<StockMove> neg_move_loc_domain = new InitialSpecification<StockMove>(x => true); //phủ định
+            ISpecification<StockMove> neg_move_dest_loc_domain = new InitialSpecification<StockMove>(x => true);
+
+
+            var locations = locObj.SearchQuery(x => location_ids.Contains(x.Id)).ToList();
+            var hierarchical_locations = locations.Where(x => x.ParentLeft != 0 && opt == "child_of");
+            var other_locations = locations.Except(hierarchical_locations);
+
+            foreach (var location in hierarchical_locations)
+            {
+                loc_domain = loc_domain.Or(new InitialSpecification<StockQuant>(x => x.Location.ParentLeft >= location.ParentLeft && x.Location.ParentLeft < location.ParentRight));
+                move_loc_domain = move_loc_domain.Or(new InitialSpecification<StockMove>(x => x.Location.ParentLeft >= location.ParentLeft && x.Location.ParentLeft < location.ParentRight));
+                move_dest_loc_domain = move_dest_loc_domain.Or(new InitialSpecification<StockMove>(x => x.LocationDest.ParentLeft >= location.ParentLeft && x.LocationDest.ParentLeft < location.ParentRight));
+
+                neg_move_loc_domain = neg_move_loc_domain.And(new InitialSpecification<StockMove>(x => !(x.Location.ParentLeft >= location.ParentLeft && x.Location.ParentLeft < location.ParentRight)));
+                neg_move_dest_loc_domain = neg_move_dest_loc_domain.And(new InitialSpecification<StockMove>(x => !(x.LocationDest.ParentLeft >= location.ParentLeft && x.LocationDest.ParentLeft < location.ParentRight)));
+            }
+
+            if (other_locations.Any())
+            {
+                var other_location_ids = other_locations.Select(x => x.Id);
+                loc_domain = loc_domain.And(new InitialSpecification<StockQuant>(x => other_location_ids.Contains(x.LocationId)));
+                move_loc_domain = move_loc_domain.And(new InitialSpecification<StockMove>(x => other_location_ids.Contains(x.LocationId)));
+                move_dest_loc_domain = move_dest_loc_domain.And(new InitialSpecification<StockMove>(x => other_location_ids.Contains(x.LocationDestId)));
+
+                neg_move_loc_domain = neg_move_loc_domain.And(new InitialSpecification<StockMove>(x => !other_location_ids.Contains(x.LocationId)));
+                neg_move_dest_loc_domain = neg_move_dest_loc_domain.And(new InitialSpecification<StockMove>(x => !other_location_ids.Contains(x.LocationDestId)));
+            }
+
+            return new GetDomainLoctionsRes
+            {
+                domain_quant_loc = quant_domain.And(loc_domain),
+                domain_move_in_loc = move_domain.And(move_dest_loc_domain).And(neg_move_loc_domain),
+                domain_move_out_loc = move_domain.And(move_loc_domain).And(neg_move_dest_loc_domain)
+            };
+        }
+    }
+
+    public class ProductAvailableRes
+    {
+        public decimal QtyAvailable { get; set; }
+
+        public decimal IncomingQty { get; set; }
+
+        public decimal OutgoingQty { get; set; }
+
+        public decimal VirtualAvailable { get; set; }
+    }
+
+    public class GetDomainLoctionsRes
+    {
+        public ISpecification<StockQuant> domain_quant_loc { get; set; }
+
+        public ISpecification<StockMove> domain_move_in_loc { get; set; }
+
+        public ISpecification<StockMove> domain_move_out_loc { get; set; }
     }
 }
