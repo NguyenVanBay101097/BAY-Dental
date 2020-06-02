@@ -87,6 +87,17 @@ export class TCareMessageDisplay {
   tCareCampaignId: string;
 }
 
+export class TCareRuleCondition {
+  typeCondition: string;
+  valueCondition: string;
+  nameCondition: string;
+  flagCondition: string;
+}
+
+export class TCareRule {
+  logic: string;
+  conditions: TCareRuleCondition[];
+}
 
 @Injectable({
   providedIn: 'root'
