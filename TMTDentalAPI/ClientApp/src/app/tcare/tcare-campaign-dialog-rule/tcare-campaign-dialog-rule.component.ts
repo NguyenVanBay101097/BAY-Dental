@@ -27,14 +27,14 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   listTags: any = [];
   selectedTag: any;
   numbericValueCondition: number = 0;
-  TCareRule: TCareRule;
+  tCareRule: TCareRule;
 
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
     private notificationService: NotificationService,
-    private partnerCategoryService: PartnerCategoryService, 
-    private productService: ProductService, 
+    private partnerCategoryService: PartnerCategoryService,
+    private productService: ProductService,
     private productCategoryService: ProductCategoryService
   ) { }
 
@@ -47,15 +47,21 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
       nameCondition: "",
       selectedValueCondition: null,
     });
+    this.loadDataCell(this.tCareRule);
+  }
+
+  loadDataCell(data: TCareRule) {
+    this.formGroup.patchValue({ logic: data.logic });
+    this.listTags = data.conditions;
   }
 
   onSave() {
-    this.TCareRule = {
+    this.tCareRule = {
       logic: this.formGroup.get('logic').value,
       conditions: this.listTags
     }
-    console.log(this.TCareRule);
-    this.activeModal.close(this.TCareRule);
+    console.log(this.tCareRule);
+    this.activeModal.close(this.tCareRule);
   }
 
   unitCondition() {
@@ -76,7 +82,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   optionFlagCondition() {
     switch (this.formGroup.get('typeCondition').value) {
-      case "birthday": 
+      case "birthday":
         this.listFlagCondition = ["before"];
         return;
       case "lastTreatmentDay":
@@ -148,16 +154,16 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
       this.formGroup.patchValue({ flagCondition: this.listFlagCondition[0] });
     }
     switch (this.formGroup.get('typeCondition').value) {
-      case "birthday": 
+      case "birthday":
       case "lastTreatmentDay":
         this.formGroup.patchValue({ valueCondition: 0 });
         return;
       default:
         this.search = null;
-        this.formGroup.patchValue({ 
+        this.formGroup.patchValue({
           valueCondition: 0,
           nameCondition: "",
-          selectedValueCondition: null 
+          selectedValueCondition: null
         });
         this.loadListData();
         return;
@@ -170,7 +176,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   isDay(typeCondition) {
     switch (typeCondition) {
-      case "birthday": 
+      case "birthday":
       case "lastTreatmentDay":
         return true;
       default:
@@ -248,7 +254,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
         valueCondition: this.formGroup.get('valueCondition').value,
         nameCondition: this.formGroup.get('nameCondition').value,
       });
-      this.formGroup.patchValue({ 
+      this.formGroup.patchValue({
         typeCondition: "",
         flagCondition: "",
         valueCondition: 0,
@@ -263,7 +269,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
           valueCondition: this.formGroup.get('valueCondition').value,
           nameCondition: this.formGroup.get('nameCondition').value,
         });
-        this.formGroup.patchValue({ 
+        this.formGroup.patchValue({
           typeCondition: "",
           flagCondition: "",
           valueCondition: "",
@@ -283,7 +289,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   }
 
   onCancelTag() {
-    this.formGroup.patchValue({ 
+    this.formGroup.patchValue({
       typeCondition: "",
       flagCondition: "",
       valueCondition: 0,
@@ -300,7 +306,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
       valueCondition: this.formGroup.get('valueCondition').value,
       nameCondition: this.formGroup.get('nameCondition').value,
     };
-    this.formGroup.patchValue({ 
+    this.formGroup.patchValue({
       typeCondition: "",
       flagCondition: "",
       valueCondition: 0,
@@ -312,16 +318,16 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   handleNumbericValueConditionChange(value) {
     // console.log(value);
-    this.formGroup.patchValue({ 
-      valueCondition: value, 
+    this.formGroup.patchValue({
+      valueCondition: value,
       nameCondition: ""
     });
   }
 
   handleValueConditionChange(value) {
     // console.log(value);
-    this.formGroup.patchValue({ 
-      valueCondition: value.id, 
+    this.formGroup.patchValue({
+      valueCondition: value.id,
       nameCondition: value.name
     });
   }
@@ -336,7 +342,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     // this.listTags.splice(index, 1);
     this.selectedTag = index;
     // console.log(this.selectedTag);
-    this.formGroup.patchValue({ 
+    this.formGroup.patchValue({
       typeCondition: item.typeCondition,
       flagCondition: item.flagCondition,
       valueCondition: item.valueCondition,

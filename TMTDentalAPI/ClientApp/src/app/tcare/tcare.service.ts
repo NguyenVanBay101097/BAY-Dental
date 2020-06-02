@@ -49,17 +49,6 @@ export class TCareReadMessage {
   tags: Tag[];
 }
 
-export class TCareRuleCondition {
-  nameCondition: string;
-  typeCondition: string;
-  valueCondition: string;
-  flagCondition: string;
-}
-
-export class TCareRule {
-  logic: string;
-  conditions: TCareRuleCondition[];
-}
 
 export class TCareRuleSave {
   type: string;

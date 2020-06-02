@@ -260,83 +260,77 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           else {
             if (cell.style == "sequences") {
               var message = new TCareMessageDisplay();
-              message.channelSocialId = cell.getValue().getAttribute('channelSocialId') || '';
-              message.channelType = cell.getValue().getAttribute('channelType') || 'priority';
+              message.channelSocialId = cell.getValue().getAttribute('channelsocialId') || '';
+              message.channelType = cell.getValue().getAttribute('channeltype') || 'priority';
               message.content = cell.getValue().getAttribute('content') || '';
-              message.intervalNumber = Number.parseInt(cell.getValue().getAttribute('intervalNumber')) || 0;
-              message.intervalType = cell.getValue().getAttribute('intervalType') || 'minutes';
-              message.methodType = cell.getValue().getAttribute('methodType') || 'interval';
-              message.sheduleDate = cell.getValue().getAttribute('sheduleDate') || new Date();
+              message.intervalNumber = Number.parseInt(cell.getValue().getAttribute('intervalnumber')) || 0;
+              message.intervalType = cell.getValue().getAttribute('intervaltype') || 'minutes';
+              message.methodType = cell.getValue().getAttribute('methodtype') || 'interval';
+              message.sheduleDate = cell.getValue().getAttribute('sheduledate') || new Date();
               let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
               modalRef.componentInstance.title = 'Cài đặt gửi tin';
               modalRef.componentInstance.model = message;
               modalRef.result.then(
                 (result) => {
-                  graph.getModel().beginUpdate();
-                  try {
-                    var value = cell.getValue();
-                    value.setAttribute('channelSocialId', result.channelSocialId);
-                    value.setAttribute('channelType', result.channelType);
-                    value.setAttribute('content', result.content);
-                    value.setAttribute('intervalNumber', result.intervalNumber);
-                    value.setAttribute('intervalType', result.intervalType);
-                    value.setAttribute('methodType', result.methodType);
-                    value.setAttribute('sheduleDate', result.sheduleDate);
-                    graph.getModel().setValue(cell, value);
-                  }
-                  finally {
-                    graph.getModel().endUpdate();
-                  }
+
+                  var value = cell.getValue();
+                  value.setAttribute('channelsocialId', result.channelSocialId);
+                  value.setAttribute('channeltype', result.channelType);
+                  value.setAttribute('content', result.content);
+                  value.setAttribute('intervalnumber', result.intervalNumber);
+                  value.setAttribute('intervaltype', result.intervalType);
+                  value.setAttribute('methodtype', result.methodType);
+                  value.setAttribute('sheduledate', result.sheduleDate);
+                  graph.getModel().setValue(cell, value);
                   that.updateCampaign(editor.graph);
                 });
             }
             if (cell.style == "rule") {
-              var model = new TCareRule();
-              model.logic = cell.getValue().getAttribute('logic') || '';
-              if (!model.conditions) {
-                model.conditions = [];
+              var tCareRule = new TCareRule();
+              tCareRule.logic = cell.getValue().getAttribute('logic') || '';
+              if (!tCareRule.conditions) {
+                tCareRule.conditions = [];
               }
               if (cell.value && cell.value.children && cell.value.children.length > 0) {
                 for (let i = 0; i < cell.value.children.length; i++) {
                   var obj = cell.value.children[i]
                   var condition = new TCareRuleCondition();
-                  condition.nameCondition = obj.getAttribute('nameCondition') || '';
-                  condition.typeCondition = obj.getAttribute('typeCondition') || '';
-                  condition.flagCondition = obj.getAttribute('flagCondition') || 'false';
-                  condition.valueCondition = obj.getAttribute('valueCondition') || '';
-                  model.conditions.push(condition);
+                  condition.nameCondition = obj.getAttribute('namecondition') || '';
+                  condition.typeCondition = obj.getAttribute('typecondition') || '';
+                  condition.flagCondition = obj.getAttribute('flagcondition') || 'false';
+                  condition.valueCondition = obj.getAttribute('valuecondition') || '';
+                  tCareRule.conditions.push(condition);
                 }
               }
 
               let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
               modalRef.componentInstance.title = 'Cài đặt điều kiện';
-              modalRef.componentInstance.model = model;
+              modalRef.componentInstance.tCareRule = tCareRule;
               modalRef.result.then(
                 result => {
                   graph.getModel().beginUpdate();
                   try {
-                    var val = cell.getValue();
-                    val.setAttribute('logic', result.logic);
-
-                    if (cell.value && cell.value.children && cell.value.children.length > 0) {
-                      for (let i = 0; i < cell.value.children.length; i++) {
-                        cell.value.removeChild(cell.value.children[i])
+                    var value = cell.getValue();
+                    value.setAttribute('logic', result.logic);
+                    if (value && value.children && value.children.length > 0) {
+                      while (value.firstChild) {
+                        value.removeChild(value.firstChild);
                       }
                     }
 
                     if (result.conditions && result.conditions.length > 0) {
                       result.conditions.forEach(child => {
                         var childEle = document.createElement('condition');
-                        childEle.setAttribute('nameCondition', child.nameCondition);
-                        childEle.setAttribute('typeCondition', child.typeCondition);
-                        childEle.setAttribute('flagCondition', child.flagCondition);
-                        childEle.setAttribute('valueCondition', child.valueCondition);
+                        childEle.setAttribute('namecondition', child.nameCondition);
+                        childEle.setAttribute('typecondition', child.typeCondition);
+                        childEle.setAttribute('flagcondition', child.flagCondition);
+                        childEle.setAttribute('valuecondition', child.valueCondition);
                         childEle.setAttribute('ruleId', cell.id);
-                        val.appendChild(childEle);
+                        value.appendChild(childEle);
                       });
                     }
 
-                    graph.getModel().setValue(cell, val);
+                    graph.getModel().setValue(cell, value);
                   }
                   finally {
                     graph.getModel().endUpdate();
@@ -387,7 +381,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                 for (let i = 0; i < cell.getValue().children.length; i++) {
                   var tag = cell.getValue().children[i];
                   var partnerCateg = new PartnerCategoryBasic();
-                  partnerCateg.id = tag.getAttribute('id');
+                  partnerCateg.id = tag.getAttribute('tagId');
                   partnerCateg.name = tag.getAttribute('name');
                   listPartnerCategories.push(partnerCateg);
                 }
@@ -406,7 +400,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                     }
                     result.forEach(item => {
                       var tag = document.createElement('tag');
-                      tag.setAttribute('id', item.id);
+                      tag.setAttribute('tagId', item.id);
                       tag.setAttribute('name', item.name);
                       value.appendChild(tag);
                       graph.getModel().setValue(cell, value);
