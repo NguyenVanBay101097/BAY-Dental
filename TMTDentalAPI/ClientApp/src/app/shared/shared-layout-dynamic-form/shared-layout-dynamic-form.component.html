@@ -1,0 +1,17 @@
+<form *ngIf="formFlag" [formGroup]="dynamicFormGroup">
+
+    <table style="margin: 0px 0 !important;" class="o_group o_inner_group o_group_col_6">
+        <tbody>
+            <tr *ngIf="item.fieldControlName">
+                <td colspan="1" class="o_td_label">
+                    <label class="o_form_label">
+                        {{item.fieldName}}
+                    </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                    <input [type]="item.fieldType" class="form-control" [formControlName]="item.fieldControlName">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

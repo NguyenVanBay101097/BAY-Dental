@@ -11,6 +11,7 @@ import { TcareCampaignDialogSequencesComponent } from './tcare-campaign-dialog-s
 import { TcareCampaignCreateDialogComponent } from './tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
 import { TcareCampaignListComponent } from './tcare-campaign-list/tcare-campaign-list.component';
 import { TcareCampaignDialogRuleComponent } from './tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component';
+import { TcareCampaignDialogMessageReadComponent } from './tcare-campaign-dialog-message-read/tcare-campaign-dialog-message-read.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { TcareCampaignDialogRuleComponent } from './tcare-campaign-dialog-rule/t
     TcareCampaignDialogSequencesComponent,
     TcareCampaignCreateDialogComponent,
     TcareCampaignListComponent,
-    TcareCampaignDialogRuleComponent
+    TcareCampaignDialogRuleComponent,
+    TcareCampaignDialogMessageReadComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { TcareCampaignDialogRuleComponent } from './tcare-campaign-dialog-rule/t
   entryComponents: [
     TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,
-    TcareCampaignCreateDialogComponent
+    TcareCampaignCreateDialogComponent,
+    TcareCampaignDialogMessageReadComponent
   ]
 })
 export class TcareModule { }

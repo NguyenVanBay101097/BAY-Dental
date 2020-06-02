@@ -2,9 +2,12 @@ import { Component, OnInit, Inject, Renderer2 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TcareService, TCareRuleSave, TCareCampaignBasic, TCareCampaignDisplay, TCareCampaignSave, TCareMessageSave } from '../tcare.service';
+import { TcareService, TCareRuleSave, TCareCampaignBasic, TCareCampaignDisplay, TCareCampaignSave, TCareMessageSave, TCareMessageDisplay, TCareRule, TCareRuleCondition } from '../tcare.service';
 import { TcareCampaignDialogSequencesComponent } from '../tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component';
 import { TcareCampaignDialogRuleComponent } from '../tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component';
+import { mxgraph } from 'src/mxgraph-types';
+import { TcareCampaignDialogMessageReadComponent } from '../tcare-campaign-dialog-message-read/tcare-campaign-dialog-message-read.component';
+import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 
 declare var mxGeometry: any;
 declare var mxUtils: any;
@@ -20,18 +23,12 @@ declare var mxCodec: any;
 declare var mxEvent: any;
 declare var mxOutline: any;
 declare var mxEdgeStyle: any;
-declare var mxCellOverlay: any;
 declare var mxImage: any;
 declare var mxPerimeter: any;
 declare var mxConnectionHandler: any;
 declare var mxEffects: any;
 declare var mxRectangle: any;
-declare var mxWindow: any;
-declare var mxConnectionConstraint: any;
-declare var mxPoint: any;
-declare var mxGraph: any;
-declare var mxParallelEdgeLayout: any;
-declare var mxLayoutManager: any;
+declare var mxCellAttributeChange: any;
 
 @Component({
   selector: "app-tcare-campaign-create-update",
@@ -103,6 +100,25 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         new mxDivResizer(sidebar_goals);
         new mxDivResizer(status);
       }
+      //create obj
+      var sequences = document.createElement('sequences')
+      sequences.setAttribute('tCareCampaignId', that.id);
+      sequences.setAttribute('parentId', '');
+
+      var rule = document.createElement('rule');
+      rule.setAttribute('logic', 'And');
+      var condition = document.createElement('condition')
+      condition.setAttribute('nameCondition', '1');
+      condition.setAttribute('typeCondition', '1');
+      condition.setAttribute('flagCondition', 'ok');
+      condition.setAttribute('valueCondition', 'child');
+      var condition2 = document.createElement('condition')
+      condition2.setAttribute('nameCondition', '2');
+      condition2.setAttribute('typeCondition', '2');
+      condition2.setAttribute('flagCondition', 'ok2');
+      condition2.setAttribute('valueCondition', 'child2');
+      rule.appendChild(condition);
+      rule.appendChild(condition2);
 
       // Creates a wrapper editor with a graph inside the given container.
       // The editor is used to create certain functionality for the
@@ -197,9 +213,14 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
         if (styleSource == styleTarget || !styleTarget)
           return false;
-
-        else
+        if (styleSource == 'read' || styleSource == 'unread' || styleTarget == 'read' || styleTarget == 'unread')
+          return false;
+        else {
+          var value = target.getValue();
+          value.setAttribute('parent', source.id);
+          graph.getModel().setValue(target, value);
           return true;
+        }
       }
 
       // Disables HTML labels for swimlanes to avoid conflict
@@ -216,12 +237,14 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         return !this.isSwimlane(cell);
       };
 
+
+
       //Add ContextMenu
       graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
         return that.createPopupMenu(editor, graph, menu, cell, evt);
       };
 
-      // Shows a "modal" window when double clicking a vertex.
+      //double click Action
       graph.dblClick = function (evt, cell) {
         // Do not fire a DOUBLE_CLICK event here as mxEditor will
         // consume the event and start the in-place editor.
@@ -236,22 +259,162 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           }
           else {
             if (cell.style == "sequences") {
+              var message = new TCareMessageDisplay();
+              message.channelSocialId = cell.getValue().getAttribute('channelSocialId') || '';
+              message.channelType = cell.getValue().getAttribute('channelType') || 'priority';
+              message.content = cell.getValue().getAttribute('content') || '';
+              message.intervalNumber = Number.parseInt(cell.getValue().getAttribute('intervalNumber')) || 0;
+              message.intervalType = cell.getValue().getAttribute('intervalType') || 'minutes';
+              message.methodType = cell.getValue().getAttribute('methodType') || 'interval';
+              message.sheduleDate = cell.getValue().getAttribute('sheduleDate') || new Date();
               let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-              modalRef.componentInstance.title = 'Cài đặt';
-              modalRef.componentInstance.cell = cell;
+              modalRef.componentInstance.title = 'Cài đặt gửi tin';
+              modalRef.componentInstance.model = message;
               modalRef.result.then(
-                () => {
-                  that.updateCampaign(graph);
+                (result) => {
+                  graph.getModel().beginUpdate();
+                  try {
+                    var value = cell.getValue();
+                    value.setAttribute('channelSocialId', result.channelSocialId);
+                    value.setAttribute('channelType', result.channelType);
+                    value.setAttribute('content', result.content);
+                    value.setAttribute('intervalNumber', result.intervalNumber);
+                    value.setAttribute('intervalType', result.intervalType);
+                    value.setAttribute('methodType', result.methodType);
+                    value.setAttribute('sheduleDate', result.sheduleDate);
+                    graph.getModel().setValue(cell, value);
+                  }
+                  finally {
+                    graph.getModel().endUpdate();
+                  }
+                  that.updateCampaign(editor.graph);
                 });
             }
             if (cell.style == "rule") {
+              var model = new TCareRule();
+              model.logic = cell.getValue().getAttribute('logic') || '';
+              if (!model.conditions) {
+                model.conditions = [];
+              }
+              if (cell.value && cell.value.children && cell.value.children.length > 0) {
+                for (let i = 0; i < cell.value.children.length; i++) {
+                  var obj = cell.value.children[i]
+                  var condition = new TCareRuleCondition();
+                  condition.nameCondition = obj.getAttribute('nameCondition') || '';
+                  condition.typeCondition = obj.getAttribute('typeCondition') || '';
+                  condition.flagCondition = obj.getAttribute('flagCondition') || 'false';
+                  condition.valueCondition = obj.getAttribute('valueCondition') || '';
+                  model.conditions.push(condition);
+                }
+              }
+
               let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-              modalRef.componentInstance.title = 'Cài đặt';
-              modalRef.componentInstance.cell = cell;
+              modalRef.componentInstance.title = 'Cài đặt điều kiện';
+              modalRef.componentInstance.model = model;
               modalRef.result.then(
-                () => {
-                  that.updateCampaign(graph);
+                result => {
+                  graph.getModel().beginUpdate();
+                  try {
+                    var val = cell.getValue();
+                    val.setAttribute('logic', result.logic);
+
+                    if (cell.value && cell.value.children && cell.value.children.length > 0) {
+                      for (let i = 0; i < cell.value.children.length; i++) {
+                        cell.value.removeChild(cell.value.children[i])
+                      }
+                    }
+
+                    if (result.conditions && result.conditions.length > 0) {
+                      result.conditions.forEach(child => {
+                        var childEle = document.createElement('condition');
+                        childEle.setAttribute('nameCondition', child.nameCondition);
+                        childEle.setAttribute('typeCondition', child.typeCondition);
+                        childEle.setAttribute('flagCondition', child.flagCondition);
+                        childEle.setAttribute('valueCondition', child.valueCondition);
+                        childEle.setAttribute('ruleId', cell.id);
+                        val.appendChild(childEle);
+                      });
+                    }
+
+                    graph.getModel().setValue(cell, val);
+                  }
+                  finally {
+                    graph.getModel().endUpdate();
+                  }
+                  that.updateCampaign(editor.graph);
                 });
+            }
+
+            if (cell.style == "read") {
+              var listPartnerCategories: PartnerCategoryBasic[] = [];
+              if (cell.getValue() && cell.getValue().children) {
+                for (let i = 0; i < cell.getValue().children.length; i++) {
+                  var tag = cell.getValue().children[i];
+                  var partnerCateg = new PartnerCategoryBasic();
+                  partnerCateg.id = tag.getAttribute('id');
+                  partnerCateg.name = tag.getAttribute('name');
+                  listPartnerCategories.push(partnerCateg);
+                }
+              }
+              let modalRef = that.modalService.open(TcareCampaignDialogMessageReadComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+              modalRef.componentInstance.title = 'Thêm tag';
+              modalRef.componentInstance.listPartnerCategories = listPartnerCategories;
+              modalRef.result.then(
+                result => {
+                  if (result) {
+                    var value = cell.getValue();
+                    if (value && value.children && value.children.length > 0) {
+                      while (value.firstChild) {
+                        value.removeChild(value.firstChild);
+                      }
+                    }
+                    result.forEach(item => {
+                      var tag = document.createElement('tag');
+                      tag.setAttribute('id', item.id);
+                      tag.setAttribute('name', item.name);
+                      value.appendChild(tag);
+                      graph.getModel().setValue(cell, value);
+                      that.updateCampaign(graph);
+                    });
+                  }
+                }
+              )
+            }
+
+            if (cell.style == "unread") {
+              var listPartnerCategories: PartnerCategoryBasic[] = [];
+              if (cell.getValue() && cell.getValue().children) {
+                for (let i = 0; i < cell.getValue().children.length; i++) {
+                  var tag = cell.getValue().children[i];
+                  var partnerCateg = new PartnerCategoryBasic();
+                  partnerCateg.id = tag.getAttribute('id');
+                  partnerCateg.name = tag.getAttribute('name');
+                  listPartnerCategories.push(partnerCateg);
+                }
+              }
+              let modalRef = that.modalService.open(TcareCampaignDialogMessageReadComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+              modalRef.componentInstance.title = 'Thêm tag';
+              modalRef.componentInstance.listPartnerCategories = listPartnerCategories;
+              modalRef.result.then(
+                result => {
+                  if (result) {
+                    var value = cell.getValue();
+                    if (value && value.children && value.children.length > 0) {
+                      while (value.firstChild) {
+                        value.removeChild(value.firstChild);
+                      }
+                    }
+                    result.forEach(item => {
+                      var tag = document.createElement('tag');
+                      tag.setAttribute('id', item.id);
+                      tag.setAttribute('name', item.name);
+                      value.appendChild(tag);
+                      graph.getModel().setValue(cell, value);
+                      that.updateCampaign(graph);
+                    });
+                  }
+                }
+              )
             }
             else { return false; }
           }
@@ -301,9 +464,24 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           img,
           "click",
           mxUtils.bind(this, function (evt) {
+            if (value.cell.isRoot) {
+              alert('bạn không được xóa gốc của sơ đồ');
+              return false
+            }
             graph.removeCells([value.cell]);
             mxEvent.consume(evt);
             this.destroy();
+            if (value.cell.style == 'read') {
+              var cellParent = graph.getModel().getCell(value.cell.value.getAttribute('parent'));
+              var valueCell = cellParent.getValue();
+              valueCell.removeAttribute('messageReadId');
+            }
+            if (value.cell.style == 'unread') {
+              var cellParent = graph.getModel().getCell(value.cell.value.getAttribute('parent'));
+              var valueCell = cellParent.getValue();
+              valueCell.removeAttribute('messageUnreadId');
+            }
+
             that.updateCampaign(graph);
           })
         );
@@ -387,20 +565,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       });
 
       // thêm 1 step
-      that.addSidebarIcon(graph, sidebar_sequences,
-        '<div style="position: relative; ">' +
-        '<img src="./assets/editors/images/steps.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Sequence</b></div>' +
-        "</div>",
-        "./assets/editors/images/steps.png", "sequences");
+      that.addSidebarIcon(graph, sidebar_sequences, sequences, "./assets/editors/images/steps.png", "sequences");
 
-      //thêm 1 birthday
-      that.addSidebarIcon(graph, sidebar_goals,
-        '<div style="position: relative;">' +
-        '<img src="./assets/editors/images/birthday.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Điều kiện</b></div>' +
-        "</div>",
-        "./assets/editors/images/birthday.png", "rule");
+      //thêm 1 rule
+      that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
 
 
       that.addToolbarButton(editor, toolbar, "zoomIn", "", "./assets/editors/images/zoom_in.png", true);
@@ -420,8 +588,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   }
 
   updateCampaign(graph) {
-    var enc = new mxCodec(mxUtils.createXmlDocument());
-    var node = enc.encode(graph.getModel());
+    var encoder = new mxCodec();
+    var node = encoder.encode(graph.getModel());
     var val = new TCareCampaignSave();
     val.graphXml = mxUtils.getPrettyXml(node);
     val.name = this.campaign.name;
@@ -448,18 +616,15 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             editor.graph.getModel().endUpdate();
           }
         } else {
-          var label = '<div style="position: relative;">' +
-            '<img src="./assets/editors/images/birthday.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-            '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Điều kiện</b></div>' +
-            "</div>";
+          var rule = document.createElement('rule');
+          rule.setAttribute('logic', 'And');
           var parent = editor.graph.getDefaultParent();
           editor.graph.getModel().beginUpdate();
           try {
-            var v1 = editor.graph.insertVertex(parent, '', label, 50, 200, 40, 40, 'rule');
+            var v1 = editor.graph.insertVertex(parent, null, rule, 50, 200, 40, 40, 'rule');
             v1.mxTransient.push("name");
-            v1.mxTransient.push("beforeDays");
             v1.name = 'rule';
-            v1.beforeDays = 0;
+            v1.isRoot = true;
           }
           finally {
             editor.graph.getModel().endUpdate();
@@ -496,7 +661,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     toolbar.appendChild(button);
   }
 
-  addSidebarIcon(graph, sidebar, label, image, typeShape?) {
+  addSidebarIcon(graph, sidebar, obj, image, typeShape?) {
     let that = this;
     // Function that is executed when the image is dropped on
     // the graph. The cell argument points to the cell under
@@ -506,52 +671,18 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       var model = graph.getModel();
 
       var v1 = null;
-      var lableRead = '<div style="position: relative;">' +
-        '<img src="./assets/editors/images/icons/read-message.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Đã đọc</b></div>' +
-        "</div>";
-      var lableUnRead = '<div style="position: relative;">' +
-        '<img src="./assets/editors/images/icons/unread-message.png" style="height: 35px; width: 35px; object-fit: cover;">' +
-        '<div class="d-flex justify-content-center"><b class="position-absolute mt-1" style="font-size: 0.8rem; white-space: nowrap;">Chưa đọc</b></div>' +
-        "</div>";
       model.beginUpdate();
       try {
         if (typeShape == "sequences") {
-
-          v1 = graph.insertVertex(parent, '', label, x, y, 110, 40, typeShape);
+          v1 = graph.insertVertex(parent, null, obj, x, y, 110, 40, 'sequences');
           v1.mxTransient.push("name");
-          v1.mxTransient.push("methodType");
-          v1.mxTransient.push("intervalType");
-          v1.mxTransient.push("intervalNumber");
-          v1.mxTransient.push("sheduleDate");
-          v1.mxTransient.push("content");
-          v1.mxTransient.push("channelSocialId");
-          v1.mxTransient.push("channelType");
-          v1.mxTransient.push("tCareCampaignId");
-          v1.mxTransient.push("parentId");
           v1.name = typeShape;
-          v1.tCareCampaignId = that.id;
-
-          var v_read = graph.insertVertex(parent, '', lableRead, x + 200, y + 50, 40, 40, 'read');
-          v_read.mxTransient.push("parentId");
-          v_read.mxTransient.push("name");
-          v_read.name = 'read'
-          graph.insertEdge(parent, '', '', v1, v_read);
-
-          var v_unread = graph.insertVertex(parent, '', lableUnRead, x + 200, y - 50, 40, 40, 'unread');
-          v_unread.mxTransient.push("parentId");
-          v_unread.mxTransient.push("name");
-          v_unread.name = 'unread'
-          graph.insertEdge(parent, '', '', v1, v_unread);
-
         }
 
         if (typeShape == "rule") {
-          v1 = graph.insertVertex(parent, '', label, x, y, 40, 40, typeShape);
+          v1 = graph.insertVertex(parent, null, obj, x, y, 40, 40, 'rule');
           v1.mxTransient.push("name");
-          v1.mxTransient.push("beforeDays");
           v1.name = typeShape;
-          v1.beforeDays = 0;
         }
       } finally {
         model.endUpdate();
@@ -591,6 +722,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   configureStylesheet(graph) {
     var style = new Object();
+    let that = this;
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
@@ -607,60 +739,133 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     // style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
     graph.getStylesheet().putDefaultVertexStyle(style);
 
-    style = new Object();
-    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
-    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
-    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
-    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-    style[mxConstants.STYLE_FILLCOLOR] = "#FF9103";
-    style[mxConstants.STYLE_GRADIENTCOLOR] = "#F8C48B";
-    style[mxConstants.STYLE_STROKECOLOR] = "#E86A00";
-    style[mxConstants.STYLE_FONTCOLOR] = "#000000";
-    style[mxConstants.STYLE_ROUNDED] = true;
-    style[mxConstants.STYLE_OPACITY] = "80";
-    style[mxConstants.STYLE_STARTSIZE] = "30";
-    style[mxConstants.STYLE_FONTSIZE] = "16";
-    style[mxConstants.STYLE_FONTSTYLE] = 1;
-    graph.getStylesheet().putCellStyle("group", style);
-
-    style = new Object();
-    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-    style[mxConstants.STYLE_FONTCOLOR] = "#774400";
-    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
-    style[mxConstants.STYLE_PERIMETER_SPACING] = "6";
-    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
-    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
-    style[mxConstants.STYLE_FONTSIZE] = "10";
-    style[mxConstants.STYLE_FONTSTYLE] = 2;
-    style[mxConstants.STYLE_IMAGE_WIDTH] = "16";
-    style[mxConstants.STYLE_IMAGE_HEIGHT] = "16";
-    graph.getStylesheet().putCellStyle("port", style);
-
     style = graph.getStylesheet().getDefaultEdgeStyle();
     style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "#FFFFFF";
     style[mxConstants.STYLE_STROKEWIDTH] = "2";
     style[mxConstants.STYLE_ROUNDED] = true;
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.SideToSide;
     graph.alternateEdgeStyle = "elbow=vertical";
+
+    //style for sequences
+    style = mxUtils.clone(style);
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE] = that.base_url + 'assets/editors/images/steps.png';
+    style[mxConstants.STYLE_IMAGE_WIDTH] = '40';
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = '40';
+    style[mxConstants.STYLE_SPACING_TOP] = '55';
+    style[mxConstants.STYLE_SPACING] = '-6';
+    graph.getStylesheet().putCellStyle('sequences', style);
+
+    //style for rule
+    style = mxUtils.clone(style);
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE] = that.base_url + 'assets/editors/images/rule.png';
+    style[mxConstants.STYLE_IMAGE_WIDTH] = '40';
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = '40';
+    style[mxConstants.STYLE_SPACING_TOP] = '55';
+    style[mxConstants.STYLE_SPACING] = '-8';
+    graph.getStylesheet().putCellStyle('rule', style);
+
+    //style for message-read
+    style = mxUtils.clone(style);
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE] = that.base_url + 'assets/editors/images/icons/read.png';
+    style[mxConstants.STYLE_IMAGE_WIDTH] = '35';
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = '35';
+    style[mxConstants.STYLE_SPACING_TOP] = '55';
+    style[mxConstants.STYLE_SPACING] = '-8';
+    graph.getStylesheet().putCellStyle('read', style);
+
+    //style for message-unread
+    style = mxUtils.clone(style);
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_IMAGE] = that.base_url + 'assets/editors/images/icons/unread.png';
+    style[mxConstants.STYLE_IMAGE_WIDTH] = '35';
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = '35';
+    style[mxConstants.STYLE_SPACING_TOP] = '60';
+    style[mxConstants.STYLE_SPACING] = '-8';
+    graph.getStylesheet().putCellStyle('unread', style);
+
   }
 
   createPopupMenu(editor, graph, menu, cell, evt) {
     var that = this;
+    var parent = graph.getDefaultParent();
     if (cell != null) {
-      if (cell.style) {
-        menu.addItem("Cut", "./assets/editors/images/cut.png",
-          function () {
-            editor.execute("cut");
-            that.cellSave = cell;
+      if (cell.name == 'sequences') {
+        menu.addItem("Add Read", "./assets/editors/images/icons/read.png", function () {
+          if (cell.value.getAttribute('messageReadId') == null || cell.value.getAttribute('messageReadId') == '') {
+            graph.getModel().beginUpdate();
+            try {
+              var read = document.createElement('message_read');
+              read.setAttribute('name', 'read');
+              read.setAttribute('parent', cell.id);
+              var v_read = graph.insertVertex(parent, null, read, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, 'read');
+              graph.insertEdge(parent, null, '', cell, v_read);
+              var value = cell.getValue();
+              value.setAttribute('messageReadId', v_read.id);
+              graph.getModel().setValue(cell, value);
+            }
+            finally {
+              graph.getModel().endUpdate();
+            }
             that.updateCampaign(graph);
           }
-        );
-        menu.addItem("Copy", "./assets/editors/images/copy.png",
-          function () {
-            editor.execute("copy");
+        });
+        menu.addItem("Add UnRead", "./assets/editors/images/icons/unread.png", function () {
+          if (cell.value.getAttribute('messageUnreadId') == null || cell.value.getAttribute('messageUnreadId') == '') {
+            graph.getModel().beginUpdate();
+            try {
+              var unread = document.createElement('message_unread');
+              unread.setAttribute('name', 'unread');
+              unread.setAttribute('parent', cell.id);
+              var v_unread = graph.insertVertex(parent, null, unread, cell.geometry.x + 200, cell.geometry.y + 50, 40, 40, 'unread');
+              graph.insertEdge(parent, '', '', cell, v_unread);
+              var value = cell.getValue();
+              value.setAttribute('messageUnreadId', v_unread.id);
+              graph.getModel().setValue(cell, value);
+            }
+            finally {
+              graph.getModel().endUpdate();
+            }
+            that.updateCampaign(graph);
           }
-        );
+        })
       }
+      // if (cell.style) {
+      //   menu.addItem("Cut", "./assets/editors/images/cut.png",
+      //     function () {
+      //       editor.execute("cut");
+      //       that.cellSave = cell;
+      //       that.updateCampaign(graph);
+      //     }
+      //   );
+      //   menu.addItem("Copy", "./assets/editors/images/copy.png",
+      //     function () {
+      //       editor.execute("copy");
+      //     }
+      //   );
+      // }
     } else {
       menu.addItem("Paste", "./assets/editors/images/paste.png", function () {
         if (that.cellSave) {

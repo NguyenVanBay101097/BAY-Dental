@@ -39,6 +39,28 @@ export class TCarePropertySave {
   value: string;
 }
 
+export class Tag {
+  id: string;
+  name: string;
+}
+
+export class TCareReadMessage {
+  name: string;
+  tags: Tag[];
+}
+
+export class TCareRuleCondition {
+  nameCondition: string;
+  typeCondition: string;
+  valueCondition: string;
+  flagCondition: string;
+}
+
+export class TCareRule {
+  logic: string;
+  conditions: TCareRuleCondition[];
+}
+
 export class TCareRuleSave {
   type: string;
   campaignid: string;
@@ -55,7 +77,6 @@ export class TCareMessageSave {
 }
 
 export class TCareMessageDisplay {
-  id: string;
   methodType: string;
   intervalType: string;
   intervalNumber: number;
@@ -63,9 +84,7 @@ export class TCareMessageDisplay {
   content: string;
   channelType: string;
   channelSocialId: string;
-  channelSocial: ChannelSocial
   tCareCampaignId: string;
-  tCareCampaign: TCareCampaignBasic
 }
 
 

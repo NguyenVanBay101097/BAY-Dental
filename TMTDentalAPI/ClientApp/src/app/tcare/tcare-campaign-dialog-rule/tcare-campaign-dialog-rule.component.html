@@ -13,6 +13,27 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Điều kiện</label>
+                                </td>
+                                <td colspan="1" style="width: 100%; padding-right: 15px;">
+                                    <select formControlName="typeCondition" class="form-control">
+                                        <option selected="selected">Chọn điều kiện</option>
+                                        <option *ngFor="let item of conditions" value="item.name">{{item.text}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <label class="o_form_label">Danh sách điều kiện</label>
+                                <td colspan="2">
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Trước sinh nhật</label>
                                 </td>
                                 <td colspan="1" style="width: 100%; padding-right: 15px;">

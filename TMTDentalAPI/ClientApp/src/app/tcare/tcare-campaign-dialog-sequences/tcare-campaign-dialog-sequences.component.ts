@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { TcareService } from '../tcare.service';
+import { TcareService, TCareMessageDisplay } from '../tcare.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -18,7 +18,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
 
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
 
-  cell: any;
+  model: TCareMessageDisplay;
   campaignId: string;
   formGroup: FormGroup;
   loading = false;
@@ -54,9 +54,10 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     });
 
     this.loadSocialChannel();
-    if (this.cell) {
-      if (this.cell.methodType)
-        this.type = this.cell.methodType;
+    if (this.model) {
+      if (this.model.methodType)
+        this.type = this.model.methodType;
+
       this.loadFormApi();
     }
 
@@ -67,7 +68,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   loadFormApi() {
-    this.formGroup.patchValue(this.cell);
+    this.formGroup.patchValue(this.model);
   }
 
   loadSocialChannel() {
@@ -87,15 +88,8 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   onSave() {
-    var value = this.formGroup.value;
-    this.cell.methodType = value.methodType;
-    this.cell.intervalType = value.intervalType;
-    this.cell.intervalNumber = value.intervalNumber;
-    this.cell.sheduleDate = value.sheduleDate;
-    this.cell.content = value.content;
-    this.cell.channelSocialId = value.channelSocialId;
-    this.cell.channelType = value.channelType;
-    this.activeModal.close(this.cell);
+    this.model = this.formGroup.value;
+    this.activeModal.close(this.model);
   }
 
 }
