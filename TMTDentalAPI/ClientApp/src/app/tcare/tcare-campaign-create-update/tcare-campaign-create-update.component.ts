@@ -106,20 +106,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       sequences.setAttribute('parentId', '');
 
       var rule = document.createElement('rule');
-      rule.setAttribute('logic', 'And');
-      var condition = document.createElement('condition')
-      condition.setAttribute('nameCondition', '1');
-      condition.setAttribute('typeCondition', '1');
-      condition.setAttribute('flagCondition', 'ok');
-      condition.setAttribute('valueCondition', 'child');
-      var condition2 = document.createElement('condition')
-      condition2.setAttribute('nameCondition', '2');
-      condition2.setAttribute('typeCondition', '2');
-      condition2.setAttribute('flagCondition', 'ok2');
-      condition2.setAttribute('valueCondition', 'child2');
-      rule.appendChild(condition);
-      rule.appendChild(condition2);
-
+      rule.setAttribute('logic', 'and');
       // Creates a wrapper editor with a graph inside the given container.
       // The editor is used to create certain functionality for the
       // graph, such as the rubberband selection, but most parts
@@ -345,7 +332,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                 for (let i = 0; i < cell.getValue().children.length; i++) {
                   var tag = cell.getValue().children[i];
                   var partnerCateg = new PartnerCategoryBasic();
-                  partnerCateg.id = tag.getAttribute('id');
+                  partnerCateg.id = tag.getAttribute('tagId');
                   partnerCateg.name = tag.getAttribute('name');
                   listPartnerCategories.push(partnerCateg);
                 }
@@ -364,7 +351,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                     }
                     result.forEach(item => {
                       var tag = document.createElement('tag');
-                      tag.setAttribute('id', item.id);
+                      tag.setAttribute('tagId', item.id);
                       tag.setAttribute('name', item.name);
                       value.appendChild(tag);
                       graph.getModel().setValue(cell, value);
