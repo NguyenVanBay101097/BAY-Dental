@@ -35,17 +35,103 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
         {
-            foreach (var product in entities)
-            {
-                if (string.IsNullOrEmpty(product.NameNoSign))
-                    product.NameNoSign = product.Name.RemoveSignVietnameseV2();
-            }
+            _SetNameNoSign(entities);
+
+            await _GenerateCodeIfEmpty(entities);
+
+            await _CheckProductExistCode(entities);
 
             await base.CreateAsync(entities);
 
             await _SetListPrice(entities);
 
             return entities;
+        }
+
+        private void _SetNameNoSign(IEnumerable<Product> self)
+        {
+            foreach (var product in self)
+                product.NameNoSign = product.Name.RemoveSignVietnameseV2();
+        }
+
+        public override async Task UpdateAsync(IEnumerable<Product> entities)
+        {
+            _SetNameNoSign(entities);
+
+            await _GenerateCodeIfEmpty(entities);
+
+            await _CheckProductExistCode(entities);
+
+            await base.UpdateAsync(entities);
+
+            await _SetListPrice(entities);
+        }
+
+        /// <summary>
+        /// Kiểm tra xem nếu có sản phẩm đã tồn tại mã thì báo lỗi
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        private async Task _CheckProductExistCode(IEnumerable<Product> self)
+        {
+            var exists = await _GetProductsExistCode(self);
+            if (exists.Any())
+                throw new Exception($"Đã tồn tại sản phẩm với mã {string.Join(", ", exists.Select(x => x.DefaultCode))}");
+        }
+
+        private async Task _GenerateCodeIfEmpty(IEnumerable<Product> self)
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            foreach(var product in self)
+            {
+                if (!string.IsNullOrWhiteSpace(product.DefaultCode))
+                    continue;
+
+                //Không phát sinh mã cho thuốc
+                if (product.Type2 == "medicine")
+                    continue;
+
+                product.DefaultCode = await seqObj.NextByCode("product_seq");
+
+                if (string.IsNullOrWhiteSpace(product.DefaultCode))
+                {
+                    await _InsertProductSequence();
+                    product.DefaultCode = await seqObj.NextByCode("product_seq");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tìm những product đã tồn tại mã trong db
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        private async Task<IEnumerable<Product>> _GetProductsExistCode(IEnumerable<Product> self)
+        {
+            var list = new List<Product>();
+            foreach(var product in self)
+            {
+                if (string.IsNullOrWhiteSpace(product.DefaultCode))
+                    continue;
+
+                var exist = await SearchQuery(x => x.DefaultCode == product.DefaultCode && x.Id != product.Id).FirstOrDefaultAsync();
+                if (exist != null)
+                    list.Add(product);
+            }
+
+            return list;
+        }
+
+        private async Task _InsertProductSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Product Sequence",
+                Code = "product_seq",
+                Prefix = "SP",
+                Padding = 4
+            });
         }
 
         private async Task _SetListPrice(IEnumerable<Product> self)
@@ -103,58 +189,23 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<ProductBasic2>> GetPagedResultAsync(ProductPaged val)
+        public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            var query2 = query.Select(x => new ProductBasic2
-            {
-                CategName = x.Categ.CompleteName,
-                DefaultCode = x.DefaultCode,
-                ListPrice = x.ListPrice,
-                Name = x.Name,
-                SaleOK = x.SaleOK,
-                PurchaseOK = x.PurchaseOK,
-                KeToaOK = x.KeToaOK,
-                IsLabo = x.IsLabo,
-                NameNoSign = x.NameNoSign,
-                Type = x.Type,
-                Id = x.Id,
-                PurchasePrice = x.PurchasePrice ?? 0,
-                CategId = x.CategId,
-                QtyAvailable = x.StockQuants.Where(s => s.Location.Usage == "internal").Sum(s => s.Qty),
-                Type2 = x.Type2,
-                UOMId = x.UOMId,
-                UOMName = x.UOM.Name
-            });
-
-            if (!string.IsNullOrEmpty(val.Search))
-                query2 = query2.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.DefaultCode.Contains(val.Search));
-            if (val.CategId.HasValue)
-                query2 = query2.Where(x => x.CategId == val.CategId);
-            if (!string.IsNullOrEmpty(val.Type))
-            {
-                var types = val.Type.Split(",");
-                query2 = query2.Where(x => types.Contains(x.Type));
-            }
-
-            if (!string.IsNullOrEmpty(val.Type2))
-                query2 = query2.Where(x => x.Type2 == val.Type2);
-
-            var items = await query2.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
-                .ToListAsync();
+            var items =  await _mapper.ProjectTo<ProductBasic>(query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)).ToListAsync();
 
             //Tính lại giá bán
             await _ProcessListPrice(items);
 
-            var totalItems = await query2.CountAsync();
+            var totalItems = await query.CountAsync();
 
-            return new PagedResult2<ProductBasic2>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<ProductBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
         }
 
-        private async Task _ProcessListPrice(List<ProductBasic2> items)
+        private async Task _ProcessListPrice(List<ProductBasic> items)
         {
             var irConfigParameter = GetService<IIrConfigParameterService>();
             var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
@@ -219,8 +270,21 @@ namespace Infrastructure.Services
         private IQueryable<Product> GetQueryPaged(ProductPaged val)
         {
             var query = SearchQuery(x => x.Active);
-            //if (!string.IsNullOrEmpty(val.Search))
-            //    query = query.Where(x => x.Name.Contains(val.Search) || x.DefaultCode.Contains(val.Search));
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.DefaultCode.Contains(val.Search));
+
+            if (val.CategId.HasValue)
+                query = query.Where(x => x.CategId == val.CategId);
+
+            if (!string.IsNullOrEmpty(val.Type))
+            {
+                var types = val.Type.Split(",");
+                query = query.Where(x => types.Contains(x.Type));
+            }
+
+            if (!string.IsNullOrEmpty(val.Type2))
+                query = query.Where(x => x.Type2 == val.Type2);
 
             return query;
         }
@@ -308,7 +372,7 @@ namespace Infrastructure.Services
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
-            SaveProductSteps(product, val.StepList);
+            _SaveProductSteps(product, val.StepList);
             await UpdateAsync(product);
         }
 
@@ -316,20 +380,9 @@ namespace Infrastructure.Services
         {
             var product = _mapper.Map<Product>(val);
 
-            _SaveUoMRels(product, val);
+            _SaveProductSteps(product, val.StepList);
 
-            if (val.StepList.Any())
-            {
-                var order = 1;
-                foreach (var step in val.StepList)
-                {
-                    product.Steps.Add(new ProductStep
-                    {
-                        Order = order++,
-                        Name = step.Name
-                    });
-                }
-            }
+            _SaveUoMRels(product, val);
 
             return await CreateAsync(product);
         }
@@ -342,7 +395,7 @@ namespace Infrastructure.Services
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
-            SaveProductSteps(product, val.StepList);
+            _SaveProductSteps(product, val.StepList);
             _SaveUoMRels(product, val);
 
             //_SetStandardPrice(product, val.StandardPrice);
@@ -371,7 +424,7 @@ namespace Infrastructure.Services
             }
         }
 
-        private void SaveProductSteps(Product product, IEnumerable<ProductStepDisplay> val)
+        private void _SaveProductSteps(Product product, IEnumerable<ProductStepDisplay> val)
         {
             var existLines = product.Steps.ToList();
             var lineToRemoves = new List<ProductStep>();

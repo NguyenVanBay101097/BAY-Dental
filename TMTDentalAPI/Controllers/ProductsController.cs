@@ -65,8 +65,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(ProductSave val)
         {
             var product = await _productService.CreateProduct(val);
-
-            var res = _mapper.Map<ProductDisplay>(product);
+            var res = _mapper.Map<ProductBasic>(product);
             return Ok(res);
         }
 

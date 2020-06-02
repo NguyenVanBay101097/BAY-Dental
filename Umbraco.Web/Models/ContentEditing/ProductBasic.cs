@@ -14,13 +14,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Đơn vị chính của sản phẩm
         /// </summary>
         public Guid UOMId { get; set; }
-        public UoMBasic UOM { get; set; }
+
+        public string UOMName { get; set; }
 
         /// <summary>
         /// Nhóm sản phẩm
         /// </summary>
         public Guid CategId { get; set; }
-        public ProductCategoryBasic Categ { get; set; }
+        public string CategName { get; set; }
 
         /// <summary>
         /// Giá niêm yết, chỗ này nên xử lý nhiều chi nhánh?? 
@@ -39,7 +40,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Đơn vị mua hàng
         /// </summary>
         public Guid UOMPOId { get; set; }
-        public UoMBasic UOMPO { get; set; }
+        public string UOMPOName { get; set; }
 
         /// <summary>
         /// Loại sản phẩm
@@ -63,41 +64,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
 
         public decimal QtyAvailable { get; set; }
-    }
-
-    public class ProductBasic2
-    {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
 
         public string NameNoSign { get; set; }
-
-        public string CategName { get; set; }
-
-        /// <summary>
-        /// Giá niêm yết, chỗ này nên xử lý nhiều chi nhánh?? 
-        /// Nếu các chi nhánh khác biệt giá bán sản phẩm thì nên có danh sách sản phẩm riêng cho từng chi nhánh
-        /// </summary>
-        public decimal ListPrice { get; set; }
-
-        /// <summary>
-        /// Loại sản phẩm
-        /// ('consu', 'Consumable') không quản lý tồn kho
-        /// product Có quản lý tồn kho
-        /// service A service is a non-material product you provide.
-        /// </summary>
-        public string Type { get; set; }
-
-        public string DefaultCode { get; set; }
-
-        public decimal QtyAvailable { get; set; }
-
-        public Guid CategId { get; set; }
-
-        public bool SaleOK { get; set; }
-
-        public bool PurchaseOK { get; set; }
 
         public bool KeToaOK { get; set; }
 
@@ -106,10 +74,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type2 { get; set; }
 
         public decimal? PurchasePrice { get; set; }
-
-        public Guid? UOMId { get; set; }
-
-        public string UOMName { get; set; }
     }
 
     public class ProductPaged
