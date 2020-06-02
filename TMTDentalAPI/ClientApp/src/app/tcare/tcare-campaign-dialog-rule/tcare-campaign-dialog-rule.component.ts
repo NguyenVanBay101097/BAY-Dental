@@ -26,6 +26,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   listFlagCondition: any = [];
   listData: any;
   listTags: any = [];
+  selectedTag: any;
   numbericValueCondition: number = 0;
 
   constructor(
@@ -43,6 +44,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
       flagCondition: "",
       valueCondition: 0,
       nameCondition: "",
+      selectedValueCondition: null,
       days: [0],
     });
 
@@ -57,6 +59,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   onSave() {
     this.cell.beforeDays = this.formGroup.get('days').value;
     this.activeModal.close(this.cell);
+    console.log(this.listTags);
   }
 
   unitCondition() {
@@ -154,6 +157,12 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
         this.formGroup.patchValue({ valueCondition: 0 });
         return;
       default:
+        this.search = null;
+        this.formGroup.patchValue({ 
+          valueCondition: 0,
+          nameCondition: "",
+          selectedValueCondition: null 
+        });
         this.loadListData();
         return;
     }
@@ -234,24 +243,36 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     }
   }
 
-  onAdd() {
-    console.log(this.formGroup.value);
+  onAddTag() {
+    // console.log(this.formGroup.value);
     if (this.isDay(this.formGroup.get('typeCondition').value)) {
-      this.listTags.push(this.formGroup.value);
+      this.listTags.push({
+        typeCondition: this.formGroup.get('typeCondition').value,
+        flagCondition: this.formGroup.get('flagCondition').value,
+        valueCondition: this.formGroup.get('valueCondition').value,
+        nameCondition: this.formGroup.get('nameCondition').value,
+      });
       this.formGroup.patchValue({ 
         typeCondition: "",
         flagCondition: "",
         valueCondition: 0,
         nameCondition: "",
+        selectedValueCondition: null
       });
     } else {
       if (this.formGroup.value.valueCondition !== 0) {
-        this.listTags.push(this.formGroup.value);
+        this.listTags.push({
+          typeCondition: this.formGroup.get('typeCondition').value,
+          flagCondition: this.formGroup.get('flagCondition').value,
+          valueCondition: this.formGroup.get('valueCondition').value,
+          nameCondition: this.formGroup.get('nameCondition').value,
+        });
         this.formGroup.patchValue({ 
           typeCondition: "",
           flagCondition: "",
           valueCondition: "",
           nameCondition: "",
+          selectedValueCondition: null
         });
       } else {
         this.notificationService.show({
@@ -263,6 +284,34 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
         });
       }
     }
+  }
+
+  onCancelTag() {
+    this.formGroup.patchValue({ 
+      typeCondition: "",
+      flagCondition: "",
+      valueCondition: 0,
+      nameCondition: "",
+      selectedValueCondition: null
+    });
+    this.selectedTag = null;
+  }
+
+  onSaveTag() {
+    this.listTags[this.selectedTag] = {
+      typeCondition: this.formGroup.get('typeCondition').value,
+      flagCondition: this.formGroup.get('flagCondition').value,
+      valueCondition: this.formGroup.get('valueCondition').value,
+      nameCondition: this.formGroup.get('nameCondition').value,
+    };
+    this.formGroup.patchValue({ 
+      typeCondition: "",
+      flagCondition: "",
+      valueCondition: 0,
+      nameCondition: "",
+      selectedValueCondition: null
+    });
+    this.selectedTag = null;
   }
 
   handleNumbericValueConditionChange(value) {
@@ -281,19 +330,35 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     });
   }
 
+  handleValueConditionFilter(value) {
+    // console.log(value);
+    this.search = value;
+    this.loadListData();
+  }
+
   clickTag(item, index) {
     // this.listTags.splice(index, 1);
-    console.log(item);
+    this.selectedTag = index;
+    // console.log(this.selectedTag);
     this.formGroup.patchValue({ 
       typeCondition: item.typeCondition,
       flagCondition: item.flagCondition,
       valueCondition: item.valueCondition,
       nameCondition: item.nameCondition,
+      selectedValueCondition: {
+        completeName: item.nameCondition,
+        id: item.valueCondition,
+        name: item.nameCondition
+      }
     });
+    this.optionFlagCondition();
     if (this.isDay(item.typeCondition)) {
       this.numbericValueCondition = item.valueCondition;
+    } else {
+      this.search = item.nameCondition;
+      this.loadListData();
     }
-    console.log(this.formGroup.value);
+    // console.log(this.formGroup.value);
   }
 
   deleteTag(index) {

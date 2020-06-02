@@ -40,9 +40,11 @@
                                 <td *ngIf="getTypeConditionValue() && !isDay(formGroup.get('typeCondition').value)"
                                     class="min-w-200px" style="padding-right: 0;">
                                     <kendo-combobox [data]="listData" [textField]="'name'" [valueField]="'id'"
+                                        formControlName="selectedValueCondition"
                                         [filterable]="true"
                                         [placeholder]="'-- ' + placeholderValueCondition() + ' --'"
-                                        (valueChange)="handleValueConditionChange($event)">
+                                        (valueChange)="handleValueConditionChange($event)"
+                                        (filterChange)="handleValueConditionFilter($event)">
                                     </kendo-combobox>
                                 </td>
                                 <td *ngIf="getTypeConditionValue()"
@@ -54,15 +56,20 @@
                         <tfoot *ngIf="getTypeConditionValue()">
                             <tr>
                                 <td colspan="4" style="text-align: right;">
-                                    <button type="button" class="btn btn-primary btn-sm" (click)="onAdd()"
+                                    <button *ngIf="!selectedTag && selectedTag != 0" type="button" class="btn btn-primary btn-sm" (click)="onAddTag()"
                                         accesskey="a">Thêm điều kiện</button>
+                                    <button *ngIf="selectedTag || selectedTag == 0" type="button" class="btn btn-secondary btn-sm" (click)="onCancelTag()"
+                                        accesskey="a">Hủy</button>
+                                    <button *ngIf="selectedTag || selectedTag == 0" type="button" class="btn btn-primary btn-sm ml-2" (click)="onSaveTag()"
+                                        accesskey="a">Lưu điều kiện</button>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-                <div *ngIf="listTags.length" class="o_group border rounded p-2">
-                    <button *ngFor="let tag of listTags; index as i;" class="mr-2 btn btn-light btn-sm border"
+                <div *ngIf="listTags.length" class="o_group border rounded pt-2 px-2 pb-1">
+                    <button *ngFor="let tag of listTags; index as i;" class="mr-2 mb-1 btn btn-light btn-sm border"
+                        [disabled]="selectedTag === i"
                         (click)="clickTag(tag, i)">
                         <span>{{convertTypeCondition(tag.typeCondition)}}</span>
                         <u class="pl-1">{{convertFlagCondition(tag.flagCondition)}}</u>
