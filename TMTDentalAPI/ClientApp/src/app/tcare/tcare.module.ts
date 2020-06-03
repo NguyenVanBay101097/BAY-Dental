@@ -12,6 +12,15 @@ import { TcareCampaignCreateDialogComponent } from './tcare-campaign-create-dial
 import { TcareCampaignListComponent } from './tcare-campaign-list/tcare-campaign-list.component';
 import { TcareCampaignDialogRuleComponent } from './tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component';
 import { TcareCampaignDialogMessageReadComponent } from './tcare-campaign-dialog-message-read/tcare-campaign-dialog-message-read.component';
+import { AudienceFilterComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter.component';
+import { AudienceFilterDropdownComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-dropdown.component';
+import { AudienceFilterBirthdayComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-birthday/audience-filter-birthday.component';
+import { AudienceFilterLastTreatmentDayComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-last-treatment-day/audience-filter-last-treatment-day.component';
+import { AudienceFilterServiceComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-service/audience-filter-service.component';
+import { AudienceFilterServiceCategoryComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-service-category/audience-filter-service-category.component';
+import { AudienceFilterPartnerCategoryComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
+import { MyAutofocusDirective } from './tcare-campaign-dialog-rule/audience-filter/autofocus.directive';
+import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-filter/click-outside.directive';
 
 @NgModule({
   declarations: [
@@ -20,7 +29,16 @@ import { TcareCampaignDialogMessageReadComponent } from './tcare-campaign-dialog
     TcareCampaignCreateDialogComponent,
     TcareCampaignListComponent,
     TcareCampaignDialogRuleComponent,
-    TcareCampaignDialogMessageReadComponent
+    TcareCampaignDialogMessageReadComponent,
+    AudienceFilterComponent,
+    AudienceFilterDropdownComponent,
+    AudienceFilterBirthdayComponent,
+    AudienceFilterLastTreatmentDayComponent,
+    AudienceFilterServiceComponent,
+    AudienceFilterServiceCategoryComponent,
+    AudienceFilterPartnerCategoryComponent,
+    MyAutofocusDirective,
+    ClickOutsideDirective
   ],
   imports: [
     CommonModule,
@@ -35,7 +53,12 @@ import { TcareCampaignDialogMessageReadComponent } from './tcare-campaign-dialog
     TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,
     TcareCampaignCreateDialogComponent,
-    TcareCampaignDialogMessageReadComponent
+    TcareCampaignDialogMessageReadComponent,
+    AudienceFilterBirthdayComponent, 
+    AudienceFilterLastTreatmentDayComponent, 
+    AudienceFilterPartnerCategoryComponent,
+    AudienceFilterServiceComponent,
+    AudienceFilterServiceCategoryComponent
   ]
 })
 export class TcareModule { }

@@ -88,6 +88,14 @@ export class TCareRule {
   conditions: TCareRuleCondition[];
 }
 
+export class AudienceFilterItem {
+  type: string;
+  name: string;
+  formula_type: string;
+  formula_value: string;
+  formula_display: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })

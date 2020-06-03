@@ -1,0 +1,38 @@
+<form [formGroup]="formGroup">
+    <table>
+        <tr>
+            <td colspan="2">
+                <b class="ml-2">{{selected_AudienceFilter_Picker.name}} : </b>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-right p-0 align-top">
+                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.formula_type"
+                    *ngFor="let item of AudienceFilter_Picker.formula_types"
+                    (click)="selectFormulaType(item)">
+                    {{convertFormulaType(item)}}
+                </button>
+            </td>
+            <td class="p-0 align-top">
+                <div class="px-2 pb-2">
+                    <input class="form-control shadow-sm" style="min-width: 200px;" type="text" placeholder="Tìm kiếm.." myAutofocus
+                        formControlName="name"
+                        (input)="searchPartnerCategoryUpdate.next(formGroup.get('name').value)">
+                </div>
+                <div class="px-2 pb-2" *ngIf="showButtonCreatePartnerCategory">
+                    <button class="btn btn-light btn-sm" type="button" (click)="createPartnerCategory()">
+                        Tạo nhóm khách hàng
+                    </button>
+                </div>
+                <div class="list-formula-value">
+                    <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.formula_value" 
+                        *ngFor="let item of AudienceFilter_Picker.formula_values; index as i"
+                        (click)="selectFormulaValue(item, i)">
+                        <span *ngIf="AudienceFilter_Picker.formula_displays === null">{{item}}</span>
+                        <span *ngIf="AudienceFilter_Picker.formula_displays !== null">{{AudienceFilter_Picker.formula_displays[i]}}</span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
