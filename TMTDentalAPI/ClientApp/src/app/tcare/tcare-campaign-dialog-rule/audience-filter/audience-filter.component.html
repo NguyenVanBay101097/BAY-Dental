@@ -23,7 +23,7 @@
     </span>
     <span class="position-relative">
         <button class="audience-filter-open btn btn-light btn-sm"
-            [class.w-100]="!audience_filter_receive"
+            [class.w-100]="!listAudienceFilter_Items || listAudienceFilter_Items.length == 0"
             (click)="clickAudienceFilter()">
             + Thêm điều kiện lọc
         </button>
