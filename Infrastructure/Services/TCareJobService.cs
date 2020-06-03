@@ -68,14 +68,14 @@ namespace Infrastructure.Services
                         else if (CampaignXML.Root.Sequences.Intervaltype == "weeks")
                             date = date.AddDays((intervalNumber) * 7);
 
-                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId,db), date);
+                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, db), date);
                         if (string.IsNullOrEmpty(jobId))
                             throw new Exception("Can't not schedule job");
                     }
                     else
-                    {                       
+                    {
                         date = DateTime.Parse(CampaignXML.Root.Sequences.Sheduledate);
-                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId,db), date);
+                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, db), date);
                         if (string.IsNullOrEmpty(jobId))
                             throw new Exception("Can't not schedule job");
                     }
@@ -127,21 +127,19 @@ namespace Infrastructure.Services
         //}
 
 
-        /// <summary>
-        /// check Rule And
-        /// </summary>
-        /// <param name="rules"></param>
-        /// <param name="conn"></param>
-        /// <returns></returns>
-        public IEnumerable<Guid> SearchAndPartnerIds(IEnumerable<Condition> conditions, SqlConnection conn)
+
+        public IEnumerable<Guid> SearchPartnerIds(IEnumerable<Condition> conditions, string typeRule, SqlConnection conn)
         {
             var partnerIds = new List<Guid>();
             var builder = new SqlBuilder();
             var lst = new Dictionary<string, string>();
             lst.Add("eq", "=");
             lst.Add("neq", "!=");
-            var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM Partners pn /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ ");
-            builder.Select("pn.Id ");
+            lst.Add("contains", "");
+            lst.Add("not_contains", "");
+            lst.Add("lte", "<=");
+            lst.Add("gte", ">=");
+            var sqltemplate = builder.AddTemplate("SELECT pn.Id FROM Partners pn /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ ");
             builder.Where("pn.Customer = 1 ");
             foreach (var condition in conditions)
             {
@@ -150,80 +148,185 @@ namespace Infrastructure.Services
                     case "birthday":
                         var today = DateTime.Today;
                         var date = today.AddDays(int.Parse(condition.Valuecondition));
-                        builder.Where("pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month });
-                        //var partner_ids = conn.Query<Guid>("SELECT Id FROM Partners WHERE Customer = 1 AND BirthDay = @day AND BirthMonth = @month", new { day = date.Day, month = date.Month }).ToList();
-                        // var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();     
+                        if (typeRule == "and")
+                        {
+                            builder.Where("pn.id in (Select pn.Id " +
+                                "From Partners pn " +
+                                "Where pn.BirthDay = @day AND pn.BirthMonth = @month) ", new { day = date.Day, month = date.Month });
+                        }
+                        else
+                        {
+                            builder.OrWhere("pn.id in (Select pn.Id " +
+                                "From Partners pn " +
+                                "Where pn.BirthDay = @day AND pn.BirthMonth = @month) ", new { day = date.Day, month = date.Month });
+                        }
+
                         break;
-                    case "lastTreatmentDay":
-                        builder.LeftJoin("SaleOrders sale ON sale.PartnerId = pn.Id");
-                        builder.Where("sale.State = 'sale' ");
-                        builder.GroupBy(" pn.Id ");
-                        builder.Having("(Max(sale.DateOrder) <  DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Valuecondition) });
+                    case "lastSaleOrder":
+                        //builder.LeftJoin("SaleOrders sale ON sale.PartnerId = pn.Id");
+                        //builder.Where("sale.State = 'sale' ");
+                        //builder.GroupBy(" pn.Id ");
+                        //builder.Having("(Max(sale.DateOrder) <  DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Valuecondition) });
+                        if (typeRule == "and")
+                        {
+                            builder.Where("pn.id in (Select pn.Id From Partners pn " +
+                                "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
+                                "Where sale.State = @sale " +
+                                "Group by pn.Id " +
+                                "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE()))) ", new { number = int.Parse(condition.Valuecondition) , sale = "sale" });
+                        }
+                        else
+                        {
+                            builder.OrWhere("pn.id in (Select pn.Id From Partners pn " +
+                                "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
+                                "Where sale.State = @sale " +
+                                "Group by pn.Id " +
+                                "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE()))) ", new { number = int.Parse(condition.Valuecondition), sale = "sale" });
+                        }
                         break;
-                    case "groupPartner":
-                        builder.LeftJoin("PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id");
-                        builder.LeftJoin("PartnerCategories cpt On cpt.id = rel.CategoryId");
+                    case "categPartner":
+                        //builder.LeftJoin("PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id");
+                        //builder.LeftJoin("PartnerCategories cpt On cpt.id = rel.CategoryId");
                         foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
                         {
                             switch (kvp.Key)
                             {
                                 case "eq":
-                                    builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    if (typeRule == "and")
+                                    {
+                                        // builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                        builder.Where("pn.id in (Select pn.Id" +
+                                            "From Partners pn" +
+                                            "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
+                                            "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
+                                            $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    }
+                                    else
+                                    {
+                                        builder.OrWhere("pn.id in (Select pn.Id" +
+                                           "From Partners pn" +
+                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
+                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
+                                           $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    }
                                     break;
                                 case "neq":
-                                    builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    if (typeRule == "and")
+                                    {
+                                        builder.Where("pn.id in (Select pn.Id" +
+                                          "From Partners pn" +
+                                          "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
+                                          "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
+                                          $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    }
+                                    else
+                                    {
+                                        builder.OrWhere("pn.id in (Select pn.Id" +
+                                           "From Partners pn" +
+                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
+                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
+                                           $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Valuecondition });
+                                    }
+
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
                             }
                         }
+
                         break;
-                    case "service":
+                    case "usedService":
 
                         foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
                         {
                             switch (kvp.Key)
                             {
                                 case "eq":
-                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                        "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                        "Left join Products sp On sp.Id = orlines.ProductId " +
-                                        $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    if (typeRule == "and")
+                                    {
+                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                      "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                      "Left join Products sp On sp.Id = orlines.ProductId " +
+                                      $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    }
+                                    else
+                                    {
+                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                     "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                     "Left join Products sp On sp.Id = orlines.ProductId " +
+                                     $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    }
+
                                     break;
                                 case "neq":
-                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                        "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                        "Left join Products sp On sp.Id = orlines.ProductId " +
-                                        $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    if (typeRule == "and")
+                                    {
+                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                           "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                           "Left join Products sp On sp.Id = orlines.ProductId " +
+                                           $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    }
+                                    else
+                                    {
+                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                       "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                       "Left join Products sp On sp.Id = orlines.ProductId " +
+                                       $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Valuecondition });
+                                    }
+
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
                             }
                         }
                         break;
-                    case "groupService":
+                    case "usedCategService":
                         foreach (var kvp in lst.Where(x => x.Key == condition.Flagcondition))
                         {
                             switch (kvp.Key)
                             {
                                 case "eq":
-                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    if (typeRule == "and")
+                                    {
+                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
                                     "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
                                     "Left join Products sp On sp.Id = orlines.ProductId " +
                                     "Left join ProductCategories csp On csp.Id = sp.CategId " +
                                     $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    }
+                                    else
+                                    {
+                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    }
+
                                     break;
                                 case "neq":
-                                    builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                        "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                        "Left join Products sp On sp.Id = orlines.ProductId " +
-                                        "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                        $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    if (typeRule == "and")
+                                    {
+                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    }
+                                    else
+                                    {
+                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
+                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
+                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Valuecondition });
+                                    }
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Valuecondition));
                             }
                         }
+
                         break;
                 }
 
@@ -232,12 +335,7 @@ namespace Infrastructure.Services
             return partner_ids;
         }
 
-        /// <summary>
-        /// check Rule Or
-        /// </summary>
-        /// <param name="rules"></param>
-        /// <param name="conn"></param>
-        /// <returns></returns>
+
         public IEnumerable<Guid> SearchOrPartnerIds(IEnumerable<Condition> conditions, SqlConnection conn)
         {
             var partnerIds = new List<Guid>();
@@ -359,17 +457,7 @@ namespace Infrastructure.Services
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-                    /// kiem tra dieu kien  and hoac or
-                    if (resultingMessage.Root.Rule.Logic == "and")
-                    {
-                        partner_ids = SearchAndPartnerIds(resultingMessage.Root.Rule.Condition, conn);
-                    }
-                    else
-                    {
-                        partner_ids = SearchOrPartnerIds(resultingMessage.Root.Rule.Condition, conn);
-                    }
-
-
+                    partner_ids = SearchPartnerIds(resultingMessage.Root.Rule.Condition, resultingMessage.Root.Rule.Logic, conn);
 
                     //Get partnerIds in list rules
 
@@ -407,7 +495,7 @@ namespace Infrastructure.Services
                     }
                     else if (channelSocial.Type == "zalo")
                     {
-                       
+
                         var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequences.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequences.Tcarecampaignid))).ToList();
                         var limit = 200;
                         var offset = 0;
@@ -454,7 +542,7 @@ namespace Infrastructure.Services
                             }
                             else if (channel.Type == "zalo")
                             {
-                                
+
                                 var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequences.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequences.Tcarecampaignid))).ToList();
                                 var limit = 200;
                                 var offset = 0;
@@ -507,13 +595,13 @@ namespace Infrastructure.Services
 
 
 
-        public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token , Guid campaignId)
+        public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId)
         {
             var now = DateTime.Now;
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
-           
-            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);          
+
+            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" });
             else
@@ -527,11 +615,11 @@ namespace Infrastructure.Services
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
             var zaloClient = new ZaloClient(access_token);
-            var sendResult = zaloClient.sendTextMessageToUserId( profile.PSID, text).Root.ToObject<RootZalo>().data;
+            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text).Root.ToObject<RootZalo>().data;
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo" });
             else
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID,PartnerId = profile.PartnerId, Type = "zalo" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo" });
 
 
         }
