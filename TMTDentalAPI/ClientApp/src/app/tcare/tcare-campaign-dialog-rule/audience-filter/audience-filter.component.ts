@@ -69,6 +69,10 @@ export class AudienceFilterComponent implements OnInit {
         return 'không chứa';
       case 'startswith':
         return 'bắt đầu với';
+      case 'before':
+        return 'trước';
+      case 'after':
+        return 'sau';
       case 'bằng':
         return 'eq';
       case 'không bằng':
@@ -79,6 +83,20 @@ export class AudienceFilterComponent implements OnInit {
         return 'doesnotcontain';
       case 'bắt đầu với':
         return 'startswith';
+      case 'trước':
+        return 'before';
+      case 'sau':
+        return 'after';
+    }
+  }
+
+  isDay(item) {
+    switch (item) {
+      case 'birthday': 
+      case 'lastTreatmentDay': 
+        return true;
+      default: 
+        return false;
     }
   }
 
@@ -130,23 +148,25 @@ export class AudienceFilterComponent implements OnInit {
         break;
       } 
     }
-    this.selectedAudienceFilter_Item = item;
-    this.clickedAudienceFilter_Item = true;
+    this.openAudienceFilter = false;
+    this.clickedAudienceFilter = false;
+    this.openAudienceFilter_Picker = false; //
+    if (this.clickedAudienceFilter_Item === true) {
+      this.selectedAudienceFilter_Item = null;
+      this.clickedAudienceFilter_Item = false;
+    } else {
+      this.selectedAudienceFilter_Item = item;
+      this.clickedAudienceFilter_Item = true;
+    }
+    this.count_clickOutside = 1;
   }
 
   clickOutsideAudienceFilter_Item_Picker() {
-    console.log("Hello");
-    console.log(this.count_clickOutside);
-    if (this.count_clickOutside === 2) {
-      if (this.clickedAudienceFilter_Item === true) {
-        this.clickedAudienceFilter_Item = false;
-      } else {
-        this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
-        this.selectedAudienceFilter_Item = null;
-      }
-      this.count_clickOutside = 1;
-    } else {
-      this.count_clickOutside += 1;
+    this.count_clickOutside += 1;
+    if (this.clickedAudienceFilter_Item === true && this.count_clickOutside >= 3) {
+      this.selectedAudienceFilter_Item = null;
+      this.clickedAudienceFilter_Item = false;
+      this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
     }
   }
 
@@ -157,39 +177,27 @@ export class AudienceFilterComponent implements OnInit {
   }
 
   clickAudienceFilter() {
+    this.selectedAudienceFilter_Item = null;
+    this.clickedAudienceFilter_Item = false;
     if (this.clickedAudienceFilter === true) {
       this.openAudienceFilter = false;
-      this.openAudienceFilter_Picker = false;
       this.clickedAudienceFilter = false;
+      this.openAudienceFilter_Picker = false; //
     } else {
       this.openAudienceFilter = true;
-      this.openAudienceFilter_Picker = false;
       this.clickedAudienceFilter = true;
+      this.openAudienceFilter_Picker = false; //
     }
+    this.count_clickOutside = 1;
   }
 
   clickOutsideAudienceFilter() {
     this.count_clickOutside += 1;
-    if (this.clickedAudienceFilter === true) {
-      console.log("KKK");
+    if (this.clickedAudienceFilter === true && this.count_clickOutside >= 3) {
+      this.openAudienceFilter = false;
+      this.clickedAudienceFilter = false;
+      this.openAudienceFilter_Picker = false; //
     }
-    /*
-    console.log(this.count_clickOutside);
-    console.log(this.clickedAudienceFilter);
-    if (this.count_clickOutside === 2) {
-      if (this.clickedAudienceFilter === true) {
-        this.clickedAudienceFilter = false;
-        console.log("Pro");
-      } else {
-        this.openAudienceFilter = false;
-        this.openAudienceFilter_Picker = false;
-        console.log("Cro");
-      }
-      this.count_clickOutside = 1;
-    } else {
-      this.count_clickOutside += 1;
-    }
-    */
   }
 
   selectAudienceFilter(item) {
@@ -241,7 +249,8 @@ export class AudienceFilterComponent implements OnInit {
       this.listAudienceFilter_Items.push(this.AudienceFilter_Item);
       this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
       this.openAudienceFilter = false;
-      this.openAudienceFilter_Picker = false;
+      this.clickedAudienceFilter = false;
+      this.openAudienceFilter_Picker = false; //
     }
   }
 }

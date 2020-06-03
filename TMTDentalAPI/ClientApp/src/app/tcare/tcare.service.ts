@@ -92,7 +92,7 @@ export class AudienceFilterItem {
   type: string;
   name: string;
   formula_type: string;
-  formula_value: string;
+  formula_value: any;
   formula_display: string;
 }
 

@@ -22,7 +22,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   showAudienceFilter: boolean = false;
 
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder, public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {

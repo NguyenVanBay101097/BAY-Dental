@@ -8,6 +8,7 @@
                 <span *ngIf="!item.formula_display || item.formula_display === ''">{{item.formula_value}}</span>
                 <span *ngIf="item.formula_display && item.formula_display !== ''">{{item.formula_display}}</span>
             </span>
+            <span *ngIf="isDay(item.type)" class="unit-select pl-1">ngày</span>
             <span class="remove" (click)="deleteAudienceFilterItem(i)">
                 <i class="fas fa-times pl-2"></i>
             </span>
@@ -22,6 +23,7 @@
     </span>
     <span class="position-relative">
         <button class="audience-filter-open btn btn-light btn-sm"
+            [class.w-100]="!audience_filter_receive"
             (click)="clickAudienceFilter()">
             + Thêm điều kiện lọc
         </button>

@@ -54,26 +54,14 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
 
   convertFormulaType(item) {
     switch (item) {
-      case 'eq':
-        return 'bằng';
-      case 'neq':
-        return 'không bằng';
       case 'contains':
         return 'có chứa';
       case 'doesnotcontain':
         return 'không chứa';
-      case 'startswith':
-        return 'bắt đầu với';
-      case 'bằng':
-        return 'eq';
-      case 'không bằng':
-        return 'neq';
       case 'có chứa':
         return 'contains';
       case 'không chứa':
         return 'doesnotcontain';
-      case 'bắt đầu với':
-        return 'startswith';
     }
   }
 
@@ -91,16 +79,16 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
     val.limit = 10;
     val.search = this.formGroup.get('name').value || '';
     this.partnerCategoryService.getPaged(val).subscribe(res => {
-      var listTags = res['items'];
+      var listItems = res['items'];
       
-      if (listTags.length == 0) {
+      if (listItems.length == 0) {
         this.showButtonCreatePartnerCategory = true;
       } else {
         this.showButtonCreatePartnerCategory = false;
       }
       this.AudienceFilter_Picker.formula_values = [];
-      for (let i = 0; i < listTags.length; i++) {
-        this.AudienceFilter_Picker.formula_values.push(listTags[i].name); // Add formula_values Tag
+      for (let i = 0; i < listItems.length; i++) {
+        this.AudienceFilter_Picker.formula_values.push(listItems[i].name); // Add formula_values
       }
     }, err => {
       console.log(err);
