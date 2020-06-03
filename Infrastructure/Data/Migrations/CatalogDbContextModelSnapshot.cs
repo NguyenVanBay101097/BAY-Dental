@@ -6171,6 +6171,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("MessageId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PSID")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 

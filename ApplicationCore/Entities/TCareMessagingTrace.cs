@@ -18,6 +18,12 @@ namespace ApplicationCore.Entities
 
         public DateTime? Delivery { get; set; }
 
+        /// <summary>
+        /// psid : user facebook
+        /// user_id : user zalo
+        /// </summary>
+        public string PSID { get; set; }
+
         public string MessageId { get; set; }
 
         public Guid? PartnerId { get; set; }

@@ -21,6 +21,7 @@ namespace Infrastructure.Data.Migrations
                     Exception = table.Column<DateTime>(nullable: true),
                     Read = table.Column<DateTime>(nullable: true),
                     Delivery = table.Column<DateTime>(nullable: true),
+                    PSID = table.Column<string>(nullable: true),
                     MessageId = table.Column<string>(nullable: true),
                     PartnerId = table.Column<Guid>(nullable: true),
                     Type = table.Column<string>(nullable: true)

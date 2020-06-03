@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20200602035030_CreateTCareMessagingTrace")]
+    [Migration("20200603031253_CreateTCareMessagingTrace")]
     partial class CreateTCareMessagingTrace
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -6171,6 +6171,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MessageId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PSID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("PartnerId")

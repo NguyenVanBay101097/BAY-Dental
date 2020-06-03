@@ -513,12 +513,11 @@ namespace Infrastructure.Services
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
            
-            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
+            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);          
             if (sendResult == null)
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PartnerId = profile.PartnerId, Type = "facebook" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" });
             else
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PartnerId = profile.PartnerId, Type = "facebook" });
-           
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" });
 
         }
 
@@ -530,9 +529,9 @@ namespace Infrastructure.Services
             var zaloClient = new ZaloClient(access_token);
             var sendResult = zaloClient.sendTextMessageToUserId( profile.PSID, text).Root.ToObject<RootZalo>().data;
             if (sendResult == null)
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PartnerId = profile.PartnerId, Type = "zalo" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type) values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo" });
             else
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PartnerId = profile.PartnerId, Type = "zalo" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type) values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID,PartnerId = profile.PartnerId, Type = "zalo" });
 
 
         }
