@@ -11,7 +11,6 @@ import { DatePipe } from '@angular/common';
 import { TcareCampaignDialogMessageComponent } from '../tcare-campaign-dialog-message/tcare-campaign-dialog-message.component';
 import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-declare var mxImageBasePath: any;
 declare var mxGeometry: any;
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -46,7 +45,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   title = "Kịch bản";
   campaign: TCareCampaignDisplay;
   cellSave: any;
-  doc = mxUtils.createXmlDocument();
+  doc: any;
   constructor(
     private activeRoute: ActivatedRoute,
     private fb: FormBuilder,
@@ -90,8 +89,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         return !mxEvent.isAltDown(evt);
       };
 
-
-
       // Enables snapping waypoints to terminals
       mxEdgeHandler.prototype.snapToTerminals = true;
 
@@ -111,10 +108,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       var rule = that.doc.createElement('rule');
       rule.setAttribute('logic', 'and');
-      // Creates a wrapper editor with a graph inside the given container.
-      // The editor is used to create certain functionality for the
-      // graph, such as the rubberband selection, but most parts
-      // of the UI are custom in this example.
+
       var editor = new mxEditor();
       var graph = editor.graph;
       that.editorDefind = editor;
@@ -124,15 +118,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       graph.centerZoom = true;
       graph.panningHandler.useLeftButtonForPanning = true;
 
-      // Disable highlight of cells when dragging from toolbar
-      graph.setDropEnabled(false);
-
       // Uses the port icon while connections are previewed
       mxConnectionHandler.prototype.connectImage = new mxImage(
         that.base_url + "assets/editors/images/connector.gif",
         16,
         16
       );
+
       // Centers the port icon on the target port
       graph.connectionHandler.targetConnectImage = true;
 
@@ -158,25 +150,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       }
 
-      var group = new mxCell("Group", new mxGeometry(), "group");
-      group.setVertex(false);
-      editor.defaultGroup = group;
-      editor.groupBorderSize = 20;
-      // Disables drag-and-drop into non-swimlanes.
-      graph.isValidDropTarget = function (cell, cells, evt) {
-        return this.isSwimlane(cell);
-      };
 
-      // Disables drilling into non-swimlanes.
-      graph.isValidRoot = function (cell) {
-        return this.isValidDropTarget(cell);
-      };
-
-      // Does not allow selection of locked cells
-      graph.isCellSelectable = function (cell) {
-        return !this.isCellLocked(cell);
-      };
-
+      //validate Connection
       graph.isValidConnection = function (source, target) {
         const source_id = source.id;
         const target_id = target.id;
@@ -214,27 +189,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       }
 
-      // Disables HTML labels for swimlanes to avoid conflict
-      // for the event processing on the child cells. HTML
-      // labels consume events before underlying cells get the
-      // chance to process those events.
-      //
-      // NOTE: Use of HTML labels is only recommended if the specific
-      // features of such labels are required, such as special label
-      // styles or interactive form fields. Otherwise non-HTML labels
-      // should be used by not overidding the following function.
-      // See also: configureStylesheet.
-      graph.isHtmlLabel = function (cell) {
-        return !this.isSwimlane(cell);
-      };
-
-
-
       //Add ContextMenu
       graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
         return that.createPopupMenu(editor, graph, menu, cell, evt);
       };
 
+      //defind NodeName
       graph.convertValueToString = function (cell) {
         if (mxUtils.isNode(cell.value)) {
           if (cell.value.nodeName.toLowerCase() == 'rule') {
@@ -255,191 +215,21 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       //double click Action
       graph.dblClick = function (evt, cell) {
-        // Do not fire a DOUBLE_CLICK event here as mxEditor will
-        // consume the event and start the in-place editor.
-        if (
-          this.isEnabled() &&
-          !mxEvent.isConsumed(evt) &&
-          cell != null &&
-          this.isCellEditable(cell)
-        ) {
-          if (this.model.isEdge(cell) || !this.isHtmlLabel(cell)) {
-            this.startEditingAtCell(cell);
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null) {
+          if (cell.style == "sequence") {
+            that.popupSequence(graph, cell, TcareCampaignDialogSequencesComponent);
           }
-          else {
-            if (cell.style == "sequence") {
-              var value = cell.getValue();
-              var objx = new Object();
-              for (let i = 0; i < value.attributes.length; i++) {
-                var attribute = value.attributes[i];
-                objx[attribute.name] = attribute.nodeValue;
-              }
-              if (objx['intervalNumber'])
-                objx['intervalNumber'] = Number.parseInt(objx['intervalNumber']);
-              if (objx['sheduleDate'])
-                objx['sheduleDate'] = new Date(objx['sheduleDate']);
-              let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-              modalRef.componentInstance.title = 'Cài đặt gửi tin';
-              if (objx['content'])
-                modalRef.componentInstance.model = objx;
-              modalRef.result.then(
-                (result) => {
-                  graph.getModel().beginUpdate();
-                  try {
-                    var value = cell.getValue();
-                    value.setAttribute('channelSocialId', result.channelSocialId);
-                    value.setAttribute('channelType', result.channelType);
-                    value.setAttribute('content', result.content);
-                    value.setAttribute('intervalNumber', result.intervalNumber);
-                    value.setAttribute('intervalType', result.intervalType);
-                    value.setAttribute('methodType', result.methodType);
-                    value.setAttribute('sheduleDate', result.sheduleDate ? that.intlService.formatDate(result.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '');
-                    graph.getModel().setValue(cell, value);
-                  } finally {
-                    graph.getModel().endUpdate();
-                    that.onSave();
-                  }
-                });
-            }
 
-            if (cell.style == "rule") {
-              var tCareRule = new TCareRule();
-              tCareRule.logic = cell.getValue().getAttribute('logic') || 'and';
-              if (!tCareRule.conditions) {
-                tCareRule.conditions = [];
-              }
-              if (cell.value && cell.value.children && cell.value.children.length > 0) {
-                for (let i = 0; i < cell.value.children.length; i++) {
-                  var obj = cell.value.children[i]
-                  var condition = new TCareRuleCondition();
-                  condition.name = obj.getAttribute('name') || '';
-                  condition.type = obj.getAttribute('type') || '';
-                  condition.op = obj.getAttribute('op') || 'eq';
-                  condition.value = obj.getAttribute('value') || '';
-                  condition.displayValue = obj.getAttribute('displayValue')
-                  tCareRule.conditions.push(condition);
-                }
-              }
-
-              let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-              modalRef.componentInstance.title = 'Cài đặt điều kiện';
-              modalRef.componentInstance.tCareRule = tCareRule;
-              modalRef.result.then(
-                result => {
-                  graph.getModel().beginUpdate();
-                  try {
-                    var value = cell.getValue();
-                    value.setAttribute('logic', result.logic);
-                    if (value && value.children && value.children.length > 0) {
-                      while (value.firstChild) {
-                        value.removeChild(value.firstChild);
-                      }
-                    }
-
-                    if (result.conditions && result.conditions.length > 0) {
-                      result.conditions.forEach(child => {
-                        var childEle = that.doc.createElement('condition');
-                        childEle.setAttribute('name', child.name);
-                        childEle.setAttribute('type', child.type);
-                        childEle.setAttribute('op', child.op);
-                        childEle.setAttribute('value', child.value);
-                        childEle.setAttribute('valueDisplay', child.valueDisplay);
-                        value.appendChild(childEle);
-                      });
-                    }
-
-                    graph.getModel().setValue(cell, value);
-                  }
-                  finally {
-                    graph.getModel().endUpdate();
-                    that.onSave();
-                  }
-                });
-            }
-
-            if (cell.style == "read") {
-              var listPartnerCategories: PartnerCategoryBasic[] = [];
-              if (cell.getValue() && cell.getValue().children) {
-                for (let i = 0; i < cell.getValue().children.length; i++) {
-                  var tag = cell.getValue().children[i];
-                  var partnerCateg = new PartnerCategoryBasic();
-                  partnerCateg.id = tag.getAttribute('tagId');
-                  partnerCateg.name = tag.getAttribute('name');
-                  listPartnerCategories.push(partnerCateg);
-                }
-              }
-              let modalRef = that.modalService.open(TcareCampaignDialogMessageComponent, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
-              modalRef.componentInstance.title = 'Thêm tag';
-              modalRef.componentInstance.listPartnerCategories = listPartnerCategories;
-              modalRef.result.then(
-                result => {
-                  if (result) {
-                    graph.getModel().beginUpdate();
-                    try {
-                      var value = cell.getValue();
-                      while (value.firstChild) {
-                        value.removeChild(value.firstChild);
-                      }
-
-                      result.listPartnerCategories.forEach(item => {
-                        var tag = that.doc.createElement('tag');
-                        tag.setAttribute('tagId', item.id);
-                        tag.setAttribute('name', item.name);
-                        value.appendChild(tag);
-                        graph.getModel().setValue(cell, value);
-                      });
-                    } finally {
-                      graph.getModel().endUpdate();
-                      that.onSave();
-                    }
-                  }
-                }
-              )
-            }
-
-            if (cell.style == "unread") {
-              var listPartnerCategories: PartnerCategoryBasic[] = [];
-              if (cell.getValue() && cell.getValue().children) {
-                for (let i = 0; i < cell.getValue().children.length; i++) {
-                  var tag = cell.getValue().children[i];
-                  var partnerCateg = new PartnerCategoryBasic();
-                  partnerCateg.id = tag.getAttribute('tagId');
-                  partnerCateg.name = tag.getAttribute('name');
-                  listPartnerCategories.push(partnerCateg);
-                }
-              }
-              let modalRef = that.modalService.open(TcareCampaignDialogMessageComponent, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
-              modalRef.componentInstance.title = 'Thêm tag';
-              modalRef.componentInstance.listPartnerCategories = listPartnerCategories;
-              modalRef.result.then(
-                result => {
-                  if (result) {
-                    graph.getModel().beginUpdate();
-                    try {
-                      var value = cell.getValue();
-                      while (value.firstChild) {
-                        value.removeChild(value.firstChild);
-                      }
-                      result.listPartnerCategories.forEach(item => {
-                        var tag = that.doc.createElement('tag');
-                        tag.setAttribute('tagId', item.id);
-                        tag.setAttribute('name', item.name);
-                        value.appendChild(tag);
-                        graph.getModel().setValue(cell, value);
-                      });
-                    } finally {
-                      graph.getModel().endUpdate();
-                      that.onSave();
-                    }
-                  }
-                }
-              )
-            }
-
-            else { return false; }
+          if (cell.style == "rule") {
+            that.popupRule(graph, cell, TcareCampaignDialogRuleComponent);
           }
+
+          if (cell.style == "read" || cell.style == "unread") {
+            that.popupMessage(graph, cell, TcareCampaignDialogMessageComponent);
+          }
+
+          else { return false; }
         }
-
         // Disables any default behaviour for the double click
         mxEvent.consume(evt);
       };
@@ -449,14 +239,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       // Adds all required styles to the graph (see below)
       that.configureStylesheet(graph);
-
-      // Adds sidebar icons.
-      //
-      // NOTE: For non-HTML labels a simple string as the third argument
-      // and the alternative style as shown in configureStylesheet should
-      // be used. For example, the first call to addSidebar icon would
-      // be as follows:
-      // that.addSidebarIcon(graph, sidebar, 'Website', './assets/editors/images/icons48/earth.png');
 
       //add image on hover
       function mxIconSet(value) {
@@ -509,6 +291,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         this.images.push(img);
       }
 
+      //remove all when remove node
       mxIconSet.prototype.destroy = function () {
         if (this.images != null) {
           for (var i = 0; i < this.images.length; i++) {
@@ -584,30 +367,19 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         },
       });
 
-      // thêm 1 step
+      // thêm 1 sequence
       that.addSidebarIcon(graph, sidebar_sequences, sequence, "./assets/editors/images/message-setting.png", "sequence");
 
       //thêm 1 rule
       that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
 
-
-      that.addToolbarButton(editor, toolbar, "zoomIn", "", "./assets/editors/images/zoom_in.png", true);
-      that.addToolbarButton(editor, toolbar, "zoomOut", "", "./assets/editors/images/zoom_out.png", true);
-      that.addToolbarButton(editor, toolbar, "actualSize", "", "./assets/editors/images/view_1_1.png", true);
-      that.addToolbarButton(editor, toolbar, "fit", "", "./assets/editors/images/fit_to_size.png", true);
-      // Creates the outline (navigator, overview) for moving
-      // around the graph in the top, right corner of the window.
+      //outLine
       new mxOutline(graph, outline);
 
-      // auto generate start and Task
-
-      if (that.id) {
-        this.load(editor);
-      }
+      //load Xml
+      this.load(editor);
     }
   }
-
-
 
   load(editor) {
     let that = this;
@@ -698,7 +470,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       model.beginUpdate();
       try {
         if (typeShape == "sequence") {
-          v1 = graph.insertVertex(parent, null, obj, x, y, 110, 40, typeShape);
+          v1 = graph.insertVertex(parent, null, obj, x, y, 110, 50, typeShape);
         }
 
         if (typeShape == "rule") {
@@ -707,6 +479,9 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       } finally {
         model.endUpdate();
       }
+      //style of connection
+
+
       graph.setSelectionCell(v1);
     }
 
@@ -728,16 +503,9 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     var dragImage = div.cloneNode(true);
     var ds = mxUtils.makeDraggable(img, graph, funct, dragImage, 0, 0, true, true);
     ds.setGuidesEnabled(true);
-  }
 
-  makeId(length): string {
-    var result = '';
-    var characters = '1234567890';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+
+
   }
 
   configureStylesheet(graph) {
@@ -759,13 +527,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     // style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
     graph.getStylesheet().putDefaultVertexStyle(style);
 
-    style = graph.getStylesheet().getDefaultEdgeStyle();
-    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "#FFFFFF";
-    style[mxConstants.STYLE_STROKEWIDTH] = "2";
-    style[mxConstants.STYLE_ROUNDED] = true;
-    style[mxConstants.STYLE_EDGE] = mxEdgeStyle.SideToSide;
-    graph.alternateEdgeStyle = "elbow=vertical";
-
     //style for sequence
     style = mxUtils.clone(style);
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
@@ -778,7 +539,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     style[mxConstants.STYLE_IMAGE_WIDTH] = '40';
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '40';
     style[mxConstants.STYLE_SPACING_TOP] = '55';
-    style[mxConstants.STYLE_SPACING] = '-6';
+    style[mxConstants.STYLE_SPACING] = '0';
     graph.getStylesheet().putCellStyle('sequence', style);
 
     //style for rule
@@ -828,6 +589,143 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   }
 
+  popupMessage(graph, cell, component) {
+    let that = this;
+    var listPartnerCategories: any[] = [];
+    if (cell.getValue() && cell.getValue().children) {
+      for (let i = 0; i < cell.getValue().children.length; i++) {
+        var objValue = cell.getValue().children[i];
+        var objx = new Object();
+        for (let i = 0; i < objValue.attributes.length; i++) {
+          var attribute = objValue.attributes[i];
+          objx[attribute.name] = attribute.nodeValue;
+        }
+        listPartnerCategories.push(objx);
+      }
+    }
+    let modalRef = that.modalService.open(component, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Thêm tag';
+    modalRef.componentInstance.listPartnerCategories = listPartnerCategories;
+    modalRef.result.then(
+      result => {
+        if (result) {
+          graph.getModel().beginUpdate();
+          try {
+            var value = cell.getValue();
+            while (value.firstChild) {
+              value.removeChild(value.firstChild);
+            }
+
+            result.listPartnerCategories.forEach(item => {
+              var tag = that.doc.createElement('tag');
+              tag.setAttribute('tagId', item.id);
+              tag.setAttribute('name', item.name);
+              value.appendChild(tag);
+              graph.getModel().setValue(cell, value);
+            });
+          } finally {
+            graph.getModel().endUpdate();
+            that.onSave();
+          }
+        }
+      }
+    )
+  }
+
+  popupRule(graph, cell, component) {
+    let that = this;
+    var tCareRule = {
+      logic: '',
+      conditions: null
+    };
+    tCareRule.logic = cell.getValue().getAttribute('logic') || 'and';
+    if (!tCareRule.conditions) {
+      tCareRule.conditions = [];
+    }
+    if (cell.value && cell.value.children && cell.value.children.length > 0) {
+      for (let i = 0; i < cell.value.children.length; i++) {
+        var objValue = cell.value.children[i]
+        var objx = new Object();
+        for (let i = 0; i < objValue.attributes.length; i++) {
+          var attribute = objValue.attributes[i];
+          objx[attribute.name] = attribute.nodeValue;
+        }
+        tCareRule.conditions.push(objx);
+      }
+    }
+
+    let modalRef = that.modalService.open(component, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Cài đặt điều kiện';
+    modalRef.componentInstance.tCareRule = tCareRule;
+    modalRef.result.then(
+      result => {
+        graph.getModel().beginUpdate();
+        try {
+          var value = cell.getValue();
+          value.setAttribute('logic', result.logic);
+          if (value && value.children && value.children.length > 0) {
+            while (value.firstChild) {
+              value.removeChild(value.firstChild);
+            }
+          }
+
+          if (result.conditions && result.conditions.length > 0) {
+            result.conditions.forEach(child => {
+              var childEle = that.doc.createElement('condition');
+              childEle.setAttribute('name', child.name);
+              childEle.setAttribute('type', child.type);
+              childEle.setAttribute('op', child.op);
+              childEle.setAttribute('value', child.value);
+              childEle.setAttribute('valueDisplay', child.valueDisplay);
+              value.appendChild(childEle);
+            });
+          }
+
+          graph.getModel().setValue(cell, value);
+        }
+        finally {
+          graph.getModel().endUpdate();
+          that.onSave();
+        }
+      });
+  }
+
+  popupSequence(graph, cell, component) {
+    let that = this;
+    var value = cell.getValue();
+    var objx = new Object();
+    for (let i = 0; i < value.attributes.length; i++) {
+      var attribute = value.attributes[i];
+      objx[attribute.name] = attribute.nodeValue;
+    }
+    if (objx['intervalNumber'])
+      objx['intervalNumber'] = Number.parseInt(objx['intervalNumber']);
+    if (objx['sheduleDate'])
+      objx['sheduleDate'] = new Date(objx['sheduleDate']);
+    let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Cài đặt gửi tin';
+    if (objx['content'])
+      modalRef.componentInstance.model = objx;
+    modalRef.result.then(
+      (result) => {
+        graph.getModel().beginUpdate();
+        try {
+          var value = cell.getValue();
+          value.setAttribute('channelSocialId', result.channelSocialId);
+          value.setAttribute('channelType', result.channelType);
+          value.setAttribute('content', result.content);
+          value.setAttribute('intervalNumber', result.intervalNumber);
+          value.setAttribute('intervalType', result.intervalType);
+          value.setAttribute('methodType', result.methodType);
+          value.setAttribute('sheduleDate', result.sheduleDate ? that.intlService.formatDate(result.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '');
+          graph.getModel().setValue(cell, value);
+        } finally {
+          graph.getModel().endUpdate();
+          that.onSave();
+        }
+      });
+  }
+
   createPopupMenu(editor, graph, menu, cell, evt) {
     var that = this;
     var parent = graph.getDefaultParent();
@@ -841,14 +739,20 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               read.setAttribute('name', 'read');
               read.setAttribute('parent', cell.id);
               var v_read = graph.insertVertex(parent, null, read, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, 'read');
-              graph.insertEdge(parent, null, '', cell, v_read);
+              var e1 = graph.insertEdge(parent, null, '', cell, v_read, 'strokeWidth=3;endArrow=block;endSize=2;endFill=1;strokeColor=black;rounded=1;');
               var value = cell.getValue();
               value.setAttribute('messageReadId', v_read.id);
               graph.getModel().setValue(cell, value);
+
             }
             finally {
               graph.getModel().endUpdate();
             }
+            var state = graph.view.getState(e1);
+            state.shape.node.getElementsByTagName('path')[0].removeAttribute('visibility');
+            state.shape.node.getElementsByTagName('path')[0].setAttribute('stroke-width', '6');
+            state.shape.node.getElementsByTagName('path')[0].setAttribute('stroke', 'lightGray');
+            state.shape.node.getElementsByTagName('path')[1].setAttribute('class', 'flow');
             that.onSave();
           }
           else {
