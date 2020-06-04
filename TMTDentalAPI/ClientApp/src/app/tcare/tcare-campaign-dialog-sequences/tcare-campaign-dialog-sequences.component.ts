@@ -8,6 +8,7 @@ import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
 import { FacebookPageService, ChannelSocial } from 'src/app/socials-channel/facebook-page.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { DatePipe } from '@angular/common';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-sequences',
@@ -17,23 +18,19 @@ import { DatePipe } from '@angular/common';
 export class TcareCampaignDialogSequencesComponent implements OnInit {
 
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
-
-  model: TCareMessageDisplay;
-  campaignId: string;
+  model: any;
   formGroup: FormGroup;
-  loading = false;
-  limit = 10;
-  offset = 0;
   filterdChannelSocials: ChannelSocial[] = [];
-  type: string;
+
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
     private facebookPageService: FacebookPageService,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
-
+    console.log(this.model);
     this.formGroup = this.fb.group({
       channelSocialId: ['', Validators.required],
       content: ['', Validators.required],
@@ -44,73 +41,49 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       channelType: ['priority', Validators.required]
     });
 
-
-
-    // Preprocess the stringified date before passing it to the DateTimePicker.
-
-
-    this.type = this.formGroup.get('methodType').value;
     this.channelSocialCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.channelSocialCbx.loading = true)),
       switchMap(value => this.searchSocialChannel(value))
-    ).subscribe(result => {
+    ).subscribe((result: any) => {
       this.filterdChannelSocials = result.items;
       this.channelSocialCbx.loading = false;
     });
 
     this.loadSocialChannel();
+
     if (this.model) {
-      if (this.model.methodType)
-        this.type = this.model.methodType;
-
-      this.loadFormApi();
+      var tmp = Object.assign({}, this.model);
+      tmp.intervalNumber = parseInt(this.model.intervalNumber) || 0;
+      tmp.sheduleDate = this.model.sheduleDate ? new Date(this.model.sheduleDate) : null;
+      this.formGroup.patchValue(tmp);
     }
-
-  }
-
-  parseObjectDates(target: any): any {
-    const result = Object.assign({}, target);
-
-    Object.keys(result)
-      .forEach(key => {
-        const date = new Date(result[key]);
-        if (!isNaN(date.getTime())) {
-          result[key] = date;
-        }
-      });
-
-    return result;
-  }
-
-  chossesMethodType(val) {
-    this.type = val;
-  }
-
-  loadFormApi() {
-    if (this.model)
-      this.formGroup.patchValue(this.model);
   }
 
   loadSocialChannel() {
-    this.searchSocialChannel().subscribe(
-      result => {
-        this.filterdChannelSocials = result.items;
-      }
-    )
+    this.searchSocialChannel().subscribe((result: any) => {
+      this.filterdChannelSocials = result.items;
+    });
+  }
+
+  get methodTypeValue() {
+    return this.formGroup.get('methodType').value;
   }
 
   searchSocialChannel(q?: string) {
     var val = new FacebookPagePaged();
-    val.limit = this.limit;
-    val.offset = this.offset;
     val.search = q || '';
     return this.facebookPageService.getPaged(val);
   }
 
   onSave() {
-    this.model = this.formGroup.value;
-    this.activeModal.close(this.model);
-  }
+    if (!this.formGroup.valid) {
+      return false;
+    }
 
+    var value = this.formGroup.value;
+    value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : '';
+    value.sheduleDate = value.sheduleDate ? this.intlService.formatDate(value.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '';
+    this.activeModal.close(value);
+  }
 }

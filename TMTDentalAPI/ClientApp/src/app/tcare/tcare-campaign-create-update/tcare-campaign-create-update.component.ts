@@ -11,6 +11,8 @@ import { DatePipe } from '@angular/common';
 import { TcareCampaignDialogMessageComponent } from '../tcare-campaign-dialog-message/tcare-campaign-dialog-message.component';
 import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 import { IntlService } from '@progress/kendo-angular-intl';
+import * as xml2js from 'xml2js';
+
 declare var mxGeometry: any;
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -198,10 +200,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       graph.convertValueToString = function (cell) {
         if (mxUtils.isNode(cell.value)) {
           if (cell.value.nodeName.toLowerCase() == 'rule') {
-            return 'Điều kiện gửi tin';
+            return 'Điều kiện';
           }
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
-            return 'Cài đặt gửi tin';
+            return 'Gửi tin';
           }
           if (cell.value.nodeName.toLowerCase() == 'message_read') {
             return 'Gán thẻ đã đọc';
@@ -217,7 +219,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       graph.dblClick = function (evt, cell) {
         if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null) {
           if (cell.style == "sequence") {
-            that.popupSequence(graph, cell, TcareCampaignDialogSequencesComponent);
+            that.popupSequence(graph, cell);
           }
 
           if (cell.style == "rule") {
@@ -399,20 +401,20 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             editor.graph.getModel().endUpdate();
           }
         } else {
-          var rule = that.doc.createElement('rule');
-          rule.setAttribute('logic', 'and');
-          var parent = editor.graph.getDefaultParent();
-          editor.graph.getModel().beginUpdate();
-          try {
-            var v1 = editor.graph.insertVertex(parent, null, rule, 50, 200, 40, 40, 'rule');
-            v1.mxTransient.push("name");
-            v1.name = 'rule';
-            v1.isRoot = true;
-          }
-          finally {
-            editor.graph.getModel().endUpdate();
-          }
-          editor.graph.setSelectionCell(v1);
+          // var rule = that.doc.createElement('rule');
+          // rule.setAttribute('logic', 'and');
+          // var parent = editor.graph.getDefaultParent();
+          // editor.graph.getModel().beginUpdate();
+          // try {
+          //   var v1 = editor.graph.insertVertex(parent, null, rule, 50, 200, 40, 40, 'rule');
+          //   v1.mxTransient.push("name");
+          //   v1.name = 'rule';
+          //   v1.isRoot = true;
+          // }
+          // finally {
+          //   editor.graph.getModel().endUpdate();
+          // }
+          // editor.graph.setSelectionCell(v1);
         }
       }
     )
@@ -634,63 +636,56 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   popupRule(graph, cell, component) {
     let that = this;
-    var tCareRule = {
-      logic: '',
-      conditions: null
-    };
-    tCareRule.logic = cell.getValue().getAttribute('logic') || 'and';
-    if (!tCareRule.conditions) {
-      tCareRule.conditions = [];
-    }
-    if (cell.value && cell.value.children && cell.value.children.length > 0) {
-      for (let i = 0; i < cell.value.children.length; i++) {
-        var objValue = cell.value.children[i]
-        var objx = new Object();
-        for (let i = 0; i < objValue.attributes.length; i++) {
-          var attribute = objValue.attributes[i];
-          objx[attribute.name] = attribute.nodeValue;
-        }
-        tCareRule.conditions.push(objx);
-      }
-    }
+    var value = cell.getValue();
 
-    let modalRef = that.modalService.open(component, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
-    modalRef.componentInstance.title = 'Cài đặt điều kiện';
-    modalRef.componentInstance.tCareRule = tCareRule;
-    modalRef.result.then(
-      result => {
-        graph.getModel().beginUpdate();
-        try {
-          var value = cell.getValue();
-          value.setAttribute('logic', result.logic);
-          if (value && value.children && value.children.length > 0) {
-            while (value.firstChild) {
-              value.removeChild(value.firstChild);
+    var serializer = new XMLSerializer();
+    var valueXMl = serializer.serializeToString(value);
+
+    xml2js.parseString(valueXMl, function (err, result) {
+      if (!err) {
+        var rule = result.rule;
+        var a = Object.assign({}, rule.$);
+        a.conditions = [];
+        rule.condition.forEach(con => {
+          a.conditions.push(Object.assign({}, con.$));
+        });
+
+        let modalRef = that.modalService.open(component, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+        modalRef.componentInstance.title = 'Cài đặt điều kiện';
+        modalRef.componentInstance.tCareRule = a;
+        modalRef.result.then((result: any) => {
+          graph.getModel().beginUpdate();
+          try {
+            var doc = mxUtils.createXmlDocument();
+            var userObject = doc.createElement('rule');
+            for (var p in result) {
+              if (p != 'conditions') {
+                userObject.setAttribute(p, result[p]);
+              }
             }
-          }
 
-          if (result.conditions && result.conditions.length > 0) {
-            result.conditions.forEach(child => {
-              var childEle = that.doc.createElement('condition');
-              childEle.setAttribute('name', child.name);
-              childEle.setAttribute('type', child.type);
-              childEle.setAttribute('op', child.op);
-              childEle.setAttribute('value', child.value);
-              childEle.setAttribute('valueDisplay', child.valueDisplay);
-              value.appendChild(childEle);
+            result.conditions.forEach(con => {
+              var conEl = doc.createElement('condition');
+              for (var p in con) {
+                conEl.setAttribute(p, con[p]);
+              }
+
+              userObject.appendChild(conEl);
             });
-          }
 
-          graph.getModel().setValue(cell, value);
-        }
-        finally {
-          graph.getModel().endUpdate();
-          that.onSave();
-        }
-      });
+            graph.getModel().setValue(cell, userObject);
+          }
+          finally {
+            graph.getModel().endUpdate();
+            that.onSave();
+          }
+        }, () => {
+        });
+      }
+    });
   }
 
-  popupSequence(graph, cell, component) {
+  popupSequence(graph, cell) {
     let that = this;
     var value = cell.getValue();
     var objx = new Object();
@@ -698,32 +693,27 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       var attribute = value.attributes[i];
       objx[attribute.name] = attribute.nodeValue;
     }
-    if (objx['intervalNumber'])
-      objx['intervalNumber'] = Number.parseInt(objx['intervalNumber']);
-    if (objx['sheduleDate'])
-      objx['sheduleDate'] = new Date(objx['sheduleDate']);
+
     let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
     modalRef.componentInstance.title = 'Cài đặt gửi tin';
-    if (objx['content'])
-      modalRef.componentInstance.model = objx;
-    modalRef.result.then(
-      (result) => {
-        graph.getModel().beginUpdate();
-        try {
-          var value = cell.getValue();
-          value.setAttribute('channelSocialId', result.channelSocialId);
-          value.setAttribute('channelType', result.channelType);
-          value.setAttribute('content', result.content);
-          value.setAttribute('intervalNumber', result.intervalNumber);
-          value.setAttribute('intervalType', result.intervalType);
-          value.setAttribute('methodType', result.methodType);
-          value.setAttribute('sheduleDate', result.sheduleDate ? that.intlService.formatDate(result.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '');
-          graph.getModel().setValue(cell, value);
-        } finally {
-          graph.getModel().endUpdate();
-          that.onSave();
+    modalRef.componentInstance.model = objx;
+
+    modalRef.result.then((result: any) => {
+      graph.getModel().beginUpdate();
+      try {
+        var doc = mxUtils.createXmlDocument();
+        var userObject = doc.createElement('sequence');
+        for (var p in result) {
+          userObject.setAttribute(p, result[p]);
         }
-      });
+
+        graph.getModel().setValue(cell, userObject);
+      } finally {
+        graph.getModel().endUpdate();
+        that.onSave();
+      }
+    }, () => {
+    });
   }
 
   createPopupMenu(editor, graph, menu, cell, evt) {
@@ -731,7 +721,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     var parent = graph.getDefaultParent();
     if (cell != null) {
       if (cell.style == 'sequence') {
-        menu.addItem("Add Read", "./assets/editors/images/icons/message-tag-open-icon.png", function () {
+        menu.addItem("Gán nhãn đã đọc", "./assets/editors/images/icons/message-tag-open-icon.png", function () {
           if (cell.value.getAttribute('messageReadId') == null || cell.value.getAttribute('messageReadId') == '') {
             graph.getModel().beginUpdate();
             try {
@@ -765,7 +755,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             });
           }
         });
-        menu.addItem("Add UnRead", "./assets/editors/images/icons/message-tag-icon.png", function () {
+        menu.addItem("Gán nhãn đã nhận", "./assets/editors/images/icons/message-tag-icon.png", function () {
           if (cell.value.getAttribute('messageUnreadId') == null || cell.value.getAttribute('messageUnreadId') == '') {
             graph.getModel().beginUpdate();
             try {

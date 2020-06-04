@@ -17,7 +17,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <textarea formControlName="content"
-                                        placeholder="Nhập nội dung bạn muốn gửi đến khách hàng" rows="3"
+                                        placeholder="Nhập nội dung bạn muốn gửi đến khách hàng"
                                         class="form-control"></textarea>
                                 </td>
 
@@ -33,14 +33,14 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="radio-inline">
                                         <input type="radio" name="methodType" id="exampleRadios3" value="interval"
-                                            (click)="chossesMethodType('interval')" formControlName="methodType">
+                                            formControlName="methodType">
                                         <label class="radio-inline" for="exampleRadios3">
-                                            Thời gian
+                                            Delay
                                         </label>
                                     </div>
                                     <div class="radio-inline">
                                         <input type="radio" name="methodType" id="exampleRadios1" value="shedule"
-                                            (click)="chossesMethodType('shedule')" formControlName="methodType">
+                                            formControlName="methodType">
                                         <label class="radio-inline" for="exampleRadios1">
                                             Thời gian cụ thể
                                         </label>
@@ -52,40 +52,38 @@
                                     <label class="o_form_label"></label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div *ngIf="type == 'interval'" class="form-group" style="display: inline-flex;">
-                                        <kendo-numerictextbox [placeholder]="'Chọn kênh'" class="form-control"
-                                            formControlName="intervalNumber" [min]="0" [format]="'n0'">
+                                    <div *ngIf="methodTypeValue == 'interval'" class="form-group"
+                                        style="display: inline-flex;">
+                                        <kendo-numerictextbox formControlName="intervalNumber" [min]="0"
+                                            [format]="'n0'">
                                         </kendo-numerictextbox>
-                                        <select class="form-control" formControlName="intervalType" id="sel1"
+                                        <select class="form-control" formControlName="intervalType"
                                             style="margin-left: 10px;">
-                                            <option value="minutes">minutes</option>
-                                            <option value="hours">hours</option>
-                                            <option value="weeks">weeks</option>
-                                            <option value="months">months</option>
+                                            <option value="minutes">Phút</option>
+                                            <option value="hours">Giờ</option>
+                                            <option value="weeks">Tuần</option>
+                                            <option value="months">Tháng</option>
                                         </select>
 
                                     </div>
-                                    <div *ngIf="type == 'shedule'" class="form-group">
+                                    <div *ngIf="methodTypeValue == 'shedule'" class="form-group">
                                         <kendo-datetimepicker formControlName="sheduleDate">
                                         </kendo-datetimepicker>
                                     </div>
                                 </td>
 
                             </tr>
-
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Kênh gửi</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;" style="display: inline-flex;">
-                                    <kendo-combobox style="min-width: 78%;" class="form-control"
-                                        [data]="filterdChannelSocials" [textField]="'pageName'" [filterable]="true"
-                                        #channelSocialCbx formControlName="channelSocialId" [valueField]="'id'"
-                                        [valuePrimitive]="true">
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
+                                        [filterable]="true" #channelSocialCbx formControlName="channelSocialId"
+                                        [valueField]="'id'" [valuePrimitive]="true">
                                     </kendo-combobox>
 
-                                    <select class="form-control" formControlName="channelType" id="sel1"
-                                        style="min-width: 102px; margin-left: 10px;">
+                                    <select class="form-control" formControlName="channelType">
                                         <option value="priority">Ưu tiên</option>
                                         <option value="fixed">Cố định</option>
                                     </select>

@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ChannelSocial } from '../socials-channel/facebook-page.service';
 
 export class TCareCampaignSave {
   name: string;
