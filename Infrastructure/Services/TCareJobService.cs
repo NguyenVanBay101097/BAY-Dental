@@ -90,41 +90,7 @@ namespace Infrastructure.Services
 
 
 
-        //public CampaignXml ConvertXmlCampaign(string xmlFilePath)
-        //{
-        //    XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-        //    MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlFilePath));
-        //    MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-
-        //    //if(resultingMessage == null)
-        //    //    throw new Exception("")
-
-        //    var campaignXml = new CampaignXml
-        //    {
-        //        RuleXml = new RuleXml
-        //        {
-        //            Condition = resultingMessage.Root.Rule.Condition,
-        //            Logic = resultingMessage.Root.Rule.Logic,
-        //        },
-        //        MessageXML = new MessageXML
-        //        {
-        //            Tcarecampaignid = resultingMessage.Root.Sequences.Tcarecampaignid,
-        //            Parentid = resultingMessage.Root.Sequences.Parentid,
-        //            Messagereadid = resultingMessage.Root.Sequences.Messagereadid,
-        //            Messageunreadid = resultingMessage.Root.Sequences.Messageunreadid,
-        //            Content = resultingMessage.Root.Sequences.Content,
-        //            Channeltype = resultingMessage.Root.Sequences.Channeltype,
-        //            Intervalnumber = int.Parse(resultingMessage.Root.Sequences.Intervalnumber),
-        //            Intervaltype = resultingMessage.Root.Sequences.Intervaltype,
-        //            Methodtype = resultingMessage.Root.Sequences.Methodtype,
-        //            Channelsocialid = Guid.Parse(resultingMessage.Root.Sequences.ChannelsocialId),
-
-        //        }
-        //    };
-
-
-        //    return campaignXml;
-        //}
+       
 
 
 
@@ -635,18 +601,7 @@ namespace Infrastructure.Services
         public string Content { get; set; }
     }
 
-    public class CampaignXml
-    {
-        public RuleXml RuleXml { get; set; }
 
-        public MessageXML MessageXML { get; set; }
-    }
-
-    public class RuleXml
-    {
-        public List<Condition> Condition { get; set; } = new List<Condition>();
-        public string Logic { get; set; }
-    }
 
     public class RootZalo
     {
@@ -659,32 +614,5 @@ namespace Infrastructure.Services
     }
 
 
-    public class MessageXML
-    {
 
-        public string Tcarecampaignid { get; set; }
-
-        public string Parentid { get; set; }
-
-        public string Messagereadid { get; set; }
-
-        public string Messageunreadid { get; set; }
-
-        public Guid? Channelsocialid { get; set; }
-
-        public string Channeltype { get; set; }
-
-        public string Content { get; set; }
-
-        public int? Intervalnumber { get; set; }
-
-        public string Intervaltype { get; set; }
-
-        public string Methodtype { get; set; }
-
-        public DateTime? Sheduledate { get; set; }
-
-        public string Id { get; set; }
-        public string Xmlns { get; set; }
-    }
 }
