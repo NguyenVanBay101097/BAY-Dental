@@ -223,6 +223,17 @@ namespace Infrastructure.Services
 
         private async Task _ProcessListPrice(List<ProductBasic> items)
         {
+            var userObj = GetService<IUserService>();
+            var hasGroup = await userObj.HasGroup("base.group_multi_company");
+            if (!hasGroup)
+                return;
+
+            var modelDataObj = GetService<IIRModelDataService>();
+            var productRule = await modelDataObj.GetRef<IRRule>("product.product_comp_rule");
+            var companyShareProduct = !productRule.Active;
+            if (!companyShareProduct)
+                return;
+
             var irConfigParameter = GetService<IIrConfigParameterService>();
             var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
             if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
