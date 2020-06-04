@@ -29,20 +29,26 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
-    private tcareService: TcareService,
     private facebookPageService: FacebookPageService,
   ) { }
 
   ngOnInit() {
+
     this.formGroup = this.fb.group({
       channelSocialId: ['', Validators.required],
       content: ['', Validators.required],
       methodType: ['interval', Validators.required],
       intervalNumber: [0],
       intervalType: ['minutes'],
-      sheduleDate: new Date(),
+      sheduleDate: null,
       channelType: ['priority', Validators.required]
     });
+
+
+
+    // Preprocess the stringified date before passing it to the DateTimePicker.
+
+
     this.type = this.formGroup.get('methodType').value;
     this.channelSocialCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -63,12 +69,27 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
 
   }
 
+  parseObjectDates(target: any): any {
+    const result = Object.assign({}, target);
+
+    Object.keys(result)
+      .forEach(key => {
+        const date = new Date(result[key]);
+        if (!isNaN(date.getTime())) {
+          result[key] = date;
+        }
+      });
+
+    return result;
+  }
+
   chossesMethodType(val) {
     this.type = val;
   }
 
   loadFormApi() {
-    this.formGroup.patchValue(this.model);
+    if (this.model)
+      this.formGroup.patchValue(this.model);
   }
 
   loadSocialChannel() {

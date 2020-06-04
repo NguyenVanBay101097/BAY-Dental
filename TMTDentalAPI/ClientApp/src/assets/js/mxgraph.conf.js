@@ -1,2 +1,2 @@
 mxBasePath = 'mxgraph';
-mxImageBasePath = '/mxgraph/images/';
+mxImageBasePath = 'assets/editors';

@@ -7,11 +7,11 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerCategoryBasic, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 
 @Component({
-  selector: 'app-tcare-campaign-dialog-message-read',
-  templateUrl: './tcare-campaign-dialog-message-read.component.html',
-  styleUrls: ['./tcare-campaign-dialog-message-read.component.css']
+  selector: 'app-tcare-campaign-dialog-message',
+  templateUrl: './tcare-campaign-dialog-message.component.html',
+  styleUrls: ['./tcare-campaign-dialog-message.component.css']
 })
-export class TcareCampaignDialogMessageReadComponent implements OnInit {
+export class TcareCampaignDialogMessageComponent implements OnInit {
 
   @ViewChild('tagCbx', { static: true }) tagCbx: ComboBoxComponent
   title: string;
@@ -26,7 +26,7 @@ export class TcareCampaignDialogMessageReadComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      tag: null
+      listPartnerCategories: null
     });
 
     this.tagCbx.filterChange.asObservable().pipe(
@@ -37,7 +37,7 @@ export class TcareCampaignDialogMessageReadComponent implements OnInit {
       this.filterdPartnerCategoies = result.items;
       this.tagCbx.loading = false;
     });
-
+    this.formGroup.get('listPartnerCategories').patchValue(this.listPartnerCategories);
     this.loadPartnerCategory();
   }
 
@@ -49,26 +49,6 @@ export class TcareCampaignDialogMessageReadComponent implements OnInit {
     return this.partnerCatgService.getPaged(val);
   }
 
-  addPartnerCategory() {
-    if (this.formGroup.invalid)
-      return false;
-    var partnerCategory = new PartnerCategoryBasic();
-    var index = this.listPartnerCategories.findIndex(x => x.id == this.formGroup.value.tag.id);
-    if (index >= 0)
-      return false;
-    partnerCategory.id = this.formGroup.value.tag.id;
-    partnerCategory.name = this.formGroup.value.tag.name;
-    this.listPartnerCategories.push(partnerCategory);
-    this.formGroup.get('tag').patchValue(null);
-  }
-
-  removePartnerCategory(tag) {
-    var index = this.listPartnerCategories.findIndex(x => x.id == tag.id);
-    if (index >= 0) {
-      this.listPartnerCategories.splice(index, 1);
-    }
-  }
-
   loadPartnerCategory() {
     return this.searchPartnerCategories().subscribe(
       result => {
@@ -78,6 +58,7 @@ export class TcareCampaignDialogMessageReadComponent implements OnInit {
   }
 
   onSave() {
+    this.listPartnerCategories = this.formGroup.value;
     this.activeModal.close(this.listPartnerCategories);
   }
 

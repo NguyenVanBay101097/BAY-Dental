@@ -26,12 +26,7 @@ export class TCareCampaignDisplay {
   graphXml: string;
 }
 
-export class TCareCampaignPaging {
-  offset: number;
-  limit: number;
-  totalItems: number;
-  items: TCareCampaignBasic[];
-}
+
 
 export class TCarePropertySave {
   name: string;
@@ -69,7 +64,7 @@ export class TCareMessageDisplay {
   methodType: string;
   intervalType: string;
   intervalNumber: number;
-  sheduleDate: string;
+  sheduleDate: any;
   content: string;
   channelType: string;
   channelSocialId: string;
@@ -77,10 +72,12 @@ export class TCareMessageDisplay {
 }
 
 export class TCareRuleCondition {
-  typeCondition: string;
-  valueCondition: string;
-  nameCondition: string;
-  flagCondition: string;
+  type: string;
+  value: string;
+  name: string;
+  displayValue: string;
+  op: string; //toán tử (bằng : eq; không bằng: neq; chứa : contains; Không chứa: not_contains; Nhỏ hơn hoặc bằng: lte; Lớn hơn hoặc bằng: gte)
+  //truyển kiểu String
 }
 
 export class TCareRule {
@@ -98,9 +95,6 @@ export class TcareService {
     private http: HttpClient
   ) { }
   private readonly apiUrlCampaign = "api/TCareCampaigns"
-  private readonly apiUrlRules = "api/TCareRules";
-  private readonly apiUrlMessage = "api/TCareMessagings"
-
 
   //TCareCampaign
 
@@ -127,41 +121,4 @@ export class TcareService {
   autocomplete(val: TCareCampaignPaged): Observable<TCareCampaignBasic[]> {
     return this.http.post<TCareCampaignBasic[]>(this.base_api + this.apiUrlCampaign + '/autocomplete', val);
   }
-
-  //TCareRule
-
-  createTCareRule(val: TCareRuleSave): Observable<TCareRuleBasic> {
-    return this.http.post<TCareRuleBasic>(this.base_api + this.apiUrlRules, val);
-  }
-
-  updateTCareRuleBirthday(id, val: TCareRuleSave) {
-    return this.http.put(`${this.base_api + this.apiUrlRules}/${id}/Birthday/`, val);
-  }
-
-  getTcareRuleBirthday(id) {
-    return this.http.get(this.base_api + this.apiUrlRules + '/' + id);
-  }
-
-  deleteTCareRuleBirthday(id) {
-    return this.http.delete(this.base_api + this.apiUrlRules + '/' + id);
-  }
-
-  //TCareMessage
-
-  createTCareMessage(val: TCareMessageSave): Observable<TCareMessageDisplay> {
-    return this.http.post<TCareMessageDisplay>(this.base_api + this.apiUrlMessage, val);
-  }
-
-  updateTCareMessage(id, val: TCareMessageSave) {
-    return this.http.put(`${this.base_api + this.apiUrlMessage}/${id}`, val);
-  }
-
-  getTcareMessage(id): Observable<TCareMessageDisplay> {
-    return this.http.get<TCareMessageDisplay>(this.base_api + this.apiUrlMessage + '/' + id);
-  }
-
-  deleteTCareMessage(id) {
-    return this.http.delete(this.base_api + this.apiUrlMessage + '/' + id);
-  }
-
 }

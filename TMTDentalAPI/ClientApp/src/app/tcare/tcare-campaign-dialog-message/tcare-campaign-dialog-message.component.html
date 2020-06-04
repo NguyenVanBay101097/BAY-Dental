@@ -1,0 +1,36 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet" style="min-width: 500px; min-height: 165px;">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_12">
+                        <tbody>
+                            <tr>
+                                <td colspan="3" style="width: 100%;">
+                                    <label class=" o_form_label">Chọn thẻ gán </label>
+                                    <kendo-multiselect class="form-control" [data]="filterdPartnerCategoies"
+                                        [textField]="'name'" [filterable]="true" #tagCbx
+                                        formControlName="listPartnerCategories" [valueField]="'id'"
+                                        [placeholder]="'Chọn thẻ gán cho người dùng...'" style="min-width: 614px;">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

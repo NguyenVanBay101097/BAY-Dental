@@ -8,9 +8,9 @@ describe('TcareCampaignCreateUpdateComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TcareCampaignCreateUpdateComponent ]
+      declarations: [TcareCampaignCreateUpdateComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

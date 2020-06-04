@@ -22,11 +22,11 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   limit: number = 20;
   skip: number = 0;
   search: string;
-  listFlagCondition: any = [];
+  listop: any = [];
   listData: any;
   listTags: any = [];
   selectedTag: any;
-  numbericValueCondition: number = 0;
+  numbericvalue: number = 0;
   tCareRule: TCareRule;
 
   constructor(
@@ -41,11 +41,11 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       logic: "and",
-      typeCondition: "",
-      flagCondition: "",
-      valueCondition: 0,
-      nameCondition: "",
-      selectedValueCondition: null,
+      type: "",
+      op: "",
+      value: 0,
+      name: "",
+      selectedvalue: null,
     });
     this.loadDataCell(this.tCareRule);
   }
@@ -65,7 +65,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   }
 
   unitCondition() {
-    switch (this.formGroup.get('typeCondition').value) {
+    switch (this.formGroup.get('type').value) {
       case "birthday":
       case "lastTreatmentDay":
         return "Ngày";
@@ -80,26 +80,26 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     }
   }
 
-  optionFlagCondition() {
-    switch (this.formGroup.get('typeCondition').value) {
+  optionop() {
+    switch (this.formGroup.get('type').value) {
       case "birthday":
-        this.listFlagCondition = ["before"];
+        this.listop = ["before"];
         return;
       case "lastTreatmentDay":
-        this.listFlagCondition = ["after"];
+        this.listop = ["after"];
         return;
       case "partnerGroup":
       case "service":
       case "serviceGroup":
-        this.listFlagCondition = ["contain", "does_not_contain"];
+        this.listop = ["contain", "does_not_contain"];
         return;
       default:
         return;
     }
   }
 
-  placeholderValueCondition() {
-    switch (this.formGroup.get('typeCondition').value) {
+  placeholdervalue() {
+    switch (this.formGroup.get('type').value) {
       case "partnerGroup":
         return "Chọn nhóm khách hàng";
       case "service":
@@ -111,8 +111,8 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     }
   }
 
-  convertTypeCondition(typeCondition) {
-    switch (typeCondition) {
+  converttype(type) {
+    switch (type) {
       case "birthday":
         return "Sinh nhật"
       case "lastTreatmentDay":
@@ -128,8 +128,8 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     }
   }
 
-  convertFlagCondition(flagCondition) {
-    switch (flagCondition) {
+  convertop(op) {
+    switch (op) {
       case "before":
         return "trước"
       case "after":
@@ -143,39 +143,39 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     }
   }
 
-  handleTypeConditionChange(value) {
+  handletypeChange(value) {
     if (value !== "") {
       this.isDisabledCondition = false;
     } else {
       this.isDisabledCondition = true;
     }
-    this.optionFlagCondition();
-    if (this.listFlagCondition.length > 0) {
-      this.formGroup.patchValue({ flagCondition: this.listFlagCondition[0] });
+    this.optionop();
+    if (this.listop.length > 0) {
+      this.formGroup.patchValue({ op: this.listop[0] });
     }
-    switch (this.formGroup.get('typeCondition').value) {
+    switch (this.formGroup.get('type').value) {
       case "birthday":
       case "lastTreatmentDay":
-        this.formGroup.patchValue({ valueCondition: 0 });
+        this.formGroup.patchValue({ value: 0 });
         return;
       default:
         this.search = null;
         this.formGroup.patchValue({
-          valueCondition: 0,
-          nameCondition: "",
-          selectedValueCondition: null
+          value: 0,
+          name: "",
+          selectedvalue: null
         });
         this.loadListData();
         return;
     }
   }
 
-  getTypeConditionValue() {
-    return this.formGroup.get('typeCondition').value;
+  gettypeValue() {
+    return this.formGroup.get('type').value;
   }
 
-  isDay(typeCondition) {
-    switch (typeCondition) {
+  isDay(type) {
+    switch (type) {
       case "birthday":
       case "lastTreatmentDay":
         return true;
@@ -230,7 +230,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   }
 
   loadListData() {
-    switch (this.formGroup.get('typeCondition').value) {
+    switch (this.formGroup.get('type').value) {
       case "partnerGroup":
         this.loadPartnerCategoryList();
         return;
@@ -247,38 +247,38 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   onAddTag() {
     // console.log(this.formGroup.value);
-    if (this.isDay(this.formGroup.get('typeCondition').value)) {
+    if (this.isDay(this.formGroup.get('type').value)) {
       this.listTags.push({
-        typeCondition: this.formGroup.get('typeCondition').value,
-        flagCondition: this.formGroup.get('flagCondition').value,
-        valueCondition: this.formGroup.get('valueCondition').value,
-        nameCondition: this.formGroup.get('nameCondition').value,
+        type: this.formGroup.get('type').value,
+        op: this.formGroup.get('op').value,
+        value: this.formGroup.get('value').value,
+        name: this.formGroup.get('name').value,
       });
       this.formGroup.patchValue({
-        typeCondition: "",
-        flagCondition: "",
-        valueCondition: 0,
-        nameCondition: "",
-        selectedValueCondition: null
+        type: "",
+        op: "",
+        value: 0,
+        name: "",
+        selectedvalue: null
       });
     } else {
-      if (this.formGroup.value.valueCondition !== 0) {
+      if (this.formGroup.value.value !== 0) {
         this.listTags.push({
-          typeCondition: this.formGroup.get('typeCondition').value,
-          flagCondition: this.formGroup.get('flagCondition').value,
-          valueCondition: this.formGroup.get('valueCondition').value,
-          nameCondition: this.formGroup.get('nameCondition').value,
+          type: this.formGroup.get('type').value,
+          op: this.formGroup.get('op').value,
+          value: this.formGroup.get('value').value,
+          name: this.formGroup.get('name').value,
         });
         this.formGroup.patchValue({
-          typeCondition: "",
-          flagCondition: "",
-          valueCondition: "",
-          nameCondition: "",
-          selectedValueCondition: null
+          type: "",
+          op: "",
+          value: "",
+          name: "",
+          selectedvalue: null
         });
       } else {
         this.notificationService.show({
-          content: 'Vui lòng' + this.placeholderValueCondition(),
+          content: 'Vui lòng' + this.placeholdervalue(),
           hideAfter: 5000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },
@@ -290,49 +290,49 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   onCancelTag() {
     this.formGroup.patchValue({
-      typeCondition: "",
-      flagCondition: "",
-      valueCondition: 0,
-      nameCondition: "",
-      selectedValueCondition: null
+      type: "",
+      op: "",
+      value: 0,
+      name: "",
+      selectedvalue: null
     });
     this.selectedTag = null;
   }
 
   onSaveTag() {
     this.listTags[this.selectedTag] = {
-      typeCondition: this.formGroup.get('typeCondition').value,
-      flagCondition: this.formGroup.get('flagCondition').value,
-      valueCondition: this.formGroup.get('valueCondition').value,
-      nameCondition: this.formGroup.get('nameCondition').value,
+      type: this.formGroup.get('type').value,
+      op: this.formGroup.get('op').value,
+      value: this.formGroup.get('value').value,
+      name: this.formGroup.get('name').value,
     };
     this.formGroup.patchValue({
-      typeCondition: "",
-      flagCondition: "",
-      valueCondition: 0,
-      nameCondition: "",
-      selectedValueCondition: null
+      type: "",
+      op: "",
+      value: 0,
+      name: "",
+      selectedvalue: null
     });
     this.selectedTag = null;
   }
 
-  handleNumbericValueConditionChange(value) {
+  handleNumbericvalueChange(value) {
     // console.log(value);
     this.formGroup.patchValue({
-      valueCondition: value,
-      nameCondition: ""
+      value: value,
+      name: ""
     });
   }
 
-  handleValueConditionChange(value) {
+  handlevalueChange(value) {
     // console.log(value);
     this.formGroup.patchValue({
-      valueCondition: value.id,
-      nameCondition: value.name
+      value: value.id,
+      name: value.name
     });
   }
 
-  handleValueConditionFilter(value) {
+  handlevalueFilter(value) {
     // console.log(value);
     this.search = value;
     this.loadListData();
@@ -343,21 +343,21 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     this.selectedTag = index;
     // console.log(this.selectedTag);
     this.formGroup.patchValue({
-      typeCondition: item.typeCondition,
-      flagCondition: item.flagCondition,
-      valueCondition: item.valueCondition,
-      nameCondition: item.nameCondition,
-      selectedValueCondition: {
-        completeName: item.nameCondition,
-        id: item.valueCondition,
-        name: item.nameCondition
+      type: item.type,
+      op: item.op,
+      value: item.value,
+      name: item.name,
+      selectedvalue: {
+        completeName: item.name,
+        id: item.value,
+        name: item.name
       }
     });
-    this.optionFlagCondition();
-    if (this.isDay(item.typeCondition)) {
-      this.numbericValueCondition = item.valueCondition;
+    this.optionop();
+    if (this.isDay(item.type)) {
+      this.numbericvalue = item.value;
     } else {
-      this.search = item.nameCondition;
+      this.search = item.name;
       this.loadListData();
     }
     // console.log(this.formGroup.value);
