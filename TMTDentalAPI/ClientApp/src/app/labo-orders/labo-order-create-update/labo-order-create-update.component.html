@@ -1,27 +1,26 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel o_breadcrumb_full">
-        <ol class="breadcrumb">
-            <li>
-                <a routerLink="/labo-orders">Phiếu Labo</a>
-            </li>
-            <li class="active">
-                <span *ngIf="id">{{laboOrder.name}}</span>
-                <span *ngIf="!id">Mới</span>
-            </li>
-        </ol>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
-                        Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
-                        *ngIf="id">
-                        Thêm mới</button>
-                </div>
-            </div>
+  <div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+      <li>
+        <a routerLink="/labo-orders">Phiếu Labo</a>
+      </li>
+      <li class="active">
+        <span *ngIf="id">{{laboOrder.name}}</span>
+        <span *ngIf="!id">Mới</span>
+      </li>
+    </ol>
+    <div class="o_cp_left">
+      <div class="o_cp_buttons">
+        <div class="o_form_buttons_view">
+          <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+            Lưu</button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c" *ngIf="id">
+            Thêm mới</button>
         </div>
-        <div class="o_cp_right">
-            <!-- <div class="dropdown">
+      </div>
+    </div>
+    <div class="o_cp_right">
+      <!-- <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                     Thao tác
@@ -30,321 +29,322 @@
                     <a *ngIf="id" class="dropdown-item" (click)="printLaboOrder()">In phiếu</a>
                 </div>
             </div> -->
-        </div>
     </div>
+  </div>
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_statusbar">
-                <div class="o_statusbar_buttons">
-                    <button type="button" accesskey="1" *ngIf="!id" class="btn btn-primary btn-sm"
-                        (click)="onSaveConfirm()">
-                        Xác nhận
-                    </button>
-                    <button type="button" accesskey="1" *ngIf="id && laboOrder.state == 'draft'"
-                        class="btn btn-primary btn-sm" (click)="buttonConfirm()">
-                        Xác nhận
-                    </button>
-                    <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button"
-                        class="btn btn-danger btn-sm" (click)="buttonCancel()">
-                        Hủy phiếu
-                    </button>
-                </div>
-                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <!-- <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
+  <form class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+      <div class="o_form_statusbar">
+        <div class="o_statusbar_buttons">
+          <button type="button" accesskey="1" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+            Xác nhận
+          </button>
+          <button type="button" accesskey="1" *ngIf="id && laboOrder.state == 'draft'" class="btn btn-primary btn-sm"
+            (click)="buttonConfirm()">
+            Xác nhận
+          </button>
+          <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
+            (click)="buttonCancel()">
+            Hủy phiếu
+          </button>
+        </div>
+        <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+          <!-- <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': laboOrder.state === 'done', 'btn-secondary': laboOrder.state !== 'done'}"
                         type="button">
                         Đã khóa
                     </button> -->
-                    <button [disabled]="laboOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': laboOrder.state === 'purchase', 'btn-secondary': laboOrder.state !== 'purchase'}"
-                        type="button">
-                        Đơn hàng
-                    </button>
-                    <button [disabled]="laboOrder.state !== 'draft'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': laboOrder.state === 'draft', 'btn-secondary': laboOrder.state !== 'draft'}"
-                        type="button">
-                        Nháp
-                    </button>
-                    <button *ngIf="laboOrder.state === 'cancel'" [disabled]="laboOrder.state !== 'cancel'"
-                        class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': laboOrder.state === 'cancel', 'btn-secondary': laboOrder.state !== 'cancel'}"
-                        type="button">
-                        Đã hủy
-                    </button>
-                </div>
-            </div>
-            <div class="o_form_sheet">
-                <div class="oe_title">
-                    <h1>
-                        <span>{{laboOrder.name}}</span>
-                    </h1>
-                </div>
-                <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Labo
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-combobox [class.d-none]="laboOrder.state != 'draft'"
-                                            [data]="filteredPartners" [textField]="'name'" [filterable]="true"
-                                            #partnerCbx formControlName="partner" [valueField]="'id'">
-                                        </kendo-combobox>
-                                        <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo"
-                                            class="pl-2 py-1" type="button" *ngIf="partner"
-                                            (click)="updateSupplierModal()">
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                        <a [class.d-none]="laboOrder.state != 'draft'" type="button" title="Thêm labo"
-                                            class="pl-2 py-1" (click)="quickCreateSupplier()">
-                                            <i class="fas fa-plus"></i>
-                                        </a>
-                                    </div>
-                                    <a class="text-primary" (click)="updateSupplierModal()"
-                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Phiếu điều trị
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="laboOrder.saleOrder" [routerLink]="['/sale-orders/form']"
-                                        [queryParams]="{id: laboOrder.saleOrder.id}">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
-                                </td>
-                            </tr>
-                            <tr *ngIf="laboOrder.dotKham">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Đợt khám
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a
-                                        [routerLink]="['/dot-khams/edit/', laboOrder.dotKham.id]">{{laboOrder.dotKham ? laboOrder.dotKham.name : ''}}</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày gửi
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
-                                        [class.d-none]="laboOrder.state != 'draft'" formControlName="dateOrderObj">
-                                    </kendo-datepicker>
-                                    <span
-                                        [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.dateOrder | date: 'short'}}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày nhận
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="datePlannedObj">
-                                    </kendo-datepicker>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="o_notebook">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                                aria-controls="home" aria-selected="true">Chi tiết</a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <div class="mb-2" *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1">
-                                <button type="button" class="btn btn-secondary btn-sm" (click)="showAddLineModal()"
-                                    accesskey="a">Thêm</button>
-                            </div>
-                            <div>
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Loại phục hình</th>
-                                            <th>Răng</th>
-                                            <th class="text-right">Số lượng</th>
-                                            <th class="text-right">Đơn giá</th>
-                                            <th class="text-right">Thành tiền</th>
-                                            <th class="text-right"
-                                                *ngIf="['cancel', 'done'].indexOf(laboOrder.state) === -1">#</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody formArrayName="orderLines">
-                                        <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                            <tr [formGroupName]="i">
-                                                <td>{{ line.get('product').value.name }}</td>
-                                                <td>{{lineTeeth(line)}}</td>
-                                                <td class="text-right">{{ line.get('productQty').value | number }}
-                                                </td>
-                                                <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
-                                                <td class="text-right">{{ line.get('priceSubtotal').value | number }}
-                                                </td>
-                                                <td class="text-right"
-                                                    *ngIf="['cancel', 'done'].indexOf(laboOrder.state) === -1">
-                                                    <button type="button" class="btn btn-icon btn-sm btn-light"
-                                                        (click)="editLine(line)">
-                                                        <span class="k-icon k-i-edit"></span>
-                                                    </button>
-                                                    <button
-                                                        *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1"
-                                                        type="button" class="btn btn-icon btn-sm btn-light ml-1"
-                                                        (click)="deleteLine(i)">
-                                                        <span class="k-icon k-i-delete"></span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </ng-container>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
-                                <tbody>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label pb-0">
-                                            <label class="o_form_label oe_subtotal_footer_separator">
-                                                Tổng tiền
-                                            </label>
-                                        </td>
-                                        <td colspan="1">
-                                            <span
-                                                class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{laboOrder.amountTotal | number}}</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <button [disabled]="laboOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
+            [ngClass]="{'btn-primary': laboOrder.state === 'purchase', 'btn-secondary': laboOrder.state !== 'purchase'}"
+            type="button">
+            Đơn hàng
+          </button>
+          <button [disabled]="laboOrder.state !== 'draft'" class="btn o_arrow_button disabled"
+            [ngClass]="{'btn-primary': laboOrder.state === 'draft', 'btn-secondary': laboOrder.state !== 'draft'}"
+            type="button">
+            Nháp
+          </button>
+          <button *ngIf="laboOrder.state === 'cancel'" [disabled]="laboOrder.state !== 'cancel'"
+            class="btn o_arrow_button disabled"
+            [ngClass]="{'btn-primary': laboOrder.state === 'cancel', 'btn-secondary': laboOrder.state !== 'cancel'}"
+            type="button">
+            Đã hủy
+          </button>
         </div>
-    </form>
+      </div>
+      <div class="o_form_sheet">
+        <div class="oe_title">
+          <h1>
+            <span>{{laboOrder.name}}</span>
+          </h1>
+        </div>
+        <div class="o_group">
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Labo
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <div class="d-flex">
+                    <kendo-combobox [class.d-none]="laboOrder.state != 'draft'" [data]="filteredPartners"
+                      [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
+                      [valueField]="'id'">
+                    </kendo-combobox>
+                    <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo" class="pl-2 py-1" type="button"
+                      *ngIf="partner" (click)="updateSupplierModal()">
+                      <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    <a [class.d-none]="laboOrder.state != 'draft'" type="button" title="Thêm labo" class="pl-2 py-1"
+                      (click)="quickCreateSupplier()">
+                      <i class="fas fa-plus"></i>
+                    </a>
+                  </div>
+                  <a class="text-primary" (click)="updateSupplierModal()"
+                    [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}
+                  </a>
+                  <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                    class="text-danger">
+                    <span *ngIf="f.partner.errors.required">Chọn nhà cung cấp</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Phiếu điều trị
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <a *ngIf="laboOrder.saleOrder" [routerLink]="['/sale-orders/form']"
+                    [queryParams]="{id: laboOrder.saleOrder.id}">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
+                </td>
+              </tr>
+              <tr *ngIf="laboOrder.dotKham">
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Đợt khám
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <a
+                    [routerLink]="['/dot-khams/edit/', laboOrder.dotKham.id]">{{laboOrder.dotKham ? laboOrder.dotKham.name : ''}}</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Ngày gửi
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" [class.d-none]="laboOrder.state != 'draft'"
+                    formControlName="dateOrderObj">
+                  </kendo-datepicker>
+                  <span [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.dateOrder | date: 'short'}}</span>
+                  <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
+                    class="text-danger">
+                    <span *ngIf="f.partner.errors.required">Chọn ngày gửi</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Ngày nhận
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="datePlannedObj">
+                  </kendo-datepicker>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="o_notebook">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                aria-selected="true">Chi tiết</a>
+            </li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+              <div class="mb-2" *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1">
+                <button type="button" class="btn btn-secondary btn-sm" (click)="showAddLineModal()"
+                  accesskey="a">Thêm</button>
+              </div>
+              <div>
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Loại phục hình</th>
+                      <th>Răng</th>
+                      <th class="text-right">Số lượng</th>
+                      <th class="text-right">Đơn giá</th>
+                      <th class="text-right">Thành tiền</th>
+                      <th class="text-right" *ngIf="['cancel', 'done'].indexOf(laboOrder.state) === -1">#</th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="orderLines">
+                    <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                      <tr [formGroupName]="i">
+                        <td>{{ line.get('product').value.name }}</td>
+                        <td>{{lineTeeth(line)}}</td>
+                        <td class="text-right">{{ line.get('productQty').value | number }}
+                        </td>
+                        <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
+                        <td class="text-right">{{ line.get('priceSubtotal').value | number }}
+                        </td>
+                        <td class="text-right" *ngIf="['cancel', 'done'].indexOf(laboOrder.state) === -1">
+                          <button type="button" class="btn btn-icon btn-sm btn-light" (click)="editLine(line)">
+                            <span class="k-icon k-i-edit"></span>
+                          </button>
+                          <button *ngIf="['cancel', 'done', 'purchase'].indexOf(laboOrder.state) === -1" type="button"
+                            class="btn btn-icon btn-sm btn-light ml-1" (click)="deleteLine(i)">
+                            <span class="k-icon k-i-delete"></span>
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+              <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                <tbody>
+                  <tr>
+                    <td colspan="1" class="o_td_label pb-0">
+                      <label class="o_form_label oe_subtotal_footer_separator">
+                        Tổng tiền
+                      </label>
+                    </td>
+                    <td colspan="1">
+                      <span
+                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{laboOrder.amountTotal | number}}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 
 <div id="printLaboOrderDiv" *ngIf="laboOrderPrint" style="display: none;">
-    <div class="o_form_view o_print">
-        <div class="text-center">
-            <h5 class="mb-0">{{laboOrderPrint.companyName}}</h5>
-            <div *ngIf="laboOrderPrint.companyAddress">{{laboOrderPrint.companyAddress}}</div>
-            <!-- <div>ĐT: {{laboOrderPrint.companyPhone}} - Email: {{laboOrderPrint.companyEmail}}</div> -->
-        </div>
-        <div class="text-center">
-            <h1>PHIẾU LABO</h1>
-            <span>Số phiếu: {{laboOrderPrint.name}} - Ngày gửi: {{laboOrderPrint.dateOrder | date: 'short'}}</span>
-        </div>
-        <div class="o_group">
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Nhà cung cấp
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{laboOrderPrint.partnerName}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Địa chỉ
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{laboOrderPrint.partnerAddress}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Điện thoại
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{laboOrderPrint.partnerPhone}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <table class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th>Loại labo</th>
-                        <th class="text-right">Số lượng</th>
-                        <th class="text-right">Đơn giá</th>
-                        <th class="text-right">Thành tiền</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let line of laboOrderPrint.orderLines; let i=index">
-                        <td>{{ line.productName }}</td>
-                        <td class="text-right">{{ line.productQty | number }}</td>
-                        <td class="text-right">{{ line.priceUnit | number }}</td>
-                        <td class="text-right">{{ line.priceSubtotal | number }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label" style="width: 50%;">
-                            <label class="o_form_label oe_subtotal_footer_separator">
-                                Tổng tiền
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 50%;">
-                            <span
-                                class="oe_subtotal_footer_separator o_form_field o_form_field_number">{{laboOrderPrint.amountTotal | number}}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="clearfix"></div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-                <div class="text-center font-weight-bold">
-                    Nhà cung cấp
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="text-center font-weight-bold">
-                    Người lập
-                </div>
-            </div>
-        </div>
+  <div class="o_form_view o_print">
+    <div class="text-center">
+      <h5 class="mb-0">{{laboOrderPrint.companyName}}</h5>
+      <div *ngIf="laboOrderPrint.companyAddress">{{laboOrderPrint.companyAddress}}</div>
+      <!-- <div>ĐT: {{laboOrderPrint.companyPhone}} - Email: {{laboOrderPrint.companyEmail}}</div> -->
     </div>
+    <div class="text-center">
+      <h1>PHIẾU LABO</h1>
+      <span>Số phiếu: {{laboOrderPrint.name}} - Ngày gửi: {{laboOrderPrint.dateOrder | date: 'short'}}</span>
+    </div>
+    <div class="o_group">
+      <table class="o_group o_inner_group o_group_col_6">
+        <tbody>
+          <tr>
+            <td colspan="1" class="o_td_label">
+              <label class="o_form_label o_form_label_help">
+                Nhà cung cấp
+              </label>
+            </td>
+            <td colspan="1" style="width: 100%;">
+              {{laboOrderPrint.partnerName}}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" class="o_td_label">
+              <label class="o_form_label o_form_label_help">
+                Địa chỉ
+              </label>
+            </td>
+            <td colspan="1" style="width: 100%;">
+              {{laboOrderPrint.partnerAddress}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="o_group o_inner_group o_group_col_6">
+        <tbody>
+          <tr>
+            <td colspan="1" class="o_td_label">
+              <label class="o_form_label o_form_label_help">
+                Điện thoại
+              </label>
+            </td>
+            <td colspan="1" style="width: 100%;">
+              {{laboOrderPrint.partnerPhone}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <table class="table table-sm table-bordered">
+        <thead>
+          <tr>
+            <th>Loại labo</th>
+            <th class="text-right">Số lượng</th>
+            <th class="text-right">Đơn giá</th>
+            <th class="text-right">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of laboOrderPrint.orderLines; let i=index">
+            <td>{{ line.productName }}</td>
+            <td class="text-right">{{ line.productQty | number }}</td>
+            <td class="text-right">{{ line.priceUnit | number }}</td>
+            <td class="text-right">{{ line.priceSubtotal | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+        <tbody>
+          <tr>
+            <td colspan="1" class="o_td_label" style="width: 50%;">
+              <label class="o_form_label oe_subtotal_footer_separator">
+                Tổng tiền
+              </label>
+            </td>
+            <td colspan="1" style="width: 50%;">
+              <span
+                class="oe_subtotal_footer_separator o_form_field o_form_field_number">{{laboOrderPrint.amountTotal | number}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="clearfix"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <div class="text-center font-weight-bold">
+          Nhà cung cấp
+        </div>
+      </div>
+      <div class="col-sm">
+        <div class="text-center font-weight-bold">
+          Người lập
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
