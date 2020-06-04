@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ViewContainerRef, ComponentFactoryResolver, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ViewContainerRef, ComponentFactoryResolver, SimpleChanges, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-audience-filter-dropdown',
@@ -8,6 +8,7 @@ import { Component, OnInit, Input, ViewChild, ViewContainerRef, ComponentFactory
 export class AudienceFilterDropdownComponent implements OnInit {
 
   @Input() audience_filter_comp_data: { component, data }; // component and data 
+  @Output() statusItem = new EventEmitter<any>();
   
   @ViewChild('container', {
     read: ViewContainerRef,
@@ -33,6 +34,6 @@ export class AudienceFilterDropdownComponent implements OnInit {
 
     const componentRef = viewContainerRef.createComponent(componentFactory);
     (<any>componentRef.instance).dataReceive = this.audience_filter_comp_data.data;
-
+    (<any>componentRef.instance).dataSend.subscribe(res => this.statusItem.emit(res));
   }
 }

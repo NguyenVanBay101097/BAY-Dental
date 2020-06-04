@@ -170,6 +170,14 @@ export class AudienceFilterComponent implements OnInit {
     }
   }
 
+  closeAudienceFilter_Item_Picker(value) {
+    if (value == false) {
+      this.selectedAudienceFilter_Item = null;
+      this.clickedAudienceFilter_Item = false;
+      console.log("Hello");
+    }
+  }
+
   deleteAudienceFilterItem(index) {
     this.selectedAudienceFilter_Item = null;
     this.clickedAudienceFilter_Item = false;

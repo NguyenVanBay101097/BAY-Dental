@@ -18,7 +18,8 @@
             style="top: 28px; left: 0; z-index: 1;"
             *ngIf="selectedAudienceFilter_Item === item"
             (clickOutside)="clickOutsideAudienceFilter_Item_Picker()"
-            [audience_filter_comp_data]="audience_filter_comp_data">
+            [audience_filter_comp_data]="audience_filter_comp_data"
+            (statusItem)="closeAudienceFilter_Item_Picker($event)">
         </app-audience-filter-dropdown>
     </span>
     <span class="position-relative">
