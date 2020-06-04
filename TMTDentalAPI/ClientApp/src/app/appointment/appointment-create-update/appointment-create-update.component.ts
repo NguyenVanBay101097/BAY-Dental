@@ -114,7 +114,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.formCreate = this.fb.group({
       name: null,
       partner: [null, Validators.required],
-      user: [null, Validators.required],
+      user: null,
       userId: null,
       date: null,
       dateObj: [null, Validators.required],

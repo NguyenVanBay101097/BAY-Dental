@@ -58,9 +58,7 @@
                   <kendo-combobox formControlName="user" [filterable]="true" [data]="userSimpleFilter" #userCbx
                     [valueField]="'id'" [textField]="'name'">
                   </kendo-combobox>
-                  <div *ngIf="f.user.errors && (f.user.touched || f.user.dirty || submitted)" class="k-alert-error">
-                    <span *ngIf="f.user.errors.required"> Chọn bác sĩ</span>
-                  </div>
+
                 </td>
               </tr>
               <tr>
