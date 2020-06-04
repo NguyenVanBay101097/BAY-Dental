@@ -5,6 +5,7 @@ import { AudienceFilterLastTreatmentDayComponent } from './audience-filter-dropd
 import { AudienceFilterServiceComponent } from './audience-filter-dropdown/audience-filter-service/audience-filter-service.component';
 import { AudienceFilterPartnerCategoryComponent } from './audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
 import { AudienceFilterServiceCategoryComponent } from './audience-filter-dropdown/audience-filter-service-category/audience-filter-service-category.component';
+import { FormGroup, FormBuilder } from '@angular/forms';
 declare var $ :any;
 
 @Component({
@@ -15,6 +16,7 @@ declare var $ :any;
 export class AudienceFilterComponent implements OnInit {
   @Input() audience_filter_receive: any;
   @Output() audience_filter_send = new EventEmitter<any>();
+  formGroup: FormGroup;
   
   audience_filter_comp_data: { component, data };
   listAudienceFilter_Items: any[] = [];
@@ -44,17 +46,36 @@ export class AudienceFilterComponent implements OnInit {
     }
   ]
 
-  constructor() { }
+  constructor(private fb: FormBuilder, ) { }
 
   ngOnInit() {
+    this.formGroup = this.fb.group({
+      logic: "and",
+      conditions: []
+    });
+
     if (this.audience_filter_receive) {
-      this.listAudienceFilter_Items = this.convertAudienceFilterItemsToArray(this.audience_filter_receive);
+      var temp = this.convertAudienceFilterItemsToArray(this.audience_filter_receive);
+      this.formGroup.patchValue({
+        logic: temp.logic,
+        conditions: temp.conditions
+      });
+      this.listAudienceFilter_Items = temp.conditions;
     }
     // console.log(this.listAudienceFilter_Items);
 
     $(document).on('click', '.allow-focus', function (e) {
       e.stopPropagation();
     });
+  }
+
+  convertLogic(logic) {
+    switch (logic) {
+      case "and":
+        return "tất cả điều kiện";
+      case "or":
+        return "bất kỳ điều kiện nào";
+    }
   }
 
   convertFormulaType(item) {
@@ -100,16 +121,21 @@ export class AudienceFilterComponent implements OnInit {
     }
   }
 
+  setLogic(value) {
+    this.formGroup.patchValue({ 
+      logic: value 
+    });
+  }
+
   convertAudienceFilterItemsToString() {
-    var result = {
-      logic: "and",
-      conditions: this.listAudienceFilter_Items
-    }
-    return JSON.stringify(result);
+    this.formGroup.patchValue({ 
+      conditions: this.listAudienceFilter_Items 
+    });
+    return JSON.stringify(this.formGroup.value);
   }
 
   convertAudienceFilterItemsToArray(listAudienceFilter_Items_String) {
-    return JSON.parse(listAudienceFilter_Items_String).conditions;
+    return JSON.parse(listAudienceFilter_Items_String);
   }
 
   existListAudienceFilter_Items() {

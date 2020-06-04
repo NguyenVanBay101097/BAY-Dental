@@ -25,7 +25,7 @@ export class AudienceFilterBirthdayComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      day: null
+      day: 0
     });
 
     this.selected_AudienceFilter_Picker = this.dataReceive;

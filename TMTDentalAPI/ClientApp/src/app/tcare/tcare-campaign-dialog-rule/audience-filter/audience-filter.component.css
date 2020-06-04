@@ -2,15 +2,13 @@
     position: relative;
     display: block;
     background-color: white;
-    /* padding: 10px;   */
-    /* padding-bottom: 5px;   */
+    padding: 10px;  
+    padding-bottom: 5px;  
     word-break: break-all;
     line-height: 1.8;
 }
 .audience-filter-item {
     margin-bottom: 5px;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 .audience-filter-item .remove {
     cursor: pointer;
@@ -23,8 +21,6 @@
     width: fit-content;
     border: 1px dashed #8492a6;
     margin-bottom: 5px;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 .audience-filter-item .condition-select, 
 .audience-filter-item .value-select {
@@ -32,4 +28,8 @@
 }
 .audience-filter-picker button {
     margin-bottom: 5px;
+}
+.dropdown u, 
+.dropdown span {
+    cursor: pointer;
 }
