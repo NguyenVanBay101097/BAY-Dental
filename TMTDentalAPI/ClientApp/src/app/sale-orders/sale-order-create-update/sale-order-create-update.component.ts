@@ -65,7 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
 
   searchCardBarcode: string;
-  submitForm = false;
+  submitted = false;
   type: string;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
@@ -178,9 +178,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return control ? control.value : null;
   }
 
-  get partnerValidate() { return this.formGroup.get('partner') }
-
-  get dateOrderObjValidate() { return this.formGroup.get('dateOrderObj') }
+  get fgControls() {
+    return this.formGroup.controls;
+  }
 
   quickCreateCustomer() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -699,7 +699,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
-    this.submitForm = true;
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -760,6 +761,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }

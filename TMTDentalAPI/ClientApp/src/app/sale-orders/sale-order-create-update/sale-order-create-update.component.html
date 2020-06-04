@@ -139,10 +139,10 @@
                                     </div>
                                     <a class="text-primary" (click)="updateCustomerModal()"
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.partner ? saleOrder.partner.name : ''}}</a>
-                                    <div *ngIf="partnerValidate.invalid && (partnerValidate.touched || submitForm)"
-                                        class="validator-lable">
-                                        <div *ngIf="partnerValidate.errors.required">
-                                            Khách hàng không được để trống.</div>
+                                    <div *ngIf="fgControls.partner.invalid && (fgControls.partner.touched || fgControls.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="fgControls.partner.errors.required">
+                                            Chọn khách hàng</div>
                                     </div>
                                 </td>
                             </tr>
@@ -189,10 +189,9 @@
                                     </kendo-datetimepicker>
                                     <span
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.dateOrder | date: 'short'}}</span>
-                                    <div *ngIf="dateOrderObjValidate.errors && (dateOrderObjValidate.touched || submitForm)"
-                                        class="validator-lable">
-                                        <div *ngIf="dateOrderObjValidate.errors.required">Ngày điều trị không được để
-                                            trống.</div>
+                                    <div *ngIf="fgControls.dateOrderObj.invalid && (fgControls.dateOrderObj.touched || fgControls.dateOrderObj.dirty || submitForm)"
+                                        class="text-danger">
+                                        <div *ngIf="fgControls.dateOrderObj.errors.required">Nhập ngày điều trị</div>
                                     </div>
                                 </td>
                             </tr>
