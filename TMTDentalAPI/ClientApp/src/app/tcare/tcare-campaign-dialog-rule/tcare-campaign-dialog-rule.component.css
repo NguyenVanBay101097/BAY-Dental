@@ -9,3 +9,6 @@
 .plugin-textarea span:hover {
     background: rgba(0, 0, 0, 0.4) !important;
 }
+.dropdown u {
+    cursor: pointer;
+}

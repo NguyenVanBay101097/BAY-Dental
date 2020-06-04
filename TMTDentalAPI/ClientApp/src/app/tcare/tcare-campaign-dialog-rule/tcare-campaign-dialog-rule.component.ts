@@ -37,6 +37,15 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     this.showAudienceFilter = true;
   }
 
+  convertLogicAudienceFilter(logic) {
+    switch (logic) {
+      case "and":
+        return "tất cả điều kiện";
+      case "or":
+        return "bất kỳ điều kiện nào";
+    }
+  }
+
   saveAudienceFilter(event) {
     this.audience_filter = event;
   }

@@ -290,7 +290,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                 }
               }
 
-              let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+              let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
               modalRef.componentInstance.title = 'Cài đặt điều kiện';
               modalRef.componentInstance.tCareRule = tCareRule;
               modalRef.result.then(

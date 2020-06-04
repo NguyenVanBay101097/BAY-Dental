@@ -102,14 +102,14 @@ export class AudienceFilterComponent implements OnInit {
 
   convertAudienceFilterItemsToString() {
     var result = {
-      type: "and",
-      items: this.listAudienceFilter_Items
+      logic: "and",
+      conditions: this.listAudienceFilter_Items
     }
     return JSON.stringify(result);
   }
 
   convertAudienceFilterItemsToArray(listAudienceFilter_Items_String) {
-    return JSON.parse(listAudienceFilter_Items_String).items;
+    return JSON.parse(listAudienceFilter_Items_String).conditions;
   }
 
   clickAudienceFilter_Item(item) {
@@ -172,6 +172,7 @@ export class AudienceFilterComponent implements OnInit {
 
   deleteAudienceFilterItem(index) {
     this.selectedAudienceFilter_Item = null;
+    this.clickedAudienceFilter_Item = false;
     this.listAudienceFilter_Items.splice(index, 1);
     this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
   }
