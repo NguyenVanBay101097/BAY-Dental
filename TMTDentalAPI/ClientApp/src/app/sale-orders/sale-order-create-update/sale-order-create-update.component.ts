@@ -65,7 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
 
   searchCardBarcode: string;
-
+  submitForm = false;
   type: string;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
@@ -127,9 +127,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
-    console.log(this.partnera);
-    console.log(this.dateObj);
-    console.log(this.submitForm);
   }
 
   routeActive() {
@@ -181,11 +178,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return control ? control.value : null;
   }
 
-  get submitForm() { return this.formGroup.markAsTouched() }
+  get partnerValidate() { return this.formGroup.get('partner') }
 
-  get partnera() { return this.formGroup.get('partner') }
-
-  get dateObj() { return this.formGroup.get('dateOrderObj') }
+  get dateOrderObjValidate() { return this.formGroup.get('dateOrderObj') }
 
   quickCreateCustomer() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -704,6 +699,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
+    this.submitForm = true;
     if (!this.formGroup.valid) {
       return false;
     }
