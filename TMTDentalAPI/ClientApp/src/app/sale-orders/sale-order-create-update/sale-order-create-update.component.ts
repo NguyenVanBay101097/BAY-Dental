@@ -65,7 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
 
   searchCardBarcode: string;
-
+  submitted = false;
   type: string;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
@@ -176,6 +176,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   get partner() {
     var control = this.formGroup.get('partner');
     return control ? control.value : null;
+  }
+
+  get fgControls() {
+    return this.formGroup.controls;
   }
 
   quickCreateCustomer() {
@@ -695,6 +699,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -755,6 +761,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }

@@ -40,9 +40,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
       name: '',
       product: [null, Validators.required],
       productId: null,
-      priceUnit: 0,
-      productUOMQty: 1,
-      discount: 0,
+      priceUnit: [0, Validators.required],
+      productUOMQty: [1, Validators.required],
+      discount: [0, Validators.required],
       discountType: 'percentage',
       discountFixed: 0,
       priceSubTotal: 1,
@@ -90,6 +90,10 @@ export class SaleOrderLineDialogComponent implements OnInit {
       this.loadFilteredProducts();
       this.loadToothCategories();
     });
+  }
+
+  get fgControls() {
+    return this.saleLineForm.controls;
   }
 
   get productUpdatable() {
