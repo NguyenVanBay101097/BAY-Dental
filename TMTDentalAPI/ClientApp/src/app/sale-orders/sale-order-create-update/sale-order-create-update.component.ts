@@ -127,6 +127,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
+    console.log(this.partnera);
+    console.log(this.dateObj);
+    console.log(this.submitForm);
   }
 
   routeActive() {
@@ -177,6 +180,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var control = this.formGroup.get('partner');
     return control ? control.value : null;
   }
+
+  get submitForm() { return this.formGroup.markAsTouched() }
+
+  get partnera() { return this.formGroup.get('partner') }
+
+  get dateObj() { return this.formGroup.get('dateOrderObj') }
 
   quickCreateCustomer() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
