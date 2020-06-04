@@ -17,5 +17,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceTotal { get; set; }
 
         public int? Sequence { get; set; }
+
+        public string DiscountType { get; set; }
+
+        public decimal Discount { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
     }
 }

@@ -37,7 +37,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
-    this.dotKhamForm = this.fb.group({     
+    this.dotKhamForm = this.fb.group({
       dateObj: [null, Validators.required],
       note: null,
       companyId: null,
@@ -46,9 +46,9 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       partnerId: null
     });
 
-    setTimeout(() => {
-      this.userCbx.focus();
-    }, 200);
+    // setTimeout(() => {
+    //   this.userCbx.focus();
+    // }, 200);
 
 
     setTimeout(() => {
@@ -163,7 +163,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
-  searchUsers(q?: string){
+  searchUsers(q?: string) {
     var val = new UserPaged();
     val.search = q;
     return this.userService.autocompleteSimple(val);

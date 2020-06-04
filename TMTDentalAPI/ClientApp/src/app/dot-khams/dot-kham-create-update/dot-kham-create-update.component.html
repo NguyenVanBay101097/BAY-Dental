@@ -90,7 +90,7 @@
                                         </kendo-combobox>
                                     </div> -->
                                 </td>
-                           
+
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -130,8 +130,8 @@
                                     <!-- <span *ngIf="getDoctor && id">{{getDoctor.name}}</span> -->
                                     <div>
                                         <div class="d-flex">
-                                           
-                                    <kendo-combobox formControlName="user" [filterable]="true"
+
+                                            <kendo-combobox formControlName="user" [filterable]="true"
                                                 [data]="userSimpleFilter" #userCbx [valueField]="'id'"
                                                 [textField]="'name'">
                                             </kendo-combobox>
@@ -525,7 +525,8 @@
         <div class="text-center">
             <h5 class="mb-0">{{toaThuocPrint.companyName}}</h5>
             <div>Địa chỉ: {{toaThuocPrint.companyAddress}}</div>
-            <div>ĐT: {{toaThuocPrint.companyPhone}} - Email: {{toaThuocPrint.companyEmail}}</div>
+            <div *ngIf="toaThuocPrint.companyPhone">ĐT: {{toaThuocPrint.companyPhone}}</div>
+            <div *ngIf="toaThuocPrint.companyEmail">Email: {{toaThuocPrint.companyEmail}}</div>
         </div>
         <div class="text-center">
             <h1>Đơn thuốc</h1>
