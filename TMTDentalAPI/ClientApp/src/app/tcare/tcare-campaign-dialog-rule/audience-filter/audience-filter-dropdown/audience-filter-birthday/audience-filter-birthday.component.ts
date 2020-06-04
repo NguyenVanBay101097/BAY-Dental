@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AudienceFilterItem } from 'src/app/tcare/tcare.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class AudienceFilterBirthdayComponent implements OnInit {
 
   @Input() dataReceive: any;
+  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
 
   AudienceFilter_Picker = {
@@ -51,5 +52,6 @@ export class AudienceFilterBirthdayComponent implements OnInit {
 
   saveFormulaValue() {
     this.selected_AudienceFilter_Picker.formula_value = this.formGroup.get('day').value;
+    this.dataSend.emit(false);
   }
 }

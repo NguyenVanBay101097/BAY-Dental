@@ -112,6 +112,13 @@ export class AudienceFilterComponent implements OnInit {
     return JSON.parse(listAudienceFilter_Items_String).conditions;
   }
 
+  existListAudienceFilter_Items() {
+    if (!this.listAudienceFilter_Items || this.listAudienceFilter_Items.length == 0) {
+      return false;
+    }
+    return true;
+  }
+
   clickAudienceFilter_Item(item) {
     if (this.AudienceFilter_Item !== item) {
       this.AudienceFilter_Item = item;
@@ -170,11 +177,10 @@ export class AudienceFilterComponent implements OnInit {
     }
   }
 
-  closeAudienceFilter_Item_Picker(value) {
-    if (value == false) {
+  closeAudienceFilter_Item_Picker(status) {
+    if (status == false) {
       this.selectedAudienceFilter_Item = null;
       this.clickedAudienceFilter_Item = false;
-      console.log("Hello");
     }
   }
 

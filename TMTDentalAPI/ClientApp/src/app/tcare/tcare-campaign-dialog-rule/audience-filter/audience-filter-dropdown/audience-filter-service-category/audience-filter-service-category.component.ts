@@ -14,7 +14,7 @@ import { ProductCategoryService, ProductCategoryPaged } from 'src/app/product-ca
 export class AudienceFilterServiceCategoryComponent implements OnInit {
   
   @Input() dataReceive: any;
-  @Output() dataSend = new EventEmitter<boolean>();
+  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
 
   AudienceFilter_Picker = {

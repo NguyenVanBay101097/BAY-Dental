@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AudienceFilterItem } from 'src/app/tcare/tcare.service';
 import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -14,6 +14,7 @@ import { ProductService, ProductPaged } from 'src/app/products/product.service';
 export class AudienceFilterServiceComponent implements OnInit {
 
   @Input() dataReceive: any;
+  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
 
   AudienceFilter_Picker = {
@@ -71,6 +72,7 @@ export class AudienceFilterServiceComponent implements OnInit {
 
   selectFormulaValue(item, i) {
     this.selected_AudienceFilter_Picker.formula_value = item;
+    this.dataSend.emit(false);
   }
 
   loadListService() {
