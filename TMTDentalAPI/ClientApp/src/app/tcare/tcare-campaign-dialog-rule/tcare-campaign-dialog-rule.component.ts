@@ -39,5 +39,6 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
 
   saveAudienceFilter(event) {
     this.audience_filter = event;
+    console.log(event);
   }
 }

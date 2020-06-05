@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AudienceFilterItem } from 'src/app/tcare/tcare.service';
+import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
 import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -18,12 +18,12 @@ export class AudienceFilterServiceComponent implements OnInit {
   formGroup: FormGroup;
 
   AudienceFilter_Picker = {
-    formula_types: ['contains', 'doesnotcontain'],
+    formula_types: ['contains', 'not_contains'],
     formula_values: [],
-    formula_displays: null,
+    formula_displays: []
   }
 
-  selected_AudienceFilter_Picker: AudienceFilterItem;
+  selected_AudienceFilter_Picker: TCareRuleCondition;
 
   showButtonCreateService: boolean = false;
   searchServiceUpdate = new Subject<string>();
@@ -38,11 +38,11 @@ export class AudienceFilterServiceComponent implements OnInit {
     });
 
     this.selected_AudienceFilter_Picker = this.dataReceive;
-    if (!this.dataReceive.formula_type) {
-      this.selected_AudienceFilter_Picker.formula_type = this.AudienceFilter_Picker.formula_types[0]
+    if (!this.dataReceive.op) {
+      this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
     }
-    if (this.dataReceive.formula_value) {
-      this.formGroup.patchValue({ name: this.selected_AudienceFilter_Picker.formula_value });
+    if (this.dataReceive.value) {
+      this.formGroup.patchValue({ name: this.selected_AudienceFilter_Picker.displayValue });
     }
     this.loadListService();
     this.searchServiceUpdate.pipe(
@@ -57,21 +57,22 @@ export class AudienceFilterServiceComponent implements OnInit {
     switch (item) {
       case 'contains':
         return 'có chứa';
-      case 'doesnotcontain':
+      case 'not_contains':
         return 'không chứa';
       case 'có chứa':
         return 'contains';
       case 'không chứa':
-        return 'doesnotcontain';
+        return 'not_contains';
     }
   }
 
   selectFormulaType(item) {
-    this.selected_AudienceFilter_Picker.formula_type = item;
+    this.selected_AudienceFilter_Picker.op = item;
   }
 
   selectFormulaValue(item, i) {
-    this.selected_AudienceFilter_Picker.formula_value = item;
+    this.selected_AudienceFilter_Picker.value = this.AudienceFilter_Picker.formula_values[i];
+    this.selected_AudienceFilter_Picker.displayValue = item;
     this.dataSend.emit(false);
   }
 
@@ -91,7 +92,8 @@ export class AudienceFilterServiceComponent implements OnInit {
       }
       this.AudienceFilter_Picker.formula_values = [];
       for (let i = 0; i < listItems.length; i++) {
-        this.AudienceFilter_Picker.formula_values.push(listItems[i].name); // Add formula_values
+        this.AudienceFilter_Picker.formula_values.push(listItems[i].id); 
+        this.AudienceFilter_Picker.formula_displays.push(listItems[i].name); 
       }
     }, err => {
       console.log(err);

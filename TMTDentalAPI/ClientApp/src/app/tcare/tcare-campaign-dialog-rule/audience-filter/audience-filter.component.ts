@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AudienceFilterItem } from '../../tcare.service';
+import { TCareRuleCondition } from '../../tcare.service';
 import { AudienceFilterBirthdayComponent } from './audience-filter-dropdown/audience-filter-birthday/audience-filter-birthday.component';
 import { AudienceFilterLastTreatmentDayComponent } from './audience-filter-dropdown/audience-filter-last-treatment-day/audience-filter-last-treatment-day.component';
 import { AudienceFilterServiceComponent } from './audience-filter-dropdown/audience-filter-service/audience-filter-service.component';
@@ -26,22 +26,22 @@ export class AudienceFilterComponent implements OnInit {
   clickedAudienceFilter_Item: boolean = false;
   clickedAudienceFilter: boolean = false;
   count_clickOutside: number = 1;
-  AudienceFilter_Item: AudienceFilterItem;
+  AudienceFilter_Item: TCareRuleCondition;
   listAudienceFilter_Picker = [
     {
       type: 'birthday',
       name: 'Sinh nhật'
     }, {
-      type: 'lastTreatmentDay',
+      type: 'lastSaleOrder',
       name: 'Ngày điều trị cuối'
     }, {
-      type: 'partnerGroup',
+      type: 'categPartner',
       name: 'Nhóm khách hàng'
     }, {
-      type: 'service',
+      type: 'usedService',
       name: 'Dịch vụ sử dụng'
     }, {
-      type: 'serviceGroup',
+      type: 'usedCategService',
       name: 'Nhóm dịch vụ sử dụng'
     }
   ]
@@ -86,13 +86,11 @@ export class AudienceFilterComponent implements OnInit {
         return 'không bằng';
       case 'contains':
         return 'có chứa';
-      case 'doesnotcontain':
+      case 'not_contains':
         return 'không chứa';
-      case 'startswith':
-        return 'bắt đầu với';
-      case 'before':
+      case 'lte':
         return 'trước';
-      case 'after':
+      case 'gte':
         return 'sau';
       case 'bằng':
         return 'eq';
@@ -101,26 +99,14 @@ export class AudienceFilterComponent implements OnInit {
       case 'có chứa':
         return 'contains';
       case 'không chứa':
-        return 'doesnotcontain';
-      case 'bắt đầu với':
-        return 'startswith';
+        return 'not_contains';
       case 'trước':
-        return 'before';
+        return 'lte';
       case 'sau':
-        return 'after';
+        return 'gte';
     }
   }
-
-  isDay(item) {
-    switch (item) {
-      case 'birthday': 
-      case 'lastTreatmentDay': 
-        return true;
-      default: 
-        return false;
-    }
-  }
-
+  
   setLogic(value) {
     this.formGroup.patchValue({ 
       logic: value 
@@ -155,25 +141,25 @@ export class AudienceFilterComponent implements OnInit {
             data: this.AudienceFilter_Item
           }
         break;
-        case "lastTreatmentDay":
+        case "lastSaleOrder":
           this.audience_filter_comp_data = {
             component: AudienceFilterLastTreatmentDayComponent,
             data: this.AudienceFilter_Item
           }
         break;
-        case "partnerGroup":
+        case "categPartner":
           this.audience_filter_comp_data = {
             component: AudienceFilterPartnerCategoryComponent,
             data: this.AudienceFilter_Item
           }
         break;
-        case "service":
+        case "usedService":
           this.audience_filter_comp_data = {
             component: AudienceFilterServiceComponent,
             data: this.AudienceFilter_Item
           }
         break;
-        case "serviceGroup":
+        case "usedCategService":
           this.audience_filter_comp_data = {
             component: AudienceFilterServiceCategoryComponent,
             data: this.AudienceFilter_Item
@@ -245,9 +231,9 @@ export class AudienceFilterComponent implements OnInit {
     this.AudienceFilter_Item = {
       type: item.type,
       name: item.name,
-      formula_type: null,
-      formula_value: null,
-      formula_display: null
+      op: null,
+      value: null,
+      displayValue: null
     }
     switch (item.type) {
       case "birthday":
@@ -256,25 +242,25 @@ export class AudienceFilterComponent implements OnInit {
           data: this.AudienceFilter_Item
         }
       break;
-      case "lastTreatmentDay":
+      case "lastSaleOrder":
         this.audience_filter_comp_data = {
           component: AudienceFilterLastTreatmentDayComponent,
           data: this.AudienceFilter_Item
         }
       break;
-      case "partnerGroup":
+      case "categPartner":
         this.audience_filter_comp_data = {
           component: AudienceFilterPartnerCategoryComponent,
           data: this.AudienceFilter_Item
         }
       break;
-      case "service":
+      case "usedService":
         this.audience_filter_comp_data = {
           component: AudienceFilterServiceComponent,
           data: this.AudienceFilter_Item
         }
       break;
-      case "serviceGroup":
+      case "usedCategService":
         this.audience_filter_comp_data = {
           component: AudienceFilterServiceCategoryComponent,
           data: this.AudienceFilter_Item
@@ -286,7 +272,7 @@ export class AudienceFilterComponent implements OnInit {
   }
 
   addAudienceFilterItem() {
-    if (this.AudienceFilter_Item.formula_type && this.AudienceFilter_Item.formula_value) {
+    if (this.AudienceFilter_Item.op && this.AudienceFilter_Item.value) {
       this.listAudienceFilter_Items.push(this.AudienceFilter_Item);
       this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
       this.openAudienceFilter = false;

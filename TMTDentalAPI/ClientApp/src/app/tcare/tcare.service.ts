@@ -77,23 +77,18 @@ export class TCareMessageDisplay {
 }
 
 export class TCareRuleCondition {
-  typeCondition: string;
-  valueCondition: string;
-  nameCondition: string;
-  flagCondition: string;
+  type: string;
+  name: string;
+  value: string;
+  displayValue: string;
+  op: string; //toán tử (bằng : eq; không bằng: neq; chứa : contains; Không chứa: not_contains; Nhỏ hơn hoặc bằng: lte; Lớn hơn hoặc bằng: gte)
+  //truyển kiểu String
 }
+
 
 export class TCareRule {
   logic: string;
   conditions: TCareRuleCondition[];
-}
-
-export class AudienceFilterItem {
-  type: string;
-  name: string;
-  formula_type: string;
-  formula_value: any;
-  formula_display: string;
 }
 
 @Injectable({

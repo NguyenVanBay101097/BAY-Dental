@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AudienceFilterItem } from 'src/app/tcare/tcare.service';
+import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -14,12 +14,12 @@ export class AudienceFilterBirthdayComponent implements OnInit {
   formGroup: FormGroup;
 
   AudienceFilter_Picker = {
-    formula_types: ['before'],
+    formula_types: ['lte'],
     formula_values: [],
-    formula_displays: null
+    formula_displays: []
   }
 
-  selected_AudienceFilter_Picker: AudienceFilterItem;
+  selected_AudienceFilter_Picker: TCareRuleCondition;
 
   constructor(private fb: FormBuilder) { }
 
@@ -29,29 +29,30 @@ export class AudienceFilterBirthdayComponent implements OnInit {
     });
 
     this.selected_AudienceFilter_Picker = this.dataReceive;
-    if (!this.dataReceive.formula_type) {
-      this.selected_AudienceFilter_Picker.formula_type = this.AudienceFilter_Picker.formula_types[0]
+    if (!this.dataReceive.op) {
+      this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
     }
-    if (this.dataReceive.formula_value) {
-      this.formGroup.patchValue({ day: this.selected_AudienceFilter_Picker.formula_value });
+    if (this.dataReceive.value) {
+      this.formGroup.patchValue({ day: this.selected_AudienceFilter_Picker.value });
     }
   }
 
   convertFormulaType(item) {
     switch (item) {
-      case 'before':
+      case 'lte':
         return 'trước';
       case 'trước':
-        return 'before';
+        return 'lte';
     }
   }
 
   selectFormulaType(item) {
-    this.selected_AudienceFilter_Picker.formula_type = item;
+    this.selected_AudienceFilter_Picker.op = item;
   }
 
   saveFormulaValue() {
-    this.selected_AudienceFilter_Picker.formula_value = this.formGroup.get('day').value;
+    this.selected_AudienceFilter_Picker.value = this.formGroup.get('day').value;
+    this.selected_AudienceFilter_Picker.displayValue = this.formGroup.get('day').value + ' ngày';
     this.dataSend.emit(false);
   }
 }

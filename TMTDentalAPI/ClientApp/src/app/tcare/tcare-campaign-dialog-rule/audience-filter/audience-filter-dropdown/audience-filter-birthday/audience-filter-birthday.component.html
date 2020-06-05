@@ -7,19 +7,20 @@
         </tr>
         <tr>
             <td class="border-right p-0 align-top">
-                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.formula_type"
+                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.op"
                     *ngFor="let item of AudienceFilter_Picker.formula_types"
                     (click)="selectFormulaType(item)">
                     {{convertFormulaType(item)}}
                 </button>
             </td>
-            <td class="p-0 align-top" style="min-width: 200px;">
+            <td class="p-0 align-top">
                 <div class="list-formula-value">
                     <div class="px-2 pb-2">
                         <div class="d-flex align-items-center">
                             <kendo-numerictextbox class="shadow-sm mr-2"
+                                style="width: 150px;"
                                 formControlName="day" placeholder="Nhập số ngày.." myAutofocus
-                                [min]="0" [autoCorrect]="autoCorrect">
+                                [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                             </kendo-numerictextbox>
                             <span style="white-space: nowrap;">ngày</span>
                         </div>

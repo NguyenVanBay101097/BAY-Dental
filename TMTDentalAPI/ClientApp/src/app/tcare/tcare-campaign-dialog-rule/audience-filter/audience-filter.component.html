@@ -14,12 +14,11 @@
         <button class="audience-filter-item mr-2 btn btn-light btn-sm border"
             (click)="clickAudienceFilter_Item(item)">
             <span class="drop-select">{{item.name}}</span>
-            <span class="condition-select pl-1">{{convertFormulaType(item.formula_type)}}</span>
+            <span class="condition-select pl-1">{{convertFormulaType(item.op)}}</span>
             <span class="value-select pl-1">
-                <span *ngIf="!item.formula_display || item.formula_display === ''">{{item.formula_value}}</span>
-                <span *ngIf="item.formula_display && item.formula_display !== ''">{{item.formula_display}}</span>
+                <span *ngIf="!item.displayValue || item.displayValue === ''">{{item.value}}</span>
+                <span *ngIf="item.displayValue && item.displayValue !== ''">{{item.displayValue}}</span>
             </span>
-            <span *ngIf="isDay(item.type)" class="unit-select pl-1">ngày</span>
             <span class="remove" (click)="deleteAudienceFilterItem(i)">
                 <i class="fas fa-times pl-2"></i>
             </span>

@@ -7,7 +7,7 @@
         </tr>
         <tr>
             <td class="border-right p-0 align-top">
-                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.formula_type"
+                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.op"
                     *ngFor="let item of AudienceFilter_Picker.formula_types"
                     (click)="selectFormulaType(item)">
                     {{convertFormulaType(item)}}
@@ -25,11 +25,10 @@
                     </button>
                 </div>
                 <div class="list-formula-value">
-                    <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.formula_value" 
+                    <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.displayValue" 
                         *ngFor="let item of AudienceFilter_Picker.formula_values; index as i"
                         (click)="selectFormulaValue(item, i)">
-                        <span *ngIf="AudienceFilter_Picker.formula_displays === null">{{item}}</span>
-                        <span *ngIf="AudienceFilter_Picker.formula_displays !== null">{{AudienceFilter_Picker.formula_displays[i]}}</span>
+                        <span>{{item}}</span>
                     </button>
                 </div>
             </td>
