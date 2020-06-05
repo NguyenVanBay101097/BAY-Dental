@@ -26,7 +26,7 @@
                   </span>
                   <div *ngIf="f.product.errors && (f.product.touched || f.product.dirty || submitted)"
                     class="text-danger">
-                    <div *ngIf="f.product.errors.required">Chọn loại phục hình</div>
+                    <span *ngIf="f.product.errors.required">Chọn loại phục hình</span>
                   </div>
                 </td>
               </tr>
@@ -69,6 +69,10 @@
                     formControlName="productQty">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.productQty | number}}</span>
+                  <div *ngIf="f.productQty.errors && (f.productQty.touched || f.productQty.dirty || submitted)"
+                    class="text-danger">
+                    <span *ngIf="f.productQty.errors.required">Nhập số lượng</span>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -82,6 +86,10 @@
                     formControlName="priceUnit">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.priceUnit | number}}</span>
+                  <div *ngIf="f.priceUnit.errors && (f.priceUnit.touched || f.priceUnit.dirty || submitted)"
+                    class="text-danger">
+                    <span *ngIf="f.priceUnit.errors.required">Nhập đơn giá</span>
+                  </div>
                 </td>
               </tr>
               <tr>

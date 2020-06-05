@@ -59,8 +59,8 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
       product: [null, Validators.required],
       supplier: [null, Validators.required],
       color: null,
-      quantity: null,
-      priceUnit: null,
+      quantity: [null, Validators.required],
+      priceUnit: [null, Validators.required],
       priceSubtotal: null,
       warrantyCode: null,
       warrantyPeriodObj: null,
@@ -117,6 +117,10 @@ export class LaboOrderLineCuDialogComponent implements OnInit {
     this.loadFilteredCustomers();
     this.loadFilteredSuppliers();
     this.loadFilteredProducts();
+  }
+
+  get f() {
+    return this.lineForm.controls;
   }
 
   loadFilteredCustomers() {
