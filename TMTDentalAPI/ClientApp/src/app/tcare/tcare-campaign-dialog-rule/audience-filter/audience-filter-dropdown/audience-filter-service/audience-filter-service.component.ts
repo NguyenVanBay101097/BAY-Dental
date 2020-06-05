@@ -41,9 +41,7 @@ export class AudienceFilterServiceComponent implements OnInit {
     if (!this.dataReceive.op) {
       this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
     }
-    if (this.dataReceive.value) {
-      this.formGroup.patchValue({ name: this.selected_AudienceFilter_Picker.displayValue });
-    }
+
     this.loadListService();
     this.searchServiceUpdate.pipe(
       debounceTime(400),
@@ -84,6 +82,23 @@ export class AudienceFilterServiceComponent implements OnInit {
     val.type2 = 'service';
     this.productService.getPaged(val).subscribe(res => {
       var listItems = res['items'];
+      // filter
+      var index_item =  listItems.findIndex(x => x.id == this.selected_AudienceFilter_Picker.value);
+      if (index_item >= 0) {
+        listItems.splice(index_item, 1);
+      }
+      var temp_item = {
+        id: this.selected_AudienceFilter_Picker.value,
+        name: this.selected_AudienceFilter_Picker.displayValue,
+        categName: null,
+        listPrice: null,
+        type: null,
+        defaultCode: null,
+        qtyAvailable: null,
+        uomId: null,
+        uom: null
+      };
+      listItems.splice(0, 0, temp_item);
       
       if (listItems.length == 0) {
         this.showButtonCreateService = true;
@@ -91,6 +106,7 @@ export class AudienceFilterServiceComponent implements OnInit {
         this.showButtonCreateService = false;
       }
       this.AudienceFilter_Picker.formula_values = [];
+      this.AudienceFilter_Picker.formula_displays = [];
       for (let i = 0; i < listItems.length; i++) {
         this.AudienceFilter_Picker.formula_values.push(listItems[i].id); 
         this.AudienceFilter_Picker.formula_displays.push(listItems[i].name); 

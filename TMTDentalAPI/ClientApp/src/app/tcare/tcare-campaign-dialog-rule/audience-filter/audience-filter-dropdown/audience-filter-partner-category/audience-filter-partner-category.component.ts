@@ -41,9 +41,7 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
     if (!this.dataReceive.op) {
       this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
     }
-    if (this.dataReceive.value) {
-      this.formGroup.patchValue({ name: this.selected_AudienceFilter_Picker.displayValue });
-    }
+
     this.loadListPartnerCategory();
     this.searchPartnerCategoryUpdate.pipe(
       debounceTime(400),
@@ -83,6 +81,16 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
     val.search = this.formGroup.get('name').value || '';
     this.partnerCategoryService.getPaged(val).subscribe(res => {
       var listItems = res['items'];
+      // filter
+      var index_item =  listItems.findIndex(x => x.id == this.selected_AudienceFilter_Picker.value);
+      if (index_item >= 0) {
+        listItems.splice(index_item, 1);
+      }
+      listItems.splice(0, 0, {
+        id: this.selected_AudienceFilter_Picker.value,
+        name: this.selected_AudienceFilter_Picker.displayValue,
+        completeName: this.selected_AudienceFilter_Picker.displayValue
+      });
       
       if (listItems.length == 0) {
         this.showButtonCreatePartnerCategory = true;
@@ -90,6 +98,7 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
         this.showButtonCreatePartnerCategory = false;
       }
       this.AudienceFilter_Picker.formula_values = [];
+      this.AudienceFilter_Picker.formula_displays = [];
       for (let i = 0; i < listItems.length; i++) {
         this.AudienceFilter_Picker.formula_values.push(listItems[i].id); 
         this.AudienceFilter_Picker.formula_displays.push(listItems[i].name); 
