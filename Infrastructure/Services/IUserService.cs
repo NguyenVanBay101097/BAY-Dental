@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -17,5 +18,6 @@ namespace Infrastructure.Services
         Task<bool> HasGroup(string group_ext_id);
         void TestJobFunc(string s, string tenant_id);
         Task UpdateAsync(ApplicationUser user);
+        Task<ApplicationUserImportResponse> Import(ApplicationUserImportExcelViewModel val);
     }
 }

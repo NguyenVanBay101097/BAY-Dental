@@ -13,6 +13,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using OfficeOpenXml;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -135,6 +138,59 @@ namespace Infrastructure.Services
         public async Task UpdateAsync(ApplicationUser user)
         {
             await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<ApplicationUserImportResponse> Import(ApplicationUserImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ApplicationUserRowExcel>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var errs = new List<string>();
+
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        if (string.IsNullOrWhiteSpace(name))
+                            errs.Add("Tên nhóm khách hàng là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        data.Add(new ApplicationUserRowExcel
+                        {
+                            Name = name
+                        });
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return new ApplicationUserImportResponse { Success = false, Errors = errors };
+
+            var data_to_insert = data;
+
+            var applicationUser_to_insert = new List<ApplicationUser>();
+            foreach (var item in data_to_insert)
+            {
+                var applicationUser = new ApplicationUser();
+                applicationUser.Name = item.Name;
+
+                applicationUser_to_insert.Add(applicationUser);
+            }
+
+            await CreateAsync(applicationUser_to_insert);
+
+            return new ApplicationUserImportResponse { Success = true };
         }
     }
 }

@@ -342,6 +342,19 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionImport(ApplicationUserImportExcelViewModel val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var result = await _userService.Import(val);
+
+            if (result.Success)
+                _unitOfWork.Commit();
+
+            return Ok(result);
+        }
+
         private async Task SaveAvatar(Partner partner, ApplicationUserDisplay val)
         {
             if (!string.IsNullOrEmpty(val.Avatar) && ImageHelper.IsBase64String(val.Avatar))
