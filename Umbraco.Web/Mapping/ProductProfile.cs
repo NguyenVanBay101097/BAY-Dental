@@ -14,13 +14,12 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<Product, ProductBasic>().ReverseMap();
             CreateMap<Product, ProductDisplay>()
-            .ForMember(x => x.StepList, x => x.MapFrom(s=>s.Steps));
+                 .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
             CreateMap<ProductDisplay, Product>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Categ, x => x.Ignore())
                 .ForMember(x => x.UOM, x => x.Ignore())
-                .ForMember(x => x.UOMPO, x => x.Ignore())
-                .ForMember(x => x.Steps, x => x.Ignore());
+                .ForMember(x => x.UOMPO, x => x.Ignore());
             
 
             CreateMap<Product, ProductSimple>();

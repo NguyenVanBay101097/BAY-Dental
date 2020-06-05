@@ -32,5 +32,6 @@ namespace Infrastructure.Services
 
         Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val);
         Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids);
+        Task<ProductDisplay> GetProductExport(Guid id);
     }
 }

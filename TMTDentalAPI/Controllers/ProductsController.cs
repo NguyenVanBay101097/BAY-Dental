@@ -631,7 +631,8 @@ namespace TMTDentalAPI.Controllers
                 for (int row = 2; row < items.Count + 2; row++)
                 {
                     var item = items[row - 2];
-                    var self = await _productService.GetProductDisplay(item.Id);
+                    var self = await _productService.GetProductExport(item.Id);
+
                     worksheet.Cells[row, 1].Value = self.Name;
                     worksheet.Cells[row, 2].Value = self.IsLabo;
                     worksheet.Cells[row, 3].Value = self.Categ.Name;
