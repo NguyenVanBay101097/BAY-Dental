@@ -511,7 +511,7 @@ namespace Infrastructure.Services
             var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
-                .Include(x => x.UOMPO).FirstOrDefaultAsync();
+                .Include(x => x.UOMPO).Include(x=>x.Steps).FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
 
             //res.StandardPrice = _GetStandardPrice(product);

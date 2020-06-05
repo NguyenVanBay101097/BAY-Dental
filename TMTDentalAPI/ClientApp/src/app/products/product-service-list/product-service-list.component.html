@@ -1,66 +1,67 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel">
-        <ol class="breadcrumb">
-            <li class="active">Dịch vụ</li>
-        </ol>
-        <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên..." type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                </div>
-            </div>
+  <div class="o_control_panel">
+    <ol class="breadcrumb">
+      <li class="active">Dịch vụ</li>
+    </ol>
+    <div class="o_cp_searchview">
+      <div class="o_cp_searchview_group">
+        <div class="o_searchview">
+          <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search"
+            (ngModelChange)="this.searchUpdate.next($event)">
         </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="c"
-                        (click)="createItem()">Thêm</button>
-                    <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
-                        <i class="fas fa-upload"></i> Import
-                    </button>
-                </div>
-            </div>
-            <div class="o_cp_sidebar">
-            </div>
-        </div>
-        <div class="o_cp_right">
-            <div>
-                <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm dịch vụ'" [filterable]="true"
-                    (valueChange)="onCategChange($event)" [textField]="'completeName'" #categCbx
-                    [(ngModel)]="searchCateg" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
-                </kendo-combobox>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="o_cp_left">
+      <div class="o_cp_buttons">
+        <div class="o_form_buttons_view">
+          <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="createItem()">Thêm</button>
+          <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
+            <i class="fas fa-upload"></i> Import
+          </button>
+          <button type="button" class="btn btn-light btn-sm" (click)="exportExcelFile()">
+            <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+        </div>
+      </div>
+      <div class="o_cp_sidebar">
+      </div>
+    </div>
+    <div class="o_cp_right">
+      <div>
+        <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm dịch vụ'" [filterable]="true"
+          (valueChange)="onCategChange($event)" [textField]="'completeName'" #categCbx [(ngModel)]="searchCateg"
+          [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+        </kendo-combobox>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="o_content">
-    <div>
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-            (pageChange)="pageChange($event)">
-            <kendo-grid-column field="name" title="Tên dịch vụ" width="250">
-            </kendo-grid-column>
-            <kendo-grid-column field="defaultCode" title="Mã dịch vụ" width="100">
-            </kendo-grid-column>
-            <kendo-grid-column field="categName" title="Nhóm dịch vụ" width="150">
-            </kendo-grid-column>
-            <kendo-grid-column field="listPrice" class="text-right" title="Giá bán" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.listPrice | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="id" width="100">
-                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                    Thao tác
-                </ng-template>
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
-                        <i class="far fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
-                        <i class="far fa-trash-alt"></i></button>
-                </ng-template>
-            </kendo-grid-column>
-        </kendo-grid>
-    </div>
+  <div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+      (pageChange)="pageChange($event)">
+      <kendo-grid-column field="name" title="Tên dịch vụ" width="250">
+      </kendo-grid-column>
+      <kendo-grid-column field="defaultCode" title="Mã dịch vụ" width="100">
+      </kendo-grid-column>
+      <kendo-grid-column field="categName" title="Nhóm dịch vụ" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column field="listPrice" class="text-right" title="Giá bán" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+          {{dataItem.listPrice | number}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="id" width="100">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+          Thao tác
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+          <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+            <i class="far fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+            <i class="far fa-trash-alt"></i></button>
+        </ng-template>
+      </kendo-grid-column>
+    </kendo-grid>
+  </div>
 </div>
