@@ -7,17 +7,18 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet" style="min-width: 500px; min-height: 165px;">
+            <div class="o_form_sheet">
                 <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_12">
+                    <table class="o_group o_inner_group">
                         <tbody>
                             <tr>
-                                <td colspan="3" style="width: 100%;">
-                                    <label class=" o_form_label">Chọn thẻ gán </label>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Chọn nhãn</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     <kendo-multiselect class="form-control" [data]="filterdPartnerCategoies"
-                                        [textField]="'name'" [filterable]="true" #tagCbx
-                                        formControlName="listPartnerCategories" [valueField]="'id'"
-                                        [placeholder]="'Chọn thẻ gán cho người dùng...'" style="min-width: 614px;">
+                                        [textField]="'name'" [filterable]="true" #tagCbx formControlName="tags"
+                                        [valueField]="'id'">
                                     </kendo-multiselect>
                                 </td>
                             </tr>

@@ -4,7 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FacebookTagsService, FacebookTagsPaged, FacebookTagBasic } from 'src/app/socials-channel/facebook-tags.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { PartnerCategoryBasic, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { PartnerCategoryBasic, PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-message',
@@ -14,10 +14,11 @@ import { PartnerCategoryBasic, PartnerCategoryService } from 'src/app/partner-ca
 export class TcareCampaignDialogMessageComponent implements OnInit {
 
   @ViewChild('tagCbx', { static: true }) tagCbx: ComboBoxComponent
-  title: string;
+  title: string = 'Gán nhãn';
   formGroup: FormGroup;
-  filterdPartnerCategoies: PartnerCategoryBasic[] = []
-  listPartnerCategories: PartnerCategoryBasic[] = [];
+  filterdPartnerCategoies: PartnerCategoryBasic[] = [];
+  item: any;
+
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
@@ -26,7 +27,7 @@ export class TcareCampaignDialogMessageComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      listPartnerCategories: null
+      tags: null
     });
 
     this.tagCbx.filterChange.asObservable().pipe(
@@ -37,14 +38,17 @@ export class TcareCampaignDialogMessageComponent implements OnInit {
       this.filterdPartnerCategoies = result.items;
       this.tagCbx.loading = false;
     });
-    this.formGroup.get('listPartnerCategories').patchValue(this.listPartnerCategories);
+
+    if (this.item) {
+      console.log(this.item);
+      this.formGroup.patchValue(this.item);
+    }
+
     this.loadPartnerCategory();
   }
 
   searchPartnerCategories(q?: string) {
-    var val = new FacebookTagsPaged();
-    val.limit = 10;
-    val.offset = 0;
+    var val = new PartnerCategoryPaged();
     val.search = q || '';
     return this.partnerCatgService.getPaged(val);
   }
@@ -58,8 +62,8 @@ export class TcareCampaignDialogMessageComponent implements OnInit {
   }
 
   onSave() {
-    this.listPartnerCategories = this.formGroup.value;
-    this.activeModal.close(this.listPartnerCategories);
+    var value = this.formGroup.value;
+    this.activeModal.close(value);
   }
 
 }

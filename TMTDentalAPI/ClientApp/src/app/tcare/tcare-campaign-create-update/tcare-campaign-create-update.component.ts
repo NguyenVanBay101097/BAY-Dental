@@ -32,6 +32,7 @@ declare var mxPerimeter: any;
 declare var mxConnectionHandler: any;
 declare var mxEffects: any;
 declare var mxRectangle: any;
+declare var mxKeyHandler: any;
 
 @Component({
   selector: "app-tcare-campaign-create-update",
@@ -104,12 +105,15 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         new mxDivResizer(sidebar_goals);
         new mxDivResizer(status);
       }
+
       //create obj
-      var sequence = that.doc.createElement('sequence')
+      var sequence = that.doc.createElement('sequence');
       sequence.setAttribute('campaignId', that.id);
+      sequence.setAttribute('label', 'Gửi tin');
 
       var rule = that.doc.createElement('rule');
       rule.setAttribute('logic', 'and');
+      rule.setAttribute('label', 'Điều kiện');
 
       var editor = new mxEditor();
       var graph = editor.graph;
@@ -135,10 +139,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       // Sets the graph container and configures the editor
       editor.setGraphContainer(container);
-      var config = mxUtils
-        .load("./assets/editors/config/keyhandler-commons.xml")
-        .getDocumentElement();
-      editor.configure(config);
+      // var config = mxUtils
+      //   .load("./assets/editors/config/keyHandler-commons.xml")
+      //   .getDocumentElement();
+      // editor.configure(config);
 
       var iconTolerance = 20;
       var splash = document.getElementById("splash");
@@ -202,32 +206,38 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           if (cell.value.nodeName.toLowerCase() == 'rule') {
             return 'Điều kiện';
           }
+
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
             return 'Gửi tin';
           }
-          if (cell.value.nodeName.toLowerCase() == 'message_read') {
-            return 'Gán thẻ đã đọc';
+
+          if (cell.value.nodeName.toLowerCase() == 'addtag') {
+            return 'Gán nhãn';
           }
-          if (cell.value.nodeName.toLowerCase() == 'message_unread') {
-            return 'Gán thẻ đã nhận';
+
+          if (cell.value.nodeName.toLowerCase() == 'messageopen') {
+            return cell.value.getAttribute('label', '');
           }
+
+          return cell.value.getAttribute('label', '');
         }
+
         return '';
       };
 
       //double click Action
       graph.dblClick = function (evt, cell) {
         if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null) {
-          if (cell.style == "sequence") {
+          if (cell.value.nodeName.toLowerCase() == 'sequence') {
             that.popupSequence(graph, cell);
           }
 
-          if (cell.style == "rule") {
+          if (cell.value.nodeName.toLowerCase() == 'rule') {
             that.popupRule(graph, cell, TcareCampaignDialogRuleComponent);
           }
 
-          if (cell.style == "read" || cell.style == "unread") {
-            that.popupMessage(graph, cell, TcareCampaignDialogMessageComponent);
+          if (cell.value.nodeName.toLowerCase() == 'addtag') {
+            that.popupAddTag(graph, cell, TcareCampaignDialogMessageComponent);
           }
 
           else { return false; }
@@ -303,6 +313,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
         this.images = null;
       };
+
+      var keyHandler = new mxKeyHandler(graph);
+      keyHandler.bindKey(46, function (evt) {
+        if (graph.isEnabled()) {
+          graph.removeCells();
+        }
+      });
 
       //Mouse listener
       graph.addMouseListener({
@@ -454,20 +471,48 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     var funct = function (graph, evt, cell, x, y) {
       var parent = graph.getDefaultParent();
       var model = graph.getModel();
-      // for (let index = 0; index < model.nextId + 1; index++) {
-      //   const element = model.cells[index];
-      //   if (element.style == 'sequence'  || element.style == 'rule') {
-      //     that.notificationService.show({
-      //       content: 'Chỉ có thể thêm một ' + typeShape,
-      //       hideAfter: 3000,
-      //       position: { horizontal: 'center', vertical: 'top' },
-      //       animation: { type: 'fade', duration: 400 },
-      //       type: { style: 'error', icon: true }
-      //     });
-      //     return false;
-      //   }
 
-      // }
+      //Chỉ cho phép kéo 1 điều kiện và 1 gửi tin
+      var vertices = model.filterDescendants(function (c) {
+        return graph.model.isVertex(c);
+      });
+
+      if (typeShape == 'sequence') {
+        var sequence_cells = model.filterCells(vertices, function (c) {
+          return c.value.nodeName.toLowerCase() == 'sequence';
+        });
+
+        if (sequence_cells.length) {
+          that.notificationService.show({
+            content: 'Không thể kéo nhiều gửi tin',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
+
+          return false;
+        }
+      }
+
+      if (typeShape == 'rule') {
+        var rule_cells = model.filterCells(vertices, function (c) {
+          return c.value.nodeName.toLowerCase() == 'rule';
+        });
+
+        if (rule_cells.length) {
+          that.notificationService.show({
+            content: 'Không thể kéo nhiều điều kiện',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
+
+          return false;
+        }
+      }
+
       var v1 = null;
       model.beginUpdate();
       try {
@@ -481,8 +526,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       } finally {
         model.endUpdate();
       }
-      //style of connection
-
 
       graph.setSelectionCell(v1);
     }
@@ -490,16 +533,16 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     // Creates the image which is used as the sidebar icon (drag source)
     var div = that.renderer2.createElement("div");
     that.renderer2.addClass(div, "sidebar-icon");
-    var lab = that.renderer2.createElement("label");
-    var content = that.renderer2.createText(typeShape);
-    that.renderer2.appendChild(lab, content);
+    // var lab = that.renderer2.createElement("label");
+    // var content = that.renderer2.createText(typeShape);
+    // that.renderer2.appendChild(lab, content);
     var img = that.renderer2.createElement("img");
     img.setAttribute("src", image);
     img.style.width = "35px";
     img.style.height = "35px";
-    img.title = typeShape;
+    // img.title = typeShape;
     that.renderer2.appendChild(div, img);
-    that.renderer2.appendChild(div, lab);
+    // that.renderer2.appendChild(div, lab);
     sidebar.appendChild(div);
     // When drag Icon image
     var dragImage = div.cloneNode(true);
@@ -591,47 +634,55 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   }
 
-  popupMessage(graph, cell, component) {
-    let that = this;
-    var listPartnerCategories: any[] = [];
-    if (cell.getValue() && cell.getValue().children) {
-      for (let i = 0; i < cell.getValue().children.length; i++) {
-        var objValue = cell.getValue().children[i];
-        var objx = new Object();
-        for (let i = 0; i < objValue.attributes.length; i++) {
-          var attribute = objValue.attributes[i];
-          objx[attribute.name] = attribute.nodeValue;
+  popupAddTag(graph, cell, component) {
+    let self = this;
+    var value = cell.getValue();
+
+    var serializer = new XMLSerializer();
+    var valueXMl = serializer.serializeToString(value);
+
+    xml2js.parseString(valueXMl, function (err, result) {
+      if (!err) {
+        var addTag = result.addTag;
+        var item = new Object();
+        item['tags'] = [];
+
+        if (addTag.tag) {
+          addTag.tag.forEach(t => {
+            item['tags'].push(Object.assign({}, t.$));
+          });
         }
-        listPartnerCategories.push(objx);
-      }
-    }
-    let modalRef = that.modalService.open(component, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
-    modalRef.componentInstance.title = 'Thêm tag';
-    modalRef.componentInstance.listPartnerCategories = listPartnerCategories;
-    modalRef.result.then(
-      result => {
-        if (result) {
+
+        let modalRef = self.modalService.open(component, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+        modalRef.componentInstance.item = item;
+
+        modalRef.result.then((result: any) => {
           graph.getModel().beginUpdate();
           try {
-            var value = cell.getValue();
-            while (value.firstChild) {
-              value.removeChild(value.firstChild);
-            }
+            var doc = mxUtils.createXmlDocument();
+            var userObject = doc.createElement('addTag');
 
-            result.listPartnerCategories.forEach(item => {
-              var tag = that.doc.createElement('tag');
-              tag.setAttribute('tagId', item.id);
-              tag.setAttribute('name', item.name);
-              value.appendChild(tag);
-              graph.getModel().setValue(cell, value);
+            result.tags.forEach(t => {
+              var tagEl = doc.createElement('tag');
+              for (var p in t) {
+                if (p == 'id' || p == 'name') {
+                  tagEl.setAttribute(p, t[p]);
+                }
+              }
+
+              userObject.appendChild(tagEl);
             });
-          } finally {
-            graph.getModel().endUpdate();
-            that.onSave();
+
+            graph.getModel().setValue(cell, userObject);
           }
-        }
+          finally {
+            graph.getModel().endUpdate();
+            self.onSave();
+          }
+        }, () => {
+        });
       }
-    )
+    });
   }
 
   popupRule(graph, cell, component) {
@@ -722,64 +773,82 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     if (cell != null) {
       if (cell.style == 'sequence') {
         menu.addItem("Gán nhãn đã đọc", "./assets/editors/images/icons/message-tag-open-icon.png", function () {
-          if (cell.value.getAttribute('messageReadId') == null || cell.value.getAttribute('messageReadId') == '') {
+          //Nếu có edge messageOpen từ cell này thì sẽ ko cho add thêm nữa
+          var model = graph.getModel();
+          var all_edges = model.filterDescendants(function (c) {
+            return graph.model.isEdge(c);
+          });
+
+          var connect_edges = model.filterCells(all_edges, function (c) {
+            return c.source.id == cell.id && c.value.nodeName.toLowerCase() == 'messageopen';
+          });
+
+          if (connect_edges.length) {
+            that.notificationService.show({
+              content: 'Đã thêm gán nhãn đã đọc',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'error', icon: true }
+            });
+          } else {
             graph.getModel().beginUpdate();
             try {
-              var read = that.doc.createElement('message_read');
-              read.setAttribute('name', 'read');
-              read.setAttribute('parent', cell.id);
-              var v_read = graph.insertVertex(parent, null, read, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, 'read');
-              var e1 = graph.insertEdge(parent, null, '', cell, v_read, 'strokeWidth=3;endArrow=block;endSize=2;endFill=1;strokeColor=black;rounded=1;');
-              var value = cell.getValue();
-              value.setAttribute('messageReadId', v_read.id);
-              graph.getModel().setValue(cell, value);
+              var addTagEl = that.doc.createElement('addTag');
+              addTagEl.setAttribute('label', 'Gán nhãn');
 
+              var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, 'verticalLabelPosition=bottom;verticalAlign=top');
+
+              var messageOpenEl = that.doc.createElement('messageOpen');
+              messageOpenEl.setAttribute('label', 'Đã đọc');
+              messageOpenEl.setAttribute('name', 'message_open');
+              graph.insertEdge(parent, null, messageOpenEl, cell, addTagVertex);
             }
             finally {
               graph.getModel().endUpdate();
             }
-            var state = graph.view.getState(e1);
-            state.shape.node.getElementsByTagName('path')[0].removeAttribute('visibility');
-            state.shape.node.getElementsByTagName('path')[0].setAttribute('stroke-width', '6');
-            state.shape.node.getElementsByTagName('path')[0].setAttribute('stroke', 'lightGray');
-            state.shape.node.getElementsByTagName('path')[1].setAttribute('class', 'flow');
+
             that.onSave();
           }
-          else {
+        });
+
+        menu.addItem("Gán nhãn đã nhận", "./assets/editors/images/icons/message-tag-icon.png", function () {
+          //Nếu có edge messageDelivered từ cell này thì sẽ ko cho add thêm nữa
+          var model = graph.getModel();
+          var all_edges = model.filterDescendants(function (c) {
+            return graph.model.isEdge(c);
+          });
+
+          var connect_edges = model.filterCells(all_edges, function (c) {
+            return c.source.id == cell.id && c.value.nodeName.toLowerCase() == 'messagedelivered';
+          });
+
+          if (connect_edges.length) {
             that.notificationService.show({
-              content: 'Chỉ có thể thêm một Message_read',
+              content: 'Đã thêm gán nhãn đã nhận',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
               type: { style: 'error', icon: true }
             });
-          }
-        });
-        menu.addItem("Gán nhãn đã nhận", "./assets/editors/images/icons/message-tag-icon.png", function () {
-          if (cell.value.getAttribute('messageUnreadId') == null || cell.value.getAttribute('messageUnreadId') == '') {
+          } else {
             graph.getModel().beginUpdate();
             try {
-              var unread = that.doc.createElement('message_unread');
-              unread.setAttribute('name', 'unread');
-              unread.setAttribute('parent', cell.id);
-              var v_unread = graph.insertVertex(parent, null, unread, cell.geometry.x + 200, cell.geometry.y + 50, 40, 40, 'unread');
-              graph.insertEdge(parent, '', '', cell, v_unread);
-              var value = cell.getValue();
-              value.setAttribute('messageUnreadId', v_unread.id);
-              graph.getModel().setValue(cell, value);
+              var addTagEl = that.doc.createElement('addTag');
+              addTagEl.setAttribute('label', 'Gán nhãn');
+
+              var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y + 50, 40, 40, 'verticalLabelPosition=bottom;verticalAlign=top');
+
+              var messageDeliveredEl = that.doc.createElement('messageDelivered');
+              messageDeliveredEl.setAttribute('label', 'Đã nhận');
+              messageDeliveredEl.setAttribute('name', 'message_delivered');
+              graph.insertEdge(parent, null, messageDeliveredEl, cell, addTagVertex);
             }
             finally {
               graph.getModel().endUpdate();
-              that.onSave();
             }
-          } else {
-            that.notificationService.show({
-              content: 'Chỉ có thể thêm một Message_unread',
-              hideAfter: 3000,
-              position: { horizontal: 'center', vertical: 'top' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'error', icon: true }
-            });
+
+            that.onSave();
           }
         })
       }
@@ -805,7 +874,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     value.graphXml = mxUtils.getPrettyXml(node);
     if (this.id) {
       this.tcareService.update(this.id, value).subscribe(() => {
-        console.log("Thành công");
         this.notificationService.show({
           content: 'Thành công',
           hideAfter: 3000,
