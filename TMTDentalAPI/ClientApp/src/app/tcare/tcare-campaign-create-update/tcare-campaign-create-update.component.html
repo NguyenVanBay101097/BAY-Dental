@@ -20,39 +20,74 @@
     </div>
 </div>
 
-<div style="padding: 15px;">
-    <div style="max-width: 50%;">
-        <form [formGroup]="formGroup">
-            <div class="form-group">
-                <label for="formGroupExampleInput">Tên quy trình</label>
-                <input type="text" class="form-control" formControlName="name" id="formGroupExampleInput"
-                    placeholder="Example input">
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" *ngIf="campaign.state == 'draft' || campaign.state == 'stopped'"
+                        class="btn btn-primary btn-sm" (click)="startCampaign()">
+                        Chạy kịch bản
+                    </button>
+                    <button type="button" *ngIf="campaign.state == 'running'" class="btn btn-primary btn-sm"
+                        (click)="stopCampaign()">
+                        Dừng kịch bản
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="campaign.state !== 'stopped'" class="btn o_arrow_button disabled" type="button"
+                        [ngClass]="{'btn-primary': campaign.state === 'stopped', 'btn-secondary': campaign.state !== 'stopped'}">
+                        Đã dừng
+                    </button>
+                    <button [disabled]="campaign.state !== 'running'" class="btn o_arrow_button disabled" type="button"
+                        [ngClass]="{'btn-primary': campaign.state === 'running', 'btn-secondary': campaign.state !== 'running'}">
+                        Đang chạy
+                    </button>
+                    <button [disabled]="campaign.state !== 'draf t'" class="btn o_arrow_button disabled" type="button"
+                        [ngClass]="{'btn-primary': campaign.state === 'draft', 'btn-secondary': campaign.state !== 'draft'}">
+                        Nháp
+                    </button>
+
+                </div>
             </div>
-        </form>
-    </div>
-    <div class="row" style="position: relative;">
-        <div class="col-2" style="padding-right:0">
-            <div id="sidebarContainer" class="border shadow-sm"
-                style="overflow:hidden;min-height: 555px; height: 555px; padding:10px; ">
-                <div>
-                    <div>
-                        <div class="my-1"><b style="font-size: 0.9rem;">Gửi tin</b></div>
-                        <div class="border p-1" id="sidebarContainer_sequences"></div>
+
+            <div class="o_form_sheet">
+                <div style="margin-bottom: 15px;">
+                    <label for="formGroupExampleInput">Tên quy trình</label>
+                    <input type="text" class="form-control" formControlName="name" id="formGroupExampleInput"
+                        placeholder="Example input">
+                    <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submited)">
+                        <label *ngIf="nameControl.errors.required" style="color: red;">Nội dung gửi
+                            không được để trống !</label>
                     </div>
-                    <div>
-                        <div class="my-1"><b style="font-size: 0.9rem;">Điều kiện</b></div>
-                        <div class="border p-1" id="sidebarContainer_goals"></div>
+                </div>
+                <div class="row" style="position: relative;">
+                    <div class="col-2" style="padding-right:0">
+                        <div id="sidebarContainer" class="border shadow-sm"
+                            style="overflow:hidden;min-height: 555px; height: 555px; padding:10px; ">
+                            <div>
+                                <div>
+                                    <div class="my-1"><b style="font-size: 0.9rem;">Gửi tin</b></div>
+                                    <div class="border p-1" id="sidebarContainer_sequences"></div>
+                                </div>
+                                <div>
+                                    <div class="my-1"><b style="font-size: 0.9rem;">Điều kiện</b></div>
+                                    <div class="border p-1" id="sidebarContainer_goals"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-10" style="padding-left:0">
+                        <div id="graphContainer"
+                            style="overflow:hidden;min-height: 555px; height: 555px; background-image:url('./assets/editors/images/grid.gif');cursor:default;">
+                        </div>
+                    </div>
+                    <div id="outlineContainer"
+                        style="position:absolute;overflow:hidden;top:42px;right:15px;width:200px;height:140px;background:transparent;border-style:solid;border-color:black;">
                     </div>
                 </div>
             </div>
+
         </div>
-        <div class="col-10" style="padding-left:0">
-            <div id="graphContainer"
-                style="overflow:hidden;min-height: 555px; height: 555px; background-image:url('./assets/editors/images/grid.gif');cursor:default;">
-            </div>
-        </div>
-        <div id="outlineContainer"
-            style="position:absolute;overflow:hidden;top:42px;right:15px;width:200px;height:140px;background:transparent;border-style:solid;border-color:black;">
-        </div>
-    </div>
+    </form>
 </div>

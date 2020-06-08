@@ -61,9 +61,9 @@ namespace Infrastructure.Services
             var jobService = GetService<ITCareJobService>();
             var states = new string[] { "draft", "stopped" };
             var campaign = await SearchQuery(x => x.Id == val.Id && states.Contains(x.State)).FirstOrDefaultAsync();
-
-            campaign.State = "running";
             var runAt = val.SheduleStart.Value;
+            campaign.State = "running";
+            campaign.SheduleStart = runAt;
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             if (campaign.RecurringJobId == null)
             {

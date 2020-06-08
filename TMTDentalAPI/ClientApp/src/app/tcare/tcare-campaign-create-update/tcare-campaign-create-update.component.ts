@@ -12,6 +12,7 @@ import { TcareCampaignDialogMessageComponent } from '../tcare-campaign-dialog-me
 import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as xml2js from 'xml2js';
+import { TcareCampaignStartDialogComponent } from '../tcare-campaign-start-dialog/tcare-campaign-start-dialog.component';
 
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -25,7 +26,6 @@ declare var mxGraphHandler: any;
 declare var mxCodec: any;
 declare var mxEvent: any;
 declare var mxOutline: any;
-declare var mxEdgeStyle: any;
 declare var mxImage: any;
 declare var mxPerimeter: any;
 declare var mxConnectionHandler: any;
@@ -48,6 +48,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   campaign: TCareCampaignDisplay;
   cellSave: any;
   doc: any;
+  submited = false;
   constructor(
     private activeRoute: ActivatedRoute,
     private fb: FormBuilder,
@@ -107,12 +108,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       //create obj
       var sequence = that.doc.createElement('sequence');
-      sequence.setAttribute('campaignId', that.id);
-      sequence.setAttribute('label', 'Gửi tin');
-
       var rule = that.doc.createElement('rule');
-      rule.setAttribute('logic', 'and');
-      rule.setAttribute('label', 'Điều kiện');
 
       var editor = new mxEditor();
       var graph = editor.graph;
@@ -652,7 +648,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           });
         }
 
-        let modalRef = self.modalService.open(TcareCampaignDialogMessageComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+        let modalRef = self.modalService.open(TcareCampaignDialogMessageComponent, { size: 'sm', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
         modalRef.componentInstance.item = item;
 
         modalRef.result.then((result: any) => {
@@ -752,8 +748,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     modalRef.result.then((result: any) => {
       graph.getModel().beginUpdate();
       try {
-        var doc = mxUtils.createXmlDocument();
-        var userObject = doc.createElement('sequence');
+        var userObject = that.doc.createElement('sequence');
+        userObject.setAttribute('campaignId', that.id);
         for (var p in result) {
           userObject.setAttribute(p, result[p]);
         }
@@ -866,7 +862,50 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     }
   }
 
+  startCampaign() {
+    let modalRef = this.modalService.open(TcareCampaignStartDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
+    modalRef.componentInstance.title = 'Cài đặt thời gian chạy kịch bản';
+    modalRef.result.then((result: any) => {
+      if (result) {
+        result.id = this.id;
+        result.sheduleStart = this.intlService.formatDate(result.sheduleStart, 'yyyy-MM-ddTHH:mm:ss');
+        this.tcareService.actionStartCampaign(result).subscribe(
+          () => {
+            this.campaign.state = "running";
+            this.notificationService.show({
+              content: 'Chạy kịch bản thành công!.',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+          }
+        )
+      }
+    })
+  }
+
+  stopCampaign() {
+    if (this.campaign.id) {
+      var value = [];
+      value.push(this.campaign.id);
+      this.tcareService.actionStopCampaign(value).subscribe(
+        () => {
+          this.campaign.state = "stopped";
+          this.notificationService.show({
+            content: 'Dừng kịch bản thành công!.',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }
+      )
+    }
+  }
+
   onSave() {
+    this.submited = true;
     if (this.formGroup.invalid) {
       return false;
     }
@@ -886,4 +925,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       });
     }
   }
+
+  get nameControl() { return this.formGroup.get('name'); }
 }

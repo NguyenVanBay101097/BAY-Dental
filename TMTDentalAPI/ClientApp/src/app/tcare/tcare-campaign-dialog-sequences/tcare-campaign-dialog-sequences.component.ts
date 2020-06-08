@@ -70,11 +70,11 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     return this.formGroup.get('methodType').value;
   }
 
-  get contentValue() {
+  get contentControl() {
     return this.formGroup.get('content');
   }
 
-  get channelSocialIdValue() {
+  get channelSocialIdControl() {
     return this.formGroup.get('channelSocialId');
   }
 
