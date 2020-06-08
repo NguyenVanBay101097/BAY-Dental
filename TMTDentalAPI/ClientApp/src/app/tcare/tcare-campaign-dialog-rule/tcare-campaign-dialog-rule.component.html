@@ -5,94 +5,23 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group">
                         <tbody>
                             <tr>
-                                <td class="d-flex align-items-center">
-                                    <span>Chỉ khách hàng phù hợp với </span>
-                                    <select class="form-control ml-2" style="width: fit-content;"
-                                        formControlName="logic">
-                                        <option value="and">Tất cả điều kiện</option>
-                                        <option value="or">Bất kì điều kiện nào</option>
-                                    </select>
+                                <td class="o_td_label p-0" style="vertical-align: top;">
+                                    <label class="o_form_label">Điều kiện</label>
+                                </td>
+                                <td class="p-0" style="width:100%">
+                                    <app-audience-filter *ngIf="showAudienceFilter" [audience_filter_receive]="audience_filter" 
+                                        (audience_filter_send)="saveAudienceFilter($event)"></app-audience-filter>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group" [class.o_group_col_6]="!gettypeValue()">
-                        <tbody>
-                            <tr>
-                                <td style="padding-right: 20px;">
-                                    <select class="form-control" formControlName="type"
-                                        (change)="handletypeChange($event)">
-                                        <option value="">-- Chọn điều kiện --</option>
-                                        <option value="birthday">Sinh nhật</option>
-                                        <option value="lastTreatmentDay">Ngày điều trị cuối</option>
-                                        <option value="partnerGroup">Nhóm khách hàng</option>
-                                        <option value="service">Dịch vụ sử dụng</option>
-                                        <option value="serviceGroup">Nhóm dịch vụ sử dụng</option>
-                                    </select>
-                                </td>
-                                <td *ngIf="gettypeValue()" style="padding-right: 20px;">
-                                    <select class="form-control" formControlName="op">
-                                        <option *ngFor="let item of listop; index as i;" [value]="item">
-                                            {{convertop(item)}}
-                                        </option>
-                                    </select>
-                                </td>
-                                <td *ngIf="gettypeValue() && isDay(formGroup.get('type').value)" class="max-w-100px"
-                                    style="padding-right: 0;">
-                                    <kendo-numerictextbox class="form-control" [value]="numbericvalue"
-                                        (valueChange)="handleNumbericvalueChange($event)" [min]="0" [format]="'n0'">
-                                    </kendo-numerictextbox>
-                                </td>
-                                <td *ngIf="gettypeValue() && !isDay(formGroup.get('type').value)" class="min-w-200px"
-                                    style="padding-right: 0;">
-                                    <kendo-combobox [data]="listData" [textField]="'name'" [valueField]="'id'"
-                                        formControlName="selectedvalue" [filterable]="true"
-                                        [placeholder]="'-- ' + placeholdervalue() + ' --'"
-                                        (valueChange)="handlevalueChange($event)"
-                                        (filterChange)="handlevalueFilter($event)">
-                                    </kendo-combobox>
-                                </td>
-                                <td *ngIf="gettypeValue()"
-                                    style="vertical-align: middle; padding: 0; text-align: right;">
-                                    <span>{{unitCondition()}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot *ngIf="gettypeValue()">
-                            <tr>
-                                <td colspan="4" style="text-align: right;">
-                                    <button *ngIf="!selectedTag && selectedTag != 0" type="button"
-                                        class="btn btn-primary btn-sm" (click)="onAddTag()" accesskey="a">Thêm điều
-                                        kiện</button>
-                                    <button *ngIf="selectedTag || selectedTag == 0" type="button"
-                                        class="btn btn-secondary btn-sm" (click)="onCancelTag()"
-                                        accesskey="a">Hủy</button>
-                                    <button *ngIf="selectedTag || selectedTag == 0" type="button"
-                                        class="btn btn-primary btn-sm ml-2" (click)="onSaveTag()" accesskey="a">Lưu điều
-                                        kiện</button>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <div *ngIf="listTags.length" class="o_group border rounded pt-2 px-2 pb-1">
-                    <button *ngFor="let tag of listTags; index as i;" class="mr-2 mb-1 btn btn-light btn-sm border"
-                        [disabled]="selectedTag === i" (click)="clickTag(tag, i)">
-                        <span>{{converttype(tag.type)}}</span>
-                        <u class="pl-1">{{convertop(tag.op)}}</u>
-                        <u class="pl-1">{{isDay(tag.type) ? tag.value : tag.name}}</u>
-                        <span *ngIf="isDay(tag.type)" class="pl-1">ngày</span>
-                        <span class="remove" (click)="deleteTag(i)">
-                            <i class="fas fa-times pl-2"></i>
-                        </span>
-                    </button>
                 </div>
             </div>
         </div>

@@ -1,0 +1,35 @@
+<form [formGroup]="formGroup">
+    <table>
+        <tr>
+            <td colspan="2">
+                <b class="ml-2">{{selected_AudienceFilter_Picker.name}} : </b>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-right p-0 align-top">
+                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.op"
+                    *ngFor="let item of AudienceFilter_Picker.formula_types"
+                    (click)="selectFormulaType(item)">
+                    {{convertFormulaType(item)}}
+                </button>
+            </td>
+            <td class="p-0 align-top">
+                <div class="list-formula-value">
+                    <div class="px-2 pb-2">
+                        <div class="d-flex align-items-center">
+                            <kendo-numerictextbox class="shadow-sm mr-2"
+                                style="width: 150px;"
+                                formControlName="day" placeholder="Nhập số ngày.." myAutofocus
+                                [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                            </kendo-numerictextbox>
+                            <span style="white-space: nowrap;">ngày</span>
+                        </div>
+                        <div class="text-right mt-2">
+                            <button type="button" class="btn btn-primary btn-sm ml-1" (click)="saveFormulaValue()">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
