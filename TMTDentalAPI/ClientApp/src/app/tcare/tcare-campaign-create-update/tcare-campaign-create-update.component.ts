@@ -775,10 +775,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         menu.addItem("Gán nhãn đã đọc", "./assets/editors/images/icons/message-tag-open-icon.png", function () {
           //Nếu có edge messageOpen từ cell này thì sẽ ko cho add thêm nữa
           var model = graph.getModel();
+          //tìm tất cả edge của root
           var all_edges = model.filterDescendants(function (c) {
             return graph.model.isEdge(c);
           });
 
+          //lọc edge kết nối vơi cell (source là cellId)
           var connect_edges = model.filterCells(all_edges, function (c) {
             return c.source.id == cell.id && c.value.nodeName.toLowerCase() == 'messageopen';
           });
