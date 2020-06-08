@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
+using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Web.Mapping;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -47,7 +53,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, TCareCampaignNameCreateVM val)
+        public async Task<IActionResult> Update(Guid id, TCareCampaignSave val)
         {
             var campain = await _campaignService.GetByIdAsync(id);
             if (campain == null)
@@ -67,6 +73,20 @@ namespace TMTDentalAPI.Controllers
             if (campaign == null)
                 return BadRequest();
             await _campaignService.DeleteAsync(campaign);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionStartCampaign(TCareCampaignStart val)
+        {
+            await _campaignService.ActionStartCampaign(val);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionStopCampaign(IEnumerable<Guid> ids)
+        {
+            await _campaignService.ActionStopCampaign(ids);
             return NoContent();
         }
     }

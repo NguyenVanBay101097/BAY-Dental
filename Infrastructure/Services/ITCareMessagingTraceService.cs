@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    public interface ITCareJobService
+    public interface ITCareMessagingTraceService : IBaseService<TCareMessagingTrace>
     {
-        void Run(string db, Guid campaignId);
-
     }
 }

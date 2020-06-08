@@ -148,13 +148,13 @@ namespace Infrastructure.Services
                     await groupObj.AddAllImpliedGroupsToAllUser(groups);
                     //groupObj.Write(groups, implied_ids: new List<ResGroup>() { implied_group });
 
-                    if (name == "GroupTCare")
-                    {
-                        var db = _tenant != null ? _tenant.Hostname : "localhost";
-                        var runAtConfig = classified.Configs.FirstOrDefault(x => x.Name == "TCareRunAt");
-                        var runAt = Convert.ToDateTime(self.GetType().GetProperty(runAtConfig.Name).GetValue(self, null));
-                        RecurringJob.AddOrUpdate($"tcare-{db}", () => _tcareJobService.Run(db), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
-                    }
+                    //if (name == "GroupTCare")
+                    //{
+                    //    var db = _tenant != null ? _tenant.Hostname : "localhost";
+                    //    var runAtConfig = classified.Configs.FirstOrDefault(x => x.Name == "TCareRunAt");
+                    //    var runAt = Convert.ToDateTime(self.GetType().GetProperty(runAtConfig.Name).GetValue(self, null));
+                    //    RecurringJob.AddOrUpdate($"tcare-{db}", () => _tcareJobService.Run(db), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+                    //}
                 }
                 else
                 {

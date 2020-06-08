@@ -9,8 +9,25 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class TCareCampaign: BaseEntity
     {
+        //public TCareCampaign()
+        //{
+        //    State = "draft";
+        //}
+
         public string Name { get; set; }
 
         public string GraphXml { get; set; }
+
+        public DateTime? SheduleStart { get; set; }
+
+        public ICollection<TCareMessagingTrace> Traces { get; set; } = new List<TCareMessagingTrace>();
+        /// <summary>
+        /// draft : mới 
+        /// running : đang chạy
+        /// stopped : dừng
+        /// </summary>
+        public string State { get; set; }
+        public string RecurringJobId { get; set; }
+
     }
 }
