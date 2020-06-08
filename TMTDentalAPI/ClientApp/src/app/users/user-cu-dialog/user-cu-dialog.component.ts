@@ -119,6 +119,7 @@ export class UserCuDialogComponent implements OnInit {
 
   saveOrUpdate() {
     var data = this.getBodyData();
+    console.log(data);
     if (this.id) {
       return this.userService.update(this.id, data);
     } else {

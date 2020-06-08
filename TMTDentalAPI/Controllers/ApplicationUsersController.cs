@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -340,6 +341,138 @@ namespace TMTDentalAPI.Controllers
             _userService.ClearRuleCache(new List<string>() { user.Id });
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionImport(ApplicationUserImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ApplicationUserRowExcel>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var errs = new List<string>();
+
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        if (string.IsNullOrWhiteSpace(name))
+                            errs.Add("Tên người dùng là bắt buộc");
+
+                        var userName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                        if (string.IsNullOrWhiteSpace(userName))
+                            errs.Add("Tên tài khoản là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        data.Add(new ApplicationUserRowExcel
+                        {
+                            Name = name,
+                            PhoneNumber = Convert.ToString(worksheet.Cells[row, 2].Value),
+                            Email = Convert.ToString(worksheet.Cells[row, 3].Value),
+                            UserName = userName,
+                            Password = Convert.ToString(worksheet.Cells[row, 5].Value),
+                            Group = Convert.ToString(worksheet.Cells[row, 6].Value),
+                        });
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new ApplicationUserImportResponse { Success = false, Errors = errors });
+
+            var companyId = CompanyId;
+
+            var row_tmp = 2;
+            await _unitOfWork.BeginTransactionAsync();
+            foreach(var item in data)
+            {
+                var errs = new List<string>();
+
+                var partner = new Partner()
+                {
+                    Name = item.Name,
+                    Email = item.Email,
+                    CompanyId = companyId,
+                    Customer = false
+                };
+
+                await _partnerService.CreateAsync(partner);
+
+                var user = _mapper.Map<ApplicationUser>(item);
+                user.CompanyId = companyId;
+                user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = companyId });
+                user.PartnerId = partner.Id;
+
+                if (!string.IsNullOrEmpty(item.Group))
+                {
+                    var excel_group = await _resGroupService.SearchQuery(x => x.Name == item.Group).FirstOrDefaultAsync();
+                    if (excel_group != null)
+                    {
+                        var to_add = new List<Guid>() { excel_group.Id };
+                        var add_dict = _resGroupService._GetTransImplied(to_add);
+
+                        foreach (var group_id in to_add)
+                        {
+                            var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
+                            if (rel2 == null)
+                                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
+
+                            var groups = add_dict[group_id];
+                            foreach (var group in groups)
+                            {
+                                var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
+                                if (rel == null)
+                                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                            }
+                        }
+                    }
+                }
+
+                var result = await _userManager.CreateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
+                        errs.Add($"Tài khoản {item.UserName} đã được sử dụng");
+                    else
+                        errs.Add(string.Join(", ", result.Errors.Select(x => x.Description)));
+                }
+
+                if (!string.IsNullOrEmpty(item.Password))
+                {
+                    var addResult = await _userManager.AddPasswordAsync(user, item.Password);
+                    if (!addResult.Succeeded)
+                        errs.Add($"Add password fail");
+                }
+
+                if (errs.Any())
+                {
+                    errors.Add($"Dòng {row_tmp}: {string.Join(", ", errs)}");
+                    row_tmp++;
+                    continue;
+                } else
+                    row_tmp++;
+            }
+
+            if (!errors.Any())
+            {
+                _unitOfWork.Commit();
+                return Ok(new ApplicationUserImportResponse { Success = true, Errors = errors });
+            }
+            else
+            {
+                return Ok(new ApplicationUserImportResponse { Success = false, Errors = errors });
+            }
         }
 
         private async Task SaveAvatar(Partner partner, ApplicationUserDisplay val)

@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { UserCuDialogComponent } from '../user-cu-dialog/user-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { UserListImportComponent } from '../user-list-import/user-list-import.component';
 
 @Component({
   selector: 'app-user-list',
@@ -88,4 +89,11 @@ export class UserListComponent implements OnInit {
     });
   }
 
+  importFromExcel() {
+    const modalRef = this.modalService.open(UserListImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
 }
