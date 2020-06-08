@@ -18,6 +18,5 @@ namespace Infrastructure.Services
         Task<bool> HasGroup(string group_ext_id);
         void TestJobFunc(string s, string tenant_id);
         Task UpdateAsync(ApplicationUser user);
-        Task<ApplicationUserImportResponse> Import(ApplicationUserImportExcelViewModel val);
     }
 }
