@@ -11,7 +11,7 @@ import { TcareCampaignDialogSequencesComponent } from './tcare-campaign-dialog-s
 import { TcareCampaignCreateDialogComponent } from './tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
 import { TcareCampaignListComponent } from './tcare-campaign-list/tcare-campaign-list.component';
 import { TcareCampaignDialogRuleComponent } from './tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component';
-import { TcareCampaignDialogMessageReadComponent } from './tcare-campaign-dialog-message-read/tcare-campaign-dialog-message-read.component';
+import { TcareCampaignDialogMessageComponent } from './tcare-campaign-dialog-message/tcare-campaign-dialog-message.component';
 import { AudienceFilterComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter.component';
 import { AudienceFilterDropdownComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-dropdown.component';
 import { AudienceFilterBirthdayComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-birthday/audience-filter-birthday.component';
@@ -29,7 +29,7 @@ import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-fil
     TcareCampaignCreateDialogComponent,
     TcareCampaignListComponent,
     TcareCampaignDialogRuleComponent,
-    TcareCampaignDialogMessageReadComponent,
+    TcareCampaignDialogMessageComponent,
     AudienceFilterComponent,
     AudienceFilterDropdownComponent,
     AudienceFilterBirthdayComponent,
@@ -53,9 +53,9 @@ import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-fil
     TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,
     TcareCampaignCreateDialogComponent,
-    TcareCampaignDialogMessageReadComponent,
-    AudienceFilterBirthdayComponent, 
-    AudienceFilterLastTreatmentDayComponent, 
+    TcareCampaignDialogMessageComponent,
+    AudienceFilterBirthdayComponent,
+    AudienceFilterLastTreatmentDayComponent,
     AudienceFilterPartnerCategoryComponent,
     AudienceFilterServiceComponent,
     AudienceFilterServiceCategoryComponent

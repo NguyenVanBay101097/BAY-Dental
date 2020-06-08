@@ -82,6 +82,10 @@
                                         [filterable]="true" #channelSocialCbx formControlName="channelSocialId"
                                         [valueField]="'id'" [valuePrimitive]="true">
                                     </kendo-combobox>
+                                    <div
+                                        *ngIf="channelSocialIdValue.invalid && (channelSocialIdValue.dirty || channelSocialIdValue.touched || submited)">
+                                        <label style="color: red;">Kênh gửi không được để trống !</label>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -94,6 +98,10 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <textarea formControlName="content" class="form-control"></textarea>
+                                    <div
+                                        *ngIf="contentValue.invalid && (contentValue.dirty || contentValue.touched || submited)">
+                                        <label style="color: red;">Nội dung gửi không được để trống !</label>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

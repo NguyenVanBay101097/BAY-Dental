@@ -13,7 +13,6 @@ import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-categor
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as xml2js from 'xml2js';
 
-declare var mxGeometry: any;
 declare var mxUtils: any;
 declare var mxDivResizer: any;
 declare var mxClient: any;
@@ -233,11 +232,11 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           }
 
           if (cell.value.nodeName.toLowerCase() == 'rule') {
-            that.popupRule(graph, cell, TcareCampaignDialogRuleComponent);
+            that.popupRule(graph, cell);
           }
 
           if (cell.value.nodeName.toLowerCase() == 'addtag') {
-            that.popupAddTag(graph, cell, TcareCampaignDialogMessageComponent);
+            that.popupAddTag(graph, cell);
           }
 
           else { return false; }
@@ -634,7 +633,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   }
 
-  popupAddTag(graph, cell, component) {
+  popupAddTag(graph, cell) {
     let self = this;
     var value = cell.getValue();
 
@@ -653,7 +652,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           });
         }
 
-        let modalRef = self.modalService.open(component, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+        let modalRef = self.modalService.open(TcareCampaignDialogMessageComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
         modalRef.componentInstance.item = item;
 
         modalRef.result.then((result: any) => {
@@ -685,7 +684,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     });
   }
 
-  popupRule(graph, cell, component) {
+  popupRule(graph, cell) {
     let that = this;
     var value = cell.getValue();
 
@@ -697,13 +696,14 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         var rule = result.rule;
         var a = Object.assign({}, rule.$);
         a.conditions = [];
-        rule.condition.forEach(con => {
-          a.conditions.push(Object.assign({}, con.$));
-        });
-
-        let modalRef = that.modalService.open(component, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+        if (rule.condition) {
+          rule.condition.forEach(con => {
+            a.conditions.push(Object.assign({}, con.$));
+          });
+        }
+        let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'lg', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
         modalRef.componentInstance.title = 'Cài đặt điều kiện';
-        modalRef.componentInstance.tCareRule = a;
+        modalRef.componentInstance.audience_filter = a;
         modalRef.result.then((result: any) => {
           graph.getModel().beginUpdate();
           try {
@@ -799,7 +799,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               var addTagEl = that.doc.createElement('addTag');
               addTagEl.setAttribute('label', 'Gán nhãn');
 
-              var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, 'verticalLabelPosition=bottom;verticalAlign=top');
+              var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, 'read');
 
               var messageOpenEl = that.doc.createElement('messageOpen');
               messageOpenEl.setAttribute('label', 'Đã đọc');
@@ -839,7 +839,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               var addTagEl = that.doc.createElement('addTag');
               addTagEl.setAttribute('label', 'Gán nhãn');
 
-              var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y + 50, 40, 40, 'verticalLabelPosition=bottom;verticalAlign=top');
+              var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y + 50, 40, 40, 'unread');
 
               var messageDeliveredEl = that.doc.createElement('messageDelivered');
               messageDeliveredEl.setAttribute('label', 'Đã nhận');

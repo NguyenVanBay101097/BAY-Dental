@@ -21,7 +21,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   model: any;
   formGroup: FormGroup;
   filterdChannelSocials: ChannelSocial[] = [];
-
+  submited = false;
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
@@ -70,6 +70,14 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     return this.formGroup.get('methodType').value;
   }
 
+  get contentValue() {
+    return this.formGroup.get('content');
+  }
+
+  get channelSocialIdValue() {
+    return this.formGroup.get('channelSocialId');
+  }
+
   searchSocialChannel(q?: string) {
     var val = new FacebookPagePaged();
     val.search = q || '';
@@ -77,10 +85,10 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   onSave() {
+    this.submited = true;
     if (!this.formGroup.valid) {
       return false;
     }
-
     var value = this.formGroup.value;
     value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : '';
     value.sheduleDate = value.sheduleDate ? this.intlService.formatDate(value.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '';

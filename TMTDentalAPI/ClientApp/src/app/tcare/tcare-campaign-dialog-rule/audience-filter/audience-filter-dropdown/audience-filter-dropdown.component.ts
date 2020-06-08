@@ -9,7 +9,7 @@ export class AudienceFilterDropdownComponent implements OnInit {
 
   @Input() audience_filter_comp_data: { component, data }; // component and data 
   @Output() statusItem = new EventEmitter<any>();
-  
+
   @ViewChild('container', {
     read: ViewContainerRef,
     static: true
@@ -18,15 +18,16 @@ export class AudienceFilterDropdownComponent implements OnInit {
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
+    debugger
     this.renderComponent();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.renderComponent();
-  }  
+  }
 
   renderComponent() {
-    
+    debugger
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.audience_filter_comp_data.component);
 
     const viewContainerRef = this.container;

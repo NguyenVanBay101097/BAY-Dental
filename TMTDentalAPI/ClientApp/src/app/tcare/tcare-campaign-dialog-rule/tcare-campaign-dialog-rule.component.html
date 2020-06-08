@@ -16,7 +16,8 @@
                                     <label class="o_form_label">Điều kiện</label>
                                 </td>
                                 <td class="p-0" style="width:100%">
-                                    <app-audience-filter *ngIf="showAudienceFilter" [audience_filter_receive]="audience_filter" 
+                                    <app-audience-filter *ngIf="showAudienceFilter"
+                                        [audience_filter_receive]="audience_filter"
                                         (audience_filter_send)="saveAudienceFilter($event)"></app-audience-filter>
                                 </td>
                             </tr>
