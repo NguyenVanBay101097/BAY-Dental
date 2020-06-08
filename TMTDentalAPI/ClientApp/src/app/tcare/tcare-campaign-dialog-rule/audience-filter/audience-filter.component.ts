@@ -6,7 +6,7 @@ import { AudienceFilterServiceComponent } from './audience-filter-dropdown/audie
 import { AudienceFilterPartnerCategoryComponent } from './audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
 import { AudienceFilterServiceCategoryComponent } from './audience-filter-dropdown/audience-filter-service-category/audience-filter-service-category.component';
 import { FormGroup, FormBuilder } from '@angular/forms';
-declare var $ :any;
+declare var $: any;
 
 @Component({
   selector: 'app-audience-filter',
@@ -17,7 +17,7 @@ export class AudienceFilterComponent implements OnInit {
   @Input() audience_filter_receive: any;
   @Output() audience_filter_send = new EventEmitter<any>();
   formGroup: FormGroup;
-  
+
   audience_filter_comp_data: { component, data };
   listAudienceFilter_Items: any[] = [];
   selectedAudienceFilter_Item: any;
@@ -55,12 +55,12 @@ export class AudienceFilterComponent implements OnInit {
     });
 
     if (this.audience_filter_receive) {
-      var temp = this.convertAudienceFilterItemsToArray(this.audience_filter_receive);
+      debugger
       this.formGroup.patchValue({
-        logic: temp.logic,
-        conditions: temp.conditions
+        logic: this.audience_filter_receive.logic,
+        conditions: this.audience_filter_receive.conditions
       });
-      this.listAudienceFilter_Items = temp.conditions;
+      this.listAudienceFilter_Items = this.audience_filter_receive.conditions;
     }
     // console.log(this.listAudienceFilter_Items);
 
@@ -106,22 +106,19 @@ export class AudienceFilterComponent implements OnInit {
         return 'gte';
     }
   }
-  
+
   setLogic(value) {
-    this.formGroup.patchValue({ 
-      logic: value 
+    this.formGroup.patchValue({
+      logic: value
     });
+    this.audience_filter_send.emit(this.outputAudienceFilterItems());
   }
 
-  convertAudienceFilterItemsToString() {
-    this.formGroup.patchValue({ 
-      conditions: this.listAudienceFilter_Items 
+  outputAudienceFilterItems() {
+    this.formGroup.patchValue({
+      conditions: this.listAudienceFilter_Items
     });
-    return JSON.stringify(this.formGroup.value);
-  }
-
-  convertAudienceFilterItemsToArray(listAudienceFilter_Items_String) {
-    return JSON.parse(listAudienceFilter_Items_String);
+    return this.formGroup.value;
   }
 
   existListAudienceFilter_Items() {
@@ -140,32 +137,32 @@ export class AudienceFilterComponent implements OnInit {
             component: AudienceFilterBirthdayComponent,
             data: this.AudienceFilter_Item
           }
-        break;
+          break;
         case "lastSaleOrder":
           this.audience_filter_comp_data = {
             component: AudienceFilterLastTreatmentDayComponent,
             data: this.AudienceFilter_Item
           }
-        break;
+          break;
         case "categPartner":
           this.audience_filter_comp_data = {
             component: AudienceFilterPartnerCategoryComponent,
             data: this.AudienceFilter_Item
           }
-        break;
+          break;
         case "usedService":
           this.audience_filter_comp_data = {
             component: AudienceFilterServiceComponent,
             data: this.AudienceFilter_Item
           }
-        break;
+          break;
         case "usedCategService":
           this.audience_filter_comp_data = {
             component: AudienceFilterServiceCategoryComponent,
             data: this.AudienceFilter_Item
           }
-        break;
-      } 
+          break;
+      }
     }
     this.openAudienceFilter = false;
     this.clickedAudienceFilter = false;
@@ -185,7 +182,7 @@ export class AudienceFilterComponent implements OnInit {
     if (this.clickedAudienceFilter_Item === true && this.count_clickOutside >= 3) {
       this.selectedAudienceFilter_Item = null;
       this.clickedAudienceFilter_Item = false;
-      this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
+      this.audience_filter_send.emit(this.outputAudienceFilterItems());
     }
   }
 
@@ -200,7 +197,7 @@ export class AudienceFilterComponent implements OnInit {
     this.selectedAudienceFilter_Item = null;
     this.clickedAudienceFilter_Item = false;
     this.listAudienceFilter_Items.splice(index, 1);
-    this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
+    this.audience_filter_send.emit(this.outputAudienceFilterItems());
   }
 
   clickAudienceFilter() {
@@ -241,31 +238,31 @@ export class AudienceFilterComponent implements OnInit {
           component: AudienceFilterBirthdayComponent,
           data: this.AudienceFilter_Item
         }
-      break;
+        break;
       case "lastSaleOrder":
         this.audience_filter_comp_data = {
           component: AudienceFilterLastTreatmentDayComponent,
           data: this.AudienceFilter_Item
         }
-      break;
+        break;
       case "categPartner":
         this.audience_filter_comp_data = {
           component: AudienceFilterPartnerCategoryComponent,
           data: this.AudienceFilter_Item
         }
-      break;
+        break;
       case "usedService":
         this.audience_filter_comp_data = {
           component: AudienceFilterServiceComponent,
           data: this.AudienceFilter_Item
         }
-      break;
+        break;
       case "usedCategService":
         this.audience_filter_comp_data = {
           component: AudienceFilterServiceCategoryComponent,
           data: this.AudienceFilter_Item
         }
-      break;
+        break;
     }
     document.getElementById("dropdown-item-audience-filter").style.display = 'none';
     this.openAudienceFilter_Picker = true;
@@ -274,7 +271,7 @@ export class AudienceFilterComponent implements OnInit {
   addAudienceFilterItem() {
     if (this.AudienceFilter_Item.op && this.AudienceFilter_Item.value) {
       this.listAudienceFilter_Items.push(this.AudienceFilter_Item);
-      this.audience_filter_send.emit(this.convertAudienceFilterItemsToString());
+      this.audience_filter_send.emit(this.outputAudienceFilterItems());
       this.openAudienceFilter = false;
       this.clickedAudienceFilter = false;
       this.openAudienceFilter_Picker = false; //

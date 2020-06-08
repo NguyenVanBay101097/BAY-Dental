@@ -12,7 +12,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   audience_filter: any;
   showAudienceFilter: boolean = false;
 
-  constructor( public activeModal: NgbActiveModal ) { }
+  constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.showAudienceFilter = true;
