@@ -527,6 +527,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  getDiscountNumberObj(line: any) {
+    var discountType = line.discountType || 'percentage';
+    if (discountType == 'fixed') {
+      return line.discountFixed;
+    } else {
+      return line.discount;
+    }
+  }
+
+  getDiscountTypeDisplayObj(line: any) {
+    var discountType = line.discountType || 'percentage';
+    if (discountType == 'fixed') {
+      return "";
+    } else {
+      return '%';
+    }
+  }
+
   saveRecord() {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');

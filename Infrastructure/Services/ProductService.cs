@@ -313,6 +313,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type2))
                 query = query.Where(x => x.Type2 == val.Type2);
 
+            if (val.PurchaseOK.HasValue)
+                query = query.Where(x => x.PurchaseOK == val.PurchaseOK);
+
+            if (val.SaleOK.HasValue)
+                query = query.Where(x => x.SaleOK == val.SaleOK);
+
             return query;
         }
 

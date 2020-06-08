@@ -84,7 +84,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       }, (err) => {
         this.errorService.show(err);
       });
-    }, () => {
+    }, (err) => {
+      this.errorService.show(err);
     });
   }
 

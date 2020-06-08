@@ -13,8 +13,6 @@
 "access_toa_thuoc_group_user","toa_thuoc group_user","sale.model_toa_thuoc","group_user",1,0,0,0
 "access_labo_order_group_user","labo_order group_user","labo.model_labo_order","group_user",1,1,1,1
 "access_purchase_order_group_user","purchase_order group_user","purchase.model_purchase_order","group_user",1,1,1,1
-"access_employee_group_user","employee group_user","base.model_employee","group_user",1,1,1,1
-"access_employee_category_group_user","employee_category group_user","base.model_employee_category","group_user",1,1,1,1
 "access_history_group_user","history group_user","base.model_history","group_user",1,1,1,1
 "access_sale_order_group_user","sale_order group_user","sale.model_sale_order","group_user",1,0,0,0
 "access_product_pricelist_group_user","product_pricelist group_user","product.model_product_pricelist","group_user",1,0,0,0
@@ -38,10 +36,8 @@
 "access_company_group_manager","company group_manager","base.model_res_company","group_manager",1,0,0,0
 "access_dot_kham_group_manager","dot_kham group_manager","sale.model_dot_kham","group_manager",1,1,1,1
 "access_toa_thuoc_group_manager","toa_thuoc group_manager","sale.model_toa_thuoc","group_manager",1,1,1,1
-"access_labo_order_group_manager","labo_order group_manager","labo.model_labo_order","group_manager",1,0,0,0
+"access_labo_order_group_manager","labo_order group_manager","labo.model_labo_order","group_manager",1,1,1,1
 "access_purchase_order_group_manager","purchase_order group_manager","purchase.model_purchase_order","group_manager",1,0,0,0
-"access_employee_group_manager","employee group_manager","base.model_employee","group_manager",1,0,0,0
-"access_employee_category_group_manager","employee_category group_manager","base.model_employee_category","group_manager",1,0,0,0
 "access_history_group_manager","history group_manager","base.model_history","group_manager",1,1,1,1
 "access_sale_order_group_manager","sale_order group_manager","sale.model_sale_order","group_manager",1,1,1,1
 "access_product_pricelist_group_manager","product_pricelist group_manager","product.model_product_pricelist","group_manager",1,0,0,0
@@ -67,8 +63,6 @@
 "access_toa_thuoc_group_admin","toa_thuoc group_admin","sale.model_toa_thuoc","group_admin",1,0,0,0
 "access_labo_order_group_admin","labo_order group_admin","labo.model_labo_order","group_admin",1,0,0,0
 "access_purchase_order_group_admin","purchase_order group_admin","purchase.model_purchase_order","group_admin",1,0,0,0
-"access_employee_group_admin","employee group_admin","base.model_employee","group_admin",1,1,1,1
-"access_employee_category_group_admin","employee_category group_admin","base.model_employee_category","group_admin",1,1,1,1
 "access_history_group_admin","history group_admin","base.model_history","group_admin",1,1,1,1
 "access_sale_order_group_admin","sale_order group_admin","sale.model_sale_order","group_admin",1,0,0,0
 "access_product_pricelist_group_admin","product_pricelist group_admin","product.model_product_pricelist","group_admin",1,1,1,1

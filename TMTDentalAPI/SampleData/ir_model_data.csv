@@ -12,8 +12,6 @@ account.model_account_partial_reconcile,AccountPartialReconcile,Account Partial 
 account.model_account_payment,AccountPayment,Thanh toán,0
 base.model_res_user,ResUser,Người dùng,0
 base.model_res_company,Company,Chi nhánh,0
-base.model_employee,Employee,Nhân viên,0
-base.model_employee_category,EmployeeCategory,Nhóm nhân viên,0
 base.model_history,History,Tiểu sử bệnh,0
 base.model_res_group,ResGroup,Nhóm quyền,0
 base.model_ir_attachment,IRAttachment,IR Attachment,1

@@ -64,15 +64,20 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProductSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var product = await _productService.CreateProduct(val);
-            var res = _mapper.Map<ProductBasic>(product);
+            _unitOfWork.Commit();
+
+             var res = _mapper.Map<ProductBasic>(product);
             return Ok(res);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ProductSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _productService.UpdateProduct(id, val);
+            _unitOfWork.Commit();
 
             return NoContent();
         }
