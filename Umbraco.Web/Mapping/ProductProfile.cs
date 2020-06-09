@@ -13,6 +13,9 @@ namespace Umbraco.Web.Mapping
         public ProductProfile()
         {
             CreateMap<Product, ProductBasic>().ReverseMap();
+
+            CreateMap<Product, ProductServiceExportExcel>()
+             .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
             CreateMap<Product, ProductDisplay>()
                  .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
             CreateMap<ProductDisplay, Product>()

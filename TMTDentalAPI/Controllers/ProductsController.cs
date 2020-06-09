@@ -610,7 +610,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             val.Offset = 0;
-            var services = await _productService.GetPagedResultAsync(val);
+            var services = await _productService.GetServiceExportExcel(val);
             //var categDict = new Dictionary<Guid, ProductCategory>();
             var sheetName = "Thông tin dịch vụ ";
             byte[] fileContent;
@@ -626,20 +626,18 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 4].Value = "Mã dịch vụ";
                 worksheet.Cells[1, 5].Value = "Giá bán";
                 worksheet.Cells[1, 6].Value = "Công đoạn";
-                worksheet.Cells[1, 7].Value = "Giá đặt labo";
-                var items = services.Items.Where(x => x.Type2 == "service").ToList();
-                for (int row = 2; row < items.Count + 2; row++)
+                worksheet.Cells[1, 7].Value = "Giá đặt labo";              
+                for (int row = 2; row < services.Count() + 2; row++)
                 {
-                    var item = items[row - 2];
-                    var self = await _productService.GetProductExport(item.Id);
+                    var item = services.ToList()[row - 2];
 
-                    worksheet.Cells[row, 1].Value = self.Name;
-                    worksheet.Cells[row, 2].Value = self.IsLabo;
-                    worksheet.Cells[row, 3].Value = self.Categ.Name;
-                    worksheet.Cells[row, 4].Value = self.DefaultCode;
-                    worksheet.Cells[row, 5].Value = self.ListPrice;
-                    worksheet.Cells[row, 6].Value = self.StepList.Count() == 0 ? null : string.Join(";", self.StepList.Select(x=>x.Name).ToList());
-                    worksheet.Cells[row, 7].Value = self.LaboPrice ?? 0;
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.IsLabo;
+                    worksheet.Cells[row, 3].Value = item.CategName;
+                    worksheet.Cells[row, 4].Value = item.DefaultCode;
+                    worksheet.Cells[row, 5].Value = item.ListPrice;
+                    worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x=>x.Name).ToList());
+                    worksheet.Cells[row, 7].Value = item.PurchasePrice ?? 0;
                 }
 
                 package.Save();

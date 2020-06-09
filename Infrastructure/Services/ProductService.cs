@@ -207,8 +207,79 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
+       
+        public async Task<List<ProductServiceExportExcel>> GetServiceExportExcel(ProductPaged val)
+        {
+            var query = SearchQuery(x => x.Active && x.Type2 == "service");
+            if (!string.IsNullOrWhiteSpace(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (val.CategId.HasValue)
+                query = query.Where(x => x.CategId == val.CategId);
+            var products = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Include(x => x.ProductCompanyRels)
+                .Include(x => x.Categ)
+                .Include(x => x.UOM)
+                .Include(x => x.UOMPO).ToListAsync();
+
+            //check listPrice product
+            foreach (var product in products)           
+                product.ListPrice = await _GetListPrice(product);
+            
+
+            var res = products.Select(x => new ProductServiceExportExcel { 
+            Id = x.Id,
+            CategName = x.Categ.Name,
+            DefaultCode = x.DefaultCode,
+            Name = x.Name,
+            IsLabo = x.IsLabo,
+            ListPrice = x.ListPrice,
+            PurchasePrice = x.PurchasePrice,
+            StepList = x.Steps.Select(s => new ProductStepSimple { 
+            Id = s.Id,
+            Name = s.Name
+            })
+            }).ToList();
+
+            return res;
+
+        }
 
         private void _CalcQtyAvailable(IEnumerable<ProductBasic> items)
+        {
+            var compute_items = items.Where(x => x.Type == "product");
+            if (!compute_items.Any())
+                return;
+
+            var company_id = CompanyId;
+            var qty_available_dict = ProductAvailable(ids: compute_items.Select(x => x.Id).ToList(), company_id: company_id);
+
+            foreach (var item in compute_items)
+                item.QtyAvailable = qty_available_dict[item.Id].QtyAvailable;
+        }
+
+        private async Task _ProcessListPriceExport(List<ProductServiceExportExcel> items)
+        {
+            var userObj = GetService<IUserService>();
+            var hasGroup = await userObj.HasGroup("base.group_multi_company");
+            if (!hasGroup)
+                return;
+
+            var modelDataObj = GetService<IIRModelDataService>();
+            var productRule = await modelDataObj.GetRef<IRRule>("product.product_comp_rule");
+            var companyShareProduct = !productRule.Active;
+            if (!companyShareProduct)
+                return;
+
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("product.listprice_restrict_company");
+            if (string.IsNullOrEmpty(value) || !Convert.ToBoolean(value))
+                return;
+
+            var propertyObj = GetService<IIRPropertyService>();
+            var dict = propertyObj.get_multi("list_price", "product.product", items.Select(x => x.Id.ToString()).ToList());
+            foreach (var item in items)
+                item.ListPrice = Convert.ToDecimal(dict[item.Id.ToString()]);
+        }
+        private void _CalcQtyAvailableExport(IEnumerable<ProductServiceExportExcel> items)
         {
             var compute_items = items.Where(x => x.Type == "product");
             if (!compute_items.Any())

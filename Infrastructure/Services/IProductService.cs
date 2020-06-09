@@ -29,7 +29,7 @@ namespace Infrastructure.Services
             Guid pricelistId,
             Guid? partnerId = null, decimal quantity = 1,
             DateTime? date = null);
-
+        Task<List<ProductServiceExportExcel>> GetServiceExportExcel(ProductPaged val);
         Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val);
         Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids);
         Task<ProductDisplay> GetProductExport(Guid id);

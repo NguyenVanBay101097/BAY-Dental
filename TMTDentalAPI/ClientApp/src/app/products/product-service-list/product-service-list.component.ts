@@ -153,6 +153,7 @@ export class ProductServiceListComponent implements OnInit {
   exportExcelFile() {
     var paged = new ProductPaged();
     paged.search = this.search || "";
+    paged.categId = this.searchCateg ? this.searchCateg.id : "";
     this.productService.excelServiceExport(paged).subscribe((rs) => {
       let filename = "ExportedExcelFile";
       let newBlob = new Blob([rs], {

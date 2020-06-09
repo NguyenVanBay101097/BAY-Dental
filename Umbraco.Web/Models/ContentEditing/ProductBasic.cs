@@ -175,4 +175,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? PurchasePrice { get; set; }
     }
+
+    
 }
