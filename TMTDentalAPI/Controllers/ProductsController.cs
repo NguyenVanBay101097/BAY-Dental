@@ -311,9 +311,9 @@ namespace TMTDentalAPI.Controllers
             var uom = await _uomService.DefaultUOM();
             foreach (var item in data)
             {
-                if (!string.IsNullOrEmpty(item.DefaultCode))
+                var product = !string.IsNullOrEmpty(item.DefaultCode) ? await _productService.SearchQuery(x => x.DefaultCode == item.DefaultCode && x.Type == "service").FirstOrDefaultAsync() : null;
+                if (product != null)
                 {
-                    var product = await _productService.SearchQuery(x => x.DefaultCode == item.DefaultCode  && x.Type == "service").FirstOrDefaultAsync();
                     var res = new ProductSave();
                     res.ListPrice = item.ListPrice ?? 0;
                     res.IsLabo = item.IsLabo ?? false;
@@ -380,10 +380,7 @@ namespace TMTDentalAPI.Controllers
                     }
                     await _productService.CreateProduct(pd);
                 }
-
-               
             }
-
 
             _unitOfWork.Commit();
 
