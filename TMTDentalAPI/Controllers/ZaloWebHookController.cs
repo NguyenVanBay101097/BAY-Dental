@@ -22,9 +22,12 @@ namespace TMTDentalAPI.Controllers
             _tCareMessagingTraceService = tCareMessagingTraceService;
         }
 
+       
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]JObject data)
         {
+           
             var whzl = data.ToObject<ZaloWebHook>();
 
             if (whzl.EventName == "user_received_message")
