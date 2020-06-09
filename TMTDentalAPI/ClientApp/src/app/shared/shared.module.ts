@@ -109,7 +109,7 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
     AnchorHostDirective,
     MyAutosizeDirective,
     CharCountDirective,
-    SelectUomProductDialogComponent
+    SelectUomProductDialogComponent,
   ],
   imports: [
     CommonModule,

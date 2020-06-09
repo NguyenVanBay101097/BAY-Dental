@@ -65,7 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
 
   searchCardBarcode: string;
-
+  submitted = false;
   type: string;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
@@ -176,6 +176,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   get partner() {
     var control = this.formGroup.get('partner');
     return control ? control.value : null;
+  }
+
+  get fgControls() {
+    return this.formGroup.controls;
   }
 
   quickCreateCustomer() {
@@ -523,6 +527,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  getDiscountNumberObj(line: any) {
+    var discountType = line.discountType || 'percentage';
+    if (discountType == 'fixed') {
+      return line.discountFixed;
+    } else {
+      return line.discount;
+    }
+  }
+
+  getDiscountTypeDisplayObj(line: any) {
+    var discountType = line.discountType || 'percentage';
+    if (discountType == 'fixed') {
+      return "";
+    } else {
+      return '%';
+    }
+  }
+
   saveRecord() {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
@@ -695,6 +717,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -755,6 +779,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -823,8 +849,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionCancel() {
     if (this.id) {
-      this.saleOrderService.actionCancel([this.id]).subscribe(() => {
-        this.loadRecord();
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Hủy phiếu điều trị';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy phiếu điều trị?';
+      modalRef.result.then(() => {
+        this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+          this.loadRecord();
+        }, err => {
+          this.errorService.show(err);
+        });
       });
     }
   }

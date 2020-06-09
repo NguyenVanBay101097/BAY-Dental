@@ -10,7 +10,6 @@ namespace Infrastructure.Services
 {
     public interface IProductService : IBaseService<Product>
     {
-        Task<PagedResult<Product>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "");
         Task<Product> GetProductForDisplayAsync(Guid id);
         Task<IEnumerable<ProductSimple>> GetProductsAutocomplete(string filter = "");
         Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val);
@@ -20,7 +19,7 @@ namespace Infrastructure.Services
 
         Task<ProductDisplay> GetProductDisplay(Guid id);
         Task<double> GetStandardPrice(Guid id);
-        Task<PagedResult2<ProductBasic2>> GetPagedResultAsync(ProductPaged val);
+        Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val);
 
         Task<ProductDisplay> DefaultGet();
 
@@ -30,8 +29,9 @@ namespace Infrastructure.Services
             Guid pricelistId,
             Guid? partnerId = null, decimal quantity = 1,
             DateTime? date = null);
-
+        Task<List<ProductServiceExportExcel>> GetServiceExportExcel(ProductPaged val);
         Task<PagedResult2<ProductLaboBasic>> GetLaboPagedResultAsync(ProductPaged val);
         Task<IDictionary<Guid, decimal>> GetQtyAvailableDict(IEnumerable<Guid> ids);
+        Task<ProductDisplay> GetProductExport(Guid id);
     }
 }

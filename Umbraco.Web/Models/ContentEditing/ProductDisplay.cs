@@ -17,29 +17,20 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         /// <summary>
-        /// Có thể kê toa 
-        /// </summary>
-        public bool KeToaOK { get; set; }
-
-        /// <summary>
-        /// Ghi hướng dẫn sử dụng khi tạo toa thuốc
-        /// </summary>
-        public string KeToaNote { get; set; }
-
-        /// <summary>
         /// Giá vốn
         /// </summary>
         public double StandardPrice { get; set; }
 
-        public bool IsLabo { get; set; }
-
-        public string Type2 { get; set; }
-
-        public decimal? PurchasePrice { get; set; }
-
         public decimal? LaboPrice { get; set; }
 
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
+
         public IEnumerable<Guid> UoMIds { get; set; } = new List<Guid>();
+
+        public UoMBasic UOM { get; set; }
+
+        public UoMBasic UOMPO { get; set; }
+
+        public ProductCategoryBasic Categ { get; set; }
     }
 }

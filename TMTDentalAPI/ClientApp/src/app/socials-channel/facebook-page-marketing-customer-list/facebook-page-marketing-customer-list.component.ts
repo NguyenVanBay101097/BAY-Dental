@@ -7,6 +7,7 @@ import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -18,7 +19,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   constructor(private modalService: NgbModal,
     private facebookPageService: FacebookPageService,
     private facebookUserProfilesService: FacebookUserProfilesService,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService, private route: ActivatedRoute) { }
 
   dataSendMessage: any[] = [];
   gridData: GridDataResult;
@@ -28,15 +29,20 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   loading = false;
   searchUpdate = new Subject<string>();
 
-  ngOnInit() {
-    this.loadDataFromApi();
+  pageId: string;
 
+  ngOnInit() {
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
         this.loadDataFromApi();
       });
+
+    this.route.parent.paramMap.subscribe((param: ParamMap) => {
+      this.pageId = param.get('id');
+      this.loadDataFromApi();
+    });
   }
 
   loadDataFromApi() {
@@ -44,8 +50,10 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     var val = {
       limit: this.limit,
       offset: this.skip,
-      search: this.search || ''
-    }
+      search: this.search || '',
+      fbPageId: this.pageId
+    };
+
     this.facebookUserProfilesService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -61,24 +69,23 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     });
   }
 
-  createFacebookUser() {
-    this.facebookPageService.createFacebookUser()
-      .subscribe(res => {
+  syncUsers() {
+    if (this.pageId) {
+      this.facebookPageService.syncUsers([this.pageId]).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
         console.log(err);
       });
+    }
   }
 
-  selectedCustomer(id: number[]) {
-    console.log(id);
-    let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.customerId = id;
+  editItem(item: any) {
+    let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.customerId = item.id;
 
     modalRef.result.then((result) => {
       this.loadDataFromApi();
     }, (reason) => {
-      
     });
   }
 

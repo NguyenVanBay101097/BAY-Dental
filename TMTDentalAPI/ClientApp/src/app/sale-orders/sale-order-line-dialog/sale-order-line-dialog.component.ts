@@ -1,27 +1,40 @@
-
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import * as _ from 'lodash';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderLineDisplay } from '../sale-order-line-display';
-import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from '../sale-order-line.service';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { debounceTime, tap, switchMap, map } from "rxjs/operators";
+import {
+  ProductFilter,
+  ProductService,
+} from "src/app/products/product.service";
+import { ProductSimple } from "src/app/products/product-simple";
+import * as _ from "lodash";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { SaleOrderLineDisplay } from "../sale-order-line-display";
+import {
+  SaleOrderLineService,
+  SaleOrderLineOnChangeProduct,
+} from "../sale-order-line.service";
+import {
+  ToothCategoryBasic,
+  ToothCategoryService,
+} from "src/app/tooth-categories/tooth-category.service";
+import {
+  ToothDisplay,
+  ToothFilter,
+  ToothService,
+} from "src/app/teeth/tooth.service";
 
 @Component({
-  selector: 'app-sale-order-line-dialog',
-  templateUrl: './sale-order-line-dialog.component.html',
-  styleUrls: ['./sale-order-line-dialog.component.css']
+  selector: "app-sale-order-line-dialog",
+  templateUrl: "./sale-order-line-dialog.component.html",
+  styleUrls: ["./sale-order-line-dialog.component.css"],
 })
 export class SaleOrderLineDialogComponent implements OnInit {
   saleLineForm: FormGroup;
+  submitted = false;
   filteredProducts: ProductSimple[];
   line: SaleOrderLineDisplay;
-  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
+  @ViewChild("productCbx", { static: true }) productCbx: ComboBoxComponent;
   title: string;
   filteredToothCategories: ToothCategoryBasic[] = [];
 
@@ -31,24 +44,29 @@ export class SaleOrderLineDialogComponent implements OnInit {
   partnerId: string;
   pricelistId: string;
 
-  constructor(private fb: FormBuilder, private productService: ProductService,
-    public activeModal: NgbActiveModal, private saleLineService: SaleOrderLineService,
-    private toothService: ToothService, private toothCategoryService: ToothCategoryService) { }
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    public activeModal: NgbActiveModal,
+    private saleLineService: SaleOrderLineService,
+    private toothService: ToothService,
+    private toothCategoryService: ToothCategoryService
+  ) {}
 
   ngOnInit() {
     this.saleLineForm = this.fb.group({
-      name: '',
+      name: "",
       product: [null, Validators.required],
       productId: null,
-      priceUnit: 0,
-      productUOMQty: 1,
+      priceUnit: [0, Validators.required],
+      productUOMQty: [1, Validators.required],
       discount: 0,
-      discountType: 'percentage',
+      discountType: "percentage",
       discountFixed: 0,
       priceSubTotal: 1,
       diagnostic: null,
       toothCategory: null,
-      state: 'draft'
+      state: "draft",
     });
 
     setTimeout(() => {
@@ -58,7 +76,11 @@ export class SaleOrderLineDialogComponent implements OnInit {
     if (this.line) {
       setTimeout(() => {
         if (this.line.product) {
-          this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
+          this.filteredProducts = _.unionBy(
+            this.filteredProducts,
+            [this.line.product],
+            "id"
+          );
         }
 
         this.saleLineForm.patchValue(this.line);
@@ -70,21 +92,24 @@ export class SaleOrderLineDialogComponent implements OnInit {
       });
     } else {
       setTimeout(() => {
-        this.loadDefaultToothCategory().subscribe(result => {
-          this.saleLineForm.get('toothCategory').patchValue(result);
+        this.loadDefaultToothCategory().subscribe((result) => {
+          this.saleLineForm.get("toothCategory").patchValue(result);
           this.loadTeethMap(result);
-        })
+        });
       });
     }
 
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+    this.productCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.productCbx.loading = true)),
+        switchMap((value) => this.searchProducts(value))
+      )
+      .subscribe((result) => {
+        this.filteredProducts = result;
+        this.productCbx.loading = false;
+      });
 
     setTimeout(() => {
       this.loadFilteredProducts();
@@ -92,21 +117,28 @@ export class SaleOrderLineDialogComponent implements OnInit {
     });
   }
 
+  get f() {
+    return this.saleLineForm.controls;
+  }
+
   get productUpdatable() {
     if (!this.line) {
       return true;
     }
 
-    var updatable = (this.line.state == "done" || this.line.state == "cancel") || (this.line.state == "sale" && this.line.qtyInvoiced > 0);
+    var updatable =
+      this.line.state == "done" ||
+      this.line.state == "cancel" ||
+      (this.line.state == "sale" && this.line.qtyInvoiced > 0);
     return !updatable;
   }
 
   get lineState() {
-    return this.line ? this.line.state : 'draft';
+    return this.line ? this.line.state : "draft";
   }
 
   get discountTypeValue() {
-    return this.saleLineForm.get('discountType').value;
+    return this.saleLineForm.get("discountType").value;
   }
 
   onSelected(tooth: ToothDisplay) {
@@ -123,7 +155,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
     //update quantity combobox
     if (this.teethSelected.length > 0) {
-      this.saleLineForm.get('productUOMQty').setValue(this.teethSelected.length);
+      this.saleLineForm
+        .get("productUOMQty")
+        .setValue(this.teethSelected.length);
     }
   }
 
@@ -148,7 +182,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   loadToothCategories() {
-    return this.toothCategoryService.getAll().subscribe(result => this.filteredToothCategories = result);
+    return this.toothCategoryService
+      .getAll()
+      .subscribe((result) => (this.filteredToothCategories = result));
   }
 
   loadDefaultToothCategory() {
@@ -157,13 +193,13 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
   processTeeth(teeth: ToothDisplay[]) {
     this.hamList = {
-      '0_up': { '0_right': [], '1_left': [] },
-      '1_down': { '0_right': [], '1_left': [] }
+      "0_up": { "0_right": [], "1_left": [] },
+      "1_down": { "0_right": [], "1_left": [] },
     };
 
     for (var i = 0; i < teeth.length; i++) {
       var tooth = teeth[i];
-      if (tooth.position === '1_left') {
+      if (tooth.position === "1_left") {
         this.hamList[tooth.viTriHam][tooth.position].push(tooth);
       } else {
         this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
@@ -174,19 +210,21 @@ export class SaleOrderLineDialogComponent implements OnInit {
   loadTeethMap(categ: ToothCategoryBasic) {
     var val = new ToothFilter();
     val.categoryId = categ.id;
-    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
+    return this.toothService
+      .getAllBasic(val)
+      .subscribe((result) => this.processTeeth(result));
   }
 
   loadFilteredProducts() {
-    this.searchProducts().subscribe(result => {
-      this.filteredProducts = _.unionBy(this.filteredProducts, result, 'id');
+    this.searchProducts().subscribe((result) => {
+      this.filteredProducts = _.unionBy(this.filteredProducts, result, "id");
     });
   }
 
   onChangeDiscountFixed(value) {
     var price = this.getPriceUnit();
     if (value > price) {
-      this.saleLineForm.get('discountFixed').setValue(price);
+      this.saleLineForm.get("discountFixed").setValue(price);
     }
   }
 
@@ -199,26 +237,28 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
   getPriceSubTotal() {
     var discountType = this.discountTypeValue;
-    var price = discountType == 'percentage' ? this.getPriceUnit() * (1 - this.getDiscount() / 100) :
-      Math.max(0, this.getPriceUnit() - this.discountFixedValue);
+    var price =
+      discountType == "percentage"
+        ? this.getPriceUnit() * (1 - this.getDiscount() / 100)
+        : Math.max(0, this.getPriceUnit() - this.discountFixedValue);
     var subtotal = price * this.getQuantity();
     return subtotal;
   }
 
   getPriceUnit() {
-    return this.saleLineForm.get('priceUnit').value;
+    return this.saleLineForm.get("priceUnit").value;
   }
 
   getQuantity() {
-    return this.saleLineForm.get('productUOMQty').value;
+    return this.saleLineForm.get("productUOMQty").value;
   }
 
   getDiscount() {
-    return this.saleLineForm.get('discount').value;
+    return this.saleLineForm.get("discount").value;
   }
 
   get discountFixedValue() {
-    return this.saleLineForm.get('discountFixed').value;
+    return this.saleLineForm.get("discountFixed").value;
   }
 
   onChangeProduct(value: any) {
@@ -227,7 +267,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
       val.productId = value.id;
       val.partnerId = this.partnerId;
       val.pricelistId = this.pricelistId;
-      this.saleLineService.onChangeProduct(val).subscribe(result => {
+      this.saleLineService.onChangeProduct(val).subscribe((result) => {
         this.saleLineForm.patchValue(result);
       });
     }
@@ -240,8 +280,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
     }
   }
 
-
   onSave() {
+    this.submitted = true;
+
     if (!this.saleLineForm.valid) {
       return;
     }
@@ -255,7 +296,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     this.activeModal.dismiss();
   }
 }
-

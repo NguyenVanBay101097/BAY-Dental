@@ -331,7 +331,9 @@ namespace Infrastructure.Services
                 }
             }
             else
+            {
                 base_user_dict.Add("base.user_root", user_root);
+            }
 
             if (user_root == null)
                 throw new Exception("Không tìm thấy user root");

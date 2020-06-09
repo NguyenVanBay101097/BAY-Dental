@@ -90,4 +90,8 @@ export class UserService {
     switchCompany(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/SwitchCompany", data);
     }
+
+    actionImport(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionImport', val);
+    }
 }

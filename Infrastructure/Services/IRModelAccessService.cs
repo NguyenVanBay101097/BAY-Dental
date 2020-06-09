@@ -54,7 +54,8 @@ namespace Infrastructure.Services
             "ServiceCardOrderLine",
             "IRModelData",
             "IRModelField",
-            "IRProperty"
+            "IRProperty",
+            "UoMCategory"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,

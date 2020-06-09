@@ -1,51 +1,71 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import * as _ from 'lodash';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { LaboOrderLineDisplay, LaboOrderLineService, LaboOrderLineOnChangeProduct } from 'src/app/labo-order-lines/labo-order-line.service';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { debounceTime, tap, switchMap, map } from "rxjs/operators";
+import {
+  ProductFilter,
+  ProductService,
+} from "src/app/products/product.service";
+import { ProductSimple } from "src/app/products/product-simple";
+import * as _ from "lodash";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import {
+  ToothCategoryBasic,
+  ToothCategoryService,
+} from "src/app/tooth-categories/tooth-category.service";
+import {
+  ToothDisplay,
+  ToothFilter,
+  ToothService,
+} from "src/app/teeth/tooth.service";
+import {
+  LaboOrderLineDisplay,
+  LaboOrderLineService,
+  LaboOrderLineOnChangeProduct,
+} from "src/app/labo-order-lines/labo-order-line.service";
+import { IntlService } from "@progress/kendo-angular-intl";
 
 @Component({
-  selector: 'app-labo-order-cu-line-dialog',
-  templateUrl: './labo-order-cu-line-dialog.component.html',
-  styleUrls: ['./labo-order-cu-line-dialog.component.css']
+  selector: "app-labo-order-cu-line-dialog",
+  templateUrl: "./labo-order-cu-line-dialog.component.html",
+  styleUrls: ["./labo-order-cu-line-dialog.component.css"],
 })
 export class LaboOrderCuLineDialogComponent implements OnInit {
   formGroup: FormGroup;
+  submitted = false;
   filteredProducts: ProductSimple[];
   line: LaboOrderLineDisplay;
-  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
+  @ViewChild("productCbx", { static: true }) productCbx: ComboBoxComponent;
   title: string;
   filteredToothCategories: ToothCategoryBasic[] = [];
 
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
 
-  constructor(private fb: FormBuilder, private productService: ProductService,
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
     public activeModal: NgbActiveModal,
-    private toothService: ToothService, private toothCategoryService: ToothCategoryService,
-    private laboOrderLineService: LaboOrderLineService, private intlService: IntlService) { }
+    private toothService: ToothService,
+    private toothCategoryService: ToothCategoryService,
+    private laboOrderLineService: LaboOrderLineService,
+    private intlService: IntlService
+  ) {}
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: '',
+      name: "",
       product: [null, Validators.required],
       productId: null,
-      priceUnit: 0,
-      productQty: 1,
+      priceUnit: [0, Validators.required],
+      productQty: [1, Validators.required],
       priceSubTotal: 1,
       toothCategory: null,
       color: null,
       note: null,
       warrantyCode: null,
       warrantyPeriodObj: null,
-      state: 'draft'
+      state: "draft",
     });
 
     setTimeout(() => {
@@ -54,13 +74,19 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
 
     if (this.line) {
       if (this.line.product) {
-        this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
+        this.filteredProducts = _.unionBy(
+          this.filteredProducts,
+          [this.line.product],
+          "id"
+        );
       }
       setTimeout(() => {
         this.formGroup.patchValue(this.line);
         if (this.line.warrantyPeriod) {
-          let warrantyPeriod = this.intlService.parseDate(this.line.warrantyPeriod);
-          this.formGroup.get('warrantyPeriodObj').patchValue(warrantyPeriod);
+          let warrantyPeriod = this.intlService.parseDate(
+            this.line.warrantyPeriod
+          );
+          this.formGroup.get("warrantyPeriodObj").patchValue(warrantyPeriod);
         }
 
         this.teethSelected = [...this.line.teeth];
@@ -70,31 +96,37 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       });
     } else {
       setTimeout(() => {
-        this.loadDefaultToothCategory().subscribe(result => {
-          this.formGroup.get('toothCategory').patchValue(result);
+        this.loadDefaultToothCategory().subscribe((result) => {
+          this.formGroup.get("toothCategory").patchValue(result);
           this.loadTeethMap(result);
-        })
+        });
       });
     }
 
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+    this.productCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.productCbx.loading = true)),
+        switchMap((value) => this.searchProducts(value))
+      )
+      .subscribe((result) => {
+        this.filteredProducts = result;
+        this.productCbx.loading = false;
+      });
 
     setTimeout(() => {
       this.loadFilteredProducts();
       this.loadToothCategories();
     });
+  }
 
+  get f() {
+    return this.formGroup.controls;
   }
 
   onSelected(tooth: ToothDisplay) {
-    if (this.lineState != 'draft') {
+    if (this.lineState != "draft") {
       return false;
     }
     if (this.isSelected(tooth)) {
@@ -106,7 +138,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
 
     //update quantity combobox
     if (this.teethSelected.length > 0) {
-      this.formGroup.get('productQty').setValue(this.teethSelected.length);
+      this.formGroup.get("productQty").setValue(this.teethSelected.length);
     }
   }
 
@@ -131,7 +163,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   }
 
   loadToothCategories() {
-    return this.toothCategoryService.getAll().subscribe(result => {
+    return this.toothCategoryService.getAll().subscribe((result) => {
       this.filteredToothCategories = result;
     });
   }
@@ -142,13 +174,13 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
 
   processTeeth(teeth: ToothDisplay[]) {
     this.hamList = {
-      '0_up': { '0_right': [], '1_left': [] },
-      '1_down': { '0_right': [], '1_left': [] }
+      "0_up": { "0_right": [], "1_left": [] },
+      "1_down": { "0_right": [], "1_left": [] },
     };
 
     for (var i = 0; i < teeth.length; i++) {
       var tooth = teeth[i];
-      if (tooth.position === '1_left') {
+      if (tooth.position === "1_left") {
         this.hamList[tooth.viTriHam][tooth.position].push(tooth);
       } else {
         this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
@@ -159,11 +191,13 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   loadTeethMap(categ: ToothCategoryBasic) {
     var val = new ToothFilter();
     val.categoryId = categ.id;
-    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
+    return this.toothService
+      .getAllBasic(val)
+      .subscribe((result) => this.processTeeth(result));
   }
 
   loadFilteredProducts() {
-    this.searchProducts().subscribe(result => {
+    this.searchProducts().subscribe((result) => {
       this.filteredProducts = result;
     });
   }
@@ -171,12 +205,12 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   searchProducts(search?: string) {
     var val = new ProductFilter();
     val.isLabo = true;
-    val.search = search || '';
+    val.search = search || "";
     return this.productService.autocomplete2(val);
   }
 
   get lineState() {
-    return this.line ? this.line.state : 'draft';
+    return this.line ? this.line.state : "draft";
   }
 
   getPriceSubTotal() {
@@ -184,22 +218,22 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   }
 
   getPriceUnit() {
-    return this.formGroup.get('priceUnit').value;
+    return this.formGroup.get("priceUnit").value;
   }
 
   getQuantity() {
-    return this.formGroup.get('productQty').value;
+    return this.formGroup.get("productQty").value;
   }
 
   getDiscount() {
-    return this.formGroup.get('discount').value;
+    return this.formGroup.get("discount").value;
   }
 
   onChangeProduct(value: any) {
     if (value) {
       var val = new LaboOrderLineOnChangeProduct();
       val.productId = value.id;
-      this.laboOrderLineService.onChangeProduct(val).subscribe(result => {
+      this.laboOrderLineService.onChangeProduct(val).subscribe((result) => {
         this.formGroup.patchValue(result);
       });
     }
@@ -212,8 +246,9 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     }
   }
 
-
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return;
     }
@@ -223,13 +258,17 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.priceSubtotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.warrantyPeriod = val.warrantyPeriodObj
+      ? this.intlService.formatDate(
+          val.warrantyPeriodObj,
+          "yyyy-MM-ddTHH:mm:ss"
+        )
+      : null;
     this.activeModal.close(val);
   }
 
   onCancel() {
+    this.submitted = false;
     this.activeModal.dismiss();
   }
 }
-
-

@@ -21,6 +21,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ApplicationUser, ApplicationUserDisplay>()
                 .ForMember(x => x.Companies, x => x.MapFrom(s => s.ResCompanyUsersRels.Select(m => m.Company)))
                 .ForMember(x => x.Groups, x => x.MapFrom(s => s.ResGroupsUsersRels.Select(m => m.Group).Where(k => !k.CategoryId.HasValue)));
+
+            CreateMap<ApplicationUserRowExcel, ApplicationUser>();
         }
     }
 }

@@ -15,11 +15,11 @@ namespace Infrastructure.Services
         Task<FacebookPage> CreateFacebookPage(FacebookPageLinkSave val);
         Task<IEnumerable<string>> GetListPSId(Guid FBpageId);
 
-        Task<IEnumerable<FacebookCustomer>> CheckCustomerNew(Guid FBpageId);
+        Task<IEnumerable<ApiUserProfileResponse>> CheckCustomerNew(Guid FBpageId);
         Task<List<FacebookUserProfile>> CreateFacebookUser();
         Task<FacebookScheduleAppointmentConfigBasic> _GetAutoConfig();
 
         Task SaveAutoConfig(FacebookScheduleAppointmentConfigSave val);
-        
+        Task SyncUsers(IEnumerable<Guid> ids);
     }
 }

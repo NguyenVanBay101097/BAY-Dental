@@ -47,7 +47,8 @@ namespace Infrastructure.Services
                     PageAccesstoken = page.PageAccessToken,
                     UserAccesstoken = page.Connect.FbUserAccessToken,
                     UserId = page.Connect.FbUserId,
-                    UserName = page.Connect.FbUserName
+                    UserName = page.Connect.FbUserName,
+                    Type = "facebook",
                 });
 
                 await SubcribeAppFacebookPage(fbPage);

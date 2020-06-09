@@ -1,51 +1,79 @@
-import { UserPaged, UserService } from './../../users/user.service';
-import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { AppointmentService } from '../appointment.service';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
-import { AppointmentDisplay, ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentPatch, AppointmentDefaultGet } from '../appointment';
-import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
-import * as _ from 'lodash';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
-import { Router } from '@angular/router';
-import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from "./../../users/user.service";
+import { UserCuDialogComponent } from "./../../users/user-cu-dialog/user-cu-dialog.component";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  FormBuilder,
+} from "@angular/forms";
+import {
+  WindowRef,
+  WindowService,
+  WindowCloseResult,
+} from "@progress/kendo-angular-dialog";
+import { AppointmentService } from "../appointment.service";
+import {
+  PartnerService,
+  PartnerFilter,
+} from "src/app/partners/partner.service";
+import {
+  PartnerBasic,
+  PartnerDisplay,
+  PartnerSimple,
+  PartnerPaged,
+  PartnerCategorySimple,
+} from "src/app/partners/partner-simple";
+import {
+  AppointmentDisplay,
+  ApplicationUserSimple,
+  ApplicationUserPaged,
+  ApplicationUserDisplay,
+  AppointmentPatch,
+  AppointmentDefaultGet,
+} from "../appointment";
+import { PartnerCreateUpdateComponent } from "src/app/partners/partner-create-update/partner-create-update.component";
+import * as _ from "lodash";
+import { IntlService } from "@progress/kendo-angular-intl";
+import { EmployeePaged, EmployeeSimple } from "src/app/employees/employee";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { EmployeeService } from "src/app/employees/employee.service";
+import { debounceTime, tap, switchMap } from "rxjs/operators";
+import { NotificationService } from "@progress/kendo-angular-notification";
+import { NgbModal, NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { PartnerSearchDialogComponent } from "src/app/partners/partner-search-dialog/partner-search-dialog.component";
+import { Router } from "@angular/router";
+import { PartnerCustomerCuDialogComponent } from "src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component";
+import { EmployeeCreateUpdateComponent } from "src/app/employees/employee-create-update/employee-create-update.component";
+import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { UserSimple } from "src/app/users/user-simple";
 
 class DatePickerLimit {
   min: Date;
   max: Date;
 }
 @Component({
-  selector: 'app-appointment-create-update',
-  templateUrl: './appointment-create-update.component.html',
-  styleUrls: ['./appointment-create-update.component.css']
+  selector: "app-appointment-create-update",
+  templateUrl: "./appointment-create-update.component.html",
+  styleUrls: ["./appointment-create-update.component.css"],
 })
-
 export class AppointmentCreateUpdateComponent implements OnInit {
-
   // @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
-  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
 
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
   //doctorSimpleFilter: EmployeeSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
-
-  stateFilter = [{ text: 'Đang hẹn', value: 'confirmed', disabled: false }, { text: 'Đang chờ', value: 'waiting', disabled: false }, { text: 'Hoàn tất', value: 'done', disabled: false },
-  { text: 'Quá hạn', value: 'expired', disabled: true }, { text: 'Đã hủy', value: 'cancel', disabled: false }];
+  submitted = false;
+  stateFilter = [
+    { text: "Đang hẹn", value: "confirmed", disabled: false },
+    { text: "Đang chờ", value: "waiting", disabled: false },
+    { text: "Hoàn tất", value: "done", disabled: false },
+    { text: "Quá hạn", value: "expired", disabled: true },
+    { text: "Đã hủy", value: "cancel", disabled: false },
+  ];
 
   appointId: string;
   dotKhamId: string;
@@ -66,11 +94,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   // companyIdDefault: string;
 
-  constructor(private fb: FormBuilder, private service: AppointmentService, private employeeService: EmployeeService,
-    private partnerService: PartnerService, private intlService: IntlService,
+  constructor(
+    private fb: FormBuilder,
+    private service: AppointmentService,
+    private employeeService: EmployeeService,
+    private partnerService: PartnerService,
+    private intlService: IntlService,
     private userService: UserService,
-    private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal,
-    private router: Router, private errorService: AppSharedShowErrorService) { }
+    private notificationService: NotificationService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private router: Router,
+    private errorService: AppSharedShowErrorService
+  ) {}
 
   formCreate: FormGroup;
 
@@ -78,7 +114,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.formCreate = this.fb.group({
       name: null,
       partner: [null, Validators.required],
-      user: [null, Validators.required],
+      user: null,
       userId: null,
       date: null,
       dateObj: [null, Validators.required],
@@ -88,8 +124,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       doctor: null,
       doctorId: null,
       stateObj: null,
-      state: 'confirmed',
-    })
+      state: "confirmed",
+    });
     if (this.appointId) {
       setTimeout(() => {
         this.loadAppointmentToForm();
@@ -97,7 +133,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     } else {
       setTimeout(() => {
         if (this.timeConfig != null) {
-          this.formCreate.get('dateObj').setValue(this.timeConfig);
+          this.formCreate.get("dateObj").setValue(this.timeConfig);
         }
         this.defaultGet();
       });
@@ -111,13 +147,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     });
   }
 
+  get f() {
+    return this.formCreate.controls;
+  }
   setDateLimit() {
     this.dateLimit.min = new Date();
-    this.dateLimit.max = new Date(this.dateLimit.min.getFullYear() + 1, this.dateLimit.min.getMonth(), this.dateLimit.min.getDate());
+    this.dateLimit.max = new Date(
+      this.dateLimit.min.getFullYear() + 1,
+      this.dateLimit.min.getMonth(),
+      this.dateLimit.min.getDate()
+    );
   }
 
   //Create + Update
   createNewAppointment() {
+    this.submitted = true;
     if (!this.formCreate.valid) {
       return false;
     }
@@ -126,46 +170,67 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.userId = appoint.user ? appoint.user.id : null;
     // appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-    appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    appoint.date = this.intlService.formatDate(
+      appoint.dateObj,
+      "yyyy-MM-ddTHH:mm:ss"
+    );
 
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
-      rs => {
+      (rs) => {
         this.isChange = true;
         this.closeModal(rs);
       },
-      er => {
+      (er) => {
         this.errorService.show(er);
-      },
-    )
+      }
+    );
   }
 
   searchCustomerDialog() {
-    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tìm khách hàng';
+    let modalRef = this.modalService.open(PartnerSearchDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Tìm khách hàng";
     modalRef.componentInstance.domain = { customer: true };
 
-    modalRef.result.then(result => {
-      if (result.length) {
-        var p = result[0].dataItem;
-        this.formCreate.get('partner').patchValue(p);
-        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [p], 'id');
-      }
-    }, () => {
-    });
+    modalRef.result.then(
+      (result) => {
+        if (result.length) {
+          var p = result[0].dataItem;
+          this.formCreate.get("partner").patchValue(p);
+          this.customerSimpleFilter = _.unionBy(
+            this.customerSimpleFilter,
+            [p],
+            "id"
+          );
+        }
+      },
+      () => {}
+    );
   }
 
   createDoctorDialog() {
-    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm bác sĩ';
-
-    modalRef.result.then(result => {
-      var p = new UserSimple();
-      p.id = result.id;
-      p.name = result.name;
-      this.formCreate.get('user').patchValue(p);
-      this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [p], 'id');
-    }, () => {
+    let modalRef = this.modalService.open(UserCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
     });
+    modalRef.componentInstance.title = "Thêm bác sĩ";
+
+    modalRef.result.then(
+      (result) => {
+        var p = new UserSimple();
+        p.id = result.id;
+        p.name = result.name;
+        this.formCreate.get("user").patchValue(p);
+        this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [p], "id");
+      },
+      () => {}
+    );
   }
 
   getCustomerList() {
@@ -175,36 +240,39 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 10;
     partnerPaged.offset = 0;
-    this.partnerService.autocompletePartner(partnerPaged).subscribe(
-      rs => {
-        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
-      }
-    )
+    this.partnerService.autocompletePartner(partnerPaged).subscribe((rs) => {
+      this.customerSimpleFilter = _.unionBy(
+        this.customerSimpleFilter,
+        rs,
+        "id"
+      );
+    });
   }
 
-
   filterChangeCombobox() {
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.partnerCbx.loading = true),
-      switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
-    ).subscribe(
-      rs => {
+    this.partnerCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.partnerCbx.loading = true)),
+        switchMap((val) => this.searchCustomers(val.toString().toLowerCase()))
+      )
+      .subscribe((rs) => {
         this.customerSimpleFilter = rs;
         this.partnerCbx.loading = false;
-      }
-    )
+      });
 
-    this.userCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.userCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
-    ).subscribe(
-      rs => {
+    this.userCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.userCbx.loading = true)),
+        switchMap((val) => this.searchUsers(val.toString().toLowerCase()))
+      )
+      .subscribe((rs) => {
         this.userSimpleFilter = rs;
         this.userCbx.loading = false;
-      }
-    )
+      });
   }
 
   createSaleOrder() {
@@ -218,26 +286,33 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         appoint.partnerId = appoint.partner ? appoint.partner.id : null;
         appoint.userId = appoint.user ? appoint.user.id : null;
         appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-        appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+        appoint.date = this.intlService.formatDate(
+          appoint.dateObj,
+          "yyyy-MM-ddTHH:mm:ss"
+        );
 
         this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
-          rs => {
-            var partner = this.formCreate.get('partner').value;
+          (rs) => {
+            var partner = this.formCreate.get("partner").value;
             if (partner) {
               this.activeModal.dismiss();
-              this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
+              this.router.navigate(["/sale-orders/form"], {
+                queryParams: { partner_id: partner.id },
+              });
             }
           },
-          er => {
+          (er) => {
             console.log(er);
             this.errorService.show(er);
-          },
-        )
+          }
+        );
       } else {
-        var partner = this.formCreate.get('partner').value;
+        var partner = this.formCreate.get("partner").value;
         if (partner) {
           this.activeModal.dismiss();
-          this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: partner.id } });
+          this.router.navigate(["/sale-orders/form"], {
+            queryParams: { partner_id: partner.id },
+          });
         }
       }
     }
@@ -278,29 +353,34 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   getUserList() {
-    var userPn = new UserPaged;
+    var userPn = new UserPaged();
     userPn.limit = this.limit;
     userPn.offset = this.skip;
-    this.userService.autocompleteSimple(userPn).subscribe(
-      rs => {
-        this.userSimpleFilter = rs;
-      });
+    this.userService.autocompleteSimple(userPn).subscribe((rs) => {
+      this.userSimpleFilter = rs;
+    });
   }
 
   loadAppointmentToForm() {
     if (this.appointId != null) {
       this.service.getAppointmentInfo(this.appointId).subscribe(
-        rs => {
+        (rs) => {
           this.formCreate.patchValue(rs);
-          this.formCreate.get('stateObj').setValue(this.stateFilter.filter(x => x.value == rs.state)[0]);
+          this.formCreate
+            .get("stateObj")
+            .setValue(this.stateFilter.filter((x) => x.value == rs.state)[0]);
           this.state = rs.state;
           let date = new Date(rs.date);
-          this.formCreate.get('dateObj').patchValue(date);
+          this.formCreate.get("dateObj").patchValue(date);
           if (rs.partner) {
-            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+            this.customerSimpleFilter = _.unionBy(
+              this.customerSimpleFilter,
+              [rs.partner],
+              "id"
+            );
           }
           if (rs.hasDotKhamRef) {
-            this.dotKhamId = 'default';
+            this.dotKhamId = "default";
           }
           // if (!this.dotKhamId && this.formCreate.get('dotKhamId').value) {
           //   this.dotKhamId = this.formCreate.get('dotKhamId').value;
@@ -308,12 +388,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           // this.state = this.formCreate.get('state').value;
           // this.availableEdit(rs.state.toString());
         },
-        er => {
+        (er) => {
           console.log(er);
         }
-      )
+      );
     }
-
   }
 
   // getUser(id: string): ApplicationUserSimple {
@@ -351,46 +430,51 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   updateOnly(id, state) {
-    var apnPatch = new AppointmentPatch;
+    var apnPatch = new AppointmentPatch();
     var ar = [];
     apnPatch.id = id;
     apnPatch.state = state;
     for (var p in apnPatch) {
-      var o = { op: 'replace', path: '/' + p, value: apnPatch[p] };
+      var o = { op: "replace", path: "/" + p, value: apnPatch[p] };
       ar.push(o);
     }
     console.log(ar);
-    this.service.patch(id, ar).subscribe(
-      rs => {
-        this.activeModal.close(true);
-      }
-    )
-  }
-
-  get partner() {
-    return this.formCreate.get('partner').value;
-  }
-
-  updateCustomerModal() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa khách hàng';
-    modalRef.componentInstance.id = this.partner.id;
-
-    modalRef.result.then(() => {
-    }, () => {
+    this.service.patch(id, ar).subscribe((rs) => {
+      this.activeModal.close(true);
     });
   }
 
+  get partner() {
+    return this.formCreate.get("partner").value;
+  }
+
+  updateCustomerModal() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Sửa khách hàng";
+    modalRef.componentInstance.id = this.partner.id;
+
+    modalRef.result.then(
+      () => {},
+      () => {}
+    );
+  }
 
   closeModal(rs) {
     if (this.isChange) {
       if (rs) {
+        this.submitted = false;
         this.activeModal.close(rs);
       } else {
+        this.submitted = false;
         this.activeModal.close(true);
       }
-    }
-    else {
+    } else {
+      this.submitted = false;
       this.activeModal.dismiss();
     }
   }
@@ -435,21 +519,28 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   // }
 
   quickCreateCustomerModal() {
-    const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm khách hàng';
+    const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
+      scrollable: true,
+      size: "xl",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Thêm khách hàng";
 
-    modalRef.result.then(result => {
-      if (result && result.id) {
-        console.log(result);
-        var newPartner = new PartnerSimple();
-        newPartner.id = result.id;
-        newPartner.name = result.name;
-        this.customerSimpleFilter.push(newPartner);
-        this.formCreate.get('partner').setValue(newPartner);
-      }
-    }, er => {
-
-    })
+    modalRef.result.then(
+      (result) => {
+        if (result && result.id) {
+          console.log(result);
+          var newPartner = new PartnerSimple();
+          newPartner.id = result.id;
+          newPartner.name = result.name;
+          this.customerSimpleFilter.push(newPartner);
+          this.formCreate.get("partner").setValue(newPartner);
+        }
+      },
+      (er) => {}
+    );
   }
 
   defaultGet() {
@@ -459,25 +550,31 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         a.dotKhamId = this.dotKhamId;
       }
 
-      a.userId = '10407d1c-966a-422a-bfae-fe5ddfb7033f';
+      a.userId = "10407d1c-966a-422a-bfae-fe5ddfb7033f";
 
-      this.service.defaultGet(a).subscribe(
-        rs => {
-          this.formCreate.patchValue(rs);
-          if (this.timeConfig == null) {
-            let date = new Date(rs.date);
-            this.formCreate.get('dateObj').patchValue(date);
-          }
-
-          if (rs.partner) {
-            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
-          }
-
-          if (rs.user) {
-            this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [rs.user], 'id');
-          }
+      this.service.defaultGet(a).subscribe((rs) => {
+        this.formCreate.patchValue(rs);
+        if (this.timeConfig == null) {
+          let date = new Date(rs.date);
+          this.formCreate.get("dateObj").patchValue(date);
         }
-      )
+
+        if (rs.partner) {
+          this.customerSimpleFilter = _.unionBy(
+            this.customerSimpleFilter,
+            [rs.partner],
+            "id"
+          );
+        }
+
+        if (rs.user) {
+          this.userSimpleFilter = _.unionBy(
+            this.userSimpleFilter,
+            [rs.user],
+            "id"
+          );
+        }
+      });
     }
   }
 
@@ -485,72 +582,71 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.state = e.value;
   }
 
-  itemDisabled(itemArgs: { dataItem: any, index: number }) {
+  itemDisabled(itemArgs: { dataItem: any; index: number }) {
     return itemArgs.dataItem.disabled;
   }
 
   timeAvailble() {
     switch (this.state) {
-      case 'confirmed':
+      case "confirmed":
         return false;
-      case 'waiting':
+      case "waiting":
         return true;
-      case 'expired':
+      case "expired":
         return false;
-      case 'cancel':
+      case "cancel":
         return true;
-      case 'done':
+      case "done":
         return true;
     }
   }
 
   doctorAvailble() {
     switch (this.state) {
-      case 'confirmed':
+      case "confirmed":
         return false;
-      case 'waiting':
+      case "waiting":
         return false;
-      case 'expired':
+      case "expired":
         return true;
-      case 'cancel':
+      case "cancel":
         return true;
-      case 'done':
+      case "done":
         return true;
     }
   }
 
   partnerAvailble() {
     switch (this.state) {
-      case 'confirmed':
+      case "confirmed":
         if (this.dotKhamId) {
           return true;
         } else {
           return false;
         }
-      case 'waiting':
+      case "waiting":
         return true;
-      case 'expired':
+      case "expired":
         return true;
-      case 'cancel':
+      case "cancel":
         return true;
-      case 'done':
+      case "done":
         return true;
     }
   }
 
   getState(state: string) {
     switch (state) {
-      case 'done':
-        return 'Hoàn tất';
-      case 'cancel':
-        return 'Đã hủy';
-      case 'waiting':
-        return 'Đang chờ';
-      case 'expired':
-        return 'Quá hạn';
+      case "done":
+        return "Hoàn tất";
+      case "cancel":
+        return "Đã hủy";
+      case "waiting":
+        return "Đang chờ";
+      case "expired":
+        return "Quá hạn";
       default:
-        return 'Đang hẹn';
+        return "Đang hẹn";
     }
   }
-
 }

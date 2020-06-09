@@ -57,6 +57,7 @@
 
 .o_form_view .oe_avatar {
     float: left;
+    margin-right: 15px;
 }
 
 .o_form_view>.oe_chatter {

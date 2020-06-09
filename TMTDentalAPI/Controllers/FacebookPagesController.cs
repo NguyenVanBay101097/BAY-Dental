@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IUserService _userService;
         private readonly IPartnerService _partnerService;
         private readonly IFacebookUserProfileService _facebookUserProfileService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
+
         public FacebookPagesController(IMapper mapper, IFacebookPageService facebookPageService, IPartnerService partnerService, IFacebookUserProfileService facebookUserProfileService,
-            IUserService userService) {
+            IUserService userService, IUnitOfWorkAsync unitOfWork) 
+        {
             _mapper = mapper;
             _facebookPageService = facebookPageService;
             _partnerService = partnerService;
             _facebookUserProfileService = facebookUserProfileService;
             _userService = userService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -60,6 +65,16 @@ namespace TMTDentalAPI.Controllers
             var fbpage = await _facebookPageService.CreateFacebookPage(val);
             var basic = _mapper.Map<FacebookPageBasic>(fbpage);
             return Ok(basic);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SyncUsers(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _facebookPageService.SyncUsers(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
         }
 
         [HttpPost("[action]")]

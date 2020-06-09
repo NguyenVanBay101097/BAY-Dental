@@ -10,10 +10,27 @@ import { FacebookPageMarketingCustomerListComponent } from './facebook-page-mark
 import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
 import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-list/facebook-mass-messaging-list.component';
 import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
+import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
 
 const routes: Routes = [
   { path: 'facebook-connect', component: FacebookComponent },
   { path: 'facebook-dashboard', component: FacebookDashboardComponent },
+  { path: 'channels', component: FacebookPageListComponent },
+  {
+    path: 'channel/:id',
+    component: FacebookPageManagementComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'customers',
+        pathMatch: 'full'
+      },
+      {
+        path: 'customers',
+        component: FacebookPageMarketingCustomerListComponent,
+      },
+    ]
+  },
   {
     path: 'facebook-management',
     component: FacebookPageManagementComponent,

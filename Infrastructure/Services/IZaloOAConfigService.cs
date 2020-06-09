@@ -9,6 +9,6 @@ namespace Infrastructure.Services
 {
     public interface IZaloOAConfigService: IBaseService<ZaloOAConfig>
     {
-        Task<ZaloOAConfig> SaveConfig(ZaloOAConfigSave val);
+        Task<FacebookPage> SaveConfig(ZaloOAConfigSave val);
     }
 }

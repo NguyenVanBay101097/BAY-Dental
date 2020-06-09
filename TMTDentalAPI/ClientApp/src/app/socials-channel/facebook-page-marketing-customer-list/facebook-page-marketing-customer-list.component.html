@@ -1,48 +1,27 @@
 <div class="px-3 py-2 d-flex justify-content-between">
-    <button class="btn btn-sm btn-primary" (click)="createFacebookUser()">Tải danh sách khách hàng</button>
-    <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm theo tên khách hàng " type="text"
-        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    <button class="btn btn-sm btn-primary" (click)="syncUsers()">Đồng bộ danh sách người tương tác</button>
+    <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+        (ngModelChange)="this.searchUpdate.next($event)">
 </div>
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column title="Avatar" width="70">
+        <kendo-grid-column title="Hình đại diện" width="120" class="text-center">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <img class="rounded" 
-                    [src]="dataItem.profilePic" height="40" width="40">
+                <img class="rounded-circle" [src]="dataItem.avatar" height="40" width="40">
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="psId" title="PSID">
+        <kendo-grid-column field="name" title="Tên" width="200">
         </kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên khách hàng">
+        <kendo-grid-column field="partnerName" title="Khách hàng liên kết" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="gender" title="Giới tính">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span *ngIf="dataItem.gender === 'male'">Nam</span>
-                <span *ngIf="dataItem.gender === 'female'">Nữ</span>
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="dateCreated" title="Ngày tạo">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.dateCreated | date : 'short'}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="action">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Trạng thái
-            </ng-template>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span *ngIf="!dataItem.partnerId">Chưa Kết nối</span>
-                <span *ngIf="dataItem.partnerId">Đã kết nối</span>
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="id">
+        <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="selectedCustomer(dataItem.id)">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span>
                 </button>
             </ng-template>

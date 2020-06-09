@@ -15,6 +15,7 @@ import { ProductStepDisplay } from '../product-step';
 import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-product-service-cu-dialog',
@@ -49,7 +50,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal) {
+    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService) {
   }
 
   formStepEdit = this.fb.group({
@@ -184,7 +185,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
         this.activeModal.close(true);
       }
     }, err => {
-      console.log(err);
+      this.showErrorService.show(err);
     });
   }
 
