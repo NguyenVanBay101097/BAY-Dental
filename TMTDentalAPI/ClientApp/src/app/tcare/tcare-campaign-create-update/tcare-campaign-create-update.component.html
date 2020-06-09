@@ -52,13 +52,18 @@
             </div>
 
             <div class="o_form_sheet">
-                <div style="margin-bottom: 15px;">
-                    <label for="formGroupExampleInput">Tên quy trình</label>
+                <div>
+                    <label for="formGroupExampleInput">Tên quy trình </label>
                     <input type="text" class="form-control" formControlName="name" id="formGroupExampleInput"
                         placeholder="Example input">
                     <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submited)">
                         <label *ngIf="nameControl.errors.required" style="color: red;">Nội dung gửi
                             không được để trống !</label>
+                    </div>
+                    <div *ngIf="campaign.state !='running'" style="margin-bottom: 15px;"></div>
+                    <div style="margin-top: 5px;" *ngIf="campaign.state == 'running'">
+                        <label for=" formGroupExampleInput">Chạy vào lúc {{campaign.sheduleStart | date:'shortTime'}}
+                            mỗi ngày</label>
                     </div>
                 </div>
                 <div class="row" style="position: relative;">
@@ -81,9 +86,6 @@
                         <div id="graphContainer"
                             style="overflow:hidden;min-height: 555px; height: 555px; background-image:url('./assets/editors/images/grid.gif');cursor:default;">
                         </div>
-                    </div>
-                    <div id="outlineContainer"
-                        style="position:absolute;overflow:hidden;top:42px;right:15px;width:200px;height:140px;background:transparent;border-style:solid;border-color:black;">
                     </div>
                 </div>
             </div>

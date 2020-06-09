@@ -90,7 +90,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       return false;
     }
     var value = this.formGroup.value;
-    value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : '';
+    value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : 0;
     value.sheduleDate = value.sheduleDate ? this.intlService.formatDate(value.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '';
     this.activeModal.close(value);
   }

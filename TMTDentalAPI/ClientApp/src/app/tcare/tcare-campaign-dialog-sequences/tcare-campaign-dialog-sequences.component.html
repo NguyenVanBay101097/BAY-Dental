@@ -81,6 +81,9 @@
                                     <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
                                         [filterable]="true" #channelSocialCbx formControlName="channelSocialId"
                                         [valueField]="'id'" [valuePrimitive]="true">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
+                                        </ng-template>
                                     </kendo-combobox>
                                     <div
                                         *ngIf="channelSocialIdControl.invalid && (channelSocialIdControl.dirty || channelSocialIdControl.touched || submited)">

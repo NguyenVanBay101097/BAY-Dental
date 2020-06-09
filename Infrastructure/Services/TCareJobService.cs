@@ -99,10 +99,10 @@ namespace Infrastructure.Services
             var partnerIds = new List<Guid>();
             var builder = new SqlBuilder();
             var lst = new Dictionary<string, string>();
-            lst.Add("eq", "=");
-            lst.Add("neq", "!=");
-            lst.Add("contains", "");
-            lst.Add("not_contains", "");
+            lst.Add("contains", "=");
+            lst.Add("not_contains", "!=");
+            //lst.Add("contains", "");
+            //lst.Add("not_contains", "");
             lst.Add("lte", "<=");
             lst.Add("gte", ">=");
             var sqltemplate = builder.AddTemplate("SELECT pn.Id FROM Partners pn /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ ");
@@ -157,41 +157,41 @@ namespace Infrastructure.Services
                         {
                             switch (kvp.Key)
                             {
-                                case "eq":
+                                case "contains":
                                     if (typeRule == "and")
                                     {
                                         // builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value });
-                                        builder.Where("pn.id in (Select pn.Id" +
-                                            "From Partners pn" +
-                                            "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
-                                            "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
-                                            $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value });
+                                        builder.Where("pn.id in (Select pn.Id " +
+                                            "From Partners pn " +
+                                            "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
+                                            "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
+                                            $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
                                     }
                                     else
                                     {
-                                        builder.OrWhere("pn.id in (Select pn.Id" +
-                                           "From Partners pn" +
-                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
-                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
-                                           $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value });
+                                        builder.OrWhere("pn.id in (Select pn.Id " +
+                                           "From Partners pn " +
+                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
+                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
+                                           $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
                                     }
                                     break;
-                                case "neq":
+                                case "not_contains":
                                     if (typeRule == "and")
                                     {
-                                        builder.Where("pn.id in (Select pn.Id" +
-                                          "From Partners pn" +
-                                          "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
-                                          "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
-                                          $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value });
+                                        builder.Where("pn.id in (Select pn.Id " +
+                                          "From Partners pn " +
+                                          "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
+                                          "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
+                                          $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
                                     }
                                     else
                                     {
-                                        builder.OrWhere("pn.id in (Select pn.Id" +
-                                           "From Partners pn" +
-                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id" +
-                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId" +
-                                           $"Where cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value });
+                                        builder.OrWhere("pn.id in (Select pn.Id " +
+                                           "From Partners pn " +
+                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
+                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
+                                           $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
                                     }
 
                                     break;
@@ -207,37 +207,33 @@ namespace Infrastructure.Services
                         {
                             switch (kvp.Key)
                             {
-                                case "eq":
-                                    if (typeRule == "and")
+                                case "contains":
+                                     if (typeRule == "and")
                                     {
-                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                      "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                      "Left join Products sp On sp.Id = orlines.ProductId " +
-                                      $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Value });
+                                        builder.Where("EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
+                                           "Left join Products sp On sp.Id = orlines.ProductId " +
+                                           $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
                                     }
                                     else
                                     {
-                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                     "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                     "Left join Products sp On sp.Id = orlines.ProductId " +
-                                     $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Value });
+                                        builder.OrWhere("EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
+                                       "Left join Products sp On sp.Id = orlines.ProductId " +
+                                       $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
                                     }
 
                                     break;
-                                case "neq":
+                                case "not_contains":
                                     if (typeRule == "and")
                                     {
-                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                           "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        builder.Where("NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                            "Left join Products sp On sp.Id = orlines.ProductId " +
-                                           $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Value });
+                                           $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
                                     }
                                     else
                                     {
-                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                       "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        builder.OrWhere("NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                        "Left join Products sp On sp.Id = orlines.ProductId " +
-                                       $"Where sp.id {kvp.Value} @serviceId And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { serviceId = condition.Value });
+                                       $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
                                     }
 
                                     break;
@@ -251,7 +247,7 @@ namespace Infrastructure.Services
                         {
                             switch (kvp.Key)
                             {
-                                case "eq":
+                                case "contains":
                                     if (typeRule == "and")
                                     {
                                         builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
@@ -270,7 +266,7 @@ namespace Infrastructure.Services
                                     }
 
                                     break;
-                                case "neq":
+                                case "not_contains":
                                     if (typeRule == "and")
                                     {
                                         builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +

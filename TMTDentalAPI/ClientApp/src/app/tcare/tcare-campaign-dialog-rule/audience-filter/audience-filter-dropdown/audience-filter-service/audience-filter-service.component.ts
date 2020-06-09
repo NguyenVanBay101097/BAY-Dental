@@ -28,8 +28,8 @@ export class AudienceFilterServiceComponent implements OnInit {
   showButtonCreateService: boolean = false;
   searchServiceUpdate = new Subject<string>();
 
-  constructor(private fb: FormBuilder, 
-    private notificationService: NotificationService, 
+  constructor(private fb: FormBuilder,
+    private notificationService: NotificationService,
     private productService: ProductService) { }
 
   ngOnInit() {
@@ -83,7 +83,7 @@ export class AudienceFilterServiceComponent implements OnInit {
     this.productService.getPaged(val).subscribe(res => {
       var listItems = res['items'];
       // filter
-      var index_item =  listItems.findIndex(x => x.id == this.selected_AudienceFilter_Picker.value);
+      var index_item = listItems.findIndex(x => x.id == this.selected_AudienceFilter_Picker.value);
       if (index_item >= 0) {
         listItems.splice(index_item, 1);
       }
@@ -99,7 +99,7 @@ export class AudienceFilterServiceComponent implements OnInit {
         uom: null
       };
       listItems.splice(0, 0, temp_item);
-      
+
       if (listItems.length == 0) {
         this.showButtonCreateService = true;
       } else {
@@ -108,8 +108,8 @@ export class AudienceFilterServiceComponent implements OnInit {
       this.AudienceFilter_Picker.formula_values = [];
       this.AudienceFilter_Picker.formula_displays = [];
       for (let i = 0; i < listItems.length; i++) {
-        this.AudienceFilter_Picker.formula_values.push(listItems[i].id); 
-        this.AudienceFilter_Picker.formula_displays.push(listItems[i].name); 
+        this.AudienceFilter_Picker.formula_values.push(listItems[i].id);
+        this.AudienceFilter_Picker.formula_displays.push(listItems[i].name);
       }
     }, err => {
       console.log(err);

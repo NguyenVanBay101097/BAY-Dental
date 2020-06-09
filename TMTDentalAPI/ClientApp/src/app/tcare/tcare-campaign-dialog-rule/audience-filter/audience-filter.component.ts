@@ -55,9 +55,8 @@ export class AudienceFilterComponent implements OnInit {
     });
 
     if (this.audience_filter_receive) {
-      debugger
       this.formGroup.patchValue({
-        logic: this.audience_filter_receive.logic,
+        logic: this.audience_filter_receive.logic ? this.audience_filter_receive.logic : 'and',
         conditions: this.audience_filter_receive.conditions
       });
       this.listAudienceFilter_Items = this.audience_filter_receive.conditions;

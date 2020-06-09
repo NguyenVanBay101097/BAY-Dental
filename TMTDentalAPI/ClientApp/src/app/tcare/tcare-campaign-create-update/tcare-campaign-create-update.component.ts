@@ -109,7 +109,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //create obj
       var sequence = that.doc.createElement('sequence');
       var rule = that.doc.createElement('rule');
-
       var editor = new mxEditor();
       var graph = editor.graph;
       that.editorDefind = editor;
@@ -134,10 +133,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       // Sets the graph container and configures the editor
       editor.setGraphContainer(container);
-      // var config = mxUtils
-      //   .load("./assets/editors/config/keyHandler-commons.xml")
-      //   .getDocumentElement();
-      // editor.configure(config);
 
       var iconTolerance = 20;
       var splash = document.getElementById("splash");
@@ -150,7 +145,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           splash.parentNode.removeChild(splash);
         }
       }
-
 
       //validate Connection
       graph.isValidConnection = function (source, target) {
@@ -247,68 +241,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       // Adds all required styles to the graph (see below)
       that.configureStylesheet(graph);
 
-      //add image on hover
-      function mxIconSet(value) {
-        this.images = [];
-        var graph = value.view.graph;
-        // Delete
-        var img = mxUtils.createImage("./assets/editors/images/delete2.png");
-        img.setAttribute("title", "Delete");
-        img.style.position = "absolute";
-        img.style.cursor = "pointer";
-        img.style.width = "16px";
-        img.style.height = "16px";
-        img.style.left = value.x + value.width - 5 + "px";
-        img.style.top = value.y - 10 + "px";
-
-        mxEvent.addGestureListeners(
-          img,
-          mxUtils.bind(this, function (evt) {
-            mxEvent.consume(evt);
-          })
-        );
-
-        //xóa stage
-        mxEvent.addListener(
-          img,
-          "click",
-          mxUtils.bind(this, function (evt) {
-            if (value.cell.isRoot) {
-              alert('bạn không được xóa gốc của sơ đồ');
-              return false
-            }
-            graph.removeCells([value.cell]);
-            mxEvent.consume(evt);
-            this.destroy();
-            if (value.cell.style == 'read') {
-              var cellParent = graph.getModel().getCell(value.cell.value.getAttribute('parent'));
-              var valueCell = cellParent.getValue();
-              valueCell.removeAttribute('messageReadId');
-            }
-            if (value.cell.style == 'unread') {
-              var cellParent = graph.getModel().getCell(value.cell.value.getAttribute('parent'));
-              var valueCell = cellParent.getValue();
-              valueCell.removeAttribute('messageUnreadId');
-            }
-
-            that.onSave();
-          })
-        );
-        value.view.graph.container.appendChild(img);
-        this.images.push(img);
-      }
-
-      //remove all when remove node
-      mxIconSet.prototype.destroy = function () {
-        if (this.images != null) {
-          for (var i = 0; i < this.images.length; i++) {
-            var img = this.images[i];
-            img.parentNode.removeChild(img);
-          }
-        }
-        this.images = null;
-      };
-
+      //Delete cell
       var keyHandler = new mxKeyHandler(graph);
       keyHandler.bindKey(46, function (evt) {
         if (graph.isEnabled()) {
@@ -316,79 +249,11 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       });
 
-      //Mouse listener
-      graph.addMouseListener({
-        currentState: null,
-        currentIconSet: null,
-        mouseDown: function (sender, me) {
-          // Hides icons on mouse down
-          if (this.currentState != null) {
-            this.dragLeave(me.getEvent(), this.currentState);
-            this.currentState = null;
-          }
-        },
-        mouseMove: function (sender, me) {
-          if (
-            this.currentState != null &&
-            (me.getState() == this.currentState || me.getState() == null)
-          ) {
-            var tol = iconTolerance;
-            var tmp = new mxRectangle(
-              me.getGraphX() - tol,
-              me.getGraphY() - tol,
-              2 * tol,
-              2 * tol
-            );
-
-            if (mxUtils.intersects(tmp, this.currentState)) {
-              return;
-            }
-          }
-
-          var tmp = graph.view.getState(me.getCell());
-
-          // Ignores everything but vertices
-          if (
-            graph.isMouseDown ||
-            (tmp != null && !graph.getModel().isVertex(tmp.cell))
-          ) {
-            tmp = null;
-          }
-
-          if (tmp != this.currentState) {
-            if (this.currentState != null) {
-              this.dragLeave(me.getEvent(), this.currentState);
-            }
-
-            this.currentState = tmp;
-
-            if (this.currentState != null) {
-              this.dragEnter(me.getEvent(), this.currentState);
-            }
-          }
-        },
-        mouseUp: function (sender, me) { },
-        dragEnter: function (evt, state) {
-          if (this.currentIconSet == null) {
-            this.currentIconSet = new mxIconSet(state);
-          }
-        },
-        dragLeave: function (evt, state) {
-          if (this.currentIconSet != null) {
-            this.currentIconSet.destroy();
-            this.currentIconSet = null;
-          }
-        },
-      });
-
       // thêm 1 sequence
       that.addSidebarIcon(graph, sidebar_sequences, sequence, "./assets/editors/images/message-setting.png", "sequence");
 
       //thêm 1 rule
       that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
-
-      //outLine
-      new mxOutline(graph, outline);
 
       //load Xml
       this.load(editor);
@@ -869,6 +734,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       if (result) {
         result.id = this.id;
         result.sheduleStart = this.intlService.formatDate(result.sheduleStart, 'yyyy-MM-ddTHH:mm:ss');
+        this.campaign.sheduleStart = result.sheduleStart;
         this.tcareService.actionStartCampaign(result).subscribe(
           () => {
             this.campaign.state = "running";
