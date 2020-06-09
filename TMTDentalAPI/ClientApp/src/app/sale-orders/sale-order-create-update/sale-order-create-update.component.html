@@ -189,7 +189,7 @@
                                     </kendo-datetimepicker>
                                     <span
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.dateOrder | date: 'short'}}</span>
-                                    <div *ngIf="fgControls.dateOrderObj.invalid && (fgControls.dateOrderObj.touched || fgControls.dateOrderObj.dirty || submitForm)"
+                                    <div *ngIf="fgControls.dateOrderObj.invalid && (fgControls.dateOrderObj.touched || fgControls.dateOrderObj.dirty || submitted)"
                                         class="text-danger">
                                         <div *ngIf="fgControls.dateOrderObj.errors.required">Nhập ngày điều trị</div>
                                     </div>
