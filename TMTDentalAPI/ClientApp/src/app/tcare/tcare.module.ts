@@ -21,6 +21,7 @@ import { AudienceFilterServiceCategoryComponent } from './tcare-campaign-dialog-
 import { AudienceFilterPartnerCategoryComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
 import { MyAutofocusDirective } from './tcare-campaign-dialog-rule/audience-filter/autofocus.directive';
 import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-filter/click-outside.directive';
+import { TcareCampaignStartDialogComponent } from './tcare-campaign-start-dialog/tcare-campaign-start-dialog.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-fil
     AudienceFilterServiceCategoryComponent,
     AudienceFilterPartnerCategoryComponent,
     MyAutofocusDirective,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    TcareCampaignStartDialogComponent
   ],
   imports: [
     CommonModule,
@@ -58,7 +60,8 @@ import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-fil
     AudienceFilterLastTreatmentDayComponent,
     AudienceFilterPartnerCategoryComponent,
     AudienceFilterServiceComponent,
-    AudienceFilterServiceCategoryComponent
+    AudienceFilterServiceCategoryComponent,
+    TcareCampaignStartDialogComponent
   ]
 })
 export class TcareModule { }

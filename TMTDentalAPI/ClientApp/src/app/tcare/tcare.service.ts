@@ -23,6 +23,9 @@ export class TCareCampaignDisplay {
   id: string;
   name: string;
   graphXml: string;
+  state: string;
+  sheduleStart: string;
+  RecurringJobId: string;
 }
 
 
@@ -116,6 +119,14 @@ export class TcareService {
 
   delete(id) {
     return this.http.delete(this.base_api + this.apiUrlCampaign + '/' + id);
+  }
+
+  actionStartCampaign(val) {
+    return this.http.post(this.base_api + this.apiUrlCampaign + "/ActionStartCampaign", val)
+  }
+
+  actionStopCampaign(val) {
+    return this.http.post(this.base_api + this.apiUrlCampaign + "/ActionStopCampaign", val)
   }
 
   autocomplete(val: TCareCampaignPaged): Observable<TCareCampaignBasic[]> {

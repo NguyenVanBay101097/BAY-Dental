@@ -18,7 +18,6 @@ export class AudienceFilterDropdownComponent implements OnInit {
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
-    debugger
     this.renderComponent();
   }
 
@@ -27,7 +26,6 @@ export class AudienceFilterDropdownComponent implements OnInit {
   }
 
   renderComponent() {
-    debugger
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.audience_filter_comp_data.component);
 
     const viewContainerRef = this.container;

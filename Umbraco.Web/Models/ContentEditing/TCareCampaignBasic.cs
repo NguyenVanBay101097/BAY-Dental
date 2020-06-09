@@ -13,5 +13,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string GraphXml { get; set; }
 
         public string State { get; set; }
+
+        public DateTime? SheduleStart { get; set; }
     }
 }

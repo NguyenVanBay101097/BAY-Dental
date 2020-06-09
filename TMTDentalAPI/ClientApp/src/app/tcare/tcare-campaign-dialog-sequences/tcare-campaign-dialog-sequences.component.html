@@ -81,10 +81,14 @@
                                     <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
                                         [filterable]="true" #channelSocialCbx formControlName="channelSocialId"
                                         [valueField]="'id'" [valuePrimitive]="true">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
+                                        </ng-template>
                                     </kendo-combobox>
                                     <div
-                                        *ngIf="channelSocialIdValue.invalid && (channelSocialIdValue.dirty || channelSocialIdValue.touched || submited)">
-                                        <label style="color: red;">Kênh gửi không được để trống !</label>
+                                        *ngIf="channelSocialIdControl.invalid && (channelSocialIdControl.dirty || channelSocialIdControl.touched || submited)">
+                                        <label *ngIf="channelSocialIdControl.errors.required" style="color: red;">Kênh
+                                            gửi không được để trống !</label>
                                     </div>
                                 </td>
                             </tr>
@@ -99,8 +103,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <textarea formControlName="content" class="form-control"></textarea>
                                     <div
-                                        *ngIf="contentValue.invalid && (contentValue.dirty || contentValue.touched || submited)">
-                                        <label style="color: red;">Nội dung gửi không được để trống !</label>
+                                        *ngIf="contentControl.invalid && (contentControl.dirty || contentControl.touched || submited)">
+                                        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi
+                                            không được để trống !</label>
                                     </div>
                                 </td>
                             </tr>
