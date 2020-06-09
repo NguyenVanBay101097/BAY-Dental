@@ -13,13 +13,17 @@ namespace Umbraco.Web.Mapping
         public ProductProfile()
         {
             CreateMap<Product, ProductBasic>().ReverseMap();
-            CreateMap<Product, ProductDisplay>();
 
+            CreateMap<Product, ProductServiceExportExcel>()
+             .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
+            CreateMap<Product, ProductDisplay>()
+                 .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
             CreateMap<ProductDisplay, Product>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Categ, x => x.Ignore())
                 .ForMember(x => x.UOM, x => x.Ignore())
                 .ForMember(x => x.UOMPO, x => x.Ignore());
+            
 
             CreateMap<Product, ProductSimple>();
 
@@ -30,6 +34,7 @@ namespace Umbraco.Web.Mapping
 
             //Thắng
             CreateMap<ProductSave, Product>();
+  
         }
     }
 }
