@@ -67,17 +67,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       name: ["", Validators.required],
     });
     this.doc = mxUtils.createXmlDocument();
-    this.main(
-      document.getElementById("graphContainer"),
-      document.getElementById("outlineContainer"),
-      document.getElementById("toolbarContainer"),
-      document.getElementById("sidebarContainer_sequences"),
-      document.getElementById("sidebarContainer_goals"),
-      document.getElementById("statusContainer")
-    );
+    this.load();
   }
 
-  main(container, outline, toolbar, sidebar_sequences, sidebar_goals, status) {
+  main(container, sidebar_sequences, sidebar_goals, model?) {
     var that = this;
     if (!mxClient.isBrowserSupported()) {
       // Displays an error message if the browser is not supported.
@@ -99,11 +92,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       if (mxClient.IS_QUIRKS) {
         document.body.style.overflow = "hidden";
         new mxDivResizer(container);
-        new mxDivResizer(outline);
-        new mxDivResizer(toolbar);
         new mxDivResizer(sidebar_sequences);
         new mxDivResizer(sidebar_goals);
-        new mxDivResizer(status);
       }
 
       //create obj
@@ -176,6 +166,9 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           return false;
         if (styleSource == 'read' || styleSource == 'unread' || styleTarget == 'read' || styleTarget == 'unread')
           return false;
+
+        if (styleSource == "sequence" && styleTarget == "rule")
+          return false;
         else {
           var value = target.getValue();
           value.setAttribute('parent', source.id);
@@ -185,9 +178,11 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       }
 
       //Add ContextMenu
+
       graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
         return that.createPopupMenu(editor, graph, menu, cell, evt);
       };
+
 
       //defind NodeName
       graph.convertValueToString = function (cell) {
@@ -216,7 +211,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       //double click Action
       graph.dblClick = function (evt, cell) {
-        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null) {
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && model && model.state != "running") {
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
             that.popupSequence(graph, cell);
           }
@@ -234,7 +229,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         // Disables any default behaviour for the double click
         mxEvent.consume(evt);
       };
-
       // Enables new connections
       graph.setConnectable(true);
 
@@ -256,42 +250,36 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
 
       //load Xml
-      this.load(editor);
+      editor.graph.getModel().beginUpdate();
+      try {
+        var doc = mxUtils.parseXml(model.graphXml);
+        var dec = new mxCodec(doc);
+        dec.decode(doc.documentElement, editor.graph.getModel());
+      }
+      finally {
+        editor.graph.getModel().endUpdate();
+      }
     }
   }
 
-  load(editor) {
-    let that = this;
+  load() {
     this.tcareService.get(this.id).subscribe(
       result => {
         this.campaign = result;
-        that.formGroup.get('name').patchValue(result.name);
+        this.formGroup.get('name').patchValue(result.name);
         if (result.graphXml) {
-          editor.graph.getModel().beginUpdate();
-          try {
-            var xml = result.graphXml;
-            var doc = mxUtils.parseXml(xml);
-            var dec = new mxCodec(doc);
-            dec.decode(doc.documentElement, editor.graph.getModel());
-          }
-          finally {
-            editor.graph.getModel().endUpdate();
-          }
+          this.main(
+            document.getElementById("graphContainer"),
+            document.getElementById("sidebarContainer_sequences"),
+            document.getElementById("sidebarContainer_goals"),
+            result
+          );
         } else {
-          // var rule = that.doc.createElement('rule');
-          // rule.setAttribute('logic', 'and');
-          // var parent = editor.graph.getDefaultParent();
-          // editor.graph.getModel().beginUpdate();
-          // try {
-          //   var v1 = editor.graph.insertVertex(parent, null, rule, 50, 200, 40, 40, 'rule');
-          //   v1.mxTransient.push("name");
-          //   v1.name = 'rule';
-          //   v1.isRoot = true;
-          // }
-          // finally {
-          //   editor.graph.getModel().endUpdate();
-          // }
-          // editor.graph.setSelectionCell(v1);
+          this.main(
+            document.getElementById("graphContainer"),
+            document.getElementById("sidebarContainer_sequences"),
+            document.getElementById("sidebarContainer_goals"),
+          );
         }
       }
     )
