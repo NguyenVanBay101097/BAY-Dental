@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -98,11 +99,11 @@ namespace Infrastructure.Services
             if (!await userObj.HasGroup("base.group_system"))
                 throw new Exception("Chỉ có admin mới được thay đổi thiết lập");
 
+            //Đảm bảo tài khoản admin sẽ kế thừa group base.group_user
+            await _EnsureAdminHasGroupUser();
+
             var groupObj = GetService<IResGroupService>();
 
-            //var user = UserSessionCtx.User;
-            //if (!user.HasGroup("base.group_system"))
-            //    throw new Exception("Chỉ có admin mới được thay đổi thiết lập");
             var classified = await _GetClassifiedFields<T>();
 
             //foreach (var item in classified.Defaults)
@@ -176,6 +177,24 @@ namespace Infrastructure.Services
 
             //other fields
             await SetDefaultOtherFields(self, classified.Others);
+        }
+
+        private async Task _EnsureAdminHasGroupUser()
+        {
+            var userManager = GetService<UserManager<ApplicationUser>>();
+            var userRoot = userManager.Users.Where(x => x.IsUserRoot).Include(x => x.ResGroupsUsersRels).FirstOrDefault();
+            if (userRoot != null)
+            {
+                var modelDataObj = GetService<IIRModelDataService>();
+                var groupUser = await modelDataObj.GetRef<ResGroup>("base.group_user");
+                if (!userRoot.ResGroupsUsersRels.Any(x => x.GroupId == groupUser.Id))
+                {
+                    userRoot.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = groupUser.Id });
+                    var updateResult = await userManager.UpdateAsync(userRoot);
+                    if (!updateResult.Succeeded)
+                        throw new Exception(string.Join(", ", updateResult.Errors.Select(x => x.Description)));
+                }
+            }
         }
 
         public async Task InsertServiceCardData()

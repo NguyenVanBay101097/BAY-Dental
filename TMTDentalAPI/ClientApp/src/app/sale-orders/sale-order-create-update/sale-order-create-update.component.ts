@@ -849,8 +849,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionCancel() {
     if (this.id) {
-      this.saleOrderService.actionCancel([this.id]).subscribe(() => {
-        this.loadRecord();
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Hủy phiếu điều trị';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy phiếu điều trị?';
+      modalRef.result.then(() => {
+        this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+          this.loadRecord();
+        }, err => {
+          this.errorService.show(err);
+        });
       });
     }
   }
