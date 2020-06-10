@@ -15,7 +15,10 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany(x => x.Traces)
                 .HasForeignKey(x => x.TCareCampaignId);
 
-
+            builder.HasOne(x => x.ChannelSocial)
+               .WithMany()
+               .HasForeignKey(x => x.ChannelSocialId)
+               .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.Partner)
             .WithMany()
