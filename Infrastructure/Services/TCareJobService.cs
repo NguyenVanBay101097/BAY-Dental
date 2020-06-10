@@ -555,6 +555,8 @@ namespace Infrastructure.Services
 
         }
 
+       
+
 
 
         public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId)

@@ -42,9 +42,9 @@ namespace TMTDentalAPI.Controllers
                             trace.Read = watermark;
 
                         await _tCareMessagingTraceService.UpdateAsync(traces);
-                    
+                    await _tCareMessagingTraceService.AddTagWebhook(traces, "read");
 
-                  
+
                 }
 
             }else if (whzl.EventName == "user_received_message")
@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
                         trace.Delivery = watermark;
 
                     await _tCareMessagingTraceService.UpdateAsync(traces);
-
+                    await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
                 }
                 
             }
