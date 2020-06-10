@@ -88,6 +88,10 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   onCancel() {
     this.activeModal.close();
   }
+
+  get f() {
+    return this.myform.controls;
+  }
 }
 
 

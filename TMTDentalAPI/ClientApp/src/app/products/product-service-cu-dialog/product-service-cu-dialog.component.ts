@@ -31,6 +31,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   inserted: boolean;
   filterdCategories: ProductCategoryBasic[] = [];
   opened = false;
+  submitted = false;
 
   stepNameEdit = true;
   categCbxLoading = false;
@@ -174,6 +175,14 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    console.log(this.f.categ.invalid);
+    console.log(this.f.categ.errors);
+    console.log(this.f.categ.touched);
+    console.log(this.f.categ.dirty);
+    console.log(this.f.categ.errors.required);
+    console.log(this.submitted);
+    this.submitted = true;
+
     if (!this.productForm.valid) {
       return;
     }
@@ -228,6 +237,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     if (this.inserted) {
       this.activeModal.close(true);
     } else {
@@ -369,6 +379,14 @@ export class ProductServiceCuDialogComponent implements OnInit {
     }
   }
 
+  get f() {
+    return this.productForm.controls;
+  }
+
+  focusoutInput() {
+    this.submitted = true;
+      console.log("Hey");
+  }
 }
 
 
