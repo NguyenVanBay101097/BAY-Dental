@@ -14,7 +14,7 @@
             <input class="form-control" formControlName="name" name="name">
           </h1>
         </div>
-        <div *ngIf="f.name.errors" class="text-danger">
+        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
           <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>
         </div>
         <div class="o_group">
