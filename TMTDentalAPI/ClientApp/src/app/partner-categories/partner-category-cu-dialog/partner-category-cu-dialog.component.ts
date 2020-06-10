@@ -60,6 +60,8 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    console.log("Hello");
+
     if (!this.myform.valid) {
       return;
     }

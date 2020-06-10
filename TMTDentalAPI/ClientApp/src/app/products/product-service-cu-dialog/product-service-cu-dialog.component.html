@@ -11,11 +11,10 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên dịch vụ</label>
                     <h1>
-                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput
-                            (focusout)="focusoutInput()">
+                        <input type="text" name="name" class="form-control" formControlName="name">
                     </h1>
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                        <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>
+                        <div *ngIf="f.name.errors.required">Nhập tên dịch vụ</div>
                     </div>
                     <div>
                         <div class="form-check">
