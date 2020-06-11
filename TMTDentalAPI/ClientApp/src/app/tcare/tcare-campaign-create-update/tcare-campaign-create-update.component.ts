@@ -64,7 +64,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     private renderer2: Renderer2,
     private notificationService: NotificationService,
     private intlService: IntlService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.campaign = new TCareCampaignDisplay();
@@ -234,9 +234,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
           if (cell.value.nodeName.toLowerCase() == "addtag") {
             that.popupAddTag(graph, cell);
-          } else {
-            return false;
           }
+        }
+        else {
+          that.notificationService.show({
+            content: 'Kịch bản đang chạy bạn không thể thao tác, vui lòng dừng kịch bản để thao tác!',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
+          return false;
         }
         // Disables any default behaviour for the double click
         mxEvent.consume(evt);
@@ -593,13 +601,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                 userObject.appendChild(tagEl);
               });
 
-            graph.getModel().setValue(cell, userObject);
-          }
-          finally {
-            graph.getModel().endUpdate();
-          }
-        }, () => {
-        });
+              graph.getModel().setValue(cell, userObject);
+            }
+            finally {
+              graph.getModel().endUpdate();
+            }
+          }, () => {
+          });
       }
     });
   }
@@ -653,13 +661,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                 userObject.appendChild(conEl);
               });
 
-            graph.getModel().setValue(cell, userObject);
-          }
-          finally {
-            graph.getModel().endUpdate();
-          }
-        }, () => {
-        });
+              graph.getModel().setValue(cell, userObject);
+            }
+            finally {
+              graph.getModel().endUpdate();
+            }
+          }, () => {
+          });
       }
     });
   }
@@ -696,12 +704,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             userObject.setAttribute(p, result[p]);
           }
 
-        graph.getModel().setValue(cell, userObject);
-      } finally {
-        graph.getModel().endUpdate();
-      }
-    }, () => {
-    });
+          graph.getModel().setValue(cell, userObject);
+        } finally {
+          graph.getModel().endUpdate();
+        }
+      }, () => {
+      });
   }
 
   createPopupMenu(editor, graph, menu, cell, evt) {
@@ -753,18 +761,18 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                   "read"
                 );
 
-              var messageOpenEl = that.doc.createElement('messageOpen');
-              messageOpenEl.setAttribute('label', 'Đã đọc');
-              messageOpenEl.setAttribute('name', 'message_open');
-              graph.insertEdge(parent, null, messageOpenEl, cell, addTagVertex);
-              graph.setSelectionCell(addTagVertex);
-            }
-            finally {
-              graph.getModel().endUpdate();
-            }
+                var messageOpenEl = that.doc.createElement('messageOpen');
+                messageOpenEl.setAttribute('label', 'Đã đọc');
+                messageOpenEl.setAttribute('name', 'message_open');
+                graph.insertEdge(parent, null, messageOpenEl, cell, addTagVertex);
+                graph.setSelectionCell(addTagVertex);
+              }
+              finally {
+                graph.getModel().endUpdate();
+              }
 
-          }
-        });
+            }
+          });
 
         menu.addItem(
           "Gán nhãn đã nhận",
@@ -808,18 +816,18 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                   "unread"
                 );
 
-              var messageDeliveredEl = that.doc.createElement('messageDelivered');
-              messageDeliveredEl.setAttribute('label', 'Đã nhận');
-              messageDeliveredEl.setAttribute('name', 'message_delivered');
-              graph.insertEdge(parent, null, messageDeliveredEl, cell, addTagVertex);
-              graph.setSelectionCell(addTagVertex);
-            }
-            finally {
-              graph.getModel().endUpdate();
-            }
+                var messageDeliveredEl = that.doc.createElement('messageDelivered');
+                messageDeliveredEl.setAttribute('label', 'Đã nhận');
+                messageDeliveredEl.setAttribute('name', 'message_delivered');
+                graph.insertEdge(parent, null, messageDeliveredEl, cell, addTagVertex);
+                graph.setSelectionCell(addTagVertex);
+              }
+              finally {
+                graph.getModel().endUpdate();
+              }
 
-          }
-        })
+            }
+          })
       }
     } else {
       menu.addItem("Fit", "./assets/editors/images/zoom.gif", function () {
