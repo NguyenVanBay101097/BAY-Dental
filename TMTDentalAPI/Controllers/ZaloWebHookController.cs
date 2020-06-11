@@ -36,15 +36,15 @@ namespace TMTDentalAPI.Controllers
                 {
                
                         var watermark = whzl.Timestamp.ToLocalTime();
-                        var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == whzl.Sender.Id && x.Type == "zalo").ToListAsync();
+                        var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == whzl.Recipient.Id && x.Type == "zalo" && x.ChannelSocial.PageId == whzl.Sender.Id).ToListAsync();
                         //var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
                         foreach (var trace in traces)
                             trace.Read = watermark;
 
                         await _tCareMessagingTraceService.UpdateAsync(traces);
-                    
+                    await _tCareMessagingTraceService.AddTagWebhook(traces, "read");
 
-                  
+
                 }
 
             }else if (whzl.EventName == "user_received_message")
@@ -53,12 +53,12 @@ namespace TMTDentalAPI.Controllers
                 foreach (var messaging in whzl.Message.ids)
                 {
                     var watermark = whzl.Timestamp.ToLocalTime();
-                    var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == whzl.Sender.Id && x.Type == "zalo").ToListAsync();
+                    var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == whzl.Recipient.Id && x.Type == "zalo" && x.ChannelSocial.PageId == whzl.Sender.Id).ToListAsync();
                     foreach (var trace in traces)
                         trace.Delivery = watermark;
 
                     await _tCareMessagingTraceService.UpdateAsync(traces);
-
+                    await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
                 }
                 
             }

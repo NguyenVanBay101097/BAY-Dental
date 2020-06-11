@@ -498,7 +498,7 @@ namespace Infrastructure.Services
                         return;
                     if (channelSocial.Type == "facebook")
                     {
-                        var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId))).ToList();
+                        var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channelSocial.Id)).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -512,7 +512,7 @@ namespace Infrastructure.Services
                     else if (channelSocial.Type == "zalo")
                     {
 
-                        var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequence.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId))).ToList();
+                        var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequence.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channelSocial.Id)).ToList();
                         var limit = 200;
                         var offset = 0;
                         var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -545,7 +545,7 @@ namespace Infrastructure.Services
                                 return;
                             if (channel.Type == "facebook")
                             {
-                                var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId))).ToList();
+                                var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId) , channel.Id)).ToList();
                                 var limit = 200;
                                 var offset = 0;
                                 var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -559,7 +559,7 @@ namespace Infrastructure.Services
                             else if (channel.Type == "zalo")
                             {
 
-                                var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequence.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId))).ToList();
+                                var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequence.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channel.Id)).ToList();
                                 var limit = 200;
                                 var offset = 0;
                                 var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -609,9 +609,11 @@ namespace Infrastructure.Services
 
         }
 
+       
 
 
-        public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId)
+
+        public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId , Guid channelSocialId)
         {
             var now = DateTime.Now;
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
@@ -619,13 +621,13 @@ namespace Infrastructure.Services
 
             var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
             if (sendResult == null)
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" , ChannelSocialId = channelSocialId });
             else
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook", ChannelSocialId = channelSocialId });
 
         }
 
-        public async Task SendMessageAndTraceZalo(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId)
+        public async Task SendMessageAndTraceZalo(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId, Guid channelSocialId)
         {
             var now = DateTime.Now;
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
@@ -633,9 +635,9 @@ namespace Infrastructure.Services
             var zaloClient = new ZaloClient(access_token);
             var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text).Root.ToObject<RootZalo>().data;
             if (sendResult == null)
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
             else
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo" });
+                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
 
 
         }
