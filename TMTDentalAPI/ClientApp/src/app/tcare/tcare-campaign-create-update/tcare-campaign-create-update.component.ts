@@ -25,12 +25,12 @@ declare var mxGuide: any;
 declare var mxGraphHandler: any;
 declare var mxCodec: any;
 declare var mxEvent: any;
-declare var mxOutline: any;
+declare var mxGraph: any;
 declare var mxImage: any;
 declare var mxPerimeter: any;
 declare var mxConnectionHandler: any;
 declare var mxEffects: any;
-declare var mxRectangle: any;
+declare var mxAutoSaveManager: any;
 declare var mxKeyHandler: any;
 
 @Component({
@@ -46,7 +46,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   priority = null;
   title = "Kịch bản";
   campaign: TCareCampaignDisplay;
-  cellSave: any;
+  cellRule: any;
   doc: any;
   submited = false;
   constructor(
@@ -115,15 +115,14 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         16
       );
 
-      // Centers the port icon on the target port
-      graph.connectionHandler.targetConnectImage = true;
+      // Centers the port icon on the cellSequence port
+      graph.connectionHandler.cellSequenceConnectImage = true;
 
       // Does not allow dangling edges
       graph.setAllowDanglingEdges(false);
 
       // Sets the graph container and configures the editor
       editor.setGraphContainer(container);
-
       var iconTolerance = 20;
       var splash = document.getElementById("splash");
       if (splash != null) {
@@ -136,10 +135,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       }
 
+      var mgr = new mxAutoSaveManager(editor.graph, 1, 1);
+      if (mgr.isEnabled) {
+        mgr.graphModelChanged = function () {
+          that.saveChange(graph);
+        };
+      }
+
       //validate Connection
-      graph.isValidConnection = function (source, target) {
+      graph.isValidConnection = function (source, cellSequence) {
         const source_id = source.id;
-        const target_id = target.id;
+        const cellSequence_id = cellSequence.id;
         var source_edge_length = 0;
         if (source.edges) {
           source_edge_length = source.edges.length;
@@ -148,40 +154,40 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         for (let i = 0; i < source_edge_length; i++) {
           if (
             source_id == source.edges[i].source.id &&
-            target_id == source.edges[i].target.id
+            cellSequence_id == source.edges[i].cellSequence.id
           ) {
             return false;
           }
           if (
-            source_id == source.edges[i].target.id &&
-            target_id == source.edges[i].source.id
+            source_id == source.edges[i].cellSequence.id &&
+            cellSequence_id == source.edges[i].source.id
           ) {
             return false;
           }
         }
         var styleSource = this.getModel().getStyle(source);
-        var styleTarget = this.getModel().getStyle(target);
+        var stylecellSequence = this.getModel().getStyle(cellSequence);
 
-        if (styleSource == styleTarget || !styleTarget)
+        if (styleSource == stylecellSequence || !stylecellSequence)
           return false;
-        if (styleSource == 'read' || styleSource == 'unread' || styleTarget == 'read' || styleTarget == 'unread')
+        if (styleSource == 'read' || styleSource == 'unread' || stylecellSequence == 'read' || stylecellSequence == 'unread')
           return false;
 
-        if (styleSource == "sequence" && styleTarget == "rule")
+        if (styleSource == "sequence" && stylecellSequence == "rule")
           return false;
         else {
-          var value = target.getValue();
+          var value = cellSequence.getValue();
           value.setAttribute('parent', source.id);
-          graph.getModel().setValue(target, value);
+          graph.getModel().setValue(cellSequence, value);
           return true;
         }
       }
 
       //Add ContextMenu
-
       graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
         return that.createPopupMenu(editor, graph, menu, cell, evt);
       };
+
 
 
       //defind NodeName
@@ -211,7 +217,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       //double click Action
       graph.dblClick = function (evt, cell) {
-        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && model && model.state != "running") {
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && model.state != 'running') {
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
             that.popupSequence(graph, cell);
           }
@@ -237,9 +243,33 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       //Delete cell
       var keyHandler = new mxKeyHandler(graph);
+      keyHandler.target;
       keyHandler.bindKey(46, function (evt) {
-        if (graph.isEnabled()) {
-          graph.removeCells();
+        if (graph.isEnabled) {
+          if (model.state != 'running') {
+            var cell = graph.getSelectionCell();
+            if (cell.style == 'sequence' && cell.edges) {
+              cell.edges.forEach(edge => {
+                if (edge.value != '' && edge.value != null && edge.target) {
+                  var cellTag = graph.getModel().getCell(edge.target.id);
+                  if (cellTag) {
+                    graph.getModel().remove(cellTag);
+
+                  }
+                }
+              });
+            }
+            graph.removeCells();
+          }
+          else {
+            that.notificationService.show({
+              content: 'Kịch bản đang chạy bạn không thể xóa!',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'error', icon: true }
+            });
+          }
         }
       });
 
@@ -250,15 +280,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
 
       //load Xml
-      editor.graph.getModel().beginUpdate();
+      graph.getModel().beginUpdate();
       try {
         var doc = mxUtils.parseXml(model.graphXml);
         var dec = new mxCodec(doc);
-        dec.decode(doc.documentElement, editor.graph.getModel());
+        dec.decode(doc.documentElement, graph.getModel());
+        graph.setSelectionCells(graph.getModel().cells);
       }
       finally {
-        editor.graph.getModel().endUpdate();
+        graph.getModel().endUpdate();
       }
+
     }
   }
 
@@ -275,10 +307,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             result
           );
         } else {
+          var value = {
+            state: 'draf'
+          }
           this.main(
             document.getElementById("graphContainer"),
             document.getElementById("sidebarContainer_sequences"),
-            document.getElementById("sidebarContainer_goals"),
+            document.getElementById("sidebarContainer_goals"), value
           );
         }
       }
@@ -371,11 +406,11 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         if (typeShape == "rule") {
           v1 = graph.insertVertex(parent, null, obj, x, y, 40, 40, typeShape);
         }
+        graph.setSelectionCell(v1);
       } finally {
         model.endUpdate();
       }
 
-      graph.setSelectionCell(v1);
     }
 
     // Creates the image which is used as the sidebar icon (drag source)
@@ -525,7 +560,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           }
           finally {
             graph.getModel().endUpdate();
-            self.onSave();
           }
         }, () => {
         });
@@ -577,7 +611,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           }
           finally {
             graph.getModel().endUpdate();
-            that.onSave();
           }
         }, () => {
         });
@@ -610,7 +643,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         graph.getModel().setValue(cell, userObject);
       } finally {
         graph.getModel().endUpdate();
-        that.onSave();
       }
     }, () => {
     });
@@ -654,12 +686,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               messageOpenEl.setAttribute('label', 'Đã đọc');
               messageOpenEl.setAttribute('name', 'message_open');
               graph.insertEdge(parent, null, messageOpenEl, cell, addTagVertex);
+              graph.setSelectionCell(addTagVertex);
             }
             finally {
               graph.getModel().endUpdate();
             }
 
-            that.onSave();
           }
         });
 
@@ -694,12 +726,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               messageDeliveredEl.setAttribute('label', 'Đã nhận');
               messageDeliveredEl.setAttribute('name', 'message_delivered');
               graph.insertEdge(parent, null, messageDeliveredEl, cell, addTagVertex);
+              graph.setSelectionCell(addTagVertex);
             }
             finally {
               graph.getModel().endUpdate();
             }
 
-            that.onSave();
           }
         })
       }
@@ -715,7 +747,38 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     }
   }
 
+  checkConnection() {
+    var listCell = [];
+    var graph = this.editorDefind.graph;
+    var cells = graph.getModel().cells;
+    for (let index = 0; index < graph.getModel().nextId + 1; index++) {
+      if (cells[index])
+        listCell.push(cells[index]);
+    }
+    var cellRule = listCell.find(x => x.style == "rule");
+    if (cellRule) {
+      var edge = listCell.find(x => (x.source && x.source.id) === cellRule.id);
+      if (edge) {
+        var cellSequence = listCell.find(x => x.id == (edge.target && edge.target.id));
+        if (cellSequence)
+          return true;
+        else
+          return false;
+      } else { return false; }
+    } else { return false; }
+  }
+
   startCampaign() {
+    if (!this.checkConnection()) {
+      this.notificationService.show({
+        content: 'Bạn chưa hoàn thành 1 kịch bản, vui lòng hoàn thành sau đó chạy lại kịch bản!.',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
     let modalRef = this.modalService.open(TcareCampaignStartDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
     modalRef.componentInstance.title = 'Cài đặt thời gian chạy kịch bản';
     modalRef.result.then((result: any) => {
@@ -758,11 +821,22 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     }
   }
 
+  saveChange(graph) {
+    var value = this.formGroup.value;
+    var enc = new mxCodec(mxUtils.createXmlDocument());
+    var node = enc.encode(graph.getModel());
+    value.graphXml = mxUtils.getPrettyXml(node);
+    if (this.id) {
+      this.tcareService.update(this.id, value).subscribe(() => { });
+    }
+  }
+
   onSave() {
     this.submited = true;
     if (this.formGroup.invalid) {
       return false;
     }
+
     var value = this.formGroup.value;
     var enc = new mxCodec(mxUtils.createXmlDocument());
     var node = enc.encode(this.editorDefind.graph.getModel());

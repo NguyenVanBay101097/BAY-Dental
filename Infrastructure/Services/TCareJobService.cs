@@ -250,38 +250,34 @@ namespace Infrastructure.Services
                                 case "contains":
                                     if (typeRule == "and")
                                     {
-                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        builder.Where("EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +                                
                                     "Left join Products sp On sp.Id = orlines.ProductId " +
                                     "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
+                                    $"Where csp.Id = @groupservice And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { groupservice = condition.Value });
                                     }
                                     else
                                     {
-                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        builder.OrWhere("EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +                                 
                                     "Left join Products sp On sp.Id = orlines.ProductId " +
                                     "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
+                                    $"Where csp.Id = @groupservice And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { groupservice = condition.Value });
                                     }
 
                                     break;
                                 case "not_contains":
                                     if (typeRule == "and")
                                     {
-                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        builder.Where("NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                     "Left join Products sp On sp.Id = orlines.ProductId " +
                                     "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
+                                    $"Where csp.Id = @groupservice And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { groupservice = condition.Value });
                                     }
                                     else
                                     {
-                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
+                                        builder.OrWhere("NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                     "Left join Products sp On sp.Id = orlines.ProductId " +
                                     "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
+                                    $"Where csp.Id = @groupservice And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { groupservice = condition.Value });
                                     }
                                     break;
                                 default:
