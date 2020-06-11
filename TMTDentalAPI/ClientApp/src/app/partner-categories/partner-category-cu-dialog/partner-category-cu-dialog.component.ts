@@ -62,7 +62,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (!this.myform.valid) {
       return;
     }
@@ -89,6 +89,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     this.activeModal.close();
   }
 
