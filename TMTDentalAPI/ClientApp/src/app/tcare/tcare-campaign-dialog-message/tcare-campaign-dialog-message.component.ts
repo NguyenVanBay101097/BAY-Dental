@@ -21,7 +21,7 @@ export class TcareCampaignDialogMessageComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private partnerCatgService: PartnerCategoryService
   ) { }
 
