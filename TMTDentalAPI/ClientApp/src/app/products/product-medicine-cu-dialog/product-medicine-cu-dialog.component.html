@@ -13,6 +13,9 @@
                     <h1>
                         <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
                     </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Nhập tên thuốc</div>
+                    </div>
                 </div>
 
 
@@ -43,6 +46,9 @@
                                                     <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
+                                                </div>
+                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)" class="text-danger">
+                                                    <div *ngIf="f.categ.errors.required">Chọn nhóm thuốc</div>
                                                 </div>
                                             </td>
                                         </tr>

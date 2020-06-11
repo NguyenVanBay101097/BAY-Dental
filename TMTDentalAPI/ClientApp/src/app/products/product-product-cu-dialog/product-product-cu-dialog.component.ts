@@ -30,6 +30,8 @@ export class ProductProductCuDialogComponent implements OnInit {
   filterdUoMPOs: UoMBasic[] = [];
   categoryIdSave: string;
   opened = true;
+  submitted = false;
+
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
   @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
@@ -221,6 +223,8 @@ export class ProductProductCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.productForm.valid) {
       return;
     }
@@ -253,7 +257,12 @@ export class ProductProductCuDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     this.activeModal.dismiss();
+  }
+
+  get f() {
+    return this.productForm.controls;
   }
 }
 

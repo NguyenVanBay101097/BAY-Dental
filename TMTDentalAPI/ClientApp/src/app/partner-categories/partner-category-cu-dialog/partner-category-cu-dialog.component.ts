@@ -24,6 +24,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
   @Input() public id: string;
   title: string;
+  submitted = false;
 
 
   constructor(private fb: FormBuilder, private partnerCategoryService: PartnerCategoryService,
@@ -60,6 +61,8 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (!this.myform.valid) {
       return;
     }
@@ -87,6 +90,10 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
   onCancel() {
     this.activeModal.close();
+  }
+
+  get f() {
+    return this.myform.controls;
   }
 }
 

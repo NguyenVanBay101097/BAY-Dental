@@ -32,6 +32,8 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   filterdUoMPOs: UoMBasic[] = [];
   categoryIdSave: string;
   opened = false;
+  submitted = false;
+
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
   @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
@@ -236,6 +238,8 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.productForm.valid) {
       return;
     }
@@ -272,7 +276,12 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     this.activeModal.dismiss();
+  }
+
+  get f() {
+    return this.productForm.controls;
   }
 }
 
