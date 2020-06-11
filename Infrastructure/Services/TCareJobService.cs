@@ -91,12 +91,23 @@ namespace Infrastructure.Services
 
 
        
+        // Xử lý nhiều rules
+        //public IEnumerable<Guid> SearchPartnerIdsInRules(IEnumerable<Rule> rules, string typeRule, SqlConnection conn)
+        //{
+        //    var partnerIds = new List<Guid>();
+        //    foreach (var rule in rules)
+        //        partnerIds.AddRange(SearchPartnerIds(rule.Condition, typeRule, conn));
 
+        //    partnerIds = partnerIds.Distinct().ToList();
 
+        //    return partnerIds;
+        //}    
 
         public IEnumerable<Guid> SearchPartnerIds(IEnumerable<Condition> conditions, string typeRule, SqlConnection conn)
         {
-            var partnerIds = new List<Guid>();
+          
+            var lstRule = new List<RulePartnerIds>();
+            var partner_ids = new List<Guid>();
             var builder = new SqlBuilder();
             var lst = new Dictionary<string, string>();
             lst.Add("contains", "=");
@@ -105,211 +116,11 @@ namespace Infrastructure.Services
             //lst.Add("not_contains", "");
             lst.Add("lte", "<=");
             lst.Add("gte", ">=");
-            var sqltemplate = builder.AddTemplate("SELECT pn.Id FROM Partners pn /**leftjoin**/ /**where**/ /**groupby**/ /**having**/ ");
-            builder.Where("pn.Customer = 1 ");
-            foreach (var condition in conditions)
-            {
-                switch (condition.Type)
-                {
-                    case "birthday":
-                        var today = DateTime.Today;
-                        var date = today.AddDays(int.Parse(condition.Value));
-                        if (typeRule == "and")
-                        {
-                            builder.Where("pn.id in (Select pn.Id " +
-                                "From Partners pn " +
-                                "Where pn.BirthDay = @day AND pn.BirthMonth = @month) ", new { day = date.Day, month = date.Month });
-                        }
-                        else
-                        {
-                            builder.OrWhere("pn.id in (Select pn.Id " +
-                                "From Partners pn " +
-                                "Where pn.BirthDay = @day AND pn.BirthMonth = @month) ", new { day = date.Day, month = date.Month });
-                        }
-
-                        break;
-                    case "lastSaleOrder":
-                        //builder.LeftJoin("SaleOrders sale ON sale.PartnerId = pn.Id");
-                        //builder.Where("sale.State = 'sale' ");
-                        //builder.GroupBy(" pn.Id ");
-                        //builder.Having("(Max(sale.DateOrder) <  DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) });
-                        if (typeRule == "and")
-                        {
-                            builder.Where("pn.id in (Select pn.Id From Partners pn " +
-                                "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
-                                "Where sale.State = @sale " +
-                                "Group by pn.Id " +
-                                "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE()))) ", new { number = int.Parse(condition.Value) , sale = "sale" });
-                        }
-                        else
-                        {
-                            builder.OrWhere("pn.id in (Select pn.Id From Partners pn " +
-                                "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
-                                "Where sale.State = @sale " +
-                                "Group by pn.Id " +
-                                "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE()))) ", new { number = int.Parse(condition.Value), sale = "sale" });
-                        }
-                        break;
-                    case "categPartner":
-                        //builder.LeftJoin("PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id");
-                        //builder.LeftJoin("PartnerCategories cpt On cpt.id = rel.CategoryId");
-                        foreach (var kvp in lst.Where(x => x.Key == condition.Op))
-                        {
-                            switch (kvp.Key)
-                            {
-                                case "contains":
-                                    if (typeRule == "and")
-                                    {
-                                        // builder.Where($"cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value });
-                                        builder.Where("pn.id in (Select pn.Id " +
-                                            "From Partners pn " +
-                                            "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
-                                            "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                            $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
-                                    }
-                                    else
-                                    {
-                                        builder.OrWhere("pn.id in (Select pn.Id " +
-                                           "From Partners pn " +
-                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
-                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                           $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
-                                    }
-                                    break;
-                                case "not_contains":
-                                    if (typeRule == "and")
-                                    {
-                                        builder.Where("pn.id in (Select pn.Id " +
-                                          "From Partners pn " +
-                                          "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
-                                          "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                          $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
-                                    }
-                                    else
-                                    {
-                                        builder.OrWhere("pn.id in (Select pn.Id " +
-                                           "From Partners pn " +
-                                           "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
-                                           "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                           $"Where cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value });
-                                    }
-
-                                    break;
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
-                            }
-                        }
-
-                        break;
-                    case "usedService":
-
-                        foreach (var kvp in lst.Where(x => x.Key == condition.Op))
-                        {
-                            switch (kvp.Key)
-                            {
-                                case "contains":
-                                     if (typeRule == "and")
-                                    {
-                                        builder.Where("EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                           "Left join Products sp On sp.Id = orlines.ProductId " +
-                                           $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
-                                    }
-                                    else
-                                    {
-                                        builder.OrWhere("EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                       "Left join Products sp On sp.Id = orlines.ProductId " +
-                                       $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
-                                    }
-
-                                    break;
-                                case "not_contains":
-                                    if (typeRule == "and")
-                                    {
-                                        builder.Where("NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                           "Left join Products sp On sp.Id = orlines.ProductId " +
-                                           $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
-                                    }
-                                    else
-                                    {
-                                        builder.OrWhere("NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                       "Left join Products sp On sp.Id = orlines.ProductId " +
-                                       $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value });
-                                    }
-
-                                    break;
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
-                            }
-                        }
-                        break;
-                    case "usedCategService":
-                        foreach (var kvp in lst.Where(x => x.Key == condition.Op))
-                        {
-                            switch (kvp.Key)
-                            {
-                                case "contains":
-                                    if (typeRule == "and")
-                                    {
-                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                    "Left join Products sp On sp.Id = orlines.ProductId " +
-                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
-                                    }
-                                    else
-                                    {
-                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                    "Left join Products sp On sp.Id = orlines.ProductId " +
-                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
-                                    }
-
-                                    break;
-                                case "not_contains":
-                                    if (typeRule == "and")
-                                    {
-                                        builder.Where("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                    "Left join Products sp On sp.Id = orlines.ProductId " +
-                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
-                                    }
-                                    else
-                                    {
-                                        builder.OrWhere("EXISTS (Select sale.PartnerId From SaleOrders sale " +
-                                    "Left join SaleOrderLines orlines On orlines.OrderId = sale.Id " +
-                                    "Left join Products sp On sp.Id = orlines.ProductId " +
-                                    "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                    $"Where csp.Id {kvp.Value} @groupservice And sp.Type2 = 'service' AND sale.PartnerId = pn.Id Group by sale.PartnerId) ", new { groupservice = condition.Value });
-                                    }
-                                    break;
-                                default:
-                                    throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
-                            }
-                        }
-
-                        break;
-                }
-
-            }
-            var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
-            return partner_ids;
-        }
-
-        public IEnumerable<Guid> SearchPartnerIdsUpdate(IEnumerable<Condition> conditions, string typeRule, SqlConnection conn)
-        {
-          
-            var lstRule = new List<RulePartnerIds>();
-            var partner_ids = new List<Guid>().AsEnumerable();
-            var builder = new SqlBuilder();
-            var lst = new Dictionary<string, string>();
-            lst.Add("contains", "=");
-            lst.Add("not_contains", "!=");
-            //lst.Add("contains", "");
-            //lst.Add("not_contains", "");
-            lst.Add("lte", "<=");
-            lst.Add("gte", ">=");        
+            var PartnerIds = conn.Query<Guid>("" +
+                                      "Select pn.Id " +
+                                      "From Partners pn " +
+                                      "Where pn.Customer = 1 "
+                                      ).ToList();
             foreach (var condition in conditions)
             {
                 switch (condition.Type)
@@ -319,22 +130,22 @@ namespace Infrastructure.Services
                         // lấy ra danh sách khách dựa vào sinh nhật của khách hàng
                         var today = DateTime.Today;
                         var date = today.AddDays(int.Parse(condition.Value));
-                        var birthdayPartnerIds = conn.Query<RulePartnerIds>("" +
+                        var birthdayPartnerIds = conn.Query<Guid>("" +
                                        "Select pn.Id " +
                                        "From Partners pn " +
                                        "Where pn.Customer = 1 and pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month }
-                                       ).FirstOrDefault();
-                        lstRule.Add(birthdayPartnerIds);
+                                       ).ToList();
+                        lstRule.Add(new RulePartnerIds(){Ids = birthdayPartnerIds });
                         break;
                     case "lastSaleOrder":
                         // lấy ra danh sách khách dựa vào phiểu điều trị cuối lấy ra ngày điều trị cuối của khách hàng
-                        var lastSaleOrderPartnerIds = conn.Query<RulePartnerIds>("" +
+                        var lastSaleOrderPartnerIds = conn.Query<Guid>("" +
                                 "Select pn.Id From Partners pn " +
                                 "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
                                 "Where pn.Customer = 1 and sale.State = @sale " +
                                 "Group by pn.Id " +
-                                "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE()))) ", new { number = int.Parse(condition.Value), sale = "sale" }).FirstOrDefault();
-                        lstRule.Add(lastSaleOrderPartnerIds);
+                                "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value), sale = "sale" }).ToList();
+                        lstRule.Add(new RulePartnerIds() { Ids = lastSaleOrderPartnerIds });
                         break;
                     case "categPartner":
                        // lấy ra danh sách khách dựa vào nhóm khách hàng
@@ -344,23 +155,23 @@ namespace Infrastructure.Services
                             {
                                 case "contains":
                                     //danh sách khách hàng thuộc nhóm khách hàng
-                                    var categPartnerIds = conn.Query<RulePartnerIds>("" +
+                                    var categPartnerIds = conn.Query<Guid>("" +
                                                    "Select pn.Id " +
                                                    "From Partners pn " +
                                                    "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
                                                    "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                                   $"Where pn.Customer = 1 and cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value }).FirstOrDefault();
-                                    lstRule.Add(categPartnerIds);
+                                                   $"Where pn.Customer = 1 and cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value }).ToList();
+                                    lstRule.Add(new RulePartnerIds() { Ids = categPartnerIds });
                                     break;
                                 case "not_contains":
                                     //danh sách khách hàng không thuộc nhóm khách hàng
-                                    var categNotPartnerIds = conn.Query<RulePartnerIds>("" +
+                                    var categNotPartnerIds = conn.Query<Guid>("" +
                                                    "Select pn.Id " +
                                                    "From Partners pn " +
                                                    "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
                                                    "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                                   $"Where pn.Customer = 1 and cpt.Id {kvp.Value} @cateId) ", new { cateId = condition.Value }).FirstOrDefault();
-                                    lstRule.Add(categNotPartnerIds);
+                                                   $"Where pn.Customer = 1 and cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value }).ToList();
+                                    lstRule.Add(new RulePartnerIds() { Ids = categNotPartnerIds });
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
@@ -376,25 +187,25 @@ namespace Infrastructure.Services
                             {
                                 case "contains":
                                     //danh sách khách hàng đã sử dụng dịch vụ
-                                    var usedServicePartnerIds = conn.Query<RulePartnerIds>("" +
+                                    var usedServicePartnerIds = conn.Query<Guid>("" +
                                     "Select pn.Id " +
                                     "From Partners pn " +
                                     "Where pn.Customer = 1 and EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                            "Left join Products sp On sp.Id = orlines.ProductId " +
                                            $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
-                                        .FirstOrDefault();
-                                    lstRule.Add(usedServicePartnerIds);
+                                        .ToList();
+                                    lstRule.Add(new RulePartnerIds() { Ids = usedServicePartnerIds });
                                     break;
                                 case "not_contains":
                                     //danh sách khách hàng chưa sử dụng dịch vụ 
-                                    var usedServiceNotPartnerIds = conn.Query<RulePartnerIds>("" +
+                                    var usedServiceNotPartnerIds = conn.Query<Guid>("" +
                                    "Select pn.Id " +
                                    "From Partners pn " +
                                    "Where pn.Customer = 1 and NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                           "Left join Products sp On sp.Id = orlines.ProductId " +
                                           $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
-                                       .FirstOrDefault();
-                                    lstRule.Add(usedServiceNotPartnerIds);                                  
+                                       .ToList();
+                                    lstRule.Add(new RulePartnerIds() { Ids = usedServiceNotPartnerIds });                                  
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
@@ -409,24 +220,26 @@ namespace Infrastructure.Services
                             {
                                 case "contains":
                                     //danh sách khách hàng đã sử dụng nhóm dịch vụ
-                                    var usedCategServicePartnerIds = conn.Query<RulePartnerIds>("" + "Select pn.IdFrom Partners pn " +
+                                    var usedCategServicePartnerIds = conn.Query<Guid>("" + "Select pn.IdFrom Partners pn " +
                                         "Where pn.Customer = 1 and EXISTS(Select orlines.OrderPartnerId " +
                                         "From SaleOrderLines orlines " +
                                         "Left join Products sp On sp.Id = orlines.ProductId " +
                                         "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                        "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value }).FirstOrDefault();
+                                        "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
+                                        .ToList();
 
-                                    lstRule.Add(usedCategServicePartnerIds);
+                                    lstRule.Add(new RulePartnerIds() { Ids = usedCategServicePartnerIds });
                                     break;
                                 case "not_contains":
                                     //danh sách khách hàng chưa sử dụng nhóm dịch vụ
-                                    var usedCategServiceNotPartnerIds = conn.Query<RulePartnerIds>("" + "Select pn.IdFrom Partners pn " +
+                                    var usedCategServiceNotPartnerIds = conn.Query<Guid>("" + "Select pn.IdFrom Partners pn " +
                                        "Where pn.Customer = 1 and NOT EXISTS(Select orlines.OrderPartnerId " +
                                        "From SaleOrderLines orlines " +
                                        "Left join Products sp On sp.Id = orlines.ProductId " +
                                        "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                       "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value }).FirstOrDefault();
-                                    lstRule.Add(usedCategServiceNotPartnerIds);
+                                       "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
+                                        .ToList();
+                                    lstRule.Add(new RulePartnerIds() { Ids = usedCategServiceNotPartnerIds });
                                     break;
                                 default:
                                     throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
@@ -440,13 +253,16 @@ namespace Infrastructure.Services
             if (typeRule == "and")
             {
                 foreach (var rule in lstRule)
-                    partner_ids = partner_ids.Intersect(rule.Ids).Distinct().ToList();
+                    partner_ids = PartnerIds.Intersect(rule.Ids).Distinct().ToList();
 
             }
             else 
             {
-
+                foreach (var rule in lstRule)
+                    partner_ids = PartnerIds.Union(rule.Ids).Distinct().ToList();
             }
+
+            partner_ids = partner_ids.Distinct().ToList();
                 //var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
                 return partner_ids;
         }
@@ -473,14 +289,15 @@ namespace Infrastructure.Services
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-                    partner_ids = SearchPartnerIdsUpdate(resultingMessage.Root.Rule.Condition, resultingMessage.Root.Rule.Logic, conn);
+
+                    //Xử lý trường hợp khi có nhiều Rule 
+                    //partner_ids = SearchPartnerIdsInRules(resultingMessage.Root.Rule, resultingMessage.Root.Rule.Logic, conn);
+
+
+                    partner_ids = SearchPartnerIds(resultingMessage.Root.Rule.Condition, resultingMessage.Root.Rule.Logic, conn);
 
                     //Get partnerIds in list rules
 
-                    //if (partner_ids.Count() == 0)
-                    //    continue;
-
-                    //var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaignId }).FirstOrDefault();
                     if (resultingMessage.Root.Sequence.Content == null)
                         return;
 
@@ -667,7 +484,7 @@ namespace Infrastructure.Services
 
     public class RulePartnerIds
     {
-        public List<Guid> Ids { get; set; }
+        public List<Guid> Ids { get; set; } 
     }
 
 }
