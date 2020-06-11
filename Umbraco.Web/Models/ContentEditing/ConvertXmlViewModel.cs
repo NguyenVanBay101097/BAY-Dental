@@ -6,7 +6,6 @@ using System.Xml.Serialization;
 namespace Umbraco.Web.Models.ContentEditing
 {
 
-
     [XmlRoot(ElementName = "mxCell")]
     public class MxCell
     {
@@ -84,7 +83,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class Tag
     {
         [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         [XmlAttribute(AttributeName = "name")]
         public string Name { get; set; }
     }
@@ -172,7 +171,7 @@ namespace Umbraco.Web.Models.ContentEditing
         [XmlElement(ElementName = "messageDelivered")]
         public MessageDelivered MessageDelivered { get; set; }
 
-       
+
 
         [XmlElement(ElementName = "rule")]
         public Rule Rule { get; set; }

@@ -22,9 +22,10 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   formGroup: FormGroup;
   filterdChannelSocials: ChannelSocial[] = [];
   submited = false;
+  title: string;
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private facebookPageService: FacebookPageService,
     private intlService: IntlService
   ) { }

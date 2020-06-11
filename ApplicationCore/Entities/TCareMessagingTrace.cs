@@ -24,6 +24,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string PSID { get; set; }
 
+        public Guid? ChannelSocialId { get; set; }
+        public FacebookPage ChannelSocial { get; set; }
+
         public string MessageId { get; set; }
 
         public Guid? PartnerId { get; set; }

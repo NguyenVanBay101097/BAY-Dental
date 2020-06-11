@@ -10,9 +10,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class TcareCampaignStartDialogComponent implements OnInit {
   formGroup: FormGroup;
   submited = false;
+  title: string;
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {
