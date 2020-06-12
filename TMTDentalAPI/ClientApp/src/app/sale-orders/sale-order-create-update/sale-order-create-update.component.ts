@@ -110,16 +110,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.userCbx.loading = false;
     });
 
-    // this.pricelistCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.pricelistCbx.loading = true)),
-    //   switchMap(value => this.searchPricelists(value))
-    // ).subscribe(result => {
-    //   this.filteredPricelists = result.items;
-    //   this.pricelistCbx.loading = false;
-    // });
-
-
     // this.getAccountPaymentReconcicles();
     this.loadPartners();
     this.loadUsers();
@@ -833,6 +823,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get('orderLines') as FormArray;
   }
 
+  //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
   showAddLineModal() {
     var partner = this.formGroup.get('partner').value;
     if (!partner) {
@@ -862,7 +853,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-
+  //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
   editLine(line: FormGroup) {
     var partner = this.formGroup.get('partner').value;
     if (!partner) {

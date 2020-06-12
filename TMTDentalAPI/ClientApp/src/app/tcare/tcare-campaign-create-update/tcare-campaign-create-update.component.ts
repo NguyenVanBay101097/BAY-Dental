@@ -141,12 +141,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       }
 
-      var mgr = new mxAutoSaveManager(editor.graph, 1, 1);
-      if (mgr.isEnabled) {
-        mgr.graphModelChanged = function () {
-          that.saveChange(graph);
-        };
-      }
+      // var mgr = new mxAutoSaveManager(editor.graph, 1, 1);
+      // if (mgr.isEnabled) {
+      //   mgr.graphModelChanged = function () {
+      //     that.saveChange(graph);
+      //   };
+      // }
 
       //validate Connection
       graph.isValidConnection = function (source, cellSequence) {
@@ -194,8 +194,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         return that.createPopupMenu(editor, graph, menu, cell, evt);
       };
 
-
-
       //defind NodeName
       graph.convertValueToString = function (cell) {
         if (mxUtils.isNode(cell.value)) {
@@ -223,7 +221,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       //double click Action
       graph.dblClick = function (evt, cell) {
-        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && model.state != 'running') {
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && that.campaign.state != 'running') {
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
             that.popupSequence(graph, cell);
           }
@@ -249,6 +247,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         // Disables any default behaviour for the double click
         mxEvent.consume(evt);
       };
+
       // Enables new connections
       graph.setConnectable(true);
 
@@ -260,7 +259,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       keyHandler.target;
       keyHandler.bindKey(46, function (evt) {
         if (graph.isEnabled) {
-          if (model.state != 'running') {
+          if (that.campaign.state != 'running') {
             var cell = graph.getSelectionCell();
             if (cell.style == 'sequence' && cell.edges) {
               cell.edges.forEach(edge => {
@@ -268,7 +267,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                   var cellTag = graph.getModel().getCell(edge.target.id);
                   if (cellTag) {
                     graph.getModel().remove(cellTag);
-
+                    that.onSave()
                   }
                 }
               });
@@ -297,13 +296,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       );
 
       //thêm 1 rule
-      that.addSidebarIcon(
-        graph,
-        sidebar_goals,
-        rule,
-        "./assets/editors/images/rule.png",
-        "rule"
-      );
+      that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
 
       //load Xml
       graph.getModel().beginUpdate();
@@ -435,6 +428,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         graph.setSelectionCell(v1);
       } finally {
         model.endUpdate();
+        that.saveChange(graph)
       }
 
     }
@@ -553,7 +547,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   }
 
   popupAddTag(graph, cell) {
-    let self = this;
+    let that = this;
     var value = cell.getValue();
 
     var serializer = new XMLSerializer();
@@ -571,7 +565,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           });
         }
 
-        let modalRef = self.modalService.open(
+        let modalRef = that.modalService.open(
           TcareCampaignDialogMessageComponent,
           {
             size: "sm",
@@ -605,6 +599,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             }
             finally {
               graph.getModel().endUpdate();
+              that.onSave();
             }
           }, () => {
           });
@@ -665,6 +660,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             }
             finally {
               graph.getModel().endUpdate();
+              that.onSave();
             }
           }, () => {
           });
@@ -707,6 +703,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           graph.getModel().setValue(cell, userObject);
         } finally {
           graph.getModel().endUpdate();
+          that.onSave();
         }
       }, () => {
       });
@@ -769,6 +766,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               }
               finally {
                 graph.getModel().endUpdate();
+                that.saveChange(graph);
               }
 
             }
