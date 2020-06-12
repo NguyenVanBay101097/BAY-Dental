@@ -221,7 +221,7 @@ namespace Infrastructure.Services
                             {
                                 case "contains":
                                     //danh sách khách hàng đã sử dụng nhóm dịch vụ
-                                    var usedCategServicePartnerIds = conn.Query<Guid>("" + "Select pn.Id" +
+                                    var usedCategServicePartnerIds = conn.Query<Guid>("" + "Select pn.Id " +
                                         "From Partners pn " +
                                         "Where pn.Customer = 1 and EXISTS(Select orlines.OrderPartnerId " +
                                         "From SaleOrderLines orlines " +
@@ -234,7 +234,7 @@ namespace Infrastructure.Services
                                     break;
                                 case "not_contains":
                                     //danh sách khách hàng chưa sử dụng nhóm dịch vụ
-                                    var usedCategServiceNotPartnerIds = conn.Query<Guid>("" + "Select pn.Id" +
+                                    var usedCategServiceNotPartnerIds = conn.Query<Guid>("" + "Select pn.Id " +
                                         "From Partners pn " +
                                        "Where pn.Customer = 1 and NOT EXISTS(Select orlines.OrderPartnerId " +
                                        "From SaleOrderLines orlines " +
