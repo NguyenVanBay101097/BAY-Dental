@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
-import { Subject } from 'rxjs';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductService, ProductPaged, ProductFilter } from 'src/app/products/product.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-audience-filter-service',
@@ -14,18 +13,15 @@ import { ProductService, ProductPaged, ProductFilter } from 'src/app/products/pr
 export class AudienceFilterServiceComponent implements OnInit {
 
   formGroup: FormGroup;
-  searchUpdate = new Subject<string>();
-  productList = [];
-  search: string;
+  filteredProducts = [];
   submitted = false;
   type: string;
   name: string;
   @Output() saveClick = new EventEmitter<any>();
+  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   data: any;
 
-  constructor(private fb: FormBuilder,
-    private notificationService: NotificationService,
-    private productService: ProductService) { }
+  constructor(private fb: FormBuilder, private productService: ProductService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -35,25 +31,29 @@ export class AudienceFilterServiceComponent implements OnInit {
 
     setTimeout(() => {
       if (this.data) {
+        var pd = {
+          id: this.data.value,
+          name: this.data.displayValue
+        };
+
         this.formGroup.patchValue({
           op: this.data.op,
-          product: {
-            id: this.data.value,
-            name: this.data.displayValue
-          }
+          product: pd
         });
+
+        this.filteredProducts.push(pd);
       }
 
       this.loadProductList();
 
-      this.searchUpdate.pipe(
-        debounceTime(400),
-        distinctUntilChanged())
-        .subscribe(value => {
-          this.loadProductList(value);
-          this.formGroup.get('product').setValue(null);
-          this.submitted = false;
-        });
+      this.productCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.productCbx.loading = true)),
+        switchMap(value => this.searchProducts(value))
+      ).subscribe(result => {
+        this.filteredProducts = result;
+        this.productCbx.loading = false;
+      });
     });
   }
 
@@ -73,13 +73,13 @@ export class AudienceFilterServiceComponent implements OnInit {
     var val = new ProductFilter();
     val.saleOK = true;
     val.limit = 5;
-    val.search = search;
+    val.search = search || '';
     return this.productService.autocomplete2(val);
   }
 
   loadProductList(q?: string) {
     this.searchProducts(q).subscribe(result => {
-      this.productList = result;
+      this.filteredProducts = _.unionBy(this.filteredProducts, result, 'id');
     });
   }
 

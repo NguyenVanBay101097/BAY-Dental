@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
-import { Subject } from 'rxjs';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-audience-filter-service-category',
@@ -13,118 +12,93 @@ import { ProductCategoryService, ProductCategoryPaged } from 'src/app/product-ca
 })
 export class AudienceFilterServiceCategoryComponent implements OnInit {
   
-  @Input() dataReceive: any;
-  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
-
-  AudienceFilter_Picker = {
-    formula_types: ['contains', 'not_contains'],
-    formula_values: [],
-    formula_displays: []
-  }
-
-  selected_AudienceFilter_Picker: TCareRuleCondition;
-
-  showButtonCreateProductCategory: boolean = false;
-  searchProductCategoryUpdate = new Subject<string>();
+  filteredCategs = [];
+  submitted = false;
+  type: string;
+  name: string;
+  @Output() saveClick = new EventEmitter<any>();
+  @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  data: any;
 
   constructor(private fb: FormBuilder, 
-    private notificationService: NotificationService, 
     private productCategoryService: ProductCategoryService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ""
+      op: 'contains',
+      categ: [null, Validators.required]
     });
 
-    this.selected_AudienceFilter_Picker = this.dataReceive;
-    if (!this.dataReceive.op) {
-      this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
-    }
+    setTimeout(() => {
+      if (this.data) {
+        var categ = {
+          id: this.data.value,
+          name: this.data.displayValue
+        };
 
-    this.loadListProductCategory();
-    this.searchProductCategoryUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadListProductCategory();
+        this.formGroup.patchValue({
+          op: this.data.op,
+          categ: categ
+        });
+
+        this.filteredCategs.push(categ);
+      }
+
+      this.loadFilteredCategs();
+
+      this.categCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.categCbx.loading = true)),
+        switchMap(value => this.searchCategories(value))
+      ).subscribe((result: any) => {
+        this.filteredCategs = result;
+        this.categCbx.loading = false;
       });
+    });
   }
 
-  convertFormulaType(item) {
-    switch (item) {
-      case 'contains':
-        return 'có chứa';
-      case 'not_contains':
-        return 'không chứa';
-      case 'có chứa':
-        return 'contains';
-      case 'không chứa':
-        return 'not_contains';
-    }
+  loadFilteredCategs() {
+    this.searchCategories().subscribe(result => {
+      this.filteredCategs = _.unionBy(this.filteredCategs, result, 'id');
+    });
   }
 
-  selectFormulaType(item) {
-    this.selected_AudienceFilter_Picker.op = item;
-  }
-
-  selectFormulaValue(item, i) {
-    this.selected_AudienceFilter_Picker.value = this.AudienceFilter_Picker.formula_values[i];
-    this.selected_AudienceFilter_Picker.displayValue = item;
-    this.dataSend.emit(false);
-  }
-
-  loadListProductCategory() {
+  searchCategories(q?: string) {
     var val = new ProductCategoryPaged();
-    val.offset = 0;
-    val.limit = 10;
-    val.search = this.formGroup.get('name').value || '';
+    val.search = q || '';
     val.type = 'service';
-    this.productCategoryService.getPaged(val).subscribe(res => {
-      var listItems = res['items'];
-      // filter
-      var index_item =  listItems.findIndex(x => x.id == this.selected_AudienceFilter_Picker.value);
-      if (index_item >= 0) {
-        listItems.splice(index_item, 1);
-      }
-      listItems.splice(0, 0, {
-        id: this.selected_AudienceFilter_Picker.value,
-        name: this.selected_AudienceFilter_Picker.displayValue,
-        completeName: this.selected_AudienceFilter_Picker.displayValue
-      });
-
-      if (listItems.length == 0) {
-        this.showButtonCreateProductCategory = true;
-      } else {
-        this.showButtonCreateProductCategory = false;
-      }
-      this.AudienceFilter_Picker.formula_values = [];
-      this.AudienceFilter_Picker.formula_displays = [];
-      for (let i = 0; i < listItems.length; i++) {
-        this.AudienceFilter_Picker.formula_values.push(listItems[i].id); 
-        this.AudienceFilter_Picker.formula_displays.push(listItems[i].name); 
-      }
-    }, err => {
-      console.log(err);
-    })
+    return this.productCategoryService.autocomplete(val);
   }
 
-  createProductCategory() {
-    var val = this.formGroup.value;
-    val.type = 'service';
-    val.parentId = null;
-    this.productCategoryService.create(val).subscribe(res => {
-      this.notificationService.show({
-        content: 'Tạo nhãn thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.loadListProductCategory();
-      // console.log(res);
-    }, err => {
-      console.log(err);
-    })
+  getOpDisplay(op) {
+    switch (op) {
+      case 'contains':
+        return 'Chứa';
+      case 'not_contains':
+        return 'Không chứa';
+      default:
+        return '';
+    }
+  }
+
+  onSave() {
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var value = this.formGroup.value;
+    var res = {
+      op: value.op,
+      opDisplay: this.getOpDisplay(value.op),
+      value: value.categ.id,
+      displayValue: value.categ.name,
+      type: this.type,
+      name: this.name
+    };
+
+    this.saveClick.emit(res);
   }
 }

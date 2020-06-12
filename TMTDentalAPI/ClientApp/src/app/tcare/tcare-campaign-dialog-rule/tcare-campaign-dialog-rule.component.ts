@@ -6,6 +6,8 @@ import { AudienceFilterBirthdayComponent } from './audience-filter/audience-filt
 import { Observable } from 'rxjs';
 import { AudienceFilterLastTreatmentDayComponent } from './audience-filter/audience-filter-dropdown/audience-filter-last-treatment-day/audience-filter-last-treatment-day.component';
 import { AudienceFilterServiceComponent } from './audience-filter/audience-filter-dropdown/audience-filter-service/audience-filter-service.component';
+import { AudienceFilterPartnerCategoryComponent } from './audience-filter/audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
+import { AudienceFilterServiceCategoryComponent } from './audience-filter/audience-filter-dropdown/audience-filter-service-category/audience-filter-service-category.component';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-rule',
@@ -37,7 +39,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     {
       type: 'categPartner',
       name: 'Nhóm khách hàng',
-      component: AudienceFilterLastTreatmentDayComponent
+      component: AudienceFilterPartnerCategoryComponent
     }, 
     {
       type: 'usedService',
@@ -47,7 +49,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     {
       type: 'usedCategService',
       name: 'Nhóm dịch vụ sử dụng',
-      component: AudienceFilterLastTreatmentDayComponent
+      component: AudienceFilterServiceCategoryComponent
     }
   ];
 
@@ -55,12 +57,14 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
-    this.showAudienceFilter = true;
-
     this.formGroup = this.fb.group({
       logic: 'and',
       conditions: [[]]
     });
+
+    if (this.audience_filter) {
+      this.formGroup.patchValue(this.audience_filter)
+    }
   }
 
   getLogic() {
@@ -76,13 +80,18 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     this.formGroup.get('logic').setValue(logic);
   }
 
+  removeCondition(index, event) {
+    event.stopPropagation();
+    this.conditions.splice(index, 1);
+  }
+
   saveAudienceFilter(event) {
     this.audience_filter = event;
   }
 
   onSave() {
-    console.log(this.audience_filter);
-    this.activeModal.close(this.audience_filter);
+    var value = this.formGroup.value;
+    this.activeModal.close(value);
   }
 
   outsideClick() {

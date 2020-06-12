@@ -13,57 +13,13 @@
                   </div>
             </div>
             <div class="form-group mb-2">
-                <input class="form-control" type="text" placeholder="Tìm kiếm.." [(ngModel)]="search"
-                (ngModelChange)="this.searchUpdate.next($event)" [ngModelOptions]="{standalone: true}" />
-            </div>
-            <div class="form-group mb-2">
-                <p *ngIf="!productList.length">Không tìm thấy dịch vụ nào</p>
-                <ul class="list-group list-group-flush" *ngIf="productList.length">
-                    <li class="list-group-item p-2" [class.active]="productSelected == product" (click)="productClick(product)" *ngFor="let product of productList">{{product.name}}</li>
-                </ul>
-            </div>
-            <div class="form-group" *ngIf="productControl.invalid && submitted">
-                <div class="text-danger">Vui lòng chọn 1 dịch vụ</div>
+                <kendo-combobox [data]="filteredProducts"
+                    [textField]="'name'" [filterable]="true" [placeholder]="'Chọn dịch vụ'" #productCbx formControlName="product"
+                    [valueField]="'id'">
+                </kendo-combobox>
             </div>
             <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu</button>
         </form>
     </div>
 </div>
 
-<!-- 
-
-<form [formGroup]="formGroup">
-    <table>
-        <tr>
-            <td colspan="2">
-                <b class="ml-2">{{selected_AudienceFilter_Picker.name}} : </b>
-            </td>
-        </tr>
-        <tr>
-            <td class="border-right p-0 align-top">
-                <button class="dropdown-item" [class.text-primary]="item === selected_AudienceFilter_Picker.op"
-                    *ngFor="let item of AudienceFilter_Picker.formula_types" (click)="selectFormulaType(item)">
-                    {{convertFormulaType(item)}}
-                </button>
-            </td>
-            <td class="p-0 align-top">
-                <div class="px-2 pb-2">
-                    <input class="form-control shadow-sm" style="min-width: 200px;" type="text" placeholder="Tìm kiếm.."
-                        myAutofocus formControlName="name"
-                        (input)="searchServiceUpdate.next(formGroup.get('name').value)">
-                </div>
-                <div class="px-2 pb-2" *ngIf="showButtonCreateService">
-                    Không có dữ liệu
-                </div>
-                <div class="list-formula-value">
-                    <button class="dropdown-item"
-                        [class.text-primary]="item === selected_AudienceFilter_Picker.displayValue"
-                        *ngFor="let item of AudienceFilter_Picker.formula_displays; index as i"
-                        (click)="selectFormulaValue(item, i)">
-                        <span>{{item}}</span>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    </table>
-</form> -->

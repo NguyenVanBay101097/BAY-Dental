@@ -25,22 +25,15 @@
                                                 <button ngbDropdownItem (click)="setLogic('or')">bất kì điều kiện nào</button>
                                             </div>
                                         </div>
-                                        <!-- <span class="dropdown pl-2">
-                                            <a id="dropdownMenuButton" data-toggle="dropdown" 
-                                                aria-haspopup="true" aria-expanded="false">{{convertLogic(this.formGroup.get('logic').value)}}</a>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <span class="dropdown-item" (click)="setLogic('and')">tất cả điều kiện</span>
-                                                <span class="dropdown-item" (click)="setLogic('or')">bất kì điều kiện nào</span>
-                                            </div>
-                                        </span> -->
                                     </div>
                                     <div>
                                         <div>
-                                            <button type="button" class="btn btn-light btn-sm" *ngFor="let condition of conditions; let i = index" (click)="conditionClick(i, $event)">
-                                                <span>{{condition.name}} {{condition.opDisplay}} {{condition.displayValue}}</span>
+                                            <button type="button" class="btn btn-light btn-sm mr-2 mb-1" *ngFor="let condition of conditions; let i = index" (click)="conditionClick(i, $event)">
+                                                <span>{{condition.name}} {{condition.opDisplay}} {{condition.displayValue}} </span>
+                                                <i class="fas fa-times" (click)="removeCondition(i, $event)"></i>
                                             </button>
                                             <div ngbDropdown class="d-inline-block" id="conditionDropdown">
-                                                <button class="btn btn-outline-primary btn-sm" id="dropdownAddCondition" ngbDropdownToggle>Thêm điều kiện</button>
+                                                <button class="btn btn-outline-primary btn-sm mb-1" id="dropdownAddCondition" ngbDropdownToggle>Thêm điều kiện</button>
                                                 <div ngbDropdownMenu aria-labelledby="dropdownAddCondition">
                                                   <button ngbDropdownItem (click)="selectConditionDropdown(item, $event)" *ngFor="let item of conditionDropdownList">{{item.name}}</button>
                                                 </div>
@@ -49,11 +42,7 @@
                                                 <ng-template anchorHost></ng-template>
                                             </div>
                                         </div>
-                                       
                                     </div>
-                                    <!-- <app-audience-filter *ngIf="showAudienceFilter"
-                                        [audience_filter_receive]="audience_filter"
-                                        (audience_filter_send)="saveAudienceFilter($event)"></app-audience-filter> -->
                                 </td>
                             </tr>
                         </tbody>
