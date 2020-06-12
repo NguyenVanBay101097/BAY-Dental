@@ -190,9 +190,10 @@ namespace Infrastructure.Services
                                     var usedServicePartnerIds = conn.Query<Guid>("" +
                                     "Select pn.Id " +
                                     "From Partners pn " +
-                                    "Where pn.Customer = 1 and EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                           "Left join Products sp On sp.Id = orlines.ProductId " +
-                                           $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
+                                    "Where pn.Customer = 1 and EXISTS (Select orlines.OrderPartnerId " +
+                                    "From SaleOrderLines orlines " +
+                                    "Left join Products sp On sp.Id = orlines.ProductId " +
+                                    $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
                                         .ToList();
                                     lstRule.Add(new RulePartnerIds() { Ids = usedServicePartnerIds });
                                     break;
@@ -202,8 +203,8 @@ namespace Infrastructure.Services
                                    "Select pn.Id " +
                                    "From Partners pn " +
                                    "Where pn.Customer = 1 and NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                          "Left join Products sp On sp.Id = orlines.ProductId " +
-                                          $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
+                                   "Left join Products sp On sp.Id = orlines.ProductId " +
+                                  $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
                                        .ToList();
                                     lstRule.Add(new RulePartnerIds() { Ids = usedServiceNotPartnerIds });                                  
                                     break;
@@ -220,7 +221,8 @@ namespace Infrastructure.Services
                             {
                                 case "contains":
                                     //danh sách khách hàng đã sử dụng nhóm dịch vụ
-                                    var usedCategServicePartnerIds = conn.Query<Guid>("" + "Select pn.IdFrom Partners pn " +
+                                    var usedCategServicePartnerIds = conn.Query<Guid>("" + "Select pn.Id " +
+                                        "From Partners pn " +
                                         "Where pn.Customer = 1 and EXISTS(Select orlines.OrderPartnerId " +
                                         "From SaleOrderLines orlines " +
                                         "Left join Products sp On sp.Id = orlines.ProductId " +
@@ -232,7 +234,8 @@ namespace Infrastructure.Services
                                     break;
                                 case "not_contains":
                                     //danh sách khách hàng chưa sử dụng nhóm dịch vụ
-                                    var usedCategServiceNotPartnerIds = conn.Query<Guid>("" + "Select pn.IdFrom Partners pn " +
+                                    var usedCategServiceNotPartnerIds = conn.Query<Guid>("" + "Select pn.Id " +
+                                        "From Partners pn " +
                                        "Where pn.Customer = 1 and NOT EXISTS(Select orlines.OrderPartnerId " +
                                        "From SaleOrderLines orlines " +
                                        "Left join Products sp On sp.Id = orlines.ProductId " +
