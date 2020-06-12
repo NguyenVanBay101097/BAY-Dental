@@ -3,8 +3,8 @@ import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
 import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ProductService, ProductPaged } from 'src/app/products/product.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ProductService, ProductPaged, ProductFilter } from 'src/app/products/product.service';
 
 @Component({
   selector: 'app-audience-filter-service',
@@ -13,20 +13,15 @@ import { ProductService, ProductPaged } from 'src/app/products/product.service';
 })
 export class AudienceFilterServiceComponent implements OnInit {
 
-  @Input() dataReceive: any;
-  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
-
-  AudienceFilter_Picker = {
-    formula_types: ['contains', 'not_contains'],
-    formula_values: [],
-    formula_displays: []
-  }
-
-  selected_AudienceFilter_Picker: TCareRuleCondition;
-
-  showButtonCreateService: boolean = false;
-  searchServiceUpdate = new Subject<string>();
+  searchUpdate = new Subject<string>();
+  productList = [];
+  search: string;
+  submitted = false;
+  type: string;
+  name: string;
+  @Output() saveClick = new EventEmitter<any>();
+  data: any;
 
   constructor(private fb: FormBuilder,
     private notificationService: NotificationService,
@@ -34,85 +29,87 @@ export class AudienceFilterServiceComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ""
+      op: 'contains',
+      product: [null, Validators.required]
     });
 
-    this.selected_AudienceFilter_Picker = this.dataReceive;
-    if (!this.dataReceive.op) {
-      this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
+    setTimeout(() => {
+      if (this.data) {
+        this.formGroup.patchValue({
+          op: this.data.op,
+          product: {
+            id: this.data.value,
+            name: this.data.displayValue
+          }
+        });
+      }
+
+      this.loadProductList();
+
+      this.searchUpdate.pipe(
+        debounceTime(400),
+        distinctUntilChanged())
+        .subscribe(value => {
+          this.loadProductList(value);
+          this.formGroup.get('product').setValue(null);
+          this.submitted = false;
+        });
+    });
+  }
+
+  get productControl() {
+    return this.formGroup.get('product');
+  }
+
+  productClick(product) {
+    this.formGroup.get('product').setValue(product);
+  }
+
+  get productSelected() {
+    return this.formGroup.get('product').value;
+  }
+
+  searchProducts(search?: string) {
+    var val = new ProductFilter();
+    val.saleOK = true;
+    val.limit = 5;
+    val.search = search;
+    return this.productService.autocomplete2(val);
+  }
+
+  loadProductList(q?: string) {
+    this.searchProducts(q).subscribe(result => {
+      this.productList = result;
+    });
+  }
+
+  getOpDisplay(op) {
+    if (op == 'contains') {
+      return 'Chứa'
+    } else if (op == 'not_contains') {
+      return 'Không chứa';
+    } else {
+      return '';
+    }
+  }
+
+  onSave() {
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
+      return false;
     }
 
-    this.loadListService();
-    this.searchServiceUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadListService();
-      });
-  }
+    var value = this.formGroup.value;
+    var res = {
+      op: value.op,
+      opDisplay: this.getOpDisplay(value.op),
+      value: value.product.id,
+      displayValue: value.product.name,
+      type: this.type,
+      name: this.name
+    };
 
-  convertFormulaType(item) {
-    switch (item) {
-      case 'contains':
-        return 'có chứa';
-      case 'not_contains':
-        return 'không chứa';
-      case 'có chứa':
-        return 'contains';
-      case 'không chứa':
-        return 'not_contains';
-    }
-  }
-
-  selectFormulaType(item) {
-    this.selected_AudienceFilter_Picker.op = item;
-  }
-
-  selectFormulaValue(item, i) {
-    this.selected_AudienceFilter_Picker.value = this.AudienceFilter_Picker.formula_values[i];
-    this.selected_AudienceFilter_Picker.displayValue = item;
-    this.dataSend.emit(false);
-  }
-
-  loadListService() {
-    var val = new ProductPaged();
-    val.offset = 0;
-    val.limit = 10;
-    val.search = this.formGroup.get('name').value || '';
-    val.type2 = 'service';
-    this.productService.getPaged(val).subscribe(res => {
-      var listItems = res['items'];
-      // filter
-      var index_item = listItems.findIndex(x => x.id == this.selected_AudienceFilter_Picker.value);
-      if (index_item >= 0) {
-        listItems.splice(index_item, 1);
-      }
-      var temp_item = {
-        id: this.selected_AudienceFilter_Picker.value,
-        name: this.selected_AudienceFilter_Picker.displayValue,
-        categName: null,
-        listPrice: null,
-        type: null,
-        defaultCode: null,
-        qtyAvailable: null,
-        uomId: null,
-        uom: null
-      };
-      listItems.splice(0, 0, temp_item);
-
-      if (listItems.length == 0) {
-        this.showButtonCreateService = true;
-      } else {
-        this.showButtonCreateService = false;
-      }
-      this.AudienceFilter_Picker.formula_values = [];
-      this.AudienceFilter_Picker.formula_displays = [];
-      for (let i = 0; i < listItems.length; i++) {
-        this.AudienceFilter_Picker.formula_values.push(listItems[i].id);
-        this.AudienceFilter_Picker.formula_displays.push(listItems[i].name);
-      }
-    }, err => {
-      console.log(err);
-    })
+    this.saveClick.emit(res);
   }
 }

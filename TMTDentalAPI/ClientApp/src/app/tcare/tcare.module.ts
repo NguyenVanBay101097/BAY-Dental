@@ -5,7 +5,7 @@ import { TcareRoutingModule } from './tcare-routing.module';
 import { TcareCampaignCreateUpdateComponent } from './tcare-campaign-create-update/tcare-campaign-create-update.component';
 import { TcareService } from './tcare.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { TcareCampaignDialogSequencesComponent } from './tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component';
 import { TcareCampaignCreateDialogComponent } from './tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
@@ -22,6 +22,7 @@ import { AudienceFilterPartnerCategoryComponent } from './tcare-campaign-dialog-
 import { MyAutofocusDirective } from './tcare-campaign-dialog-rule/audience-filter/autofocus.directive';
 import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-filter/click-outside.directive';
 import { TcareCampaignStartDialogComponent } from './tcare-campaign-start-dialog/tcare-campaign-start-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,9 @@ import { TcareCampaignStartDialogComponent } from './tcare-campaign-start-dialog
     MyCustomKendoModule,
     TcareRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule,
+    SharedModule
   ],
   providers: [TcareService],
   entryComponents: [

@@ -9,17 +9,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class AudienceFilterLastTreatmentDayComponent implements OnInit {
 
-  @Input() dataReceive: any;
-  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
-
-  AudienceFilter_Picker = {
-    formula_types: ['gte'],
-    formula_values: [],
-    formula_displays: []
-  }
-
-  selected_AudienceFilter_Picker: TCareRuleCondition;
+  data: any;
+  @Output() saveClick = new EventEmitter<any>();
+  type: string;
+  name: string;
 
   constructor(private fb: FormBuilder) { }
 
@@ -28,31 +22,27 @@ export class AudienceFilterLastTreatmentDayComponent implements OnInit {
       day: 0
     });
 
-    this.selected_AudienceFilter_Picker = this.dataReceive;
-    if (!this.dataReceive.op) {
-      this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
-    }
-    if (this.dataReceive.value) {
-      this.formGroup.patchValue({ day: this.selected_AudienceFilter_Picker.value });
+    if (this.data) {
+      var day = parseInt(this.data.value) || 0;
+      this.formGroup.get('day').setValue(day);
     }
   }
 
-  convertFormulaType(item) {
-    switch (item) {
-      case 'gte':
-        return 'sau';
-      case 'sau':
-        return 'gte';
+  onSave() {
+    if (!this.formGroup.valid) {
+      return false;
     }
-  }
 
-  selectFormulaType(item) {
-    this.selected_AudienceFilter_Picker.op = item;
-  }
+    var day = this.formGroup.get('day').value;
+    var res = {
+      op: 'gte',
+      opDisplay: 'sau',
+      value: day + '',
+      displayValue: day + ' ngày',
+      type: this.type,
+      name: this.name
+    };
 
-  saveFormulaValue() {
-    this.selected_AudienceFilter_Picker.value = this.formGroup.get('day').value;
-    this.selected_AudienceFilter_Picker.displayValue = this.formGroup.get('day').value + ' ngày';
-    this.dataSend.emit(false);
+    this.saveClick.emit(res);
   }
 }

@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view">
+    <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -16,9 +16,44 @@
                                     <label class="o_form_label">Điều kiện</label>
                                 </td>
                                 <td class="p-0" style="width:100%">
-                                    <app-audience-filter *ngIf="showAudienceFilter"
+                                    <div>
+                                        <span>Chỉ khách hàng phù hợp với </span>
+                                        <div ngbDropdown class="d-inline-block">
+                                            <a id="dropdownLogic" ngbDropdownToggle>{{getLogic()}}</a>
+                                            <div ngbDropdownMenu aria-labelledby="dropdownLogic">
+                                                <button ngbDropdownItem (click)="setLogic('and')">tất cả điều kiện</button>
+                                                <button ngbDropdownItem (click)="setLogic('or')">bất kì điều kiện nào</button>
+                                            </div>
+                                        </div>
+                                        <!-- <span class="dropdown pl-2">
+                                            <a id="dropdownMenuButton" data-toggle="dropdown" 
+                                                aria-haspopup="true" aria-expanded="false">{{convertLogic(this.formGroup.get('logic').value)}}</a>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <span class="dropdown-item" (click)="setLogic('and')">tất cả điều kiện</span>
+                                                <span class="dropdown-item" (click)="setLogic('or')">bất kì điều kiện nào</span>
+                                            </div>
+                                        </span> -->
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <button type="button" class="btn btn-light btn-sm" *ngFor="let condition of conditions; let i = index" (click)="conditionClick(i, $event)">
+                                                <span>{{condition.name}} {{condition.opDisplay}} {{condition.displayValue}}</span>
+                                            </button>
+                                            <div ngbDropdown class="d-inline-block" id="conditionDropdown">
+                                                <button class="btn btn-outline-primary btn-sm" id="dropdownAddCondition" ngbDropdownToggle>Thêm điều kiện</button>
+                                                <div ngbDropdownMenu aria-labelledby="dropdownAddCondition">
+                                                  <button ngbDropdownItem (click)="selectConditionDropdown(item, $event)" *ngFor="let item of conditionDropdownList">{{item.name}}</button>
+                                                </div>
+                                            </div>
+                                            <div (clickOutside)="outsideClick()" [ngStyle]="{position: 'fixed', top: yPos + 'px', left: xPos + 'px'}">
+                                                <ng-template anchorHost></ng-template>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                    <!-- <app-audience-filter *ngIf="showAudienceFilter"
                                         [audience_filter_receive]="audience_filter"
-                                        (audience_filter_send)="saveAudienceFilter($event)"></app-audience-filter>
+                                        (audience_filter_send)="saveAudienceFilter($event)"></app-audience-filter> -->
                                 </td>
                             </tr>
                         </tbody>

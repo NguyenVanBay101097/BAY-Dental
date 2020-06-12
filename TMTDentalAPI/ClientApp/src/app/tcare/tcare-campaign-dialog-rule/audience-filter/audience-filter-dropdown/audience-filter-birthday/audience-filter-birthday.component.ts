@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 
 @Component({
   selector: 'app-audience-filter-birthday',
@@ -9,50 +9,40 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class AudienceFilterBirthdayComponent implements OnInit {
 
-  @Input() dataReceive: any;
-  @Output() dataSend = new EventEmitter<any>();
   formGroup: FormGroup;
-
-  AudienceFilter_Picker = {
-    formula_types: ['lte'],
-    formula_values: [],
-    formula_displays: []
-  }
-
-  selected_AudienceFilter_Picker: TCareRuleCondition;
+  data: any;
+  @Output() saveClick = new EventEmitter<any>();
+  type: string;
+  name: string;
 
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      day: 0
+      day: [0, Validators.required]
     });
 
-    this.selected_AudienceFilter_Picker = this.dataReceive;
-    if (!this.dataReceive.op) {
-      this.selected_AudienceFilter_Picker.op = this.AudienceFilter_Picker.formula_types[0]
-    }
-    if (this.dataReceive.value) {
-      this.formGroup.patchValue({ day: this.selected_AudienceFilter_Picker.value });
+    if (this.data) {
+      var day = parseInt(this.data.value) || 0;
+      this.formGroup.get('day').setValue(day);
     }
   }
 
-  convertFormulaType(item) {
-    switch (item) {
-      case 'lte':
-        return 'trước';
-      case 'trước':
-        return 'lte';
+  onSave() {
+    if (!this.formGroup.valid) {
+      return false;
     }
-  }
 
-  selectFormulaType(item) {
-    this.selected_AudienceFilter_Picker.op = item;
-  }
+    var day = this.formGroup.get('day').value;
+    var res = {
+      op: 'lte',
+      opDisplay: 'trước',
+      value: day + '',
+      displayValue: day + ' ngày',
+      type: this.type,
+      name: this.name
+    };
 
-  saveFormulaValue() {
-    this.selected_AudienceFilter_Picker.value = this.formGroup.get('day').value;
-    this.selected_AudienceFilter_Picker.displayValue = this.formGroup.get('day').value + ' ngày';
-    this.dataSend.emit(false);
+    this.saveClick.emit(res);
   }
 }
