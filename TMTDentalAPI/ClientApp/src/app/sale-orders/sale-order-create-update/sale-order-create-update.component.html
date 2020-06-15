@@ -414,7 +414,10 @@
                                         <td>{{ payment.amount | number}}</td>
                                         <td>{{ payment.ref }}</td>
                                         <td>
-                                            <a title="Xóa" (click)="deletePayment(payment)">
+                                            <a title="In" class="text-primary mr-2" (click)="printPayment(payment.accountPaymentId)">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                            <a title="Xóa" class="text-primary" (click)="deletePayment(payment)">
                                                 <span class="far fa-trash-alt"></span></a>
                                         </td>
                                     </tr>
@@ -518,6 +521,91 @@
                 </tbody>
             </table>
             <div class="clearfix"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Khách hàng
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Người lập
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="printPaymentDiv" *ngIf="paymentPrint" style="display: none;">
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">{{paymentPrint.companyName}}</h5>
+            <div *ngIf="paymentPrint.companyAddress">{{paymentPrint.companyAddress}}</div>
+        </div>
+        <div class="text-center">
+            <h1>PHIẾU THANH TOÁN</h1>
+            <span>Ngày thanh toán: {{paymentPrint.paymentDate | date: 'shortDate'}}</span>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Hình thức
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{paymentPrint.journalName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Số tiền
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{paymentPrint.amount | number}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Nội dung
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{paymentPrint.communication}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{paymentPrint.partnerName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{paymentPrint.partnerAddress}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="row">
             <div class="col-sm">

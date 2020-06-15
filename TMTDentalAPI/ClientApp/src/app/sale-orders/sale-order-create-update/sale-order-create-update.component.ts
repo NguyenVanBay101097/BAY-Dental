@@ -68,6 +68,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   type: string;
 
+  paymentPrint: any;
+
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
@@ -974,7 +976,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
-        modalRef.result.then(() => {
+        modalRef.componentInstance.showPrint = true;
+        modalRef.result.then((result: any) => {
           this.notificationService.show({
             content: 'Thanh toán thành công',
             hideAfter: 3000,
@@ -985,6 +988,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
           this.loadRecord();
           this.loadPayments();
+
+          if (result.print) {
+            this.printPayment(result.paymentId);
+          }
         }, () => {
         });
       })
@@ -1018,6 +1025,29 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
         this.loadRecord();
         this.loadPayments();
+      });
+    });
+  }
+
+  printPayment(paymentId) {
+    this.paymentService.getPrint(paymentId).subscribe((result: any) => {
+      this.paymentPrint = result;
+      setTimeout(() => {
+        var printContents = document.getElementById('printPaymentDiv').innerHTML;
+        var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+        popupWin.document.open();
+        popupWin.document.write(`
+            <html>
+              <head>
+                <title>Print tab</title>
+                <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+                <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+              </head>
+          <body onload="window.print();window.close()">${printContents}</body>
+            </html>`
+        );
+        popupWin.document.close();
+        this.paymentPrint = null;
       });
     });
   }

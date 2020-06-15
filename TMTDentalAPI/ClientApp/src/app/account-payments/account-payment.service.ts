@@ -76,4 +76,8 @@ export class AccountPaymentService {
     post(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/Post', ids);
     }
+
+    getPrint(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
+    }
 }

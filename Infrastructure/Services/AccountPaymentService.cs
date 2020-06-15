@@ -926,5 +926,59 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        public async Task<AccountPaymentPrintVM> GetPrint(Guid id)
+        {
+            var res = await SearchQuery(x => x.Id == id).Select(x => new AccountPaymentPrintVM { 
+                CompanyName = x.Company.Name,
+                CompanyStreet = x.Company.Partner.Street,
+                CompanyCity = x.Company.Partner.CityName,
+                CompanyDistrict = x.Company.Partner.DistrictName,
+                CompanyWard = x.Company.Partner.WardName,
+                Amount = x.Amount,
+                Communication = x.Communication,
+                CompanyEmail = x.Company.Email,
+                CompanyPhone = x.Company.Phone,
+                JournalName = x.Journal.Name,
+                PartnerCity = x.Partner.CityName,
+                PartnerDistrict = x.Partner.DistrictName,
+                PartnerName = x.Partner.Name,
+                PartnerPhone = x.Partner.Phone,
+                PartnerRef = x.Partner.Ref,
+                PartnerStreet = x.Partner.Street,
+                PartnerWard = x.Partner.WardName,
+                PaymentDate = x.PaymentDate
+            }).FirstOrDefaultAsync();
+
+            if (res == null)
+                throw new Exception("Null payment");
+
+            var tmp = new List<string>();
+            if (!string.IsNullOrEmpty(res.CompanyStreet))
+                tmp.Add(res.CompanyStreet);
+            if (!string.IsNullOrEmpty(res.CompanyWard))
+                tmp.Add(res.CompanyWard);
+            if (!string.IsNullOrEmpty(res.CompanyDistrict))
+                tmp.Add(res.CompanyDistrict);
+            if (!string.IsNullOrEmpty(res.CompanyCity))
+                tmp.Add(res.CompanyCity);
+
+            res.CompanyAddress = string.Join(", ", tmp);
+
+            var tmp2 = new List<string>();
+            if (!string.IsNullOrEmpty(res.PartnerStreet))
+                tmp2.Add(res.PartnerStreet);
+            if (!string.IsNullOrEmpty(res.PartnerWard))
+                tmp2.Add(res.PartnerWard);
+            if (!string.IsNullOrEmpty(res.PartnerDistrict))
+                tmp2.Add(res.PartnerDistrict);
+            if (!string.IsNullOrEmpty(res.PartnerCity))
+                tmp2.Add(res.PartnerCity);
+
+            res.PartnerAddress = string.Join(", ", tmp2);
+
+            return res;
+        }
+
     }
 }
