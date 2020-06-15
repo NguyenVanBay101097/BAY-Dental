@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -90,10 +91,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Nguồn biết đến
         /// </summary>
-        public string Source { get; set; }
+        public Guid? SourceId { get; set; }
+        public PartnerSourceBasic Source { get; set; }
 
-        public Guid? EmployeeId { get; set; }
-        public EmployeeSimple Employees { get; set; }
+        /// <summary>
+        /// Người giới thiệu
+        /// </summary>
+        public string ReReferralUserId { get; set; }
+        public ApplicationUserSimple ReReferralUser { get; set; }
 
         /// <summary>
         /// Ghi chú khi nguồn là 'Khác'

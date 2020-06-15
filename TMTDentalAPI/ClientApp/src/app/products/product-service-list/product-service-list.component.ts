@@ -152,6 +152,7 @@ export class ProductServiceListComponent implements OnInit {
 
   exportExcelFile() {
     var paged = new ProductPaged();
+    t;
     paged.search = this.search || "";
     paged.categId = this.searchCateg ? this.searchCateg.id : "";
     this.productService.excelServiceExport(paged).subscribe((rs) => {
