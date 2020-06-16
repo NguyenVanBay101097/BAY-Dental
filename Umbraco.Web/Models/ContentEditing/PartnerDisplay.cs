@@ -97,8 +97,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người giới thiệu
         /// </summary>
-        public string ReReferralUserId { get; set; }
-        public ApplicationUserSimple ReReferralUser { get; set; }
+        public string ReferralUserId { get; set; }
+        public ApplicationUserSimple ReferralUser { get; set; }
 
         /// <summary>
         /// Ghi chú khi nguồn là 'Khác'

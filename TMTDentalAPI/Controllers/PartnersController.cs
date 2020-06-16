@@ -109,12 +109,16 @@ namespace TMTDentalAPI.Controllers
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
 
-            ///check partnersource type
-            var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
-            if (source.Type == "referral")
+            if(partner.SourceId != null)
             {
-                partner.ReferralUserId = val.ReReferralUserId;
+                ///check partnersource type
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                if (source.Type == "referral")
+                {
+                    partner.ReferralUserId = val.ReferralUserId;
+                }
             }
+          
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.CreateAsync(partner);
@@ -148,17 +152,21 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
-            ///check partnersource type
-            var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
-            if (source.Type == "referral")
+
+            if (partner.SourceId != null)
             {
-                partner.ReferralUserId = val.ReReferralUserId;
-            }
-            else
-            {
-                if(partner.ReferralUserId != null)
+                ///check partnersource type
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                if (source.Type == "referral")
                 {
-                    partner.ReferralUserId = null;
+                    partner.ReferralUserId = val.ReferralUserId;
+                }
+                else
+                {
+                    if (partner.ReferralUserId != null)
+                    {
+                        partner.ReferralUserId = null;
+                    }
                 }
             }
             SaveCategories(val, partner);
