@@ -1,0 +1,15 @@
+<div class="profile">
+    <div class="profile-edit">
+        <button type="button " class="btn btn-primary btn-sm btn-edit" (click)="editCustomer()" accesskey="c">Sửa
+        </button>
+    </div>
+    <div class="profile-info">
+        <app-partner-customer-profile-infor *ngIf="customerInfo" [customerInfo]="customerInfo">
+        </app-partner-customer-profile-infor>
+    </div>
+    <div class="profile-next-appointment">
+        <app-partner-customer-profile-next-appointment [partner]="customerInfo"
+            [customerAppointment]="customerAppointment">
+        </app-partner-customer-profile-next-appointment>
+    </div>
+</div>

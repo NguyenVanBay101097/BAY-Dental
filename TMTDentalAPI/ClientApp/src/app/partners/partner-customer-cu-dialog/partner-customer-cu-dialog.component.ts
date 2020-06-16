@@ -10,6 +10,7 @@ import { HistorySimple } from 'src/app/history/history';
 import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
 import * as _ from 'lodash';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-partner-customer-cu-dialog',
@@ -40,11 +41,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   historiesList: HistorySimple[] = [];
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService) { }
+  constructor(private fb: FormBuilder,
+    private http: HttpClient,
+    private partnerCategoryService: PartnerCategoryService,
+    private partnerService: PartnerService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private showErrorService: AppSharedShowErrorService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
+    debugger
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       gender: 'male',

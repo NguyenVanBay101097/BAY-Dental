@@ -1,0 +1,25 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb" style="width: 30%;font-size: 22px;">
+        <li class="active">HỒ SƠ KHÁCH HÀNG </li>
+
+    </ol>
+    <div class="o_cp_searchview" style="width: 70%; position: relative;">
+        <div class="custom-tab">
+            <div id="profile" class="tab-content active-tab" (click)="redirectUrl($event,'profile')">
+                Thông tin cơ bản
+            </div>
+            <div class="tab-content" (click)="redirectUrl($event,'treatment-payment')">
+                Điều trị & Thanh toán
+            </div>
+            <div class="tab-content" (click)="redirectUrl($event,'appointment-schedule')">
+                Lịch hẹn
+            </div>
+            <div class="tab-content" (click)="redirectUrl($event,'medicine')">
+                Đơn thuốc
+            </div>
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,18 @@
+.treatment-payment {
+    margin-top: 1px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    padding: 15px;
+    justify-content: space-between;
+    background-color: white;
+}
+
+.o_cp_controller {
+    width: 100%;
+}
+
+.o_content {
+    max-width: 100%;
+}

@@ -66,7 +66,7 @@ namespace Infrastructure.Services
             var dotKhamObj = GetService<IDotKhamService>();
             var query = await dotKhamObj.SearchQuery(x => x.AppointmentId == id).ToListAsync();
             var res = _mapper.Map<AppointmentDisplay>(category);
-            if (query.Count()>0)
+            if (query.Count() > 0)
             {
                 res.HasDotKhamRef = true;
             }
@@ -77,8 +77,8 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search) 
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search) 
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
                 || x.Partner.Ref.Contains(val.Search));
             //if (!string.IsNullOrEmpty(val.SearchByCustomer))
             //    query = query.Where(x => x.Partner.Name.Contains(val.SearchByCustomer) || x.Partner.Phone.Contains(val.SearchByCustomer) || x.Partner.Ref.Contains(val.SearchByCustomer));
@@ -109,7 +109,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
             {
                 items = await query.Skip(val.Offset).Take(val.Limit)
-                .Include(x => x.Partner).Include(x => x.User).Include(x=>x.Doctor)
+                .Include(x => x.Partner).Include(x => x.User).Include(x => x.Doctor)
                 .ToListAsync();
             }
             else
@@ -138,7 +138,7 @@ namespace Infrastructure.Services
             {
                 var dkObj = GetService<IDotKhamService>();
                 var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner)
-                    .Include(x => x.Doctor).Include(x=>x.User).FirstOrDefaultAsync();
+                    .Include(x => x.Doctor).Include(x => x.User).FirstOrDefaultAsync();
                 res.DotKhamId = dk.Id;
                 if (dk.PartnerId.HasValue)
                     res.PartnerId = dk.PartnerId.Value;
@@ -294,5 +294,7 @@ namespace Infrastructure.Services
                 UserName = x.User.Name
             }).FirstOrDefaultAsync();
         }
+
+
     }
 }

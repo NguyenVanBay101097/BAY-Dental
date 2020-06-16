@@ -99,6 +99,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { UomCategoryModule } from './uom-categories/uom-category.module';
 import { UomModule } from './uoms/uom.module';
 import { TcareModule } from './tcare/tcare.module';
+import { PartnerCustomerDetailComponent } from './partners/partner-customer-detail/partner-customer-detail.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -109,7 +110,7 @@ registerLocaleData(localeVi, 'vi');
 @NgModule({
   declarations: [
     AppComponent,
-    PrintLayoutComponent,
+    PrintLayoutComponent
   ],
   imports: [
     BrowserModule,
@@ -147,6 +148,7 @@ registerLocaleData(localeVi, 'vi');
     EmployeesModule,
     EmployeeCategoriesModule,
     RoutingsModule,
+    HttpClientModule,
     StockPickingsModule,
     StockPickingTypesModule,
     LaboOrderLinesModule,

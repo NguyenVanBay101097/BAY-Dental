@@ -485,6 +485,13 @@ namespace TMTDentalAPI.Controllers
             partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetNextAppointment(Guid id)
+        {
+            var res = await _partnerService.GetNextAppointment(id);
+            return Ok(res);
+        }
+
         //[HttpPost("[action]")]
         //public async Task<IActionResult> CheckMegerFacebookPage(CheckMergeFacebookPage val) {
         //    var res = await _partnerService.CheckPartner(val);

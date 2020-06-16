@@ -23,14 +23,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Người hẹn
         /// </summary>
         public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        //public ApplicationUserSimple User { get; set; }
         public string UserName { get; set; }
 
         /// <summary>
         /// Bác sĩ
         /// </summary>
         public Guid? DoctorId { get; set; }
-        public EmployeeSimpleContact Doctor { get; set; }
+        //public EmployeeSimpleContact Doctor { get; set; }
         public string DoctorName { get; set; }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
-        public PartnerSimpleContact Partner { get; set; }
+        //public PartnerSimpleContact Partner { get; set; }
         public string PartnerName { get; set; }
         public string PartnerPhone { get; set; }
 

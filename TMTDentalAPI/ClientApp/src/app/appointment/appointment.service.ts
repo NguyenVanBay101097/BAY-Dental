@@ -51,9 +51,9 @@ export class AppointmentService {
 
   createUpdateAppointment(appoint: AppointmentDisplay, id: string) {
     if (id == null) {
-      return this.http.post(this.baseApi + "api/Appointments/", appoint);
+      return this.http.post<AppointmentDisplay>(this.baseApi + "api/Appointments/", appoint);
     } else {
-      return this.http.put(this.baseApi + "api/Appointments/" + id, appoint);
+      return this.http.put<AppointmentDisplay>(this.baseApi + "api/Appointments/" + id, appoint);
     }
   }
 

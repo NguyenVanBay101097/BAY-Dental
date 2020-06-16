@@ -1,0 +1,88 @@
+<div class="GAL03TOCLW min700">
+    <div class="title">
+        <label class="title-lable">
+            LỊCH HẸN TIẾP THEO/GẦN ĐÂY
+        </label>
+    </div>
+    <div class="GAL03TOCMW">
+        <div class="GAL03TOCFX" *ngIf="customerAppointment">
+            <table class="table-spacing">
+                <tbody>
+                    <tr>
+                        <td> <span class="gwt-InlineLabel">Mã lịch hẹn</span> </td>
+                        <td class="GAL03TOCEX">
+                            <div class="gwt-HTML"><span style="color:#d700fb;"
+                                    title="Đang thực hiện">{{customerAppointment ? customerAppointment.name: ''}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> <span class="gwt-InlineLabel">Ngày giờ</span> </td>
+                        <td class="GAL03TOCEX">
+                            <div class="gwt-HTML"><span style="color:#d700fb;"
+                                    title="Đang thực hiện">{{customerAppointment && customerAppointment.date | date:'hh:mm - EEEE, dd/MM/yyyy'}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> <span class="gwt-InlineLabel">Bác sĩ</span> </td>
+                        <td class="GAL03TOCEX" *ngIf="customerAppointment">
+                            <span
+                                class="gwt-InlineLabel">{{customerAppointment ? customerAppointment.userName : ''}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: top;padding-top: 5px;"> <span class="gwt-InlineLabel">Ghi chú</span>
+                        </td>
+                        <td class="GAL03TOCEX" style="font-weight: normal; font-style: italic;">
+                            <div class="gwt-HTML">{{customerAppointment ? customerAppointment.note : ''}}</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="border-top: 1px solid #eee; padding-top: 20px; padding-bottom: 15px; padding-left: 20px;">Trạng
+                thái lịch hẹn</div>
+            <form [formGroup]="formGroup">
+                <table style="margin-bottom: 10px; margin-left: 20px;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="custom-radio GAL03TOCBY" title="Đánh dấu đang chờ đến lượt">
+                                    <input (change)="changeStateAppointment('confirmed')" type="radio"
+                                        formControlName="state" name="state" value="confirmed" id="gwt-uid-202">
+                                    <label for="gwt-uid-202">Đang hẹn</label></span>
+                            </td>
+                            <td>
+                                <span class="custom-radio GAL03TOCMX" title="Đánh dấu đang thực hiện">
+                                    <input (change)="changeStateAppointment('done')" type="radio"
+                                        formControlName="state" name="state" value="done" id="gwt-uid-203">
+                                    <label for="gwt-uid-203">Đã tới</label>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="custom-radio GAL03TOCOW" title="Đánh dấu đã hủy">
+                                    <input (change)="changeStateAppointment('cancel')" type="radio"
+                                        formControlName="state" name="state" value="cancel" id="gwt-uid-205">
+                                    <label for="gwt-uid-205">Đã hủy</label>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div *ngIf="!customerAppointment" class="GAL03TOCJX" aria-hidden="true"><i aria-hidden="true"
+                class="fa fa-info-circle" style="margin-right: 5px;"></i> <span class="gwt-InlineLabel">Không có lịch
+                hẹn nào.</span>
+        </div>
+
+    </div>
+    <div class="action-appointment">
+        <span (click)="addAppointment()" style="color: #007bff;" class="icon-appointment"><i
+                class="fas fa-plus"></i></span>
+        <span *ngIf="customerAppointment" (click)="editAppointment()" style="color: #dc3545;"
+            class="icon-appointment"><i class="fas fa-edit"></i></span>
+        <span *ngIf="customerAppointment" (click)="removeAppointment()" class="icon-appointment"><i
+                class="far fa-trash-alt"></i></span>
+    </div>
+</div>

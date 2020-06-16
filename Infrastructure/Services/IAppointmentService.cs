@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IAppointmentService: IBaseService<Appointment>
+    public interface IAppointmentService : IBaseService<Appointment>
     {
         Task<PagedResult2<AppointmentBasic>> GetPagedResultAsync(AppointmentPaged val);
         Task<AppointmentDisplay> DefaultGet(AppointmentDefaultGet val);

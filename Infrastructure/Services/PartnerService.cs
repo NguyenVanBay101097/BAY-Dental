@@ -186,6 +186,14 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<AppointmentBasic> GetNextAppointment(Guid id)
+        {
+            var apObj = GetService<IAppointmentService>();
+            var now = DateTime.Now;
+            var res = await _mapper.ProjectTo<AppointmentBasic>(apObj.SearchQuery(x => x.PartnerId == id && x.Date >= now, orderBy: x => x.OrderBy(s => s.Date))).FirstOrDefaultAsync();
+            return res;
+        }
+
         public override async Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
         {
             _UpdateCityName(entities);

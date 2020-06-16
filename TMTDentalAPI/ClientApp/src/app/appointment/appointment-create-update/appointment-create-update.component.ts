@@ -61,7 +61,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   limit: number = 20;
 
   windowOpened: boolean = false;
-
+  sendPartner: any;
   appointName: string;
 
   // companyIdDefault: string;
@@ -99,8 +99,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         if (this.timeConfig != null) {
           this.formCreate.get('dateObj').setValue(this.timeConfig);
         }
+
         this.defaultGet();
       });
+      console.log(this.sendPartner);
+
     }
 
     setTimeout(() => {
@@ -129,9 +132,17 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
     this.service.createUpdateAppointment(appoint, this.appointId).subscribe(
-      rs => {
+      res => {
+        debugger
         this.isChange = true;
-        this.closeModal(rs);
+
+        if (res) {
+          appoint.name = res.name;
+          appoint.id = res.id;
+        } else {
+          appoint.id = this.appointId;
+        }
+        this.closeModal(appoint);
       },
       er => {
         this.errorService.show(er);
@@ -458,24 +469,26 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       if (this.dotKhamId) {
         a.dotKhamId = this.dotKhamId;
       }
-
       a.userId = '10407d1c-966a-422a-bfae-fe5ddfb7033f';
 
       this.service.defaultGet(a).subscribe(
         rs => {
+          if (this.sendPartner)
+            rs.partner = this.sendPartner
+
           this.formCreate.patchValue(rs);
           if (this.timeConfig == null) {
             let date = new Date(rs.date);
             this.formCreate.get('dateObj').patchValue(date);
           }
 
-          if (rs.partner) {
-            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
-          }
 
-          if (rs.user) {
+          if (rs.partner)
+            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+
+          if (rs.user)
             this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [rs.user], 'id');
-          }
+
         }
       )
     }
