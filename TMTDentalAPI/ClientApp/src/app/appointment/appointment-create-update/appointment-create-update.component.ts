@@ -473,6 +473,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
       this.service.defaultGet(a).subscribe(
         rs => {
+          debugger
           if (this.sendPartner)
             rs.partner = this.sendPartner
 

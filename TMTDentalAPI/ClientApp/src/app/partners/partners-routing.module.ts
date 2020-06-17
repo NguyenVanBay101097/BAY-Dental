@@ -8,6 +8,7 @@ import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/p
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
+import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     children: [
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
+      { path: 'appointment', component: PartnerCustomerAppointmentComponent }
     ]
   },
   {

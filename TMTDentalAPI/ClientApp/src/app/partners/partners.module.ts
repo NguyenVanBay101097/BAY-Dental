@@ -36,6 +36,9 @@ import { PartnerCustomerProfileComponent } from './partner-customer-profile/part
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
 import { PartnerCustomerProfileNextAppointmentComponent } from './partner-customer-profile-next-appointment/partner-customer-profile-next-appointment.component';
 import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
+import { SaleReportModule } from '../sale-report/sale-report.module';
+import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
+import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -61,7 +64,9 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
     PartnerCustomerProfileComponent,
     PartnerCustomerProfileInforComponent,
     PartnerCustomerProfileNextAppointmentComponent,
-    PartnerCustomerTreatmentPaymentComponent],
+    PartnerCustomerTreatmentPaymentComponent,
+    PartnerCustomerAppointmentComponent,
+    PartnerCustomerTreatmentPaymentDetailComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
@@ -71,7 +76,8 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
     FormsModule,
     MatStepperModule,
     SharedModule,
-    CustomComponentModule
+    CustomComponentModule,
+    SaleReportModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

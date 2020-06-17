@@ -62,6 +62,7 @@ export class AppointmentPaged {
     dateTimeFrom: string;
     dateTimeTo: string;
     state: string;
+    partnerId: string;
 }
 
 export class AppointmentSearch {
@@ -100,7 +101,7 @@ export class SchedulerConfig {
 
 export class AppointmentDefaultGet {
     dotKhamId: string;
-    userId:string;
+    userId: string;
 }
 
 export class AppointmentPaging {

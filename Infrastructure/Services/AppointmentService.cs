@@ -103,6 +103,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateList.Contains(x.State));
             }
 
+            if (val.PartnerId.HasValue)
+            {
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            }
+
 
             query = query.OrderByDescending(x => x.DateCreated);
             var items = new List<Appointment>();

@@ -1,93 +1,52 @@
 <div class="treatment-payment">
-    <div class="o_cp_controller">
-        <div class="o_control_panel">
-            <ol class="breadcrumb">
-                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
-                </button>
-            </ol>
-            <div class="o_cp_searchview">
-                <div class="o_cp_searchview_group">
-                    <div class="o_searchview">
-                        <input class="o_searchview_input" accesskey="q"
-                            placeholder="Tìm kiếm theo số phiếu, khách hàng, SĐT" type="text" [(ngModel)]="search"
-                            (ngModelChange)="this.searchUpdate.next($event)">
-                    </div>
-                </div>
-            </div>
-            <div class="o_cp_left">
-                <div class="o_cp_buttons">
-                    <div class="o_form_buttons_view">
+    <div class="treatment-payment-info"
+        style="display: flex; flex-flow: row wrap; align-items:center; justify-content: space-between;">
+        <div class="GAL03TOCDKB">DS phiếu điều trị/dịch vụ</div>
+        <div class="GAL03TOCHKB">
+            <div> <strong><span class="gwt-InlineLabel">Tổng cộng</span>: </strong> <span
+                    class="gwt-InlineLabel">5.300.000&nbsp;₫</span> </div>
+            <div> <strong><span class="gwt-InlineLabel">Đã trả</span>: </strong> <span
+                    class="gwt-InlineLabel">2.200.000&nbsp;₫</span> </div>
+            <div> <strong><span class="gwt-InlineLabel">Còn lại</span>: </strong> <span
+                    class="gwt-InlineLabel">3.100.000&nbsp;₫</span> </div>
+        </div>
+    </div>
+    <div class="GAL03TOCBKB">{{customerInfo.name}} (MSKH: {{customerInfo.ref}})
+        <button type="button " class="btn btn-primary btn-sm btn-edit" (click)="addStreatment()" accesskey="c">Thêm
+            phiếu điều trị
+        </button>
+    </div>
 
-                    </div>
-                </div>
-                <div class="o_cp_sidebar">
-                    <div class="btn-group">
-                        <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
-                                Thao tác
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <button class="dropdown-item" (click)="actionPayment()">Thanh toán</button>
-                                <button class="dropdown-item" (click)="unlink()">Xóa</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="GAL03TOCH3B" style="height: 75px;" *ngFor="let order of listSaleOrder">
+        <span class="GAL03TOCK3B" title="Mở rộng">
+            <i class="fas fa-arrows-alt"></i>
+            <i *ngIf="expression" class="fas fa-compress-arrows-alt"></i>
+        </span>
+        <div style="display: flex; flex-flow: row nowrap; align-items: flex-start;">
+            <div style="display: flex; flex-flow: row nowrap; align-items: center; height: 36px; white-space: nowrap;">
+                <span class="GAL03TOCB3B">Ngày lập phiếu</span> <span
+                    class="GAL03TOCN2B">{{order.dateOrder |date:'hh:mm - EEEE, dd/MM/yyyy'}}</span>
             </div>
-            <div class="o_cp_right">
-                <div class="o_search_options">
-                    <app-tai-date-range-filter-dropdown title="Ngày" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
-                        (searchChange)="onDateSearchChange($event)">
-                    </app-tai-date-range-filter-dropdown>
-                    <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
-                        (selectChange)="onStateSelectChange($event)">
-                    </app-tmt-option-select-dropdown>
+            <div class="treatment-action">
+                <select class="btn btn-light GAL03TOCJ3B">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+                <div class="action">
+                    <button type="button" class="btn btn-outline-danger GAL03TOCL2B" title="Xóa phiếu này">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary GAL03TOCL2B"
+                        title="Xem hoặc in ra phiếu điều trị này">
+                        <i class="fa fa-print"></i>
+                    </button>
                 </div>
             </div>
         </div>
+        <app-partner-customer-treatment-payment-detail></app-partner-customer-treatment-payment-detail>
     </div>
 
-    <div class="o_content">
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-            (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'"
-            [selectedKeys]="selectedIds">
-            <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-            <kendo-grid-column field="name" title="Số phiếu" width="100">
-            </kendo-grid-column>
-            <kendo-grid-column field="dateOrder" title="Ngày điều trị" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.dateOrder | date : 'short'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="userName" title="Bác sĩ" width="150">
-            </kendo-grid-column>
-            <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.amountTotal | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Còn nợ" class="text-right" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.residual | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="state" title="Trạng thái" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{stateGet(dataItem.state)}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="id" width="100">
-                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                    Thao tác
-                </ng-template>
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                        <span class="far fa-edit"></span></button>
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                        <span class="far fa-trash-alt"></span></button>
-                </ng-template>
-            </kendo-grid-column>
-        </kendo-grid>
-    </div>
 </div>

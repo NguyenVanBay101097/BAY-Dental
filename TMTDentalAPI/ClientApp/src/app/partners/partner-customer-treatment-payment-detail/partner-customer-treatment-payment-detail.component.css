@@ -1,0 +1,79 @@
+.ProcedureItemView:FIRST-CHILD {
+    background: #fcfcfc;
+    color: #333;
+}
+
+.ProcedureItemView:LAST-CHILD {
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.ProcedureItemView {
+    display: flex;
+    flex-flow: row nowrap;
+    font-weight: 300;
+    border-top: 1px solid #f9f9f9;
+    font-size: 12px;
+    color: black;
+}
+
+.ProcedureItemView-date {
+    width: 75px;
+    min-width: 75px;
+    flex-basis: 75px;
+}
+
+.ProcedureItemView>* {
+    padding: 4px 4px;
+    border-left: 1px solid #f9f9f9;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+.ProcedureItemView-teeth {
+    width: 85px;
+    min-width: 85px;
+    flex-basis: 85px;
+}
+
+.ProcedureItemView-quantity {
+    width: 32px;
+    min-width: 32px;
+    flex-basis: 32px;
+    text-align: center;
+}
+
+.ProcedureItemView-name {
+    width: 150px;
+    min-width: 150px;
+    flex-basis: 150px;
+    flex-grow: 2;
+    flex-shrink: 2;
+}
+
+.ProcedureItemView-note {
+    font-style: italic;
+}
+
+.ProcedureItemView-doctor {
+    width: 95px;
+    min-width: 95px;
+    flex-basis: 95px;
+    text-transform: capitalize;
+    flex-grow: 1;
+}
+
+.ProcedureItemView-amount {
+    width: 90px;
+    min-width: 90px;
+    flex-basis: 90px;
+    text-align: right;
+}
+
+.ProcedureItemView-actions {
+    padding: 0;
+    width: 28px;
+    justify-content: flex-start;
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+}

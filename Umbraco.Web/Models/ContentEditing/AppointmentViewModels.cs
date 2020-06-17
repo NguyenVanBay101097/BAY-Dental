@@ -73,7 +73,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
-       
+
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
@@ -93,7 +93,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ghi chú, nội dung
         /// </summary>
         public string Note { get; set; }
-        
+
         /// <summary>
         /// Bác sĩ
         /// </summary>
@@ -114,6 +114,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public string Search { get; set; }
+
+        public Guid? PartnerId { get; set; }
 
         //public string SearchByDoctor { get; set; }
 

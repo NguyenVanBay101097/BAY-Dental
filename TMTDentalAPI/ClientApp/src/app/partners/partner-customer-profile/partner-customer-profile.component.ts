@@ -45,6 +45,10 @@ export class PartnerCustomerProfileComponent implements OnInit {
     }
   }
 
+  addStreatment() {
+
+  }
+
   loadCustomerInfo() {
     this.partnerService.getPartner(this.id).subscribe(result => {
       this.customerInfo = result;
