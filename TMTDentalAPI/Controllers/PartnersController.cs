@@ -38,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountInvoiceService _accountInvoiceService;
         private readonly IAccountPaymentService _paymentService;
         private readonly IServiceCardCardService _serviceCardService;
+        private readonly IPartnerSourceService _partnerSourceService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -47,7 +48,8 @@ namespace TMTDentalAPI.Controllers
             IIRModelAccessService modelAccessService,
             IAccountInvoiceService accountInvoiceService,
             IAccountPaymentService paymentService,
-            IServiceCardCardService serviceCardService)
+            IServiceCardCardService serviceCardService,
+            IPartnerSourceService partnerSourceService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -59,6 +61,7 @@ namespace TMTDentalAPI.Controllers
             _accountInvoiceService = accountInvoiceService;
             _paymentService = paymentService;
             _serviceCardService = serviceCardService;
+            _partnerSourceService = partnerSourceService;
         }
 
         [HttpGet]
@@ -105,6 +108,17 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
+
+            if (partner.SourceId != null)
+            {
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
+            }
+            else
+            {
+                partner.ReferralUserId = null;
+            }
+
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.CreateAsync(partner);
@@ -138,7 +152,17 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
-            partner.EmployeeId = val.EmployeeId;
+
+            if (partner.SourceId != null)
+            {
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
+            }
+            else
+            {
+                partner.ReferralUserId = null;
+            }
+
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.UpdateAsync(partner);
@@ -258,6 +282,8 @@ namespace TMTDentalAPI.Controllers
             }
 
         }
+
+    
 
         [HttpGet("{id}/GetInfo")]
         public async Task<IActionResult> GetInfo(Guid id)

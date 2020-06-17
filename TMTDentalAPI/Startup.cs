@@ -124,6 +124,7 @@ namespace TMTDentalAPI
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
+            services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IDistrictService, DistrictService>();
@@ -233,6 +234,7 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookTagService, FacebookTagService>();
             services.AddScoped<IFacebookScheduleAppointmentConfigService, FacebookScheduleAppointmentConfigService>();
 
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -248,6 +250,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new UoMProfile());
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
+                mc.AddProfile(new PartnerSourceProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
                 mc.AddProfile(new ProvinceProfile());
                 mc.AddProfile(new DistrictProfile());

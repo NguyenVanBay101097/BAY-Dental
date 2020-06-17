@@ -1,5 +1,6 @@
 import { EmployeeSimple } from '../employees/employee';
 import { HistorySimple } from '../history/history';
+import { ApplicationUserSimple } from '../appointment/appointment';
 
 export class PartnerSimple {
     id: string;
@@ -34,6 +35,10 @@ export class PartnerDisplay extends PartnerBasic {
     birthDay: number;
     birthMonth: number;
     categories: PartnerCategorySimple[];
+    sourceId: string;
+    source: PartnerSourceSimple;
+    referralUserId: string;
+    referralUser: ApplicationUserSimple;
     histories: HistorySimple[];
     jobTitle: string;
     fax: string;
@@ -42,7 +47,6 @@ export class PartnerDisplay extends PartnerBasic {
     city: PDWSimple;
     district: PDWSimple;
     ward: PDWSimple;
-    source: string;
     note: string;
     email: string;
     cityName: string;
@@ -54,6 +58,12 @@ export class PartnerDisplay extends PartnerBasic {
 export class PartnerCategorySimple {
     id: string;
     name: string;
+}
+
+export class PartnerSourceSimple {
+    id: string;
+    name: string;
+    type: string;
 }
 
 export class PartnerPaged {

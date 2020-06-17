@@ -105,8 +105,10 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.PartnerPartnerCategoryRels)
-                .Include(x => x.Employees)
+                .Include(x => x.ReferralUser)
                 .Include(x => x.PartnerHistoryRels)
+                .Include(x => x.Source)
+                .Include(x =>  x.ReferralUser)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")
                 .FirstOrDefaultAsync();

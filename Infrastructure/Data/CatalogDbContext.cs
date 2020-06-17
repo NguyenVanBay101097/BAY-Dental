@@ -37,6 +37,7 @@ namespace Infrastructure.Data
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Partner> Partners { get; set; }
+        public DbSet<PartnerSource> PartnerSources { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<UoM> UoMs { get; set; }
         public DbSet<UoMCategory> UoMCategories { get; set; }
@@ -177,6 +178,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductCategoryConfiguration());
             builder.ApplyConfiguration(new CompanyConfiguration());
             builder.ApplyConfiguration(new PartnerConfiguration());
+            builder.ApplyConfiguration(new PartnerSourceConfiguration());
             builder.ApplyConfiguration(new PartnerCategoryConfiguration());
             builder.ApplyConfiguration(new PartnerPartnerCategoryRelConfiguration());
             builder.ApplyConfiguration(new UoMConfiguration());

@@ -149,6 +149,34 @@
                 </td>
               </tr>
               <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">Nguồn</label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <div>
+                    <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources" (filterChange)="handleSourceFilter($event)"
+                       [valueField]="'id'" #sourceCbx [textField]="'name'">
+                    </kendo-combobox>
+                    <!-- <button type="button" title="Thêm nhóm khách hàng" class="btn btn-light"
+                      (click)="quickCreatePartnerCategory()">
+                      <i class="fas fa-plus"></i>
+                    </button> -->
+                  </div>
+                </td>             
+              </tr>  
+              <tr [class.d-none]="!sourceValue || sourceValue.type !== 'referral'">
+                  <td colspan="1" class="o_td_label">
+                    <label class="o_form_label">Người giới thiệu</label>
+                  </td>
+                  <td colspan="1" style="width: 100%;">
+                    <div>
+                      <kendo-combobox formControlName="referralUser" [filterable]="true" [data]="filteredReferralUsers" (filterChange)="handleReferralUserFilter($event)" 
+                        [valueField]="'id'" #userCbx [textField]="'name'">
+                      </kendo-combobox> 
+                    </div>
+                  </td>             
+              </tr>
+              <tr>
                 <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
                     chú</label></td>
                 <td colspan="1" style="width: 100%;">
