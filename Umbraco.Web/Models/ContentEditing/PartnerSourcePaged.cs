@@ -12,11 +12,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public int Offset { get; set; }
         public int Limit { get; set; }
-        /// <summary>
-        /// normal : nguồn facebook , zalo , news v.v..
-        /// referral : người giới thiệu
-        /// </summary>
-        public string Type { get; set; }
+
         public string Search { get; set; }
 
     }

@@ -14,13 +14,13 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PartnerSourceController : BaseApiController
+    public class PartnerSourcesController : BaseApiController
     {
         private readonly IPartnerSourceService _partnerSourceService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public PartnerSourceController(IPartnerSourceService partnerSourceService , IMapper mapper , IUnitOfWorkAsync unitOfWork)
+        public PartnerSourcesController(IPartnerSourceService partnerSourceService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _partnerSourceService = partnerSourceService;
             _mapper = mapper;
@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Controllers
             if (result == null)
             {
                 return NotFound();
-            }           
+            }
 
             return Ok(result);
         }
@@ -63,21 +63,23 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id ,PartnerSourceSave val)
+        public async Task<IActionResult> Update(Guid id, PartnerSourceSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
+            
             var source = await _partnerSourceService.GetByIdAsync(id);
             if (source == null)
                 return NotFound();
 
-            await _unitOfWork.BeginTransactionAsync();
-
             source = _mapper.Map(val, source);
+
+            await _unitOfWork.BeginTransactionAsync();
 
             await _partnerSourceService.UpdateAsync(source);
 
+            _unitOfWork.Commit();
 
             return NoContent();
         }
