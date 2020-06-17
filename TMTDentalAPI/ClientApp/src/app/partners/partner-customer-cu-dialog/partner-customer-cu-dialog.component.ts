@@ -37,7 +37,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   submitted = false;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
-  idShowRef = false;
   title: string;
   filteredSources: PartnerSourceSimple[] = [];
   filteredReferralUsers: UserSimple[] = [];
@@ -145,13 +144,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           if (result.ward && result.ward.code) {
             this.handleWardChange(result.ward);
           }
-          if (result.source) {
-           this.handleSourceChange(result.source);
-          }
-          if (result.referralUser) {
-            this.handleReferralChange(result.referralUser);
-          }
 
+         
           if (result.histories.length) {
             result.histories.forEach((history) => {
               var histories = this.formGroup.get("histories") as FormArray;
@@ -174,6 +168,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   get f() {
     return this.formGroup.controls;
+  }
+
+  get sourceValue() {
+    return this.formGroup.get('source').value;
   }
 
   loadHistoriesList() {
@@ -313,35 +311,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     this.formGroup.get("ward").setValue(value);
   }
 
-  handleSourceChange(value) {
-    if (value) {
-      this.formGroup.get("source").setValue(value);
-      if (value.type == "referral") {
-        this.idShowRef = true;
-        setTimeout(() => {
-          this.userCbx.filterChange
-            .asObservable()
-            .pipe(
-              debounceTime(300),
-              tap(() => (this.userCbx.loading = true)),
-              switchMap((value) => this.searchReferralUsers(value))
-            )
-            .subscribe((result) => {
-              this.filteredReferralUsers = result;
-              this.userCbx.loading = false;
-            });
-        }, 100);
-      } else {
-        this.idShowRef = false;
-      }
-    } else {
-      this.idShowRef = false;
-    }
-  }
-
-  handleReferralChange(value) {
-    this.formGroup.get("referralUser").setValue(value);
-  }
+  
 
   loadCategoriesList() {
     this.searchCategories().subscribe((result) => {

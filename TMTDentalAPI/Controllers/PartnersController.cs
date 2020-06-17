@@ -109,16 +109,14 @@ namespace TMTDentalAPI.Controllers
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
 
-            if (val.SourceId != null)
+            if (partner.SourceId != null)
             {
-                partner.SourceId = val.SourceId;
-                ///check partnersource type
-
-                if (val.Source.Type == "referral")
-                {
-                    partner.ReferralUserId = val.ReferralUser.Id;
-                }
-              
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
+            }
+            else
+            {
+                partner.ReferralUserId = null;
             }
 
             SaveCategories(val, partner);
@@ -155,23 +153,16 @@ namespace TMTDentalAPI.Controllers
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
 
-            if (val.SourceId != null)
+            if (partner.SourceId != null)
             {
-                partner.SourceId = val.Source.Id;
-                ///check partnersource type
-
-                if (val.Source.Type == "referral")
-                {
-                    partner.ReferralUserId = val.ReferralUserId;
-                }
-                else
-                {
-                    if (partner.ReferralUserId != null)
-                    {
-                        partner.ReferralUserId = null;
-                    }
-                }
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
             }
+            else
+            {
+                partner.ReferralUserId = null;
+            }
+
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.UpdateAsync(partner);
