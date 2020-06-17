@@ -146,18 +146,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
             this.handleWardChange(result.ward);
           }
           if (result.source) {
-            this.filteredSources = _.unionBy(
-              this.filteredSources,
-              [result.source],
-              "id"
-            );
+           this.handleSourceChange(result.source);
           }
           if (result.referralUser) {
-            this.filteredReferralUsers = _.unionBy(
-              this.filteredReferralUsers,
-              [result.referralUser],
-              "id"
-            );
+            this.handleReferralChange(result.referralUser);
           }
 
           if (result.histories.length) {
