@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     public interface IPartnerSourceService : IBaseService<PartnerSource>
     {
         Task<PagedResult2<PartnerSourceBasic>> GetPagedResultAsync(PartnerSourcePaged val);
+        Task<IEnumerable<PartnerSourceBasic>> GetAutocompleteAsync(PartnerSourcePaged val);
     }
 }

@@ -1,3 +1,8 @@
+import { PartnerSourceSimple } from "./../partner-simple";
+import {
+  PartnerSourceService,
+  PartnerSourcePaged,
+} from "./../../partner-sources/partner-source.service";
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
@@ -13,6 +18,10 @@ import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
 import * as _ from "lodash";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { debounceTime, tap, switchMap } from "rxjs/operators";
+import { UserPaged, UserService } from "src/app/users/user.service";
+import { UserSimple } from "src/app/users/user-simple";
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -20,13 +29,18 @@ import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.serv
   styleUrls: ["./partner-customer-cu-dialog.component.css"],
 })
 export class PartnerCustomerCuDialogComponent implements OnInit {
+  @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
+  @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
+
   id: string;
   formGroup: FormGroup;
   submitted = false;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
+  idShowRef = false;
   title: string;
-
+  filteredSources: PartnerSourceSimple[] = [];
+  filteredReferralUsers: UserSimple[] = [];
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
     code: string;
@@ -71,10 +85,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private partnerCategoryService: PartnerCategoryService,
+    private partnerSourceService: PartnerSourceService,
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService
+    private showErrorService: AppSharedShowErrorService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -93,12 +109,28 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       email: null,
       phone: null,
       categories: null,
+      sourceId: null,
+      source: null,
+      referralUserId: null,
+      referralUser: null,
       comment: null,
       jobTitle: null,
       customer: true,
       histories: this.fb.array([]),
       companyId: null,
     });
+
+    this.sourceCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.sourceCbx.loading = true)),
+        switchMap((value) => this.searchSources(value))
+      )
+      .subscribe((result) => {
+        this.filteredSources = result;
+        this.sourceCbx.loading = false;
+      });
 
     setTimeout(() => {
       if (this.id) {
@@ -112,6 +144,20 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           }
           if (result.ward && result.ward.code) {
             this.handleWardChange(result.ward);
+          }
+          if (result.source) {
+            this.filteredSources = _.unionBy(
+              this.filteredSources,
+              [result.source],
+              "id"
+            );
+          }
+          if (result.referralUser) {
+            this.filteredReferralUsers = _.unionBy(
+              this.filteredReferralUsers,
+              [result.referralUser],
+              "id"
+            );
           }
 
           if (result.histories.length) {
@@ -128,7 +174,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.yearList = _.range(new Date().getFullYear(), 1900, -1);
       this.loadSourceCities();
       this.loadCategoriesList();
+      this.loadSourceList();
       this.loadHistoriesList();
+      this.loadReferralUserList();
     });
   }
 
@@ -227,6 +275,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     );
   }
 
+  handleSourceFilter(value) {
+    this.filteredSources = this.filteredSources.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
+  }
+
+  handleReferralUserFilter(value) {
+    this.filteredReferralUsers = this.filteredReferralUsers.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
+  }
+
   handleCityChange(value) {
     this.formGroup.get("city").setValue(value);
     this.formGroup.get("district").setValue(null);
@@ -261,9 +321,57 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     this.formGroup.get("ward").setValue(value);
   }
 
+  handleSourceChange(value) {
+    if (value) {
+      this.formGroup.get("source").setValue(value);
+      if (value.type == "referral") {
+        this.idShowRef = true;
+        setTimeout(() => {
+          this.userCbx.filterChange
+            .asObservable()
+            .pipe(
+              debounceTime(300),
+              tap(() => (this.userCbx.loading = true)),
+              switchMap((value) => this.searchReferralUsers(value))
+            )
+            .subscribe((result) => {
+              this.filteredReferralUsers = result;
+              this.userCbx.loading = false;
+            });
+        }, 100);
+      } else {
+        this.idShowRef = false;
+      }
+    } else {
+      this.idShowRef = false;
+    }
+  }
+
+  handleReferralChange(value) {
+    this.formGroup.get("referralUser").setValue(value);
+  }
+
   loadCategoriesList() {
     this.searchCategories().subscribe((result) => {
       this.categoriesList = result;
+    });
+  }
+
+  loadSourceList() {
+    this.searchSources().subscribe((result) => {
+      this.filteredSources = result;
+    });
+  }
+
+  loadReferralUserList() {
+    this.searchReferralUsers().subscribe((result) => {
+      this.filteredReferralUsers = result;
+    });
+  }
+
+  loadSourcesList() {
+    this.searchSources().subscribe((result) => {
+      this.filteredSources = result;
     });
   }
 
@@ -290,6 +398,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return this.partnerCategoryService.autocomplete(val);
   }
 
+  searchSources(q?: string) {
+    var val = new PartnerSourcePaged();
+    val.search = q;
+    return this.partnerSourceService.autocomplete(val);
+  }
+
+  searchReferralUsers(q?: string) {
+    var val = new UserPaged();
+    val.search = q;
+    return this.userService.autocompleteSimple(val);
+  }
+
   birthInit(begin: number, end: number) {
     var list = new Array();
     for (let i = begin; i <= end; i++) {
@@ -307,6 +427,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
     if (this.id) {
       var val = this.formGroup.value;
+      val.sourceId = val.source ? val.source.id : null;
+      val.referralUserId = val.referralUser ? val.referralUser.id : null;
       this.partnerService.update(this.id, val).subscribe(
         () => {
           this.activeModal.close(true);
@@ -315,6 +437,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       );
     } else {
       var val = this.formGroup.value;
+      val.sourceId = val.source ? val.source.id : null;
+      val.referralUserId = val.referralUser ? val.referralUser.id : null;
       this.partnerService.create(val).subscribe(
         (result) => {
           this.activeModal.close(result);

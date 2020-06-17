@@ -53,6 +53,10 @@ export class PartnerSourceService {
     return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
   }
 
+  autocomplete(val: PartnerSourcePaged): Observable<PartnerSourceBasic[]> {
+    return this.http.post<PartnerSourceBasic[]>(this.baseApi + this.apiUrl + "/Autocomplete", val);
+  }
+
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
