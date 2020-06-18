@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ComponentFactoryResolver } from '@angular/core';
-import { RedirectComponentDirective } from '../redirect-component.directive';
+
 import { PartnerCustomerTreatmentPaymentDetailComponent } from 'src/app/partners/partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
+import { RedirectComponentDirective } from '../redirect-component.directive';
 
 @Component({
   selector: 'app-redirect-component',

@@ -39,7 +39,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-       // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
+        // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
         public PartnerService(IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper, UserManager<ApplicationUser> userManager)
             : base(repository, httpContextAccessor)
@@ -186,7 +186,7 @@ namespace Infrastructure.Services
             };
         }
 
-        
+
         public async Task<AppointmentBasic> GetNextAppointment(Guid id)
         {
             var apObj = GetService<IAppointmentService>();
@@ -209,7 +209,7 @@ namespace Infrastructure.Services
         private void _SetCompanyIfNull(IEnumerable<Partner> self)
         {
             //Nếu khởi tạo công ty ban đầu thì CompanyId ko có giá trị mà gán vào sẽ bị lỗi insert 
-            foreach(var partner in self)
+            foreach (var partner in self)
             {
                 var company_id = CompanyId;
                 if (!partner.CompanyId.HasValue && company_id != Guid.Empty)
@@ -245,7 +245,7 @@ namespace Infrastructure.Services
 
         private async Task _CheckUniqueRef(IEnumerable<Partner> self)
         {
-            foreach(var partner in self)
+            foreach (var partner in self)
             {
                 if (partner.Customer == true && !string.IsNullOrEmpty(partner.Ref))
                 {
@@ -275,7 +275,7 @@ namespace Infrastructure.Services
 
         private void _UpdateCityName(IEnumerable<Partner> self)
         {
-            foreach(var partner in self)
+            foreach (var partner in self)
             {
                 if (string.IsNullOrEmpty(partner.CityName))
                     continue;
@@ -394,7 +394,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val)
         {
-            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimple {
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimple
+            {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
                 Name = x.Name
@@ -427,7 +428,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone)
         {
             var query = await SearchQuery(x => x.Phone.Contains(phone) && x.Active == true).ToListAsync();
-            var result  = _mapper.Map<IEnumerable<PartnerInfoChangePhone>>(query);
+            var result = _mapper.Map<IEnumerable<PartnerInfoChangePhone>>(query);
             return result;
         }
 
@@ -793,7 +794,8 @@ namespace Infrastructure.Services
                 }
 
             }
-            else {
+            else
+            {
                 foreach (var pn in list)
                 {
                     var entity = SearchQuery(x => x.Ref == pn.Ref).FirstOrDefault();
@@ -890,7 +892,7 @@ namespace Infrastructure.Services
                 if (!string.IsNullOrEmpty(item.MedicalHistory))
                 {
                     var medical_history_list = item.MedicalHistory.Split(",");
-                    foreach(var mh in medical_history_list)
+                    foreach (var mh in medical_history_list)
                     {
                         var new_mh = mh.Trim();
                         if (string.IsNullOrEmpty(new_mh))
@@ -928,7 +930,7 @@ namespace Infrastructure.Services
             {
                 await CreateAsync(partners_to_insert);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
             }
@@ -1156,7 +1158,7 @@ namespace Infrastructure.Services
             var offset = 0;
             var sub_ids = ids.Skip(offset).Take(limit).ToList();
             var res = new Dictionary<Guid, Partner>();
-            while(sub_ids.Count > 0)
+            while (sub_ids.Count > 0)
             {
                 var list = await SearchQuery(x => sub_ids.Contains(x.Id)).Include(x => x.PartnerHistoryRels).ToListAsync();
                 foreach (var item in list)
@@ -1359,7 +1361,7 @@ namespace Infrastructure.Services
                     if (dict.ContainsKey(address.ToLower()))
                     {
                         item.Street = dict[address.ToLower()].ShortAddress;
-                        item.CityName = dict[address.ToLower()].CityName.Replace("TP","Thành phố");
+                        item.CityName = dict[address.ToLower()].CityName.Replace("TP", "Thành phố");
                         item.CityCode = dict[address.ToLower()].CityCode;
                         item.DistrictName = dict[address.ToLower()].DistrictName;
                         item.DistrictCode = dict[address.ToLower()].DistrictCode;
@@ -1447,7 +1449,7 @@ namespace Infrastructure.Services
                 Percentage = x.Count() * 100f / query.Count()
             }).ToListAsync();
 
-            foreach(var item in res)
+            foreach (var item in res)
             {
                 item.CityCode = val.CityCode;
                 item.CityName = val.CityName;
@@ -1477,15 +1479,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<AppointmentBasic> GetNextAppointment(Guid id)
-        {
-            var apObj = GetService<IAppointmentService>();
-            var now = DateTime.Now;
-            var res = await _mapper.ProjectTo<AppointmentBasic>(apObj.SearchQuery(x => x.PartnerId == id && x.Date >= now, orderBy: x => x.OrderBy(s => s.Date))).FirstOrDefaultAsync();
-            return res;
-        }
 
-        
 
         //public async Task<File> ExportExcelFile(PartnerPaged val)
         //{
@@ -1572,5 +1566,5 @@ namespace Infrastructure.Services
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
 
-    
+
 }

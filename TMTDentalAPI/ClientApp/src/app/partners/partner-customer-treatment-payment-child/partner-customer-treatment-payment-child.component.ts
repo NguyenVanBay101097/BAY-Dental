@@ -3,6 +3,7 @@ import { RedirectComponentComponent } from 'src/app/shared/redirect-component/re
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { SharedService } from 'src/app/shared/shared.service';
 
+
 @Component({
   selector: 'app-partner-customer-treatment-payment-child',
   templateUrl: './partner-customer-treatment-payment-child.component.html',
