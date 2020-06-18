@@ -1,27 +1,25 @@
 <div class="o_control_panel">
-    <ol class="breadcrumb" style="width: 30%;font-size: 22px;">
-        <li class="active">HỒ SƠ KHÁCH HÀNG </li>
-
-    </ol>
-    <div class="o_cp_searchview" style="width: 70%; position: relative;">
-        <div class="custom-tab">
+    <div>
+        <div>HỒ SƠ KHÁCH HÀNG</div>
+        <div>
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a routerLink="profile" routerLinkActive="active" class="nav-link">Thông tin cơ bản</a>
+                    <a routerLink="profile" class="nav-link px-3 py-1" routerLinkActive="active">Thông tin cơ bản</a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="treatment-payment" routerLinkActive="active" class="nav-link">Điều trị & Thanh toán</a>
+                    <a routerLink="treatment-payment" class="nav-link px-3 py-1" routerLinkActive="active">Điều trị & Thanh toán</a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="appointment" routerLinkActive="active" class="nav-link">Lịch hẹn</a>
+                    <a routerLink="appointment" class="nav-link px-3 py-1" routerLinkActive="active">Lịch hẹn</a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="medicine" routerLinkActive="active" class="nav-link">Đơn thuốc</a>
+                    <a routerLink="medicine" class="nav-link px-3 py-1" routerLinkActive="active">Đơn thuốc</a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
+    
 <div class="o_content">
     <router-outlet></router-outlet>
 </div>

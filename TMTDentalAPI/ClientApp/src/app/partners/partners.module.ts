@@ -39,6 +39,7 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
 import { SaleReportModule } from '../sale-report/sale-report.module';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -77,7 +78,8 @@ import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-custom
     MatStepperModule,
     SharedModule,
     CustomComponentModule,
-    SaleReportModule
+    SaleReportModule,
+    FlexLayoutModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

@@ -6,7 +6,10 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 @Component({
   selector: 'app-partner-customer-detail',
   templateUrl: './partner-customer-detail.component.html',
-  styleUrls: ['./partner-customer-detail.component.css']
+  styleUrls: ['./partner-customer-detail.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class PartnerCustomerDetailComponent implements OnInit {
 
