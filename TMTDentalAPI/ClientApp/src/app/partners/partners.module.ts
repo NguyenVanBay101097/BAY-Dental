@@ -31,7 +31,7 @@ import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-se
 import { CustomComponentModule } from '../common/common.module';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
 import { HttpClientModule } from '@angular/common/http';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
 import { PartnerCustomerProfileNextAppointmentComponent } from './partner-customer-profile-next-appointment/partner-customer-profile-next-appointment.component';
@@ -39,6 +39,7 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
 import { SaleReportModule } from '../sale-report/sale-report.module';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
+import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -66,13 +67,15 @@ import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-custom
     PartnerCustomerProfileNextAppointmentComponent,
     PartnerCustomerTreatmentPaymentComponent,
     PartnerCustomerAppointmentComponent,
-    PartnerCustomerTreatmentPaymentDetailComponent],
+    PartnerCustomerTreatmentPaymentDetailComponent,
+    PartnerCustomerTreatmentPaymentChildComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgbDropdownModule,
     FormsModule,
     MatStepperModule,
     SharedModule,
@@ -85,14 +88,16 @@ import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-custom
     PartnerImportComponent,
     PartnerCustomerCuDialogComponent,
     PartnerSearchDialogComponent,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    PartnerCustomerTreatmentPaymentDetailComponent
   ],
   providers: [
     PartnerService,
     NgbActiveModal
   ],
   exports: [
-    PartnerCustomerDetailComponent
+    PartnerCustomerDetailComponent,
+    PartnerCustomerTreatmentPaymentDetailComponent
   ]
 })
 export class PartnersModule { }

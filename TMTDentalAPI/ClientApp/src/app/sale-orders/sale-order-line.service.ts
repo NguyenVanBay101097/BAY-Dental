@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { SaleOrderLineDisplay } from './sale-order-line-display';
 
 export class SaleOrderLineOnChangeProduct {
     productId: string;
@@ -20,5 +21,9 @@ export class SaleOrderLineService {
 
     onChangeProduct(val: SaleOrderLineOnChangeProduct): Observable<SaleOrderLineOnChangeProductResult> {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
+    }
+
+    create(val): Observable<SaleOrderLineDisplay> {
+        return this.http.post<SaleOrderLineDisplay>(this.baseApi + this.apiUrl, val);
     }
 }

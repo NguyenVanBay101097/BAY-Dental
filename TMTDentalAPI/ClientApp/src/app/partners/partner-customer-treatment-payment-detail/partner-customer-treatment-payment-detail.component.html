@@ -1,38 +1,129 @@
-<div>
+<div *ngIf="listSaleOrderLines && listSaleOrderLines.length > 0">
     <div
         style="margin-top: 20px; margin-bottom: 5px;display: flex; flex-flow: row nowrap; align-items: center; justify-content: space-between;">
-        <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;"> <span>Kế hoạch điều trị/dịch
-                vụ</span> <i class="fa fa-question-circle tooltipIcon"
-                title="Các thủ thuật/công việc/dịch vụ được DỰ ĐỊNH thực hiện."></i> </div>
-        <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: 1.500.000&nbsp;₫</div>
+        <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;">
+            <span>Danh sách dịch vụ</span>
+            <i class="fa fa-question-circle tooltipIcon"
+                title="Các thủ thuật/công việc/dịch vụ được DỰ ĐỊNH thực hiện."></i>
+        </div>
+        <!-- <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: 1111111;₫</div> -->
     </div>
     <div>
         <div class="ProcedureItemView">
             <div class="ProcedureItemView-date"><strong>Ngày</strong></div>
-            <div class="ProcedureItemView-teeth"><strong>Răng</strong></div>
+            <!-- <div class="ProcedureItemView-teeth"><strong>Răng</strong></div> -->
             <div class="ProcedureItemView-quantity"><strong>SL</strong></div>
             <div class="ProcedureItemView-name"><strong>Điều trị/dịch vụ</strong></div>
+            <!-- <div class="ProcedureItemView-name ProcedureItemView-note" style="font-style: normal;"><strong>Ghi chú</strong></div> -->
+            <div class="ProcedureItemView-doctor" style="text-transform: none;"><strong>Bác sĩ &amp; phụ tá</strong>
+            </div>
+            <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Chi phí</strong></div>
+            <!-- <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Giảm giá</strong></div> -->
+            <div class="ProcedureItemView-actions">
+                <button type="button" class="btn btn-success btn-edit" (click)="addSaleOrderLine()">
+                    <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
+                </button>
+            </div>
+        </div>
+        <div class="ProcedureItemView" *ngFor="let item of listSaleOrderLines">
+            <div class="ProcedureItemView-date">{{item.order.dateOrder | date:'shortDate'}}</div>
+            <!-- <div class="ProcedureItemView-teeth"></div> -->
+            <div class="ProcedureItemView-quantity">{{item.qtyInvoiced}}</div>
+            <div class="ProcedureItemView-name">{{item.name}}</div>
+            <!-- <div class="ProcedureItemView-name ProcedureItemView-note">ádasdasd</div> -->
+            <div class="ProcedureItemView-doctor">{{item.order.userName}}</div>
+            <div class="ProcedureItemView-amount">{{item.priceUnit | number}} ₫</div>
+            <!-- <div class="ProcedureItemView-amount">0&nbsp;₫</div> -->
+            <div class="ProcedureItemView-actions"><button type="button" class="btn btn-light ProcedureItemView-btn"
+                    title="Chức năng"><i class="fa fa-ellipsis-h"></i></button></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="listTreatments && listTreatments.length > 0">
+    <div
+        style="margin-top: 20px; margin-bottom: 5px;display: flex; flex-flow: row nowrap; align-items: center; justify-content: space-between;">
+        <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;">
+            <span>Danh sách đợt khám</span>
+            <i class="fa fa-question-circle tooltipIcon"></i>
+        </div>
+    </div>
+    <div>
+        <div class="ProcedureItemView">
+            <div class="ProcedureItemView-date"><strong>Ngày khám</strong></div>
+            <div class="ProcedureItemView-name"><strong>Số đợt khám</strong></div>
             <div class="ProcedureItemView-name ProcedureItemView-note" style="font-style: normal;"><strong>Ghi
                     chú</strong></div>
             <div class="ProcedureItemView-doctor" style="text-transform: none;"><strong>Bác sĩ &amp; phụ tá</strong>
             </div>
-            <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Chi phí</strong></div>
-            <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Giảm giá</strong></div>
-            <div class="ProcedureItemView-actions"><button type="button" class="btn btn-success"
-                    style="width: 100%; height: 25px; padding: 2px;"><img src="images/icon_plus_white.svg"
-                        style="width: 18px;"></button></div>
+            <div class="ProcedureItemView-actions">
+                <button type="button" class="btn btn-success btn-edit" (click)="addTreatment()">
+                    <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
+                </button>
+            </div>
         </div>
+        <div class="ProcedureItemView" *ngFor="let item of listTreatments">
+            <div class="ProcedureItemView-date">{{item.date | date : 'shortDate'}}</div>
+            <div class="ProcedureItemView-name">{{item.name}}</div>
+            <div class="ProcedureItemView-name ProcedureItemView-note">{{item.note}}</div>
+            <div class="ProcedureItemView-doctor">{{item.user && item.user.name}}</div>
+            <div class="ProcedureItemView-actions">
+                <div ngbDropdown class="d-inline-block">
+                    <button type="button" id="dropdownBasic1" ngbDropdownToggle
+                        class="btn btn-light ProcedureItemView-btn" title="Chức năng">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <button (click)="viewTreatment(item.id)" ngbDropdownItem>Sửa</button>
+                        <button (click)="deleteTreatment(item.id)" ngbDropdownItem>Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="listLabos && listLabos.length > 0">
+    <div
+        style="margin-top: 20px; margin-bottom: 5px;display: flex; flex-flow: row nowrap; align-items: center; justify-content: space-between;">
+        <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;">
+            <span>Danh sách phiếu labo</span>
+            <i class="fa fa-question-circle tooltipIcon"></i> </div>
+        <!-- <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: 1.500.000&nbsp;₫</div> -->
+    </div>
+    <div>
         <div class="ProcedureItemView">
-            <div class="ProcedureItemView-date">17/06</div>
-            <div class="ProcedureItemView-teeth"></div>
-            <div class="ProcedureItemView-quantity">1</div>
-            <div class="ProcedureItemView-name">Bộ giữ khoảng cố định</div>
-            <div class="ProcedureItemView-name ProcedureItemView-note">ádasdasd</div>
-            <div class="ProcedureItemView-doctor">Đặng Thế Tài</div>
-            <div class="ProcedureItemView-amount">1.500.000&nbsp;₫</div>
-            <div class="ProcedureItemView-amount">0&nbsp;₫</div>
-            <div class="ProcedureItemView-actions"><button type="button" class="btn btn-light ProcedureItemView-btn"
-                    title="Chức năng"><i class="fa fa-ellipsis-h"></i></button></div>
+            <div class="ProcedureItemView-date"><strong>Ngày</strong></div>
+            <!-- <div class="ProcedureItemView-teeth"><strong>Răng</strong></div> -->
+            <!-- <div class="ProcedureItemView-quantity"><strong>SL</strong></div> -->
+            <div class="ProcedureItemView-name"><strong>Mã phiếu labo</strong></div>
+            <!-- <div class="ProcedureItemView-name ProcedureItemView-note" style="font-style: normal;"><strong>Ghi
+                    chú</strong></div> -->
+            <div class="ProcedureItemView-doctor" style="text-transform: none;"><strong>Bác sĩ &amp; phụ tá</strong>
+            </div>
+            <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Chi phí</strong></div>
+            <!-- <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Giảm giá</strong></div> -->
+            <div class="ProcedureItemView-actions">
+                <button type="button" class="btn btn-success btn-edit">
+                    <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
+                </button>
+            </div>
+        </div>
+        <div class="ProcedureItemView" *ngFor="let item of listLabos">
+            <div class="ProcedureItemView-date">{{item.dateOrder | date: 'shortDate'}}</div>
+            <!-- <div class="ProcedureItemView-teeth">
+            </div> -->
+            <!-- <div class="ProcedureItemView-quantity"></div> -->
+            <div class="ProcedureItemView-name">{{item.name}}</div>
+            <!-- <div class="ProcedureItemView-name ProcedureItemView-note"></div> -->
+            <div class="ProcedureItemView-doctor">{{item.saleOrder.userName}}</div>
+            <div class="ProcedureItemView-amount">{{item.amountTotal}} ₫</div>
+            <!-- <div class="ProcedureItemView-amount">0&nbsp;₫</div> -->
+            <div class="ProcedureItemView-actions">
+                <button type="button" class="btn btn-light ProcedureItemView-btn" title="Chức năng">
+                    <i class="fa fa-ellipsis-h"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>

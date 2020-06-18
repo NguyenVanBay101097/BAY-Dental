@@ -23,6 +23,7 @@ import { UserCuDialogComponent } from 'src/app/users/user-cu-dialog/user-cu-dial
 
 export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   dotKhamForm: FormGroup;
+  id: string;
   saleOrderId: string;
   filteredDoctors: EmployeeSimple[];
   filteredAssistants: EmployeeSimple[];
@@ -32,12 +33,19 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   title: string;
 
-  constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
-    private employeeService: EmployeeService, private userService: UserService, public activeModal: NgbActiveModal, private modalService: NgbModal,
-    private errorService: AppSharedShowErrorService) { }
+  constructor(
+    private fb: FormBuilder,
+    private dotKhamService: DotKhamService,
+    private intlService: IntlService,
+    private employeeService: EmployeeService,
+    private userService: UserService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private errorService: AppSharedShowErrorService
+  ) { }
 
   ngOnInit() {
-    this.dotKhamForm = this.fb.group({     
+    this.dotKhamForm = this.fb.group({
       dateObj: [null, Validators.required],
       note: null,
       companyId: null,
@@ -82,9 +90,21 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
         this.filteredUsers = result;
         this.userCbx.loading = false;
       });
-
-      this.getDefault();
+      if (this.id)
+        this.loadData();
+      else
+        this.getDefault();
     });
+  }
+
+  loadData() {
+    this.dotKhamService.get(this.id).subscribe(
+      result => {
+        this.dotKhamForm.patchValue(result);
+        let date = new Date(result.date);
+        this.dotKhamForm.get('dateObj').patchValue(date);
+      }
+    )
   }
 
   getDefault() {
@@ -163,7 +183,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
-  searchUsers(q?: string){
+  searchUsers(q?: string) {
     var val = new UserPaged();
     val.search = q;
     return this.userService.autocompleteSimple(val);
@@ -195,21 +215,31 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     if (!this.dotKhamForm.valid) {
       return;
     }
+
     var val = this.dotKhamForm.value;
     val.userId = val.user ? val.user.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    this.dotKhamService.create(val).subscribe(result => {
-      this.dotKhamService.actionConfirm(result.id).subscribe(() => {
-        this.activeModal.close({
-          view: true,
-          result
+    if (this.id) {
+      this.dotKhamService.update(this.id, val).subscribe(
+        () => {
+          this.activeModal.close(val);
+        }
+      )
+    } else {
+      this.dotKhamService.create(val).subscribe(result => {
+        console.log(result);
+        this.dotKhamService.actionConfirm(result.id).subscribe(() => {
+          this.activeModal.close({
+            view: true,
+            result
+          });
+        }, err1 => {
+          this.errorService.show(err1);
         });
-      }, err1 => {
-        this.errorService.show(err1);
+      }, err2 => {
+        this.errorService.show(err2);
       });
-    }, err2 => {
-      this.errorService.show(err2);
-    });
+    }
   }
 
   onCancel() {

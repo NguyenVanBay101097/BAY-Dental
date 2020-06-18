@@ -334,6 +334,8 @@ export class PartnerService {
     getNextAppointment(id): Observable<AppointmentDisplay> {
         return this.http.get<AppointmentDisplay>(this.baseApi + this.apiUrl + '/' + id + '/GetNextAppointment')
     }
+
+
 }
 
 

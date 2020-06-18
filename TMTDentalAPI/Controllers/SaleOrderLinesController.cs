@@ -48,5 +48,11 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(paged);
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> Create(SaleOrderLineSave val)
+        //{
+        //    var res = await
+        //}
     }
 }

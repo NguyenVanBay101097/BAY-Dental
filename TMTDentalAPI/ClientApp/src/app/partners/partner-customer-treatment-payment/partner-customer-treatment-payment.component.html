@@ -17,36 +17,9 @@
         </button>
     </div>
 
-    <div class="GAL03TOCH3B" style="height: 75px;" *ngFor="let order of listSaleOrder">
-        <span class="GAL03TOCK3B" title="Mở rộng">
-            <i class="fas fa-arrows-alt"></i>
-            <i *ngIf="expression" class="fas fa-compress-arrows-alt"></i>
-        </span>
-        <div style="display: flex; flex-flow: row nowrap; align-items: flex-start;">
-            <div style="display: flex; flex-flow: row nowrap; align-items: center; height: 36px; white-space: nowrap;">
-                <span class="GAL03TOCB3B">Ngày lập phiếu</span> <span
-                    class="GAL03TOCN2B">{{order.dateOrder |date:'hh:mm - EEEE, dd/MM/yyyy'}}</span>
-            </div>
-            <div class="treatment-action">
-                <select class="btn btn-light GAL03TOCJ3B">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-                <div class="action">
-                    <button type="button" class="btn btn-outline-danger GAL03TOCL2B" title="Xóa phiếu này">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-primary GAL03TOCL2B"
-                        title="Xem hoặc in ra phiếu điều trị này">
-                        <i class="fa fa-print"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <app-partner-customer-treatment-payment-detail></app-partner-customer-treatment-payment-detail>
+    <div class="GAL03TOCH3B" [id]="saleOrder.id" *ngFor="let saleOrder of listSaleOrder">
+        <app-partner-customer-treatment-payment-child [saleOrder]="saleOrder">
+        </app-partner-customer-treatment-payment-child>
     </div>
 
 </div>

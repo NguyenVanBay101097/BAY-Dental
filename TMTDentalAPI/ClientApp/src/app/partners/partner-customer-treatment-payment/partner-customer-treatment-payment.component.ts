@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Renderer2 } from '@angular/core';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
@@ -11,6 +11,8 @@ import { AccountPaymentService } from 'src/app/account-payments/account-payment.
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerService } from '../partner.service';
 import { PartnerDisplay } from '../partner-simple';
+import { RedirectComponentComponent } from 'src/app/shared/redirect-component/redirect-component.component';
+import { SharedService } from 'src/app/shared/shared.service';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment',
@@ -19,21 +21,24 @@ import { PartnerDisplay } from '../partner-simple';
 })
 export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
-  @ViewChild(GridComponent, { static: false }) grid: GridComponent;
+
+
   limit = 20;
   id: string;
   skip = 0;
   customerInfo: PartnerDisplay;
   listSaleOrder: SaleOrderBasic[] = []
   selectedIds: string[] = [];
-
+  show = false;
   constructor(private saleOrderService: SaleOrderService,
     private router: Router,
     private partnerService: PartnerService,
     private modalService: NgbModal,
     private paymentService: AccountPaymentService,
     private notificationService: NotificationService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private renderer2: Renderer2,
+    private sharedService: SharedService
   ) { }
 
   ngOnInit() {
@@ -106,5 +111,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
       });
     })
   }
+
+
 
 }

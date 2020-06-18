@@ -88,7 +88,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-       
+
             await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.UpdateOrderAsync(id, val);
             _unitOfWork.Commit();
@@ -125,7 +125,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("DefaultGetInvoice")]
         public IActionResult DefaultGetInvoice(List<Guid> ids)
         {
-            var res =  _saleOrderService.DefaultGetInvoice(ids);
+            var res = _saleOrderService.DefaultGetInvoice(ids);
             return Ok(res);
         }
 
@@ -236,7 +236,7 @@ namespace TMTDentalAPI.Controllers
                 if (card != null && card.Type.PricelistId.HasValue)
                     res.Pricelist = await _pricelistService.GetBasic(card.Type.PricelistId.Value);
             }
-          
+
             return Ok(res);
         }
 
@@ -348,6 +348,27 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetServiceBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetServiceBySaleOrderId(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetTreatmentBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetTreatmentBySaleOrderId(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetLaboBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetLaboBySaleOrderId(id);
+            return Ok(res);
+        }
+
     }
 }

@@ -27,13 +27,17 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
-
+  saleOrderId: string;
   partnerId: string;
   pricelistId: string;
 
-  constructor(private fb: FormBuilder, private productService: ProductService,
-    public activeModal: NgbActiveModal, private saleLineService: SaleOrderLineService,
-    private toothService: ToothService, private toothCategoryService: ToothCategoryService) { }
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    public activeModal: NgbActiveModal,
+    private saleLineService: SaleOrderLineService,
+    private toothService: ToothService,
+    private toothCategoryService: ToothCategoryService) { }
 
   ngOnInit() {
     this.saleLineForm = this.fb.group({
@@ -251,7 +255,18 @@ export class SaleOrderLineDialogComponent implements OnInit {
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    this.activeModal.close(val);
+    if (this.saleOrderId) {
+      val.saleOrderId = this.saleOrderId;
+      this.saleLineService.create(val).subscribe(
+        result => {
+          console.log(result);
+          this.activeModal.close(val);
+        }
+      )
+    }
+    else {
+      this.activeModal.close(val);
+    }
   }
 
   onCancel() {

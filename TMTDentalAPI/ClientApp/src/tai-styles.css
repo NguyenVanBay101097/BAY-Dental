@@ -1313,3 +1313,154 @@ span.char-count {
     bottom: 5px;
     color: #ffc107!important;
 }
+
+.treatment-payment {
+    margin-top: 1px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    padding: 15px;
+    justify-content: space-between;
+    background-color: white;
+    padding-left: 1.5625%;
+    padding-right: 1.5625%;
+    min-height: 100%;
+    box-sizing: border-box;
+    min-width: 980px;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.o_cp_controller {
+    width: 100%;
+}
+
+.o_content {
+    max-width: 100%;
+}
+
+.treatment-payment-info {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.GAL03TOCBKB {
+    margin-left: 10px;
+    white-space: nowrap;
+    text-transform: capitalize;
+    font-weight: 300;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: -15px;
+}
+
+.GAL03TOCDKB {
+    margin-left: 10px;
+    white-space: nowrap;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.GAL03TOCHKB {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.GAL03TOCHKB>* {
+    margin: 0 10px;
+}
+
+.GAL03TOCHKB>*>span:LAST-CHILD {
+    font-size: 15px;
+    font-weight: 300;
+}
+
+.GAL03TOCH3B {
+    margin-top: 30px;
+    box-shadow: 0 -1px 5px 1px #efefef;
+    padding: 20px 15px;
+    height: 75px;
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.GAL03TOCB3B {
+    font-weight: 600;
+    margin-right: 5px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.GAL03TOCK3B {
+    display: block;
+    position: absolute;
+    right: 3px;
+    top: 0px;
+    cursor: pointer;
+}
+
+.GAL03TOCJ3B {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-left: 10px;
+    align-items: center;
+    white-space: nowrap;
+    height: 36px;
+    text-transform: none;
+    position: absolute;
+    max-width: 80px;
+    right: 80px;
+    font-weight: 300;
+    justify-content: space-between;
+    color: #777;
+    background: none;
+}
+
+.GAL03TOCL2B {
+    font-size: 10px;
+    padding: 4px 5px 4px 5px;
+    min-width: 30px;
+    font-weight: 300;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    justify-content: center;
+    color: #777;
+    border-color: #ddd;
+    min-height: 20px;
+}
+
+.treatment-action {
+    display: inline-flex;
+    position: relative;
+    width: 100%;
+}
+
+.action {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-left: 10px;
+    align-items: center;
+    white-space: nowrap;
+    position: absolute;
+    right: 0px;
+    margin-top: 8px;
+}
+
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none !important;
+}
