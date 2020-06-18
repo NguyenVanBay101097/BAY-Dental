@@ -436,7 +436,7 @@ namespace TMTDentalAPI.Controllers
 
                 for (int row = 2; row < partners.Count + 2; row++)
                 {
-                    var item = partners[row - 2]; 
+                    var item = partners[row - 2];
                     var entity = await _partnerService.GetPartnerForDisplayAsync(item.Id);
 
                     var ar = new List<string>();
@@ -450,10 +450,10 @@ namespace TMTDentalAPI.Controllers
 
                     var histories = entity.PartnerHistoryRels.Select(x => x.History.Name).ToList();
                     histories.Add(item.MedicalHistory);
-                        
+
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
-                    worksheet.Cells[row, 3].Value = (item.Gender=="male") ? "Nam" : (item.Gender == "female") ? "Nữ" : "Khác";
+                    worksheet.Cells[row, 3].Value = (item.Gender == "male") ? "Nam" : (item.Gender == "female") ? "Nữ" : "Khác";
                     worksheet.Cells[row, 4].Value = item.BirthDay + "/" + item.BirthMonth + "/" + item.BirthYear;
                     worksheet.Cells[row, 5].Value = item.Phone;
                     worksheet.Cells[row, 6].Value = address;
@@ -491,6 +491,8 @@ namespace TMTDentalAPI.Controllers
             var res = await _partnerService.GetNextAppointment(id);
             return Ok(res);
         }
+
+        
 
         //[HttpPost("[action]")]
         //public async Task<IActionResult> CheckMegerFacebookPage(CheckMergeFacebookPage val) {

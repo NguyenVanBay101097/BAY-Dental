@@ -9,9 +9,10 @@ import { SharedModule } from '../shared/shared.module';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { LaboOrderCreateUpdateComponent } from './labo-order-create-update/labo-order-create-update.component';
 import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
+import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 
 @NgModule({
-  declarations: [LaboOrderListComponent, LaboOrderCreateUpdateComponent, LaboOrderCuLineDialogComponent],
+  declarations: [LaboOrderListComponent, LaboOrderCreateUpdateComponent, LaboOrderCuLineDialogComponent, LaboOrderCuDialogComponent],
   imports: [
     CommonModule,
     LaboOrdersRoutingModule,
@@ -24,7 +25,8 @@ import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo
     LaboOrderService
   ],
   entryComponents: [
-    LaboOrderCuLineDialogComponent
+    LaboOrderCuLineDialogComponent,
+    LaboOrderCuDialogComponent
   ]
 })
 export class LaboOrdersModule { }

@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Controllers
             }
             var res = _mapper.Map<DotKhamDisplay>(dotKham);
             res.Lines = res.Lines.OrderBy(x => x.Sequence);
-            foreach(var line in res.Lines)
+            foreach (var line in res.Lines)
             {
                 line.Operations = line.Operations.OrderBy(x => x.Sequence);
             }
@@ -93,7 +93,8 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             var dotKham = _mapper.Map<DotKham>(val);
-            await _dotKhamService.CreateAsync(dotKham);
+            var res = await _dotKhamService.CreateAsync(dotKham);
+            val.Name = res.Name;
             val.Id = dotKham.Id;
             return Ok(val);
         }
@@ -161,7 +162,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetLaboOrderLines(Guid id)
         {
             var res = await _laboOrderLineService.GetAllForDotKham(id);
-            return Ok(res); 
+            return Ok(res);
         }
 
         [HttpGet("{id}/[action]")]
@@ -238,7 +239,7 @@ namespace TMTDentalAPI.Controllers
             }
 
             var result = await Task.WhenAll(tasks);
-            foreach(var item in result)
+            foreach (var item in result)
             {
                 if (item == null)
                     throw new Exception("Hình không hợp lệ hoặc vượt quá kích thước cho phép.");

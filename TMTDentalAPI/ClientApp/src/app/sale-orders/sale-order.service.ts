@@ -4,10 +4,13 @@ import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { SaleOrderBasic } from './sale-order-basic';
 import { SaleOrderDisplay } from './sale-order-display';
-import { DotKhamBasic } from '../dot-khams/dot-khams';
+import { DotKhamBasic, DotKhamDisplay } from '../dot-khams/dot-khams';
 import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../account-payments/account-register-payment.service';
 import { AccountPaymentPaged, AccountPaymentBasic } from '../account-payments/account-payment.service';
 import { PaymentInfoContent } from '../account-invoices/account-invoice.service';
+import { LaboOrderBasic, LaboOrderDisplay } from '../labo-orders/labo-order.service';
+import { SaleOrderLineBasic } from '../partners/partner.service';
+import { SaleOrderLineDisplay } from './sale-order-line-display';
 
 export class SaleOrderPaged {
     limit: number;
@@ -143,5 +146,16 @@ export class SaleOrderService {
     getInvoices(id) {
         return this.http.get(this.baseApi + this.apiUrl + `/${id}/GetInvoices`);
     }
-  
+
+    getServiceBySaleOrderId(id): Observable<SaleOrderLineDisplay[]> {
+        return this.http.get<SaleOrderLineDisplay[]>(this.baseApi + this.apiUrl + '/' + id + '/GetServiceBySaleOrderId');
+    }
+
+    getTreatmentBySaleOrderId(id): Observable<DotKhamDisplay[]> {
+        return this.http.get<DotKhamDisplay[]>(this.baseApi + this.apiUrl + '/' + id + '/GetTreatmentBySaleOrderId');
+    }
+
+    getLaboBySaleOrderId(id): Observable<LaboOrderDisplay[]> {
+        return this.http.get<LaboOrderDisplay[]>(this.baseApi + this.apiUrl + '/' + id + '/GetLaboBySaleOrderId');
+    }
 }
