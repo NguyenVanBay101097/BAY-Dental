@@ -1,0 +1,14 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <app-sale-order-cu-form [saleOrder]="saleOrder"></app-sale-order-cu-form>
+</div>
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="onConfirm()">Xác nhận</button>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="onSave()">Lưu nháp</button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+</footer>
+

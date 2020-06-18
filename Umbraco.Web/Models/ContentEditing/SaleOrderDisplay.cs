@@ -11,6 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
             State = "draft";
             DateOrder = DateTime.Now;
             Name = "/";
+            AmountTotal = 0;
         }
         public Guid Id { get; set; }
 

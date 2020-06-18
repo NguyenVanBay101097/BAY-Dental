@@ -89,9 +89,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [disabled]="true" [format]="'n0'"
-                                        [value]="getPriceSubTotal()">
-                                    </kendo-numerictextbox>
+                                    <span class="fw500">{{getPriceSubTotal() | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
