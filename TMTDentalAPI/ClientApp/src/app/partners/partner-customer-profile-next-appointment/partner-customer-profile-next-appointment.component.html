@@ -20,7 +20,7 @@
                         <td> <span class="gwt-InlineLabel">Ngày giờ</span> </td>
                         <td class="GAL03TOCEX">
                             <div class="gwt-HTML"><span style="color:#d700fb;"
-                                    title="Đang thực hiện">{{customerAppointment && customerAppointment.date | date:'hh:mm - EEEE, dd/MM/yyyy'}}</span>
+                                    title="Đang thực hiện">{{customerAppointment && customerAppointment.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}</span>
                             </div>
                         </td>
                     </tr>
@@ -42,34 +42,33 @@
             </table>
             <div style="border-top: 1px solid #eee; padding-top: 20px; padding-bottom: 15px; padding-left: 20px;">Trạng
                 thái lịch hẹn</div>
-            <form [formGroup]="formGroup">
+            <div>
                 <table style="margin-bottom: 10px; margin-left: 20px;">
                     <tbody>
                         <tr>
                             <td>
                                 <span class="custom-radio GAL03TOCBY" title="Đánh dấu đang chờ đến lượt">
-                                    <input (change)="changeStateAppointment('confirmed')" type="radio"
-                                        formControlName="state" name="state" value="confirmed" id="gwt-uid-202">
+                                    <input (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="confirmed" id="gwt-uid-202">
                                     <label for="gwt-uid-202">Đang hẹn</label></span>
                             </td>
                             <td>
                                 <span class="custom-radio GAL03TOCMX" title="Đánh dấu đang thực hiện">
-                                    <input (change)="changeStateAppointment('done')" type="radio"
-                                        formControlName="state" name="state" value="done" id="gwt-uid-203">
+                                    <input (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio"
+                                        value="done" id="gwt-uid-203">
                                     <label for="gwt-uid-203">Đã tới</label>
                                 </span>
                             </td>
                             <td>
                                 <span class="custom-radio GAL03TOCOW" title="Đánh dấu đã hủy">
-                                    <input (change)="changeStateAppointment('cancel')" type="radio"
-                                        formControlName="state" name="state" value="cancel" id="gwt-uid-205">
+                                    <input [(ngModel)]="customerAppointment.state" (change)="changeStateAppointment()" type="radio"
+                                        value="cancel" id="gwt-uid-205">
                                     <label for="gwt-uid-205">Đã hủy</label>
                                 </span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </form>
+            </div>
         </div>
         <div *ngIf="!customerAppointment" class="GAL03TOCJX" aria-hidden="true"><i aria-hidden="true"
                 class="fa fa-info-circle" style="margin-right: 5px;"></i> <span class="gwt-InlineLabel">Không có lịch

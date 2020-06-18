@@ -1,117 +1,101 @@
-<table class="table-spacing">
-    <tbody>
-        <tr>
-            <td>
-                <span class="gwt-InlineLabel" title="Mã số khách hàng">MSKH</span>
-            </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">{{customerInfo.ref}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="gwt-InlineLabel">Họ và tên</span>
-            </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">{{customerInfo.name}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="gwt-InlineLabel">Giới tính</span>
-            </td>
-            <td class="GAL03TOCEX">
-                <span *ngIf="customerInfo.gender=='male'" class="gwt-InlineLabel">Nam</span>
-                <span *ngIf="customerInfo.gender=='female'" class="gwt-InlineLabel">Nữ</span>
-                <span *ngIf="customerInfo.gender=='other'" class="gwt-InlineLabel">Khác</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="gwt-InlineLabel">Ngày sinh</span>
-            </td>
-            <td class="GAL03TOCEX">
-                <span
-                    class="gwt-InlineLabel">{{customerInfo.birthDay}}/{{customerInfo.birthMonth}}/{{customerInfo.birthYear}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="gwt-InlineLabel">Địa chỉ</span>
-            </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">
-                    {{customerInfo.street}}, {{customerInfo.wardName}}, {{customerInfo.districtName}},
-                    {{customerInfo.cityName}}
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <td> <span class="gwt-InlineLabel">Điện thoại</span> </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">{{customerInfo.phone}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td> Email </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">{{customerInfo.email}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td> Facebook </td>
-            <td class="GAL03TOCEX">
-                <div class="gwt-HTML"></div>
-            </td>
-        </tr>
-        <tr>
-            <td> <span class="gwt-InlineLabel">Nghề nghiệp</span> </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">{{customerInfo.jobTitle}}</span>
-            </td>
-        </tr>
-    </tbody>
-    <tbody>
-        <tr>
-            <td> <span class="gwt-InlineLabel">Nhóm/thành viên</span> </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">
-                    <span *ngFor="let item of customerInfo.categories">{{item.name}}, </span>
-                </span>
-            </td>
-        </tr>
-    </tbody>
-    <tbody>
-        <tr>
-            <td> <span class="gwt-InlineLabel">Nguồn</span> </td>
-            <td class="GAL03TOCEX">
-                <span class="gwt-InlineLabel">{{customerInfo.source}}</span>
-            </td>
-        </tr>
-        <!-- <tr>
-            <td style="vertical-align: top;padding-top: 5px;"> <span class="gwt-InlineLabel">Lý do khám lần đầu</span>
-            </td>
-            <td class="GAL03TOCEX">
-                <div class="gwt-HTML"></div>
-            </td>
-        </tr> -->
-        <tr>
-            <td style="vertical-align: top; padding-top: 6px;"> <span class="gwt-InlineLabel">Tiền sử bệnh</span> </td>
-            <td colspan="2">
-                <span class="gwt-InlineLabel" *ngFor="let item of customerInfo.histories">{{item.name}}, </span>
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;"> <span class="gwt-InlineLabel">Ghi chú</span> </td>
-            <td class="GAL03TOCEX" style="line-height: 1.5;">
-                <span class="gwt-InlineLabel">{{customerInfo.content}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;"> <span class="gwt-InlineLabel">Tiền sử bệnh khác</span> </td>
-            <td class="GAL03TOCEX" style="line-height: 1.5;">
-                <span class="gwt-InlineLabel">{{customerInfo.medicalHistory}}</span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div *ngIf="customerInfo">
+    <table class="table-spacing">
+        <tbody>
+            <tr>
+                <td>
+                    <span class="gwt-InlineLabel" title="Mã số khách hàng">Mã khách hàng</span>
+                </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">{{customerInfo.ref}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="gwt-InlineLabel">Tên khách hàng</span>
+                </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">{{customerInfo.name}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="gwt-InlineLabel">Giới tính</span>
+                </td>
+                <td class="GAL03TOCEX">
+                    <span *ngIf="customerInfo.gender=='male'" class="gwt-InlineLabel">Nam</span>
+                    <span *ngIf="customerInfo.gender=='female'" class="gwt-InlineLabel">Nữ</span>
+                    <span *ngIf="customerInfo.gender=='other'" class="gwt-InlineLabel">Khác</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="gwt-InlineLabel">Ngày sinh</span>
+                </td>
+                <td class="GAL03TOCEX">
+                    <span
+                        class="gwt-InlineLabel">{{customerInfo.birthDay}}/{{customerInfo.birthMonth}}/{{customerInfo.birthYear}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="gwt-InlineLabel">Địa chỉ</span>
+                </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">
+                        {{getCustomerAddress(customerInfo)}}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td> <span class="gwt-InlineLabel">Điện thoại</span> </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">{{customerInfo.phone}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Email </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">{{customerInfo.email}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <span class="gwt-InlineLabel">Nghề nghiệp</span> 
+                </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">{{customerInfo.jobTitle}}</span>
+                </td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <td> <span class="gwt-InlineLabel">Nhóm/thành viên</span> </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">
+                        <span>{{getCustomerCategories(customerInfo)}}</span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <td style="vertical-align: top; padding-top: 6px;"> <span class="gwt-InlineLabel">Tiểu sử bệnh</span> </td>
+                <td class="GAL03TOCEX">
+                    <span class="gwt-InlineLabel">{{getCustomerHistories(customerInfo)}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;"> <span class="gwt-InlineLabel">Tiểu sử bệnh khác</span> </td>
+                <td class="GAL03TOCEX" style="line-height: 1.5;">
+                    <span class="gwt-InlineLabel">{{customerInfo.medicalHistory}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;"> <span class="gwt-InlineLabel">Ghi chú</span> </td>
+                <td class="GAL03TOCEX" style="line-height: 1.5;">
+                    <span class="gwt-InlineLabel">{{customerInfo.comment}}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

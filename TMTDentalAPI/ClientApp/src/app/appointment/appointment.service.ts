@@ -61,20 +61,20 @@ export class AppointmentService {
     return this.http.get<AppointmentPaging>(this.baseApi + "api/Appointments", { params: val });
   }
 
-  create(val: AppointmentDisplay) {
+  create(val: any) {
     return this.http.post(this.baseApi + "api/Appointments", val);
   }
 
-  update(id: string, val: AppointmentDisplay) {
+  update(id: string, val: any) {
     return this.http.put(this.baseApi + "api/Appointments/" + id, val);
   }
 
-  getAppointmentInfo(id): Observable<AppointmentDisplay> {
-    return this.http.get<AppointmentDisplay>(this.baseApi + "api/Appointments/" + id);
+  get(id: string) {
+    return this.http.get(this.baseApi + "api/Appointments/" + id);
   }
 
-  defaultGet(a: AppointmentDefaultGet): Observable<AppointmentDisplay> {
-    return this.http.post<AppointmentDisplay>(this.baseApi + "api/Appointments/DefaultGet", a);
+  defaultGet(val: any) {
+    return this.http.post(this.baseApi + "api/Appointments/DefaultGet", val);
   }
 
   searchRead(val: any): Observable<AppointmentBasic[]> {

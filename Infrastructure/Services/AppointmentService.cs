@@ -139,6 +139,7 @@ namespace Infrastructure.Services
             var res = new AppointmentDisplay();
             res.CompanyId = CompanyId;
             res.UserId = UserId;
+
             if (val.DotKhamId.HasValue)
             {
                 var dkObj = GetService<IDotKhamService>();
@@ -154,6 +155,13 @@ namespace Infrastructure.Services
                     res.UserId = dk.User.Id;
                     res.User = _mapper.Map<ApplicationUserSimple>(dk.User);
                 }
+            }
+
+            if (val.PartnerId.HasValue)
+            {
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(val.PartnerId.Value);
+                res.Partner = _mapper.Map<PartnerSimple>(partner);
             }
 
             return res;

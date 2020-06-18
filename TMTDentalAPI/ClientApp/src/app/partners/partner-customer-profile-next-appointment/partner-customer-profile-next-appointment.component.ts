@@ -16,31 +16,24 @@ import { PartnerService } from '../partner.service';
 })
 export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
   @Input() customerAppointment: AppointmentDisplay;
-  @Input() partner: any;
-  formGroup: FormGroup;
+  @Input() partnerId: any;
 
   constructor(
-    private fb: FormBuilder,
     private modalService: NgbModal,
     private appointmentService: AppointmentService,
     private partnerService: PartnerService,
     private notificationService: NotificationService,
   ) {
-    this.formGroup = this.fb.group({
-      state: 'confirmed'
-    })
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.formGroup.patchValue(this.customerAppointment);
-    }, 300);
   }
 
   addAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    if (this.partner)
-      modalRef.componentInstance.sendPartner = this.partner;
+    modalRef.componentInstance.defaultVal = {
+      partnerId: this.partnerId
+    };
 
     modalRef.result.then(result => {
       if (result) {
@@ -53,6 +46,7 @@ export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
           type: { style: "success", icon: true },
         });
       }
+    }, () => {
     });
   }
 
@@ -72,24 +66,14 @@ export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
             type: { style: "success", icon: true },
           });
         })
-      });
+      }, () => {});
     }
   }
 
-  changeStateAppointment(state) {
+  changeStateAppointment() {
     if (this.customerAppointment) {
-      this.customerAppointment.state = state;
       this.appointmentService.createUpdateAppointment(this.customerAppointment, this.customerAppointment.id).subscribe(
-        () => {
-          this.formGroup.get('state').patchValue(state);
-          this.notificationService.show({
-            content: "Cập nhật trạng thái lịch hẹn thành công!.",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
-        }
+        () => {}
       )
     }
   }
@@ -97,9 +81,8 @@ export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
   editAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = this.customerAppointment.id;
-    modalRef.result.then(result => {
-      if (result) {
-        this.getNextAppointment();
+    modalRef.result.then(() => {
+      this.getNextAppointment();
         this.notificationService.show({
           content: "Sửa lịch hẹn thành công!.",
           hideAfter: 3000,
@@ -107,19 +90,12 @@ export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
-      }
-    });
+    }, () => {});
   }
 
   getNextAppointment() {
-    if (this.partner) {
-      this.partnerService.getNextAppointment(this.partner.id).subscribe(
-        rs => {
-          this.customerAppointment = rs;
-          console.log(this.customerAppointment);
-          this.formGroup.patchValue(this.customerAppointment);
-        })
-    }
+    this.partnerService.getNextAppointment(this.partnerId).subscribe(rs => {
+        this.customerAppointment = rs;
+    });
   }
-
 }

@@ -1,21 +1,22 @@
 <div class="appointment">
     <div class="appointment-create">
-        <button type="button " class="btn btn-primary btn-sm btn-edit" (click)="dialogAppointment()" accesskey="c">Thêm
-            mới
+        <button type="button" class="btn btn-primary btn-sm btn-edit" (click)="dialogAppointment()" accesskey="c">Tạo lịch hẹn
         </button>
     </div>
     <div class="o_view_controller">
         <div class="o_content">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                (pageChange)="pageChange($event)" [selectable]="true" [navigable]="true">
+                (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Mã lịch hẹn" width="100">
                 </kendo-grid-column>
-                <kendo-grid-column field="userName" title="Bác sĩ" width="100">
-                </kendo-grid-column>
-                <kendo-grid-column field="date" title="Ngày hẹn" width="100">
+                <kendo-grid-column field="date" title="Ngày hẹn" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.date | date:'hh:mm - EEEE, dd/MM/yyyy'}}
+                        {{dataItem.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}
                     </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="userName" title="Bác sĩ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="note" title="Ghi chú" width="150">
                 </kendo-grid-column>
                 <kendo-grid-column field="state" title="Trạng thái" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -23,8 +24,6 @@
                         <label *ngIf="dataItem.state =='done'">Đã tới</label>
                         <label *ngIf="dataItem.state =='cancel'">Đã hủy</label>
                     </ng-template>
-                </kendo-grid-column>
-                <kendo-grid-column field="note" title="Ghi chú" width="100">
                 </kendo-grid-column>
                 <kendo-grid-column field="id" width="100">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

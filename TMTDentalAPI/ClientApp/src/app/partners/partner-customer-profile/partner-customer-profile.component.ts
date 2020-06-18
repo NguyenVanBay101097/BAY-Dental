@@ -22,22 +22,22 @@ export class PartnerCustomerProfileComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private serviceAppointment: AppointmentService,
     private modalService: NgbModal
-  ) {
-    this.id = this.activeRoute.snapshot['_routerState']._root.children[0].value.params.id
-    this.customerInfo = new PartnerDisplay();
+  ) {}
+
+  ngOnInit() {
+    this.id = this.activeRoute.parent.snapshot.paramMap.get('id');
+
     if (this.id) {
       this.loadCustomerInfo();
       this.loadCustomerAppointment();
     }
   }
 
-  ngOnInit() {
-  }
-
   editCustomer() {
     if (this.id) {
       const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.id = this.id;
+      modalRef.componentInstance.title = 'Cập nhật khách hàng';
 
       modalRef.result.then(result => {
         this.loadCustomerInfo();
@@ -45,14 +45,9 @@ export class PartnerCustomerProfileComponent implements OnInit {
     }
   }
 
-  addStreatment() {
-
-  }
-
   loadCustomerInfo() {
     this.partnerService.getPartner(this.id).subscribe(result => {
       this.customerInfo = result;
-      console.log(this.customerInfo);
     })
   }
 
@@ -60,7 +55,6 @@ export class PartnerCustomerProfileComponent implements OnInit {
     this.partnerService.getNextAppointment(this.id).subscribe(
       rs => {
         this.customerAppointment = rs;
-        console.log(this.customerAppointment);
       })
   }
 

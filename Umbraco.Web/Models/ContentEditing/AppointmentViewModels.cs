@@ -159,6 +159,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class AppointmentDefaultGet
     {
         public Guid? DotKhamId { get; set; }
+
+        public Guid? PartnerId { get; set; }
     }
 
     public class AppointmentStateCount

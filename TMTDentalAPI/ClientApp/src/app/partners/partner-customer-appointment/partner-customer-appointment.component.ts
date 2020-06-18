@@ -26,23 +26,12 @@ import { PartnerDisplay } from '../partner-simple';
   providers: [AppointmentVMService]
 })
 export class PartnerCustomerAppointmentComponent implements OnInit {
-
-  @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
-  dateFrom: Date;
-  dateTo: Date;
-  state: string;
-  search: string;
-  customerInfo: PartnerDisplay;
-  showDropdown = false;
-  dateList: Date[];
   gridData: GridDataResult;
   limit = 20;
   id: string;
   skip = 0;
   loading = false;
-  opened = false;
-  today = new Date();
-  appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
+
   constructor(
     private appointmentService: AppointmentService,
     private modalService: NgbModal,
@@ -52,8 +41,7 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.activeRoute.snapshot['_routerState']._root.children[0].value.params.id
-    this.loadCustomerInfo();
+    this.id = this.activeRoute.parent.snapshot.paramMap.get('id');
     this.loadData();
   }
 
@@ -62,7 +50,6 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     var val = new AppointmentPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.search = this.search || '';
     val.partnerId = this.id;
 
     this.appointmentService.getPaged(val).pipe(
@@ -78,13 +65,6 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     }, err => {
       console.log(err);
       this.loading = false;
-    })
-  }
-
-  loadCustomerInfo() {
-    this.partnerService.getPartner(this.id).subscribe(result => {
-      this.customerInfo = result;
-      console.log(this.customerInfo);
     })
   }
 
@@ -106,17 +86,17 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
 
   dialogAppointment(appointment: AppointmentBasic) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+
     if (appointment) {
       modalRef.componentInstance.appointId = appointment.id;
-    }
-    else {
-      modalRef.componentInstance.sendPartner = this.customerInfo;
+    } else {
+      modalRef.componentInstance.defaultVal = {
+        partnerId: this.id
+      };
     }
 
     modalRef.result.then(() => {
-      this.appointmentService.getBasic(appointment.id).subscribe(item => {
-        this.loadData();
-      });
+      this.loadData();
     }, () => {
     });
   }
