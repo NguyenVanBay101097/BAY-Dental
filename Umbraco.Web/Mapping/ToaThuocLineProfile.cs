@@ -12,12 +12,16 @@ namespace Umbraco.Web.Mapping
         public ToaThuocLineProfile()
         {
             CreateMap<ToaThuocLine, ToaThuocLineDisplay>();
+
             CreateMap<ToaThuocLineDisplay, ToaThuocLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
                 .ForMember(x => x.ToaThuoc, x => x.Ignore());
 
             CreateMap<ToaThuocLine, ToaThuocLinePrintViewModel>();
+
+            CreateMap<ToaThuocLineSave, ToaThuocLine>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

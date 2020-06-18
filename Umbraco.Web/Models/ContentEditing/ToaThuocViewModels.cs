@@ -14,6 +14,21 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày tạo
         /// </summary>
         public DateTime Date { get; set; }
+
+        public string Note { get; set; }
+    }
+
+    public class ToaThuocPaged
+    {
+        public ToaThuocPaged()
+        {
+            Limit = 20;
+        }
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public string Search { get; set; }
+
+        public Guid? PartnerId { get; set; }
     }
 
     public class ToaThuocDisplay: ToaThuocBasic

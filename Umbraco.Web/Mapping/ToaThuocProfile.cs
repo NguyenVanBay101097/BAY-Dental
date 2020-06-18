@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public ToaThuocProfile()
         {
             CreateMap<ToaThuoc, ToaThuocDisplay>();
+
             CreateMap<ToaThuocDisplay, ToaThuoc>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Name, x => x.Ignore())
@@ -24,6 +25,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<ToaThuoc, ToaThuocBasic>();
 
             CreateMap<ToaThuoc, ToaThuocPrintViewModel>();
+
+            CreateMap<ToaThuocSave, ToaThuoc>()
+                .ForMember(x => x.Lines, x => x.Ignore());
         }
     }
 }
