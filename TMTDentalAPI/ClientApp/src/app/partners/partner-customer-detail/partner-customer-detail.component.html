@@ -5,18 +5,20 @@
     </ol>
     <div class="o_cp_searchview" style="width: 70%; position: relative;">
         <div class="custom-tab">
-            <div id="profile" class="tab-content active-tab" (click)="redirectUrl($event,'profile')">
-                Thông tin cơ bản
-            </div>
-            <div class="tab-content" (click)="redirectUrl($event,'treatment-payment')">
-                Điều trị & Thanh toán
-            </div>
-            <div class="tab-content" (click)="redirectUrl($event,'appointment')">
-                Lịch hẹn
-            </div>
-            <div class="tab-content" (click)="redirectUrl($event,'medicine')">
-                Đơn thuốc
-            </div>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a routerLink="profile" routerLinkActive="active" class="nav-link">Thông tin cơ bản</a>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="treatment-payment" routerLinkActive="active" class="nav-link">Điều trị & Thanh toán</a>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="appointment" routerLinkActive="active" class="nav-link">Lịch hẹn</a>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="medicine" routerLinkActive="active" class="nav-link">Đơn thuốc</a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
