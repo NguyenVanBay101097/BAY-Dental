@@ -30,7 +30,7 @@
                                         <a class="text-primary" *ngIf="!getAppointment"
                                             (click)="appointmentCreateModal()">Nhấn để thêm</a>
                                         <a class="text-primary" (click)="updateAppointmentModal(getAppointment.id)"
-                                            *ngIf="getAppointment">{{getAppointment.name}}</a>
+                                            *ngIf="getAppointment">{{getAppointment.date | date:'hh:mm a - EEEE, dd/MM/yyyy'}}</a>
                                     </td>
                                 </tr>
 

@@ -55,11 +55,10 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   invoiceId: string;//id hóa đơn
   invoiceState: string;//Trạng thái của hóa đơn
   userId: string;
-  idSend: string;
+  partner: any;
 
 
   dotKhamForm: FormGroup;
-  filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
 
   //Dấu check cho những dịch vụ đã xong
@@ -148,16 +147,17 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       filter: "dotkham"
     });
 
+
     // this.getDoctorList();
     // this.getAssistantList();
 
     this.getUserList();
 
-    if (this.idSend) {
-      this.id = this.idSend;
+    if (this.id) {
+      this.id = this.id;
       this.loadData();
     } else {
-      this.getActiveRoute();
+      this.loadDefaultFormGroup();
     }
 
     this.filterChangeCombobox();
@@ -168,17 +168,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   setEditingStep(step: DotKhamStepDisplay) {
     this.editingStep = step;
-  }
-
-  getActiveRoute() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.id = params.get('id');
-      if (this.id) {
-        this.loadData();
-      } else {
-        this.loadDefaultFormGroup();
-      }
-    });
   }
 
   loadRecordUpdateFormGroup() {
@@ -679,14 +668,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     val.userId = val.user ? val.user.id : null;
 
     this.dotKhamService.create(val).subscribe(result => {
-      if (!this.dialog) {
-        this.router.navigate(['/dot-khams/edit', result.id]);
-      } else {
-        this.id == result.id;
-        this.closeWindow(result.id);
-      }
-      if (this.idSend)
-        this.activeModal.close(result);
+      this.activeModal.close(result);
     });
   }
 
@@ -696,7 +678,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     }
 
     if (this.id) {
-      debugger
       var val = this.dotKhamForm.value;
       var data = this.prepareData();
       data.userId = val.user ? val.user.id : data.userId;
@@ -709,7 +690,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
           type: { style: 'success', icon: true }
         });
         this.loadData();
-        if (this.idSend)
+        if (this.id)
           this.activeModal.close();
       });
     }
@@ -722,16 +703,12 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
         var data = this.prepareData();
         this.dotKhamService.update(this.id, data).subscribe(() => {
           this.dotKhamService.actionConfirm(this.id).subscribe(() => {
-            this.loadData();
-            if (this.idSend)
-              this.activeModal.close();
+            this.activeModal.close();
           })
         });
       } else {
         this.dotKhamService.actionConfirm(this.id).subscribe(() => {
-          this.loadData();
-          if (this.idSend)
-            this.activeModal.close();
+          this.activeModal.close();
         })
       }
     }
@@ -794,6 +771,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
 
   //===============BỔ SUNG=======================
+
   getCustomerList() {
     var partnerPaged = new PartnerPaged();
     partnerPaged.employee = false;
@@ -864,7 +842,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     }
     return this.employeeService.getEmployeeSimpleList(empPaged);
   }
-
 
   valueChangeCombobox() {
     this.partnerCbx.valueChange.asObservable().subscribe(
@@ -979,9 +956,12 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   appointmentCreateModal() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    if (this.getAppointment) {
+    if (this.getAppointment)
       modalRef.componentInstance.appointId = this.getAppointment.id;
-    }
+
+    if (this.partner)
+      modalRef.componentInstance.partnerSend = this.partner;
+
     modalRef.componentInstance.dotKhamId = this.id;
     modalRef.result.then(
       rs => {
@@ -998,11 +978,11 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
           this.dotKhamService.patch(this.id, ar).subscribe(
             rs => {
-              this.getActiveRoute();
+              this.loadData()
             }
           )
         } else {
-          this.getActiveRoute();
+          this.loadDefaultFormGroup();
         }
         this.notificationService.show({
           content: 'Cập nhật thành công',
@@ -1020,7 +1000,22 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   updateAppointmentModal(id) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
-    modalRef.result.then(() => {
+    modalRef.result.then(rs => {
+      var dkpatch = new DotKhamPatch;
+      dkpatch.appointmentId = rs['id'];
+      dkpatch.dotKhamId = this.id;
+      var ar = [];
+      for (var p in dkpatch) {
+        var o = { op: 'replace', path: '/' + p, value: dkpatch[p] };
+        ar.push(o);
+      }
+
+      this.dotKhamService.patch(this.id, ar).subscribe(
+        rs => {
+          this.loadData()
+        }
+      )
+
       this.notificationService.show({
         content: 'Cập nhật thành công',
         hideAfter: 3000,

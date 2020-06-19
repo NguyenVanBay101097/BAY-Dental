@@ -43,7 +43,6 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.customerInfo = new PartnerDisplay();
     this.id = this.activeRoute.snapshot['_routerState']._root.children[0].value.params.id
     this.loadDataFromApi();
     this.loadCustomerInfo();
@@ -62,6 +61,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
   loadCustomerInfo() {
     this.partnerService.getPartner(this.id).subscribe(result => {
+      this.customerInfo = new PartnerDisplay();
       this.customerInfo = result;
       console.log(this.customerInfo);
     })

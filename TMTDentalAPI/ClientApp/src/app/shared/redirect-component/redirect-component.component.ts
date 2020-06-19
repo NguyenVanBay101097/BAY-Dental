@@ -21,12 +21,13 @@ export class RedirectComponentComponent implements OnInit {
 
   }
 
-  loadComponent(adItem, id) {
+  loadComponent(adItem, id, partner) {
     var viewContainerRef = this.sharedHost.viewContainerRef;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(adItem.component);
     viewContainerRef.clear();
     var componentRef = viewContainerRef.createComponent(componentFactory);
     (<PartnerCustomerTreatmentPaymentDetailComponent>componentRef.instance).saleOrderId = id;
+    (<PartnerCustomerTreatmentPaymentDetailComponent>componentRef.instance).partner = partner;
   }
 
   destroyComponent(): void {

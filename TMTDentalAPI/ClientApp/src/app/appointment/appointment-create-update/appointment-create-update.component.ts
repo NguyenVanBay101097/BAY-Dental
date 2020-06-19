@@ -22,6 +22,7 @@ import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-custo
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { UserSimple } from 'src/app/users/user-simple';
+import { remove } from 'lodash';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -32,18 +33,24 @@ import { UserSimple } from 'src/app/users/user-simple';
 export class AppointmentCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-
   customerSimpleFilter: PartnerSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
   appointId: string;
   defaultVal: any;
   formGroup: FormGroup;
-
-  constructor(private fb: FormBuilder, private appointmentService: AppointmentService, private employeeService: EmployeeService,
-    private partnerService: PartnerService, private intlService: IntlService,
+  partnerSend: any;
+  constructor(
+    private fb: FormBuilder,
+    private appointmentService: AppointmentService,
+    private employeeService: EmployeeService,
+    private partnerService: PartnerService,
+    private intlService: IntlService,
     private userService: UserService,
-    private notificationService: NotificationService, public activeModal: NgbActiveModal, private modalService: NgbModal,
-    private router: Router, private errorService: AppSharedShowErrorService) { }
+    private notificationService: NotificationService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private router: Router,
+    private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -55,6 +62,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       companyId: null,
       state: 'confirmed',
     })
+
+
 
     setTimeout(() => {
       if (this.appointId) {
@@ -82,7 +91,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
-          this.activeModal.close(null);
+          appoint.id = this.appointId;
+          this.activeModal.close(appoint);
         },
         er => {
           this.errorService.show(er);
@@ -252,6 +262,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var val = this.defaultVal || {};
     this.appointmentService.defaultGet(val).subscribe(
       (rs: any) => {
+        if (this.partnerSend)
+          rs.partner = this.partnerSend;
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);

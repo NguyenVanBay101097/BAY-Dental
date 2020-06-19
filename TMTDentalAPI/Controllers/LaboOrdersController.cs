@@ -128,5 +128,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> QuickCreateOrderLine(LaboOrderLineQuickSave val)
+        {
+
+            return Ok();
+        }
+
     }
 }

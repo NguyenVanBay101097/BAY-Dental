@@ -13,6 +13,7 @@ export class PartnerCustomerTreatmentPaymentChildComponent implements OnInit {
 
   @ViewChild(RedirectComponentComponent, { static: false }) redirecComponent: RedirectComponentComponent;
   @Input() saleOrder: SaleOrderBasic;
+  @Input() partner: any;
   show = false;
 
   constructor(
@@ -31,7 +32,7 @@ export class PartnerCustomerTreatmentPaymentChildComponent implements OnInit {
     document.getElementById(id + '_show').classList.remove('show')
     this.renderer2.setStyle(element, 'height', 'auto');
     this.show = true;
-    this.redirecComponent.loadComponent(this.sharedService.getComponentSearchUser(), id);
+    this.redirecComponent.loadComponent(this.sharedService.getComponentSearchUser(), id, this.partner);
   }
 
   hideTreatment(id) {

@@ -19,16 +19,16 @@ import { LaboOrderQuickCreateDialogComponent } from 'src/app/labo-orders/labo-or
   styleUrls: ['./partner-customer-treatment-payment-detail.component.css']
 })
 export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
-  @Input() saleOrderId: string;
+  saleOrderId: string;
   listSaleOrderLines: SaleOrderLineDisplay[] = [];
   listTreatments: DotKhamDisplay[] = [];
   listLabos: LaboOrderDisplay[] = [];
-
+  partner: any;
   constructor(
     private saleOrder: SaleOrderService,
     private modalService: NgbModal,
     private dotkhamService: DotKhamService,
-    private laboOrderService: LaboOrderService
+    private laboOrderService: LaboOrderService,
   ) { }
 
   ngOnInit() {
@@ -37,7 +37,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
       this.loadTreatment()
       this.loadLabo();
     }
-
+    console.log(this.partner);
   }
 
   loadService() {
@@ -78,10 +78,13 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
     })
   }
 
+
+
   addTreatment() {
     let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo đợt khám';
     modalRef.componentInstance.saleOrderId = this.saleOrderId;
+    modalRef.componentInstance.partner = this.partner;
     modalRef.result.then(res => {
       this.loadTreatment();
     });
@@ -90,7 +93,8 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   viewTreatment(id) {
     let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi tiết đợt khám';
-    modalRef.componentInstance.idSend = id;
+    modalRef.componentInstance.id = id;
+    modalRef.componentInstance.partner = this.partner;
     modalRef.result.then(res => {
       this.loadTreatment();
     });

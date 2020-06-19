@@ -18,7 +18,7 @@
     </div>
 
     <div class="GAL03TOCH3B" [id]="saleOrder.id" *ngFor="let saleOrder of listSaleOrder">
-        <app-partner-customer-treatment-payment-child [saleOrder]="saleOrder">
+        <app-partner-customer-treatment-payment-child [saleOrder]="saleOrder" [partner]="customerInfo">
         </app-partner-customer-treatment-payment-child>
     </div>
 
