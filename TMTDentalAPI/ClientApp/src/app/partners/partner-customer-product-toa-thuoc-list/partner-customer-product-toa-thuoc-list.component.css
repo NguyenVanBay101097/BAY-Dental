@@ -1,4 +1,4 @@
-.product-medicines {
+.product-toa-thuoc {
     margin-top: 1px;
     display: flex;
     flex-direction: row;
@@ -9,7 +9,7 @@
     background-color: white;
 }
 
-.product-medicines-create {
+.product-toc-thuoc-create {
     width: 100%;
     background-color: #fafafa;
     margin: 0 10px 8px 10px;

@@ -39,7 +39,7 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
 import { SaleReportModule } from '../sale-report/sale-report.module';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
-import { PartnerCustomerProductMedicineListComponent } from './partner-customer-product-medicine-list/partner-customer-product-medicine-list.component';
+import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -68,7 +68,7 @@ import { PartnerCustomerProductMedicineListComponent } from './partner-customer-
     PartnerCustomerTreatmentPaymentComponent,
     PartnerCustomerAppointmentComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
-    PartnerCustomerProductMedicineListComponent],
+    PartnerCustomerProductToaThuocListComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,

@@ -29,6 +29,17 @@ export class ToaThuocDisplay {
     lines: []
 }
 
+export class ToaThuocSave {
+    id: string;
+    partnerId: string;
+    date: string;
+    note: string;
+    dotKhamId: string;
+    userId: string;
+    companyId: string;
+    lines: []
+}
+
 export class ToaThuocLineDisplay {
     id: string;
     productId: string;
@@ -62,6 +73,20 @@ export class ToaThuocLinePrint {
     sequence: number;
 }
 
+export class ToaThuocPaged {
+    limit: number;
+    offset: number;
+    search: string;
+    partnerId: string;
+}
+
+export class ToaThuocPaging {
+    offset: number;
+    limit: number;
+    totalItems: number;
+    items: [];
+}
+
 @Injectable()
 export class ToaThuocService {
     apiUrl = 'api/toathuocs';
@@ -73,6 +98,10 @@ export class ToaThuocService {
 
     lineDefaultGet(val: ToaThuocLineDefaultGet): Observable<ToaThuocLineDisplay> {
         return this.http.post<ToaThuocLineDisplay>(this.baseApi + this.apiUrl + "/LineDefaultGet", val);
+    }
+
+    getPaged(val: any): Observable<ToaThuocPaging> {
+        return this.http.get<ToaThuocPaging>(this.baseApi + this.apiUrl, { params: val });
     }
 
     get(id): Observable<ToaThuocDisplay> {

@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GridDataResult } from '@progress/kendo-angular-grid';
-import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { Product } from 'src/app/products/product';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 
 @Component({
-  selector: 'app-partner-customer-product-medicine-list',
-  templateUrl: './partner-customer-product-medicine-list.component.html',
-  styleUrls: ['./partner-customer-product-medicine-list.component.css']
+  selector: 'app-partner-customer-product-toa-thuoc-list',
+  templateUrl: './partner-customer-product-toa-thuoc-list.component.html',
+  styleUrls: ['./partner-customer-product-toa-thuoc-list.component.css']
 })
-export class PartnerCustomerProductMedicineListComponent implements OnInit {
+export class PartnerCustomerProductToaThuocListComponent implements OnInit {
 
   id: string;
   gridData: GridDataResult;
@@ -26,7 +26,7 @@ export class PartnerCustomerProductMedicineListComponent implements OnInit {
 
   constructor(
     private activeRoute: ActivatedRoute, 
-    private productService: ProductService, 
+    private toaThuocService: ToaThuocService, 
     private modalService: NgbModal
   ) { }
 
@@ -37,14 +37,13 @@ export class PartnerCustomerProductMedicineListComponent implements OnInit {
 
   loadData() {
     this.loading = true;
-    var val = new ProductPaged();
+    var val = new ToaThuocPaged();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.categId = this.searchCateg ? this.searchCateg.id : '';
-    val.type2 = 'medicine';
+    val.partnerId = this.id;
 
-    this.productService.getPaged(val).pipe(
+    this.toaThuocService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -59,18 +58,18 @@ export class PartnerCustomerProductMedicineListComponent implements OnInit {
     })
   }
 
-  createProductMedicine() {
-    let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Thuốc';
+  createProductToaThuoc() {
+    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Toa Thuốc';
     modalRef.result.then(() => {
       this.loadData();
     }, () => {
     });
   }
 
-  editProductMedicine(item: Product) {
-    let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa Thuốc';
+  editProductToaThuoc(item: Product) {
+    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa Toa Thuốc';
     modalRef.componentInstance.id = item.id;
 
     modalRef.result.then(() => {
@@ -79,13 +78,13 @@ export class PartnerCustomerProductMedicineListComponent implements OnInit {
     });
   }
 
-  deleteProductMedicine(item) {
+  deleteProductToaThuoc(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa Thuốc';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa Thuốc này?';
+    modalRef.componentInstance.title = 'Xóa Toa Thuốc';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa Toa Thuốc này?';
 
     modalRef.result.then(() => {
-      this.productService.delete(item.id).subscribe(() => {
+      this.toaThuocService.delete(item.id).subscribe(() => {
         this.loadData();
       }, err => {
         console.log(err);

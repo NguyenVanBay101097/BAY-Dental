@@ -9,7 +9,7 @@ import { PartnerCustomerDetailComponent } from './partner-customer-detail/partne
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
-import { PartnerCustomerProductMedicineListComponent } from './partner-customer-product-medicine-list/partner-customer-product-medicine-list.component';
+import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 
 const routes: Routes = [
   {
@@ -28,7 +28,7 @@ const routes: Routes = [
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
       { path: 'appointment', component: PartnerCustomerAppointmentComponent }, 
-      { path: 'product-medicines', component: PartnerCustomerProductMedicineListComponent }, 
+      { path: 'product-toa-thuoc', component: PartnerCustomerProductToaThuocListComponent }, 
     ]
   },
   {
