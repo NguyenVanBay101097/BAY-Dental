@@ -106,10 +106,10 @@ namespace Infrastructure.Services
             ISpecification<SamplePrescription> spec = new InitialSpecification<SamplePrescription>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<SamplePrescription>(x => x.Name.Contains(val.Search)));
+         
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<SamplePrescriptionBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
-            var totalItems = await query.CountAsync();
 
             return items;
         }

@@ -9,6 +9,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid Id { get; set; }
 
+        public Guid ProductId { get; set; }
+        public ProductSimple Product { get; set; }
+
         /// <summary>
         /// STT
         /// </summary>

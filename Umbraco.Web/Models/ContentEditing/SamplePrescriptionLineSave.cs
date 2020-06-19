@@ -5,8 +5,16 @@ using System.Text;
 namespace Umbraco.Web.Models.ContentEditing
 {
     public class SamplePrescriptionLineSave
-    {     
+    {
+        public SamplePrescriptionLineSave()
+        {
+            UseAt = "after_meal";
+        }
+
         public Guid Id { get; set; }
+
+        public Guid ProductId { get; set; }
+        public ProductSimple Product { get; set; }
 
         /// <summary>
         /// STT
