@@ -113,3 +113,14 @@
     border-bottom: 0;
     border-left: .3em solid transparent;
 }
+
+.custom-ngbdropdown {
+    font-size: 12px;
+    min-width: 70px;
+}
+
+.dont {
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0.8;
+}

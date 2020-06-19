@@ -1,4 +1,4 @@
-<div *ngIf="listSaleOrderLines && listSaleOrderLines.length > 0">
+<div>
     <div
         style="margin-top: 20px; margin-bottom: 5px;display: flex; flex-flow: row nowrap; align-items: center; justify-content: space-between;">
         <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;">
@@ -6,7 +6,7 @@
             <i class="fa fa-question-circle tooltipIcon"
                 title="Các thủ thuật/công việc/dịch vụ được DỰ ĐỊNH thực hiện."></i>
         </div>
-        <!-- <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: 1111111;₫</div> -->
+        <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: {{totalSaleOrderLine | number}} ₫</div>
     </div>
     <div>
         <div class="ProcedureItemView">
@@ -25,6 +25,9 @@
                 </button>
             </div>
         </div>
+        <div *ngIf="!listSaleOrderLines || listSaleOrderLines.length <= 0" class="ProcedureItemView dont">Người dùng
+            chưa sử
+            dụng dịch vụ nào !!!</div>
         <div class="ProcedureItemView" *ngFor="let item of listSaleOrderLines">
             <div class="ProcedureItemView-date">{{item.order.dateOrder | date:'shortDate'}}</div>
             <!-- <div class="ProcedureItemView-teeth"></div> -->
@@ -40,7 +43,7 @@
     </div>
 </div>
 
-<div *ngIf="listTreatments && listTreatments.length > 0">
+<div>
     <div
         style="margin-top: 20px; margin-bottom: 5px;display: flex; flex-flow: row nowrap; align-items: center; justify-content: space-between;">
         <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;">
@@ -62,6 +65,9 @@
                 </button>
             </div>
         </div>
+        <div *ngIf="!listTreatments || listTreatments.length <= 0" class="ProcedureItemView dont">Người dùng có đợt khám
+            nào
+            !!!</div>
         <div class="ProcedureItemView" *ngFor="let item of listTreatments">
             <div class="ProcedureItemView-date">{{item.date | date : 'shortDate'}}</div>
             <div class="ProcedureItemView-name">{{item.name}}</div>
@@ -73,9 +79,11 @@
                         class="btn btn-light ProcedureItemView-btn" title="Chức năng">
                         <i class="fa fa-ellipsis-h"></i>
                     </button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                        <button (click)="viewTreatment(item.id)" ngbDropdownItem>Sửa</button>
-                        <button (click)="deleteTreatment(item.id)" ngbDropdownItem>Xóa</button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="custom-ngbdropdown">
+                        <button (click)="viewTreatment(item.id)" ngbDropdownItem><i class="fa fa-info-circle"></i> Chi
+                            tiết</button>
+                        <button (click)="deleteTreatment(item.id)" ngbDropdownItem><i class="fa fa-trash"></i>
+                            Xóa</button>
                     </div>
                 </div>
             </div>
@@ -83,13 +91,13 @@
     </div>
 </div>
 
-<div *ngIf="listLabos && listLabos.length > 0">
+<div>
     <div
         style="margin-top: 20px; margin-bottom: 5px;display: flex; flex-flow: row nowrap; align-items: center; justify-content: space-between;">
         <div style="font-weight: 600; text-transform: uppercase; font-size: 12px;">
             <span>Danh sách phiếu labo</span>
             <i class="fa fa-question-circle tooltipIcon"></i> </div>
-        <!-- <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: 1.500.000&nbsp;₫</div> -->
+        <div style="font-weight: 300; font-size: 13px;">Tổng dự toán: {{totalLabo | number}} ₫</div>
     </div>
     <div>
         <div class="ProcedureItemView">
@@ -104,11 +112,13 @@
             <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Chi phí</strong></div>
             <!-- <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Giảm giá</strong></div> -->
             <div class="ProcedureItemView-actions">
-                <button type="button" class="btn btn-success btn-edit">
+                <button type="button" class="btn btn-success btn-edit" (click)="addLabo()">
                     <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
                 </button>
             </div>
         </div>
+        <div *ngIf="!listLabos || listLabos.length <=0" class="ProcedureItemView dont">Người dùng chưa sử
+            phiếu labo vụ nào !!!</div>
         <div class="ProcedureItemView" *ngFor="let item of listLabos">
             <div class="ProcedureItemView-date">{{item.dateOrder | date: 'shortDate'}}</div>
             <!-- <div class="ProcedureItemView-teeth">
@@ -120,9 +130,18 @@
             <div class="ProcedureItemView-amount">{{item.amountTotal}} ₫</div>
             <!-- <div class="ProcedureItemView-amount">0&nbsp;₫</div> -->
             <div class="ProcedureItemView-actions">
-                <button type="button" class="btn btn-light ProcedureItemView-btn" title="Chức năng">
-                    <i class="fa fa-ellipsis-h"></i>
-                </button>
+                <div ngbDropdown class="d-inline-block">
+                    <button type="button" id="dropdownBasic1" ngbDropdownToggle
+                        class="btn btn-light ProcedureItemView-btn" title="Chức năng">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="custom-ngbdropdown">
+                        <button (click)="clickLabo(item.id)" ngbDropdownItem><i class="fa fa-info-circle"></i> Chi
+                            tiết</button>
+                        <button (click)="deleteLabo(item.id)" ngbDropdownItem><i class="fa fa-trash"></i>
+                            Xóa</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
