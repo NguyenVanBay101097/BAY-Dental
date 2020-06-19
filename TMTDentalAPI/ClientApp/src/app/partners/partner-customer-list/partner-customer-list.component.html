@@ -25,26 +25,38 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
         [loading]="loading">
-        <kendo-grid-column field="ref" title="Mã" width="120"></kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
-        <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
-        <kendo-grid-column field="debt" title="Nợ hiện tại" width="120" class="text-right">
+        <kendo-grid-column field="name" title="Họ tên" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.debt | number}}
+                <div>
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/customer/' + dataItem.id]">
+                        <span *ngIf="dataItem.ref">[{{dataItem.ref}}] </span>
+                        {{dataItem.name}}
+                    </a>
+                </div>
+                <div *ngIf="dataItem.address">
+                    <small>{{dataItem.address}}</small>
+                </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="age" title="Tuổi" width="50"></kendo-grid-column>
+        <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
+        <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.lastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id" width="60">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <i class="far fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
                     <i class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-column>
-        <div *kendoGridDetailTemplate="let dataItem">
+        <!-- <div *kendoGridDetailTemplate="let dataItem">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info_{{dataItem.id}}" role="tab"
@@ -74,6 +86,6 @@
                     </app-partner-payments>
                 </div>
             </div>
-        </div>
+        </div> -->
     </kendo-grid>
 </div>

@@ -49,6 +49,7 @@ export class PartnerDisplay extends PartnerBasic {
     districtName: string;
     wardName: string;
     zaloId: string;
+    date: string;
 }
 
 export class PartnerCategorySimple {

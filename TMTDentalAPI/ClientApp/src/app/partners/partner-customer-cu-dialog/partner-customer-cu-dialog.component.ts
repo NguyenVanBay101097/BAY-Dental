@@ -11,6 +11,7 @@ import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/par
 import * as _ from 'lodash';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ActivatedRoute } from '@angular/router';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-partner-customer-cu-dialog',
@@ -48,11 +49,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
-    private route: ActivatedRoute
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
-    debugger
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       gender: 'male',
@@ -72,7 +72,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       jobTitle: null,
       customer: true,
       histories: this.fb.array([]),
-      companyId: null
+      companyId: null,
+      dateObj: null
     });
 
     setTimeout(() => {
@@ -95,7 +96,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
               histories.push(this.fb.group(history));
             });
           }
+
+          if (result.date) {
+            var date = new Date(result.date);
+            this.formGroup.get('dateObj').setValue(date);
+          }
         });
+      } else {
+        this.formGroup.get('dateObj').setValue(new Date());
       }
 
       this.dayList = _.range(1, 32);
@@ -254,16 +262,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   onSave() {
     if (!this.formGroup.valid) {
-      return;
+      return false;
     }
 
+    var val = this.formGroup.value;
+    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, 'yyyy-MM-dd') : null;
+
     if (this.id) {
-      var val = this.formGroup.value;
+     
       this.partnerService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
       }, err => this.showErrorService.show(err));
     } else {
-      var val = this.formGroup.value;
       this.partnerService.create(val).subscribe(result => {
         this.activeModal.close(result);
       }, err => this.showErrorService.show(err));

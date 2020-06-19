@@ -26,7 +26,7 @@ namespace Infrastructure.EntityConfigurations
              .HasForeignKey(x => x.DotKhamId);
 
             builder.HasOne(x => x.Partner)
-               .WithMany()
+               .WithMany(x => x.Appointments)
                .HasForeignKey(x => x.PartnerId)
                .OnDelete(DeleteBehavior.Restrict);
 

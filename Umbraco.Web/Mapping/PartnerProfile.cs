@@ -2,6 +2,7 @@
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -12,7 +13,8 @@ namespace Umbraco.Web.Mapping
         public PartnerProfile()
         {
             CreateMap<Partner, PartnerSimpleContact>();
-            CreateMap<Partner, PartnerBasic>().ReverseMap();
+            CreateMap<Partner, PartnerBasic>()
+                .ForMember(x => x.LastAppointmentDate, x => x.MapFrom(s => s.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date));
 
             CreateMap<Partner, PartnerDisplay>()
                 .ForMember(x => x.Categories, x => x.MapFrom(s => s.PartnerPartnerCategoryRels))

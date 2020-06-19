@@ -9,7 +9,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Tên khách hàng</label>
+                    <label class="o_form_label oe_edit_only">Họ tên</label>
                     <h1>
                         <input class="form-control" formControlName="name" name="name">
                     </h1>
@@ -116,6 +116,15 @@
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày tạo</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
