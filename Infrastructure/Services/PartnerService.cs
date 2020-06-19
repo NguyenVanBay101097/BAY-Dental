@@ -105,7 +105,6 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.PartnerPartnerCategoryRels)
-                .Include(x => x.Employees)
                 .Include(x => x.PartnerHistoryRels)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")

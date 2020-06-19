@@ -19,7 +19,6 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Histories, x => x.MapFrom(s => s.PartnerHistoryRels));
             CreateMap<PartnerDisplay, Partner>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Employees, x => x.Ignore())
                 .ForMember(x => x.ZaloId, x => x.Ignore());
 
             CreateMap<Partner, PartnerSimple>();
@@ -28,12 +27,10 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<Partner, PartnerPatch>();
             CreateMap<PartnerPatch, Partner>()
-                .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Employees, x => x.Ignore());
+                .ForMember(x => x.Id, x => x.Ignore());
 
             CreateMap<PartnerImportExcel, Partner>()
                 .ForMember(x=>x.Id, x=>x.Ignore())
-                .ForMember(x => x.Employees, x => x.Ignore())
                 .ForMember(x=>x.Company, x=>x.Ignore());
 
             CreateMap<Partner, PartnerChangePhone>();

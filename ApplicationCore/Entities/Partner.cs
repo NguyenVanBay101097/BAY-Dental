@@ -142,16 +142,16 @@ namespace ApplicationCore.Entities
 
         public string Fax { get; set; }
 
-        /// <summary>
-        /// Nguồn biết đến
-        /// </summary>
-        public string Source { get; set; }
+        ///// <summary>
+        ///// Nguồn biết đến
+        ///// </summary>
+        //public string Source { get; set; }
 
-        /// <summary>
-        /// Nhân viên giới thiệu
-        /// </summary>
-        public Guid? EmployeeId { get; set; }
-        public Employee Employees { get; set; }
+        ///// <summary>
+        ///// Nhân viên giới thiệu
+        ///// </summary>
+        //public Guid? EmployeeId { get; set; }
+        //public Employee Employees { get; set; }
 
         /// <summary>
         /// Ghi chú khi nguồn là 'Khác'

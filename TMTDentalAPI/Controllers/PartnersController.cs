@@ -138,7 +138,7 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
-            partner.EmployeeId = val.EmployeeId;
+           // partner.EmployeeId = val.EmployeeId;
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.UpdateAsync(partner);
