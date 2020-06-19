@@ -13,6 +13,7 @@ import { PartnerService } from '../partner.service';
 import { PartnerDisplay } from '../partner-simple';
 import { RedirectComponentComponent } from 'src/app/shared/redirect-component/redirect-component.component';
 import { SharedService } from 'src/app/shared/shared.service';
+import { PartnerCustomerTreatmentPaymentDetailComponent } from '../partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment',
@@ -22,7 +23,7 @@ import { SharedService } from 'src/app/shared/shared.service';
 export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
 
-
+  // @ViewChild(PartnerCustomerTreatmentPaymentDetailComponent, { static: true }) cmp: PartnerCustomerTreatmentPaymentDetailComponent;
   limit = 20;
   id: string;
   skip = 0;
