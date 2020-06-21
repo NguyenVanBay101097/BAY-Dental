@@ -21,7 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid CategoryId { get; set; }
 
-        public UoMCategory Category { get; set; }
+        public UoMCategorySimple Category { get; set; }
 
         public string MeasureType { get; set; }
     }

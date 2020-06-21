@@ -561,6 +561,8 @@ namespace Infrastructure.Services
             return res;
         }
 
+       
+
         //public override ISpecification<Product> RuleDomainGet(IRRule rule)
         //{
         //    var companyId = CompanyId;
@@ -573,4 +575,6 @@ namespace Infrastructure.Services
         //    }
         //}
     }
+
+   
 }

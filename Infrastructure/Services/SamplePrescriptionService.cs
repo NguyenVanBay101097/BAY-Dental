@@ -60,7 +60,7 @@ namespace Infrastructure.Services
         {
             var prescription = await SearchQuery(x => x.Id == id).Include(x => x.Lines).Include("Lines.Product").FirstOrDefaultAsync();
             if (prescription == null)
-                throw new Exception("Dơn thuốc mẫu không tồn tại");
+                throw new Exception("Đơn thuốc mẫu không tồn tại");
 
             prescription = _mapper.Map(val, prescription);
             SaveLines(val, prescription);

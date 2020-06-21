@@ -56,6 +56,8 @@ namespace TMTDentalAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = order.Id }, val);
         }
 
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ToaThuocDisplay val)
         {
@@ -73,6 +75,28 @@ namespace TMTDentalAPI.Controllers
             await _toaThuocService.Write(order);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreatePrescription(CopyToaThuoc val)
+        {
+            if (null == val || !ModelState.IsValid)
+                return BadRequest();
+            
+            await _toaThuocService.CopyToaThuoc(val);
+         
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UsedPrescription(UsedPrescription val)
+        {
+            if (null == val || !ModelState.IsValid)
+                return BadRequest();
+           
+            var res = await _toaThuocService.UsedPrescription(val);
+         
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]

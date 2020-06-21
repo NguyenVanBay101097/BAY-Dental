@@ -128,6 +128,64 @@ namespace Infrastructure.Services
             });
         }
 
+        public async Task CopyToaThuoc(CopyToaThuoc val)
+        {
+            var lines = new List<SamplePrescriptionLine>();
+            var objPrescription = GetService<ISamplePrescriptionService>();
+            var toathuoc = await SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Lines)
+                .Include("Lines.Product").FirstOrDefaultAsync();
+            if (toathuoc == null)
+                throw new Exception("Toa thuốc không tồn tại");
+            if (toathuoc.Lines.Count > 0)
+            {
+                foreach (var item in toathuoc.Lines)
+                {
+                    var prescriptionline = new SamplePrescriptionLine
+                    {
+                        ProductId = item.ProductId,
+                        NumberOfDays = item.NumberOfDays,
+                        NumberOfTimes = item.NumberOfTimes,
+                        Quantity = item.Quantity,
+                        AmountOfTimes = item.AmountOfTimes,
+                        UseAt = item.UseAt
+                    };
+                    lines.Add(prescriptionline);
+                }
+            }
+
+            var prescription = new SamplePrescription() { Name = val.name, Lines = lines };
+
+            await objPrescription.CreateAsync(prescription);
+        }
+
+        public async Task<ToaThuoc> UsedPrescription(UsedPrescription val)
+        {
+            var objPrescription = GetService<ISamplePrescriptionService>();
+            var toathuoc = await SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Lines)
+                .Include("Lines.Product").FirstOrDefaultAsync();
+            var prescription = await objPrescription.SearchQuery(x => x.Id == val.PrescriptionId).Include(x => x.Lines)
+                .Include("Lines.Product").FirstOrDefaultAsync();
+
+            foreach (var item in prescription.Lines)
+            {
+                var toathuocline = new ToaThuocLine
+                {
+                    Name = item.Product.Name,
+                    ProductId = item.ProductId,
+                    NumberOfDays = item.NumberOfDays,
+                    NumberOfTimes = item.NumberOfTimes,
+                    Quantity = item.Quantity,
+                    AmountOfTimes = item.AmountOfTimes,
+                    UseAt = item.UseAt
+                };
+
+                toathuoc.Lines.Add(toathuocline);
+            }
+
+            return toathuoc;
+
+        }
+
         public override ISpecification<ToaThuoc> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
@@ -139,5 +197,22 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+    }
+
+    public class CopyToaThuoc
+    {
+        public Guid ToaThuocId { get; set; }
+        public string name { get; set; }
+    }
+
+    public class UsedPrescription
+    {
+        //
+        public Guid ToaThuocId { get; set; }
+
+        /// <summary>
+        /// id toa thuốc mẫu
+        /// </summary>
+        public Guid PrescriptionId { get; set; }
     }
 }
