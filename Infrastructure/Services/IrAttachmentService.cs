@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,12 @@ namespace Infrastructure.Services
 {
     public class IrAttachmentService : BaseService<IrAttachment>, IIrAttachmentService
     {
-        public IrAttachmentService(IAsyncRepository<IrAttachment> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public IrAttachmentService(IAsyncRepository<IrAttachment> repository, IHttpContextAccessor httpContextAccessor,
+            IMapper mapper)
             : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public override async Task<IEnumerable<IrAttachment>> CreateAsync(IEnumerable<IrAttachment> entities)
@@ -71,16 +75,8 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<IrAttachment>(x => x.ResModel == val.Model));
             if (val.ResId.HasValue)
                 spec = spec.And(new InitialSpecification<IrAttachment>(x => x.ResId == val.ResId));
-            var query = SearchQuery(spec.AsExpression());
-            var res = await query.Select(x => new IrAttachmentBasic
-            {
-                Id = x.Id,
-                Name = x.Name,
-                DatasFname = x.DatasFname,
-                MineType = x.MineType,
-                Url = x.Url,
-                UploadId = x.UploadId,
-            }).ToListAsync();
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var res = await _mapper.ProjectTo<IrAttachmentBasic>(query).ToListAsync();
             return res;
         }
     }
