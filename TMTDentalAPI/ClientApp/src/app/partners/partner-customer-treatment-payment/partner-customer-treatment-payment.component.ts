@@ -67,17 +67,8 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
     })
   }
 
-  pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
   createItem() {
-    this.router.navigate(['/sale-orders/form']);
-  }
-
-  editItem(item: SaleOrderBasic) {
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: item.id } });
+    this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: this.customerInfo.id } });
   }
 
   deleteItem(item) {
@@ -89,28 +80,6 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
-  }
-
-  actionPayment() {
-    if (this.selectedIds.length == 0) {
-      return false;
-    }
-    this.paymentService.saleDefaultGet(this.selectedIds).subscribe(rs2 => {
-      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Thanh toán';
-      modalRef.componentInstance.defaultVal = rs2;
-      modalRef.result.then(() => {
-        this.notificationService.show({
-          content: 'Thanh toán thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadDataFromApi();
-      }, () => {
-      });
-    })
   }
 
 

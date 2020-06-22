@@ -11,6 +11,8 @@ import { SaleOrderLineDisplay } from '../sale-order-line-display';
 import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from '../sale-order-line.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from 'src/app/users/user.service';
 
 @Component({
   selector: 'app-sale-order-line-dialog',
@@ -19,9 +21,11 @@ import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.ser
 })
 export class SaleOrderLineDialogComponent implements OnInit {
   saleLineForm: FormGroup;
+  filteredUsers: UserSimple[] = [];
   filteredProducts: ProductSimple[];
   line: SaleOrderLineDisplay;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
+  @ViewChild('salemanIdCbx', { static: true }) salemanIdCbx: ComboBoxComponent;
   title: string;
   filteredToothCategories: ToothCategoryBasic[] = [];
 
@@ -37,7 +41,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private saleLineService: SaleOrderLineService,
     private toothService: ToothService,
-    private toothCategoryService: ToothCategoryService) { }
+    private toothCategoryService: ToothCategoryService,
+    private userService: UserService
+  ) { }
 
   ngOnInit() {
     this.saleLineForm = this.fb.group({
@@ -46,6 +52,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
       productId: null,
       priceUnit: 0,
       productUOMQty: 1,
+      salemanId: null,
       discount: 0,
       discountType: 'percentage',
       discountFixed: 0,
@@ -68,9 +75,11 @@ export class SaleOrderLineDialogComponent implements OnInit {
         this.saleLineForm.patchValue(this.line);
         this.teethSelected = [...this.line.teeth];
         console.log(this.line);
+
         if (this.line.toothCategory) {
           this.loadTeethMap(this.line.toothCategory);
         }
+
       });
     } else {
       setTimeout(() => {
@@ -90,10 +99,22 @@ export class SaleOrderLineDialogComponent implements OnInit {
       this.productCbx.loading = false;
     });
 
+    this.salemanIdCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.salemanIdCbx.loading = true)),
+      switchMap(value => this.searchUsers(value))
+    ).subscribe(result => {
+      this.filteredUsers = result;
+      this.salemanIdCbx.loading = false;
+    });
+
     setTimeout(() => {
       this.loadFilteredProducts();
       this.loadToothCategories();
     });
+
+    this.loadUsers();
+
   }
 
   get productUpdatable() {
@@ -129,6 +150,19 @@ export class SaleOrderLineDialogComponent implements OnInit {
     if (this.teethSelected.length > 0) {
       this.saleLineForm.get('productUOMQty').setValue(this.teethSelected.length);
     }
+  }
+
+  loadUsers() {
+    this.searchUsers().subscribe(result => {
+      this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
+    });
+  }
+
+
+  searchUsers(filter?: string) {
+    var val = new UserPaged();
+    val.search = filter;
+    return this.userService.autocompleteSimple(val);
   }
 
   getSelectedIndex(tooth: ToothDisplay) {

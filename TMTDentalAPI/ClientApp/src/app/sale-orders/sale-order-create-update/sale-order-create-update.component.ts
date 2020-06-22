@@ -81,12 +81,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      partner: [null, Validators.required],
-      user: null,
       dateOrderObj: [null, Validators.required],
       orderLines: this.fb.array([]),
       companyId: null,
-      userId: null,
       amountTotal: 0,
       state: null,
       residual: null,
@@ -94,27 +91,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       pricelist: [null, Validators.required],
     });
     this.routeActive();
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.partnerCbx.loading = true)),
-      switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
-    });
 
-    this.userCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.userCbx.loading = true)),
-      switchMap(value => this.searchUsers(value))
-    ).subscribe(result => {
-      this.filteredUsers = result;
-      this.userCbx.loading = false;
-    });
+
 
     // this.getAccountPaymentReconcicles();
-    this.loadPartners();
-    this.loadUsers();
     this.loadDotKhamList();
     this.loadLaboOrderList();
     this.loadPayments();
@@ -539,12 +519,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-  searchPartners(filter?: string) {
-    var val = new PartnerPaged();
-    val.customer = true;
-    val.search = filter;
-    return this.partnerService.getAutocompleteSimple(val);
-  }
 
   searchUsers(filter?: string) {
     var val = new UserPaged();
@@ -557,6 +531,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.search = filter || '';
     return this.pricelistService.loadPriceListList(val);
   }
+
+  searchPartners(filter?: string) {
+    var val = new PartnerPaged();
+    val.customer = true;
+    val.search = filter;
+    return this.partnerService.getAutocompleteSimple(val);
+  }
+
 
   createNew() {
     this.router.navigate(['/sale-orders/form']);
@@ -752,9 +734,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
+    val.partnerId = this.partnerId;
     val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
@@ -826,21 +807,21 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
   showAddLineModal() {
-    var partner = this.formGroup.get('partner').value;
-    if (!partner) {
-      this.notificationService.show({
-        content: 'Vui lòng chọn khách hàng',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return false;
-    }
+    // var partner = this.formGroup.get('partner').value;
+    // if (!partner) {
+    //   this.notificationService.show({
+    //     content: 'Vui lòng chọn khách hàng',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
+    //   return false;
+    // }
 
     let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
-    modalRef.componentInstance.partnerId = partner.id;
+    modalRef.componentInstance.partnerId = this.partnerId;
     var pricelist = this.formGroup.get('pricelist').value;
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 

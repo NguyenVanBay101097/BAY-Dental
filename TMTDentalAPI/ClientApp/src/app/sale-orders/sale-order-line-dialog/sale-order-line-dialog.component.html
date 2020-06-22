@@ -29,8 +29,21 @@
                     </table>
                 </div>
                 <div class="o_group mt-0 mb-0">
+
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true"
+                                        #salemanIdCbx formControlName="salemanId" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
