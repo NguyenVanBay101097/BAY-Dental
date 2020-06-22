@@ -1,88 +1,72 @@
-<div class="GAL03TOCLW min700">
-    <div class="title">
-        <label class="title-lable">
-            LỊCH HẸN TIẾP THEO/GẦN ĐÂY
-        </label>
-    </div>
-    <div class="GAL03TOCMW">
-        <div class="GAL03TOCFX" *ngIf="customerAppointment">
-            <table class="table-spacing">
-                <tbody>
-                    <tr>
-                        <td> <span class="gwt-InlineLabel">Mã lịch hẹn</span> </td>
-                        <td class="GAL03TOCEX">
-                            <div class="gwt-HTML"><span style="color:#d700fb;"
-                                    title="Đang thực hiện">{{customerAppointment ? customerAppointment.name: ''}}</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td> <span class="gwt-InlineLabel">Ngày giờ</span> </td>
-                        <td class="GAL03TOCEX">
-                            <div class="gwt-HTML"><span style="color:#d700fb;"
-                                    title="Đang thực hiện">{{customerAppointment && customerAppointment.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td> <span class="gwt-InlineLabel">Bác sĩ</span> </td>
-                        <td class="GAL03TOCEX" *ngIf="customerAppointment">
-                            <span
-                                class="gwt-InlineLabel">{{customerAppointment ? customerAppointment.userName : ''}}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="vertical-align: top;padding-top: 5px;"> <span class="gwt-InlineLabel">Ghi chú</span>
-                        </td>
-                        <td class="GAL03TOCEX" style="font-weight: normal; font-style: italic;">
-                            <div class="gwt-HTML">{{customerAppointment ? customerAppointment.note : ''}}</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="border-top: 1px solid #eee; padding-top: 20px; padding-bottom: 15px; padding-left: 20px;">Trạng
-                thái lịch hẹn</div>
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
             <div>
-                <table style="margin-bottom: 10px; margin-left: 20px;">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="custom-radio GAL03TOCBY" title="Đánh dấu đang chờ đến lượt">
-                                    <input (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state"
-                                        type="radio" value="confirmed" id="gwt-uid-202">
-                                    <label for="gwt-uid-202">Đang hẹn</label></span>
-                            </td>
-                            <td>
-                                <span class="custom-radio GAL03TOCMX" title="Đánh dấu đang thực hiện">
-                                    <input (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state"
-                                        type="radio" value="done" id="gwt-uid-203">
-                                    <label for="gwt-uid-203">Đã tới</label>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="custom-radio GAL03TOCOW" title="Đánh dấu đã hủy">
-                                    <input [(ngModel)]="customerAppointment.state" (change)="changeStateAppointment()"
-                                        type="radio" value="cancel" id="gwt-uid-205">
-                                    <label for="gwt-uid-205">Đã hủy</label>
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                Lịch hẹn tiếp theo/gần đây
+            </div>
+            <div>
+                <a (click)="addAppointment()" title="Thêm" class="px-2 py-1">
+                    <i class="fas fa-plus"></i>
+                </a>
+                <a *ngIf="customerAppointment" (click)="editAppointment()" title="Sửa" class="px-2 py-1">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a *ngIf="customerAppointment" (click)="removeAppointment()" title="Xóa" class="px-2 py-1">
+                    <i class="far fa-trash-alt"></i>
+                </a>
             </div>
         </div>
-        <div *ngIf="!customerAppointment" class="GAL03TOCJX" aria-hidden="true"><i aria-hidden="true"
-                class="fa fa-info-circle" style="margin-right: 5px;"></i> <span class="gwt-InlineLabel">Không có lịch
-                hẹn nào.</span>
-        </div>
-
     </div>
-    <div class="action-appointment">
-        <span (click)="addAppointment()" style="color: #007bff;" class="icon-appointment"><i
-                class="fas fa-plus"></i></span>
-        <span *ngIf="customerAppointment" (click)="editAppointment()" style="color: #dc3545;"
-            class="icon-appointment"><i class="fas fa-edit"></i></span>
-        <span *ngIf="customerAppointment" (click)="removeAppointment()" class="icon-appointment"><i
-                class="far fa-trash-alt"></i></span>
+    <div class="card-body">
+        <div *ngIf="customerAppointment">
+            <div class="form-group row">
+                <label class="col-sm-4">Mã lịch hẹn</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.name}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Ngày hẹn</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Bác sĩ</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.userName}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Ghi chú</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.note}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Trạng thái</label>
+                <div class="col-sm-8">
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="confirmed" id="gwt-uid-202">
+                            <label class="form-check-label" for="gwt-uid-202">Đang hẹn</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="done" id="gwt-uid-203">
+                            <label class="form-check-label" for="gwt-uid-203">Đã tới</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" [(ngModel)]="customerAppointment.state" (change)="changeStateAppointment()" type="radio" value="cancel" id="gwt-uid-205">
+                            <label class="form-check-label" for="gwt-uid-205">Đã hủy</label>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!customerAppointment">
+            <span>Không có lịch hẹn nào.</span>
+        </div>
     </div>
 </div>
+
+ 

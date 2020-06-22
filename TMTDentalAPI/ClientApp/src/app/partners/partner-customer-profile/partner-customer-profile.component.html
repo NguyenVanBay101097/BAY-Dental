@@ -1,15 +1,17 @@
-<div class="profile">
-    <div class="profile-edit">
-        <button type="button " class="btn btn-primary btn-sm btn-edit" (click)="editCustomer()" accesskey="c">Sửa
+<div class="px-3 py-3 bg-white">
+    <div class="mb-2">
+        <button type="button" class="btn btn-primary btn-sm" (click)="editCustomer()" accesskey="c">
+            <i class="fas fa-pencil-alt"></i> Sửa
         </button>
     </div>
-    <div class="profile-info">
-        <app-partner-customer-profile-infor *ngIf="customerInfo" [customerInfo]="customerInfo">
-        </app-partner-customer-profile-infor>
-    </div>
-    <div class="profile-next-appointment">
-        <app-partner-customer-profile-next-appointment [partnerId]="id"
-            [customerAppointment]="customerAppointment">
-        </app-partner-customer-profile-next-appointment>
+    <div class="row">
+        <div class="col-sm">
+            <app-partner-customer-profile-infor *ngIf="customerInfo" [customerInfo]="customerInfo">
+            </app-partner-customer-profile-infor>
+        </div>
+        <div class="col-sm">
+            <app-partner-customer-profile-next-appointment [partnerId]="id" [customerAppointment]="customerAppointment">
+            </app-partner-customer-profile-next-appointment>
+        </div>
     </div>
 </div>

@@ -11,6 +11,7 @@ import { LaboOrderCreateUpdateComponent } from './labo-order-create-update/labo-
 import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderQuickCreateDialogComponent } from './labo-order-quick-create-dialog/labo-order-quick-create-dialog.component';
+import { LaboOrderStatisticsComponent } from './labo-order-statistics/labo-order-statistics.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { LaboOrderQuickCreateDialogComponent } from './labo-order-quick-create-d
     LaboOrderCreateUpdateComponent,
     LaboOrderCuLineDialogComponent,
     LaboOrderCuDialogComponent,
-    LaboOrderQuickCreateDialogComponent
+    LaboOrderQuickCreateDialogComponent,
+    LaboOrderStatisticsComponent
   ],
   imports: [
     CommonModule,

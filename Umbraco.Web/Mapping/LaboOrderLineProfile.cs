@@ -33,7 +33,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<LaboOrderLine, LaboOrderLinePrintVM>();
 
-            
+            CreateMap<LaboOrderLine, LaboOrderStatisticsBasic>();
         }
     }
 }

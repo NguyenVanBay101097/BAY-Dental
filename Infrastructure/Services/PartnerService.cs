@@ -197,6 +197,7 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
         {
+            _ComputeDisplayName(entities);
             _UpdateCityName(entities);
             await _GenerateRefIfEmpty(entities);
             _SetCompanyIfNull(entities);
@@ -266,6 +267,7 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(IEnumerable<Partner> entities)
         {
+            _ComputeDisplayName(entities);
             _UpdateCityName(entities);
             //_SetCompanyIfNull(entities);
 
@@ -283,6 +285,12 @@ namespace Infrastructure.Services
                 if (partner.CityName == "TP Hồ Chí Minh")
                     partner.CityName = "Thành phố Hồ Chí Minh";
             }
+        }
+
+        private void _ComputeDisplayName(IEnumerable<Partner> self)
+        {
+            foreach (var partner in self)
+                partner.DisplayName = _NameGet(partner);
         }
 
         private async Task InsertCustomerSequence()
