@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ToaThuocService, ToaThuocDefaultGet } from '../toa-thuoc.service';
+import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDisplay } from '../toa-thuoc.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { UserSimple } from 'src/app/users/user-simple';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog-save',
@@ -12,12 +15,15 @@ import { UserSimple } from 'src/app/users/user-simple';
 export class ToaThuocCuDialogSaveComponent implements OnInit {
   toaThuocForm: FormGroup;
   id: string;
+  partnerId: string;
   limit: number;
   skip: number;
   userSimpleFilter: UserSimple[] = [];
+  lines: any[] = [];
   
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, 
-    private userService: UserService) { }
+    private userService: UserService, public activeModal: NgbActiveModal, 
+    private intlService: IntlService, private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
@@ -25,7 +31,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       dateObj: null, 
       note: null, 
       advice: null, 
-      userId: null,
+      user: null,
       partnerId: null,
       companyId: null,
       dotKhamId: null,
@@ -52,20 +58,18 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     this.userService.autocompleteSimple(val).subscribe(
       result => {
         this.userSimpleFilter = result;
-        console.log(result);
       });
   }
 
   loadRecord() {
-    if (this.id) {
-      this.toaThuocService.get(this.id).subscribe(
-        result => {
-          this.toaThuocForm.patchValue(result);
-          let date = new Date(result.date);
-          this.toaThuocForm.get('dateObj').patchValue(date);
-          // this.lines = result.lines;
-        });
-    }
+    this.toaThuocService.get(this.id).subscribe(
+      result => {
+        console.log("result", result);
+        this.toaThuocForm.patchValue(result);
+        let date = new Date(result.date);
+        this.toaThuocForm.get('dateObj').patchValue(date);
+        this.lines = result.lines;
+      });
   }
 
   loadDefault() {
@@ -76,5 +80,38 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       let date = new Date(result.date);
       this.toaThuocForm.get('dateObj').patchValue(date);
     });
+  }
+
+  onSave() {
+    if (!this.toaThuocForm.valid) {
+      return;
+    }
+
+    var val = this.toaThuocForm.value;
+    val.partnerId = this.partnerId;
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.lines = this.lines;
+    console.log(val);
+    if (this.id) {
+      this.toaThuocService.update(this.id, val).subscribe(() => {
+        this.activeModal.close(true);
+      }, err => {
+        this.errorService.show(err);
+      });
+    } else {
+      this.toaThuocService.create(val).subscribe(result => {
+        this.activeModal.close(result);
+      }, err => {
+        this.errorService.show(err);
+      });
+    }
+  }
+
+  onCancel() {
+    this.activeModal.dismiss();
+  }
+
+  updateLines(value) {
+
   }
 }

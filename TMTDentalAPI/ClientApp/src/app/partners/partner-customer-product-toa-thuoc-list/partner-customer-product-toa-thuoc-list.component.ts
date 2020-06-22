@@ -61,6 +61,7 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
   createProductToaThuoc() {
     let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Toa Thuốc';
+    modalRef.componentInstance.partnerId = this.id;
     modalRef.result.then(() => {
       this.loadData();
     }, () => {
@@ -71,6 +72,7 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa Toa Thuốc';
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.partnerId = this.id;
 
     modalRef.result.then(() => {
       this.loadData();

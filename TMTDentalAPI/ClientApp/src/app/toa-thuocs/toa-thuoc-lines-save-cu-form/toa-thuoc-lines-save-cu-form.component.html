@@ -13,5 +13,14 @@
             <th>#</th>
         </tr>
     </thead>
-    <tbody app-toa-thuoc-line-save></tbody>
+    <tbody *ngIf="showCreateOrEdit" app-toa-thuoc-line-save 
+        [createOrEdit]="true"
+        (showCreateOrEdit)="getShowCreateOrEdit($event)"
+        (dataThuocSend)="getDataThuocSend($event)">
+    </tbody>
+    <tbody app-toa-thuoc-line-save 
+        *ngFor="let line of lines; index as i"
+        [dataThuocReceive]="line"
+        [createOrEdit]="false">
+    </tbody>
 </table>

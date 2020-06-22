@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ToaThuocLineSave } from '../toa-thuoc.service';
 
 @Component({
   selector: 'app-toa-thuoc-lines-save-cu-form',
@@ -6,13 +7,33 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./toa-thuoc-lines-save-cu-form.component.css']
 })
 export class ToaThuocLinesSaveCuFormComponent implements OnInit {
+  showCreateOrEdit: boolean = false;
+  lines: any[] = [];
+  indexLineEdit: number;
+  @Input() dataThuocsReceive: any[];
+  @Output() dataThuocsSend = new EventEmitter<any[]>();
 
   constructor() { }
 
   ngOnInit() {
+    console.log("Pro", this.dataThuocsReceive);
+    this.lines = this.dataThuocsReceive;
   }
 
   onCreate() {
-    console.log("Hello");
+    this.showCreateOrEdit = true;
+  }
+
+  getShowCreateOrEdit(value) {
+    this.showCreateOrEdit = value;
+  }
+
+  getDataThuocSend(value) {
+    console.log(value);
+    if (this.indexLineEdit || this.indexLineEdit == 0) {
+      this.lines[this.indexLineEdit] = value;
+    } else {
+      this.lines.push(value);
+    }
   }
 }
