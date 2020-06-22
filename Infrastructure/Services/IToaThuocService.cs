@@ -16,6 +16,6 @@ namespace Infrastructure.Services
         Task Write(ToaThuoc entity);
         Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id);
         Task CopyToaThuoc(CopyToaThuoc val);
-        Task<ToaThuoc> UsedPrescription(UsedPrescription val);
+        Task UsedPrescription(UsedPrescription val);
     }
 }

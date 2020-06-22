@@ -94,9 +94,9 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
            
-            var res = await _toaThuocService.UsedPrescription(val);
-         
-            return Ok(res);
+            await _toaThuocService.UsedPrescription(val);
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

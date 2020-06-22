@@ -39,12 +39,14 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<SamplePrescription> GetPrescription(Guid id)
+        public async Task<SamplePrescriptionBasic> GetPrescription(Guid id)
         {
-            return await SearchQuery(x => x.Id == id)
-                .Include(x => x.Lines)
-                .Include("Lines.Product")
-                .FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == id)
+                 .Include(x => x.Lines)
+                 .Include("Lines.Product")
+                 .FirstOrDefaultAsync();
+            var basic = _mapper.Map<SamplePrescriptionBasic>(res);
+            return basic;
         }
 
         public async Task<SamplePrescription> CreatePrescription(SamplePrescriptionSave val)

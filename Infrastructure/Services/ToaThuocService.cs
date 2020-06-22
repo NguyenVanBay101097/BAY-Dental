@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -147,7 +148,8 @@ namespace Infrastructure.Services
                         NumberOfTimes = item.NumberOfTimes,
                         Quantity = item.Quantity,
                         AmountOfTimes = item.AmountOfTimes,
-                        UseAt = item.UseAt
+                        UseAt = item.UseAt,
+                        Sequence = item.Sequence
                     };
                     lines.Add(prescriptionline);
                 }
@@ -158,19 +160,23 @@ namespace Infrastructure.Services
             await objPrescription.CreateAsync(prescription);
         }
 
-        public async Task<ToaThuoc> UsedPrescription(UsedPrescription val)
+        public async Task UsedPrescription(UsedPrescription val)
         {
             var objPrescription = GetService<ISamplePrescriptionService>();
+            var lineObj = GetService<IToaThuocLineService>();
             var toathuoc = await SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Lines)
                 .Include("Lines.Product").FirstOrDefaultAsync();
+
             var prescription = await objPrescription.SearchQuery(x => x.Id == val.PrescriptionId).Include(x => x.Lines)
                 .Include("Lines.Product").FirstOrDefaultAsync();
 
             foreach (var item in prescription.Lines)
             {
+                if (toathuoc.Lines.Any(x => x.ProductId == item.ProductId))
+                    continue;
+
                 var toathuocline = new ToaThuocLine
-                {
-                    Name = item.Product.Name,
+                {                 
                     ProductId = item.ProductId,
                     NumberOfDays = item.NumberOfDays,
                     NumberOfTimes = item.NumberOfTimes,
@@ -182,7 +188,9 @@ namespace Infrastructure.Services
                 toathuoc.Lines.Add(toathuocline);
             }
 
-            return toathuoc;
+            lineObj.ComputeName(toathuoc.Lines);
+
+            await UpdateAsync(toathuoc);
 
         }
 
