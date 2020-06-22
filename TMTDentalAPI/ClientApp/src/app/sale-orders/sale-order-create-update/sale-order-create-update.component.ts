@@ -148,7 +148,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get customerId() {
-    var parterIdParam = this.route.snapshot.queryParamMap.get('partnerId');
+    var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
     if (parterIdParam) {
       return parterIdParam;
     }
@@ -555,8 +555,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
 
   createNew() {
-    this.router.navigate(['/sale-orders/form']);
-    $('#myTab a[href="#home"]').tab('show');
+    if (this.customerId) {
+      this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: this.customerId } });
+    }
   }
 
   actionConfirm() {
