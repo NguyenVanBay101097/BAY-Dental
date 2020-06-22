@@ -1,8 +1,8 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li>
-                <a>Phiếu điều trị</a>
+            <li *ngIf="customerId">
+                <a [routerLink]="['/customer/' + customerId + '/treatment-payment']">Phiếu điều trị</a>
             </li>
             <li class="active">
                 <span *ngIf="id">{{saleOrder.name}}</span>
@@ -39,12 +39,17 @@
                         class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
                     </button>
+                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                        Thanh toán
+                    </button>
+                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                        In phiếu
+                    </button>
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
                         (click)="actionInvoiceCreateV2()">
-                        Tạo hóa đơn
+                        Cập nhật công nợ
                     </button>
-
-
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
                         Hủy phiếu
@@ -53,13 +58,7 @@
                         (click)="actionDone()">
                         Khóa
                     </button>
-                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
-                        class="btn btn-secondary btn-sm" (click)="actionSaleOrderPayment()">
-                        Thanh toán
-                    </button>
-                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                        In phiếu
-                    </button>
+                   
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
@@ -86,7 +85,7 @@
                 </div>
             </div>
             <div class="o_form_sheet">
-                <div class="o_not_full oe_button_box">
+                <!-- <div class="o_not_full oe_button_box">
                     <button type="button" *ngIf="id" (click)="actionViewInvoice()" class="btn oe_stat_button">
                         <i class="fas fa-edit o_button_icon"></i>
                         <div name="invoice_count" class="o_field_widget o_stat_info o_readonly_modifier">
@@ -94,7 +93,7 @@
                             <span class="o_stat_text">Hóa đơn</span>
                         </div>
                     </button>
-                </div>
+                </div> -->
                 <div class="oe_title">
                     <h1>
                         <span>{{saleOrder.name}}</span>

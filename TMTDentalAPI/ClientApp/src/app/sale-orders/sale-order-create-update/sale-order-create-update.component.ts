@@ -81,6 +81,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
+      partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
       orderLines: this.fb.array([]),
       companyId: null,
@@ -144,6 +145,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.formGroup.markAsPristine();
       });
+  }
+
+  get customerId() {
+    var parterIdParam = this.route.snapshot.queryParamMap.get('partnerId');
+    if (parterIdParam) {
+      return parterIdParam;
+    }
+
+    if (this.id && this.saleOrder) {
+      return this.saleOrder.partnerId;
+    }
+
+    return undefined;
   }
 
   get partner() {
@@ -598,14 +612,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       if (item && item.id) {
-        modalRef.componentInstance.title = 'Sửa Phiếu labo';
+        modalRef.componentInstance.title = 'Cập nhật phiếu labo';
         modalRef.componentInstance.id = item.id;
       }
-      else
-        modalRef.componentInstance.title = 'Tạo Phiếu labo';
+      else {
+        modalRef.componentInstance.title = 'Tạo phiếu labo';
+      }
 
       modalRef.componentInstance.saleOrderId = this.id;
-
 
       modalRef.result.then(res => {
         if (res) {
@@ -843,8 +857,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    console.log(line.value);
-
     let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.line = line.value;
@@ -960,7 +972,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionEditDotKham(item) {
     let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Chỉnh sửa đợt khám';
+    modalRef.componentInstance.title = 'Cập nhật đợt khám';
     modalRef.componentInstance.id = item.id;
     if (this.partnerSend)
       modalRef.componentInstance.partner = this.partnerSend;
@@ -978,7 +990,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.dotKhamService.delete(dotKham.id).subscribe(() => {
         this.loadDotKhamList();
       });
-    });
+    }, () => {});
   }
 
   deletePayment(payment) {

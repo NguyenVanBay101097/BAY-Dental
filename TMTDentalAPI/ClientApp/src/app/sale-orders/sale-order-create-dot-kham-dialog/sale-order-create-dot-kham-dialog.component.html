@@ -1,6 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
 
@@ -70,13 +70,9 @@
 </div>
 
 <footer class="modal-footer">
-
-    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-        Lưu</button>
-    <!-- <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác nhận</button> -->
+    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">Xác nhận</button>
     <button type="button" class="btn btn-primary btn-sm" (click)="onSaveAndView()">
         Xác nhận và xem</button>
-
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()"
         accesskey="q">Đóng</button>
 </footer>

@@ -9,12 +9,17 @@
         <div class="o_form_view ng-untouched ng-pristine ng-valid">
             <div class="o_form_sheet_bg">
                 <div class="o_form_statusbar">
+                    <div class="o_statusbar_buttons">
+                        <button type="button" accesskey="1" *ngIf="id && laboOrder.state == 'draft'"
+                            class="btn btn-primary btn-sm" (click)="buttonConfirm()">
+                            Xác nhận
+                        </button>
+                        <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button"
+                            class="btn btn-danger btn-sm" (click)="buttonCancel()">
+                            Hủy phiếu
+                        </button>
+                    </div>
                     <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                        <!-- <button [disabled]="laboOrder.state !== 'done'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': laboOrder.state === 'done', 'btn-secondary': laboOrder.state !== 'done'}"
-                        type="button">
-                        Đã khóa
-                    </button> -->
                         <button [disabled]="laboOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
                             [ngClass]="{'btn-primary': laboOrder.state === 'purchase', 'btn-secondary': laboOrder.state !== 'purchase'}"
                             type="button">
@@ -317,19 +322,11 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" accesskey="1" *ngIf="id && laboOrder.state == 'draft'" class="btn btn-primary btn-sm"
-        (click)="buttonConfirm()">
+    <button type="button" accesskey="s" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
         Xác nhận
     </button>
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
         Lưu</button>
-    <button type="button" accesskey="1" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
-        Xác nhận
-    </button>
-    <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
-        (click)="buttonCancel()">
-        Hủy phiếu
-    </button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

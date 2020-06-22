@@ -154,16 +154,18 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     // this.getDoctorList();
     // this.getAssistantList();
 
-    this.getUserList();
+    setTimeout(() => {
+      this.getUserList();
 
-    if (this.id) {
-      this.id = this.id;
-      this.loadData();
-    } else {
-      this.loadDefaultFormGroup();
-    }
-
-    this.filterChangeCombobox();
+      if (this.id) {
+        this.id = this.id;
+        this.loadData();
+      } else {
+        this.loadDefaultFormGroup();
+      }
+  
+      this.filterChangeCombobox();
+    });
 
     this.webImageApi = environment.uploadDomain + 'api/Web/Image';
     this.webContentApi = environment.uploadDomain + 'api/Web/Content';

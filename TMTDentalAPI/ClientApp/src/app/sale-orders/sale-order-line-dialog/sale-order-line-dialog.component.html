@@ -1,6 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
 
@@ -18,8 +18,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredProducts" [disabled]="productUpdatable == false"
-                                        ngbAutofocus [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [data]="filteredProducts" [disableControl]="productUpdatable == false"
+                                        [textField]="'name'" [filterable]="true"
                                         (valueChange)="onChangeProduct($event)" #productCbx formControlName="product"
                                         [valueField]="'id'">
                                     </kendo-combobox>
@@ -40,7 +40,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true"
-                                        #salemanIdCbx formControlName="salemanId" [valueField]="'id'">
+                                        #salesmanCbx formControlName="salesman" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -51,7 +51,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [format]="'n0'" [disabled]="line && line.qtyInvoiced > 0"
+                                    <kendo-numerictextbox [format]="'n0'" [disableControl]="line && line.qtyInvoiced > 0"
                                         formControlName="priceUnit">
                                     </kendo-numerictextbox>
                                 </td>
