@@ -48,6 +48,18 @@ export class ToaThuocLineDisplay {
     note: string;
 }
 
+export class ToaThuocLineSave {
+    id: string;
+    productId: string;
+    product: ProductSimple;
+    numberOfTimes: number; 
+    amountOfTimes: number; 
+    quantity: number; 
+    unit: string; 
+    numberOfDays: number; 
+    note: string; 
+}
+
 export class ToaThuocLineDefaultGet {
     productId: string;
 }
