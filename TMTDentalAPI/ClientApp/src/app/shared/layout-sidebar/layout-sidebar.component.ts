@@ -18,29 +18,27 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
-    {
-      name: 'Điều trị',
-      icon: 'fas fa-medkit',
-      children: [
-        { name: 'Phiếu điều trị', link: '/sale-orders' },
-        { name: 'Phiếu tư vấn', link: '/sale-quotations' },
-        // { name: 'Đợt khám', link: '/dot-khams' },
-      ]
-    },
-    {
-      name: 'Phiếu labo',
-      icon: 'fas fa-tooth',
-      link: '/labo-orders',
-      children: []
-    },
     // {
-    //   name: 'Quản lý labo',
-    //   icon: 'fas fa-tooth',
+    //   name: 'Điều trị',
+    //   icon: 'fas fa-medkit',
     //   children: [
-    //     { name: 'Phiếu Labo', link: '/labo-orders' },
-    //     { name: 'Báo cáo labo', link: '/labo-order-lines' },
+    //     { name: 'Phiếu điều trị', link: '/sale-orders' },
+    //     { name: 'Phiếu tư vấn', link: '/sale-quotations' },
+    //     // { name: 'Đợt khám', link: '/dot-khams' },
     //   ]
     // },
+    // {
+    //   name: 'Phiếu labo',
+    //   icon: 'fas fa-tooth',
+    //   link: '/labo-orders',
+    //   children: []
+    // },
+    {
+      name: 'Thống kê labo',
+      icon: 'fas fa-tooth',
+      children: [], 
+      link: '/labo-statistics'
+    },
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',

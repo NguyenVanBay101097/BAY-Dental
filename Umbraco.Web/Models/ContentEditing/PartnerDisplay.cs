@@ -134,5 +134,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ZaloId { get; set; }
 
         public DateTime? Date { get; set; }
+
+        public string DisplayName { get; set; }
     }
 }

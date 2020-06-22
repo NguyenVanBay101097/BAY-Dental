@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-detail',
@@ -14,35 +15,20 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 export class PartnerCustomerDetailComponent implements OnInit {
 
   id: string;
-  eventSave: any;
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private modalService: NgbModal
-  ) { }
+  partner: any;
+
+  constructor(private partnerService: PartnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.id = this.route.snapshot.params['id'];
+    this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
-      this.router.navigateByUrl(`customer/${this.id}/profile`);
+      this.loadPartner(this.id);
     }
   }
 
-
-
-  redirectUrl(event, value) {
-    var eventProfile = document.getElementById('profile');
-    if (eventProfile && eventProfile != event && !this.eventSave) {
-      eventProfile.classList.remove('active-tab');
-      event.currentTarget.classList.add('active-tab');
-      this.eventSave = event;
-    }
-    else {
-      this.eventSave.target.classList.remove('active-tab');
-      event.currentTarget.classList.add('active-tab');
-      this.eventSave = event;
-    }
-
-    this.router.navigateByUrl(`customer/${this.id}/${value}`);
+  loadPartner(id: string) {
+    this.partnerService.getPartner(this.id).subscribe((result) => {
+      this.partner = result;
+    });
   }
 }

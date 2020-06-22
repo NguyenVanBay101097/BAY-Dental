@@ -53,6 +53,16 @@ export class LaboOrderDisplay {
     dotKham: DotKhamBasic;
 }
 
+export class LaboOrderStatisticsPaged {
+    limit: number;
+    offset: number;
+    search: string;
+    partnerId: string;
+    productId: string;
+    dateOrderFrom: string;
+    dateOrderTo: string;
+}
+
 @Injectable()
 export class LaboOrderService {
     apiUrl = 'api/LaboOrders';
@@ -96,5 +106,9 @@ export class LaboOrderService {
 
     unlink(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
+    }
+
+    getStatistics(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Statistics', data);
     }
 }

@@ -30,6 +30,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Color, x => x.Condition(s => s.State == "draft"));
 
             CreateMap<LaboOrderLine, LaboOrderLinePrintVM>();
+
+            CreateMap<LaboOrderLine, LaboOrderStatisticsBasic>();
         }
     }
 }
