@@ -13,11 +13,17 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<SamplePrescription, SamplePrescriptionBasic>();
 
-            CreateMap<SamplePrescription, SamplePrescriptionSave>();       
+            CreateMap<SamplePrescription, SamplePrescriptionSave>();
+
+            CreateMap<SamplePrescription, SamplePrescriptionDisplay>();
+
+            CreateMap<SamplePrescriptionDisplay, SamplePrescription>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Lines, x => x.Ignore());
 
             CreateMap<SamplePrescriptionSave, SamplePrescription>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Lines, x => x.Ignore());                
+                .ForMember(x => x.Lines, x => x.Ignore());
         }
     }
 }

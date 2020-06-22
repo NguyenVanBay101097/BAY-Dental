@@ -11,9 +11,9 @@ namespace Infrastructure.Services
     public interface ISamplePrescriptionService : IBaseService<SamplePrescription>
     {
         Task<PagedResult2<SamplePrescriptionBasic>> GetPagedResultAsync(SamplePrescriptionPaged val);
-        Task<SamplePrescriptionBasic> GetPrescription(Guid id);
+        Task<SamplePrescriptionDisplay> GetPrescriptionForDisplay(Guid id);
         Task<SamplePrescription> CreatePrescription(SamplePrescriptionSave val);
         Task UpdatePrescription(Guid id, SamplePrescriptionSave val);
-        Task<IEnumerable<SamplePrescriptionBasic>> GetAutocomplete(SamplePrescriptionPaged val);
+      
     }
 }

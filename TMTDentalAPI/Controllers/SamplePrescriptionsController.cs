@@ -36,7 +36,8 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _prescriptionService.GetPrescription(id);
+            //display
+            var res = await _prescriptionService.GetPrescriptionForDisplay(id);
             return Ok(res);
         }
 
@@ -82,11 +83,5 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Autocomplete(SamplePrescriptionPaged val)
-        {
-            var res = await _prescriptionService.GetAutocomplete(val);
-            return Ok(res);
-        }
     }
 }

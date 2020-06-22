@@ -39,14 +39,14 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<SamplePrescriptionBasic> GetPrescription(Guid id)
+        public async Task<SamplePrescriptionDisplay> GetPrescriptionForDisplay(Guid id)
         {
             var res = await SearchQuery(x => x.Id == id)
                  .Include(x => x.Lines)
                  .Include("Lines.Product")
                  .FirstOrDefaultAsync();
-            var basic = _mapper.Map<SamplePrescriptionBasic>(res);
-            return basic;
+            var display = _mapper.Map<SamplePrescriptionDisplay>(res);
+            return display;
         }
 
         public async Task<SamplePrescription> CreatePrescription(SamplePrescriptionSave val)
@@ -103,18 +103,7 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<SamplePrescriptionBasic>> GetAutocomplete(SamplePrescriptionPaged val)
-        {
-            ISpecification<SamplePrescription> spec = new InitialSpecification<SamplePrescription>(x => true);
-            if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<SamplePrescription>(x => x.Name.Contains(val.Search)));
-         
-
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-            var items = await _mapper.ProjectTo<SamplePrescriptionBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
-
-            return items;
-        }
+      
 
     }
 }

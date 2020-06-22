@@ -15,7 +15,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<ToaThuocBasic>> GetToaThuocsForDotKham(Guid dotKhamId);
         Task Write(ToaThuoc entity);
         Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id);
-        Task CopyToaThuoc(CopyToaThuoc val);
-        Task UsedPrescription(UsedPrescription val);
+        Task  CreatePrescription(CreatePrescription val);
+       
     }
 }

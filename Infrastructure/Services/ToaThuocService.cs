@@ -129,70 +129,32 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task CopyToaThuoc(CopyToaThuoc val)
+        public async Task CreatePrescription(CreatePrescription val)
         {
             var lines = new List<SamplePrescriptionLine>();
             var objPrescription = GetService<ISamplePrescriptionService>();
-            var toathuoc = await SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Lines)
-                .Include("Lines.Product").FirstOrDefaultAsync();
-            if (toathuoc == null)
-                throw new Exception("Toa thuốc không tồn tại");
-            if (toathuoc.Lines.Count > 0)
+            foreach (var item in val.Lines)
             {
-                foreach (var item in toathuoc.Lines)
+                var prescriptionline = new SamplePrescriptionLine
                 {
-                    var prescriptionline = new SamplePrescriptionLine
-                    {
-                        ProductId = item.ProductId,
-                        NumberOfDays = item.NumberOfDays,
-                        NumberOfTimes = item.NumberOfTimes,
-                        Quantity = item.Quantity,
-                        AmountOfTimes = item.AmountOfTimes,
-                        UseAt = item.UseAt,
-                        Sequence = item.Sequence
-                    };
-                    lines.Add(prescriptionline);
-                }
-            }
-
-            var prescription = new SamplePrescription() { Name = val.name, Lines = lines };
-
-            await objPrescription.CreateAsync(prescription);
-        }
-
-        public async Task UsedPrescription(UsedPrescription val)
-        {
-            var objPrescription = GetService<ISamplePrescriptionService>();
-            var lineObj = GetService<IToaThuocLineService>();
-            var toathuoc = await SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Lines)
-                .Include("Lines.Product").FirstOrDefaultAsync();
-
-            var prescription = await objPrescription.SearchQuery(x => x.Id == val.PrescriptionId).Include(x => x.Lines)
-                .Include("Lines.Product").FirstOrDefaultAsync();
-
-            foreach (var item in prescription.Lines)
-            {
-                if (toathuoc.Lines.Any(x => x.ProductId == item.ProductId))
-                    continue;
-
-                var toathuocline = new ToaThuocLine
-                {                 
                     ProductId = item.ProductId,
                     NumberOfDays = item.NumberOfDays,
                     NumberOfTimes = item.NumberOfTimes,
                     Quantity = item.Quantity,
                     AmountOfTimes = item.AmountOfTimes,
-                    UseAt = item.UseAt
+                    UseAt = item.UseAt,
+                    Sequence = item.Sequence
                 };
-
-                toathuoc.Lines.Add(toathuocline);
+                lines.Add(prescriptionline);
             }
 
-            lineObj.ComputeName(toathuoc.Lines);
 
-            await UpdateAsync(toathuoc);
+            var prescription = new SamplePrescription() { Name = val.Name , Lines = lines };
 
+            await objPrescription.CreateAsync(prescription);
         }
+
+
 
         public override ISpecification<ToaThuoc> RuleDomainGet(IRRule rule)
         {
@@ -207,20 +169,12 @@ namespace Infrastructure.Services
         }
     }
 
-    public class CopyToaThuoc
+    public class CreatePrescription
     {
-        public Guid ToaThuocId { get; set; }
-        public string name { get; set; }
+        public string Name { get; set; }
+
+        public IEnumerable<ToaThuocLineDisplay> Lines = new List<ToaThuocLineDisplay>();
     }
 
-    public class UsedPrescription
-    {
-        //
-        public Guid ToaThuocId { get; set; }
 
-        /// <summary>
-        /// id toa thuốc mẫu
-        /// </summary>
-        public Guid PrescriptionId { get; set; }
-    }
 }

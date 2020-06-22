@@ -4,10 +4,11 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class SamplePrescriptionBasic 
+    public class SamplePrescriptionDisplay
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
 
+        public IEnumerable<SamplePrescriptionLineSave> Lines = new List<SamplePrescriptionLineSave>();
     }
 }
