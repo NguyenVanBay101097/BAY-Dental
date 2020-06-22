@@ -210,32 +210,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.router.navigate(['/labo-orders/form']);
   }
 
-  onSaveConfirm() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
 
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
-    val.partnerId = val.partner.id;
-    val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
-    if (this.saleOrderId)
-      val.saleOrderId = this.saleOrderId;
-    this.laboOrderService.create(val).subscribe(result => {
-      this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.activeModal.close();
-      });
-    });
-  }
-
-  buttonConfirm() {
-    if (this.id) {
-      this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
-        this.loadRecord();
-      });
-    }
-  }
 
   get partner() {
     return this.formGroup.get('partner').value;
@@ -266,6 +241,33 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
   }
 
+  onSaveConfirm() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.partnerId = val.partner.id;
+    val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
+    if (this.saleOrderId)
+      val.saleOrderId = this.saleOrderId;
+    this.laboOrderService.create(val).subscribe(result => {
+      this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
+        this.activeModal.close(result);
+      });
+    });
+  }
+
+  buttonConfirm() {
+    if (this.id) {
+      this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
   onSave() {
     if (!this.formGroup.valid) {
       return false;
@@ -282,8 +284,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
     if (this.id) {
       this.laboOrderService.update(this.id, val).subscribe(() => {
-        if (this.saleOrderId)
-          this.activeModal.close();
+        if (this.saleOrderId) {
+          val.id = this.id;
+          this.activeModal.close(val);
+        }
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -296,7 +300,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     } else {
 
       this.laboOrderService.create(val).subscribe(result => {
-        this.activeModal.close();
+        this.activeModal.close(result);
       });
     }
   }

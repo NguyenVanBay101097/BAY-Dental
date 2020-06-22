@@ -36,6 +36,8 @@ import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confi
 import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
+import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
+import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 declare var $: any;
 
 @Component({
@@ -65,7 +67,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
 
   searchCardBarcode: string;
-
+  partnerSend: any;
   type: string;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
@@ -132,6 +134,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       })).subscribe(result => {
 
         this.saleOrder = result;
+        this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -609,27 +612,25 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  actionCreateDotKham() {
+  actionLabo(item?) {
     if (this.id) {
-      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Tạo đợt khám';
+      let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      if (item && item.id) {
+        modalRef.componentInstance.title = 'Sửa Phiếu labo';
+        modalRef.componentInstance.id = item.id;
+      }
+      else
+        modalRef.componentInstance.title = 'Tạo Phiếu labo';
+
       modalRef.componentInstance.saleOrderId = this.id;
 
-      modalRef.result.then(result => {
-        if (result.view) {
-          this.router.navigate(['/dot-khams/edit/', result.result.id]);
-        } else {
-          this.loadDotKhamList();
-          // $('#myTab a[href="#profile"]').tab('show');
+
+      modalRef.result.then(res => {
+        if (res) {
+          this.loadLaboOrderList();
         }
       }, () => {
       });
-    }
-  }
-
-  actionCreateLabo() {
-    if (this.id) {
-      this.router.navigate(['/labo-orders/form'], { queryParams: { sale_order_id: this.id } });
     }
   }
 
@@ -955,6 +956,37 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.paymentsInfo = result;
       });
     }
+  }
+
+  actionCreateDotKham() {
+    if (this.id) {
+      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Tạo đợt khám';
+      modalRef.componentInstance.saleOrderId = this.id;
+
+      modalRef.result.then(res => {
+        if (res.view) {
+          this.actionEditDotKham(res.result);
+          this.loadDotKhamList();
+        } else {
+          this.loadDotKhamList();
+          // $('#myTab a[href="#profile"]').tab('show');
+        }
+      }, () => {
+      });
+    }
+  }
+
+  actionEditDotKham(item) {
+    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chỉnh sửa đợt khám';
+    modalRef.componentInstance.id = item.id;
+    if (this.partnerSend)
+      modalRef.componentInstance.partner = this.partnerSend;
+    modalRef.result.then(() => {
+      this.loadDotKhamList();
+    }, () => {
+    });
   }
 
   deleteDotKham(dotKham) {

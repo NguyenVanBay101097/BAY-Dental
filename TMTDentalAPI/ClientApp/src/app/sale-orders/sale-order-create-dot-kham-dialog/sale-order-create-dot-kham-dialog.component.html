@@ -26,29 +26,16 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
-                                </td>
-                            </tr>
-                            <!-- <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
                                         Phụ tá
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredAssistants" [textField]="'name'" [filterable]="true"
-                                        #assistantCbx formControlName="assistant" [valueField]="'id'">
-                                        <ng-template kendoDropDownListNoDataTemplate>
-                                            <a class="btn btn-light btn-sm" (click)="createAssistantDialog()">Thêm phụ
-                                                tá</a>
-                                        </ng-template>
+                                    <kendo-combobox formControlName="assistantUser" [filterable]="true"
+                                        [data]="assistantUserSimpleFilter" #assistantUserCbx [valueField]="'id'"
+                                        [textField]="'name'">
                                     </kendo-combobox>
                                 </td>
-                            </tr> -->
+                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -64,6 +51,16 @@
                                     </kendo-datetimepicker>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -73,9 +70,13 @@
 </div>
 
 <footer class="modal-footer">
+
+    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+        Lưu</button>
     <!-- <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác nhận</button> -->
-    <button type="button" class="btn btn-primary" (click)="onSaveAndView()">
+    <button type="button" class="btn btn-primary btn-sm" (click)="onSaveAndView()">
         Xác nhận và xem</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()"
         accesskey="q">Đóng</button>
 </footer>

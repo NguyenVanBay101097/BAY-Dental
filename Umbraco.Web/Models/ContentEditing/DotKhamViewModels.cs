@@ -30,6 +30,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
 
+        public string AssistantUserId { get; set; }
+        public ApplicationUserBasic AssistantUser { get; set; }
+
         /// <summary>
         /// Ngày khám
         /// </summary>
@@ -78,6 +81,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? AssistantId { get; set; }
         public EmployeeSimple Assistant { get; set; }
+
+        public string AssistantUserId { get; set; }
+        public ApplicationUserDisplay AssistantUser { get; set; }
 
         /// <summary>
         /// Người dùng

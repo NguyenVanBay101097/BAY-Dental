@@ -19,11 +19,11 @@
             </div>
             <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Chi phí</strong></div>
             <!-- <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Giảm giá</strong></div> -->
-            <div class="ProcedureItemView-actions">
+            <!-- <div class="ProcedureItemView-actions">
                 <button type="button" class="btn btn-success btn-edit" (click)="addSaleOrderLine()">
                     <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
                 </button>
-            </div>
+            </div> -->
         </div>
         <div *ngIf="!listSaleOrderLines || listSaleOrderLines.length <= 0" class="ProcedureItemView dont">Người dùng
             chưa sử
@@ -37,8 +37,8 @@
             <div class="ProcedureItemView-doctor">{{item.order.userName}}</div>
             <div class="ProcedureItemView-amount">{{item.priceUnit | number}} ₫</div>
             <!-- <div class="ProcedureItemView-amount">0&nbsp;₫</div> -->
-            <div class="ProcedureItemView-actions"><button type="button" class="btn btn-light ProcedureItemView-btn"
-                    title="Chức năng"><i class="fa fa-ellipsis-h"></i></button></div>
+            <!-- <div class="ProcedureItemView-actions"><button type="button" class="btn btn-light ProcedureItemView-btn"
+                    title="Chức năng"><i class="fa fa-ellipsis-h"></i></button></div> -->
         </div>
     </div>
 </div>
@@ -59,11 +59,11 @@
                     chú</strong></div>
             <div class="ProcedureItemView-doctor" style="text-transform: none;"><strong>Bác sĩ &amp; phụ tá</strong>
             </div>
-            <div class="ProcedureItemView-actions">
+            <!-- <div class="ProcedureItemView-actions">
                 <button type="button" class="btn btn-success btn-edit" (click)="addTreatment()">
                     <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
                 </button>
-            </div>
+            </div> -->
         </div>
         <div *ngIf="!listTreatments || listTreatments.length <= 0" class="ProcedureItemView dont">Người dùng có đợt khám
             nào
@@ -73,7 +73,7 @@
             <div class="ProcedureItemView-name">{{item.name}}</div>
             <div class="ProcedureItemView-name ProcedureItemView-note">{{item.note}}</div>
             <div class="ProcedureItemView-doctor">{{item.user && item.user.name}}</div>
-            <div class="ProcedureItemView-actions">
+            <!-- <div class="ProcedureItemView-actions">
                 <div ngbDropdown class="d-inline-block">
                     <button type="button" id="dropdownBasic1" ngbDropdownToggle
                         class="btn btn-light ProcedureItemView-btn" title="Chức năng">
@@ -86,7 +86,7 @@
                             Xóa</button>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -111,11 +111,13 @@
             </div>
             <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Chi phí</strong></div>
             <!-- <div class="ProcedureItemView-amount" style="text-align: center;"><strong>Giảm giá</strong></div> -->
-            <div class="ProcedureItemView-actions">
+
+            <!-- add thêm -->
+            <!-- <div class="ProcedureItemView-actions">
                 <button type="button" class="btn btn-success btn-edit" (click)="addLabo()">
                     <img src="https://quanlyphongnha.vn/images/icon_plus_white.svg" class="img-edit">
                 </button>
-            </div>
+            </div> -->
         </div>
         <div *ngIf="!listLabos || listLabos.length <=0" class="ProcedureItemView dont">Người dùng chưa sử
             phiếu labo vụ nào !!!</div>
@@ -129,7 +131,7 @@
             <div class="ProcedureItemView-doctor">{{item.saleOrder.userName}}</div>
             <div class="ProcedureItemView-amount">{{item.amountTotal}} ₫</div>
             <!-- <div class="ProcedureItemView-amount">0&nbsp;₫</div> -->
-            <div class="ProcedureItemView-actions">
+            <!-- <div class="ProcedureItemView-actions">
                 <div ngbDropdown class="d-inline-block">
                     <button type="button" id="dropdownBasic1" ngbDropdownToggle
                         class="btn btn-light ProcedureItemView-btn" title="Chức năng">
@@ -142,7 +144,7 @@
                             Xóa</button>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

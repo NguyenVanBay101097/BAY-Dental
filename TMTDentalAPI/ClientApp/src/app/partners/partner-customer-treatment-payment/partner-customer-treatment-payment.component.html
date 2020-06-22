@@ -1,20 +1,21 @@
 <div class="treatment-payment">
     <div class="treatment-payment-info"
         style="display: flex; flex-flow: row wrap; align-items:center; justify-content: space-between;">
-        <div class="GAL03TOCDKB">DS phiếu điều trị/dịch vụ</div>
-        <div class="GAL03TOCHKB">
+        <div class="GAL03TOCDKB">DS phiếu điều trị/dịch vụ/Labo</div>
+        <button type="button " class="btn btn-primary btn-sm " (click)="createItem()" accesskey="c">Thêm
+            phiếu điều trị
+        </button>
+        <!-- <div class="GAL03TOCHKB">
             <div> <strong><span class="gwt-InlineLabel">Tổng cộng</span>: </strong> <span
                     class="gwt-InlineLabel">5.300.000&nbsp;₫</span> </div>
             <div> <strong><span class="gwt-InlineLabel">Đã trả</span>: </strong> <span
                     class="gwt-InlineLabel">2.200.000&nbsp;₫</span> </div>
             <div> <strong><span class="gwt-InlineLabel">Còn lại</span>: </strong> <span
                     class="gwt-InlineLabel">3.100.000&nbsp;₫</span> </div>
-        </div>
+        </div> -->
     </div>
     <div class="GAL03TOCBKB">{{customerInfo.name}} (MSKH: {{customerInfo.ref}})
-        <button type="button " class="btn btn-primary btn-sm btn-edit" (click)="addStreatment()" accesskey="c">Thêm
-            phiếu điều trị
-        </button>
+
     </div>
 
     <div class="GAL03TOCH3B" [id]="saleOrder.id" *ngFor="let saleOrder of listSaleOrder">

@@ -69,6 +69,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('assistantUserCbx', { static: true }) assistantUserCbx: ComboBoxComponent;
   @ViewChild('inputFile', { static: true }) inputFile: ElementRef;
   // @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   opened = false;
@@ -89,6 +90,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   doctorSimpleFilter: EmployeeSimple[] = [];
   assistantSimpleFilter: EmployeeSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
+  assistantUserSimpleFilter: UserSimple[] = [];
   productSimpleList: ProductSimple[] = [];
   productSimpleFilteredList: ProductSimple[] = [];
   skip: number = 0;
@@ -138,6 +140,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       note: null,
       companyId: null,
       user: [null, Validators.required],
+      assistantUser: null,
       state: null,
       saleOrderId: null,
       step: null,
@@ -666,6 +669,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     val.doctorId = val.doctor ? val.doctor.id : null;
     val.assistantId = val.assistant ? val.assistant.id : null;
     val.userId = val.user ? val.user.id : null;
+    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
 
     this.dotKhamService.create(val).subscribe(result => {
       this.activeModal.close(result);
@@ -681,6 +685,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       var val = this.dotKhamForm.value;
       var data = this.prepareData();
       data.userId = val.user ? val.user.id : data.userId;
+      data.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
       this.dotKhamService.update(this.id, data).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thay đổi thành công',
@@ -819,6 +824,17 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
         this.userCbx.loading = false;
       }
     )
+
+    this.assistantUserCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.assistantUserCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+    ).subscribe(
+      rs => {
+        this.assistantUserSimpleFilter = rs;
+        this.assistantUserCbx.loading = false;
+      }
+    )
   }
 
   searchDoctors(search) {
@@ -907,6 +923,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     this.userService.autocompleteSimple(userlst).subscribe(
       rs => {
         this.userSimpleFilter = rs;
+        this.assistantUserSimpleFilter = rs;
       });
   }
 

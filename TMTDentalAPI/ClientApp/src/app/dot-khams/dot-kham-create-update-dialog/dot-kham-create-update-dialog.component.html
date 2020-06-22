@@ -30,7 +30,7 @@
                                         <a class="text-primary" *ngIf="!getAppointment"
                                             (click)="appointmentCreateModal()">Nhấn để thêm</a>
                                         <a class="text-primary" (click)="updateAppointmentModal(getAppointment.id)"
-                                            *ngIf="getAppointment">{{getAppointment.date | date:'hh:mm a - EEEE, dd/MM/yyyy'}}</a>
+                                            *ngIf="getAppointment">{{getAppointment.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}</a>
                                     </td>
                                 </tr>
 
@@ -74,6 +74,25 @@
                                                 <kendo-combobox formControlName="user" [filterable]="true"
                                                     [data]="userSimpleFilter" #userCbx [valueField]="'id'"
                                                     [textField]="'name'">
+                                                </kendo-combobox>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Phụ tá
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <!-- <span *ngIf="getDoctor && id">{{getDoctor.name}}</span> -->
+                                        <div>
+                                            <div class="d-flex">
+
+                                                <kendo-combobox formControlName="assistantUser" [filterable]="true"
+                                                    [data]="assistantUserSimpleFilter" #assistantUserCbx
+                                                    [valueField]="'id'" [textField]="'name'">
                                                 </kendo-combobox>
                                             </div>
                                         </div>
@@ -132,7 +151,7 @@
                         <button class="btn btn-info btn-sm mr-2">Thêm</button>
                     </div> -->
 
-                    <ngb-tabset type="pills">
+                    <ngb-tabset>
                         <ngb-tab title="Điều trị">
                             <ng-template ngbTabContent>
                                 <div>

@@ -28,8 +28,10 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   filteredDoctors: EmployeeSimple[];
   filteredAssistants: EmployeeSimple[];
   filteredUsers: UserSimple[];
+  assistantUserSimpleFilter: UserSimple[];
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
+  @ViewChild('assistantUserCbx', { static: true }) assistantUserCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   title: string;
 
@@ -51,7 +53,8 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       companyId: null,
       user: [null, Validators.required],
       saleOrderId: null,
-      partnerId: null
+      partnerId: null,
+      assistantUser: null
     });
 
     setTimeout(() => {
@@ -64,24 +67,6 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       // this.getAssistantList();
       this.getUserList();
 
-      // this.doctorCbx.filterChange.asObservable().pipe(
-      //   debounceTime(300),
-      //   tap(() => (this.doctorCbx.loading = true)),
-      //   switchMap(value => this.searchDoctors(value))
-      // ).subscribe(result => {
-      //   this.filteredDoctors = result;
-      //   this.doctorCbx.loading = false;
-      // });
-
-      // this.assistantCbx.filterChange.asObservable().pipe(
-      //   debounceTime(300),
-      //   tap(() => (this.assistantCbx.loading = true)),
-      //   switchMap(value => this.searchAssistants(value))
-      // ).subscribe(result => {
-      //   this.filteredAssistants = result;
-      //   this.assistantCbx.loading = false;
-      // });
-
       this.userCbx.filterChange.asObservable().pipe(
         debounceTime(300),
         tap(() => (this.userCbx.loading = true)),
@@ -89,6 +74,15 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       ).subscribe(result => {
         this.filteredUsers = result;
         this.userCbx.loading = false;
+      });
+
+      this.assistantUserCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.assistantUserCbx.loading = true)),
+        switchMap(value => this.searchUsers(value))
+      ).subscribe(result => {
+        this.assistantUserSimpleFilter = result;
+        this.assistantUserCbx.loading = false;
       });
       if (this.id)
         this.loadData();
@@ -196,7 +190,8 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
 
     var val = this.dotKhamForm.value;
     val.doctorId = val.doctor ? val.doctor.id : null;
-    val.assistantId = val.assistant ? val.assistant.id : null;
+    val.userId = val.user ? val.user.id : null;
+    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
@@ -218,6 +213,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
 
     var val = this.dotKhamForm.value;
     val.userId = val.user ? val.user.id : null;
+    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     if (this.id) {
       this.dotKhamService.update(this.id, val).subscribe(
@@ -264,6 +260,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     this.searchUsers().subscribe(
       rs => {
         this.filteredUsers = _.unionBy(this.filteredUsers, rs, 'id');
+        this.assistantUserSimpleFilter = _.unionBy(this.assistantUserSimpleFilter, rs, 'id');
       });
   }
 }

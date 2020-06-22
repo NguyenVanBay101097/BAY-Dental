@@ -12,7 +12,6 @@ namespace Umbraco.Web.Mapping
     {
         public LaboOrderLineProfile()
         {
-            //CreateMap<LaboOrderLineQuickSave, LaboOrderLine>̣();
             CreateMap<LaboOrderLine, LaboOrderLineBasic>();
 
             CreateMap<LaboOrderLine, LaboOrderLineDisplay>()

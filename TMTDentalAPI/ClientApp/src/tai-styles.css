@@ -1214,12 +1214,11 @@ span.char-count {
     background-color: white;
     padding-left: 1.5625%;
     padding-right: 1.5625%;
-    min-height: 100%;
     box-sizing: border-box;
     min-width: 980px;
     display: flex;
     flex-flow: column;
-    height: 100%;
+    height: auto;
 }
 
 .o_cp_controller {
