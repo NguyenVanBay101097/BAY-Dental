@@ -139,6 +139,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -147,8 +148,6 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
       .subscribe(value => {
         this.loadDataFromApi();
       });
-
-    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
   }
 
   stateGet(state) {
@@ -208,17 +207,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
     var val = new SaleOrderPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.search = this.search || '';
-    val.isQuotation = false;
-    if (this.dateOrderFrom) {
-      val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
-    }
-    if (this.dateOrderTo) {
-      val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
-    }
-    if (this.stateFilter) {
-      val.state = this.stateFilter;
-    }
+    val.partnerId = this.partnerId;
 
     this.saleOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

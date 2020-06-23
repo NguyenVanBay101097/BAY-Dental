@@ -749,7 +749,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = this.partnerId;
+    val.partnerId = val.partner.id;
     val.pricelistId = val.pricelist.id;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {

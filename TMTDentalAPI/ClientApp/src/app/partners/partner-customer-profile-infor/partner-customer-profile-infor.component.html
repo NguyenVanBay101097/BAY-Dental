@@ -12,6 +12,12 @@
         </div>
     </div>
     <div class="form-group row">
+        <label class="col-sm-4">Ngày tạo</label>
+        <div class="col-sm-8">
+            <span class="fw500">{{customerInfo.date | date : 'shortDate'}}</span>
+        </div>
+    </div>
+    <div class="form-group row">
         <label class="col-sm-4">Giới tính</label>
         <div class="col-sm-8">
             <span class="fw500" *ngIf="customerInfo.gender == 'male'">Nam</span>

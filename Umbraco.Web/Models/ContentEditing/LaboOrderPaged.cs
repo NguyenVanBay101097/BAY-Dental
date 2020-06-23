@@ -39,6 +39,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateOrderTo { get; set; }
 
+        public DateTime? DatePlannedFrom { get; set; }
+
+        public DateTime? DatePlannedTo { get; set; }
+
         public Guid? ProductId { get; set; }
     }
 

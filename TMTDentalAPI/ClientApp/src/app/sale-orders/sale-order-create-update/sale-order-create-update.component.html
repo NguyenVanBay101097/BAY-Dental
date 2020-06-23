@@ -105,6 +105,47 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="partner" [routerLink]="['/customer/' + partner.id]">{{partner.displayName}}</a>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bảng giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPricelists"
+                                        [class.d-none]="saleOrder.state != 'draft'" [textField]="'name'"
+                                        [filterable]="true" #pricelistCbx formControlName="pricelist"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <span
+                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.pricelist ? saleOrder.pricelist.name : ''}}</span>
+                                </td>
+                            </tr> -->
+                            <!-- <tr *ngIf="saleOrder.quote">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phiếu tư vấn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="saleOrder.quote" [routerLink]="['/sale-quotations/form']"
+                                        [queryParams]="{id: saleOrder.quote.id}">{{saleOrder.quote.name}}</a>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
                                         Ngày lập phiếu
                                     </label>
                                 </td>
@@ -191,7 +232,6 @@
                             </tr>
                         </tbody>
                     </table>
-
                 </div>
 
                 <div class="o_notebook">
@@ -199,7 +239,7 @@
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                                aria-controls="home" aria-selected="true">Chi tiết</a>
+                                aria-controls="home" aria-selected="true">Dịch vụ</a>
                         </li>
                         <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"

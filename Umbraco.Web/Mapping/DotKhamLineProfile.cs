@@ -13,8 +13,7 @@ namespace Umbraco.Web.Mapping
         public DotKhamLineProfile()
         {
             CreateMap<DotKhamLine, DotKhamLineBasic>();
-            CreateMap<DotKhamLine, DotKhamLineDisplay>()
-                .ForMember(x => x.HasOps, x => x.MapFrom(s => s.Operations.Any()));
+            CreateMap<DotKhamLine, DotKhamLineDisplay>();
             CreateMap<DotKhamLineDisplay, DotKhamLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.DotKham, x => x.Ignore())

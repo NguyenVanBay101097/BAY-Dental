@@ -61,6 +61,8 @@ export class LaboOrderStatisticsPaged {
     productId: string;
     dateOrderFrom: string;
     dateOrderTo: string;
+    datePlannedFrom: string;
+    datePlannedTo: string;
 }
 
 @Injectable()

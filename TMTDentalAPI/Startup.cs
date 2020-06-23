@@ -330,6 +330,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareCampaignProfile());
                 mc.AddProfile(new TCareRuleProfile());
                 mc.AddProfile(new TCareMessagingProfile());
+                mc.AddProfile(new IrAttachmentProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

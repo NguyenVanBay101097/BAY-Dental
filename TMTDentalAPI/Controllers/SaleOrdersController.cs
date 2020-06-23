@@ -334,8 +334,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}/GetDotKhamList")]
         public async Task<IActionResult> GetDotKhamList(Guid id)
         {
-            var dotKhams = await _dotKhamService.GetDotKhamsForSaleOrder(id);
-            var res = _mapper.Map<IEnumerable<DotKhamBasic>>(dotKhams);
+            var res = await _dotKhamService.GetDotKhamBasicsForSaleOrder(id);
             return Ok(res);
         }
 

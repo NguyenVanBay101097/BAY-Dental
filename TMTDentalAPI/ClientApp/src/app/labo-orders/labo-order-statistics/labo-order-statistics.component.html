@@ -7,21 +7,21 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <div>
-                    <kendo-combobox [placeholder]="'Tìm theo labo'" [data]="filteredSuppliers" [textField]="'name'" [filterable]="true"
+                <div class="d-flex align-items-center">
+                    <kendo-combobox class="mr-2" [placeholder]="'Tìm theo labo'" [data]="filteredSuppliers" [textField]="'name'" [filterable]="true"
                         #supplierCbx [(ngModel)]="paged.partnerId" [valueField]="'id'" [valuePrimitive]="true"
                         (valueChange)="loadDataFromApi()">
                     </kendo-combobox>
-                    <kendo-combobox style="width: 250px;" [placeholder]="'Tìm theo loại phục hình'" [data]="filteredProducts" [textField]="'name'" [filterable]="true"
+                    <kendo-combobox class="mr-2" style="width: 250px;" [placeholder]="'Tìm theo loại phục hình'" [data]="filteredProducts" [textField]="'name'" [filterable]="true"
                         #productCbx [(ngModel)]="paged.productId" [valueField]="'id'" [valuePrimitive]="true"
                         (valueChange)="loadDataFromApi()">
                     </kendo-combobox>
-                    <app-tai-date-range-filter-dropdown title="Ngày gởi" [dateFrom]="paged.dateOrderFrom" [dateTo]="paged.dateOrderTo"
+                    <app-tai-date-range-filter-dropdown class="mr-2" title="Ngày gởi" [dateFrom]="paged.dateOrderFrom" [dateTo]="paged.dateOrderTo"
                         (searchChange)="onDateOrderSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
-                </div>
-                <div>
-                   
+                    <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="paged.datePlannedFrom" [dateTo]="paged.datePlannedTo"
+                        (searchChange)="onDatePlannedSearchChange($event)">
+                    </app-tai-date-range-filter-dropdown>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -42,9 +42,9 @@
             </kendo-grid-column>
             <kendo-grid-column field="orderName" title="Phiếu labo" width="100">
             </kendo-grid-column>
-            <kendo-grid-column field="productName" title="Loại phục hình" width="100">
+            <kendo-grid-column field="productName" title="Loại phục hình" width="150">
             </kendo-grid-column>
-            <kendo-grid-column field="productQty" title="Số lượng" class="text-right" width="100">
+            <kendo-grid-column field="productQty" title="SL" class="text-right" width="50">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.productQty | number}}
                 </ng-template>
@@ -56,12 +56,12 @@
             </kendo-grid-column>
             <kendo-grid-column field="orderDateOrder" title="Ngày gửi" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.dateOrder | date : 'short'}}
+                    {{dataItem.orderDateOrder | date : 'short'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="orderDatePlanned" title="Ngày nhận" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'short'}}
+                    {{dataItem.orderDatePlanned | date : 'short'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">

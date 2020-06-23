@@ -73,18 +73,14 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var dotKham = await _dotKhamService.GetDotKhamForDisplayAsync(id);
+            var dotKham = await _dotKhamService.GetDotKhamDisplayAsync(id);
             if (dotKham == null)
             {
                 return NotFound();
             }
-            var res = _mapper.Map<DotKhamDisplay>(dotKham);
-            res.Lines = res.Lines.OrderBy(x => x.Sequence);
-            foreach (var line in res.Lines)
-            {
-                line.Operations = line.Operations.OrderBy(x => x.Sequence);
-            }
-            return Ok(res);
+
+            dotKham.Lines = dotKham.Lines.OrderBy(x => x.Sequence);
+            return Ok(dotKham);
         }
 
         [HttpPost]

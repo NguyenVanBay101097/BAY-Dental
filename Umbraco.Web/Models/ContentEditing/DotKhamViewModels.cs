@@ -73,17 +73,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
 
-        /// <summary>
-        /// Nhân viên
-        /// </summary>
-        public Guid? DoctorId { get; set; }
-        public EmployeeSimple Doctor { get; set; }
-
-        public Guid? AssistantId { get; set; }
-        public EmployeeSimple Assistant { get; set; }
-
         public string AssistantUserId { get; set; }
-        public ApplicationUserDisplay AssistantUser { get; set; }
+        public ApplicationUserSimple AssistantUser { get; set; }
 
         /// <summary>
         /// Người dùng
@@ -98,17 +89,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
-        /// <summary>
-        /// Hóa đơn điều trị
-        /// </summary>
-        public Guid? InvoiceId { get; set; }
-        public AccountInvoiceCbx Invoice { get; set; }
-
-        public Guid? SaleOrderId { get; set; }
-        public SaleOrderBasic SaleOrder { get; set; }
-
         public Guid? AppointmentId { get; set; }
         public AppointmentBasic Appointment { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
 
         public string State { get; set; }
 

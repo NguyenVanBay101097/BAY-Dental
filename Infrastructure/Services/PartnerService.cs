@@ -197,9 +197,9 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
         {
-            _ComputeDisplayName(entities);
             _UpdateCityName(entities);
             await _GenerateRefIfEmpty(entities);
+            _ComputeDisplayName(entities);
             _SetCompanyIfNull(entities);
 
             await base.CreateAsync(entities);
@@ -425,7 +425,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                 || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
 
-            query = query.OrderBy(s => s.Name);
+            query = query.OrderByDescending(s => s.DateCreated);
             return query;
         }
 

@@ -93,7 +93,19 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder >= val.DateOrderFrom));
 
             if (val.DateOrderTo.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder <= val.DateOrderTo));
+            {
+                var dateOrderTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder <= dateOrderTo));
+            }
+
+            if (val.DatePlannedFrom.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned >= val.DatePlannedFrom));
+
+            if (val.DatePlannedTo.HasValue)
+            {
+                var datePlannedTo = val.DatePlannedTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned <= datePlannedTo));
+            }
 
             var lineObj = GetService<ILaboOrderLineService>();
 

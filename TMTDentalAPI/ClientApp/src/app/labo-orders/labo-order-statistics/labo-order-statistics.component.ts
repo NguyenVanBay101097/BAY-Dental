@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -62,6 +62,24 @@ export class LaboOrderStatisticsComponent implements OnInit {
 
     this.loadFilteredPartners();
     this.loadFilteredProducts();
+
+    this.productCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.productCbx.loading = true)),
+      switchMap(value => this.searchProducts(value))
+    ).subscribe(result => {
+      this.filteredProducts = result;
+      this.productCbx.loading = false;
+    });
+
+    this.supplierCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.supplierCbx.loading = true)),
+      switchMap(value => this.searchSuppliers(value))
+    ).subscribe(result => {
+      this.filteredSuppliers = result;
+      this.supplierCbx.loading = false;
+    });
   }
 
   
@@ -119,10 +137,17 @@ export class LaboOrderStatisticsComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onDatePlannedSearchChange(data) {
+    this.paged.datePlannedFrom = data.dateFrom ? this.intlService.formatDate(data.dateFrom, 'yyyy-MM-dd') : null;
+    this.paged.datePlannedTo = data.dateTo ? this.intlService.formatDate(data.dateTo, 'yyyy-MM-dd') : null;
+    this.loadDataFromApi();
+  }
+
 
   loadDataFromApi() {
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
+    console.log(this.paged);
 
     this.laboOrderService.getStatistics(this.paged).pipe(
       map((response: any) => (<GridDataResult>{
