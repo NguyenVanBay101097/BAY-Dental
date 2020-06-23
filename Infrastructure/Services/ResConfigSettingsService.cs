@@ -1,8 +1,10 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,15 @@ namespace Infrastructure.Services
 {
     public class ResConfigSettingsService: BaseService<ResConfigSettings>, IResConfigSettingsService
     {
-        public ResConfigSettingsService(IAsyncRepository<ResConfigSettings> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly ITCareJobService _tcareJobService;
+        private readonly AppTenant _tenant;
+
+        public ResConfigSettingsService(IAsyncRepository<ResConfigSettings> repository, IHttpContextAccessor httpContextAccessor,
+            ITCareJobService tcareJobService, ITenant<AppTenant> tenant)
             : base(repository, httpContextAccessor)
         {
+            _tcareJobService = tcareJobService;
+            _tenant = tenant?.Value;
         }
 
         public virtual async Task<T> DefaultGet<T>()
@@ -23,6 +31,7 @@ namespace Infrastructure.Services
             var groupObj = GetService<IResGroupService>();
             await groupObj.InsertSettingGroupIfNotExist("product.group_uom", "Group UoM");
             await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
+            await groupObj.InsertSettingGroupIfNotExist("tcare.group_tcare", "TCare");
 
             //var irValueObj = DependencyResolver.Current.GetService<IRValuesService>();
             var classified = await _GetClassifiedFields<T>();
@@ -65,6 +74,8 @@ namespace Infrastructure.Services
                         res.GetType().GetProperty(name).SetValue(res, Convert.ToDecimal(value));
                     else if (field_type == "boolean")
                         res.GetType().GetProperty(name).SetValue(res, Convert.ToBoolean(value));
+                    else if (field_type == "datetime")
+                        res.GetType().GetProperty(name).SetValue(res, Convert.ToDateTime(value));
                 }
             }
 
@@ -117,6 +128,7 @@ namespace Infrastructure.Services
             //    irValueObj.SetDefault(model, field, field_type, value);
             //}
 
+            //Nếu bật tính năng tcare thì add recurring job chạy mỗi ngày với TCareRunAt, ngược lại remove recurring job
             foreach (var item in classified.Groups)
             {
                 var name = item.Name;
@@ -136,6 +148,14 @@ namespace Infrastructure.Services
                     await groupObj.UpdateAsync(groups);
                     await groupObj.AddAllImpliedGroupsToAllUser(groups);
                     //groupObj.Write(groups, implied_ids: new List<ResGroup>() { implied_group });
+
+                    //if (name == "GroupTCare")
+                    //{
+                    //    var db = _tenant != null ? _tenant.Hostname : "localhost";
+                    //    var runAtConfig = classified.Configs.FirstOrDefault(x => x.Name == "TCareRunAt");
+                    //    var runAt = Convert.ToDateTime(self.GetType().GetProperty(runAtConfig.Name).GetValue(self, null));
+                    //    RecurringJob.AddOrUpdate($"tcare-{db}", () => _tcareJobService.Run(db), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+                    //}
                 }
                 else
                 {
@@ -156,6 +176,12 @@ namespace Infrastructure.Services
                     //    implied_group.Users.Remove(user);
                     //}
                     //groupObj.Write(new List<ResGroup>() { implied_group }, users: users);
+
+                    if (name == "GroupTCare")
+                    {
+                        var db = _tenant != null ? _tenant.Hostname : "localhost";
+                        RecurringJob.RemoveIfExists($"tcare-{db}");
+                    }
                 }
 
                 implied_group.ResGroupsUsersRels.Clear();
@@ -172,6 +198,8 @@ namespace Infrastructure.Services
                     valueStr = Convert.ToDecimal(value).ToString();
                 else if (field_type == "boolean")
                     valueStr = Convert.ToBoolean(value).ToString();
+                else if (field_type == "datetime")
+                    valueStr = Convert.ToDateTime(value).ToString();
                 await irConfigParameter.SetParam(item.ConfigParameter, valueStr);
             }
 

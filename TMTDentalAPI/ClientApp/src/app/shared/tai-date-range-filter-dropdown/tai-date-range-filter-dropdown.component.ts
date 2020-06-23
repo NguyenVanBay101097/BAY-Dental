@@ -85,7 +85,7 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
       return false;
     }
 
-    var value = this.formGroup.value;
+    var value = Object.assign({}, this.formGroup.value);
 
     if (value.dateFrom) {
       value.dateFrom = new Date(value.dateFrom.year, value.dateFrom.month - 1, value.dateFrom.day);
@@ -95,11 +95,13 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
       value.dateTo = new Date(value.dateTo.year, value.dateTo.month - 1, value.dateTo.day);
     }
 
-    this.searchChange.emit(this.formGroup.value);
+    this.searchChange.emit(value);
     this.myDrop.close();
   }
 
-  onClear() {
+  onClear(event) {
+    event.stopPropagation();
+    
     this.formGroup = this.fb.group(this.defaultFormGroup);
     this.searchChange.emit(this.formGroup.value);
     this.myDrop.close();

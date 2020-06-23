@@ -1455,6 +1455,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AssistantId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AssistantUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1502,6 +1505,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AppointmentId");
 
                     b.HasIndex("AssistantId");
+
+                    b.HasIndex("AssistantUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -1864,6 +1869,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
@@ -3423,6 +3431,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Customer")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -4527,6 +4538,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool?>("GroupServiceCard")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("GroupTCare")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("GroupUoM")
                         .HasColumnType("bit");
 
@@ -4538,6 +4552,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool?>("ProductListpriceRestrictCompany")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("TCareRunAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
@@ -6075,6 +6092,260 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("StockWarehouses");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.TCareCampaign", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GraphXml")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RecurringJobId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SheduleStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareCampaigns");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessaging", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ChannelSocialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ChannelType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("IntervalNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IntervalType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MethodType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SheduleDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TCareCampaignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChannelSocialId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("TCareCampaignId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareMessagings");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessagingTrace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ChannelSocialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Delivery")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Exception")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MessageId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PSID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Read")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Sent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TCareCampaignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChannelSocialId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("TCareCampaignId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareMessingTraces");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareProperty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ValueDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("ValueDecimal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double?>("ValueDouble")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("ValueInteger")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ValueReference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ValueText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("RuleId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareProperties");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CampaignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareRules");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ToaThuoc", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7046,7 +7317,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("DotKhamId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
+                        .WithMany("Appointments")
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -7174,6 +7445,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
                         .WithMany()
                         .HasForeignKey("AssistantId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "AssistantUser")
+                        .WithMany()
+                        .HasForeignKey("AssistantUserId");
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
@@ -9139,6 +9414,99 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ViewLocationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareCampaign", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessaging", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.FacebookPage", "ChannelSocial")
+                        .WithMany()
+                        .HasForeignKey("ChannelSocialId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.TCareCampaign", "TCareCampaign")
+                        .WithMany()
+                        .HasForeignKey("TCareCampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessagingTrace", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.FacebookPage", "ChannelSocial")
+                        .WithMany()
+                        .HasForeignKey("ChannelSocialId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ApplicationCore.Entities.TCareCampaign", "TCareCampaign")
+                        .WithMany("Traces")
+                        .HasForeignKey("TCareCampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareProperty", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.TCareRule", "Rule")
+                        .WithMany("Properties")
+                        .HasForeignKey("RuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareRule", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.TCareCampaign", "Campaign")
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

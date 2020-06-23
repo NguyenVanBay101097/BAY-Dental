@@ -1,0 +1,25 @@
+<span class="GAL03TOCK3B" title="Mở rộng">
+    <i [id]="saleOrder.id+'_show'" (click)="showTreatment(saleOrder.id)" class="fas fa-arrows-alt"></i>
+    <i [id]="saleOrder.id+'_hide'" (click)="hideTreatment(saleOrder.id)" style="display: none;"
+        class="fas fa-compress-arrows-alt"></i>
+</span>
+<div
+    style="display: flex; flex-flow: row nowrap; border-radius: 3px; align-items: flex-start; background-color: #f0eeee;">
+    <div
+        style="padding: 0 10px; display: flex; flex-flow: row nowrap; align-items: center; height: 36px; white-space: nowrap;">
+        <span class="GAL03TOCB3B">Ngày lập phiếu</span>
+        <span class="GAL03TOCN2B">{{saleOrder.dateOrder |date:'HH:mm - EEEE, dd/MM/yyyy'}}</span>
+    </div>
+    <div class="treatment-action">
+        <div class="action">
+            <!-- <button type="button" (click)="deleteItem(saleOrder)" class="btn btn-outline-danger GAL03TOCL2B"
+                title="Xóa phiếu này">
+                <i class="fa fa-trash"></i>
+            </button> -->
+            <button type="button" class="btn btn-outline-primary GAL03TOCL2B" title="Xem hoặc in ra phiếu điều trị này">
+                <i class="fa fa-print"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<app-redirect-component></app-redirect-component>

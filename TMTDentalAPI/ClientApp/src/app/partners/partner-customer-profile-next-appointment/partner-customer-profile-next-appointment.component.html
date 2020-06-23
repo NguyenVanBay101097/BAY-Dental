@@ -1,0 +1,72 @@
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <div>
+                Lịch hẹn tiếp theo/gần đây
+            </div>
+            <div>
+                <a (click)="addAppointment()" title="Thêm" class="px-2 py-1">
+                    <i class="fas fa-plus"></i>
+                </a>
+                <a *ngIf="customerAppointment" (click)="editAppointment()" title="Sửa" class="px-2 py-1">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a *ngIf="customerAppointment" (click)="removeAppointment()" title="Xóa" class="px-2 py-1">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div *ngIf="customerAppointment">
+            <div class="form-group row">
+                <label class="col-sm-4">Mã lịch hẹn</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.name}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Ngày hẹn</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Bác sĩ</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.userName}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Ghi chú</label>
+                <div class="col-sm-8">
+                    <span class="fw500">{{customerAppointment.note}}</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4">Trạng thái</label>
+                <div class="col-sm-8">
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="confirmed" id="gwt-uid-202">
+                            <label class="form-check-label" for="gwt-uid-202">Đang hẹn</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="done" id="gwt-uid-203">
+                            <label class="form-check-label" for="gwt-uid-203">Đã tới</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" [(ngModel)]="customerAppointment.state" (change)="changeStateAppointment()" type="radio" value="cancel" id="gwt-uid-205">
+                            <label class="form-check-label" for="gwt-uid-205">Đã hủy</label>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!customerAppointment">
+            <span>Không có lịch hẹn nào.</span>
+        </div>
+    </div>
+</div>
+
+ 

@@ -1,0 +1,75 @@
+<div class="px-3 py-3 bg-white">
+    <div class="mb-2">
+        <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
+            <i class="fas fa-plus"></i> Tạo phiếu điều trị
+        </button>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Số phiếu" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="dateOrder" title="Ngày lập phiếu" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.dateOrder | date : 'short'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.amountTotal | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Còn nợ" class="text-right" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.residual | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="state" title="Trạng thái" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{stateGet(dataItem.state)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span></button>
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="treatment-payment">
+    <div class="treatment-payment-info"
+        style="display: flex; flex-flow: row wrap; align-items:center; justify-content: space-between;">
+        <div class="GAL03TOCDKB">DS phiếu điều trị/dịch vụ/Labo</div>
+        <button type="button " class="btn btn-primary btn-sm " (click)="createItem()" accesskey="c">Thêm
+            phiếu điều trị
+        </button>
+        <div class="GAL03TOCHKB">
+            <div> <strong><span class="gwt-InlineLabel">Tổng cộng</span>: </strong> <span
+                    class="gwt-InlineLabel">5.300.000&nbsp;₫</span> </div>
+            <div> <strong><span class="gwt-InlineLabel">Đã trả</span>: </strong> <span
+                    class="gwt-InlineLabel">2.200.000&nbsp;₫</span> </div>
+            <div> <strong><span class="gwt-InlineLabel">Còn lại</span>: </strong> <span
+                    class="gwt-InlineLabel">3.100.000&nbsp;₫</span> </div>
+        </div>
+    </div>
+    <div class="GAL03TOCBKB">{{customerInfo.name}} (MSKH: {{customerInfo.ref}})
+
+    </div>
+
+    <div class="GAL03TOCH3B" [id]="saleOrder.id" *ngFor="let saleOrder of listSaleOrder">
+        <app-partner-customer-treatment-payment-child [saleOrder]="saleOrder" [partner]="customerInfo">
+        </app-partner-customer-treatment-payment-child>
+    </div>
+
+</div> -->

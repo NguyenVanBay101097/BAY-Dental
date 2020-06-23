@@ -1,0 +1,60 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label p-0" style="vertical-align: top;">
+                                    <label class="o_form_label">Điều kiện</label>
+                                </td>
+                                <td class="p-0" style="width:100%">
+                                    <div>
+                                        <span>Chỉ khách hàng phù hợp với </span>
+                                        <div ngbDropdown class="d-inline-block">
+                                            <a id="dropdownLogic" ngbDropdownToggle>{{getLogic()}}</a>
+                                            <div ngbDropdownMenu aria-labelledby="dropdownLogic">
+                                                <button ngbDropdownItem (click)="setLogic('and')">tất cả điều kiện</button>
+                                                <button ngbDropdownItem (click)="setLogic('or')">bất kì điều kiện nào</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <button type="button" class="btn btn-light btn-sm mr-2 mb-1" *ngFor="let condition of conditions; let i = index" (click)="conditionClick(i, $event)">
+                                                <span>{{condition.name}} {{condition.opDisplay}} {{condition.displayValue}} </span>
+                                                <i class="fas fa-times" (click)="removeCondition(i, $event)"></i>
+                                            </button>
+                                            <div ngbDropdown class="d-inline-block" id="conditionDropdown">
+                                                <button class="btn btn-outline-primary btn-sm mb-1" id="dropdownAddCondition" ngbDropdownToggle>Thêm điều kiện</button>
+                                                <div ngbDropdownMenu aria-labelledby="dropdownAddCondition">
+                                                  <button ngbDropdownItem (click)="selectConditionDropdown(item, $event)" *ngFor="let item of conditionDropdownList">{{item.name}}</button>
+                                                </div>
+                                            </div>
+                                            <div (clickOutside)="outsideClick()" [ngStyle]="{position: 'fixed', top: yPos + 'px', left: xPos + 'px'}">
+                                                <ng-template anchorHost></ng-template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

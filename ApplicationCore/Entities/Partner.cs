@@ -13,6 +13,7 @@ namespace ApplicationCore.Entities
         {
             Customer = true;
             Active = true;
+            Date = DateTime.Today;
         }
 
         public string DisplayName { get; set; }
@@ -100,6 +101,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<PartnerHistoryRel> PartnerHistoryRels { get; set; } = new List<PartnerHistoryRel>();
 
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
         /// <summary>
         /// Mã tỉnh/thành phố
         /// </summary>
@@ -166,5 +169,10 @@ namespace ApplicationCore.Entities
         public string Avatar { get; set; }
 
         public string ZaloId { get; set; }
+
+        /// <summary>
+        /// Ngay lap ho so khach hang
+        /// </summary>
+        public DateTime? Date { get; set; }
     }
 }

@@ -43,6 +43,8 @@ import { AnchorHostDirective } from './anchor-host.directive';
 import { MyAutosizeDirective } from './autosize.directive';
 import { CharCountDirective } from './char-count.directive';
 import { SelectUomProductDialogComponent } from './select-uom-product-dialog/select-uom-product-dialog.component';
+import { RedirectComponentDirective } from './redirect-component.directive';
+import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +74,8 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
+    RedirectComponentComponent,
+    RedirectComponentDirective,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
     AnchorHostDirective,
@@ -106,10 +110,12 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
     SharedPartnerGridComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
+    RedirectComponentComponent,
     AnchorHostDirective,
     MyAutosizeDirective,
     CharCountDirective,
     SelectUomProductDialogComponent,
+    RedirectComponentDirective
   ],
   imports: [
     CommonModule,

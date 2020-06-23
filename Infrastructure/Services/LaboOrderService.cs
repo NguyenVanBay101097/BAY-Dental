@@ -79,6 +79,47 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val)
+        {
+            ISpecification<LaboOrderLine> spec = new InitialSpecification<LaboOrderLine>(x => true);
+           
+            if (val.PartnerId.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.PartnerId == val.PartnerId));
+
+            if (val.ProductId.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.ProductId == val.ProductId));
+
+            if (val.DateOrderFrom.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder >= val.DateOrderFrom));
+
+            if (val.DateOrderTo.HasValue)
+            {
+                var dateOrderTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder <= dateOrderTo));
+            }
+
+            if (val.DatePlannedFrom.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned >= val.DatePlannedFrom));
+
+            if (val.DatePlannedTo.HasValue)
+            {
+                var datePlannedTo = val.DatePlannedTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned <= datePlannedTo));
+            }
+
+            var lineObj = GetService<ILaboOrderLineService>();
+
+            var query = lineObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            var items = await _mapper.ProjectTo<LaboOrderStatisticsBasic>(query).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<LaboOrderStatisticsBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
         public override ISpecification<LaboOrder> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
@@ -423,14 +464,39 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public override async Task<LaboOrder> CreateAsync(LaboOrder labo)
+        public override async Task<IEnumerable<LaboOrder>> CreateAsync(IEnumerable<LaboOrder> entities)
         {
-            if (string.IsNullOrEmpty(labo.Name))
+            await _UpdateProperties(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<LaboOrder> entities)
+        {
+            await _UpdateProperties(entities);
+            await base.UpdateAsync(entities);
+        }
+
+        private async Task _UpdateProperties(IEnumerable<LaboOrder> self)
+        {
+            var saleObj = GetService<ISaleOrderService>();
+            foreach(var labo in self)
             {
-                var sequenceObj = GetService<IIRSequenceService>();
-                labo.Name = await sequenceObj.NextByCode("labo.order");
+                if (string.IsNullOrEmpty(labo.Name))
+                {
+                    var sequenceObj = GetService<IIRSequenceService>();
+                    labo.Name = await sequenceObj.NextByCode("labo.order");
+                }
+
+                var sale = labo.SaleOrderId.HasValue ? await saleObj.GetByIdAsync(labo.SaleOrderId.Value) : null;
+                var partnerId = sale != null ? sale.PartnerId : (Guid?)null;
+                labo.CustomerId = partnerId;
+
+                foreach (var line in labo.OrderLines)
+                {
+                    line.CustomerId = partnerId;
+                    line.PartnerId = labo.PartnerId;
+                }
             }
-            return await base.CreateAsync(labo);
         }
     }
 }

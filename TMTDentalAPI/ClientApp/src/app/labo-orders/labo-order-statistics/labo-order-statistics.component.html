@@ -1,0 +1,81 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Thống kê labo</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="d-flex align-items-center">
+                    <kendo-combobox class="mr-2" [placeholder]="'Tìm theo labo'" [data]="filteredSuppliers" [textField]="'name'" [filterable]="true"
+                        #supplierCbx [(ngModel)]="paged.partnerId" [valueField]="'id'" [valuePrimitive]="true"
+                        (valueChange)="loadDataFromApi()">
+                    </kendo-combobox>
+                    <kendo-combobox class="mr-2" style="width: 250px;" [placeholder]="'Tìm theo loại phục hình'" [data]="filteredProducts" [textField]="'name'" [filterable]="true"
+                        #productCbx [(ngModel)]="paged.productId" [valueField]="'id'" [valuePrimitive]="true"
+                        (valueChange)="loadDataFromApi()">
+                    </kendo-combobox>
+                    <app-tai-date-range-filter-dropdown class="mr-2" title="Ngày gởi" [dateFrom]="paged.dateOrderFrom" [dateTo]="paged.dateOrderTo"
+                        (searchChange)="onDateOrderSearchChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                    <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="paged.datePlannedFrom" [dateTo]="paged.datePlannedTo"
+                        (searchChange)="onDatePlannedSearchChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_view_controller">
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="partnerDisplayName" title="Tên labo" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="customerDisplayName" title="Khách hàng" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="orderName" title="Phiếu labo" width="100">
+            </kendo-grid-column>
+            <kendo-grid-column field="productName" title="Loại phục hình" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="productQty" title="SL" class="text-right" width="50">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.productQty | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="priceTotal" title="Thành tiền" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.priceTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="orderDateOrder" title="Ngày gửi" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.orderDateOrder | date : 'short'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="orderDatePlanned" title="Ngày nhận" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.orderDatePlanned | date : 'short'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.warrantyPeriod | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{stateGet(dataItem.state)}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

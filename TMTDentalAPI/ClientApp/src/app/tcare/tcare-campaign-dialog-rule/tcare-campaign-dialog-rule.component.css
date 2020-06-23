@@ -1,0 +1,11 @@
+.plugin-textarea {
+    right: 0; 
+    font-size: 0.8rem; 
+    background: white;
+}
+.plugin-textarea span {
+    cursor: pointer;
+}
+.plugin-textarea span:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+}

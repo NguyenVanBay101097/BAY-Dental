@@ -21,7 +21,13 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/mxgraph/javascript/src",
+                "output": "./mxgraph"
+              }
             ],
             "styles": [
               "node_modules/@progress/kendo-theme-bootstrap/dist/all.css",
@@ -35,7 +41,9 @@
               "node_modules/jquery/dist/jquery.js",
               "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/autosize/dist/autosize.js"
+              "node_modules/autosize/dist/autosize.js",
+              "src/assets/js/mxgraph.conf.js",
+              "node_modules/mxgraph/javascript/mxClient.js"
             ]
           },
           "configurations": {

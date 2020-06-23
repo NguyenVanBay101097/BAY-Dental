@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PageId { get; set; }
         public string PageName { get; set; }
         public string PageAccessToken { get; set; }
+        public string Picture { get; set; }
 
         public bool Connected { get; set; }
     }

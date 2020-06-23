@@ -83,7 +83,7 @@ namespace TMTDentalAPI.Controllers
             var category = await _appointmentService.GetByIdAsync(id);
             if (category == null)
                 return NotFound();
-
+            val.CompanyId = category.CompanyId;
             category = _mapper.Map(val, category);
             await _appointmentService.UpdateAsync(category);
 

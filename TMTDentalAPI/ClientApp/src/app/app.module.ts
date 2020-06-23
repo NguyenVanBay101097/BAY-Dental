@@ -68,36 +68,38 @@ import { PriceListModule } from "./price-list/price-list.module";
 import { LaboOrdersModule } from "./labo-orders/labo-orders.module";
 import { PurchaseOrdersModule } from "./purchase-orders/purchase-orders.module";
 
-import { RefreshTokenInterceptor } from "./auth/refresh-token-interceptor";
-import { RealRevenueReportModule } from "./real-revenue-report/real-revenue-report.module";
-import { SaleReportModule } from "./sale-report/sale-report.module";
-import { MomentModule } from "ngx-moment";
-import { MailMessagesModule } from "./mail-messages/mail-messages.module";
-import "moment/locale/vi";
-import { PartnerReportModule } from "./partner-report/partner-report.module";
-import { ResBanksModule } from "./res-banks/res-banks.module";
-import { ResPartnerBanksModule } from "./res-partner-banks/res-partner-banks.module";
-import { CardTypesModule } from "./card-types/card-types.module";
-import { CardCardsModule } from "./card-cards/card-cards.module";
-import { SaleSettingsModule } from "./sale-settings/sale-settings.module";
-import { SaleCouponPromotionModule } from "./sale-coupon-promotion/sale-coupon-promotion.module";
-import { PromotionProgramsModule } from "./promotion-programs/promotion-programs.module";
-import { ResConfigSettingsModule } from "./res-config-settings/res-config-settings.module";
-import { JournalReportsModule } from "./journal-reports/journal-reports.module";
-import { ZaloOaConfigModule } from "./zalo-oa-config/zalo-oa-config.module";
-import { RevenueReportModule } from "./revenue-report/revenue-report.module";
-import { MarketingCampaignsModule } from "./marketing-campaigns/marketing-campaigns.module";
-import { FacebookConfigModule } from "./facebook-config/facebook-config.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
-import { FacebookModule } from "ngx-facebook";
-import { SocialsChannelModule } from "./socials-channel/socials-channel.module";
-import { ServiceCardTypesModule } from "./service-card-types/service-card-types.module";
-import { ServiceCardOrdersModule } from "./service-card-orders/service-card-orders.module";
-import { ServiceCardCardsModule } from "./service-card-cards/service-card-cards.module";
-import { PickerModule } from "@ctrl/ngx-emoji-mart";
-import { EmojiModule } from "@ctrl/ngx-emoji-mart/ngx-emoji";
-import { UomCategoryModule } from "./uom-categories/uom-category.module";
-import { UomModule } from "./uoms/uom.module";
+import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
+import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
+import { SaleReportModule } from './sale-report/sale-report.module';
+import { MomentModule } from 'ngx-moment';
+import { MailMessagesModule } from './mail-messages/mail-messages.module';
+import 'moment/locale/vi';
+import { PartnerReportModule } from './partner-report/partner-report.module';
+import { ResBanksModule } from './res-banks/res-banks.module';
+import { ResPartnerBanksModule } from './res-partner-banks/res-partner-banks.module';
+import { CardTypesModule } from './card-types/card-types.module';
+import { CardCardsModule } from './card-cards/card-cards.module';
+import { SaleSettingsModule } from './sale-settings/sale-settings.module';
+import { SaleCouponPromotionModule } from './sale-coupon-promotion/sale-coupon-promotion.module';
+import { PromotionProgramsModule } from './promotion-programs/promotion-programs.module';
+import { ResConfigSettingsModule } from './res-config-settings/res-config-settings.module';
+import { JournalReportsModule } from './journal-reports/journal-reports.module';
+import { ZaloOaConfigModule } from './zalo-oa-config/zalo-oa-config.module';
+import { RevenueReportModule } from './revenue-report/revenue-report.module';
+import { MarketingCampaignsModule } from './marketing-campaigns/marketing-campaigns.module';
+import { FacebookConfigModule } from './facebook-config/facebook-config.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FacebookModule } from 'ngx-facebook';
+import { SocialsChannelModule } from './socials-channel/socials-channel.module';
+import { ServiceCardTypesModule } from './service-card-types/service-card-types.module';
+import { ServiceCardOrdersModule } from './service-card-orders/service-card-orders.module';
+import { ServiceCardCardsModule } from './service-card-cards/service-card-cards.module';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { UomCategoryModule } from './uom-categories/uom-category.module';
+import { UomModule } from './uoms/uom.module';
+import { TcareModule } from './tcare/tcare.module';
+import { PartnerCustomerDetailComponent } from './partners/partner-customer-detail/partner-customer-detail.component';
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 
 export function tokenGetter() {
@@ -107,7 +109,10 @@ export function tokenGetter() {
 registerLocaleData(localeVi, "vi");
 
 @NgModule({
-  declarations: [AppComponent, PrintLayoutComponent],
+  declarations: [
+    AppComponent,
+    PrintLayoutComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -144,6 +149,7 @@ registerLocaleData(localeVi, "vi");
     EmployeesModule,
     EmployeeCategoriesModule,
     RoutingsModule,
+    HttpClientModule,
     StockPickingsModule,
     StockPickingTypesModule,
     LaboOrderLinesModule,
@@ -203,6 +209,7 @@ registerLocaleData(localeVi, "vi");
     // thắng import
     UomCategoryModule,
     UomModule,
+    TcareModule
     // end
   ],
   providers: [

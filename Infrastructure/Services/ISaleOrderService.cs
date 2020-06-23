@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ISaleOrderService: IBaseService<SaleOrder>
+    public interface ISaleOrderService : IBaseService<SaleOrder>
     {
         Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "");
         Task<SaleOrder> CreateOrderAsync(SaleOrder order);
@@ -43,6 +43,9 @@ namespace Infrastructure.Services
         Task<bool> CheckHasPromotionCanApply(Guid id);
         Task<IEnumerable<AccountMoveBasic>> GetInvoicesBasic(Guid id);
         Task ApplyServiceCards(SaleOrderApplyServiceCards val);
-    
+        Task<IEnumerable<SaleOrderLineDisplay>>  GetServiceBySaleOrderId(Guid id);
+        Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
+        Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
+
     }
 }

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel } from './partner-simple';
-import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay } from '../appointment/appointment';
+import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
 import { EmployeeSimple } from '../employees/employee';
@@ -330,6 +330,12 @@ export class PartnerService {
     defaultGet(val?: any) {
         return this.http.post<PartnerDisplay[]>(this.baseApi + this.apiUrl + '/DefaultGet', val || {});
     }
+
+    getNextAppointment(id): Observable<AppointmentDisplay> {
+        return this.http.get<AppointmentDisplay>(this.baseApi + this.apiUrl + '/' + id + '/GetNextAppointment')
+    }
+
+
 }
 
 

@@ -438,8 +438,6 @@ export class AppointmentListComponent implements OnInit {
         if (rs) {
           this.appointmentVMService.announceApCreate(rs.id);
         }
-
-        // this.loadAppointments();
       },
       er => { }
     )

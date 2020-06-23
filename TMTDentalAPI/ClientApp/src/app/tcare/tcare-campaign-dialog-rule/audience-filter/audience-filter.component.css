@@ -1,0 +1,35 @@
+.audience-filter-content {
+    position: relative;
+    display: block;
+    background-color: white;
+    padding: 10px;  
+    padding-bottom: 5px;  
+    word-break: break-all;
+    line-height: 1.8;
+}
+.audience-filter-item {
+    margin-bottom: 5px;
+}
+.audience-filter-item .remove {
+    cursor: pointer;
+    transition: 0.2s;
+}
+.audience-filter-item .remove:hover {
+    color: orangered;
+}
+.audience-filter-open {
+    width: fit-content;
+    border: 1px dashed #8492a6;
+    margin-bottom: 5px;
+}
+.audience-filter-item .condition-select, 
+.audience-filter-item .value-select {
+    text-decoration: underline;
+}
+.audience-filter-picker button {
+    margin-bottom: 5px;
+}
+.dropdown u, 
+.dropdown span {
+    cursor: pointer;
+}

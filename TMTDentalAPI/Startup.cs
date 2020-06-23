@@ -124,7 +124,6 @@ namespace TMTDentalAPI
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
-            services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IDistrictService, DistrictService>();
@@ -233,8 +232,12 @@ namespace TMTDentalAPI
             services.AddScoped<IFacebookMassMessageJobService, FacebookMassMessageJobService>();
             services.AddScoped<IFacebookTagService, FacebookTagService>();
             services.AddScoped<IFacebookScheduleAppointmentConfigService, FacebookScheduleAppointmentConfigService>();
-
-
+            services.AddScoped<ITCareCampaignService, TCareCampaignService>();
+            services.AddScoped<ITCareRuleService, TCareRuleService>();
+            services.AddScoped<ITCarePropertyService, TCarePropertyService>();
+            services.AddScoped<ITCareMessagingService, TCareMessagingService>();
+            services.AddScoped<ITCareJobService, TCareJobService>();
+            services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -250,7 +253,6 @@ namespace TMTDentalAPI
                 mc.AddProfile(new UoMProfile());
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
-                mc.AddProfile(new PartnerSourceProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
                 mc.AddProfile(new ProvinceProfile());
                 mc.AddProfile(new DistrictProfile());
@@ -325,6 +327,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ServiceCardCardProfile());
                 mc.AddProfile(new SaleOrderServiceCardCardRelProfile());
                 mc.AddProfile(new ServiceCardOrderLineProfile());
+                mc.AddProfile(new TCareCampaignProfile());
+                mc.AddProfile(new TCareRuleProfile());
+                mc.AddProfile(new TCareMessagingProfile());
+                mc.AddProfile(new IrAttachmentProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

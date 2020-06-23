@@ -39,7 +39,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-       // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
+        // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
         public PartnerService(IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper, UserManager<ApplicationUser> userManager)
             : base(repository, httpContextAccessor)
@@ -148,50 +148,60 @@ namespace Infrastructure.Services
         {
             var query = GetQueryPaged(val);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit)
+            var items = await _mapper.ProjectTo<PartnerBasic>(query.Skip(val.Offset).Take(val.Limit))
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
-            var partnerList = new List<PartnerBasic>();
-            var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
-            foreach (var i in items)
-            {
-                var p = new PartnerBasic();
-                var list = new List<string>();
-                p = _mapper.Map<PartnerBasic>(i);
-                if (!string.IsNullOrEmpty(i.Street))
-                    list.Add(i.Street);
-                if (!string.IsNullOrEmpty(i.WardName))
-                    list.Add(i.WardName);
-                if (!string.IsNullOrEmpty(i.DistrictName))
-                    list.Add(i.DistrictName);
-                if (!string.IsNullOrEmpty(i.CityName))
-                    list.Add(i.CityName);
-                if (list.Count > 0)
-                {
-                    p.Address = String.Join(", ", list);
-                }
-                partnerList.Add(p);
+            //var partnerList = new List<PartnerBasic>();
+            //var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
+            //foreach (var i in items)
+            //{
+            //    var p = new PartnerBasic();
+            //    var list = new List<string>();
+            //    p = _mapper.Map<PartnerBasic>(i);
+            //    if (!string.IsNullOrEmpty(i.Street))
+            //        list.Add(i.Street);
+            //    if (!string.IsNullOrEmpty(i.WardName))
+            //        list.Add(i.WardName);
+            //    if (!string.IsNullOrEmpty(i.DistrictName))
+            //        list.Add(i.DistrictName);
+            //    if (!string.IsNullOrEmpty(i.CityName))
+            //        list.Add(i.CityName);
+            //    if (list.Count > 0)
+            //    {
+            //        p.Address = String.Join(", ", list);
+            //    }
+            //    partnerList.Add(p);
 
-                if (i.Customer)
-                {
-                    p.Debt = creditDebitDict[p.Id].Credit;
-                }
-                else if (i.Supplier)
-                {
-                    p.Debt = creditDebitDict[p.Id].Debit;
-                }
-            }
+            //    if (i.Customer)
+            //    {
+            //        p.Debt = creditDebitDict[p.Id].Credit;
+            //    }
+            //    else if (i.Supplier)
+            //    {
+            //        p.Debt = creditDebitDict[p.Id].Debit;
+            //    }
+            //}
+
             return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = partnerList
+                Items = items
             };
+        }
+
+
+        public async Task<AppointmentBasic> GetNextAppointment(Guid id)
+        {
+            var apObj = GetService<IAppointmentService>();
+            var res = await _mapper.ProjectTo<AppointmentBasic>(apObj.SearchQuery(x => x.PartnerId == id, orderBy: x => x.OrderByDescending(s => s.Date))).FirstOrDefaultAsync();
+            return res;
         }
 
         public override async Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
         {
             _UpdateCityName(entities);
             await _GenerateRefIfEmpty(entities);
+            _ComputeDisplayName(entities);
             _SetCompanyIfNull(entities);
 
             await base.CreateAsync(entities);
@@ -203,7 +213,7 @@ namespace Infrastructure.Services
         private void _SetCompanyIfNull(IEnumerable<Partner> self)
         {
             //Nếu khởi tạo công ty ban đầu thì CompanyId ko có giá trị mà gán vào sẽ bị lỗi insert 
-            foreach(var partner in self)
+            foreach (var partner in self)
             {
                 var company_id = CompanyId;
                 if (!partner.CompanyId.HasValue && company_id != Guid.Empty)
@@ -239,7 +249,7 @@ namespace Infrastructure.Services
 
         private async Task _CheckUniqueRef(IEnumerable<Partner> self)
         {
-            foreach(var partner in self)
+            foreach (var partner in self)
             {
                 if (partner.Customer == true && !string.IsNullOrEmpty(partner.Ref))
                 {
@@ -259,6 +269,7 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(IEnumerable<Partner> entities)
         {
+            _ComputeDisplayName(entities);
             _UpdateCityName(entities);
             //_SetCompanyIfNull(entities);
 
@@ -269,13 +280,19 @@ namespace Infrastructure.Services
 
         private void _UpdateCityName(IEnumerable<Partner> self)
         {
-            foreach(var partner in self)
+            foreach (var partner in self)
             {
                 if (string.IsNullOrEmpty(partner.CityName))
                     continue;
                 if (partner.CityName == "TP Hồ Chí Minh")
                     partner.CityName = "Thành phố Hồ Chí Minh";
             }
+        }
+
+        private void _ComputeDisplayName(IEnumerable<Partner> self)
+        {
+            foreach (var partner in self)
+                partner.DisplayName = _NameGet(partner);
         }
 
         private async Task InsertCustomerSequence()
@@ -388,7 +405,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val)
         {
-            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimple {
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimple
+            {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
                 Name = x.Name
@@ -409,7 +427,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                 || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
 
-            query = query.OrderBy(s => s.Name);
+            query = query.OrderByDescending(s => s.DateCreated);
             return query;
         }
 
@@ -421,7 +439,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone)
         {
             var query = await SearchQuery(x => x.Phone.Contains(phone) && x.Active == true).ToListAsync();
-            var result  = _mapper.Map<IEnumerable<PartnerInfoChangePhone>>(query);
+            var result = _mapper.Map<IEnumerable<PartnerInfoChangePhone>>(query);
             return result;
         }
 
@@ -787,7 +805,8 @@ namespace Infrastructure.Services
                 }
 
             }
-            else {
+            else
+            {
                 foreach (var pn in list)
                 {
                     var entity = SearchQuery(x => x.Ref == pn.Ref).FirstOrDefault();
@@ -884,7 +903,7 @@ namespace Infrastructure.Services
                 if (!string.IsNullOrEmpty(item.MedicalHistory))
                 {
                     var medical_history_list = item.MedicalHistory.Split(",");
-                    foreach(var mh in medical_history_list)
+                    foreach (var mh in medical_history_list)
                     {
                         var new_mh = mh.Trim();
                         if (string.IsNullOrEmpty(new_mh))
@@ -922,7 +941,7 @@ namespace Infrastructure.Services
             {
                 await CreateAsync(partners_to_insert);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
             }
@@ -1150,7 +1169,7 @@ namespace Infrastructure.Services
             var offset = 0;
             var sub_ids = ids.Skip(offset).Take(limit).ToList();
             var res = new Dictionary<Guid, Partner>();
-            while(sub_ids.Count > 0)
+            while (sub_ids.Count > 0)
             {
                 var list = await SearchQuery(x => sub_ids.Contains(x.Id)).Include(x => x.PartnerHistoryRels).ToListAsync();
                 foreach (var item in list)
@@ -1353,7 +1372,7 @@ namespace Infrastructure.Services
                     if (dict.ContainsKey(address.ToLower()))
                     {
                         item.Street = dict[address.ToLower()].ShortAddress;
-                        item.CityName = dict[address.ToLower()].CityName.Replace("TP","Thành phố");
+                        item.CityName = dict[address.ToLower()].CityName.Replace("TP", "Thành phố");
                         item.CityCode = dict[address.ToLower()].CityCode;
                         item.DistrictName = dict[address.ToLower()].DistrictName;
                         item.DistrictCode = dict[address.ToLower()].DistrictCode;
@@ -1441,7 +1460,7 @@ namespace Infrastructure.Services
                 Percentage = x.Count() * 100f / query.Count()
             }).ToListAsync();
 
-            foreach(var item in res)
+            foreach (var item in res)
             {
                 item.CityCode = val.CityCode;
                 item.CityName = val.CityName;
@@ -1470,6 +1489,8 @@ namespace Infrastructure.Services
             }).ToListAsync();
             return res;
         }
+
+
 
         //public async Task<File> ExportExcelFile(PartnerPaged val)
         //{
@@ -1534,7 +1555,7 @@ namespace Infrastructure.Services
         //}
 
 
-       
+
     }
 
     public class PartnerCreditDebitItem
@@ -1556,5 +1577,5 @@ namespace Infrastructure.Services
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
 
-    
+
 }

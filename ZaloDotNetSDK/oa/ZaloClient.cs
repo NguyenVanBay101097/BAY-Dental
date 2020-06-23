@@ -212,7 +212,6 @@ namespace ZaloDotNetSDK
             param.Add("body", body.ToString());
 
             result = excuteRequest("POST", "https://openapi.zalo.me/v2.0/oa/message", param);
-
             return result;
         }
 

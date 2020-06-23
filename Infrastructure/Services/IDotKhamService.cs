@@ -18,5 +18,9 @@ namespace Infrastructure.Services
         Task<IEnumerable<DotKham>> GetDotKhamsForSaleOrder(Guid saleOrderId);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task Unlink(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<DotKhamBasic>> GetDotKhamBasicsForSaleOrder(Guid saleOrderId);
+
+        Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id);
     }
 }

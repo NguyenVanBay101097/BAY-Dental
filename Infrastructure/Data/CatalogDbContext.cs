@@ -154,7 +154,11 @@ namespace Infrastructure.Data
         public DbSet<ServiceCardCard> ServiceCardCards { get; set; }
         public DbSet<SaleOrderServiceCardCardRel> SaleOrderServiceCardCardRels { get; set; }
         public DbSet<ServiceCardOrderPaymentRel> ServiceCardOrderPaymentRels { get; set; }
-
+        public DbSet<TCareCampaign> TCareCampaigns { get; set; }
+        public DbSet<TCareRule> TCareRules { get; set; }
+        public DbSet<TCareProperty> TCareProperties { get; set; }
+        public DbSet<TCareMessaging> TCareMessagings { get; set; }
+        public DbSet<TCareMessagingTrace> TCareMessingTraces { get; set; }
 
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
@@ -304,6 +308,11 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleOrderServiceCardCardRelConfiguration());
             builder.ApplyConfiguration(new ServiceCardOrderPaymentRelConfiguration());
             builder.ApplyConfiguration(new ProductUoMRelConfiguration());
+            builder.ApplyConfiguration(new TCareCampaignConfiguration());
+            builder.ApplyConfiguration(new TCareRuleConfiguration());
+            builder.ApplyConfiguration(new TCarePropertyConfiguration());
+            builder.ApplyConfiguration(new TCareMessagingConfiguration());
+            builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

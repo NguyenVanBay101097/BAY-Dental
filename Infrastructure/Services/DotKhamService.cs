@@ -42,6 +42,11 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id)
+        {
+            return await _mapper.ProjectTo<DotKhamDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+        }
+
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Steps).ToListAsync();
@@ -70,6 +75,11 @@ namespace Infrastructure.Services
                 .Include(x => x.Doctor)
                 .Include(x => x.Assistant)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DotKhamBasic>> GetDotKhamBasicsForSaleOrder(Guid saleOrderId)
+        {
+            return await _mapper.ProjectTo<DotKhamBasic>(SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
         }
 
 
@@ -147,7 +157,6 @@ namespace Infrastructure.Services
                 var saleObj = GetService<ISaleOrderService>();
                 var saleOrder = await saleObj.SearchQuery(x => x.Id == val.SaleOrderId).FirstOrDefaultAsync();
                 res.SaleOrderId = saleOrder.Id;
-                res.SaleOrder = _mapper.Map<SaleOrderBasic>(saleOrder);
                 res.PartnerId = saleOrder.PartnerId;
                 var partnerObj = GetService<IPartnerService>();
                 var partner = partnerObj.SearchQuery(x => x.Id == saleOrder.PartnerId).FirstOrDefault();

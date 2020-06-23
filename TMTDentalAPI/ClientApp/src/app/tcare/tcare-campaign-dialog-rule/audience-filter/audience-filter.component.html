@@ -1,0 +1,59 @@
+<div class="mb-2">
+    <span>Chỉ khách hàng phù hợp với</span>
+    <span class="dropdown pl-2">
+        <u id="dropdownMenuButton" data-toggle="dropdown" 
+            aria-haspopup="true" aria-expanded="false">{{convertLogic(this.formGroup.get('logic').value)}}</u>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <span class="dropdown-item" (click)="setLogic('and')">tất cả điều kiện</span>
+            <span class="dropdown-item" (click)="setLogic('or')">bất kì điều kiện nào</span>
+        </div>
+    </span>
+</div>
+<span class="audience-filter-content rounded border">
+    <span class="position-relative" *ngFor="let item of listAudienceFilter_Items; index as i">
+        <button class="audience-filter-item mr-2 btn btn-light btn-sm border"
+            (click)="clickAudienceFilter_Item(item)">
+            <span class="drop-select">{{item.name}}</span>
+            <span class="condition-select pl-1">{{convertFormulaType(item.op)}}</span>
+            <span class="value-select pl-1">
+                <span *ngIf="!item.displayValue || item.displayValue === ''">{{item.value}}</span>
+                <span *ngIf="item.displayValue && item.displayValue !== ''">{{item.displayValue}}</span>
+            </span>
+            <span class="remove" (click)="deleteAudienceFilterItem(i)">
+                <i class="fas fa-times pl-2"></i>
+            </span>
+        </button>
+        <app-audience-filter-dropdown 
+            class="position-absolute bg-white border rounded"
+            style="top: 28px; left: 0; z-index: 1;"
+            *ngIf="selectedAudienceFilter_Item === item"
+            (clickOutside)="clickOutsideAudienceFilter_Item_Picker()"
+            [audience_filter_comp_data]="audience_filter_comp_data"
+            (statusItem)="closeAudienceFilter_Item_Picker($event)">
+        </app-audience-filter-dropdown>
+    </span>
+    <span class="position-relative">
+        <button class="audience-filter-open btn btn-light btn-sm"
+            [class.w-100]="!existListAudienceFilter_Items()"
+            (click)="clickAudienceFilter()">
+            + Thêm điều kiện lọc
+        </button>
+        <div class="position-absolute bg-white border rounded"
+            style="top: 28px; left: 0; z-index: 1;"
+            *ngIf="openAudienceFilter"
+            (clickOutside)="clickOutsideAudienceFilter()">
+            <div id="dropdown-item-audience-filter">
+                <button class="dropdown-item"
+                    *ngFor="let item of listAudienceFilter_Picker"
+                    (click)="selectAudienceFilter(item)">
+                    {{item.name}}
+                </button>
+            </div>
+            <app-audience-filter-dropdown 
+                *ngIf="openAudienceFilter_Picker"
+                (click)="addAudienceFilterItem()"
+                [audience_filter_comp_data]="audience_filter_comp_data">
+            </app-audience-filter-dropdown>
+        </div>
+    </span>
+</span>

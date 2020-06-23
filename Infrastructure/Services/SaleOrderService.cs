@@ -30,6 +30,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        // Tao moi 1 phieu dieu tri
         public async Task<SaleOrder> CreateOrderAsync(SaleOrder order)
         {
             if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
@@ -245,11 +246,11 @@ namespace Infrastructure.Services
             order.Name = await seqObj.NextByCode("sale.order");
             order.QuoteId = id;
 
-            foreach(var line in self.OrderLines)
+            foreach (var line in self.OrderLines)
             {
                 var l = new SaleOrderLine(line);
                 l.OrderId = order.Id;
-                foreach(var rel in line.SaleOrderLineToothRels)
+                foreach (var rel in line.SaleOrderLineToothRels)
                 {
                     var r = new SaleOrderLineToothRel
                     {
@@ -370,7 +371,7 @@ namespace Infrastructure.Services
             var amount_total = val.Amount;
 
             var product_amount_apply = new Dictionary<Guid?, decimal?>();
-            foreach(var card in cards)
+            foreach (var card in cards)
             {
                 if (amount_total <= 0)
                     break;
@@ -409,7 +410,7 @@ namespace Infrastructure.Services
 
             var soLineObj = GetService<ISaleOrderLineService>();
             var lines = new List<SaleOrderLine>();
-            foreach(var item in product_amount_apply)
+            foreach (var item in product_amount_apply)
             {
                 if (!item.Key.HasValue)
                     continue;
@@ -541,7 +542,7 @@ namespace Infrastructure.Services
             var productObj = GetService<IProductService>();
 
             var loLines = new List<LaboOrderLine>();
-            foreach(var line in self.OrderLines)
+            foreach (var line in self.OrderLines)
             {
                 if (!line.Product.IsLabo)
                     continue;
@@ -596,7 +597,7 @@ namespace Infrastructure.Services
             //Unbind promotion and coupon programs which requirements are not met anymore
             if (programs_to_remove.Any())
             {
-                foreach(var program in programs_to_remove)
+                foreach (var program in programs_to_remove)
                 {
                     var rel = order.NoCodePromoPrograms.FirstOrDefault(x => x.ProgramId == program.Id);
                     if (rel != null)
@@ -729,7 +730,7 @@ namespace Infrastructure.Services
                 }
 
                 var total_discount_amount = 0M;
-                foreach(var line in lines)
+                foreach (var line in lines)
                 {
                     var discount_line_amount = _GetRewardValuesDiscountPercentagePerLine(self, program, line);
                     if (discount_line_amount > 0)
@@ -832,7 +833,7 @@ namespace Infrastructure.Services
                 MaximumUseNumber = x.MaximumUseNumber ?? 0,
             }).ToListAsync();
 
-            foreach(var program in programs)
+            foreach (var program in programs)
             {
                 if (program.MaximumUseNumber > 0 && program.MaximumUseNumber <= program.OrderCount)
                     continue;
@@ -841,12 +842,14 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     DiscountApplyOn = x.DiscountApplyOn,
-                    DiscountProductItems = x.RuleProductRels.Select(s => new PromotionRuleDiscountProductItem {
+                    DiscountProductItems = x.RuleProductRels.Select(s => new PromotionRuleDiscountProductItem
+                    {
                         ProductId = s.ProductId,
                         DiscountLineProductId = s.DiscountLineProductId,
                         DiscountLineProductUOMId = s.DiscountLineProduct.UOMId
                     }),
-                    DiscountCategoryItems = x.RuleCategoryRels.Select(s => new PromotionRuleDiscountCategoryItem {
+                    DiscountCategoryItems = x.RuleCategoryRels.Select(s => new PromotionRuleDiscountCategoryItem
+                    {
                         CategId = s.CategId,
                         DiscountLineProductId = s.DiscountLineProductId,
                         DiscountLineProductUOMId = s.DiscountLineProduct.UOMId
@@ -936,7 +939,7 @@ namespace Infrastructure.Services
                 discountProductId = rule.DiscountLineProductId;
                 discountProductUOMId = rule.DiscountLineProductUOMId;
             }
-           
+
             var soLineObj = GetService<ISaleOrderLineService>();
             decimal price_unit = 0;
             if (rule.DiscountType == "percentage")
@@ -1203,7 +1206,7 @@ namespace Infrastructure.Services
             var coupons = await couponObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
             if (coupons.Any())
             {
-                foreach(var coupon in coupons)
+                foreach (var coupon in coupons)
                 {
                     coupon.SaleOrderId = null;
                     coupon.State = "new";
@@ -1217,7 +1220,6 @@ namespace Infrastructure.Services
 
             await DeleteAsync(self);
         }
-
 
         public async Task UnlinkSaleOrderAsync(SaleOrder order)
         {
@@ -1327,13 +1329,13 @@ namespace Infrastructure.Services
             var invoiceObj = GetService<IAccountMoveService>();
             var invoices = await invoiceObj._ComputePaymentsWidgetReconciledInfo(invoiceIds);
             var dict = new Dictionary<Guid, PaymentInfoContent>();
-            foreach(var invoice in invoices)
+            foreach (var invoice in invoices)
             {
                 if (string.IsNullOrEmpty(invoice.InvoicePaymentsWidget))
                     continue;
 
                 var paymentsWidget = JsonConvert.DeserializeObject<IList<PaymentInfoContent>>(invoice.InvoicePaymentsWidget);
-                foreach(var paymentWidget in paymentsWidget)
+                foreach (var paymentWidget in paymentsWidget)
                 {
                     if (!paymentWidget.AccountPaymentId.HasValue)
                         continue;
@@ -1563,7 +1565,7 @@ namespace Infrastructure.Services
                 .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
                 .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
                 .Include(x => x.CodePromoProgram).ToListAsync();
-            foreach(var order in self)
+            foreach (var order in self)
             {
                 //if(order.AppliedCoupons != null)
                 //{
@@ -1571,7 +1573,7 @@ namespace Infrastructure.Services
                 //    {
                 //        throw new Exception($"Không thể thêm khuyến mãi do đã tồn tại Coupon : {coupon.Program.Name} trên tổng tiền  !!!");
                 //    }
-                   
+
                 //}
                 await _RemoveInvalidRewardLines(order);
                 await _CreateNewNoCodePromoRewardLines(order);
@@ -1588,7 +1590,7 @@ namespace Infrastructure.Services
             var programs = await _GetApplicableNoCodePromoProgram(self);
             programs = programObj._KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(programs);
             var line_product_ids = self.OrderLines.Select(x => x.ProductId).ToList();
-            foreach(var program in programs)
+            foreach (var program in programs)
             {
                 var error_status = await programObj._CheckPromoCode(program, order, "");
                 if (string.IsNullOrEmpty(error_status.Error))
@@ -1619,10 +1621,11 @@ namespace Infrastructure.Services
 
         public async Task _UpdateExistingRewardLines(SaleOrder self)
         {
-            void UpdateLine(SaleOrder o, IEnumerable<SaleOrderLine> lines, SaleOrderLine value) {
+            void UpdateLine(SaleOrder o, IEnumerable<SaleOrderLine> lines, SaleOrderLine value)
+            {
                 if (value != null && value.PriceUnit != 0 && value.ProductUOMQty != 0)
                 {
-                    foreach(var line in lines)
+                    foreach (var line in lines)
                     {
                         line.PriceUnit = value.PriceUnit;
                         line.ProductUOMQty = value.ProductUOMQty;
@@ -1634,15 +1637,15 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = self;
             var applied_programs = _GetAppliedProgramsWithRewardsOnCurrentOrder(self);
-            foreach(var program in applied_programs)
+            foreach (var program in applied_programs)
             {
                 var values = _GetRewardLineValues(order, program);
                 var lines = order.OrderLines.Where(x => x.ProductId == program.DiscountLineProductId);
                 if (program.RewardType == "discount" && program.DiscountType == "percentage")
                 {
-                    foreach(var value in values)
+                    foreach (var value in values)
                     {
-                        foreach(var line in lines)
+                        foreach (var line in lines)
                         {
                             UpdateLine(order, new List<SaleOrderLine>() { line }, value);
                         }
@@ -1743,8 +1746,8 @@ namespace Infrastructure.Services
                 .Include("InvoiceLines.SaleLines.OrderLine.Order").ToList();
             //Xác định ds hóa đơn thuộc phiếu điều trị nào
             var orders = queryInvoices.SelectMany(x => x.InvoiceLines).SelectMany(x => x.SaleLines).Select(x => x.OrderLine).Select(x => x.Order)
-                .Distinct().OrderBy(x=>x.DateCreated);
-            foreach(var order in orders)
+                .Distinct().OrderBy(x => x.DateCreated);
+            foreach (var order in orders)
             {
                 var queryOrder = SearchQuery(x => x.Id == order.Id)
                 .Include(x => x.OrderLines)
@@ -1763,12 +1766,12 @@ namespace Infrastructure.Services
                 }
                 order.Residual = residual;
                 Update(order);
-            }            
+            }
         }
 
         public async Task _UpdateLoyaltyPoint(IEnumerable<SaleOrder> self)
         {
-            foreach(var order in self)
+            foreach (var order in self)
             {
                 if (order.State != "done")
                     continue;
@@ -1794,7 +1797,7 @@ namespace Infrastructure.Services
                 var invoice_vals = await _PrepareInvoice(order);
 
                 //Invoice line values (keep only necessary sections)
-                foreach(var line in order.OrderLines)
+                foreach (var line in order.OrderLines)
                 {
                     if (line.QtyToInvoice == 0)
                         continue;
@@ -1864,43 +1867,26 @@ namespace Infrastructure.Services
             return invoice_vals;
         }
 
-      
-    }
+        public async Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id)
+        {
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var orderlines = await _mapper.ProjectTo<SaleOrderLineDisplay>(orderLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            return orderlines;
 
-    public class SaleOrderSearchPromotionRuleItem
-    {
-        public Guid Id { get; set; }
-        public string DiscountApplyOn { get; set; }
-        public IEnumerable<PromotionRuleDiscountProductItem> DiscountProductItems { get; set; }
-        public IEnumerable<PromotionRuleDiscountCategoryItem> DiscountCategoryItems { get; set; }
-        public decimal MinQuantity { get; set; }
-        public string DiscountType { get; set; }
-        public decimal DiscountFixedAmount { get; set; }
-        public decimal DiscountPercentage { get; set; }
-        public string ProgramName { get; set; }
-        public Guid ProgramId { get; set; }
+        }
 
-        public Guid? DiscountLineProductId { get; set; }
-        public Guid? DiscountLineProductUOMId { get; set; }
-    }
+        public async Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id)
+        {
+            var treatmentObj = GetService<IDotKhamService>();
+            var treatments = await _mapper.ProjectTo<DotKhamDisplay>(treatmentObj.SearchQuery(x => x.SaleOrderId == id, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
+            return treatments;
+        }
 
-    public class PromotionRuleDiscountProductItem
-    {
-        public Guid ProductId { get; set; }
-        public Guid? DiscountLineProductId { get; set; }
-        public Guid? DiscountLineProductUOMId { get; set; }
-    }
-
-    public class PromotionRuleDiscountCategoryItem
-    {
-        public Guid CategId { get; set; }
-        public Guid? DiscountLineProductId { get; set; }
-        public Guid? DiscountLineProductUOMId { get; set; }
-    }
-
-    public class PromotionQtyAmountDictValue
-    {
-        public decimal Qty { get; set; }
-        public decimal Amount { get; set; }
+        public async Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id)
+        {
+            var laboObj = GetService<ILaboOrderService>();
+            var labos = await _mapper.ProjectTo<LaboOrderDisplay>(laboObj.SearchQuery(x => x.SaleOrderId == id, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
+            return labos;
+        }
     }
 }
