@@ -238,6 +238,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareMessagingService, TCareMessagingService>();
             services.AddScoped<ITCareJobService, TCareJobService>();
             services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
+            services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
