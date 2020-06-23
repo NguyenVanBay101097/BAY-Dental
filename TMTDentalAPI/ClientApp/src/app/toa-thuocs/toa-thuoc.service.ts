@@ -50,8 +50,8 @@ export class ToaThuocLineDisplay {
 
 export class ToaThuocLineSave {
     id: string;
-    productId: string;
     product: ProductSimple;
+    productId: string;
     numberOfTimes: number; 
     amountOfTimes: number; 
     quantity: number; 

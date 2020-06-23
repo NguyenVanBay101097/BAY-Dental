@@ -175,6 +175,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     var val = this.toaThuocForm.value;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     val.lines = this.lines;
+    console.log(val);
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);

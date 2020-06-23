@@ -10,10 +10,9 @@ import { ToaThuocLineDialogComponent } from './toa-thuoc-line-dialog/toa-thuoc-l
 import { ToaThuocLineCuFormComponent } from './toa-thuoc-line-cu-form/toa-thuoc-line-cu-form.component';
 import { ToaThuocCuDialogSaveComponent } from './toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 import { ToaThuocLinesSaveCuFormComponent } from './toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
-import { ToaThuocLineSaveComponent } from './toa-thuoc-lines-save-cu-form/toa-thuoc-line-save/toa-thuoc-line-save.component';
 
 @NgModule({
-  declarations: [ToaThuocCuDialogComponent, ToaThuocLineDialogComponent, ToaThuocLineCuFormComponent, ToaThuocCuDialogSaveComponent, ToaThuocLinesSaveCuFormComponent, ToaThuocLineSaveComponent],
+  declarations: [ToaThuocCuDialogComponent, ToaThuocLineDialogComponent, ToaThuocLineCuFormComponent, ToaThuocCuDialogSaveComponent, ToaThuocLinesSaveCuFormComponent],
   imports: [
     CommonModule,
     ToaThuocsRoutingModule,

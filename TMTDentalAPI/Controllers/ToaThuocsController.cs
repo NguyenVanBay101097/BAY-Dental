@@ -42,8 +42,9 @@ namespace TMTDentalAPI.Controllers
             var toaThuoc = await _toaThuocService.GetToaThuocForDisplayAsync(id);
             if (toaThuoc == null)
                 return NotFound();
+            var res = _mapper.Map<ToaThuocDisplay>(toaThuoc);
 
-            return Ok(_mapper.Map<ToaThuocDisplay>(toaThuoc));
+            return Ok(res);
         }
 
         [HttpPost]

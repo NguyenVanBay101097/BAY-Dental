@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDisplay } from '../toa-thuoc.service';
+import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDisplay, ToaThuocLineSave } from '../toa-thuoc.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { UserSimple } from 'src/app/users/user-simple';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   limit: number;
   skip: number;
   userSimpleFilter: UserSimple[] = [];
-  lines: any[] = [];
+  lines: ToaThuocLineSave[] = [];
+  temp_lines: any[] = [];
   
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, 
     private userService: UserService, public activeModal: NgbActiveModal, 
@@ -30,8 +31,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       name: null, 
       dateObj: null, 
       note: null, 
-      advice: null, 
       user: null,
+      userId: null,
       partnerId: null,
       companyId: null,
       dotKhamId: null,
@@ -64,7 +65,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   loadRecord() {
     this.toaThuocService.get(this.id).subscribe(
       result => {
-        console.log("result", result);
+        // console.log("result", result);
         this.toaThuocForm.patchValue(result);
         let date = new Date(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
@@ -89,8 +90,21 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
     var val = this.toaThuocForm.value;
     val.partnerId = this.partnerId;
+    val.userId = this.toaThuocForm.get('user').value.id;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.lines = this.lines;
+    val.lines = [];
+    for (let i = 0; i < this.temp_lines.length; i++) {
+      val.lines.push({
+        product: this.temp_lines[i].product,
+        productId: this.temp_lines[i].product.id,
+        numberOfTimes: this.temp_lines[i].numberOfTimes,
+        amountOfTimes: this.temp_lines[i].amountOfTimes, 
+        quantity: this.temp_lines[i].quantity,
+        unit: this.temp_lines[i].unit,
+        numberOfDays: this.temp_lines[i].numberOfDays,
+        note: this.temp_lines[i].note
+      })
+    }
     console.log(val);
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
@@ -112,6 +126,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   updateLines(value) {
-
+    this.temp_lines = value;
   }
 }
