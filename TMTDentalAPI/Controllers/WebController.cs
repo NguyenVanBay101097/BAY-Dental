@@ -21,11 +21,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IIrAttachmentService _attachmentService;
         private readonly IMapper _mapper;
+        private readonly IUploadService _uploadService;
+
         public WebController(IIrAttachmentService attachmentService,
-            IMapper mapper)
+            IMapper mapper, IUploadService uploadService)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
+            _uploadService = uploadService;
         }
 
         [HttpPost("[action]")]
@@ -36,34 +39,46 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             }
 
-            var companyId = CompanyId;
             var list = new List<IrAttachment>();
+
+            var tasks = new List<Task<UploadResult>>();
             foreach (var file in val.files)
             {
-                var fileName = file.FileName;
-
-                var attachment = new IrAttachment
-                {
-                    Name = fileName,
-                    DatasFname = fileName,
-                    ResModel = val.model,
-                    ResId = val.id,
-                    MineType = file.ContentType,
-                    CompanyId = companyId
-                };
-
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
-                    attachment.DbDatas = memoryStream.ToArray();
+                    tasks.Add(_HandleUploadAsync(Convert.ToBase64String(memoryStream.ToArray()), file.FileName));
                 }
+            }
 
-                await _attachmentService.CreateAsync(attachment);
+            var result = await Task.WhenAll(tasks);
+            foreach (var item in result)
+            {
+                if (item == null)
+                    throw new Exception("Hình không hợp lệ hoặc vượt quá kích thước cho phép.");
+                var attachment = new IrAttachment()
+                {
+                    ResModel = val.model,
+                    ResId = val.id,
+                    Name = item.Name,
+                    Type = "upload",
+                    UploadId = item.Id,
+                    MineType = item.MineType,
+                    CompanyId = CompanyId
+                };
+
                 list.Add(attachment);
             }
 
+            await _attachmentService.CreateAsync(list);
+
             var res = _mapper.Map<IEnumerable<IrAttachmentBasic>>(list);
             return Ok(res);
+        }
+
+        private Task<UploadResult> _HandleUploadAsync(string base64, string fileName)
+        {
+            return _uploadService.UploadBinaryAsync(base64, fileName: fileName);
         }
 
         [AllowAnonymous]

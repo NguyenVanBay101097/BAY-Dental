@@ -13,8 +13,10 @@ namespace Umbraco.Web.Mapping
         public LaboOrderLineProfile()
         {
             CreateMap<LaboOrderLine, LaboOrderLineBasic>();
+
             CreateMap<LaboOrderLine, LaboOrderLineDisplay>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderLineToothRels.Select(m => m.Tooth)));
+
             CreateMap<LaboOrderLineDisplay, LaboOrderLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
@@ -30,6 +32,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Color, x => x.Condition(s => s.State == "draft"));
 
             CreateMap<LaboOrderLine, LaboOrderLinePrintVM>();
+
+            CreateMap<LaboOrderLine, LaboOrderStatisticsBasic>();
         }
     }
 }

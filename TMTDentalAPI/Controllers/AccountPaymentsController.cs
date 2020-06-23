@@ -110,42 +110,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id)
-        //{
-        //    var category = await _partnerCategoryService.SearchQuery(x => x.Id == id).Include(x => x.Parent).FirstOrDefaultAsync();
-        //    if (category == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(_mapper.Map<PartnerCategoryDisplay>(category));
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> Create(PartnerCategoryDisplay val)
-        //{
-        //    if (null == val || !ModelState.IsValid)
-        //        return BadRequest();
-
-        //    var category = _mapper.Map<PartnerCategory>(val);
-        //    await _partnerCategoryService.CreateAsync(category);
-
-        //    return CreatedAtAction(nameof(Get), new { id = category.Id }, val);
-        //}
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(Guid id, PartnerCategoryDisplay val)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest();
-        //    var category = await _partnerCategoryService.GetByIdAsync(id);
-        //    if (category == null)
-        //        return NotFound();
-
-        //    category = _mapper.Map(val, category);
-        //    await _partnerCategoryService.UpdateAsync2(category);
-
-        //    return NoContent();
-        //}
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _paymentService.GetPrint(id);
+            return Ok(res);
+        }
     }
 }

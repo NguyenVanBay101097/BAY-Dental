@@ -25,6 +25,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   providers: [
     SaleReportService
-  ]
+  ],
+  exports: [SaleReportItemDetailComponent]
 })
 export class SaleReportModule { }

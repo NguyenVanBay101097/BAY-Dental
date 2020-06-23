@@ -699,10 +699,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self,
-            Guid pricelistId,
-            Guid? partnerId = null, decimal quantity = 1,
-            DateTime? date = null)
+        public async Task<IDictionary<Guid, decimal>> _ComputeProductPrice(IEnumerable<Product> self, Guid pricelistId, Guid? partnerId = null, decimal quantity = 1, DateTime? date = null)
         {
             var res = new Dictionary<Guid, decimal>();
             foreach (var product in self)

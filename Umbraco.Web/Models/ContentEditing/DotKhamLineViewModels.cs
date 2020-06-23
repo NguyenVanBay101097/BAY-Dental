@@ -38,12 +38,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
-        public Guid? RoutingId { get; set; }
-        public RoutingSimple Routing { get; set; }
-
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
-
         public int? Sequence { get; set; }
 
         /// <summary>
@@ -53,17 +47,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// done: hoàn thành
         /// </summary>
         public string State { get; set; }
-
-        public DateTime? DateStart { get; set; }
-
-        public DateTime? DateFinished { get; set; }
-
-        /// <summary>
-        /// Check xem đã có operation nào chưa? dùng để readonly product, routing
-        /// </summary>
-        public bool HasOps { get; set; }
-
-        public IEnumerable<DotKhamLineOperationDisplay> Operations { get; set; } = new List<DotKhamLineOperationDisplay>();
     }
 
     public class DotKhamLineChangeRouting

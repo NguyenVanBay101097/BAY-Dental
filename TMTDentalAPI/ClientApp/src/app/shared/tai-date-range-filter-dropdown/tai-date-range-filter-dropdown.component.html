@@ -5,6 +5,7 @@
         <span *ngIf="dateFrom && dateTo">{{dateFrom | date: 'shortDate'}} - {{dateTo | date: 'shortDate'}}</span>
         <span *ngIf="dateFrom && !dateTo">{{dateFrom | date: 'shortDate'}} - ...</span>
         <span *ngIf="!dateFrom && dateTo">... - {{dateTo | date: 'shortDate'}}</span>
+        <span class="ml-2" *ngIf="dateFrom || dateTo" title="Hủy lọc" (click)="onClear($event)"><i class="fas fa-times"></i></span>
     </button>
     <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
         <button class="dropdown-item" *ngFor="let option of quickOptions" type="button"
@@ -39,7 +40,7 @@
                 <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
                     Áp dụng
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear()">
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear($event)">
                     Hủy lọc
                 </button>
                 <button type="button" class="btn btn-light btn-sm mr-2" (click)="myDrop.toggle()">

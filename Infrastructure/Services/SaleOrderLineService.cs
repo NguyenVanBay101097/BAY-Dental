@@ -50,6 +50,7 @@ namespace Infrastructure.Services
             }
         }
 
+        //Get thong tin cua 1 dich vu
         public async Task<SaleOrderLineOnChangeProductResult> OnChangeProduct(SaleOrderLineOnChangeProduct val)
         {
             var res = new SaleOrderLineOnChangeProductResult();

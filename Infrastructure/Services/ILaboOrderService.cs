@@ -20,5 +20,7 @@ namespace Infrastructure.Services
         Task ButtonCancel(IEnumerable<Guid> ids);
         Task<LaboOrderPrintVM> GetPrint(Guid id);
         Task<IEnumerable<LaboOrderBasic>> GetAllForDotKham(Guid dotKhamId);
+
+        Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val);
     }
 }

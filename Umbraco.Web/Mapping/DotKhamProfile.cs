@@ -27,6 +27,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Doctor, x => x.Ignore())
                 .ForMember(x => x.Assistant, x => x.Ignore())
                 .ForMember(x => x.Appointment, x => x.Ignore())
+                .ForMember(x => x.AssistantUser, x => x.Ignore())
                 .ForMember(x => x.SaleOrderId, x => x.Condition(s => s.State == "draft"))
                 .ForMember(x => x.PartnerId, x => x.Condition(s => s.State == "draft"))
                 .ForMember(x => x.Date, x => x.Condition(s => s.State == "draft"));

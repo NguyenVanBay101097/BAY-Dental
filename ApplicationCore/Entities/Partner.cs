@@ -13,6 +13,7 @@ namespace ApplicationCore.Entities
         {
             Customer = true;
             Active = true;
+            Date = DateTime.Today;
         }
 
         public string DisplayName { get; set; }
@@ -100,6 +101,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<PartnerHistoryRel> PartnerHistoryRels { get; set; } = new List<PartnerHistoryRel>();
 
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
         /// <summary>
         /// Mã tỉnh/thành phố
         /// </summary>
@@ -144,14 +147,16 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Nguồn biết đến
-        /// </summary>
-        public string Source { get; set; }
+        /// </summary>       
+        public Guid? SourceId { get; set; }
+
+        public PartnerSource Source { get; set; }
 
         /// <summary>
         /// Nhân viên giới thiệu
         /// </summary>
-        public Guid? EmployeeId { get; set; }
-        public Employee Employees { get; set; }
+        public string ReferralUserId { get; set; }
+        public ApplicationUser ReferralUser { get; set; }
 
         /// <summary>
         /// Ghi chú khi nguồn là 'Khác'
@@ -164,5 +169,10 @@ namespace ApplicationCore.Entities
         public string Avatar { get; set; }
 
         public string ZaloId { get; set; }
+
+        /// <summary>
+        /// Ngay lap ho so khach hang
+        /// </summary>
+        public DateTime? Date { get; set; }
     }
 }

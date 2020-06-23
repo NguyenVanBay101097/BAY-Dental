@@ -19,6 +19,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public Guid OrderId { get; set; }
+        public SaleOrderBasic Order { get; set; }
+
         /// <summary>
         /// %
         /// </summary>

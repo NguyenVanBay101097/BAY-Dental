@@ -16,6 +16,8 @@ export class DotKhamBasic {
     date: string;
     partnerId: string;
     partner: object;
+    assistantUserId: string;
+    assistantUser: object;
     doctorId: string;
     doctor: object;
     userId: string;
@@ -83,8 +85,8 @@ export class DotKhamStepSave {
 export class DotKhamPatch {
     dotKhamId: string;
     appointmentId: string;
-    
-   
+
+
 }
 
 export class DotkhamEntitySearchBy {

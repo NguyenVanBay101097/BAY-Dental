@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Tien trinh dieu tri
     /// </summary>
-    public class DotKham: BaseEntity
+    public class DotKham : BaseEntity
     {
         public DotKham()
         {
@@ -67,6 +67,9 @@ namespace ApplicationCore.Entities
 
         public Guid? AppointmentId { get; set; }
         public Appointment Appointment { get; set; }
+
+        public string AssistantUserId { get; set; }
+        public ApplicationUser AssistantUser { get; set; }
 
         public ICollection<DotKhamLine> Lines { get; set; } = new List<DotKhamLine>();
 

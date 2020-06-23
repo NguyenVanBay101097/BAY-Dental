@@ -7,6 +7,12 @@ export class FacebookTagsPaged {
     search: string;
 }
 
+
+export class FacebookTagBasic {
+    id: string;
+    name: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FacebookTagsService {
     apiUrl = 'api/FacebookTags';

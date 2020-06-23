@@ -23,18 +23,28 @@ import { UserCuDialogComponent } from 'src/app/users/user-cu-dialog/user-cu-dial
 
 export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   dotKhamForm: FormGroup;
+  id: string;
   saleOrderId: string;
   filteredDoctors: EmployeeSimple[];
   filteredAssistants: EmployeeSimple[];
   filteredUsers: UserSimple[];
+  assistantUserSimpleFilter: UserSimple[];
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: true }) assistantCbx: ComboBoxComponent;
+  @ViewChild('assistantUserCbx', { static: true }) assistantUserCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   title: string;
 
-  constructor(private fb: FormBuilder, private dotKhamService: DotKhamService, private intlService: IntlService,
-    private employeeService: EmployeeService, private userService: UserService, public activeModal: NgbActiveModal, private modalService: NgbModal,
-    private errorService: AppSharedShowErrorService) { }
+  constructor(
+    private fb: FormBuilder,
+    private dotKhamService: DotKhamService,
+    private intlService: IntlService,
+    private employeeService: EmployeeService,
+    private userService: UserService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private errorService: AppSharedShowErrorService
+  ) { }
 
   ngOnInit() {
     this.dotKhamForm = this.fb.group({
@@ -43,7 +53,8 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       companyId: null,
       user: [null, Validators.required],
       saleOrderId: null,
-      partnerId: null
+      partnerId: null,
+      assistantUser: null
     });
 
     // setTimeout(() => {
@@ -56,24 +67,6 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       // this.getAssistantList();
       this.getUserList();
 
-      // this.doctorCbx.filterChange.asObservable().pipe(
-      //   debounceTime(300),
-      //   tap(() => (this.doctorCbx.loading = true)),
-      //   switchMap(value => this.searchDoctors(value))
-      // ).subscribe(result => {
-      //   this.filteredDoctors = result;
-      //   this.doctorCbx.loading = false;
-      // });
-
-      // this.assistantCbx.filterChange.asObservable().pipe(
-      //   debounceTime(300),
-      //   tap(() => (this.assistantCbx.loading = true)),
-      //   switchMap(value => this.searchAssistants(value))
-      // ).subscribe(result => {
-      //   this.filteredAssistants = result;
-      //   this.assistantCbx.loading = false;
-      // });
-
       this.userCbx.filterChange.asObservable().pipe(
         debounceTime(300),
         tap(() => (this.userCbx.loading = true)),
@@ -83,8 +76,29 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
         this.userCbx.loading = false;
       });
 
-      this.getDefault();
+      this.assistantUserCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.assistantUserCbx.loading = true)),
+        switchMap(value => this.searchUsers(value))
+      ).subscribe(result => {
+        this.assistantUserSimpleFilter = result;
+        this.assistantUserCbx.loading = false;
+      });
+      if (this.id)
+        this.loadData();
+      else
+        this.getDefault();
     });
+  }
+
+  loadData() {
+    this.dotKhamService.get(this.id).subscribe(
+      result => {
+        this.dotKhamForm.patchValue(result);
+        let date = new Date(result.date);
+        this.dotKhamForm.get('dateObj').patchValue(date);
+      }
+    )
   }
 
   getDefault() {
@@ -176,7 +190,8 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
 
     var val = this.dotKhamForm.value;
     val.doctorId = val.doctor ? val.doctor.id : null;
-    val.assistantId = val.assistant ? val.assistant.id : null;
+    val.userId = val.user ? val.user.id : null;
+    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
@@ -195,21 +210,32 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     if (!this.dotKhamForm.valid) {
       return;
     }
+
     var val = this.dotKhamForm.value;
     val.userId = val.user ? val.user.id : null;
+    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    this.dotKhamService.create(val).subscribe(result => {
-      this.dotKhamService.actionConfirm(result.id).subscribe(() => {
-        this.activeModal.close({
-          view: true,
-          result
+    if (this.id) {
+      this.dotKhamService.update(this.id, val).subscribe(
+        () => {
+          this.activeModal.close(val);
+        }
+      )
+    } else {
+      this.dotKhamService.create(val).subscribe(result => {
+        console.log(result);
+        this.dotKhamService.actionConfirm(result.id).subscribe(() => {
+          this.activeModal.close({
+            view: true,
+            result
+          });
+        }, err1 => {
+          this.errorService.show(err1);
         });
-      }, err1 => {
-        this.errorService.show(err1);
+      }, err2 => {
+        this.errorService.show(err2);
       });
-    }, err2 => {
-      this.errorService.show(err2);
-    });
+    }
   }
 
   onCancel() {
@@ -234,6 +260,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     this.searchUsers().subscribe(
       rs => {
         this.filteredUsers = _.unionBy(this.filteredUsers, rs, 'id');
+        this.assistantUserSimpleFilter = _.unionBy(this.assistantUserSimpleFilter, rs, 'id');
       });
   }
 }

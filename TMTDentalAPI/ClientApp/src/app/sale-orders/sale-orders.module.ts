@@ -18,9 +18,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderCreateLaboOrderDialogComponent } from './sale-order-create-labo-order-dialog/sale-order-create-labo-order-dialog.component';
 import { SaleOrderInvoiceListComponent } from './sale-order-invoice-list/sale-order-invoice-list.component';
 import { SaleOrderApplyServiceCardsDialogComponent } from './sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
+import { SaleOrderCuDialogComponent } from './sale-order-cu-dialog/sale-order-cu-dialog.component';
+import { SaleOrderCuFormComponent } from './sale-order-cu-form/sale-order-cu-form.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent],
+  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent, SaleOrderCuDialogComponent, SaleOrderCuFormComponent],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,
@@ -40,7 +42,8 @@ import { SaleOrderApplyServiceCardsDialogComponent } from './sale-order-apply-se
     SaleOrderLineDialogComponent,
     SaleOrderCreateDotKhamDialogComponent,
     SaleOrderApplyCouponDialogComponent,
-    SaleOrderApplyServiceCardsDialogComponent
+    SaleOrderApplyServiceCardsDialogComponent,
+    SaleOrderCuDialogComponent
   ]
 })
 export class SaleOrdersModule { }

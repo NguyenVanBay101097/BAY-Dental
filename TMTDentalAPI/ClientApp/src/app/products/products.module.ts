@@ -33,7 +33,30 @@ import { ProductServiceImportDialogComponent } from './product-service-import-di
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [ProductListComponent, ProductDialogComponent, ProductImportExcelDialogComponent, ProductSearchListComponent, ProductGridComponent, ProductServiceListComponent, ProductServiceFormComponent, ProductServiceCuDialogComponent, ProductAdvanceFilterComponent, ProductMedicineListComponent, ProductMedicineCuDialogComponent, ProductMedicineFormComponent, ProductLaboFormComponent, ProductLaboCuDialogComponent, ProductLaboListComponent, ProductProductListComponent, ProductProductCuDialogComponent, ProductProductFormComponent, ProductStepCuDialogComponent, ProductStepFormComponent, ProductAdvanceSearchComponent, ProductServiceImportDialogComponent],
+  declarations: [
+    ProductListComponent, 
+    ProductDialogComponent, 
+    ProductImportExcelDialogComponent, 
+    ProductSearchListComponent, 
+    ProductGridComponent, 
+    ProductServiceListComponent, 
+    ProductServiceFormComponent, 
+    ProductServiceCuDialogComponent, 
+    ProductAdvanceFilterComponent, 
+    ProductMedicineListComponent, 
+    ProductMedicineCuDialogComponent, 
+    ProductMedicineFormComponent, 
+    ProductLaboFormComponent, 
+    ProductLaboCuDialogComponent, 
+    ProductLaboListComponent, 
+    ProductProductListComponent, 
+    ProductProductCuDialogComponent, 
+    ProductProductFormComponent, 
+    ProductStepCuDialogComponent, 
+    ProductStepFormComponent, 
+    ProductAdvanceSearchComponent, 
+    ProductServiceImportDialogComponent
+  ],
   imports: [
     CommonModule,
     ProductsRoutingModule,

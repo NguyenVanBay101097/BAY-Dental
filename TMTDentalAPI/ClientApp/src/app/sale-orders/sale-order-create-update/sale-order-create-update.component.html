@@ -1,8 +1,8 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li>
-                <a routerLink="/sale-orders">Phiếu điều trị</a>
+            <li *ngIf="customerId">
+                <a [routerLink]="['/customer/' + customerId + '/treatment-payment']">Phiếu điều trị</a>
             </li>
             <li class="active">
                 <span *ngIf="id">{{saleOrder.name}}</span>
@@ -39,17 +39,16 @@
                         class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
                     </button>
+                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                        Thanh toán
+                    </button>
+                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                        In phiếu
+                    </button>
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
                         (click)="actionInvoiceCreateV2()">
-                        Tạo hóa đơn
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateDotKham()">
-                        Tạo đợt khám
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateLabo()">
-                        Tạo phiếu labo
+                        Cập nhật công nợ
                     </button>
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
@@ -59,13 +58,7 @@
                         (click)="actionDone()">
                         Khóa
                     </button>
-                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
-                        class="btn btn-secondary btn-sm" (click)="actionSaleOrderPayment()">
-                        Thanh toán
-                    </button>
-                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                        In phiếu
-                    </button>
+                   
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
@@ -116,13 +109,82 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="partner" [routerLink]="['/customer/' + partner.id]">{{partner.displayName}}</a>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bảng giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPricelists"
+                                        [class.d-none]="saleOrder.state != 'draft'" [textField]="'name'"
+                                        [filterable]="true" #pricelistCbx formControlName="pricelist"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <span
+                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.pricelist ? saleOrder.pricelist.name : ''}}</span>
+                                </td>
+                            </tr> -->
+                            <!-- <tr *ngIf="saleOrder.quote">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phiếu tư vấn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="saleOrder.quote" [routerLink]="['/sale-quotations/form']"
+                                        [queryParams]="{id: saleOrder.quote.id}">{{saleOrder.quote.name}}</a>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày lập phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
+                                        formControlName="dateOrderObj">
+                                    </kendo-datetimepicker>
+                                    <span
+                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.dateOrder | date: 'short'}}</span>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [class.d-none]="saleOrder.state != 'draft'" [data]="filteredUsers"
+                                        [textField]="'name'" [filterable]="true" #userCbx formControlName="user"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <span
+                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.user ? saleOrder.user.name : ''}}</span>
+                                </td>
+                            </tr> -->
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
-                                        <kendo-combobox id="partner" [class.d-none]="saleOrder.state != 'draft'"
+                                        <kendo-combobox [class.d-none]="saleOrder.state != 'draft'"
                                             [data]="filteredPartners" [textField]="'name'" [filterable]="true"
                                             #partnerCbx formControlName="partner" [valueField]="'id'"
                                             (valueChange)="onChangePartner($event)">
                                         </kendo-combobox>
-
                                         <a [class.d-none]="saleOrder.state != 'draft'" title="Sửa khách hàng"
                                             class="pl-2 py-1" type="button" *ngIf="partner"
                                             (click)="updateCustomerModal()">
@@ -139,13 +201,8 @@
                                     </div>
                                     <a class="text-primary" (click)="updateCustomerModal()"
                                         [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.partner ? saleOrder.partner.name : ''}}</a>
-                                    <div *ngIf="fgControls.partner.invalid && (fgControls.partner.touched || fgControls.partner.dirty || submitted)"
-                                        class="text-danger">
-                                        <div *ngIf="fgControls.partner.errors.required">
-                                            Chọn khách hàng</div>
-                                    </div>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -175,43 +232,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày điều trị
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
-                                        formControlName="dateOrderObj">
-                                    </kendo-datetimepicker>
-                                    <span
-                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.dateOrder | date: 'short'}}</span>
-                                    <div *ngIf="fgControls.dateOrderObj.invalid && (fgControls.dateOrderObj.touched || fgControls.dateOrderObj.dirty || submitted)"
-                                        class="text-danger">
-                                        <div *ngIf="fgControls.dateOrderObj.errors.required">Nhập ngày điều trị</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Bác sĩ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="saleOrder.state != 'draft'" [data]="filteredUsers"
-                                        [textField]="'name'" [filterable]="true" #userCbx formControlName="user"
-                                        [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <span
-                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.user ? saleOrder.user.name : ''}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
 
                 <div class="o_notebook">
@@ -219,7 +239,7 @@
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                                aria-controls="home" aria-selected="true">Chi tiết</a>
+                                aria-controls="home" aria-selected="true">Dịch vụ</a>
                         </li>
                         <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
@@ -254,7 +274,7 @@
                                             <th class="text-right">Giảm</th>
                                             <th class="text-right">Thành tiền</th>
                                             <th class="text-right"
-                                                *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1">#</th>
+                                                *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1"></th>
                                         </tr>
                                     </thead>
                                     <tbody formArrayName="orderLines">
@@ -268,6 +288,7 @@
                                                 <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
                                                 <td class="text-right">
                                                     {{getDiscountNumber(line) | number}}{{getDiscountTypeDisplay(line)}}
+
                                                 </td>
                                                 <td class="text-right">{{ line.get('priceSubTotal').value | number }}
                                                 </td>
@@ -345,22 +366,29 @@
                         </div>
                         <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="profile" role="tabpanel"
                             aria-labelledby="profile-tab">
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionCreateDotKham()">
+                                    Tạo đợt khám
+                                </button>
+                            </div>
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th>Số đợt khám</th>
                                         <th>Ngày khám</th>
                                         <th>Bác sĩ</th>
+                                        <th>Phụ tá</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let dk of dotKhams">
-                                        <td>
-                                            <a [routerLink]="['/dot-khams/edit/', dk.id]">{{dk.name}}</a>
-                                        </td>
+                                        <td (click)="actionEditDotKham(dk)" style="cursor: pointer; color: #007bff;">
+                                            {{dk.name}}</td>
                                         <td>{{ dk.date | date : 'short' }}</td>
                                         <td>{{ dk.user ? dk.user.name : '' }}</td>
+                                        <td>{{dk.assistantUser ? dk.assistantUser.name : ''}}</td>
                                         <td>
                                             <a title="Xóa" (click)="deleteDotKham(dk)">
                                                 <span class="far fa-trash-alt"></span></a>
@@ -371,6 +399,12 @@
                         </div>
                         <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
                             aria-labelledby="labo-tab">
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionLabo()">
+                                    Tạo phiếu labo
+                                </button>
+                            </div>
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -379,18 +413,26 @@
                                         <th>Ngày gửi</th>
                                         <th>Ngày nhận</th>
                                         <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let lb of laboOrders">
+                                        <td (click)="actionLabo(lb)" style="cursor: pointer; color: #007bff;">
+                                            {{lb.name}}</td>
+                                        <td>{{lb.partnerName }}</td>
+                                        <td>{{lb.dateOrder | date: 'short' }}</td>
+                                        <td>{{lb.datePlanned | date: 'short' }}</td>
+                                        <td>{{lb.amountTotal | number }}</td>
                                         <td>
-                                            <a [routerLink]="['/labo-orders/form']"
-                                                [queryParams]="{id: lb.id}">{{lb.name}}</a>
+                                            <span *ngIf="lb.state==='purchase'">Đơn hàng</span>
+                                            <span *ngIf="lb.state==='draft'">Nháp</span>
                                         </td>
-                                        <td>{{ lb.partnerName }}</td>
-                                        <td>{{ lb.dateOrder | date: 'short' }}</td>
-                                        <td>{{ lb.datePlanned | date: 'short' }}</td>
-                                        <td>{{ lb.amountTotal | number }}</td>
+                                        <td>
+                                            <a title="Xóa" (click)="deleteDotKham(dk)">
+                                                <span class="far fa-trash-alt"></span></a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -486,7 +528,7 @@
                         <th>Dịch vụ</th>
                         <th class="text-right">Số lượng</th>
                         <th class="text-right">Đơn giá</th>
-                        <th class="text-right">Giảm</th>
+                        <th class="text-right">Giảm (%)</th>
                         <th class="text-right">Thành tiền</th>
                     </tr>
                 </thead>
@@ -495,9 +537,7 @@
                         <td>{{ line.productName }}</td>
                         <td class="text-right">{{ line.productUOMQty | number }}</td>
                         <td class="text-right">{{ line.priceUnit | number }}</td>
-                        <td class="text-right">
-                            {{getDiscountNumberObj(line) | number}}{{getDiscountTypeDisplayObj(line)}}
-                        </td>
+                        <td class="text-right">{{ line.discount | number }}</td>
                         <td class="text-right">{{ line.priceSubTotal | number }}</td>
                     </tr>
                 </tbody>

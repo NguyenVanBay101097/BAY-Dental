@@ -1,0 +1,124 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Thời gian gửi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="methodType"
+                                            id="inlineRadio1" value="interval">
+                                        <label class="form-check-label" for="inlineRadio1">Delay</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="methodType"
+                                            id="inlineRadio2" value="shedule">
+                                        <label class="form-check-label" for="inlineRadio2">Thời gian cụ thể</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"></label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div *ngIf="methodTypeValue == 'interval'" class="d-flex">
+                                        <kendo-numerictextbox formControlName="intervalNumber" [min]="0"
+                                            [format]="'n0'">
+                                        </kendo-numerictextbox>
+                                        <select class="form-control" formControlName="intervalType"
+                                            style="margin-left: 10px;">
+                                            <option value="minutes">Phút</option>
+                                            <option value="hours">Giờ</option>
+                                            <option value="weeks">Tuần</option>
+                                            <option value="months">Tháng</option>
+                                        </select>
+
+                                    </div>
+                                    <div *ngIf="methodTypeValue == 'shedule'">
+                                        <kendo-datetimepicker formControlName="sheduleDate">
+                                        </kendo-datetimepicker>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Kiểu gửi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="channelType"
+                                            id="inlineRadio3" value="priority">
+                                        <label class="form-check-label" for="inlineRadio3">Ưu tiên</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="channelType"
+                                            id="inlineRadio4" value="fixed">
+                                        <label class="form-check-label" for="inlineRadio4">Cố định</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Kênh gửi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
+                                        [filterable]="true" #channelSocialCbx formControlName="channelSocialId"
+                                        [valueField]="'id'" [valuePrimitive]="true">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
+                                        </ng-template>
+                                    </kendo-combobox>
+                                    <div
+                                        *ngIf="channelSocialIdControl.invalid && (channelSocialIdControl.dirty || channelSocialIdControl.touched || submited)">
+                                        <label *ngIf="channelSocialIdControl.errors.required" style="color: red;">Kênh
+                                            gửi không được để trống !</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Nội dung</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea formControlName="content" class="form-control"></textarea>
+                                    <div
+                                        *ngIf="contentControl.invalid && (contentControl.dirty || contentControl.touched || submited)">
+                                        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi
+                                            không được để trống !</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

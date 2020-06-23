@@ -27,6 +27,7 @@ export class ProductCategoryDialogComponent implements OnInit {
 
   @Input() public id: string;
   type: string;
+  submitted = false;
 
   constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal) {
@@ -75,6 +76,8 @@ export class ProductCategoryDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.myform.valid) {
       return;
     }
@@ -102,7 +105,12 @@ export class ProductCategoryDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     this.activeModal.dismiss();
+  }
+
+  get f() {
+    return this.myform.controls;
   }
 }
 

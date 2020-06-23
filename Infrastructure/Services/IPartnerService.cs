@@ -42,5 +42,9 @@ namespace Infrastructure.Services
 
         Task<PartnerImportResponse> ImportCustomer(PartnerImportExcelViewModel val);
         Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val);
+
+        Task<AppointmentBasic> GetNextAppointment(Guid id);
+
+        
     }
 }

@@ -14,32 +14,31 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
     },
+    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/customers' },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
-    {
-      name: 'Điều trị',
-      icon: 'fas fa-medkit',
-      children: [
-        { name: 'Phiếu điều trị', link: '/sale-orders' },
-        { name: 'Phiếu tư vấn', link: '/sale-quotations' },
-        // { name: 'Đợt khám', link: '/dot-khams' },
-      ]
-    },
-    {
-      name: 'Phiếu labo',
-      icon: 'fas fa-tooth',
-      link: '/labo-orders',
-      children: []
-    },
     // {
-    //   name: 'Quản lý labo',
-    //   icon: 'fas fa-tooth',
+    //   name: 'Điều trị',
+    //   icon: 'fas fa-medkit',
     //   children: [
-    //     { name: 'Phiếu Labo', link: '/labo-orders' },
-    //     { name: 'Báo cáo labo', link: '/labo-order-lines' },
+    //     { name: 'Phiếu điều trị', link: '/sale-orders' },
+    //     { name: 'Phiếu tư vấn', link: '/sale-quotations' },
+    //     // { name: 'Đợt khám', link: '/dot-khams' },
     //   ]
     // },
+    // {
+    //   name: 'Phiếu labo',
+    //   icon: 'fas fa-tooth',
+    //   link: '/labo-orders',
+    //   children: []
+    // },
+    {
+      name: 'Thống kê labo',
+      icon: 'fas fa-tooth',
+      children: [], 
+      link: '/labo-statistics'
+    },
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
@@ -79,7 +78,6 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
-        { name: 'Khách hàng', link: '/customers' },
         { name: 'Nhóm khách hàng', link: '/partner-categories' },
         { name: 'Nhà cung cấp', link: '/suppliers' },
         { name: 'Dịch vụ', link: '/product-services' },
@@ -106,6 +104,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm quyền', link: '/res-groups' },
         // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
+        // { name: 'Kịch bản', link: '/tcare-campaigns' },
       ]
     },
     {

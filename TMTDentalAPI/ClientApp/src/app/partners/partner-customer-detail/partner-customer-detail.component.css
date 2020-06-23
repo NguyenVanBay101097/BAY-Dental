@@ -1,0 +1,19 @@
+.custom-tab {
+    position: absolute;
+    top: 16px;
+    display: inline-flex;
+    font-size: 18px;
+}
+
+.tab-content {
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.active-tab {
+    border-bottom: 2px solid #4a90e2;
+}
+
+.custom-tab>.tab-content:hover {
+    border-bottom: 2px solid #4a90e2;
+}

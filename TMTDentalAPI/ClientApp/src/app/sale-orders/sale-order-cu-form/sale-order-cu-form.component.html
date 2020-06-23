@@ -1,0 +1,118 @@
+<form class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <!-- <div class="oe_title">
+                <h1>
+                    <span></span>
+                </h1>
+            </div> -->
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Khách hàng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox 
+                                    [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                    #partnerCbx formControlName="partner" [valueField]="'id'"
+                                    (valueChange)="onChangePartner($event)">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày lập phiếu
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datetimepicker 
+                                    formControlName="dateOrderObj">
+                                </kendo-datetimepicker>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <div class="mb-2">
+                    <button type="button" accesskey="a" class="btn btn-secondary btn-sm"
+                        (click)="showAddLineModal()">Thêm dịch vụ</button>
+                </div>
+                <div>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Dịch vụ</th>
+                                <th>Răng</th>
+                                <th class="text-right">Số lượng</th>
+                                <th class="text-right">Đơn giá</th>
+                                <th class="text-right">Giảm</th>
+                                <th class="text-right">Thành tiền</th>
+                                <th class="text-right">#</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="orderLines">
+                            <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                <tr [formGroupName]="i">
+                                    <td class="align-middle">{{ line.get('product').value.name }}</td>
+                                    <td class="align-middle">{{lineTeeth(line)}}</td>
+                                    <td class="text-right align-middle">{{ line.get('productUOMQty').value | number }}
+                                    </td>
+                                    <td class="text-right align-middle">{{ line.get('priceUnit').value | number }}</td>
+                                    <td class="text-right align-middle">
+                                        {{getDiscountNumber(line) | number}}{{getDiscountTypeDisplay(line)}}
+                                    </td>
+                                    <td class="text-right align-middle">{{ line.get('priceSubTotal').value | number }}
+                                    </td>
+                                    <td class="text-right align-middle">
+                                        <div>
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-secondary mr-1"
+                                                (click)="editLine(line)">
+                                                <span class="far fa-edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                (click)="deleteLine(i)">
+                                                <span class="far fa-trash-alt"></span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_8">
+                    </table>
+                    <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label pb-0">
+                                    <label class="o_form_label oe_subtotal_footer_separator">
+                                        Tổng tiền
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <span
+                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</form>

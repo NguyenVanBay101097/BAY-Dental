@@ -1,0 +1,24 @@
+.sidebar-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+}
+
+.sidebar-icon label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.flow {
+    stroke-dasharray: 8;
+    animation: dash 0.5s linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -16;
+    }
+}

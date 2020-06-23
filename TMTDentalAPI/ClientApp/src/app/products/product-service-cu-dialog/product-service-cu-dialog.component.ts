@@ -31,6 +31,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   inserted: boolean;
   filterdCategories: ProductCategoryBasic[] = [];
   opened = false;
+  submitted = false;
 
   stepNameEdit = true;
   categCbxLoading = false;
@@ -174,6 +175,8 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.productForm.valid) {
       return;
     }
@@ -228,6 +231,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   onCancel() {
+    this.submitted = false;
     if (this.inserted) {
       this.activeModal.close(true);
     } else {
@@ -369,6 +373,9 @@ export class ProductServiceCuDialogComponent implements OnInit {
     }
   }
 
+  get f() {
+    return this.productForm.controls;
+  }
 }
 
 

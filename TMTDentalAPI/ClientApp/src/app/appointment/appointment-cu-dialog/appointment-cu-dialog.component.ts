@@ -73,7 +73,7 @@ export class AppointmentCuDialogComponent implements OnInit {
   }
 
   loadRecord() {
-    this.appointmentService.getAppointmentInfo(this.id).subscribe(result => {
+    this.appointmentService.get(this.id).subscribe((result: any) => {
       this.appointmentForm.patchValue(result);
       let date = this.intlService.parseDate(result.date);
       this.appointmentForm.get('dateObj').patchValue(date);

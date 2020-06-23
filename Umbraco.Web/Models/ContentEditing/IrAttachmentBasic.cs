@@ -22,5 +22,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Url { get; set; }
         public string UploadId { get; set; }
+
+        public DateTime? DateCreated { get; set; }
     }
 }

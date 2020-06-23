@@ -1,214 +1,229 @@
 <header class="modal-header">
-  <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-  <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-    tabindex="-1">×</button>
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
-  <form class="o_form_view" [formGroup]="formGroup">
-    <div class="o_form_sheet_bg">
-      <div class="o_form_sheet">
-        <div class="oe_title">
-          <label class="o_form_label oe_edit_only">Tên khách hàng</label>
-          <h1>
-            <input class="form-control" formControlName="name" name="name">
-          </h1>
-        </div>
-        <div *ngIf="f.name.errors" class="text-danger">
-          <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>
-        </div>
-        <div class="o_group">
-          <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Điện thoại</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <input type="text" class="form-control" formControlName="phone" />
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Mã khách hàng</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <input class="form-control" formControlName="ref" placeholder="Để trống sẽ tự động phát sinh" />
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Giới tính</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" formControlName="gender" id="male_radio" value="male">
-                    <label class="form-check-label" for="male_radio">Nam</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" formControlName="gender" id="female_radio"
-                      value="female">
-                    <label class="form-check-label" for="female_radio">Nữ</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" formControlName="gender" id="other_radio"
-                      value="other">
-                    <label class="form-check-label" for="other_radio">Khác</label>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Ngày sinh</label>
-                </td>
-                <td colspan="1" style="width:100%">
-                  <div class="d-flex">
-                    <select class="form-control" formControlName="birthDay">
-                      <option value="null">Ngày</option>
-                      <option *ngFor="let i of dayList">
-                        {{i}}</option>
-                    </select>
-                    <select class="form-control" formControlName="birthMonth">
-                      <option value="null">Tháng</option>
-                      <option *ngFor="let i of monthList">
-                        {{i}}</option>
-                    </select>
-                    <select class="form-control" formControlName="birthYear">
-                      <option value="null">Năm</option>
-                      <option *ngFor="let i of yearList">
-                        {{i}}</option>
-                    </select>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Email</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <input type="text" class="form-control" formControlName="email" />
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Nhóm khách hàng</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <div class="x_12323">
-                    <kendo-multiselect class="form-control" [data]="categoriesList" [textField]="'name'"
-                      [valueField]="'id'" formControlName="categories">
-                    </kendo-multiselect>
-                    <button type="button" title="Thêm nhóm khách hàng" class="btn btn-light"
-                      (click)="quickCreatePartnerCategory()">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Nghề nghiệp</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <input class="form-control" formControlName="jobTitle" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">
-                    Địa chỉ
-                  </label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <div class="o_address_format mb-2">
-                    <div class="mb-2">
-                      <input class="form-control" placeholder="Số nhà, đường..." type="text" formControlName="street" />
-                    </div>
-                    <div class="mb-2">
-                      <kendo-combobox [data]="dataResultCities" [textField]="'name'" [filterable]="true"
-                        [placeholder]="'Tỉnh/Thành'" [filterable]="true" (filterChange)="handleCityFilter($event)"
-                        #cityCbx (valueChange)="handleCityChange($event)" formControlName="city" [valueField]="'code'">
-                      </kendo-combobox>
-                    </div>
-                    <div class="mb-2">
-                      <kendo-combobox [data]="dataResultDistricts" [textField]="'name'"
-                        [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'"
-                        (filterChange)="handleDistrictFilter($event)" [filterable]="true" #districtCbx
-                        (valueChange)="handleDistrictChange($event)" formControlName="district" [valueField]="'code'">
-                      </kendo-combobox>
-                    </div>
-                    <kendo-combobox [data]="dataResultWards" [textField]="'name'" [disableControl]="isDisabledWards"
-                      [placeholder]="'Phường/Xã'" [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx
-                      (valueChange)="handleWardChange($event)" formControlName="ward" [valueField]="'code'">
-                    </kendo-combobox>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
-                    chú</label></td>
-                <td colspan="1" style="width: 100%;">
-                  <textarea class="form-control" formControlName="comment"></textarea>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="o_notebook">
-          <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#medical_history" role="tab"
-                aria-controls="home" aria-selected="true">Tiểu sử bệnh</a>
-            </li>
-          </ul>
-          <div class="tab-content">
-            <div class="tab-pane active" id="medical_history" role="tabpanel" aria-labelledby="info-tab">
-              <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                  <tbody>
-                    <tr>
-                      <td colspan="1" class="o_td_label">
-                        <label class="o_form_label">Tiểu sử bệnh</label>
-                      </td>
-                      <td colspan="1" style="width:100%">
-                        <div *ngFor="let i of historiesList" class="checkbox">
-                          <label><input type="checkbox" [checked]="checked(i)"
-                              (change)="checkboxChange(i,$event.target.checked)" />
-                            {{i.name}}
-                          </label>
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Họ tên</label>
+                    <h1>
+                        <input class="form-control" formControlName="name" name="name">
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Điện thoại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="phone" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Mã khách hàng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="ref"
+                                        placeholder="Để trống sẽ tự động phát sinh" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Giới tính</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender"
+                                            id="male_radio" value="male">
+                                        <label class="form-check-label" for="male_radio">Nam</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender"
+                                            id="female_radio" value="female">
+                                        <label class="form-check-label" for="female_radio">Nữ</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender"
+                                            id="other_radio" value="other">
+                                        <label class="form-check-label" for="other_radio">Khác</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày sinh</label>
+                                </td>
+                                <td colspan="1" style="width:100%">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="birthDay">
+                                            <option value="null">Ngày</option>
+                                            <option *ngFor="let i of dayList">
+                                                {{i}}</option>
+                                        </select>
+                                        <select class="form-control" formControlName="birthMonth">
+                                            <option value="null">Tháng</option>
+                                            <option *ngFor="let i of monthList">
+                                                {{i}}</option>
+                                        </select>
+                                        <select class="form-control" formControlName="birthYear">
+                                            <option value="null">Năm</option>
+                                            <option *ngFor="let i of yearList">
+                                                {{i}}</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Email</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="email" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nhóm khách hàng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="x_12323">
+                                        <kendo-multiselect class="form-control" [data]="categoriesList"
+                                            [textField]="'name'" [valueField]="'id'" formControlName="categories">
+                                        </kendo-multiselect>
+                                        <button type="button" title="Thêm nhóm khách hàng" class="btn btn-light"
+                                            (click)="quickCreatePartnerCategory()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nghề nghiệp</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="jobTitle" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày tạo</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Địa chỉ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_address_format mb-2">
+                                        <div class="mb-2">
+                                            <input class="form-control" placeholder="Số nhà, đường..." type="text"
+                                                formControlName="street" />
+                                        </div>
+                                        <div class="mb-2">
+                                            <kendo-combobox [data]="dataResultCities" [textField]="'name'"
+                                                [filterable]="true" [placeholder]="'Tỉnh/Thành'" [filterable]="true"
+                                                (filterChange)="handleCityFilter($event)" #cityCbx
+                                                (valueChange)="handleCityChange($event)" formControlName="city"
+                                                [valueField]="'code'">
+                                            </kendo-combobox>
+                                        </div>
+                                        <div class="mb-2">
+                                            <kendo-combobox [data]="dataResultDistricts" [textField]="'name'"
+                                                [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'"
+                                                (filterChange)="handleDistrictFilter($event)" [filterable]="true"
+                                                #districtCbx (valueChange)="handleDistrictChange($event)"
+                                                formControlName="district" [valueField]="'code'">
+                                            </kendo-combobox>
+                                        </div>
+                                        <kendo-combobox [data]="dataResultWards" [textField]="'name'"
+                                            [disableControl]="isDisabledWards" [placeholder]="'Phường/Xã'"
+                                            [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx
+                                            (valueChange)="handleWardChange($event)" formControlName="ward"
+                                            [valueField]="'code'">
+                                        </kendo-combobox>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
+                                        chú</label></td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" formControlName="comment"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#medical_history"
+                                role="tab" aria-controls="home" aria-selected="true">Tiểu sử bệnh</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="medical_history" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Tiểu sử bệnh</label>
+                                            </td>
+                                            <td colspan="1" style="width:100%">
+                                                <div *ngFor="let i of historiesList" class="checkbox">
+                                                    <label><input type="checkbox" [checked]="checked(i)"
+                                                            (change)="checkboxChange(i,$event.target.checked)" />
+                                                        {{i.name}}
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Tiểu sử khác</label>
+                                            </td>
+                                            <td colspan="1" style="width:100%">
+                                                <textarea class="form-control"
+                                                    formControlName="medicalHistory"></textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                  <tbody>
-                    <tr>
-                      <td colspan="1" class="o_td_label">
-                        <label class="o_form_label">Tiểu sử khác</label>
-                      </td>
-                      <td colspan="1" style="width:100%">
-                        <textarea class="form-control" formControlName="medicalHistory"></textarea>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </form>
+    </form>
 </div>
 
 <div class="modal-footer">
-  <div>
-    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
-  </div>
+    <div>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+        <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    </div>
 </div>

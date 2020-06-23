@@ -46,6 +46,7 @@ namespace ApplicationCore.Entities
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+
         public decimal? AmountTax { get; set; }
 
         public decimal? AmountUntaxed { get; set; }
@@ -113,9 +114,10 @@ namespace ApplicationCore.Entities
         //public Guid? EmployeeId { get; set; }
         //public Employee Employee { get; set; }
 
-        public ICollection<SaleOrderNoCodePromoProgram> NoCodePromoPrograms { get; set; } = new List<SaleOrderNoCodePromoProgram>();
         public Guid? CodePromoProgramId { get; set; }
         public SaleCouponProgram CodePromoProgram { get; set; }
+
+        public ICollection<SaleOrderNoCodePromoProgram> NoCodePromoPrograms { get; set; } = new List<SaleOrderNoCodePromoProgram>();
 
         public ICollection<SaleCoupon> AppliedCoupons { get; set; } = new List<SaleCoupon>();
 

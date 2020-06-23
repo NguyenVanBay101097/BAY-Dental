@@ -38,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountInvoiceService _accountInvoiceService;
         private readonly IAccountPaymentService _paymentService;
         private readonly IServiceCardCardService _serviceCardService;
+        private readonly IPartnerSourceService _partnerSourceService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -47,7 +48,8 @@ namespace TMTDentalAPI.Controllers
             IIRModelAccessService modelAccessService,
             IAccountInvoiceService accountInvoiceService,
             IAccountPaymentService paymentService,
-            IServiceCardCardService serviceCardService)
+            IServiceCardCardService serviceCardService,
+            IPartnerSourceService partnerSourceService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -59,6 +61,7 @@ namespace TMTDentalAPI.Controllers
             _accountInvoiceService = accountInvoiceService;
             _paymentService = paymentService;
             _serviceCardService = serviceCardService;
+            _partnerSourceService = partnerSourceService;
         }
 
         [HttpGet]
@@ -105,6 +108,17 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
+
+            if (partner.SourceId != null)
+            {
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
+            }
+            else
+            {
+                partner.ReferralUserId = null;
+            }
+
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.CreateAsync(partner);
@@ -138,7 +152,17 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
-            partner.EmployeeId = val.EmployeeId;
+
+            if (partner.SourceId != null)
+            {
+                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
+                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
+            }
+            else
+            {
+                partner.ReferralUserId = null;
+            }
+
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.UpdateAsync(partner);
@@ -258,6 +282,8 @@ namespace TMTDentalAPI.Controllers
             }
 
         }
+
+    
 
         [HttpGet("{id}/GetInfo")]
         public async Task<IActionResult> GetInfo(Guid id)
@@ -436,7 +462,7 @@ namespace TMTDentalAPI.Controllers
 
                 for (int row = 2; row < partners.Count + 2; row++)
                 {
-                    var item = partners[row - 2]; 
+                    var item = partners[row - 2];
                     var entity = await _partnerService.GetPartnerForDisplayAsync(item.Id);
 
                     var ar = new List<string>();
@@ -450,10 +476,10 @@ namespace TMTDentalAPI.Controllers
 
                     var histories = entity.PartnerHistoryRels.Select(x => x.History.Name).ToList();
                     histories.Add(item.MedicalHistory);
-                        
+
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
-                    worksheet.Cells[row, 3].Value = (item.Gender=="male") ? "Nam" : (item.Gender == "female") ? "Nữ" : "Khác";
+                    worksheet.Cells[row, 3].Value = (item.Gender == "male") ? "Nam" : (item.Gender == "female") ? "Nữ" : "Khác";
                     worksheet.Cells[row, 4].Value = item.BirthDay + "/" + item.BirthMonth + "/" + item.BirthYear;
                     worksheet.Cells[row, 5].Value = item.Phone;
                     worksheet.Cells[row, 6].Value = address;
@@ -484,6 +510,15 @@ namespace TMTDentalAPI.Controllers
             partner.WardCode = val.Ward != null ? val.Ward.Code : string.Empty;
             partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
         }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetNextAppointment(Guid id)
+        {
+            var res = await _partnerService.GetNextAppointment(id);
+            return Ok(res);
+        }
+
+        
 
         //[HttpPost("[action]")]
         //public async Task<IActionResult> CheckMegerFacebookPage(CheckMergeFacebookPage val) {

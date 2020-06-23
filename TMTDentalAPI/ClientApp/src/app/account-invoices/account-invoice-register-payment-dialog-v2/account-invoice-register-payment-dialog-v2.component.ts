@@ -22,6 +22,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   loading = false;
   title: string;
 
+  showPrint = false;
+
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
     private errorService: AppSharedShowErrorService) { }
@@ -42,21 +44,23 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       serviceCardOrderIds: null,
     });
 
-    if (this.defaultVal) {
-      this.paymentForm.patchValue(this.defaultVal);
-      var paymentDate = new Date(this.defaultVal.paymentDate);
-      this.paymentForm.get('paymentDateObj').setValue(paymentDate);
-    }
-
-    this.loadFilteredJournals();
-
-    this.journalCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.journalCbx.loading = true)),
-      switchMap(value => this.accountJournalService.autocomplete(value))
-    ).subscribe(result => {
-      this.filteredJournals = result;
-      this.journalCbx.loading = false;
+    setTimeout(() => {
+      if (this.defaultVal) {
+        this.paymentForm.patchValue(this.defaultVal);
+        var paymentDate = new Date(this.defaultVal.paymentDate);
+        this.paymentForm.get('paymentDateObj').setValue(paymentDate);
+      }
+  
+      this.loadFilteredJournals();
+  
+      this.journalCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap(value => this.accountJournalService.autocomplete(value))
+      ).subscribe(result => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+      });
     });
   }
 
@@ -81,6 +85,25 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
         this.activeModal.close(true);
+      }, (err) => {
+        this.errorService.show(err);
+      });
+    }, (err) => {
+      this.errorService.show(err);
+    });
+  }
+
+  saveAndPrint() {
+    if (!this.paymentForm.valid) {
+      return;
+    }
+
+    this.create().subscribe((result: any) => {
+      this.paymentService.post([result.id]).subscribe(() => {
+        this.activeModal.close({
+          print: true,
+          paymentId: result.id
+        });
       }, (err) => {
         this.errorService.show(err);
       });

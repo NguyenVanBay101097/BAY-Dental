@@ -1,0 +1,109 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_content">
+        <form class="o_form_view" [formGroup]="formGroup">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet">
+                    <div class="o_group">
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Labo
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <div class="d-flex">
+                                            <kendo-combobox [data]="filteredPartners" [textField]="'name'"
+                                                [filterable]="true" #partnerCbx formControlName="partner"
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày gửi
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="dateOrderObj">
+                                        </kendo-datepicker>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày nhận
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
+                                            formControlName="datePlannedObj">
+                                        </kendo-datepicker>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group">
+                        <!-- <h4>Chọn dịch vụ theo dịch vụ được lấy ra trong danh sách dịch vụ người dùng đã làm</h4> -->
+                        <table class="table table-light table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tên dịch vụ</th>
+                                    <th>Loại răng</th>
+                                    <th>Răng</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Giảm giá</th>
+                                    <th>Thành tiền</th>
+                                    <th>Chọn</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of listSaleOrderLine">
+                                    <td>{{item.name}}</td>
+                                    <td>{{item.toothCategory && item.toothCategory.name}}</td>
+                                    <td>
+                                        <label *ngIf="item.teeth && item.teeth.length > 0">
+                                            <span *ngFor="let teeth of item.teeth">{{teeth.name}} </span>
+
+                                        </label>
+                                    </td>
+                                    <td>{{item.productUOMQty}}</td>
+                                    <td>{{item.priceUnit}}</td>
+                                    <td>{{item.discount}}</td>
+                                    <td>{{item.priceTotal}}</td>
+                                    <td>
+                                        <input type="checkbox" (click)="chooseLaboOrderLine(item)">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<footer class="modal-footer">
+    <!-- <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác nhận</button> -->
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

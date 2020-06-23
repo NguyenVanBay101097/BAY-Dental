@@ -29,21 +29,60 @@ import { SharedModule } from '../shared/shared.module';
 import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
 import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
 import { CustomComponentModule } from '../common/common.module';
+import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
+import { HttpClientModule } from '@angular/common/http';
+import { NgbActiveModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
+import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
+import { PartnerCustomerProfileNextAppointmentComponent } from './partner-customer-profile-next-appointment/partner-customer-profile-next-appointment.component';
+import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
+import { SaleReportModule } from '../sale-report/sale-report.module';
+import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
+import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
+import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
-  declarations: [PartnerListComponent, PartnerCreateUpdateComponent, PartnerInfoComponent,
-    PartnerCustomerListComponent, PartnerCustomerListDetailComponent, PartnerCustomerInfoComponent,
-    PartnerCustomerInvoicesComponent, PartnerHistoryComponent, PartnerDetailListComponent, PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent, PartnerSupplierListComponent, PartnerInvoiceLinesComponent, PartnerImportComponent, PartnerPaymentsComponent, PurchaseOrderRefundComponent, PartnerCardsTabPaneComponent, PartnerTabSaleOrderListComponent, PartnerSearchDialogComponent],
+  declarations: [PartnerListComponent,
+    PartnerCreateUpdateComponent,
+    PartnerInfoComponent,
+    PartnerCustomerListComponent,
+    PartnerCustomerListDetailComponent,
+    PartnerCustomerInfoComponent,
+    PartnerCustomerInvoicesComponent,
+    PartnerHistoryComponent,
+    PartnerDetailListComponent,
+    PartnerCustomerCuDialogComponent,
+    PartnerSupplierCuDialogComponent,
+    PartnerSupplierListComponent,
+    PartnerInvoiceLinesComponent,
+    PartnerImportComponent,
+    PartnerPaymentsComponent,
+    PurchaseOrderRefundComponent,
+    PartnerCardsTabPaneComponent,
+    PartnerTabSaleOrderListComponent,
+    PartnerSearchDialogComponent,
+    PartnerCustomerDetailComponent,
+    PartnerCustomerProfileComponent,
+    PartnerCustomerProfileInforComponent,
+    PartnerCustomerProfileNextAppointmentComponent,
+    PartnerCustomerTreatmentPaymentComponent,
+    PartnerCustomerAppointmentComponent,
+    PartnerCustomerTreatmentPaymentDetailComponent,
+    PartnerCustomerTreatmentPaymentChildComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
+    HttpClientModule,
+    NgbDropdownModule,
     FormsModule,
     MatStepperModule,
     SharedModule,
-    CustomComponentModule
+    CustomComponentModule,
+    SaleReportModule,
+    FlexLayoutModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,
@@ -51,10 +90,16 @@ import { CustomComponentModule } from '../common/common.module';
     PartnerImportComponent,
     PartnerCustomerCuDialogComponent,
     PartnerSearchDialogComponent,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    PartnerCustomerTreatmentPaymentDetailComponent
   ],
   providers: [
-    PartnerService
+    PartnerService,
+    NgbActiveModal
+  ],
+  exports: [
+    PartnerCustomerDetailComponent,
+    PartnerCustomerTreatmentPaymentDetailComponent
   ]
 })
 export class PartnersModule { }

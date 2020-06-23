@@ -8,13 +8,19 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [UomCrUpComponent, UomListComponent],
+  declarations: [
+    UomCrUpComponent,
+    UomListComponent],
   imports: [
     CommonModule,
     UomRoutingModule,
     MyCustomKendoModule,
     FormsModule,
     ReactiveFormsModule
-  ], entryComponents: [UomCrUpComponent]
+  ],
+  entryComponents: [
+    UomCrUpComponent
+  ]
+
 })
 export class UomModule { }

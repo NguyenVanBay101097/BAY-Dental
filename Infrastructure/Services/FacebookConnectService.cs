@@ -48,7 +48,8 @@ namespace Infrastructure.Services
                     {
                         PageId = account.Id,
                         PageName = account.Name,
-                        PageAccessToken = account.PageAccesstoken
+                        PageAccessToken = account.PageAccesstoken,
+                        Picture = account.Picture != null ? account.Picture.data.url : null
                     });
                 }
 
@@ -72,7 +73,8 @@ namespace Infrastructure.Services
                     {
                         PageId = account.Id,
                         PageName = account.Name,
-                        PageAccessToken = account.PageAccesstoken
+                        PageAccessToken = account.PageAccesstoken,
+                        Picture = account.Picture != null ? account.Picture.data.url : null
                     });
                 }
 
@@ -85,7 +87,7 @@ namespace Infrastructure.Services
         public async Task<FacebookUserData> GetUserAccounts(string access_token, string user_id)
         {
             var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
-            var getRequestUrl = $"{user_id}?fields=id,name,accounts";
+            var getRequestUrl = $"{user_id}?fields=id,name,accounts" + "{access_token,name,picture}";
             var getRequest = (IGetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
             var response = (await getRequest.ExecuteAsync<FacebookUserData>());
 

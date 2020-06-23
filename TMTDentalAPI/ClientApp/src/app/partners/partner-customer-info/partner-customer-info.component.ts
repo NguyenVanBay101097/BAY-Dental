@@ -98,11 +98,11 @@ export class PartnerCustomerInfoComponent implements OnInit {
   getReferral() {
     if (this.partner.source) {
       var s = this.partner.source;
-      switch (s.toLowerCase()) {
-        case 'employee':
-          return this.partner.employees.name;
-        case 'other':
-          return this.partner.note;
+      switch (s.type.toLowerCase()) {
+        case 'normal':
+          return this.partner.source.name;
+        case 'referral':
+          return this.partner.referralUser.name;
         case 'ads':
           return 'Quảng cáo';
         case 'friend':

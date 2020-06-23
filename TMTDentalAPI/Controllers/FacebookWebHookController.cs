@@ -17,12 +17,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMarketingTraceService _marketingTraceService;
         private readonly IFacebookMessagingTraceService _messagingTraceService;
+        private readonly ITCareMessagingTraceService _tCareMessagingTraceService;
 
         public FacebookWebHookController(IMarketingTraceService marketingTraceService,
-            IFacebookMessagingTraceService messagingTraceService)
+            IFacebookMessagingTraceService messagingTraceService, ITCareMessagingTraceService tCareMessagingTraceService)
         {
             _marketingTraceService = marketingTraceService;
             _messagingTraceService = messagingTraceService;
+            _tCareMessagingTraceService = tCareMessagingTraceService;
         }
 
         [HttpPost]
@@ -39,34 +41,27 @@ namespace TMTDentalAPI.Controllers
                         if (messaging.Read != null)
                         {
                             var watermark = messaging.Read.Watermark.ToLocalTime();
-                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
-                            foreach (var trace in traces)
-                                trace.Opened = watermark;
-
-                            await _messagingTraceService.UpdateAsync(traces);
-                            //update marketingtraces
-                            var marketingtraces = await _marketingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
-                            foreach (var trace in marketingtraces)
+                            var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == messaging.Sender.Id && x.Type == "facebook" && x.ChannelSocial.PageId == messaging.Recipient.Id).ToListAsync();
+                            //var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();  
+                            foreach(var trace in traces)                            
                                 trace.Read = watermark;
+                                                       
+                            await _tCareMessagingTraceService.UpdateAsync(traces);
+                            await _tCareMessagingTraceService.AddTagWebhook(traces, "read");        
 
-                            await _marketingTraceService.UpdateAsync(marketingtraces);
                         }
 
                         if (messaging.Delivery != null)
                         {
                             var watermark = messaging.Delivery.Watermark.ToLocalTime();
-                            var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivered.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
+                            var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == messaging.Sender.Id && x.Type == "facebook" && x.ChannelSocial.PageId == messaging.Recipient.Id).ToListAsync();                           
+                           
+
                             foreach (var trace in traces)
-                                trace.Delivered = watermark;
+                             trace.Delivery = watermark;
 
-                            await _messagingTraceService.UpdateAsync(traces);
-                            //update marketingtraces
-                            var marketingtraces = await _marketingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
-                            foreach (var trace in marketingtraces)
-                                trace.Delivery = watermark;
-
-                            await _marketingTraceService.UpdateAsync(marketingtraces);
-
+                            await _tCareMessagingTraceService.UpdateAsync(traces);
+                            await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
 
 
 
