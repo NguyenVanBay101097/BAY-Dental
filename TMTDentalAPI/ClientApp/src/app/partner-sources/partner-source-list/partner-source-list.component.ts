@@ -49,12 +49,7 @@ export class PartnerSourceListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || "";
-    this.partnerSourceService
-      .getPaged(val)
-      .pipe(
-        map(
-          (response) =>
-            <GridDataResult>{
+    this.partnerSourceService.getPaged(val).pipe(map((response) => <GridDataResult>{
               data: response.items,
               total: response.totalItems,
             }
@@ -78,15 +73,7 @@ export class PartnerSourceListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(
-      PartnerSourceCreateUpdateDialogComponent,
-      {
-        size: "lg",
-        windowClass: "o_technical_modal",
-        keyboard: false,
-        backdrop: "static",
-      }
-    );
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent,{size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
 
     modalRef.result.then(
@@ -98,40 +85,22 @@ export class PartnerSourceListComponent implements OnInit {
   }
 
   editItem(item: PartnerSourceBasic) {
-    let modalRef = this.modalService.open(
-      PartnerSourceCreateUpdateDialogComponent,
-      {
-        size: "lg",
-        windowClass: "o_technical_modal",
-        keyboard: false,
-        backdrop: "static",
-      }
-    );
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, {size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
     modalRef.componentInstance.title = "Sửa nguồn khách hàng";
     modalRef.componentInstance.id = item.id;
-    modalRef.result.then(
-      () => {
-        this.loadDataFromApi();
-      },
+    modalRef.result.then(() => {
+        this.loadDataFromApi();},
       () => {}
     );
   }
 
   deleteItem(item: PartnerSourceBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, {
-      size: "sm",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
     modalRef.componentInstance.title = "Xóa: Nguồn khách hàng";
-    modalRef.result.then(
-      () => {
-        this.partnerSourceService.delete(item.id).subscribe(
-          () => {
+    modalRef.result.then(() => {
+        this.partnerSourceService.delete(item.id).subscribe(() => {
             this.loadDataFromApi();
-          },
-          (err) => {
+          },(err) => {
             console.log(err);
           }
         );

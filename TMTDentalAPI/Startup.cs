@@ -125,6 +125,7 @@ namespace TMTDentalAPI
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
+            
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
@@ -255,6 +256,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
+                mc.AddProfile(new PartnerSourceProfile());
                 mc.AddProfile(new ProvinceProfile());
                 mc.AddProfile(new DistrictProfile());
                 mc.AddProfile(new WardProfile());

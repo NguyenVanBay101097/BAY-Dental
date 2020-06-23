@@ -79,6 +79,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Nhóm khách hàng', link: '/partner-categories' },
+        { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/suppliers' },
         { name: 'Dịch vụ', link: '/product-services' },
         { name: 'Nhóm dịch vụ', link: '/product-categories/service' },
