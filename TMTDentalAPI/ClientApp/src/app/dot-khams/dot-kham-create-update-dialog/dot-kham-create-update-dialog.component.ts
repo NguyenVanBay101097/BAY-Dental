@@ -109,6 +109,9 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   editingStep: DotKhamStepDisplay;
 
+  title: string;
+  activeTabId = 1;
+
 
   constructor(
     private fb: FormBuilder,
@@ -128,7 +131,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     private injector: Injector,
     private modalService: NgbModal,
     private dotKhamStepService: DotKhamStepService,
-    private activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal
   ) { }
 
 

@@ -26,9 +26,11 @@ export class LaboOrderQuickCreateDialogComponent implements OnInit {
   listSaleOrderLine: SaleOrderLineDisplay[] = [];
   listLaboOrderLine: LaboOrderLineDisplay[] = [];
   saleOrderId: string;
+  title: string;
+  
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
     private saleOrderServive: SaleOrderService,

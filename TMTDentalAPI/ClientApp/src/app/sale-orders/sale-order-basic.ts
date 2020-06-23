@@ -9,4 +9,5 @@ export class SaleOrderBasic {
     residual: number;
     number: string;
     user: object;
+    dateOrder: string;
 }

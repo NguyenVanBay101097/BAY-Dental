@@ -36,6 +36,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   @ViewChild('saleOrderCbx', { static: true }) saleOrderCbx: ComboBoxComponent;
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
   laboOrderPrint: any;
+  title: string;
 
   constructor(
     private fb: FormBuilder,
@@ -49,7 +50,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private router: Router,
     private notificationService: NotificationService,
     private saleOrderService: SaleOrderService,
-    private activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal
   ) {
   }
 
