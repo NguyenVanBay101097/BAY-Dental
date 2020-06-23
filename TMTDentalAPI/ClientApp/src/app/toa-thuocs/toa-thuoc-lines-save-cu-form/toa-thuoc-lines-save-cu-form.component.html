@@ -13,9 +13,9 @@
             <th>#</th>
         </tr>
     </thead>
-    <tbody *ngIf="showCreateOrEdit" app-toa-thuoc-line-save 
+    <tbody *ngIf="showCreate" app-toa-thuoc-line-save 
         [createOrEdit]="true"
-        (showCreateOrEdit)="getShowCreateOrEdit($event)"
+        (showCreate)="getShowCreate($event)"
         (dataThuocSend)="getDataThuocSend($event)">
     </tbody>
     <tbody app-toa-thuoc-line-save 

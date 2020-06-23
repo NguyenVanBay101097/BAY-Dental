@@ -14,9 +14,10 @@ export class ToaThuocLineSaveComponent implements OnInit, OnChanges {
   id: string;
   filteredProducts: ProductSimple[];
   valThuocForm: any;
+  submitted = false;
   @Input() dataThuocReceive: any;
   @Input() createOrEdit: boolean;
-  @Output() showCreateOrEdit = new EventEmitter<boolean>();
+  @Output() showCreate = new EventEmitter<boolean>();
   @Output() dataThuocSend = new EventEmitter<any>();
 
   constructor(private fb: FormBuilder, private productService: ProductService) { }
@@ -35,6 +36,9 @@ export class ToaThuocLineSaveComponent implements OnInit, OnChanges {
     if (this.valThuocForm) {
       this.thuocForm.patchValue(this.valThuocForm);
     }
+
+    console.log(this.thuocForm);
+    console.log(this.thuocForm.controls);
 
     setTimeout(() => {
       this.loadFilteredProducts();
@@ -65,20 +69,31 @@ export class ToaThuocLineSaveComponent implements OnInit, OnChanges {
   }
 
   saveLine() {
-    this.showCreateOrEdit.emit(false);
+    this.submitted = true;
+
+    if (!this.thuocForm.valid) {
+      return;
+    }
+
+    this.showCreate.emit(false);
     this.dataThuocSend.emit(this.thuocForm.value);
   }
   
   cancelLine() {
-    this.showCreateOrEdit.emit(false);
+    this.submitted = false;
+    this.showCreate.emit(false);
   }
 
   editLine(i) {
-    this.showCreateOrEdit.emit(true);
+    // this.showCreateOrEdit.emit(true);
     // this.indexLineEdit = i;
   }
 
   deleteLine(i) {
     // this.lines.splice(i, 1); 
+  }
+
+  get f() {
+    return this.thuocForm.controls;
   }
 }

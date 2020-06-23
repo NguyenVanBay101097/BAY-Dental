@@ -3,6 +3,9 @@
         <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true" #productCbx
             formControlName="product" [valueField]="'id'">
         </kendo-combobox>
+        <div *ngIf="f.product.errors && (f.product.touched || f.product.dirty || submitted)" class="text-danger">
+            <div *ngIf="f.product.errors.required">Nhập tên thuốc</div>
+        </div>
     </td>
     <td>
         <kendo-numerictextbox class="max-w-numberric"

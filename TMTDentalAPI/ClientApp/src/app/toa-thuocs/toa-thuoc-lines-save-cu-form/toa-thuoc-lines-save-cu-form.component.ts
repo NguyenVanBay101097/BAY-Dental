@@ -7,7 +7,7 @@ import { ToaThuocLineSave } from '../toa-thuoc.service';
   styleUrls: ['./toa-thuoc-lines-save-cu-form.component.css']
 })
 export class ToaThuocLinesSaveCuFormComponent implements OnInit {
-  showCreateOrEdit: boolean = false;
+  showCreate: boolean = false;
   lines: any[] = [];
   indexLineEdit: number;
   @Input() dataThuocsReceive: any[];
@@ -21,11 +21,11 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit {
   }
 
   onCreate() {
-    this.showCreateOrEdit = true;
+    this.showCreate = true;
   }
 
-  getShowCreateOrEdit(value) {
-    this.showCreateOrEdit = value;
+  getShowCreate(value) {
+    this.showCreate = value;
   }
 
   getDataThuocSend(value) {
