@@ -31,11 +31,11 @@ export class PartnerSourceListComponent implements OnInit {
   ngOnInit() {
     this.loadDataFromApi();
 
-    // this.searchUpdate
-    //   .pipe(debounceTime(400), distinctUntilChanged())
-    //   .subscribe(() => {
-    //     this.loadDataFromApi();
-    //   });
+    this.searchUpdate
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe(() => {
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
