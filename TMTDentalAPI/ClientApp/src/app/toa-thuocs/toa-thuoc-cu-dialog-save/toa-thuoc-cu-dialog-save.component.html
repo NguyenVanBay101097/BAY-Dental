@@ -34,7 +34,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="note" />
+                                    <input type="text" class="form-control" formControlName="diagnostic" />
                                 </td>
                             </tr>
                         </tbody>
@@ -70,7 +70,8 @@
                 <div>
                     <app-toa-thuoc-lines-save-cu-form 
                         [dataThuocsReceive]="lines" 
-                        (dataThuocsSend)="updateLines($event)">
+                        (dataThuocsSend)="updateLines($event)"
+                        [eventSaveReceive]="dontSave">
                     </app-toa-thuoc-lines-save-cu-form>
                 </div>
             </div>

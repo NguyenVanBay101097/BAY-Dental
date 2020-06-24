@@ -19,6 +19,7 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
   tempThuocArray: any[] = [];
   @Input() dataThuocsReceive: any[];
   @Output() dataThuocsSend = new EventEmitter<any[]>();
+  @Input() eventSaveReceive: any;
 
   get getThuocArray() { return this.thuocsForm.get('thuocArray') as FormArray; }
 
@@ -31,50 +32,52 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
       thuocArray: this.fb.array([])
     });
 
-    this.addThuocArray();
-
     setTimeout(() => {
       this.loadFilteredProducts();
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.addThuocArray();
+    if (changes.dataThuocsReceive) {
+      this.addThuocArray();
+      this.dataThuocsSend.emit(this.getThuocArray.value); //
+    }
+    if (changes.eventSaveReceive) {
+      if (changes.eventSaveReceive.currentValue == true) {
+        for (let i = 0; i < this.getThuocArray.length; i++) {
+          this.setValueThuocArray(i, 'submitted', true);
+        }
+      } else {
+        for (let i = 0; i < this.getThuocArray.length; i++) {
+          this.setValueThuocArray(i, 'submitted', false);
+        }
+      }
+    }
   }
 
-  setThuocItem(item, openInput, i): FormGroup {
-    if (i) {
-      this.getThuocArray.at(i).setValue(item);
+  setThuocItem(item): FormGroup {
+    if (item) {
+      return this.fb.group({
+        product: [item.product, Validators.required],
+        productId: item.productId,
+        numberOfTimes: item.numberOfTimes, 
+        amountOfTimes: item.amountOfTimes, 
+        quantity: item.quantity,  
+        numberOfDays: item.numberOfDays, 
+        useAt: item.useAt,
+        submitted: false
+      })
     } else {
-      if (item) {
-        return this.fb.group({
-          product: [item.product, Validators.required],
-          productId: item.productId,
-          numberOfTimes: item.numberOfTimes, 
-          amountOfTimes: item.amountOfTimes, 
-          quantity: item.quantity, 
-          unit: "Viên", 
-          numberOfDays: item.numberOfDays, 
-          useAt: item.useAt,
-          openInput: openInput,
-          isEdit: true, // If openInput && !isEdit => Create // If openInput && isEdit => Edit
-          submitted: false
-        })
-      } else {
-        return this.fb.group({
-          product: [null, Validators.required],
-          productId: null,
-          numberOfTimes: 1, 
-          amountOfTimes: 1, 
-          quantity: 1, 
-          unit: "Viên", 
-          numberOfDays: 1, 
-          useAt: 'after_meal',
-          openInput: openInput,
-          isEdit: false,
-          submitted: false
-        })
-      }
+      return this.fb.group({
+        product: [null, Validators.required],
+        productId: null,
+        numberOfTimes: 1, 
+        amountOfTimes: 1, 
+        quantity: 1, 
+        numberOfDays: 1, 
+        useAt: 'after_meal',
+        submitted: false
+      })
     }
   }
 
@@ -86,13 +89,14 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
     if (!this.dataThuocsReceive) 
       return;
     for (let i = 0; i < this.dataThuocsReceive.length; i++) {
-      this.getThuocArray.push(this.setThuocItem(this.dataThuocsReceive[i], false, null));
+      this.getThuocArray.push(this.setThuocItem(this.dataThuocsReceive[i]));
       this.tempThuocArray.push(null);
     }
   }
 
   addThuocArray_DefaultItem() {
-    this.getThuocArray.insert(0, this.setThuocItem(null, true, null));
+    // this.getThuocArray.insert(0, this.setThuocItem(null));
+    this.getThuocArray.push(this.setThuocItem(null));
     this.tempThuocArray.splice(0, 0, null);
   }
 
@@ -122,7 +126,6 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
   loadFilteredProducts() {
     return this.searchProducts().subscribe(result => {
       this.filteredProducts = result;
-      // console.log(result);
     });
   }
 
@@ -148,44 +151,11 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
     this.dataThuocsSend.emit(this.getThuocArray.value); //
   }
 
-  saveLine(i) {
-    // this.submitted = true;
-    this.setValueThuocArray(i, 'submitted', true);
-
-    if (!this.getThuocArray.at(i).valid) {
-      return;
-    }
-
-    this.setValueThuocArray(i, 'openInput', false);
-
+  onChange(event) {
     this.dataThuocsSend.emit(this.getThuocArray.value); //
-  }
-  
-  cancelLine(i) {
-    this.setValueThuocArray(i, 'submitted', false);
-    // this.submitted = false;
-    console.log(this.getThuocArray.at(i).value);
-    console.log(this.tempThuocArray[i]);
-    if (this.getValueThuocArray(i, 'isEdit') == false) {
-      this.deleteThuocItem(i);
-      this.tempThuocArray.splice(i, 1);
-    } else {
-      this.setThuocItem(this.tempThuocArray[i], null, i);
-      this.tempThuocArray[i] = null;
-    }
-    this.dataThuocsSend.emit(this.getThuocArray.value); //
-  }
-
-  editLine(i) {
-    this.setValueThuocArray(i, 'openInput', true);
-    this.setValueThuocArray(i, 'isEdit', true);
-    // this.tempThuocArray[i] = this.getThuocArray.at(i).value; 
-    console.log(this.getThuocArray.at(i).value);
-    console.log(this.tempThuocArray[i]);
   }
 
   deleteLine(i) {
-    // this.lines.splice(i, 1); 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa Thuốc';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa Thuốc này?';

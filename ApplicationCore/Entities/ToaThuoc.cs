@@ -20,9 +20,14 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// Chuẩn đoán, ghi chú
+        /// Lời dặn
         /// </summary>
         public string Note { get; set; }
+
+          /// <summary>
+          /// Chẩn đoán
+          /// </summary>
+        public string Diagnostic { get; set; }
 
         /// <summary>
         /// Liên kết với đợt khám nào?

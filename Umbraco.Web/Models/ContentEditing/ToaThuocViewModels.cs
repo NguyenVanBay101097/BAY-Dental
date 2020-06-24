@@ -16,6 +16,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
 
         public string Note { get; set; }
+
+        public string UserName { get; set; }
     }
 
     public class ToaThuocPaged
@@ -45,6 +47,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public PartnerSimple Partner { get; set; }
 
         public string Note { get; set; }
+
+        public string Diagnostic { get; set; }
 
         /// <summary>
         /// Liên kết với đợt khám nào?
@@ -87,6 +91,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
 
         public string Note { get; set; }
+        public string Diagnostic { get; set; }
 
         public IEnumerable<ToaThuocLinePrintViewModel> Lines { get; set; } = new List<ToaThuocLinePrintViewModel>();
     }

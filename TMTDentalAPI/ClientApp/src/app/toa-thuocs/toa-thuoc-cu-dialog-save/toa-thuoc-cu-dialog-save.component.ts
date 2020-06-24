@@ -21,6 +21,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   userSimpleFilter: UserSimple[] = [];
   lines: ToaThuocLineSave[] = [];
   temp_lines: any[] = [];
+  dontSave: boolean;
   
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, 
     private userService: UserService, public activeModal: NgbActiveModal, 
@@ -30,7 +31,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     this.toaThuocForm = this.fb.group({
       name: null, 
       dateObj: null, 
-      note: null, 
+      note: null,
+      diagnostic: null,
       user: null,
       userId: null,
       partnerId: null,
@@ -65,7 +67,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   loadRecord() {
     this.toaThuocService.get(this.id).subscribe(
       result => {
-        console.log("result", result);
         this.toaThuocForm.patchValue(result);
         let date = new Date(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
@@ -87,13 +88,18 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     if (!this.toaThuocForm.valid) {
       return;
     }
-
+    this.dontSave = false;
     var val = this.toaThuocForm.value;
     val.partnerId = this.partnerId;
     val.userId = this.toaThuocForm.get('user').value.id;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     val.lines = [];
+
     for (let i = 0; i < this.temp_lines.length; i++) {
+      if (this.temp_lines[i].product == null) {
+        this.dontSave = true;
+        return;
+      }
       val.lines.push({
         product: this.temp_lines[i].product,
         productId: this.temp_lines[i].product.id,
@@ -105,7 +111,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         useAt: this.temp_lines[i].useAt
       })
     }
-    console.log(val);
+
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(() => {
         this.activeModal.close(true);
