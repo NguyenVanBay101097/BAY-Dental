@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,10 +18,12 @@ namespace Infrastructure.Services
     public class PartnerSourceService : BaseService<PartnerSource>, IPartnerSourceService
     {
         private readonly IMapper _mapper;
-        public PartnerSourceService(IAsyncRepository<PartnerSource> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        private readonly CatalogDbContext _context;
+        public PartnerSourceService(IAsyncRepository<PartnerSource> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , CatalogDbContext context)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<PagedResult2<PartnerSourceBasic>> GetPagedResultAsync(PartnerSourcePaged val)
@@ -79,5 +82,47 @@ namespace Infrastructure.Services
                 throw new Exception("Kiểu giới thiệu đã tồn tại");
             }
         }
+
+        public async Task<List<ReportSource>> GetReportPartnerSource(ReportFilterpartnerSource val)
+        {
+            var companyId = CompanyId;
+            var pt = new List<Partner>();
+            var partnerObj = GetService<IPartnerService>();
+            var partners = await partnerObj.SearchQuery(x => x.CompanyId == companyId).ToListAsync();
+            var query = await SearchQuery().Select(x => new ReportSource {
+                Id = x.Id,
+                Name = x.Name,
+                CountPartner = _context.Partners.Where(s => s.SourceId == x.Id && s.CompanyId == companyId).Count()
+            }).ToListAsync();
+            if (val.SourceId.HasValue)
+                query = query.Where(x => x.Id == val.SourceId.Value).ToList();
+
+            return query;
+        }
     }
+
+    public class ReportFilterpartnerSource
+    {
+        //loc theo nguồn
+        public Guid? SourceId { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+
+        public string Search { get; set; }
+        /// <summary>
+        /// week : tuần này
+        /// month : tháng này
+        /// year : năm này
+        /// </summary>
+        public string Groupby { get; set; }
+    }
+
+    public class ReportSource
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int CountPartner { get; set; }
+    }
+
 }
