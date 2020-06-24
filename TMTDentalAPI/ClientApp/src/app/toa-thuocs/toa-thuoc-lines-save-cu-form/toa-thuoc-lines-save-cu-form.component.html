@@ -49,14 +49,20 @@
                 </kendo-numerictextbox>
             </td>
             <td>
-                <input type="text" class="form-control" formControlName="note" />
+                <select class="form-control" formControlName="useAt">
+                    <option value="after_meal">Sau khi ăn</option>
+                    <option value="before_meal">Trước khi ăn</option>
+                    <option value="in_meal">Trong khi ăn</option>
+                    <option value="after_wakeup">Sau khi thức dậy</option>
+                    <option value="before_sleep">Trước khi đi ngủ</option>
+                </select>
             </td>
             <td>
                 <button type="button" title="Lưu" class="btn btn-success mr-1" (click)="saveLine(i)">
                     <i class="fas fa-check"></i>
                 </button>
                 <button type="button" title="Hủy" class="btn btn-danger" (click)="cancelLine(i)">
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-trash-alt"></i>
                 </button>
             </td>
         </tr>
@@ -67,7 +73,7 @@
             <td>{{getValueThuocArray(i, 'quantity')}}</td>
             <td>Viên</td>
             <td>{{getValueThuocArray(i, 'numberOfDays')}}</td>
-            <td>{{getValueThuocArray(i, 'note')}}</td>
+            <td>{{getUsedAt(getValueThuocArray(i, 'useAt'))}}</td>
             <td>
                 <button type="button" title="Sửa" class="btn btn-light btn-sm mr-1" (click)="editLine(i)">
                     <span class="k-icon k-i-edit"></span>

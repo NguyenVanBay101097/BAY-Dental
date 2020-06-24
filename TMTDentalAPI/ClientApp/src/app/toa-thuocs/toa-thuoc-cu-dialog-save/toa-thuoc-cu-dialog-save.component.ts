@@ -65,7 +65,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   loadRecord() {
     this.toaThuocService.get(this.id).subscribe(
       result => {
-        // console.log("result", result);
+        console.log("result", result);
         this.toaThuocForm.patchValue(result);
         let date = new Date(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
@@ -102,7 +102,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         quantity: this.temp_lines[i].quantity,
         unit: this.temp_lines[i].unit,
         numberOfDays: this.temp_lines[i].numberOfDays,
-        note: this.temp_lines[i].note
+        useAt: this.temp_lines[i].useAt
       })
     }
     console.log(val);

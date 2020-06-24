@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { ToaThuocLineSave } from '../toa-thuoc.service';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
   templateUrl: './toa-thuoc-lines-save-cu-form.component.html',
   styleUrls: ['./toa-thuoc-lines-save-cu-form.component.css']
 })
-export class ToaThuocLinesSaveCuFormComponent implements OnInit {
+export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
   thuocsForm: FormGroup;
   thuocArray: FormArray;
   filteredProducts: ProductSimple[];
@@ -31,12 +31,15 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit {
       thuocArray: this.fb.array([])
     });
 
-    console.log(this.dataThuocsReceive);
     this.addThuocArray();
 
     setTimeout(() => {
       this.loadFilteredProducts();
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.addThuocArray();
   }
 
   setThuocItem(item, openInput, i): FormGroup {
@@ -46,12 +49,13 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit {
       if (item) {
         return this.fb.group({
           product: [item.product, Validators.required],
+          productId: item.productId,
           numberOfTimes: item.numberOfTimes, 
           amountOfTimes: item.amountOfTimes, 
           quantity: item.quantity, 
-          unit: item.unit, 
+          unit: "Viên", 
           numberOfDays: item.numberOfDays, 
-          note: item.note,
+          useAt: item.useAt,
           openInput: openInput,
           isEdit: true, // If openInput && !isEdit => Create // If openInput && isEdit => Edit
           submitted: false
@@ -59,12 +63,13 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit {
       } else {
         return this.fb.group({
           product: [null, Validators.required],
+          productId: null,
           numberOfTimes: 1, 
           amountOfTimes: 1, 
           quantity: 1, 
           unit: "Viên", 
           numberOfDays: 1, 
-          note: "",
+          useAt: 'after_meal',
           openInput: openInput,
           isEdit: false,
           submitted: false
@@ -119,6 +124,23 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit {
       this.filteredProducts = result;
       // console.log(result);
     });
+  }
+
+  getUsedAt(useAt) {
+    switch (useAt) {
+      case 'before_meal':
+        return 'trước khi ăn';
+      case 'after_meal':
+        return 'sau khi ăn';
+      case 'in_meal':
+        return 'trong khi ăn';
+      case 'after_wakeup':
+        return 'sau khi thức dậy';
+      case 'before_sleep':
+        return 'trước khi đi ngủ';
+      default:
+        return 'sau khi ăn';
+    }
   }
 
   onCreate() {

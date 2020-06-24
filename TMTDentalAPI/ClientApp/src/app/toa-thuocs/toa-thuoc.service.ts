@@ -57,7 +57,7 @@ export class ToaThuocLineSave {
     quantity: number; 
     unit: string; 
     numberOfDays: number; 
-    note: string; 
+    useAt: string; 
 }
 
 export class ToaThuocLineDefaultGet {
