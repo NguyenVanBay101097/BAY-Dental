@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -86,18 +87,58 @@ namespace Infrastructure.Services
         public async Task<List<ReportSource>> GetReportPartnerSource(ReportFilterpartnerSource val)
         {
             var companyId = CompanyId;
-            var pt = new List<Partner>();
-            var partnerObj = GetService<IPartnerService>();
-            var partners = await partnerObj.SearchQuery(x => x.CompanyId == companyId).ToListAsync();
-            var query = await SearchQuery().Select(x => new ReportSource {
-                Id = x.Id,
-                Name = x.Name,
-                CountPartner = _context.Partners.Where(s => s.SourceId == x.Id && s.CompanyId == companyId).Count()
-            }).ToListAsync();
+            var partners = _context.Partners.Where(x => x.CompanyId == companyId && x.Customer == true);
             if (val.SourceId.HasValue)
-                query = query.Where(x => x.Id == val.SourceId.Value).ToList();
+                partners = partners.Where(x => x.Id == val.SourceId.Value);
 
-            return query;
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                partners = partners.Where(x => x.Date >= dateFrom);
+            }
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                partners = partners.Where(x => x.Date <= dateTo);
+            }
+
+            if (val.GroupBy == "day")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddDays(1);
+                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+            else if (val.GroupBy == "week")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddDays(7);
+                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+            else if(val.GroupBy == "month")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddMonths(1);
+                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+            else if (val.GroupBy == "quarter")
+            {
+                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
+                var dateTo = dateFrom.AddMonths(3);
+                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+            }
+
+            var query = partners.GroupBy(x => new {
+                x.Source.Id,
+                x.Source.Name
+            }).Select(x => new ReportSource {
+                Id = x.Key.Id,
+                Name = x.Key.Name,
+                CountPartner = x.Count()
+            });
+
+            var list = await query.ToListAsync();
+
+            return list;
         }
     }
 
@@ -108,14 +149,15 @@ namespace Infrastructure.Services
 
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public DateTime? Date { get; set; }
 
-        public string Search { get; set; }
         /// <summary>
+        /// day : hom nay
         /// week : tuần này
         /// month : tháng này
-        /// year : năm này
+        /// quarter : quý
         /// </summary>
-        public string Groupby { get; set; }
+        public string GroupBy { get; set; }
     }
 
     public class ReportSource
@@ -124,5 +166,6 @@ namespace Infrastructure.Services
         public string Name { get; set; }
         public int CountPartner { get; set; }
     }
+
 
 }
