@@ -31,11 +31,11 @@ export class PartnerSourceListComponent implements OnInit {
   ngOnInit() {
     this.loadDataFromApi();
 
-    this.searchUpdate
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe(() => {
-        this.loadDataFromApi();
-      });
+    // this.searchUpdate
+    //   .pipe(debounceTime(400), distinctUntilChanged())
+    //   .subscribe(() => {
+    //     this.loadDataFromApi();
+    //   });
   }
 
   loadDataFromApi() {
@@ -69,12 +69,9 @@ export class PartnerSourceListComponent implements OnInit {
   createItem() {
     let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent,{size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
-    modalRef.result.then(
-      () => {
+    modalRef.result.then(() => {
         this.loadDataFromApi();
-      },(err) => {
-       this.showErrorService.show(err);
-      } 
+      },() => {} 
     );
   }
 
@@ -84,9 +81,7 @@ export class PartnerSourceListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
         this.loadDataFromApi();
-      },(err) => {
-        this.showErrorService.show(err);
-      }
+      },() => {}
     );
   }
 
