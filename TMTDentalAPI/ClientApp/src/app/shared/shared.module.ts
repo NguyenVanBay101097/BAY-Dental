@@ -45,6 +45,7 @@ import { CharCountDirective } from './char-count.directive';
 import { SelectUomProductDialogComponent } from './select-uom-product-dialog/select-uom-product-dialog.component';
 import { RedirectComponentDirective } from './redirect-component.directive';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
+import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
     AnchorHostDirective,
     MyAutosizeDirective,
     CharCountDirective,
-    SelectUomProductDialogComponent
+    SelectUomProductDialogComponent,
+    ImageFileUploadComponent
   ],
   exports: [
     HeaderComponent,
@@ -115,7 +117,8 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
     MyAutosizeDirective,
     CharCountDirective,
     SelectUomProductDialogComponent,
-    RedirectComponentDirective
+    RedirectComponentDirective,
+    ImageFileUploadComponent
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,7 @@
-<div *ngIf="customerInfo">
+<div *ngIf="customerInfo" class="o_form_view">
+    <div>
+        <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="customerInfo.avatar"></app-image-file-upload>
+    </div>
     <div class="form-group row">
         <label class="col-sm-4">Mã khách hàng</label>
         <div class="col-sm-8">
