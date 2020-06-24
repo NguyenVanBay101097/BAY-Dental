@@ -26,12 +26,7 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   @Input() public id: string;
   title: string;
   submitted = false;
-  public lstType = [
-    { text: "Bình thường", value: "normal" },
-    { text: "Giới thiệu", value: "referral" },
-  ];
 
-  public selectedValue: string = "normal";
 
   constructor(
     private fb: FormBuilder,
@@ -43,7 +38,7 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   ngOnInit() {
     this.myform = this.fb.group({
       name: ["", Validators.required],
-      type: null,
+      type: ['normal'],
     });
 
     if (this.id) {
@@ -77,7 +72,6 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
 
   saveOrUpdate() {
     var val = this.myform.value;
-    val.type = val.type;
     if (!this.id) {
       return this.partnerSourceService.create(val);
     } else {

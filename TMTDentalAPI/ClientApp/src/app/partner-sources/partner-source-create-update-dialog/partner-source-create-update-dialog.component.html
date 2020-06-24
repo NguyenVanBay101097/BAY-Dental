@@ -31,8 +31,9 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%;">
-                  <select name="type" id="aantal" class="form-control" formControlName="type" [(ngModel)]='selectedValue'>
-                    <option *ngFor="let option of lstType" [value]="option.value">{{option.text}}</option>
+                  <select class="form-control" formControlName="type">
+                    <option value="normal">Bình thường</option>
+                    <option value="referral">Giới thiệu</option>
                   </select>                                  
                 </td>
               </tr>
