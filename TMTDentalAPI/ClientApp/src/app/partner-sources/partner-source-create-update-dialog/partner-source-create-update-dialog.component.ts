@@ -10,10 +10,6 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { Observable } from "rxjs";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 
-interface Item {
-  text: string;
-  value: string;
-}
 
 @Component({
   selector: "app-partner-source-create-update-dialog",
@@ -30,7 +26,7 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   @Input() public id: string;
   title: string;
   submitted = false;
-  public lstType: Array<Item> = [
+  public lstType = [
     { text: "Bình thường", value: "normal" },
     { text: "Giới thiệu", value: "referral" },
   ];
@@ -47,7 +43,7 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   ngOnInit() {
     this.myform = this.fb.group({
       name: ["", Validators.required],
-      type: [null, Validators.required],
+      type: null,
     });
 
     if (this.id) {
@@ -59,11 +55,6 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
     }
   }
 
-  // searchCategories(q?: string): Observable<PartnerSourceBasic[]> {
-  //   var val = new PartnerSourcePaged();
-  //   val.search = q;
-  //   return this.partnerSourceService.autocomplete(val);
-  // }
 
   onSave() {
     this.submitted = true;

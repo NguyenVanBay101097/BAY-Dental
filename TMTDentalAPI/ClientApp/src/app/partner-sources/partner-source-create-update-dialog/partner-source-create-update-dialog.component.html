@@ -25,33 +25,23 @@
                 </td>
               </tr>
               <tr>
-                <td colspan="1" class="o_td_label o_td_label_left">
+                <td colspan="1" class="o_td_label">
                   <label class="o_form_label">
                     Kiểu
                   </label>
                 </td>
-                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                  <select name="type" id="aantal" class="form-control" formControlName="type"
-                    [(ngModel)]='selectedValue'>
+                <td colspan="1" style="width: 100%;">
+                  <select name="type" id="aantal" class="form-control" formControlName="type" [(ngModel)]='selectedValue'>
                     <option *ngFor="let option of lstType" [value]="option.value">{{option.text}}</option>
-                  </select>
-                  <!-- <kendo-combobox [data]="lstType" textField="text" [filterable]="true" 
-                    formControlName="type" valueField="value">
-                  </kendo-combobox> -->
-                  <div *ngIf="f.type.errors && (f.type.touched || f.type.dirty || submitted)" class="text-danger">
-                    <div *ngIf="f.type.errors.required">Nhập kiểu</div>
-                  </div>
+                  </select>                                  
                 </td>
               </tr>
             </tbody>
           </table>
-
-
         </div>
       </div>
     </div>
   </form>
-
 </div>
 
 <footer class="modal-footer">
