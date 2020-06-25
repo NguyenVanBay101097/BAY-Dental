@@ -38,21 +38,21 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.dataThuocsReceive) {
-      this.addThuocArray();
-      this.dataThuocsSend.emit(this.getThuocArray.value); //
-    }
-    if (changes.eventSaveReceive) {
-      if (changes.eventSaveReceive.currentValue == true) {
-        for (let i = 0; i < this.getThuocArray.length; i++) {
-          this.setValueThuocArray(i, 'submitted', true);
-        }
-      } else {
-        for (let i = 0; i < this.getThuocArray.length; i++) {
-          this.setValueThuocArray(i, 'submitted', false);
-        }
-      }
-    }
+    // if (changes.dataThuocsReceive) {
+    //   this.addThuocArray();
+    //   this.dataThuocsSend.emit(this.getThuocArray.value); //
+    // }
+    // if (changes.eventSaveReceive) {
+    //   if (changes.eventSaveReceive.currentValue == true) {
+    //     for (let i = 0; i < this.getThuocArray.length; i++) {
+    //       this.setValueThuocArray(i, 'submitted', true);
+    //     }
+    //   } else {
+    //     for (let i = 0; i < this.getThuocArray.length; i++) {
+    //       this.setValueThuocArray(i, 'submitted', false);
+    //     }
+    //   }
+    // }
   }
 
   setThuocItem(item): FormGroup {

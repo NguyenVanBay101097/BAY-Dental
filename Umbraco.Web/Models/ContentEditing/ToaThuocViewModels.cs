@@ -18,6 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public string UserName { get; set; }
+
+        public string Diagnostic { get; set; }
     }
 
     public class ToaThuocPaged
@@ -70,6 +72,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ToaThuocDefaultGet
     {
         public Guid? DotKhamId { get; set; }
+
+        public Guid? PartnerId { get; set; }
     }
 
     public class ToaThuocLineDefaultGet

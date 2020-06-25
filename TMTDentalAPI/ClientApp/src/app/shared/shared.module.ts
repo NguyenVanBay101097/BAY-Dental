@@ -46,6 +46,7 @@ import { SelectUomProductDialogComponent } from './select-uom-product-dialog/sel
 import { RedirectComponentDirective } from './redirect-component.directive';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
+import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.
     MyAutosizeDirective,
     CharCountDirective,
     SelectUomProductDialogComponent,
-    ImageFileUploadComponent
+    ImageFileUploadComponent,
+    ToaThuocPrintComponent
   ],
   exports: [
     HeaderComponent,
@@ -118,7 +120,8 @@ import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.
     CharCountDirective,
     SelectUomProductDialogComponent,
     RedirectComponentDirective,
-    ImageFileUploadComponent
+    ImageFileUploadComponent,
+    ToaThuocPrintComponent
   ],
   imports: [
     CommonModule,

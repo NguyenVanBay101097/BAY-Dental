@@ -70,7 +70,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     PartnerCustomerTreatmentPaymentComponent,
     PartnerCustomerAppointmentComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
-    PartnerCustomerTreatmentPaymentChildComponent
+    PartnerCustomerTreatmentPaymentChildComponent,
     PartnerCustomerProductToaThuocListComponent],
   imports: [
     CommonModule,

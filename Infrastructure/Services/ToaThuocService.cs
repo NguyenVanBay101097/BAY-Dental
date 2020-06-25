@@ -52,6 +52,15 @@ namespace Infrastructure.Services
                 res.DotKhamId = dk.Id;
                 res.DotKham = _mapper.Map<DotKhamSimple>(dk);
             }
+
+            if (val.PartnerId.HasValue)
+            {
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(val.PartnerId);
+                res.PartnerId = partner.Id;
+                res.Partner = _mapper.Map<PartnerSimple>(partner);
+            }
+
             return res;
         }
 

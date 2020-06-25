@@ -68,11 +68,74 @@
                     </table>
                 </div>
                 <div>
-                    <app-toa-thuoc-lines-save-cu-form 
-                        [dataThuocsReceive]="lines" 
-                        (dataThuocsSend)="updateLines($event)"
-                        [eventSaveReceive]="dontSave">
-                    </app-toa-thuoc-lines-save-cu-form>
+                    <button type="button" accesskey="a" class="btn btn-primary btn-sm" (click)="onCreate()">Thêm thuốc</button>
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>Tên thuốc</th>
+                                <th>Ngày uống</th>
+                                <th>Mỗi lần</th>
+                                <th>Số ngày</th>
+                                <th>Số lượng</th>
+                                <th>Sử dụng</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="lines" >
+                            <ng-container *ngFor="let item of lines.controls; let i = index;">
+                                <tr [formGroupName]="i">
+                                    <td>
+                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                            formControlName="product" [kendoDropDownFilter]="filterSettings" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <kendo-numerictextbox style="width: 100px" class="mr-1"
+                                                [min]="0" [format]="'n0'" formControlName="numberOfTimes" 
+                                                (valueChange)="updateQuantity(item)">
+                                            </kendo-numerictextbox>
+                                            <span>Lần</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <kendo-numerictextbox class="mr-1" style="width: 100px"
+                                                [min]="0" [format]="'n0'" formControlName="amountOfTimes" 
+                                                (valueChange)="updateQuantity(item)">
+                                            </kendo-numerictextbox>
+                                            <span>Viên</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <kendo-numerictextbox style="width: 100px"
+                                            [min]="0" [format]="'n0'" formControlName="numberOfDays" 
+                                            (valueChange)="updateQuantity(item)">
+                                        </kendo-numerictextbox>
+                                    </td>
+                                    <td>
+                                        <kendo-numerictextbox style="width: 100px"
+                                            [min]="0" [format]="'n0'" formControlName="quantity">
+                                        </kendo-numerictextbox>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" formControlName="useAt">
+                                            <option value="after_meal">Sau khi ăn</option>
+                                            <option value="before_meal">Trước khi ăn</option>
+                                            <option value="in_meal">Trong khi ăn</option>
+                                            <option value="after_wakeup">Sau khi thức dậy</option>
+                                            <option value="before_sleep">Trước khi đi ngủ</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button type="button" title="Hủy" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -80,8 +143,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-primary" (click)="onSaveAndPrint()">Lưu và in</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+    <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSave(true)">Lưu và in</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

@@ -29,7 +29,7 @@ const routes: Routes = [
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
       { path: 'appointment', component: PartnerCustomerAppointmentComponent }, 
-      { path: 'product-toa-thuoc', component: PartnerCustomerProductToaThuocListComponent }, 
+      { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent }, 
     ]
   },
   {
