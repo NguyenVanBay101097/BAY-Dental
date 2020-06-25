@@ -1,17 +1,13 @@
 <div *ngIf="customerInfo" class="o_form_view">
-    <div>
+    <div class="oe_title">
         <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="customerInfo.avatar"></app-image-file-upload>
+        <h2><span>{{customerInfo.name}}</span></h2>
+        <div class="clearfix"></div>
     </div>
     <div class="form-group row">
         <label class="col-sm-4">Mã khách hàng</label>
         <div class="col-sm-8">
-            <span class="fw500"> {{customerInfo.ref}}</span>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label class="col-sm-4">Họ tên</label>
-        <div class="col-sm-8">
-            <span class="fw500">{{customerInfo.name}}</span>
+            <span class="fw500">{{customerInfo.ref}}</span>
         </div>
     </div>
     <div class="form-group row">
@@ -32,6 +28,7 @@
         <label class="col-sm-4">Ngày sinh</label>
         <div class="col-sm-8">
             <span class="fw500">{{customerInfo.birthDay}}/{{customerInfo.birthMonth}}/{{customerInfo.birthYear}}</span>
+            <span class="fw500" *ngIf="customerInfo.age"> ({{customerInfo.age}} tuổi)</span>
         </div>
     </div>
     <div class="form-group row">

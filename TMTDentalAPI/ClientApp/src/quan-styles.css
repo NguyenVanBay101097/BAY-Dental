@@ -14,10 +14,11 @@
     padding: 0 5px 0 12px;
 }
 
-.o_form_view .oe_avatar>img {
+.o_form_view .oe_avatar > img {
     max-height: 90px;
     max-width: 90px;
     margin-bottom: 10px;
+    border: 1px solid #a8a8a8;
 }
 
 .o_form_view .o_field_image .o_form_image_controls {
@@ -56,7 +57,7 @@
 }
 
 .o_form_view .oe_avatar {
-    float: left;
+    float: right;
     margin-right: 15px;
 }
 
