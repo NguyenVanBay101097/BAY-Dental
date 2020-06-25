@@ -77,19 +77,6 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> CreatePrescription(CreatePrescription val)
-        {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-            
-            await _toaThuocService.CreatePrescription(val);
-         
-            return Ok();
-        }
-
-       
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {

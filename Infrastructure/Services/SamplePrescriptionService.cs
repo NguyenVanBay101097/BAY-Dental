@@ -41,12 +41,11 @@ namespace Infrastructure.Services
 
         public async Task<SamplePrescriptionDisplay> GetPrescriptionForDisplay(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id)
-                 .Include(x => x.Lines)
-                 .Include("Lines.Product")
-                 .FirstOrDefaultAsync();
-            var display = _mapper.Map<SamplePrescriptionDisplay>(res);
-            return display;
+            var res = await _mapper.ProjectTo<SamplePrescriptionDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (res == null)
+                throw new NullReferenceException("Toa thuoc not found");
+            res.Lines = res.Lines.OrderBy(x => x.Sequence);
+            return res;
         }
 
         public async Task<SamplePrescription> CreatePrescription(SamplePrescriptionSave val)
@@ -60,7 +59,7 @@ namespace Infrastructure.Services
 
         public async Task UpdatePrescription(Guid id, SamplePrescriptionSave val)
         {
-            var prescription = await SearchQuery(x => x.Id == id).Include(x => x.Lines).Include("Lines.Product").FirstOrDefaultAsync();
+            var prescription = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
             if (prescription == null)
                 throw new Exception("Đơn thuốc mẫu không tồn tại");
 
@@ -102,8 +101,5 @@ namespace Infrastructure.Services
             }
 
         }
-
-      
-
     }
 }

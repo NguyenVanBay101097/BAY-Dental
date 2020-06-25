@@ -129,33 +129,6 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task CreatePrescription(CreatePrescription val)
-        {
-            var lines = new List<SamplePrescriptionLine>();
-            var objPrescription = GetService<ISamplePrescriptionService>();
-            foreach (var item in val.Lines)
-            {
-                var prescriptionline = new SamplePrescriptionLine
-                {
-                    ProductId = item.ProductId,
-                    NumberOfDays = item.NumberOfDays,
-                    NumberOfTimes = item.NumberOfTimes,
-                    Quantity = item.Quantity,
-                    AmountOfTimes = item.AmountOfTimes,
-                    UseAt = item.UseAt,
-                    Sequence = item.Sequence
-                };
-                lines.Add(prescriptionline);
-            }
-
-
-            var prescription = new SamplePrescription() { Name = val.Name , Lines = lines };
-
-            await objPrescription.CreateAsync(prescription);
-        }
-
-
-
         public override ISpecification<ToaThuoc> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
@@ -168,13 +141,4 @@ namespace Infrastructure.Services
             }
         }
     }
-
-    public class CreatePrescription
-    {
-        public string Name { get; set; }
-
-        public IEnumerable<ToaThuocLineDisplay> Lines = new List<ToaThuocLineDisplay>();
-    }
-
-
 }

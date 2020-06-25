@@ -36,7 +36,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            //display
             var res = await _prescriptionService.GetPrescriptionForDisplay(id);
             return Ok(res);
         }
@@ -44,24 +43,19 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SamplePrescriptionSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
             await _unitOfWork.BeginTransactionAsync();
 
             var prescription =  await _prescriptionService.CreatePrescription(val);
 
             _unitOfWork.Commit();
-            var basic = _mapper.Map<SamplePrescriptionBasic>(prescription);
 
+            var basic = _mapper.Map<SamplePrescriptionBasic>(prescription);
             return Ok(basic);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, SamplePrescriptionSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
 
             await _prescriptionService.UpdatePrescription(id,val);
@@ -82,6 +76,5 @@ namespace TMTDentalAPI.Controllers
 
             return NoContent();
         }
-
     }
 }

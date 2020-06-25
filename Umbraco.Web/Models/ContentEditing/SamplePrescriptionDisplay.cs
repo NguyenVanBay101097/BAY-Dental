@@ -7,8 +7,11 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SamplePrescriptionDisplay
     {
         public Guid Id { get; set; }
+
         public string Name { get; set; }
 
-        public IEnumerable<SamplePrescriptionLineSave> Lines = new List<SamplePrescriptionLineSave>();
+        public string Note { get; set; }
+
+        public IEnumerable<SamplePrescriptionLineDisplay> Lines = new List<SamplePrescriptionLineDisplay>();
     }
 }
