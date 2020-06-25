@@ -1,0 +1,38 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê nguồn khách hàng
+            </li>
+        </ol>   
+        <div class="o_cp_right">           
+               
+        </div> 
+        <div class="o_cp_left">           
+            <div class="o_cp_buttons">
+                <div>
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                    (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+            </div>          
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-chart>
+        <kendo-chart-legend position="bottom"></kendo-chart-legend>
+        <kendo-chart-series>
+          <kendo-chart-series-item
+            type="pie"
+            [data]="pieData"
+            field="value"
+            categoryField="category"
+            [labels]="{ visible: true, content: labelContent }"           
+          >
+          </kendo-chart-series-item>
+        </kendo-chart-series>
+    </kendo-chart>
+</div>
+

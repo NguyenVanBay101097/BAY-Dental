@@ -85,85 +85,51 @@ namespace Infrastructure.Services
         }
 
         public async Task<List<ReportSource>> GetReportPartnerSource(ReportFilterpartnerSource val)
-        {
+         {
             var companyId = CompanyId;
             var partners = _context.Partners.Where(x => x.CompanyId == companyId && x.Customer == true);
-            if (val.SourceId.HasValue)
-                partners = partners.Where(x => x.Id == val.SourceId.Value);
-
+           
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                partners = partners.Where(x => x.Date >= dateFrom);
+                partners = partners.Where(x => x.DateCreated >= dateFrom);
             }
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                partners = partners.Where(x => x.Date <= dateTo);
+                partners = partners.Where(x => x.DateCreated <= dateTo);
             }
-
-            if (val.GroupBy == "day")
-            {
-                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
-                var dateTo = dateFrom.AddDays(1);
-                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
-            }
-            else if (val.GroupBy == "week")
-            {
-                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
-                var dateTo = dateFrom.AddDays(7);
-                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
-            }
-            else if(val.GroupBy == "month")
-            {
-                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
-                var dateTo = dateFrom.AddMonths(1);
-                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
-            }
-            else if (val.GroupBy == "quarter")
-            {
-                var dateFrom = val.Date.Value.AbsoluteBeginOfDate();
-                var dateTo = dateFrom.AddMonths(3);
-                partners = partners.Where(x => x.Date >= dateFrom && x.Date < dateTo);
-            }
-
+            var totalPartner = partners.ToList().Count;
+       
             var query = partners.GroupBy(x => new {
                 x.Source.Id,
                 x.Source.Name
             }).Select(x => new ReportSource {
                 Id = x.Key.Id,
                 Name = x.Key.Name,
+                TotalPartner = totalPartner,
                 CountPartner = x.Count()
             });
 
             var list = await query.ToListAsync();
-
+            list.Sum(x => x.CountPartner);
             return list;
         }
     }
 
     public class ReportFilterpartnerSource
     {
-        //loc theo nguồn
-        public Guid? SourceId { get; set; }
-
+      
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-        public DateTime? Date { get; set; }
 
-        /// <summary>
-        /// day : hom nay
-        /// week : tuần này
-        /// month : tháng này
-        /// quarter : quý
-        /// </summary>
-        public string GroupBy { get; set; }
     }
 
     public class ReportSource
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public int TotalPartner { get; set; }
         public int CountPartner { get; set; }
     }
 

@@ -120,6 +120,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
         { name: 'Thống kê điều trị', link: '/sale-report' },
         { name: 'Khách hàng theo khu vực', link: '/partner-report-location' },
+        { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },
         { name: 'Báo cáo thu chi', link: '/journal-reports' },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report-partner' },
       ]

@@ -101,6 +101,7 @@ import { UomModule } from './uoms/uom.module';
 import { TcareModule } from './tcare/tcare.module';
 import { PartnerCustomerDetailComponent } from './partners/partner-customer-detail/partner-customer-detail.component';
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
+import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -186,6 +187,7 @@ registerLocaleData(localeVi, "vi");
     MailMessagesModule,
     PartnerReportModule,
     PartnerSourcesModule,
+    ReportPartnerSourcesModule,
     ResBanksModule,
     ResPartnerBanksModule,
     JournalReportsModule,
