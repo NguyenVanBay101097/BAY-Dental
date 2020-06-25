@@ -1,0 +1,87 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="toaThuocForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span>{{toaThuocForm.get('name').value || 'Mới'}}</span>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datetimepicker formControlName="dateObj">
+                                    </kendo-datetimepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chẩn đoán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="diagnostic" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="user" [filterable]="true"
+                                        [data]="userSimpleFilter" #userCbx [valueField]="'id'"
+                                        [textField]="'name'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Lời dặn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="note" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <app-toa-thuoc-lines-save-cu-form 
+                        [dataThuocsReceive]="lines" 
+                        (dataThuocsSend)="updateLines($event)"
+                        [eventSaveReceive]="dontSave">
+                    </app-toa-thuoc-lines-save-cu-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSaveAndPrint()">Lưu và in</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

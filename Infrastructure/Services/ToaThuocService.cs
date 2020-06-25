@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -139,6 +140,24 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task<PagedResult2<ToaThuocBasic>> GetPagedResultAsync(ToaThuocPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
     }
 }

@@ -14,9 +14,8 @@ using Umbraco.Web.Models.ContentEditing;
 namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
-    public class ToaThuocsController : ControllerBase
+    public class ToaThuocsController : BaseApiController
     {
         private readonly IToaThuocService _toaThuocService;
         private readonly IMapper _mapper;
@@ -30,40 +29,39 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery]ToaThuocPaged val)
+        {
+            var result = await _toaThuocService.GetPagedResultAsync(val);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("ToaThuoc", "Read");
             var toaThuoc = await _toaThuocService.GetToaThuocForDisplayAsync(id);
             if (toaThuoc == null)
-            {
                 return NotFound();
-            }
+
             return Ok(_mapper.Map<ToaThuocDisplay>(toaThuoc));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ToaThuocDisplay val)
+        public async Task<IActionResult> Create(ToaThuocSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-            _modelAccessService.Check("ToaThuoc", "Create");
             var order = _mapper.Map<ToaThuoc>(val);
             SaveOrderLines(val, order);
             await _toaThuocService.CreateAsync(order);
 
-            val.Id = order.Id;
-            return CreatedAtAction(nameof(Get), new { id = order.Id }, val);
+            var basic = _mapper.Map<ToaThuocBasic>(order);
+            return Ok(basic);
         }
 
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, ToaThuocDisplay val)
+        public async Task<IActionResult> Update(Guid id, ToaThuocSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            _modelAccessService.Check("ToaThuoc", "Write");
             var order = await _toaThuocService.GetToaThuocForDisplayAsync(id);
             if (order == null)
                 return NotFound();
@@ -111,10 +109,10 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        private void SaveOrderLines(ToaThuocDisplay val, ToaThuoc order)
+        private void SaveOrderLines(ToaThuocSave val, ToaThuoc order)
         {
-            //remove line
             var lineToRemoves = new List<ToaThuocLine>();
+
             foreach (var existLine in order.Lines)
             {
                 if (!val.Lines.Any(x => x.Id == existLine.Id))
@@ -127,19 +125,23 @@ namespace TMTDentalAPI.Controllers
             }
 
             int sequence = 1;
-            foreach (var line in val.Lines)
-                line.Sequence = sequence++;
 
             foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
                 {
-                    order.Lines.Add(_mapper.Map<ToaThuocLine>(line));
+                    var l = _mapper.Map<ToaThuocLine>(line);
+                    l.Sequence = sequence;
+                    order.Lines.Add(l);
                 }
                 else
                 {
-                    _mapper.Map(line, order.Lines.SingleOrDefault(c => c.Id == line.Id));
+                    var l = order.Lines.SingleOrDefault(c => c.Id == line.Id);
+                    _mapper.Map(line, l);
+                    l.Sequence = sequence;
                 }
+
+                sequence++;
             }
         }
     }

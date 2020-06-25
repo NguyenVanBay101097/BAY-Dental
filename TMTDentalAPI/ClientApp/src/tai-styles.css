@@ -15,6 +15,13 @@ a {
     }
 }
 
+@media (min-width: 1200px) {
+    .modal-lg,
+    .modal-xl {
+        max-width: 1120px;
+    }
+}
+
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {
     padding: 0;
     width: 100%;

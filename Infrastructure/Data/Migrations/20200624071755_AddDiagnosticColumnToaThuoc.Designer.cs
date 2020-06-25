@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200624071755_AddDiagnosticColumnToaThuoc")]
+    partial class AddDiagnosticColumnToaThuoc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1455,9 +1457,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AssistantId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AssistantUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1505,8 +1504,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AppointmentId");
 
                     b.HasIndex("AssistantId");
-
-                    b.HasIndex("AssistantUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -3431,9 +3428,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Customer")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -3451,6 +3445,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool>("Employee")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Fax")
                         .HasColumnType("nvarchar(max)");
@@ -3483,11 +3480,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Ref")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReferralUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid?>("SourceId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Source")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
@@ -3513,9 +3507,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("ReferralUserId");
-
-                    b.HasIndex("SourceId");
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("WriteById");
 
@@ -3636,39 +3628,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.ToTable("PartnerPartnerCategoryRel");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("PartnerSources");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Product", b =>
@@ -5341,94 +5300,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleSettings");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SamplePrescription", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SamplePrescriptions");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SamplePrescriptionLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("AmountOfTimes")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("NumberOfDays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfTimes")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("PrescriptionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Sequence")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UseAt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PrescriptionId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SamplePrescriptionLines");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ServiceCardCard", b =>
@@ -7408,7 +7279,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("DotKhamId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -7536,10 +7407,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
                         .WithMany()
                         .HasForeignKey("AssistantId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "AssistantUser")
-                        .WithMany()
-                        .HasForeignKey("AssistantUserId");
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
@@ -8268,13 +8135,9 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "ReferralUser")
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employees")
                         .WithMany()
-                        .HasForeignKey("ReferralUserId");
-
-                    b.HasOne("ApplicationCore.Entities.PartnerSource", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceId");
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -8341,17 +8204,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Product", b =>
@@ -9126,40 +8978,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SamplePrescription", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SamplePrescriptionLine", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SamplePrescription", "Prescription")
-                        .WithMany("Lines")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
