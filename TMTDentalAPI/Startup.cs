@@ -152,6 +152,8 @@ namespace TMTDentalAPI
             services.AddScoped<IDotKhamLineService, DotKhamLineService>();
             services.AddScoped<IDotKhamLineOperationService, DotKhamLineOperationService>();
             services.AddScoped<IToaThuocService, ToaThuocService>();
+            services.AddScoped<ISamplePrescriptionService, SamplePrescriptionService>();
+            services.AddScoped<ISamplePrescriptionLineService, SamplePrescriptionLineService>();
             services.AddScoped<IStockWarehouseService, StockWarehouseService>();
             services.AddScoped<IStockLocationService, StockLocationService>();
             services.AddScoped<IStockPickingTypeService, StockPickingTypeService>();
@@ -276,6 +278,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new DotKhamLineOperationProfile());
                 mc.AddProfile(new ToaThuocProfile());
                 mc.AddProfile(new ToaThuocLineProfile());
+                mc.AddProfile(new SamplePrescriptionProfile());
+                mc.AddProfile(new SamplePrescriptionLineProfile());
                 mc.AddProfile(new StockPickingTypeProfile());
                 mc.AddProfile(new StockPickingProfile());
                 mc.AddProfile(new StockMoveProfile());

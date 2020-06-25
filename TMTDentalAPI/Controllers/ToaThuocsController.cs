@@ -56,6 +56,8 @@ namespace TMTDentalAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = order.Id }, val);
         }
 
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ToaThuocDisplay val)
         {

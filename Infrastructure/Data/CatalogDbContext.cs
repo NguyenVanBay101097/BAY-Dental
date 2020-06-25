@@ -69,6 +69,8 @@ namespace Infrastructure.Data
         public DbSet<DotKhamLineOperation> DotKhamLineOperations { get; set; }
         public DbSet<ToaThuoc> ToaThuocs { get; set; }
         public DbSet<ToaThuocLine> ToaThuocLines { get; set; }
+        public DbSet<SamplePrescription> SamplePrescriptions { get; set; }
+        public DbSet<SamplePrescriptionLine> SamplePrescriptionLines { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<StockWarehouse> StockWarehouses { get; set; }
         public DbSet<StockLocation> StockLocations { get; set; }
@@ -215,6 +217,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new DotKhamLineOperationConfiguration());
             builder.ApplyConfiguration(new ToaThuocConfiguration());
             builder.ApplyConfiguration(new ToaThuocLineConfiguration());
+            builder.ApplyConfiguration(new SamplePrescriptionConfiguration());
+            builder.ApplyConfiguration(new SamplePrescriptionLineConfiguration());
             builder.ApplyConfiguration(new AppointmentConfiguration());
             builder.ApplyConfiguration(new StockWarehouseConfiguration());
             builder.ApplyConfiguration(new StockLocationConfiguration());

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200619035544_CreateSamplePrescriptions")]
+    partial class CreateSamplePrescriptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1455,9 +1457,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AssistantId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AssistantUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1505,8 +1504,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AppointmentId");
 
                     b.HasIndex("AssistantId");
-
-                    b.HasIndex("AssistantUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -3431,9 +3428,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Customer")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -3483,12 +3477,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Ref")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReferralUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid?>("SourceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
 
@@ -3512,10 +3500,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("ReferralUserId");
-
-                    b.HasIndex("SourceId");
 
                     b.HasIndex("WriteById");
 
@@ -3636,39 +3620,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.ToTable("PartnerPartnerCategoryRel");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("PartnerSources");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Product", b =>
@@ -7405,7 +7356,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("DotKhamId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -7533,10 +7484,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
                         .WithMany()
                         .HasForeignKey("AssistantId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "AssistantUser")
-                        .WithMany()
-                        .HasForeignKey("AssistantUserId");
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
@@ -8265,14 +8212,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "ReferralUser")
-                        .WithMany()
-                        .HasForeignKey("ReferralUserId");
-
-                    b.HasOne("ApplicationCore.Entities.PartnerSource", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -8338,17 +8277,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Product", b =>
