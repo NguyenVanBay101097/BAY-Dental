@@ -123,5 +123,16 @@ namespace TMTDentalAPI.Controllers
             Response.Headers.Add("Content-Disposition", String.Format("attachment;filename*=UTF-8\"{0}\"", fileName));
             return File(content, attachment.MineType, attachment.DatasFname);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                var result = await _HandleUploadAsync(Convert.ToBase64String(memoryStream.ToArray()), file.FileName);
+                return Ok(result);
+            }
+        }
     }
 }

@@ -518,12 +518,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        
-
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> CheckMegerFacebookPage(CheckMergeFacebookPage val) {
-        //    var res = await _partnerService.CheckPartner(val);
-        //    return Ok(res);
-        //}
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SaveAvatar(PartnerSaveAvatarVM val)
+        {
+            var partner = await _partnerService.GetByIdAsync(val.PartnerId);
+            partner.Avatar = val.ImageId;
+            await _partnerService.UpdateAsync(partner);
+            return NoContent();
+        }
     }
 }

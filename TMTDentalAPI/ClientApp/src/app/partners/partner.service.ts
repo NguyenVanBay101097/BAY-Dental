@@ -335,7 +335,9 @@ export class PartnerService {
         return this.http.get<AppointmentDisplay>(this.baseApi + this.apiUrl + '/' + id + '/GetNextAppointment')
     }
 
-
+    saveAvatar(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/SaveAvatar", data);
+    }
 }
 
 
