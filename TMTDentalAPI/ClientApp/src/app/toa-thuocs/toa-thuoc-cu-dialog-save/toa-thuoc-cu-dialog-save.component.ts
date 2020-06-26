@@ -229,8 +229,12 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   onSaveSamplePrescription() {
+    var nameSamplePrescription = this.toaThuocForm.get('nameSamplePrescription').value;
+    if (!nameSamplePrescription) {
+      return;
+    }
     var val = new SamplePrescriptionsDisplay();
-    val.name = this.toaThuocForm.get('nameSamplePrescription').value;
+    val.name = nameSamplePrescription;
     val.note = this.toaThuocForm.get('note').value;
     val.lines = this.lines.value;
     val.lines.forEach(line => {

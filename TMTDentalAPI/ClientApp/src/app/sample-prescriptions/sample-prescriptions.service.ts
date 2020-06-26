@@ -1,11 +1,12 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ProductSimple } from '../products/product-simple';
 
-export class SamplePrescriptionsPaged {
-  offset: number;
-  limit: number;
-  search: string;
+
+export class SamplePrescriptionBasic{
+  id: string;
+  name: string;
 }
 
 export class SamplePrescriptionsSimple {
@@ -13,21 +14,34 @@ export class SamplePrescriptionsSimple {
   name: string;
 }
 
-export class SamplePrescriptionsDisplay_Lines {
-  amountOfTimes: number;
-  numberOfDays: number;
-  numberOfTimes: number;
-  product: Object;
-  productId: string;
-  quantity: number;
-  useAt: string;
-}
-
 export class SamplePrescriptionsDisplay {
   id: string;
   name: string;
   note: string;
-  lines: SamplePrescriptionsDisplay_Lines[];
+  lines: SamplePrescriptionLineSave[];
+}
+
+export class SamplePrescriptionsSave{
+  name: string;
+  note: string;
+  lines: [];
+}
+
+export class SamplePrescriptionLineSave{
+  id: string;
+  product: ProductSimple;
+  productId: string;
+  numberOfTimes: number; 
+  amountOfTimes: number; 
+  numberOfDays: number; 
+  quantity: number;
+  useAt: string; 
+}
+
+export class SamplePrescriptionsPaged {
+  offset: number;
+  limit: number;
+  search: string;
 }
 
 export class SamplePrescriptionsPaging {
