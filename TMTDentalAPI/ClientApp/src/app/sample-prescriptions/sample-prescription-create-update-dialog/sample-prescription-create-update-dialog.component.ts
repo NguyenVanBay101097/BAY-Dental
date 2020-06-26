@@ -1,6 +1,6 @@
 import { SamplePrescriptionLineSave, SamplePrescriptionsService } from './../sample-prescriptions.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -19,6 +19,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   lineForm: FormGroup;
   editingLine: FormGroup;//line đang được chỉnh sửa
   id: string;
+  submitted = false;
   lineId: number;//toa thuoc line Id
   filteredProducts: ProductSimple[];
   lineSelected: SamplePrescriptionLineSave;
@@ -31,7 +32,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
   ngOnInit() {
     this.PrescriptionForm = this.fb.group({
-      name: null,
+      name: [null , Validators.required],
       note: null,
       lines: this.fb.array([]),
     });
@@ -87,6 +88,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
 
   onSave() {
+    this.submitted = true;
     if (!this.PrescriptionForm.valid) {
       return;
     }
@@ -193,6 +195,10 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     form.get('amountOfTimes').setValue(1);
     form.get('quantity').setValue(1);
     form.get('useAt').setValue('after_meal');
+  }
+
+  get f() {
+    return this.PrescriptionForm.controls;
   }
 
 }
