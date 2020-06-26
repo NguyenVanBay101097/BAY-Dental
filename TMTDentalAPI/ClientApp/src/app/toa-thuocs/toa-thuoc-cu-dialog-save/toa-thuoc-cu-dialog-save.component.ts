@@ -9,6 +9,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
+import { SamplePrescriptionsService, SamplePrescriptionsPaged } from 'src/app/sample-prescriptions/sample-prescriptions.service';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog-save',
@@ -31,7 +32,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, 
     private userService: UserService, public activeModal: NgbActiveModal, 
     private intlService: IntlService, private errorService: AppSharedShowErrorService,
-    private productService: ProductService) { }
+    private productService: ProductService, private samplePrescriptionsService: SamplePrescriptionsService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
@@ -60,7 +61,9 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     setTimeout(() => {
       this.getUserList(); 
       this.loadFilteredProducts();
+      this.loadSamplePrescriptionsList();
     });
+
   }
 
   searchProducts() {
@@ -168,5 +171,15 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         this.errorService.show(err);
       });
     }
+  }
+
+  loadSamplePrescriptionsList() {
+    var val = new SamplePrescriptionsPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = '';
+    this.samplePrescriptionsService.getPaged(val).subscribe(result => {
+      console.log(result);
+    });
   }
 }
