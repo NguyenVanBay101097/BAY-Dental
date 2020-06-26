@@ -8,10 +8,26 @@ export class SamplePrescriptionsPaged {
   search: string;
 }
 
+export class SamplePrescriptionsSimple {
+  id: string;
+  name: string;
+}
+
+export class SamplePrescriptionsDisplay_Lines {
+  amountOfTimes: number;
+  numberOfDays: number;
+  numberOfTimes: number;
+  product: Object;
+  productId: string;
+  quantity: number;
+  useAt: string;
+}
+
 export class SamplePrescriptionsDisplay {
   id: string;
   name: string;
-  lines: [];
+  note: string;
+  lines: SamplePrescriptionsDisplay_Lines[];
 }
 
 export class SamplePrescriptionsPaging {

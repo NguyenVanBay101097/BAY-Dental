@@ -37,6 +37,29 @@
                                     <input type="text" class="form-control" formControlName="diagnostic" />
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chọn dữ liệu mẫu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="samplePrescription" [filterable]="true"
+                                        [data]="samplePrescriptions" #samplePrescriptionCbx [valueField]="'id'"
+                                        [textField]="'name'" (valueChange)="changeSamplePrescription($event)">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Lưu thành mẫu với tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="nameSamplePrescription" />
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -62,16 +85,6 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="note" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Mẫu Đơn Thuốc
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control"  />
                                 </td>
                             </tr>
                         </tbody>
@@ -155,6 +168,7 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-primary" (click)="onSave(true)">Lưu và in</button>
+    <button type="button" class="btn btn-primary" (click)="onSaveSamplePrescription()">Lưu thành đơn thuốc mẫu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

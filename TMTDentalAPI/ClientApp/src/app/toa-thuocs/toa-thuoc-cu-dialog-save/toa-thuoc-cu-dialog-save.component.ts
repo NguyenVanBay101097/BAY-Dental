@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDisplay, ToaThuocLineSave } from '../toa-thuoc.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
@@ -8,8 +8,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
-import { SamplePrescriptionsService, SamplePrescriptionsPaged } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { DropDownFilterSettings, ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { SamplePrescriptionsService, SamplePrescriptionsPaged, SamplePrescriptionsDisplay, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog-save',
@@ -23,6 +24,9 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   userSimpleFilter: UserSimple[] = [];
   filteredProducts: ProductSimple[];
   defaultVal: any;
+  samplePrescriptions: SamplePrescriptionsSimple[] = [];
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('samplePrescriptionCbx', { static: true }) samplePrescriptionCbx: ComboBoxComponent;
 
   public filterSettings: DropDownFilterSettings = {
     caseSensitive: false,
@@ -46,6 +50,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       companyId: null,
       dotKhamId: null,
       lines: this.fb.array([]),
+      nameSamplePrescription: null,
+      samplePrescription: null,
     })
 
     if (this.id) {
@@ -64,6 +70,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       this.loadSamplePrescriptionsList();
     });
 
+    this.filterChangeCombobox();
   }
 
   searchProducts() {
@@ -173,13 +180,87 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     }
   }
 
+  searchUsers(filter: string) {
+    var val = new UserPaged();
+    val.search = filter;
+    return this.userService.autocompleteSimple(val);
+  }
+
+  searchSamplePrescriptions(filter: string) {
+    var val = new SamplePrescriptionsPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = filter;
+    return this.samplePrescriptionsService.getPaged(val);
+  }
+
+  filterChangeCombobox() {
+    this.userCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.userCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+    ).subscribe(
+      result => {
+        this.userSimpleFilter = result;
+        this.userCbx.loading = false;
+      }
+    )
+
+    this.samplePrescriptionCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.samplePrescriptionCbx.loading = true),
+      switchMap(val => this.searchSamplePrescriptions(val.toString().toLowerCase()))
+    ).subscribe(
+      result => {
+        this.samplePrescriptions = result.items;
+        this.samplePrescriptionCbx.loading = false;
+      }
+    )
+  }
+
   loadSamplePrescriptionsList() {
     var val = new SamplePrescriptionsPaged();
     val.offset = 0;
     val.limit = 20;
     val.search = '';
     this.samplePrescriptionsService.getPaged(val).subscribe(result => {
-      console.log(result);
+      this.samplePrescriptions = result.items;
+    });
+  }
+
+  onSaveSamplePrescription() {
+    var val = new SamplePrescriptionsDisplay();
+    val.name = this.toaThuocForm.get('nameSamplePrescription').value;
+    val.note = this.toaThuocForm.get('note').value;
+    val.lines = this.lines.value;
+    val.lines.forEach(line => {
+      line.productId = line.product['id'];
+    });
+    this.samplePrescriptionsService.create(val).subscribe(() => {
+      this.loadSamplePrescriptionsList();
+    }, err => {
+      this.errorService.show(err);
+    });
+  }
+
+  changeSamplePrescription(item) {
+    this.samplePrescriptionsService.get(item.id).subscribe(result => {
+      this.toaThuocForm.get('note').patchValue(result.note);
+
+      this.lines.clear();
+
+      result.lines.forEach(line => {
+        this.lines.push(this.fb.group({
+          product: [line.product, Validators.required],
+          numberOfTimes: line.numberOfTimes, 
+          amountOfTimes: line.amountOfTimes, 
+          quantity: line.quantity,  
+          numberOfDays: line.numberOfDays, 
+          useAt: line.useAt,
+        }));
+      });
+    }, err => {
+      this.errorService.show(err);
     });
   }
 }
