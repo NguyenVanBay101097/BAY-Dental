@@ -347,6 +347,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyDiscountDefault(DiscountAmount val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ApplyDiscountDefault(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetServiceBySaleOrderId(Guid id)

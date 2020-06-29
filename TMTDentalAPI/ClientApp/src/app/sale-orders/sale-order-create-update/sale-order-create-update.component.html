@@ -312,6 +312,11 @@
                                 </table>
                             </div>
                             <div class="oe_right">
+                                <button type="button" 
+                                class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyDiscountDialog()"
+                                *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
+                                <span>Áp dụng chiết khấu tổng</span>
+                                </button>
                                 <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                     class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">

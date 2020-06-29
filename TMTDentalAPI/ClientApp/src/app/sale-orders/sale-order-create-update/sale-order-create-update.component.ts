@@ -38,6 +38,7 @@ import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
 declare var $: any;
 
 @Component({
@@ -362,6 +363,47 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.orderId = result.id;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
+      });
+    }
+  }
+
+  showApplyDiscountDialog() {
+    if (this.id) {
+      if (this.formGroup.dirty) {
+        this.saveRecord().subscribe(() => {
+          let modalRef = this.modalService.open(SaleOrderApplyDiscountDefaultDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          modalRef.componentInstance.saleOrderId = this.id;
+          modalRef.result.then(() => {
+            this.loadRecord();
+          }, () => {
+          });
+        })
+      } else {
+        let modalRef = this.modalService.open(SaleOrderApplyDiscountDefaultDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.saleOrderId = this.id;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
+      }
+    } else {
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
+      this.createRecord().subscribe(result => {
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
+
+        let modalRef = this.modalService.open(SaleOrderApplyDiscountDefaultDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.saleOrderId = result.id;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {

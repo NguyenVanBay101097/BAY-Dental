@@ -1,0 +1,45 @@
+<header class="modal-header">
+    <h5 class="modal-title">Nhập chiết khấu muốn giảm trên tổng tiền <span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Giảm
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="d-flex">
+                                <kendo-numerictextbox [class.d-none]="discountTypeValue !== 'percentage'"
+                                    [min]="0" [max]="100" formControlName="discountPercent" [autoCorrect]="true">
+                                </kendo-numerictextbox>
+                                <kendo-numerictextbox [format]="'n0'"
+                                    [class.d-none]="discountTypeValue !== 'fixed'"
+                                    formControlName="discountFixed">
+                                </kendo-numerictextbox>
+                                <select class="form-control width-auto" formControlName="discountType">
+                                    <option value="percentage">%</option>
+                                    <option value="fixed">VNĐ</option>
+                                </select>
+                            </div>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Áp dụng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
