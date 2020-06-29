@@ -22,8 +22,8 @@ export class AppComponent {
   constructor(public authService: AuthService, private router: Router, public printService: PrintService,
     private el: ElementRef, private permissionService: PermissionService, private http: HttpClient, private modalService: NgbModal) {
     this.loadGroups();
-    this.loadIrConfigParam();
     if (this.authService.isAuthenticated()) {
+      this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
         console.log(result);
         this.permissionService.define(result);

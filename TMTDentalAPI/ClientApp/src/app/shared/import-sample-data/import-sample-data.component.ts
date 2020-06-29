@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-import-sample-data',
@@ -10,10 +11,11 @@ import { environment } from 'src/environments/environment';
 })
 export class ImportSampleDataComponent implements OnInit {
 
-  title = "Bạn có muốn thêm dữ liệu mẫu không ?"
+  title = "Tạo dữ liệu mẫu"
   constructor(
     private activeModal: NgbActiveModal,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
