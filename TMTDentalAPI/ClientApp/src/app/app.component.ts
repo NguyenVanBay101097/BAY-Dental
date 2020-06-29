@@ -5,6 +5,10 @@ import { PrintService } from './print.service';
 declare var $: any;
 import * as _ from 'lodash';
 import { PermissionService } from './shared/permission.service';
+import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +18,11 @@ import { PermissionService } from './shared/permission.service';
 export class AppComponent {
   title = 'tmt-dental';
   _areAccessKeyVisible = false;
-
+  value: string;
   constructor(public authService: AuthService, private router: Router, public printService: PrintService,
-    private el: ElementRef, private permissionService: PermissionService) {
+    private el: ElementRef, private permissionService: PermissionService, private http: HttpClient, private modalService: NgbModal) {
     this.loadGroups();
+    this.loadIrConfigParam();
     if (this.authService.isAuthenticated()) {
       this.authService.getGroups().subscribe((result: any) => {
         console.log(result);
@@ -25,7 +30,6 @@ export class AppComponent {
       });
     }
   }
-
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
     if (!this._areAccessKeyVisible &&
       (keyDownEvent.altKey || keyDownEvent.key === 'Alt') &&
@@ -84,4 +88,25 @@ export class AppComponent {
       }
     });
   }
+
+  loadIrConfigParam() {
+    var key = "import_simple_data";
+    var url = `${environment.apiDomain}api/Web/GetIrConfigParameter/${key}`;
+    return this.http.get(url).subscribe(
+      result => {
+        this.value = result['res'];
+        if (this.value == "True")
+          this.openPopupImportSimpleData();
+      }
+    )
+  }
+
+  openPopupImportSimpleData() {
+    const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.value = this.value;
+    modalRef.result.then(() => {
+    }, () => {
+    });
+  }
+
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
@@ -22,6 +24,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IIrAttachmentService _attachmentService;
         private readonly IMapper _mapper;
         private readonly IUploadService _uploadService;
+        private readonly IIrConfigParameterService _irConfigParameterService;
 
         public WebController(IIrAttachmentService attachmentService,
             IMapper mapper, IUploadService uploadService)
@@ -29,6 +32,218 @@ namespace TMTDentalAPI.Controllers
             _attachmentService = attachmentService;
             _mapper = mapper;
             _uploadService = uploadService;
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ImportSimpleData([FromQuery]string question)
+        {
+            await _irConfigParameterService.SetParam("import_simple_data", "False");
+            if (question == "yes")
+            {
+                XElement xml = XElement.Load(@"C:\Users\sup9\Desktop\data.xml");
+                XmlSerializer serializer = new XmlSerializer(typeof(Tdental));
+                MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xml.ToString()));
+                Tdental tdental = (Tdental)serializer.Deserialize(memStream);
+                if (tdental != null && tdental.Data != null && tdental.Data.Record.Count > 0)
+                {
+                    public async Task<string> SetParam(string key, string value)
+                    {
+                        var param = await SearchQuery(x => x.Key == key).FirstOrDefaultAsync();
+                        if (param != null)
+                        {
+                            var old = param.Value;
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                if (value != old)
+                                {
+                                    param.Value = value;
+                                    await UpdateAsync(param);
+                                }
+                            }
+                            else
+                                await DeleteAsync(param);
+                            return old;
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(value))
+                                await CreateAsync(new IrConfigParameter { Key = key, Value = value });
+                            return null;
+                        }
+                    }
+                    var record = tdental.Data.Record;
+
+                    foreach (var itemRecord in record.ToList())
+                    {
+                        switch (itemRecord.Model)
+                        {
+                            case "res.partner.category":
+                                PartnerCategory partnerCategory = new PartnerCategory();
+                                foreach (var itemField in itemRecord.Field.ToList())
+                                {
+                                    switch (itemField.Name)
+                                    {
+                                        case "name":
+                                            partnerCategory.Name = itemField.Text;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+
+                                await _partnerCategoryService.CreateAsync(partnerCategory);
+                                break;
+                            case "res.partner":
+                                Partner partner = new Partner();
+                                foreach (var itemField in itemRecord.Field.ToList())
+                                {
+                                    switch (itemField.Name)
+                                    {
+                                        case "name":
+                                            partner.Name = itemField.Text;
+                                            break;
+                                        case "email":
+                                            partner.Email = itemField.Text;
+                                            break;
+                                        case "phone":
+                                            partner.Phone = itemField.Text;
+                                            break;
+                                        case "gender":
+                                            partner.Gender = itemField.Text;
+                                            break;
+                                        case "birth_day":
+                                            partner.BirthDay = Int32.Parse(itemField.Text);
+                                            break;
+                                        case "birth_month":
+                                            partner.BirthMonth = Int32.Parse(itemField.Text);
+                                            break;
+                                        case "birth_year":
+                                            partner.BirthYear = Int32.Parse(itemField.Text);
+                                            break;
+                                        case "supplier":
+                                            partner.Supplier = Boolean.Parse(itemField.Text);
+                                            break;
+                                        case "customer":
+                                            partner.Customer = Boolean.Parse(itemField.Text);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                await _partnerService.CreateAsync(partner);
+
+                                break;
+                            case "product.category":
+                                ProductCategory productCateg = new ProductCategory();
+                                foreach (var itemField in itemRecord.Field.ToList())
+                                {
+                                    switch (itemField.Name)
+                                    {
+                                        case "name":
+                                            productCateg.Name = itemField.Text;
+                                            break;
+                                        case "type":
+                                            productCateg.Type = itemField.Text;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                await _productCategoryService.CreateAsync(productCateg);
+
+                                var listProductRecord = record.Where(x => x.Field.Any(s => s.Ref == itemRecord.Id)).ToList();
+                                var uom = await _uoMService.SearchQuery(x => x.Name.Contains("Cái")).FirstOrDefaultAsync();
+                                foreach (var productRecord in listProductRecord)
+                                {
+                                    Product product = new Product();
+                                    product.UOMId = uom.Id;
+                                    product.UOMPOId = uom.Id;
+                                    product.CompanyId = CompanyId;
+                                    foreach (var itemField in productRecord.Field.ToList())
+                                    {
+                                        switch (itemField.Name)
+                                        {
+                                            case "name":
+                                                product.Name = itemField.Text;
+                                                break;
+                                            case "list_price":
+                                                product.ListPrice = Decimal.Parse(itemField.Text);
+                                                break;
+                                            case "labo_price":
+                                                product.LaboPrice = Decimal.Parse(itemField.Text);
+                                                break;
+                                            case "purchase_price":
+                                                product.PurchasePrice = Decimal.Parse(itemField.Text);
+                                                break;
+                                            case "is_labo":
+                                                product.IsLabo = Boolean.Parse(itemField.Text);
+                                                break;
+                                            case "purchase_ok":
+                                                product.PurchaseOK = Boolean.Parse(itemField.Text);
+                                                break;
+                                            case "type":
+                                                product.Type = itemField.Text;
+                                                break;
+                                            case "type_2":
+                                                product.Type2 = itemField.Text;
+                                                break;
+                                            case "categ_id":
+                                                product.CategId = productCateg.Id;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    await _productService.CreateAsync(product);
+                                    var listProductStepRecord = record.Where(x => x.Model == "product.step" && x.Field.Any(s => s.Ref == productRecord.Id)).ToList();
+                                    foreach (var productStepRecord in listProductStepRecord)
+                                    {
+                                        ProductStep productStep = new ProductStep();
+                                        foreach (var itemField in productStepRecord.Field.ToList())
+                                        {
+                                            if (itemField.Name == "name")
+                                                productStep.Name = itemField.Text;
+                                            if (itemField.Name == "product_id")
+                                                productStep.ProductId = product.Id;
+                                        }
+                                        await _productStepService.CreateAsync(productStep);
+                                    }
+                                }
+                                break;
+                            case "history":
+                                History history = new History();
+                                foreach (var itemField in itemRecord.Field.ToList())
+                                {
+                                    switch (itemField.Name)
+                                    {
+                                        case "name":
+                                            history.Name = itemField.Text;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                await _historyService.CreateAsync(history);
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+
+                }
+            }
+            return NoContent();
+
+        }
+
+        [HttpGet("[action]/{key}")]
+        public async Task<IActionResult> GetIrConfigParameter(string key)
+        {
+            var res = await _irConfigParameterService.GetParam(key);
+            if (res == null)
+                return BadRequest();
+            return Ok(new { res });
         }
 
         [HttpPost("[action]")]

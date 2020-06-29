@@ -1,1 +1,19 @@
-<p>import-sample-data works!</p>
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet" style="padding: 15px; display: inline-flex; width: 100%;">
+            <div style="width: 50%; text-align: center;">
+                <button style="min-width: 130px;" (click)="importData('yes')" class="btn btn-primary">Có</button>
+            </div>
+            <div style="width: 50%; justify-content: center;">
+                <button style="min-width: 130px;" (click)="importData('no')" class="btn btn-danger">Không</button>
+            </div>
+
+        </div>
+    </div>
+</div>
