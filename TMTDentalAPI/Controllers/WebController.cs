@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -12,6 +13,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.ViewModels;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -25,13 +27,39 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUploadService _uploadService;
         private readonly IIrConfigParameterService _irConfigParameterService;
+        private readonly IPartnerCategoryService _partnerCategoryService;
+        private readonly IUoMService _uoMService;
+        private readonly IPartnerService _partnerService;
+        private readonly IProductCategoryService _productCategoryService;
+        private readonly IProductService _productService;
+        private readonly IProductStepService _productStepService;
+        private readonly IHistoryService _historyService;
 
-        public WebController(IIrAttachmentService attachmentService,
-            IMapper mapper, IUploadService uploadService)
+        public WebController(
+            IIrAttachmentService attachmentService,
+            IMapper mapper,
+            IUploadService uploadService,
+            IIrConfigParameterService irConfigParameterService,
+            IPartnerCategoryService partnerCategoryService,
+            IUoMService uoMService,
+            IPartnerService partnerService,
+            IProductCategoryService productCategoryService,
+            IProductService productService,
+            IProductStepService productStepService,
+            IHistoryService historyService
+            )
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
             _uploadService = uploadService;
+            _irConfigParameterService = irConfigParameterService;
+            _partnerCategoryService = partnerCategoryService;
+            _uoMService = uoMService;
+            _partnerService = partnerService;
+            _productCategoryService = productCategoryService;
+            _productService = productService;
+            _productStepService = productStepService;
+            _historyService = historyService;
         }
 
         [HttpGet("[action]")]
@@ -46,31 +74,7 @@ namespace TMTDentalAPI.Controllers
                 Tdental tdental = (Tdental)serializer.Deserialize(memStream);
                 if (tdental != null && tdental.Data != null && tdental.Data.Record.Count > 0)
                 {
-                    public async Task<string> SetParam(string key, string value)
-                    {
-                        var param = await SearchQuery(x => x.Key == key).FirstOrDefaultAsync();
-                        if (param != null)
-                        {
-                            var old = param.Value;
-                            if (!string.IsNullOrEmpty(value))
-                            {
-                                if (value != old)
-                                {
-                                    param.Value = value;
-                                    await UpdateAsync(param);
-                                }
-                            }
-                            else
-                                await DeleteAsync(param);
-                            return old;
-                        }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(value))
-                                await CreateAsync(new IrConfigParameter { Key = key, Value = value });
-                            return null;
-                        }
-                    }
+
                     var record = tdental.Data.Record;
 
                     foreach (var itemRecord in record.ToList())

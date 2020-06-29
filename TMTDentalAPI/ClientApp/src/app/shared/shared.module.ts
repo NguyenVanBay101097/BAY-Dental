@@ -124,7 +124,7 @@ import { ImportSampleDataComponent } from './import-sample-data/import-sample-da
     RedirectComponentDirective,
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
-    ImportSampleDataComponent
+
   ],
   imports: [
     CommonModule,
@@ -150,7 +150,8 @@ import { ImportSampleDataComponent } from './import-sample-data/import-sample-da
     UserProfileEditComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    SelectUomProductDialogComponent
+    SelectUomProductDialogComponent,
+    ImportSampleDataComponent
   ],
 })
 export class SharedModule { }
