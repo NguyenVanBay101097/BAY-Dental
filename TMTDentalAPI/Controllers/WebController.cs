@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -68,7 +69,8 @@ namespace TMTDentalAPI.Controllers
             await _irConfigParameterService.SetParam("import_simple_data", "False");
             if (question == "yes")
             {
-                XElement xml = XElement.Load(@"C:\Users\sup9\Desktop\data.xml");
+                var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"sampleData.xml");
+                XElement xml = XElement.Load(path);
                 XmlSerializer serializer = new XmlSerializer(typeof(Tdental));
                 MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xml.ToString()));
                 Tdental tdental = (Tdental)serializer.Deserialize(memStream);
