@@ -19,6 +19,12 @@
         </div>
     </div>
     <div class="o_cp_right">
+        <div>
+            <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm khách hàng'" [filterable]="true"
+            (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg"
+            [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+            </kendo-combobox>
+        </div>
     </div>
 </div>
 

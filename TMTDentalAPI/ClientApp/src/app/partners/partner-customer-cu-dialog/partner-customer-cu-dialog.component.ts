@@ -79,6 +79,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     setTimeout(() => {
       if (this.id) {
         this.partnerService.getPartner(this.id).subscribe(result => {
+          console.log(result);
           this.formGroup.patchValue(result);
           if (result.city && result.city.code) {
             this.handleCityChange(result.city);
