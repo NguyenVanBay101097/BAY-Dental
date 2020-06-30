@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { IrConfigParameterServiceService } from './core/services/ir-config-parameter-service.service';
+import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +30,7 @@ export class AppComponent {
     private permissionService: PermissionService,
     private http: HttpClient,
     private modalService: NgbModal,
-    private irConfigParamService: IrConfigParameterServiceService) {
+    private irConfigParamService: IrConfigParameterService) {
     this.loadGroups();
 
     this.authService.currentUser.subscribe((user) => {
@@ -96,25 +96,25 @@ export class AppComponent {
   }
 
   loadGroups() {
-    this.authService.currentUser.subscribe(user => {
-      if (user) {
-        this.authService.getGroups().subscribe((result: any) => {
-          this.permissionService.define(result);
-        });
-      }
-    });
+    if (this.authService.isAuthenticated()) {
+      this.authService.currentUser.subscribe(user => {
+        if (user) {
+          this.authService.getGroups().subscribe((result: any) => {
+            this.permissionService.define(result);
+          });
+        }
+      });
+    }
   }
 
   loadIrConfigParam() {
     var key = "import_sample_data";
-    var params = new HttpParams().set('key', key)
-    this.irConfigParamService.getIrConfigParameter(params).subscribe(
-      result => {
-        console.log(result);
-
-        this.value = result['value'];
-        if (this.value == "" || this.value == null)
+    this.irConfigParamService.getParam(key).subscribe(
+      (result: any) => {
+        this.value = result.value;
+        if (!this.value) {
           this.openPopupImportSimpleData();
+        }
       }
     )
   }

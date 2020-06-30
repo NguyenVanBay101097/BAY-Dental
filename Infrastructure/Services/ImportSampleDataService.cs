@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -18,11 +20,14 @@ namespace Infrastructure.Services
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         protected readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly CatalogDbContext _dbContext;
 
-        public ImportSampleDataService(IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public ImportSampleDataService(IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor,
+            CatalogDbContext dbContext)
         {
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _dbContext = dbContext;
         }
         public async Task ImportSampleData()
         {
@@ -232,6 +237,16 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-    }
 
+        protected string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+        }
+    }
 }
