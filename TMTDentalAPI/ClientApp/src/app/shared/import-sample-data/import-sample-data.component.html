@@ -1,0 +1,26 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <h5>Xin chào {{authService.userInfo.name}}</h5>
+            <p>
+                Để giúp quá trình tìm hiểu và sử dụng các tính năng dễ dàng hơn, hệ thống sẽ 
+                <strong>Khởi tạo dữ liệu mẫu</strong> cho cơ sở dữ liệu của bạn <br>
+            </p>
+            <p>Nếu bạn muốn xóa dữ liệu mẫu, vui lòng liên hệ với nhân viên của chúng tôi</p>
+            <p>Vui lòng chọn "<strong>Bỏ qua</strong>" nếu bạn không muốn khởi tạo</p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" (click)="importData('Installed')" class="btn btn-primary btn-sm " accesskey="s">Khởi
+        tạo</button>
+    <button type="button" (click)="importData('Cancel')" class="btn btn-light btn-sm " accesskey="q">Bỏ
+        qua</button>
+</div>

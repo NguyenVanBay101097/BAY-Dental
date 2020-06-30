@@ -211,7 +211,7 @@ namespace TMTDentalAPI
             services.AddScoped<IPromotionRuleService, PromotionRuleService>();
             services.AddScoped<IResConfigSettingsService, ResConfigSettingsService>();
             services.AddScoped<IIrModuleCategoryService, IrModuleCategoryService>();
-            services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
+            services.AddScoped<IImportSampleDataService, ImportSampleDataService>();
             services.AddScoped<IZaloOAConfigService, ZaloOAConfigService>();
             services.AddScoped(typeof(BirthdayMessageJobService));
             services.AddScoped<IRevenueReportService, RevenueReportService>();
@@ -226,6 +226,7 @@ namespace TMTDentalAPI
             services.AddScoped<IMarketingMessageService, MarketingMessageService>();
             services.AddScoped<IPartnerMapPSIDFacebookPageService, PartnerMapPSIDFacebookPageService>();
             services.AddScoped<IFacebookConnectService, FacebookConnectService>();
+            services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
             services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();
             services.AddScoped<IFacebookUserProfileService, FacebookUserProfileService>();
             services.AddScoped<IFacebookMassMessagingService, FacebookMassMessagingService>();
