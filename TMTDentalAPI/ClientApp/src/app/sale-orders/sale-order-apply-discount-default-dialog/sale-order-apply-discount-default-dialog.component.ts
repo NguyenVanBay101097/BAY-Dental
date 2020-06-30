@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SaleOrderService } from '../sale-order.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
@@ -10,10 +10,10 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
   styleUrls: ['./sale-order-apply-discount-default-dialog.component.css']
 })
 export class SaleOrderApplyDiscountDefaultDialogComponent implements OnInit {
-  saleOrderId: string;
+  @Output() discountFormGroup = new EventEmitter<any>();
+  @ViewChild('popOver',{static: true}) public popover: NgbPopover;
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private saleOrderService: SaleOrderService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, private errorService: AppSharedShowErrorService) { }
+  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -27,18 +27,18 @@ export class SaleOrderApplyDiscountDefaultDialogComponent implements OnInit {
     return this.formGroup.get('discountType').value;
   }
 
-  onSave() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-    var val = this.formGroup.value;
-    val.saleOrderId = this.saleOrderId;
-    this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
-      this.activeModal.close(true);
-    }, (error) => {
-      this.errorService.show(error);
-    });
+  applyDiscount() {
+    this.discountFormGroup.emit(this.formGroup.value);
+    this.popover.close();
+    this.resetForm();
   }
 
+   resetForm(){
+    this.formGroup = this.fb.group({
+      discountType: 'percentage',
+      discountPercent: 0,
+      discountFixed:0,
+    });
+  }
 
 }

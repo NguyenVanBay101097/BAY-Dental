@@ -1890,33 +1890,34 @@ namespace Infrastructure.Services
         }
 
         //thêm Orderline chiết khấu tổng vào SaleOrder
-        public async Task ApplyDiscountDefault(DiscountAmount val)
+        public async Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var product = await CheckProductDiscount(val);
             var reward_string = await GetDisplayName(val);
             var saleOrder = await SearchQuery(x => x.Id == val.saleOrderId).Include(x => x.OrderLines).FirstOrDefaultAsync();
-            var price = val.DiscountType == "percentage" ? ((saleOrder.OrderLines.Where(x => x.IsRewardLine == false).Sum(x => x.ProductUOMQty * x.PriceUnit) * val.DiscountPercent) / 100) : val.DiscountFixed;
-            if (saleOrder.OrderLines.Any(x => x.ProductId.Value == product.Id))
+            var total = saleOrder.OrderLines.Where(x => x.ProductId != product.Id).Sum(x => x.PriceSubTotal);
+
+            var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
+            var line = saleOrder.OrderLines.Where(x => x.ProductId == product.Id).FirstOrDefault();
+
+            if (line != null)
             {
-                var saleorderline = saleOrder.OrderLines.Where(x => x.ProductId == product.Id).FirstOrDefault();
-                saleorderline.Name = $"Chiết khấu: {reward_string}";
-                saleorderline.ProductId = product.Id;
-                saleorderline.PriceUnit = -price.Value;
-                saleorderline.ProductUOMQty = 1;
-                saleorderline.ProductUOMId = product.UOMId;
-                saleorderline.IsRewardLine = true;
+                line.Name = $"{reward_string}";
+                line.PriceUnit = -discount_amount.Value;
+                line.ProductUOMQty = 1;
+                line.IsRewardLine = true;
             }
             else
             {
                 saleOrder.OrderLines.Add(new SaleOrderLine
                 {
-                    Name = $"Chiết khấu: {reward_string}",
+                    Name = reward_string,
                     ProductId = product.Id,
-                    PriceUnit = -price.Value,
+                    PriceUnit = -discount_amount.Value,
                     ProductUOMQty = 1,
                     ProductUOMId = product.UOMId,
-                    IsRewardLine = true,
+                    IsRewardLine = true
                 });
             }
 
@@ -1931,34 +1932,30 @@ namespace Infrastructure.Services
         }
 
         //kiểm tra product chiết khấu tổng có tồn tại chưa
-        private async Task<Product> CheckProductDiscount(DiscountAmount val)
+        private async Task<Product> CheckProductDiscount(ApplyDiscountSaleOrderViewModel val)
         {
             var product = new Product();
             var productObj = GetService<IProductService>();
-            var objmodel = GetService<IIRModelDataService>();
-            var resmodel = await objmodel.GetRef<Product>("sale.product_discount_default");
-            if (resmodel == null)
+            var objModel = GetService<IIRModelDataService>();
+            var resModel = await objModel.GetRef<Product>("sale.product_discount_default");
+            if (resModel == null)
             {
-                product = await GetOrCreateDiscountProduct(val);
+                resModel = await GetOrCreateDiscountProduct(val);
                 var modeldata = new IRModelData
                 {
                     Model = "product.discount",
                     Module = "sale",
                     Name = "product_discount_default",
-                    ResId = product.Id.ToString()
+                    ResId = resModel.Id.ToString()
                 };
-                await objmodel.CreateAsync(modeldata);
-            }
-            else
-            {
-                product = await productObj.SearchQuery(x => x.Id == resmodel.Id).FirstOrDefaultAsync();
+                await objModel.CreateAsync(modeldata);
             }
 
-            return product;
+            return resModel;
         }
 
         //Tạo Product chiết khấu tổng nếu chưa tồn tại
-        private async Task<Product> GetOrCreateDiscountProduct(DiscountAmount val)
+        private async Task<Product> GetOrCreateDiscountProduct(ApplyDiscountSaleOrderViewModel val)
         {
             var productObj = GetService<IProductService>();
             var reward_string = await GetDisplayName(val);
@@ -1984,7 +1981,7 @@ namespace Infrastructure.Services
         }
 
         //Tạo tên Orderline cho phần chiết khấu tổng
-        private async Task<string> GetDisplayName(DiscountAmount val)
+        private async Task<string> GetDisplayName(ApplyDiscountSaleOrderViewModel val)
         {
             var productObj = GetService<IProductService>();
             var uomObj = GetService<IUoMService>();
@@ -1994,32 +1991,14 @@ namespace Infrastructure.Services
             if (val.DiscountType == "percentage")
             {
                 var reward_percentage = (val.DiscountPercent ?? 0).ToString();
-                reward_string = $"Giảm {reward_percentage}% trên tổng tiền";
+                reward_string = $"Giảm {reward_percentage}% ";
 
             }
             else if (val.DiscountType == "fixed")
-                reward_string = "Giảm " + (val.DiscountFixed ?? 0).ToString("n0") + " trên tổng tiền";
+                reward_string = "Giảm " + (val.DiscountFixed ?? 0).ToString("n0");
 
             return reward_string;
         }
     }
-    public class DiscountAmount
-    {
-        public Guid saleOrderId { get; set; }
-        /// <summary>
-        /// percentage : phần trăm
-        /// fixed : tiền mặt
-        /// </summary>
-        public string DiscountType { get; set; }
-        /// <summary>
-        /// phần trăm
-        /// </summary>
-        public decimal? DiscountPercent { get; set; }
-        /// <summary>
-        /// tiền mặt
-        /// </summary>
-        public decimal? DiscountFixed { get; set; }
 
-
-    }
 }

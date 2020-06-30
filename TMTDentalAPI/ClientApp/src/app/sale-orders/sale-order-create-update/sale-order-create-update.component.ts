@@ -1,3 +1,4 @@
+import { DiscountDefault } from './../sale-order.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, map, mergeMap } from 'rxjs/operators';
@@ -13,7 +14,7 @@ import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog
 import { SaleOrderDisplay } from '../sale-order-display';
 import * as _ from 'lodash';
 import { UserSimple } from 'src/app/users/user-simple';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
@@ -38,7 +39,6 @@ import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
-import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
 declare var $: any;
 
 @Component({
@@ -56,6 +56,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
+  discountDefault:DiscountDefault;
+  
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
@@ -77,7 +79,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService,public activeModal: NgbActiveModal,) {
   }
 
   ngOnInit() {
@@ -93,8 +95,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       pricelist: [null, Validators.required],
     });
     this.routeActive();
-
-
 
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
@@ -371,46 +371,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  showApplyDiscountDialog() {
-    if (this.id) {
-      if (this.formGroup.dirty) {
-        this.saveRecord().subscribe(() => {
-          let modalRef = this.modalService.open(SaleOrderApplyDiscountDefaultDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-          modalRef.componentInstance.saleOrderId = this.id;
-          modalRef.result.then(() => {
-            this.loadRecord();
-          }, () => {
-          });
-        })
-      } else {
-        let modalRef = this.modalService.open(SaleOrderApplyDiscountDefaultDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.saleOrderId = this.id;
-        modalRef.result.then(() => {
-          this.loadRecord();
-        }, () => {
-        });
-      }
-    } else {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.createRecord().subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], {
-          queryParams: {
-            id: result.id
-          },
-        });
-
-        let modalRef = this.modalService.open(SaleOrderApplyDiscountDefaultDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.saleOrderId = result.id;
-        modalRef.result.then(() => {
-          this.loadRecord();
-        }, () => {
-        });
-      });
-    }
-  }
+ 
 
   getCouponLines() {
     var lines = this.orderLines.value;
@@ -516,6 +477,38 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.saleOrderService.applyPromotion(result.id).subscribe(() => {
           this.loadRecord();
+        });
+      });
+    }
+  }
+
+  onApplyDiscount(val: any){
+    if (this.id) {
+      this.discountDefault = val;
+      this.discountDefault.saleOrderId = this.id;
+      this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
+        this.loadRecord();        
+      }, (error) => {
+        this.errorService.show(error);
+      });
+    }
+    else {
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
+      this.createRecord().subscribe(result => {
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
+
+        val.saleOrderId = result.id;
+        this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
+          this.loadRecord();        
+        }, (error) => {
+          this.errorService.show(error);
         });
       });
     }

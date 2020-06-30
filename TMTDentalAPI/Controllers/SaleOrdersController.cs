@@ -348,7 +348,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ApplyDiscountDefault(DiscountAmount val)
+        public async Task<IActionResult> ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.ApplyDiscountDefault(val);

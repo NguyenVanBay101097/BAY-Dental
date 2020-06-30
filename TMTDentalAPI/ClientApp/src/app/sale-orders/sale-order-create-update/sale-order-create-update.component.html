@@ -280,7 +280,7 @@
                                     <tbody formArrayName="orderLines">
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                             <tr [formGroupName]="i">
-                                                <td>{{ line.get('product').value.name }}</td>
+                                                <td>{{ line.get('name').value }}</td>
                                                 <td>{{lineTeeth(line)}}</td>
                                                 <td>{{line.get('diagnostic').value}}</td>
                                                 <td class="text-right">{{ line.get('productUOMQty').value | number }}
@@ -288,7 +288,6 @@
                                                 <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
                                                 <td class="text-right">
                                                     {{getDiscountNumber(line) | number}}{{getDiscountTypeDisplay(line)}}
-
                                                 </td>
                                                 <td class="text-right">{{ line.get('priceSubTotal').value | number }}
                                                 </td>
@@ -312,11 +311,8 @@
                                 </table>
                             </div>
                             <div class="oe_right">
-                                <button type="button" 
-                                class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyDiscountDialog()"
-                                *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
-                                <span>Áp dụng chiết khấu tổng</span>
-                                </button>
+                                <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog>
+                               
                                 <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                     class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
