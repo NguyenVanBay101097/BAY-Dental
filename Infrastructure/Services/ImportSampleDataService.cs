@@ -28,9 +28,9 @@ namespace Infrastructure.Services
         {
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\importSampleData.xml");
             XElement xml = XElement.Load(file_path);
-            XmlSerializer serializer = new XmlSerializer(typeof(SampleData));
+            XmlSerializer serializer = new XmlSerializer(typeof(ImportSampleDataXml));
             MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xml.ToString()));
-            SampleData sampleData = (SampleData)serializer.Deserialize(memStream);
+            ImportSampleDataXml sampleData = (ImportSampleDataXml)serializer.Deserialize(memStream);
 
             var partnerCategObj = GetService<IPartnerCategoryService>();
             var partnerObj = GetService<IPartnerService>();
@@ -48,151 +48,160 @@ namespace Infrastructure.Services
 
             if (sampleData != null && sampleData.Data != null && sampleData.Data.Record.Count > 0)
             {
-
                 var record = sampleData.Data.Record;
-
+                var uomObj = GetService<IUoMService>();
+                var uom = await uomObj.DefaultUOM();
                 foreach (var itemRecord in record.ToList())
                 {
                     switch (itemRecord.Model)
                     {
                         case "res.partner.category":
-                            partner_category_dict.Add(itemRecord.Id,new PartnerCategory());
+                            var partnerCateg = new PartnerCategory();
                             foreach (var itemField in itemRecord.Field.ToList())
                             {
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                        partner_category_dict[itemRecord.Id].Name = itemField.Text;
+                                        partnerCateg.Name = itemField.Text;
                                         break;
                                     default:
                                         break;
                                 }
                             }
+                            partner_category_dict.Add(itemRecord.Id, partnerCateg);
                             break;
+
                         case "res.partner":
-                            partner_dict.Add(itemRecord.Id, new Partner());
+                            var partner = new Partner();
                             foreach (var itemField in itemRecord.Field.ToList())
                             {
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                        partner_dict[itemRecord.Id].Name = itemField.Text;
+                                       partner.Name = itemField.Text;
                                         break;
                                     case "email":
-                                        partner_dict[itemRecord.Id].Email = itemField.Text;
+                                       partner.Email = itemField.Text;
                                         break;
                                     case "phone":
-                                        partner_dict[itemRecord.Id].Phone = itemField.Text;
+                                       partner.Phone = itemField.Text;
                                         break;
                                     case "gender":
-                                        partner_dict[itemRecord.Id].Gender = itemField.Text;
+                                       partner.Gender = itemField.Text;
                                         break;
                                     case "birth_day":
-                                        partner_dict[itemRecord.Id].BirthDay = Int32.Parse(itemField.Text);
+                                       partner.BirthDay = Int32.Parse(itemField.Text);
                                         break;
                                     case "birth_month":
-                                        partner_dict[itemRecord.Id].BirthMonth = Int32.Parse(itemField.Text);
+                                       partner.BirthMonth = Int32.Parse(itemField.Text);
                                         break;
                                     case "birth_year":
-                                        partner_dict[itemRecord.Id].BirthYear = Int32.Parse(itemField.Text);
+                                       partner.BirthYear = Int32.Parse(itemField.Text);
                                         break;
                                     case "supplier":
-                                        partner_dict[itemRecord.Id].Supplier = Boolean.Parse(itemField.Text);
+                                       partner.Supplier = Boolean.Parse(itemField.Text);
                                         break;
                                     case "customer":
-                                        partner_dict[itemRecord.Id].Customer = Boolean.Parse(itemField.Text);
+                                       partner.Customer = Boolean.Parse(itemField.Text);
                                         break;
                                     default:
                                         break;
                                 }
                             }
+                            partner_dict.Add(itemRecord.Id, partner);
                             break;
+
                         case "product.category":
-                            product_category_dict.Add(itemRecord.Id, new ProductCategory());
+
+                            var productCategory = new ProductCategory();
                             foreach (var itemField in itemRecord.Field.ToList())
                             {
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                        product_category_dict[itemRecord.Id].Name = itemField.Text;
+                                        productCategory.Name = itemField.Text;
                                         break;
                                     case "type":
-                                        product_category_dict[itemRecord.Id].Type = itemField.Text;
+                                        productCategory.Type = itemField.Text;
                                         break;
                                     default:
                                         break;
                                 }
                             }
+                            product_category_dict.Add(itemRecord.Id, productCategory);
                             break;
 
                         case "product.product":
-                            product_dict.Add(itemRecord.Id, new Product());
-                            var uom = await GetService<IUoMService>().SearchQuery(x => x.Name.Contains("Cái")).FirstOrDefaultAsync();
-                            product_dict[itemRecord.Id].UOMId = uom.Id;
-                            product_dict[itemRecord.Id].UOMPOId = uom.Id;
-                            product_dict[itemRecord.Id].CompanyId = CompanyId;
+                            var product = new Product();
+                            product.UOMId = uom.Id;
+                            product.UOMPOId = uom.Id;
+                            product.CompanyId = CompanyId;
                             foreach (var itemField in itemRecord.Field.ToList())
                             {
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                        product_dict[itemRecord.Id].Name = itemField.Text;
+                                        product.Name = itemField.Text;
                                         break;
                                     case "list_price":
-                                        product_dict[itemRecord.Id].ListPrice = Decimal.Parse(itemField.Text);
+                                        product.ListPrice = Decimal.Parse(itemField.Text);
                                         break;
                                     case "labo_price":
-                                        product_dict[itemRecord.Id].LaboPrice = Decimal.Parse(itemField.Text);
+                                        product.LaboPrice = Decimal.Parse(itemField.Text);
                                         break;
                                     case "purchase_price":
-                                        product_dict[itemRecord.Id].PurchasePrice = Decimal.Parse(itemField.Text);
+                                        product.PurchasePrice = Decimal.Parse(itemField.Text);
                                         break;
                                     case "is_labo":
-                                        product_dict[itemRecord.Id].IsLabo = Boolean.Parse(itemField.Text);
+                                        product.IsLabo = Boolean.Parse(itemField.Text);
                                         break;
                                     case "purchase_ok":
-                                        product_dict[itemRecord.Id].PurchaseOK = Boolean.Parse(itemField.Text);
+                                        product.PurchaseOK = Boolean.Parse(itemField.Text);
                                         break;
                                     case "type":
-                                        product_dict[itemRecord.Id].Type = itemField.Text;
+                                        product.Type = itemField.Text;
                                         break;
                                     case "type_2":
-                                        product_dict[itemRecord.Id].Type2 = itemField.Text;
+                                        product.Type2 = itemField.Text;
                                         break;
                                     case "categ_id":
-                                        product_dict[itemRecord.Id].Categ = product_category_dict[itemField.Ref];
+                                        product.Categ = product_category_dict[itemField.Ref];
                                         break;
                                     default:
                                         break;
                                 }
                             }
+                            product_dict.Add(itemRecord.Id, product);
                             break;
 
                         case "product.step":
-                            product_step_dict.Add(itemRecord.Id, new ProductStep());
+                            var productStep = new ProductStep();
                             foreach (var itemField in itemRecord.Field.ToList())
                             {
                                 if (itemField.Name == "name")
-                                    product_step_dict[itemRecord.Id].Name = itemField.Text;
+                                    productStep.Name = itemField.Text;
                                 if (itemField.Name == "product_id")
-                                    product_step_dict[itemRecord.Id].Product = product_dict[itemField.Ref];
+                                    productStep.Product = product_dict[itemField.Ref];
                             }
+                            product_step_dict.Add(itemRecord.Id, productStep);
                             break;
 
                         case "history":
-                            history_dict.Add(itemRecord.Id, new History());
+                            var history = new History();
                             foreach (var itemField in itemRecord.Field.ToList())
                             {
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                        history_dict[itemRecord.Id].Name = itemField.Text;
+                                        history.Name = itemField.Text;
                                         break;
                                     default:
                                         break;
                                 }
                             }
+                            history_dict.Add(itemRecord.Id, history);
                             break;
+
                         default:
                             break;
                     }

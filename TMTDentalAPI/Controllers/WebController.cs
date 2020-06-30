@@ -55,7 +55,7 @@ namespace TMTDentalAPI.Controllers
             {
                 await _importSampleDataService.ImportSampleData();
             }
-            await _irConfigParameterService.SetParam("import_simple_data", action);
+            await _irConfigParameterService.SetParam("import_sample_data", action);
             return NoContent();
 
         }

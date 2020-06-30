@@ -35,7 +35,7 @@ namespace Umbraco.Web.Models.ContentEditing
     }
 
     [XmlRoot(ElementName = "sampleData")]
-    public class SampleData
+    public class ImportSampleDataXml
     {
         [XmlElement(ElementName = "data")]
         public Data Data { get; set; }

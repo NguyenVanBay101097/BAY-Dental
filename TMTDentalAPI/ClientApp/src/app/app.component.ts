@@ -9,6 +9,8 @@ import { ImportSampleDataComponent } from './shared/import-sample-data/import-sa
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { IrConfigParameterServiceService } from './core/services/ir-config-parameter-service.service';
 
 @Component({
   selector: 'app-root',
@@ -19,8 +21,16 @@ export class AppComponent {
   title = 'tmt-dental';
   _areAccessKeyVisible = false;
   value: string;
-  constructor(public authService: AuthService, private router: Router, public printService: PrintService,
-    private el: ElementRef, private permissionService: PermissionService, private http: HttpClient, private modalService: NgbModal) {
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    public printService: PrintService,
+    private notificationService: NotificationService,
+    private el: ElementRef,
+    private permissionService: PermissionService,
+    private http: HttpClient,
+    private modalService: NgbModal,
+    private irConfigParamService: IrConfigParameterServiceService) {
     this.loadGroups();
 
     this.authService.currentUser.subscribe((user) => {
@@ -96,11 +106,12 @@ export class AppComponent {
   }
 
   loadIrConfigParam() {
-    var key = "import_simple_data";
-    var url = `${environment.apiDomain}api/IrConfigParameters/GetParam`;
-    var params = new HttpParams().set('key', key);
-    return this.http.get(url, { params }).subscribe(
+    var key = "import_sample_data";
+    var params = new HttpParams().set('key', key)
+    this.irConfigParamService.getIrConfigParameter(params).subscribe(
       result => {
+        console.log(result);
+
         this.value = result['value'];
         if (this.value == "" || this.value == null)
           this.openPopupImportSimpleData();
@@ -111,8 +122,18 @@ export class AppComponent {
   openPopupImportSimpleData() {
     const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.value = this.value;
-    modalRef.result.then(() => {
-    }, () => {
+    modalRef.result.then(result => {
+      if (result) {
+        this.notificationService.show({
+          content: 'Khởi tạo dữ liệu mẫu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+    }, err => {
+      console.log(err);
     });
   }
 
