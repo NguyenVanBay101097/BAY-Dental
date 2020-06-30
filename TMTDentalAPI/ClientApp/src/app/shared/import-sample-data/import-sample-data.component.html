@@ -5,21 +5,26 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <div class="o_form_sheet_bg" style="padding: 15px;">
-        <h3>Xin chào {{authService.userInfo.name}}</h3>
-        <h5>Để giúp quá trình tìm hiểu và sử dụng các tính năng dễ dàng hơn, hệ thống sẽ <strong>Khởi tạo dữ liệu
-                mẫu</strong> cho cơ sở dữ liệu của bạn <br>
-            (Vui lòng click <strong>Khởi tạo</strong> nếu bạn muốn khởi tạo
-            dự liệu mẫu, click <strong>Bỏ qua</strong> để không khởi tạo dữ liệu mẫu).</h5>
-        <div class="o_form_sheet" style="padding: 15px; display: inline-flex; width: 100%;">
-
-            <div style="width: 50%; text-align: center;">
-                <button style="min-width: 130px;" (click)="importData('yes')" class="btn btn-primary">Khởi tạo</button>
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="o_form_sheet">
+                <h3>Xin chào {{authService.userInfo.name}}</h3>
+                <h5>Để giúp quá trình tìm hiểu và sử dụng các tính năng dễ dàng hơn, hệ thống sẽ <strong>Khởi tạo dữ
+                        liệu
+                        mẫu</strong> cho cơ sở dữ liệu của bạn <br>
+                    (Vui lòng click <strong>Khởi tạo</strong> nếu bạn muốn khởi tạo
+                    dự liệu mẫu, click <strong>Bỏ qua</strong> để không khởi tạo dữ liệu mẫu).
+                </h5>
             </div>
-            <div style="width: 50%; justify-content: center;">
-                <button style="min-width: 130px;" (click)="importData('no')" class="btn btn-danger">Bỏ qua</button>
-            </div>
-
         </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" (click)="importData('Installed')" class="btn btn-primary btn-sm mr-2" accesskey="s">Khởi
+            tạo</button>
+        <button type="button" (click)="importData('Cancel')" class="btn btn-light btn-sm mr-2" accesskey="q">Bỏ
+            qua</button>
     </div>
 </div>

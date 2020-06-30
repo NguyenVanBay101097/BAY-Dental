@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { PermissionService } from './shared/permission.service';
 import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -22,6 +22,12 @@ export class AppComponent {
   constructor(public authService: AuthService, private router: Router, public printService: PrintService,
     private el: ElementRef, private permissionService: PermissionService, private http: HttpClient, private modalService: NgbModal) {
     this.loadGroups();
+
+    this.authService.currentUser.subscribe((user) => {
+      if (user) {
+        this.loadIrConfigParam();
+      }
+    })
     if (this.authService.isAuthenticated()) {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
@@ -91,11 +97,12 @@ export class AppComponent {
 
   loadIrConfigParam() {
     var key = "import_simple_data";
-    var url = `${environment.apiDomain}api/Web/GetIrConfigParameter/${key}`;
-    return this.http.get(url).subscribe(
+    var url = `${environment.apiDomain}api/IrConfigParameters/GetParam`;
+    var params = new HttpParams().set('key', key);
+    return this.http.get(url, { params }).subscribe(
       result => {
-        this.value = result['res'];
-        if (this.value == "True")
+        this.value = result['value'];
+        if (this.value == "" || this.value == null)
           this.openPopupImportSimpleData();
       }
     )

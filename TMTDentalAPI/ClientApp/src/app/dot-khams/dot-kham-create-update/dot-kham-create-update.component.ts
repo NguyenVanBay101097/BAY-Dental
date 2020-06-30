@@ -682,7 +682,6 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
 
     if (this.id) {
-      debugger
       var val = this.dotKhamForm.value;
       var data = this.prepareData();
       data.userId = val.user ? val.user.id : data.userId;

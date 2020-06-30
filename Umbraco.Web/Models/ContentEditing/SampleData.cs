@@ -34,8 +34,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public List<Record> Record { get; set; } = new List<Record>();
     }
 
-    [XmlRoot(ElementName = "tdental")]
-    public class Tdental
+    [XmlRoot(ElementName = "sampleData")]
+    public class SampleData
     {
         [XmlElement(ElementName = "data")]
         public Data Data { get; set; }

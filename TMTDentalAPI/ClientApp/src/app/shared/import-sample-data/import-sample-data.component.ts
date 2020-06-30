@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/auth/auth.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-import-sample-data',
@@ -15,20 +16,28 @@ export class ImportSampleDataComponent implements OnInit {
   constructor(
     private activeModal: NgbActiveModal,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
 
   }
 
-  importData(question) {
-    var url = `${environment.apiDomain}api/web/ImportSimpleData`;
-    var params = new HttpParams().set('question', question)
-    if (question == "yes") {
-      this.http.get(url, { params }).subscribe(
+  importData(action) {
+    var url = `${environment.apiDomain}api/web/ImportSampleData`;
+    var params = new HttpParams().set('action', action)
+    if (action == "Installed") {
+      this.http.get(url, { params: params }).subscribe(
         () => {
           this.activeModal.close();
+          this.notificationService.show({
+            content: 'Khởi tạo dữ liệu mẫu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
         }
       )
     }
