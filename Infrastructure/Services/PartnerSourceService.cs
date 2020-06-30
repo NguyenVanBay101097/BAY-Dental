@@ -87,24 +87,26 @@ namespace Infrastructure.Services
         public async Task<List<ReportPartnerSourceItem>> GetReportPartnerSource(ReportFilterPartnerSource val)
          {
             var companyId = CompanyId;
-            var partners = _context.Partners.Where(x => x.CompanyId == companyId && x.Customer == true);
+            //SearchQuery
+            var partnerObj = GetService<IPartnerService>();
+            var partners = partnerObj.SearchQuery(x => x.Customer == true);
            
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                partners = partners.Where(x => x.DateCreated >= dateFrom);
+                partners = partners.Where(x => x.Date.Value >= dateFrom);
             }
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                partners = partners.Where(x => x.DateCreated <= dateTo);
+                partners = partners.Where(x => x.Date.Value <= dateTo);
             }
             var totalPartner = partners.ToList().Count;
        
             var query = partners.GroupBy(x => new {
                 x.Source.Id,
                 x.Source.Name
-            }).Select(x => new ReportPartnerSourceItem {
+            }).Select(x => new ReportPartnerSourceItem {             
                 Id = x.Key.Id,
                 Name = x.Key.Name,
                 TotalPartner = totalPartner,

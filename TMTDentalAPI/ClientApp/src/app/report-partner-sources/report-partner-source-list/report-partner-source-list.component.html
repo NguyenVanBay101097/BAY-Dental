@@ -21,8 +21,10 @@
 </div>
 
 <div class="o_content">
-    <kendo-chart>
-        <kendo-chart-legend position="bottom"></kendo-chart-legend>
+    <kendo-chart *ngIf="pieData.length">
+        <kendo-chart-legend position="bottom">
+            
+        </kendo-chart-legend>
         <kendo-chart-series>
           <kendo-chart-series-item
             type="pie"
@@ -32,7 +34,11 @@
             [labels]="{ visible: true, content: labelContent }"           
           >
           </kendo-chart-series-item>
-        </kendo-chart-series>
+        </kendo-chart-series>      
     </kendo-chart>
+    <div *ngIf="!pieData.length" class="px-4 py-3 bg-white text-center">
+        Không có dữ liệu
+    </div>
+   
 </div>
 

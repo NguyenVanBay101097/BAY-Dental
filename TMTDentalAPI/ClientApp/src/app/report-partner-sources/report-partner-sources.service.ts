@@ -23,9 +23,7 @@ export class ReportPartnerSourcesService {
   apiUrl = "api/ReportPartnerSources";
   constructor( private http: HttpClient, @Inject("BASE_API") private baseApi: string) { }
 
-  getReport(val: any): Observable<ReportSource[]> {
-    return this.http.get<ReportSource[]>(this.baseApi + this.apiUrl, {
-      params: new HttpParams({ fromObject: val }),
-    });
+  getReport(val: ReportPartnerSourceSearch): Observable<ReportSource[]> {
+    return this.http.post<ReportSource[]>(this.baseApi + this.apiUrl, val);
   }
 }

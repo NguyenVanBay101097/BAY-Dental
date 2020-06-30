@@ -20,7 +20,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetReport([FromQuery]ReportFilterPartnerSource val)
+        public async Task<IActionResult> GetReport(ReportFilterPartnerSource val)
         {
             var res = await _sourceService.GetReportPartnerSource(val);
             return Ok(res);

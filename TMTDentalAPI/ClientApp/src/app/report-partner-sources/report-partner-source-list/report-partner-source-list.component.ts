@@ -65,12 +65,12 @@ export class ReportPartnerSourceListComponent implements OnInit {
 
   loadItems(): void {   
     for (let i = 0; i < this.reportResults.length; i++) {
-      this.pieData.push({category: this.reportResults[i].name, value:this.reportResults[i].countPartner , percentage: Math.round(this.reportResults[i].countPartner / this.reportResults[i].totalPartner * 100) })
+      this.pieData.push({category: this.reportResults[i].name || 'Chưa xác định', value:this.reportResults[i].countPartner , percentage: Math.round(this.reportResults[i].countPartner / this.reportResults[i].totalPartner * 100) })
      };
   }
 
   public labelContent(args: LegendLabelsContentArgs): string {
-    return `${args.dataItem.category} ${args.dataItem.value} khách hàng (${args.dataItem.percentage}%)`;
+    return `${args.dataItem.category}: ${args.dataItem.value} khách hàng (${args.dataItem.percentage}%)`;
   }
 
   onSearchDateChange(data) {
@@ -79,6 +79,4 @@ export class ReportPartnerSourceListComponent implements OnInit {
     this.loadDataFromApi();
     
   }
-
-
 }
