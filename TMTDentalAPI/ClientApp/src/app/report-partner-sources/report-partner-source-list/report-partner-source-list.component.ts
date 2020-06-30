@@ -26,10 +26,6 @@ export class ReportPartnerSourceListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   date: Date;
-  searchUpdate = new Subject<string>();
-
- 
-
 
   // Pie
   public pieData: any[] = [];
@@ -40,12 +36,6 @@ export class ReportPartnerSourceListComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi();
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(() => {
-        this.loadDataFromApi();
-      });
   }
 
   loadDataFromApi() {
@@ -74,7 +64,6 @@ export class ReportPartnerSourceListComponent implements OnInit {
   }
 
   loadItems(): void {   
-    debugger
     for (let i = 0; i < this.reportResults.length; i++) {
       this.pieData.push({category: this.reportResults[i].name, value:this.reportResults[i].countPartner , percentage: Math.round(this.reportResults[i].countPartner / this.reportResults[i].totalPartner * 100) })
      };

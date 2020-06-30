@@ -62,18 +62,18 @@
                                 </td>
                                 <td colspan="1" style="width:100%">
                                     <div class="d-flex">
-                                        <select class="form-control" formControlName="birthDay">
-                                            <option value="null">Ngày</option>
+                                        <select class="form-control" formControlName="birthDayStr">
+                                            <option value="">Ngày</option>
                                             <option *ngFor="let i of dayList">
                                                 {{i}}</option>
                                         </select>
-                                        <select class="form-control" formControlName="birthMonth">
-                                            <option value="null">Tháng</option>
+                                        <select class="form-control" formControlName="birthMonthStr">
+                                            <option value="">Tháng</option>
                                             <option *ngFor="let i of monthList">
                                                 {{i}}</option>
                                         </select>
-                                        <select class="form-control" formControlName="birthYear">
-                                            <option value="null">Năm</option>
+                                        <select class="form-control" formControlName="birthYearStr">
+                                            <option value="">Năm</option>
                                             <option *ngFor="let i of yearList">
                                                 {{i}}</option>
                                         </select>
@@ -168,7 +168,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                   <div>
-                                    <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources" (filterChange)="handleSourceFilter($event)"
+                                    <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources"
                                        [valueField]="'id'" #sourceCbx [textField]="'name'">
                                     </kendo-combobox>                                 
                                   </div>
@@ -180,7 +180,7 @@
                                   </td>
                                   <td colspan="1" style="width: 100%;">
                                     <div>
-                                      <kendo-combobox formControlName="referralUser" [filterable]="true" [data]="filteredReferralUsers" (filterChange)="handleReferralUserFilter($event)" 
+                                      <kendo-combobox formControlName="referralUser" [filterable]="true" [data]="filteredReferralUsers"
                                         [valueField]="'id'" #userCbx [textField]="'name'">
                                       </kendo-combobox> 
                                     </div>

@@ -98,9 +98,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       gender: "male",
       ref: null,
       medicalHistory: null,
-      birthDay: null,
-      birthMonth: null,
-      birthYear: null,
+      birthDayStr: '',
+      birthMonthStr: '',
+      birthYearStr: '',
       street: null,
       city: null,
       district: null,
@@ -108,7 +108,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       email: null,
       phone: null,
       categories: null,
-      sourceId: null,
       source: null,
       referralUserId: null,
       referralUser: null,
@@ -120,18 +119,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       dateObj: null,
     });
 
-    this.sourceCbx.filterChange
-    .asObservable()
-    .pipe(
-      debounceTime(300),
-      tap(() => (this.sourceCbx.loading = true)),
-      switchMap((value) => this.searchSources(value))
-    )
-    .subscribe((result) => {
-      this.filteredSources = result;
-      this.sourceCbx.loading = false;
-    });
-
+    
 
     setTimeout(() => {
       if (this.id) {
@@ -158,6 +146,26 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
             var date = new Date(result.date);
             this.formGroup.get("dateObj").setValue(date);
           }
+
+          if (result.birthYear) {
+            this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
+          }
+
+          if (result.birthMonth) {
+            this.formGroup.get("birthMonthStr").setValue(result.birthMonth + '');
+          }
+
+          if (result.birthDay) {
+            this.formGroup.get("birthDayStr").setValue(result.birthDay + '');
+          }
+
+          if (result.source) {
+            this.filteredSources = _.unionBy(this.filteredSources, [result.source], 'id');
+          }
+
+          if (result.referralUser) {
+            this.filteredReferralUsers = _.unionBy(this.filteredReferralUsers, [result.referralUser], 'id');
+          }
         });
       } else {
         this.formGroup.get("dateObj").setValue(new Date());
@@ -171,6 +179,30 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.loadHistoriesList();
       this.loadSourceList();
       this.loadReferralUserList();
+
+      this.sourceCbx.filterChange
+        .asObservable()
+        .pipe(
+          debounceTime(300),
+          tap(() => (this.sourceCbx.loading = true)),
+          switchMap((value) => this.searchSources(value))
+        )
+        .subscribe((result) => {
+          this.filteredSources = result;
+          this.sourceCbx.loading = false;
+        });
+
+    this.userCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.userCbx.loading = true)),
+        switchMap((value) => this.searchReferralUsers(value))
+      )
+      .subscribe((result) => {
+        this.filteredReferralUsers = result;
+        this.userCbx.loading = false;
+      });
     });
   }
 
@@ -276,9 +308,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   handleReferralUserFilter(value) {
-    this.filteredReferralUsers = this.filteredReferralUsers.filter(
-      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
-    );
+    this.searchReferralUsers(value).subscribe((result) => {
+      this.filteredReferralUsers = result;
+    });
   }
 
   handleCityChange(value) {
@@ -323,13 +355,13 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   loadSourceList() {
     this.searchSources().subscribe((result) => {
-      this.filteredSources = result;
+      this.filteredSources = _.unionBy(this.filteredSources, result, 'id');
     });
   }
 
   loadReferralUserList() {
     this.searchReferralUsers().subscribe((result) => {
-      this.filteredReferralUsers = result;
+      this.filteredReferralUsers = _.unionBy(this.filteredReferralUsers, result, 'id');
     });
   }
 
@@ -385,6 +417,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     val.sourceId = val.source ? val.source.id : null;
     val.referralUserId = val.referralUser ? val.referralUser.id : null;
     val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd"): null;
+    val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
+    val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
+    val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
 
     if (this.id) {
       this.partnerService.update(this.id, val).subscribe(

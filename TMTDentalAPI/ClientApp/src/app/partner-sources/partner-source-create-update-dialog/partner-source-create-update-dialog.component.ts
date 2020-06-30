@@ -18,11 +18,6 @@ import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.serv
 })
 export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   myform: FormGroup;
-  filterdCategories: PartnerSourceBasic[];
-  @ViewChild("form", { static: true }) formView: any;
-  @ViewChild("nameInput", { static: true }) nameInput: ElementRef;
-  @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
-
   @Input() public id: string;
   title: string;
   submitted = false;
@@ -77,11 +72,6 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
     } else {
       return this.partnerSourceService.update(this.id, val);
     }
-  }
-
-  onCancel() {
-    this.submitted = false;
-    this.activeModal.close();
   }
 
   get f() {

@@ -84,7 +84,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<List<ReportSource>> GetReportPartnerSource(ReportFilterpartnerSource val)
+        public async Task<List<ReportPartnerSourceItem>> GetReportPartnerSource(ReportFilterPartnerSource val)
          {
             var companyId = CompanyId;
             var partners = _context.Partners.Where(x => x.CompanyId == companyId && x.Customer == true);
@@ -104,7 +104,7 @@ namespace Infrastructure.Services
             var query = partners.GroupBy(x => new {
                 x.Source.Id,
                 x.Source.Name
-            }).Select(x => new ReportSource {
+            }).Select(x => new ReportPartnerSourceItem {
                 Id = x.Key.Id,
                 Name = x.Key.Name,
                 TotalPartner = totalPartner,
@@ -117,15 +117,13 @@ namespace Infrastructure.Services
         }
     }
 
-    public class ReportFilterpartnerSource
+    public class ReportFilterPartnerSource
     {
-      
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-
     }
 
-    public class ReportSource
+    public class ReportPartnerSourceItem
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
