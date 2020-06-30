@@ -33,6 +33,14 @@ export class AccountPaymentFilter {
     partnerId: string;
 }
 
+export class DiscountDefault{
+    saleOrderId: string;
+    discountType: string;
+    discountPercent: string;
+    discountFixed: string;
+
+}
+
 @Injectable()
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
@@ -105,6 +113,10 @@ export class SaleOrderService {
 
     applyPromotion(id: string) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/ApplyPromotion', {});
+    }
+
+    applyDiscountDefault(data: DiscountDefault) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountDefault', data);
     }
 
     unlink(ids: string[]) {

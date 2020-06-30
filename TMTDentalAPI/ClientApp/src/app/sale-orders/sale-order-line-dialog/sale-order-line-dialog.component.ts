@@ -299,18 +299,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
     val.salesmanId = val.salesman ? val.salesman.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    if (this.saleOrderId) {
-      val.saleOrderId = this.saleOrderId;
-      this.saleLineService.create(val).subscribe(
-        result => {
-          console.log(result);
-          this.activeModal.close(val);
-        }
-      )
-    }
-    else {
-      this.activeModal.close(val);
-    }
+    this.activeModal.close(val);
   }
 
   onCancel() {
