@@ -1931,6 +1931,61 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val)
+        {
+            var order = await GetSaleOrderWithLines(val.SaleOrderId);
+           
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+     
+            saleLineObj.UpdateOrderInfo(order.OrderLines, order);
+
+            foreach (var line in order.OrderLines)
+            {
+                if(line.Id != val.SaleOrderLineId)
+                {
+                    continue;
+                }
+                var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                if (saleLine != null)
+                {
+                    line.ProductUOMQty = 0;
+                    line.State = "cancel";
+                    _mapper.Map(line, saleLine);                  
+                    saleLine.SaleOrderLineToothRels.Clear();
+                   
+                }
+
+
+            }
+            saleLineObj.ComputeAmount(order.OrderLines);
+            await UpdateAsync(order);
+
+            var linesIds = order.OrderLines.Select(x => x.Id).ToList();
+            var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
+                .Include(x => x.Order)
+                .Include(x => x.Product)
+               .Include(x => x.SaleOrderLineInvoice2Rels)
+               .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
+               .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move")
+               .ToListAsync();
+
+            saleLineObj._GetInvoiceQty(lines);
+            saleLineObj._GetToInvoiceQty(lines);
+            saleLineObj._ComputeInvoiceStatus(lines);
+            await saleLineObj.UpdateAsync(lines);
+
+            _AmountAll(order);
+            _GetInvoiced(new List<SaleOrder>() { order });
+
+            await UpdateAsync(order);
+
+            var self = new List<SaleOrder>() { order };
+            await _GenerateDotKhamSteps(self);
+
+            await ActionInvoiceCreateV2(order.Id);
+        }
+
         //kiểm tra product chiết khấu tổng có tồn tại chưa
         private async Task<Product> CheckProductDiscount(ApplyDiscountSaleOrderViewModel val)
         {
@@ -1999,6 +2054,12 @@ namespace Infrastructure.Services
 
             return reward_string;
         }
+    }
+
+    public class ActionCancelSaleOrderLineViewModel
+    {
+        public Guid SaleOrderId { get; set; }
+        public Guid SaleOrderLineId { get; set; }
     }
 
 }

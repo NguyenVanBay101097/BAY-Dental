@@ -292,9 +292,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
     if (!this.saleLineForm.valid) {
       return;
     }
-
     var val = this.saleLineForm.value;
-    val.productId = val.product.id;
+    val.productId = val.product ? val.product.id : null;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.salesmanId = val.salesman ? val.salesman.id : null;
     val.priceSubTotal = this.getPriceSubTotal();

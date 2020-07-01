@@ -48,5 +48,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
         Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
 
+        Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);
+
     }
 }

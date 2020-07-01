@@ -1,4 +1,4 @@
-import { DiscountDefault } from './../sale-order.service';
+import { DiscountDefault, CancelSaleOrderLine } from './../sale-order.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, map, mergeMap } from 'rxjs/operators';
@@ -978,6 +978,34 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       })
     }
   }
+
+  // hủy dịch vụ
+  cancelSaleOrderLine(line) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    modalRef.componentInstance.title = "Hủy: Dịch vụ";
+    modalRef.result.then(() => {
+      var val = new CancelSaleOrderLine();
+      val.saleOrderId = this.id;
+      val.saleOrderLineId = line.value.id;
+      if (this.id) {
+        this.saleOrderService.cancelOrderLine(val).subscribe(() => {
+          this.notificationService.show({
+            content: 'hủy dịch vụ thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadRecord();
+        }, () => {
+          this.loadRecord();
+        });      
+        }},(err) => {
+           console.log(err);
+          }
+        );
+      }
+   
 
   loadPayments() {
     if (this.id) {
