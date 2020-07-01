@@ -1,9 +1,9 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SamplePrescriptionsPaged, SamplePrescriptionsService, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -16,9 +16,11 @@ export class ToaThuocSamplePrescriptionComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   name: string;
+  invalid: boolean = false;
   samplePrescriptions: SamplePrescriptionsSimple[] = [];
   @Output() nameSamplePrescription = new EventEmitter<string>();
   @Output() itemSamplePrescription = new EventEmitter<string>();
+  @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
 
   constructor(private samplePrescriptionsService: SamplePrescriptionsService, 
     private errorService: AppSharedShowErrorService, private modalService: NgbModal) { }
@@ -60,11 +62,24 @@ export class ToaThuocSamplePrescriptionComponent implements OnInit {
   }
 
   saveItem() {
+    if (!this.name) {
+      this.invalid = true;
+      return;
+    }
     this.nameSamplePrescription.emit(this.name);
-    this.loadSamplePrescriptionsList();
+    this.myDrop.close();
   }
 
   selectItem(item) {
     this.itemSamplePrescription.emit(item);
+    this.myDrop.close();
+  }
+
+  toggledDropdown(event) {
+    if (event) {
+      this.invalid = false;
+      this.name = null;
+      this.loadSamplePrescriptionsList();
+    }
   }
 }

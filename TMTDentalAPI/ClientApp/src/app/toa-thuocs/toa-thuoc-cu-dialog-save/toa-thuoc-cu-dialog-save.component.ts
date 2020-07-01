@@ -215,6 +215,23 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   getItemSamplePrescription(itemSamplePrescription) {
-    console.log(itemSamplePrescription);
+    this.samplePrescriptionsService.get(itemSamplePrescription.id).subscribe(result => {
+      this.toaThuocForm.get('note').patchValue(result.note);
+
+      this.lines.clear();
+
+      result.lines.forEach(line => {
+        this.lines.push(this.fb.group({
+          product: [line.product, Validators.required],
+          numberOfTimes: line.numberOfTimes, 
+          amountOfTimes: line.amountOfTimes, 
+          quantity: line.quantity,  
+          numberOfDays: line.numberOfDays, 
+          useAt: line.useAt,
+        }));
+      });
+    }, err => {
+      this.errorService.show(err);
+    });
   }
 }
