@@ -37,29 +37,6 @@
                                     <input type="text" class="form-control" formControlName="diagnostic" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Chọn dữ liệu mẫu
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="samplePrescription" [filterable]="true"
-                                        [data]="samplePrescriptions" #samplePrescriptionCbx [valueField]="'id'"
-                                        [textField]="'name'" (valueChange)="changeSamplePrescription($event)">
-                                    </kendo-combobox>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Lưu thành mẫu với tên
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="nameSamplePrescription" />
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -91,7 +68,13 @@
                     </table>
                 </div>
                 <div>
-                    <button type="button" accesskey="a" class="btn btn-primary btn-sm" (click)="onCreate()">Thêm thuốc</button>
+                    <div class="d-flex">
+                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm thuốc</button>
+                        <app-toa-thuoc-sample-prescription 
+                            (nameSamplePrescription)="getNameSamplePrescription($event)"
+                            (itemSamplePrescription)="getItemSamplePrescription($event)">
+                        </app-toa-thuoc-sample-prescription>
+                    </div>
                     <table class="table table-sm mt-2">
                         <thead>
                             <tr>

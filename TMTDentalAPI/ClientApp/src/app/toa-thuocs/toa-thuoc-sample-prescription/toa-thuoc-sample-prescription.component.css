@@ -1,0 +1,44 @@
+.my-list-group {
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.my-list-group::-webkit-scrollbar {
+    width: 10px;
+}
+
+.my-list-group::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+.my-list-group::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+.my-list-group::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.my-list-group-item {
+    position: relative;
+}
+.my-list-group-item .content {
+    white-space: nowrap;
+    padding-right: calc(20px + 0.5rem);
+    cursor: default;
+    /* max-width: ; */
+}
+.my-list-group-item .delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+    color: tomato;
+    opacity: 0.6; 
+}
+.my-list-group-item .delete:hover {
+    opacity: 1;
+}

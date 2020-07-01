@@ -9,7 +9,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { DropDownFilterSettings, ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { SamplePrescriptionsService, SamplePrescriptionsPaged, SamplePrescriptionsDisplay, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { SamplePrescriptionsService, SamplePrescriptionsDisplay, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -24,7 +24,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   userSimpleFilter: UserSimple[] = [];
   filteredProducts: ProductSimple[];
   defaultVal: any;
-  samplePrescriptions: SamplePrescriptionsSimple[] = [];
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('samplePrescriptionCbx', { static: true }) samplePrescriptionCbx: ComboBoxComponent;
 
@@ -50,8 +49,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       companyId: null,
       dotKhamId: null,
       lines: this.fb.array([]),
-      nameSamplePrescription: null,
-      samplePrescription: null,
     })
 
     if (this.id) {
@@ -67,7 +64,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     setTimeout(() => {
       this.getUserList(); 
       this.loadFilteredProducts();
-      this.loadSamplePrescriptionsList();
     });
 
     this.filterChangeCombobox();
@@ -186,14 +182,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     return this.userService.autocompleteSimple(val);
   }
 
-  searchSamplePrescriptions(filter: string) {
-    var val = new SamplePrescriptionsPaged();
-    val.offset = 0;
-    val.limit = 20;
-    val.search = filter;
-    return this.samplePrescriptionsService.getPaged(val);
-  }
-
   filterChangeCombobox() {
     this.userCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -205,66 +193,28 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         this.userCbx.loading = false;
       }
     )
-
-    this.samplePrescriptionCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.samplePrescriptionCbx.loading = true),
-      switchMap(val => this.searchSamplePrescriptions(val.toString().toLowerCase()))
-    ).subscribe(
-      result => {
-        this.samplePrescriptions = result.items;
-        this.samplePrescriptionCbx.loading = false;
-      }
-    )
   }
 
-  loadSamplePrescriptionsList() {
-    var val = new SamplePrescriptionsPaged();
-    val.offset = 0;
-    val.limit = 20;
-    val.search = '';
-    this.samplePrescriptionsService.getPaged(val).subscribe(result => {
-      this.samplePrescriptions = result.items;
-    });
-  }
-
-  onSaveSamplePrescription() {
-    var nameSamplePrescription = this.toaThuocForm.get('nameSamplePrescription').value;
-    if (!nameSamplePrescription) {
-      return;
-    }
+  onSaveSamplePrescription(name) {
     var val = new SamplePrescriptionsDisplay();
-    val.name = nameSamplePrescription;
+    val.name = name;
     val.note = this.toaThuocForm.get('note').value;
     val.lines = this.lines.value;
     val.lines.forEach(line => {
       line.productId = line.product['id'];
     });
     this.samplePrescriptionsService.create(val).subscribe(() => {
-      this.loadSamplePrescriptionsList();
+      
     }, err => {
       this.errorService.show(err);
     });
   }
 
-  changeSamplePrescription(item) {
-    this.samplePrescriptionsService.get(item.id).subscribe(result => {
-      this.toaThuocForm.get('note').patchValue(result.note);
+  getNameSamplePrescription(nameSamplePrescription) {
+    this.onSaveSamplePrescription(nameSamplePrescription);
+  }
 
-      this.lines.clear();
-
-      result.lines.forEach(line => {
-        this.lines.push(this.fb.group({
-          product: [line.product, Validators.required],
-          numberOfTimes: line.numberOfTimes, 
-          amountOfTimes: line.amountOfTimes, 
-          quantity: line.quantity,  
-          numberOfDays: line.numberOfDays, 
-          useAt: line.useAt,
-        }));
-      });
-    }, err => {
-      this.errorService.show(err);
-    });
+  getItemSamplePrescription(itemSamplePrescription) {
+    console.log(itemSamplePrescription);
   }
 }
