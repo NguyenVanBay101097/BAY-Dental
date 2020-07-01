@@ -36,7 +36,7 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Thống kê labo',
       icon: 'fas fa-tooth',
-      children: [], 
+      children: [],
       link: '/labo-statistics'
     },
     {
@@ -65,15 +65,15 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
     },
-    // {
-    //   name: 'T-Care',
-    //   icon: 'fab fa-facebook-f',
-    //   children: [
-    //     { name: 'Kết nối facebook page', link: '/facebook-connect' },
-    //     { name: 'Kết nối Zalo', link: '/zalo-config' },
-    //     { name: 'Danh sách kênh', link: '/channels' },
-    //   ],
-    // },
+    {
+      name: 'T-Care',
+      icon: 'fab fa-facebook-f',
+      children: [
+        { name: 'Kết nối facebook page', link: '/facebook-connect' },
+        { name: 'Kết nối Zalo', link: '/zalo-config' },
+        { name: 'Danh sách kênh', link: '/channels' },
+      ],
+    },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
@@ -104,7 +104,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm quyền', link: '/res-groups' },
         // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
-        // { name: 'Kịch bản', link: '/tcare-campaigns' },
+        { name: 'Kịch bản', link: '/tcare-campaigns' },
       ]
     },
     {

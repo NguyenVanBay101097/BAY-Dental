@@ -176,6 +176,8 @@ namespace Infrastructure.Data
 
         //nguyen thang
         public DbSet<ProductUoMRel> ProductUoMRels { get; set; }
+        public DbSet<TCareScenario> TCareScenarios { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -317,6 +319,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCarePropertyConfiguration());
             builder.ApplyConfiguration(new TCareMessagingConfiguration());
             builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
+            builder.ApplyConfiguration(new TCareScenarioConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
