@@ -74,6 +74,7 @@ export class PartnerPaged {
     employee: boolean;
     supplier: boolean;
     search: string;
+    categoryId: string;
 }
 
 export class PagedResult2<T>{

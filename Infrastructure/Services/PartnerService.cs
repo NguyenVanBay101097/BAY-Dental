@@ -426,6 +426,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                 || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+            if (val.CategoryId.HasValue)
+                query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
             query = query.OrderByDescending(s => s.DateCreated);
             return query;

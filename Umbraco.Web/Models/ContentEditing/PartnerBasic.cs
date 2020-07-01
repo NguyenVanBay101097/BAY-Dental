@@ -91,6 +91,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Employee { get; set; }
 
         public bool? Supplier { get; set; }
+
+        public Guid? CategoryId { get; set; }
     }
 
     public class PartnerPatch
