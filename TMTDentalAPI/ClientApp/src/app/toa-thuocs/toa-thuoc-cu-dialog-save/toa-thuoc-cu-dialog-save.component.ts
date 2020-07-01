@@ -11,6 +11,7 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { DropDownFilterSettings, ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { SamplePrescriptionsService, SamplePrescriptionsDisplay, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { result } from 'lodash';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog-save',
@@ -24,6 +25,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   userSimpleFilter: UserSimple[] = [];
   filteredProducts: ProductSimple[];
   defaultVal: any;
+  samplePrescriptionAdded: any;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('samplePrescriptionCbx', { static: true }) samplePrescriptionCbx: ComboBoxComponent;
 
@@ -203,8 +205,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     val.lines.forEach(line => {
       line.productId = line.product['id'];
     });
-    this.samplePrescriptionsService.create(val).subscribe(() => {
-      
+    this.samplePrescriptionsService.create(val).subscribe(result => {
+      this.samplePrescriptionAdded = result;
     }, err => {
       this.errorService.show(err);
     });

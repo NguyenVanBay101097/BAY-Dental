@@ -72,7 +72,8 @@
                         <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm thuốc</button>
                         <app-toa-thuoc-sample-prescription 
                             (nameSamplePrescription)="getNameSamplePrescription($event)"
-                            (itemSamplePrescription)="getItemSamplePrescription($event)">
+                            (itemSamplePrescription)="getItemSamplePrescription($event)"
+                            [item]="samplePrescriptionAdded">
                         </app-toa-thuoc-sample-prescription>
                     </div>
                     <table class="table table-sm mt-2">

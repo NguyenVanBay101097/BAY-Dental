@@ -19,26 +19,9 @@
     background: #555; 
 }
 
-.my-list-group-item {
-    position: relative;
-}
 .my-list-group-item .content {
     white-space: nowrap;
     padding-right: calc(20px + 0.5rem);
     cursor: default;
     /* max-width: ; */
-}
-.my-list-group-item .delete {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 20px;
-    text-align: center;
-    cursor: pointer;
-    color: tomato;
-    opacity: 0.6; 
-}
-.my-list-group-item .delete:hover {
-    opacity: 1;
 }
