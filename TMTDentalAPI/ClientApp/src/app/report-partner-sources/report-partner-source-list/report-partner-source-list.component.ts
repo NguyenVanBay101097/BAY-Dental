@@ -27,6 +27,9 @@ export class ReportPartnerSourceListComponent implements OnInit {
   dateTo: Date;
   date: Date;
 
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
   // Pie
   public pieData: any[] = [];
 
@@ -35,6 +38,8 @@ export class ReportPartnerSourceListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadDataFromApi();
   }
 
