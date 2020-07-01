@@ -41,7 +41,7 @@ export class PartnerCustomerProfileComponent implements OnInit {
 
       modalRef.result.then(result => {
         this.loadCustomerInfo();
-      })
+      }, () => {})
     }
   }
 

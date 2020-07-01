@@ -2,7 +2,9 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,10 +19,12 @@ namespace Infrastructure.Services
     public class PartnerSourceService : BaseService<PartnerSource>, IPartnerSourceService
     {
         private readonly IMapper _mapper;
-        public PartnerSourceService(IAsyncRepository<PartnerSource> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        private readonly CatalogDbContext _context;
+        public PartnerSourceService(IAsyncRepository<PartnerSource> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , CatalogDbContext context)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<PagedResult2<PartnerSourceBasic>> GetPagedResultAsync(PartnerSourcePaged val)
@@ -79,5 +83,55 @@ namespace Infrastructure.Services
                 throw new Exception("Kiểu giới thiệu đã tồn tại");
             }
         }
+
+        public async Task<List<ReportPartnerSourceItem>> GetReportPartnerSource(ReportFilterPartnerSource val)
+         {
+            var companyId = CompanyId;
+            //SearchQuery
+            var partnerObj = GetService<IPartnerService>();
+            var partners = partnerObj.SearchQuery(x => x.Customer == true);
+           
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                partners = partners.Where(x => x.Date.Value >= dateFrom);
+            }
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                partners = partners.Where(x => x.Date.Value <= dateTo);
+            }
+            var totalPartner = partners.ToList().Count;
+       
+            var query = partners.GroupBy(x => new {
+                x.Source.Id,
+                x.Source.Name
+            }).Select(x => new ReportPartnerSourceItem {             
+                Id = x.Key.Id,
+                Name = x.Key.Name,
+                TotalPartner = totalPartner,
+                CountPartner = x.Count()
+            });
+
+            var list = await query.ToListAsync();
+            list.Sum(x => x.CountPartner);
+            return list;
+        }
     }
+
+    public class ReportFilterPartnerSource
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class ReportPartnerSourceItem
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int TotalPartner { get; set; }
+        public int CountPartner { get; set; }
+    }
+
+
 }
