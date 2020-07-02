@@ -1938,7 +1938,6 @@ namespace Infrastructure.Services
 
             var saleLineObj = GetService<ISaleOrderLineService>();
      
-            saleLineObj.UpdateOrderInfo(order.OrderLines, order);
 
             foreach (var line in order.OrderLines)
             {
@@ -1980,9 +1979,11 @@ namespace Infrastructure.Services
 
             await UpdateAsync(order);
 
+            //kiểm tra lại đợt khám
             var self = new List<SaleOrder>() { order };
             await _GenerateDotKhamSteps(self);
 
+            // tính lại công nợ
             await ActionInvoiceCreateV2(order.Id);
         }
 
@@ -2056,10 +2057,6 @@ namespace Infrastructure.Services
         }
     }
 
-    public class ActionCancelSaleOrderLineViewModel
-    {
-        public Guid SaleOrderId { get; set; }
-        public Guid SaleOrderLineId { get; set; }
-    }
+    
 
 }
