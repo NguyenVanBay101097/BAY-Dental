@@ -1,6 +1,6 @@
 <div ngbDropdown autoClose="outside" #myDrop="ngbDropdown" (openChange)="toggledDropdown($event)">
     <button class="btn btn-primary btn-sm" id="dropdownMenu" ngbDropdownToggle>Đơn thuốc mẫu</button>
-    <div class="px-2" ngbDropdownMenu aria-labelledby="dropdownMenu">
+    <div class="px-2 _dropdownContainer" ngbDropdownMenu aria-labelledby="dropdownMenu">
         <input class="form-control" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
             (ngModelChange)="searchItem()">
         <ul class="list-group mt-1 my-list-group">

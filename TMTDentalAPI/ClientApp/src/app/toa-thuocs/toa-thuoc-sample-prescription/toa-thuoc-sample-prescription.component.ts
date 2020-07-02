@@ -34,7 +34,10 @@ export class ToaThuocSamplePrescriptionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.item) {
-      this.samplePrescriptions.splice(0, 0, this.item);
+      if (this.item) {
+        this.samplePrescriptions.splice(0, 0, this.item);
+        this.name = null;
+      }
     }
   }
 

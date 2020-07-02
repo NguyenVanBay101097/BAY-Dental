@@ -218,6 +218,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
   getItemSamplePrescription(itemSamplePrescription) {
     this.samplePrescriptionsService.get(itemSamplePrescription.id).subscribe(result => {
+      console.log(result);
       this.toaThuocForm.get('note').patchValue(result.note);
 
       this.lines.clear();
