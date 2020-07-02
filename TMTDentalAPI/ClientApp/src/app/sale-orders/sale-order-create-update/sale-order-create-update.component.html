@@ -9,12 +9,9 @@
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
-        <div class="o_cp_left">
+        <!-- <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
-                        *ngIf="['done', 'cancel'].indexOf(saleOrder.state) == -1" (click)="onSave()">
-                        Lưu</button>
                     <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
                         *ngIf="id">
                         Thêm mới</button>
@@ -22,7 +19,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -38,6 +35,10 @@
                     <button type="button" accesskey="1" *ngIf="id && saleOrder.state == 'draft'"
                         class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
+                        *ngIf="['draft'].indexOf(saleOrder.state) !== -1" (click)="onSave()">
+                        Lưu nháp
                     </button>
                     <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
