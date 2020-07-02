@@ -43,6 +43,7 @@ namespace Infrastructure.Services
             var productObj = GetService<IProductService>();
             var historyObj = GetService<IHistoryService>();
             var productStepObj = GetService<IProductStepService>();
+            var partnerSourceObj = GetService<IPartnerSourceService>();
 
             var partner_category_dict = new Dictionary<string, PartnerCategory>();
             var partner_dict = new Dictionary<string, Partner>();
@@ -50,6 +51,8 @@ namespace Infrastructure.Services
             var product_category_dict = new Dictionary<string, ProductCategory>();
             var product_dict = new Dictionary<string, Product>();
             var product_step_dict = new Dictionary<string, ProductStep>();
+
+            var partner_source_dict = new Dictionary<string, PartnerSource>();
 
             if (sampleData != null && sampleData.Data != null && sampleData.Data.Record.Count > 0)
             {
@@ -163,6 +166,12 @@ namespace Infrastructure.Services
                                     case "purchase_ok":
                                         product.PurchaseOK = Boolean.Parse(itemField.Text);
                                         break;
+                                    case "sale_ok":
+                                        product.SaleOK = Boolean.Parse(itemField.Text);
+                                        break;
+                                    case "ketoa_ok":
+                                        product.KeToaOK = Boolean.Parse(itemField.Text);
+                                        break;
                                     case "type":
                                         product.Type = itemField.Text;
                                         break;
@@ -187,6 +196,8 @@ namespace Infrastructure.Services
                                     productStep.Name = itemField.Text;
                                 if (itemField.Name == "product_id")
                                     productStep.Product = product_dict[itemField.Ref];
+                                if (itemField.Name == "order")
+                                    productStep.Order = Convert.ToInt32(itemField.Text);
                             }
                             product_step_dict.Add(itemRecord.Id, productStep);
                             break;
@@ -206,6 +217,24 @@ namespace Infrastructure.Services
                             }
                             history_dict.Add(itemRecord.Id, history);
                             break;
+                        case "res.partner.source":
+                            var source = new PartnerSource();
+                            foreach (var itemField in itemRecord.Field.ToList())
+                            {
+                                switch (itemField.Name)
+                                {
+                                    case "name":
+                                        source.Name = itemField.Text;
+                                        break;
+                                    case "type":
+                                        source.Type = itemField.Text;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            partner_source_dict.Add(itemRecord.Id, source);
+                            break;
 
                         default:
                             break;
@@ -219,6 +248,7 @@ namespace Infrastructure.Services
                 await productCategObj.CreateAsync(product_category_dict.Values.ToList());
                 await productObj.CreateAsync(product_dict.Values.ToList());
                 await productStepObj.CreateAsync(product_step_dict.Values.ToList());
+                await partnerSourceObj.CreateAsync(partner_source_dict.Values);
             }
         }
 

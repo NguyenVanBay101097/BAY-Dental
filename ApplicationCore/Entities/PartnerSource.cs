@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class PartnerSource : BaseEntity
     {
+        public PartnerSource()
+        {
+            Type = "normal";
+        }
+
         public string Name { get; set; }
 
         /// <summary>
