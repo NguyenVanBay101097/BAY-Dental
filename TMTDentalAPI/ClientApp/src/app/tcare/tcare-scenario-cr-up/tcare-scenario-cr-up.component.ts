@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TcareCampaignCreateDialogComponent } from '../tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AuthService } from 'src/app/auth/auth.service';
 import { load, IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 
@@ -25,7 +24,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
     private fb: FormBuilder,
     private activeRoute: ActivatedRoute,
     private tcareService: TcareService,
-    private authService: AuthService,
     private modalService: NgbModal,
     private intlService: IntlService,
     private notificationService: NotificationService,
@@ -42,7 +40,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       name: ['', Validators.required],
     });
 
-    this.authService.actionNext.subscribe(
+    this.tcareService.actionNext.subscribe(
       value => {
         if (value == "load") {
           this.loadData();
@@ -87,7 +85,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       this.tcareService.actionStopCampaign(value).subscribe(
         () => {
           this.campaign.active = false;
-          this.authService.actionNext.next(this.campaign);
+          this.tcareService.actionNext.next(this.campaign);
           this.notificationService.show({
             content: "Dừng kịch bản thành công!.",
             hideAfter: 3000,
@@ -105,7 +103,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       this.tcareService.actionStartCampaign(val).subscribe(
         () => {
           this.campaign.active = true;
-          this.authService.actionNext.next(this.campaign);
+          this.tcareService.actionNext.next(this.campaign);
           this.notificationService.show({
             content: "Chạy kịch bản thành công!.",
             hideAfter: 3000,
@@ -122,7 +120,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
 
   editCampaign(campaign) {
     this.campaign = campaign;
-    this.authService.actionNext.next(this.campaign);
+    this.tcareService.actionNext.next(this.campaign);
   }
 
   addCampaign() {
@@ -133,7 +131,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       if (result) {
         this.campaign = result
         this.scenario.campaigns.push(this.campaign);
-        this.authService.actionNext.next(this.campaign);
+        this.tcareService.actionNext.next(this.campaign);
       }
 
     }, () => {
@@ -162,7 +160,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
           this.loadData();
           setTimeout(() => {
             if (this.campaign)
-              this.authService.actionNext.next(this.campaign);
+              this.tcareService.actionNext.next(this.campaign);
           }, 100);
         });
       });

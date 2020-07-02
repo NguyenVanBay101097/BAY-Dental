@@ -14,7 +14,6 @@ import { TcareCampaignDialogMessageComponent } from "../tcare-campaign-dialog-me
 import { IntlService } from "@progress/kendo-angular-intl";
 import * as xml2js from "xml2js";
 import { TcareCampaignStartDialogComponent } from "../tcare-campaign-start-dialog/tcare-campaign-start-dialog.component";
-import { AuthService } from 'src/app/auth/auth.service';
 import { mxgraph } from 'src/mxgraph-types';
 
 declare var mxUtils: any;
@@ -63,7 +62,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     private renderer2: Renderer2,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private authService: AuthService
   ) {
     this.editor = new mxEditor();
   }
@@ -76,7 +74,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     });
     this.doc = mxUtils.createXmlDocument();
     this.load();
-    this.authService.actionNext.subscribe(
+    this.tcareService.actionNext.subscribe(
       value => {
         if (value && value != "load" && this.campaign && value.id != this.campaign.id) {
           this.campaign = value;
@@ -887,7 +885,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       }
       this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
         () => {
-          this.authService.actionNext.next('load');
+          this.tcareService.actionNext.next('load');
           this.notificationService.show({
             content: 'Cài thời gian chạy chiến dịch thành công !',
             hideAfter: 3000,
@@ -913,7 +911,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     value.graphXml = mxUtils.getPrettyXml(node);
     if (this.campaign && this.campaign.id) {
       this.tcareService.update(this.campaign.id, value).subscribe(() => {
-        this.authService.actionNext.next('load');
+        this.tcareService.actionNext.next('load');
         this.notificationService.show({
           content: "Thành công",
           hideAfter: 3000,

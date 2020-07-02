@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 export class TCareCampaignSave {
   name: string;
@@ -106,10 +106,14 @@ export class TCareRule {
 })
 export class TcareService {
 
+  public actionNext: BehaviorSubject<any>;
+
   constructor(
     @Inject('BASE_API') private base_api: string,
     private http: HttpClient
-  ) { }
+  ) {
+    this.actionNext = new BehaviorSubject<any>(null);
+  }
   private readonly apiUrlCampaign = "api/TCareCampaigns"
   private readonly apiUrlScenario = "api/TCareScenarios"
   //TCareCampaign
