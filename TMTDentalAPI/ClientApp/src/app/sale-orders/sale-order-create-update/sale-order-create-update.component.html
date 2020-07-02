@@ -458,8 +458,14 @@
                                         <td>{{ payment.amount | number}}</td>
                                         <td>{{ payment.ref }}</td>
                                         <td>
-                                            <a title="Xóa" (click)="deletePayment(payment)">
-                                                <span class="far fa-trash-alt"></span></a>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                (click)="printPayment(payment)">
+                                                <span class="k-icon k-i-print"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                (click)="deletePayment(payment)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -471,6 +477,8 @@
         </div>
     </form>
 </div>
+
+<app-account-payment-print></app-account-payment-print>
 
 <div id="printSaleOrderDiv" *ngIf="saleOrderPrint" style="display: none;">
     <div class="o_form_view o_print">

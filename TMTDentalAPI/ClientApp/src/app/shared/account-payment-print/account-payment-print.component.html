@@ -1,0 +1,96 @@
+<div id="printAccountPaymentDiv" *ngIf="accountPaymentPrint" style="display: none;">
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">{{accountPaymentPrint.companyName}}</h5>
+            <div>Địa chỉ: {{accountPaymentPrint.companyAddress}}</div>
+            <div *ngIf="accountPaymentPrint.companyPhone">ĐT: {{accountPaymentPrint.companyPhone}}</div>
+            <div *ngIf="accountPaymentPrint.companyEmail">Email: {{accountPaymentPrint.companyEmail}}</div>
+        </div>
+        <div class="text-center">
+            <h1>Thanh toán</h1>
+            <span>Ngày: {{accountPaymentPrint.paymentDate | date: 'shortDate'}}</span>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Mã khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.partnerRef}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.partnerName}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Số điện thoại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.partnerPhone}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.partnerAddress}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Phương thức</th>
+                        <th>Ngày thanh toán</th>
+                        <th class="text-right">Số tiền</th>
+                        <th>Nội dung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{accountPaymentPrint.journalName}}</td>
+                        <td>{{accountPaymentPrint.paymentDate | date: 'shortDate'}}</td>
+                        <td class="text-right">{{accountPaymentPrint.amount}}</td>
+                        <td>{{accountPaymentPrint.communication}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Nhân viên
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
