@@ -19,39 +19,11 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Ngày
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker formControlName="dateObj">
-                                    </kendo-datetimepicker>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
                                         Chẩn đoán
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="diagnostic" />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Bác sĩ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="user" [filterable]="true"
-                                        [data]="userSimpleFilter" #userCbx [valueField]="'id'"
-                                        [textField]="'name'">
-                                    </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
@@ -66,9 +38,44 @@
                             </tr>
                         </tbody>
                     </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datetimepicker formControlName="dateObj">
+                                    </kendo-datetimepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="user" [filterable]="true"
+                                        [data]="userSimpleFilter" #userCbx [valueField]="'id'"
+                                        [textField]="'name'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div>
-                    <button type="button" accesskey="a" class="btn btn-primary btn-sm" (click)="onCreate()">Thêm thuốc</button>
+                    <div class="d-flex">
+                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm thuốc</button>
+                        <app-toa-thuoc-sample-prescription 
+                            (nameSamplePrescription)="getNameSamplePrescription($event)"
+                            (itemSamplePrescription)="getItemSamplePrescription($event)"
+                            [item]="samplePrescriptionAdded">
+                        </app-toa-thuoc-sample-prescription>
+                    </div>
                     <table class="table table-sm mt-2">
                         <thead>
                             <tr>

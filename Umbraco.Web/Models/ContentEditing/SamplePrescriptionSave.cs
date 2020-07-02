@@ -8,6 +8,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
 
+        public string Note { get; set; }
+
         public IEnumerable<SamplePrescriptionLineSave> Lines { get; set; } = new List<SamplePrescriptionLineSave>();
     }
 }
