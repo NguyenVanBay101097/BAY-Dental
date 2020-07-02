@@ -26,11 +26,31 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Khách hàng
+                                Số điện thoại
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.partnerName}}
+                            {{accountPaymentPrint.partnerPhone}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Phương thức
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.journalName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Số tiền
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.amount}}
                         </td>
                     </tr>
                 </tbody>
@@ -40,11 +60,11 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Số điện thoại
+                                Khách hàng
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.partnerPhone}}
+                            {{accountPaymentPrint.partnerName}}
                         </td>
                     </tr>
                     <tr>
@@ -57,25 +77,25 @@
                             {{accountPaymentPrint.partnerAddress}}
                         </td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <table class="table table-sm table-bordered">
-                <thead>
                     <tr>
-                        <th>Phương thức</th>
-                        <th>Ngày thanh toán</th>
-                        <th class="text-right">Số tiền</th>
-                        <th>Nội dung</th>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày thanh toán
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.paymentDate | date: 'shortDate'}}
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
                     <tr>
-                        <td>{{accountPaymentPrint.journalName}}</td>
-                        <td>{{accountPaymentPrint.paymentDate | date: 'shortDate'}}</td>
-                        <td class="text-right">{{accountPaymentPrint.amount}}</td>
-                        <td>{{accountPaymentPrint.communication}}</td>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Nội dung
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{accountPaymentPrint.communication}}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -83,12 +103,12 @@
         <div class="row">
             <div class="col-sm">
                 <div class="text-center font-weight-bold">
-                    &nbsp;
+                    Người lập
                 </div>
             </div>
             <div class="col-sm">
                 <div class="text-center font-weight-bold">
-                    Nhân viên
+                    Khách hàng
                 </div>
             </div>
         </div>
