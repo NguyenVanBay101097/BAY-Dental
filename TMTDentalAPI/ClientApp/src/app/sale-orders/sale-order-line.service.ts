@@ -26,4 +26,9 @@ export class SaleOrderLineService {
     create(val): Observable<SaleOrderLineDisplay> {
         return this.http.post<SaleOrderLineDisplay>(this.baseApi + this.apiUrl, val);
     }
+
+    cancelOrderLine(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/CancelServiceBySaleOrder', ids);
+    }
+
 }

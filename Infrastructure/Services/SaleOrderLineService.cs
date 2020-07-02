@@ -116,11 +116,15 @@ namespace Infrastructure.Services
 
             foreach (var line in self)
             {
-                line.SalesmanId = order.UserId;
-                line.OrderPartnerId = order.PartnerId;
-                line.CompanyId = order.CompanyId;
-                line.Order = order;
-                //line.State = order.State;
+                if(line.Id == Guid.Empty)
+                {
+                    line.SalesmanId = order.UserId;
+                    line.OrderPartnerId = order.PartnerId;
+                    line.CompanyId = order.CompanyId;
+                    line.Order = order;
+                    line.State = order.State;
+                }
+               
             }
         }
 
@@ -312,6 +316,47 @@ namespace Infrastructure.Services
             }
 
             await DeleteAsync(self);
+        }
+
+        public async Task CancelSaleOrderLine(IEnumerable<Guid> Ids)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var dotkhamstepObj = GetService<IDotKhamStepService>();
+            var lines = await SearchQuery(x => Ids.Contains(x.Id)).Include("DotKhamStep").Include(x => x.Order)
+                .Include(x => x.Product)
+               .Include(x => x.SaleOrderLineInvoice2Rels)
+               .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
+               .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
+
+            foreach (var line in lines)
+            {
+                line.ProductUOMQty = 0;
+                line.State = "cancel";
+                if (line.DotKhamSteps.Any())
+                {
+                    await dotkhamstepObj.Unlink(line.DotKhamSteps);
+                }
+
+
+            }
+
+            await UpdateAsync(lines);
+
+
+            _GetInvoiceQty(lines);
+            _GetToInvoiceQty(lines);
+            _ComputeInvoiceStatus(lines);
+
+            await UpdateAsync(lines);
+
+            var orderId = lines.Select(x => x.OrderId).FirstOrDefault();
+            var order = await orderObj.GetSaleOrderWithLines(orderId);
+            ComputeAmount(order.OrderLines);
+
+            await orderObj.UpdateAsync(order);
+            // tính lại công nợ
+            await orderObj.ActionInvoiceCreateV2(orderId);
+
         }
     }
 }

@@ -41,10 +41,6 @@ export class DiscountDefault{
 
 }
 
-export class CancelSaleOrderLine{
-    saleOrderId: string;
-    saleOrderLineId: string;
-}
 
 @Injectable()
 export class SaleOrderService {
@@ -148,9 +144,7 @@ export class SaleOrderService {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + "api/accountregisterpayments/OrderDefaultGet", val);
     }
 
-    cancelOrderLine(val: CancelSaleOrderLine): Observable<CancelSaleOrderLine> {
-        return this.http.post<CancelSaleOrderLine>(this.baseApi + this.apiUrl + '/CancelServiceBySaleOrder', val);
-    }
+    
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
         return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });

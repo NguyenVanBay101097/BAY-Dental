@@ -356,14 +356,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> CancelServiceBySaleOrder(ActionCancelSaleOrderLineViewModel val)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.CancelSaleOrderLine(val);
-            _unitOfWork.Commit();
-            return NoContent();
-        }
+       
 
 
         [HttpGet("{id}/[action]")]
