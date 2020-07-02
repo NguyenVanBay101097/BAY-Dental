@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TcareService } from '../tcare.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-tcare-campaign-create-dialog',
-  templateUrl: './tcare-campaign-create-dialog.component.html',
-  styleUrls: ['./tcare-campaign-create-dialog.component.css']
+  selector: 'app-tcare-scenario-cr-dialog',
+  templateUrl: './tcare-scenario-cr-dialog.component.html',
+  styleUrls: ['./tcare-scenario-cr-dialog.component.css']
 })
-export class TcareCampaignCreateDialogComponent implements OnInit {
+export class TcareScenarioCrDialogComponent implements OnInit {
 
   title: string;
   formGroup: FormGroup;
-  scenarioId: string;
 
   constructor(
     private fb: FormBuilder,
@@ -33,9 +32,9 @@ export class TcareCampaignCreateDialogComponent implements OnInit {
       return false;
     }
     var value = this.formGroup.value;
-    value.tCareScenarioId = this.scenarioId;
-    this.tcareService.nameCreate(value).subscribe(
+    this.tcareService.createScenario(value).subscribe(
       result => {
+        this.router.navigateByUrl('tcare-scenario/' + result.id);
         this.activeModal.close(result);
       }
     )

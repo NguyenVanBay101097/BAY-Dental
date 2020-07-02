@@ -23,6 +23,9 @@ import { MyAutofocusDirective } from './tcare-campaign-dialog-rule/audience-filt
 import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-filter/click-outside.directive';
 import { TcareCampaignStartDialogComponent } from './tcare-campaign-start-dialog/tcare-campaign-start-dialog.component';
 import { SharedModule } from '../shared/shared.module';
+import { TcareScenarioListComponent } from './tcare-scenario-list/tcare-scenario-list.component';
+import { TcareScenarioCrUpComponent } from './tcare-scenario-cr-up/tcare-scenario-cr-up.component';
+import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare-scenario-cr-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +44,10 @@ import { SharedModule } from '../shared/shared.module';
     AudienceFilterPartnerCategoryComponent,
     MyAutofocusDirective,
     ClickOutsideDirective,
-    TcareCampaignStartDialogComponent
+    TcareCampaignStartDialogComponent,
+    TcareScenarioListComponent,
+    TcareScenarioCrUpComponent,
+    TcareScenarioCrDialogComponent
   ],
   imports: [
     CommonModule,
@@ -53,6 +59,7 @@ import { SharedModule } from '../shared/shared.module';
     NgbModule,
     SharedModule
   ],
+
   providers: [TcareService],
   entryComponents: [
     TcareCampaignDialogRuleComponent,
@@ -64,7 +71,8 @@ import { SharedModule } from '../shared/shared.module';
     AudienceFilterPartnerCategoryComponent,
     AudienceFilterServiceComponent,
     AudienceFilterServiceCategoryComponent,
-    TcareCampaignStartDialogComponent
+    TcareCampaignStartDialogComponent,
+    TcareScenarioCrDialogComponent
   ]
 })
 export class TcareModule { }

@@ -9,10 +9,11 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class TCareCampaign: BaseEntity
     {
-        //public TCareCampaign()
-        //{
-        //    State = "draft";
-        //}
+        public TCareCampaign()
+        {
+            Active = false;
+            SheduleStart = DateTime.Today;
+        }
 
         public string Name { get; set; }
 
@@ -45,6 +46,12 @@ namespace ApplicationCore.Entities
 
         public Guid TCareScenarioId { get; set; }
         public TCareScenario TCareScenario { get; set; }
+
+        /// <summary>
+        /// true: Đang chạy
+        /// false: nháp hoặc đã dừng
+        /// </summary> 
+        public bool Active { get; set; }
 
     }
 }

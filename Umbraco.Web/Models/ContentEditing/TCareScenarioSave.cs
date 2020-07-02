@@ -8,6 +8,5 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
 
-        public IEnumerable<TCareCampaignSave> Campaigns { get; set; } = new List<TCareCampaignSave>();
     }
 }

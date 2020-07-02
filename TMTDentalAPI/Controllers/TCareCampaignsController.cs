@@ -89,5 +89,12 @@ namespace TMTDentalAPI.Controllers
             await _campaignService.ActionStopCampaign(ids);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionSetSheduleStartCampaign(TCareCampaignSetSheduleStart val)
+        {
+            await _campaignService.SetSheduleStart(val);
+            return NoContent();
+        }
     }
 }

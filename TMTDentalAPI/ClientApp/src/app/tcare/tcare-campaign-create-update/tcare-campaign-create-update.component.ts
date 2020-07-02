@@ -1,24 +1,21 @@
-import { Component, OnInit, Inject, Renderer2 } from "@angular/core";
+import { Component, OnInit, Inject, Renderer2, Input } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {
   TcareService,
   TCareCampaignDisplay,
-  TCareMessageDisplay,
-  TCareRule,
-  TCareRuleCondition,
 } from "../tcare.service";
 import { TcareCampaignDialogSequencesComponent } from "../tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component";
 import { TcareCampaignDialogRuleComponent } from "../tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component";
 
 import { NotificationService } from "@progress/kendo-angular-notification";
-import { DatePipe } from "@angular/common";
 import { TcareCampaignDialogMessageComponent } from "../tcare-campaign-dialog-message/tcare-campaign-dialog-message.component";
-import { PartnerCategoryBasic } from "src/app/partner-categories/partner-category.service";
 import { IntlService } from "@progress/kendo-angular-intl";
 import * as xml2js from "xml2js";
 import { TcareCampaignStartDialogComponent } from "../tcare-campaign-start-dialog/tcare-campaign-start-dialog.component";
+import { AuthService } from 'src/app/auth/auth.service';
+import { mxgraph } from 'src/mxgraph-types';
 
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -45,15 +42,17 @@ declare var mxKeyHandler: any;
   styleUrls: ["./tcare-campaign-create-update.component.css"],
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit {
-  editorDefind: any;
-  id: string;
+  @Input() campaign: TCareCampaignDisplay;
   offsetY = 30;
-  formGroup: FormGroup;
+  formCampaign: FormGroup;
   priority = null;
   title = "Kịch bản";
-  campaign: TCareCampaignDisplay;
+  one = true;
+  editor: any;
+  graph: any;
   cellRule: any;
   doc: any;
+  disableTime = false;
   submited = false;
   constructor(
     private activeRoute: ActivatedRoute,
@@ -63,20 +62,33 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     private tcareService: TcareService,
     private renderer2: Renderer2,
     private notificationService: NotificationService,
-    private intlService: IntlService
-  ) { }
+    private intlService: IntlService,
+    private authService: AuthService
+  ) {
+    this.editor = new mxEditor();
+  }
 
   ngOnInit() {
-    this.campaign = new TCareCampaignDisplay();
-    this.id = this.activeRoute.params["_value"].id;
-    this.formGroup = this.fb.group({
+
+    this.formCampaign = this.fb.group({
       name: ["", Validators.required],
+      sheduleStart: null
     });
     this.doc = mxUtils.createXmlDocument();
     this.load();
+    this.authService.actionNext.subscribe(
+      value => {
+        if (value && value != "load" && this.campaign && value.id != this.campaign.id) {
+          this.campaign = value;
+          this.one = false;
+          this.load();
+        }
+      }
+    )
   }
 
-  main(container, sidebar_sequences, sidebar_goals, model?) {
+
+  main(container, sidebar_sequences, sidebar_goals, editor, graph, model) {
     var that = this;
     if (!mxClient.isBrowserSupported()) {
       // Displays an error message if the browser is not supported.
@@ -105,9 +117,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       //create obj
       var sequence = that.doc.createElement("sequence");
       var rule = that.doc.createElement("rule");
-      var editor = new mxEditor();
-      var graph = editor.graph;
-      that.editorDefind = editor;
+
+
       graph.setCellsMovable(true);
       graph.setAutoSizeCells(true);
       graph.setPanning(true);
@@ -144,9 +155,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       // var mgr = new mxAutoSaveManager(editor.graph, 1, 1);
       // if (mgr.isEnabled) {
       //   mgr.graphModelChanged = function () {
-      //     that.saveChange(graph);
+      //     that.onSave(graph);
       //   };
       // }
+
 
       //validate Connection
       graph.isValidConnection = function (source, cellSequence) {
@@ -181,12 +193,14 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
         if (styleSource == "sequence" && stylecellSequence == "rule")
           return false;
+
         else {
           var value = cellSequence.getValue();
           value.setAttribute('parent', source.id);
           graph.getModel().setValue(cellSequence, value);
           return true;
         }
+
       };
 
       //Add ContextMenu
@@ -267,11 +281,11 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                   var cellTag = graph.getModel().getCell(edge.target.id);
                   if (cellTag) {
                     graph.getModel().remove(cellTag);
-                    that.onSave()
                   }
                 }
               });
             }
+            that.onSave();
             graph.removeCells();
           }
           else {
@@ -286,21 +300,21 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       });
 
-      // thêm 1 sequence
-      that.addSidebarIcon(
-        graph,
-        sidebar_sequences,
-        sequence,
-        "./assets/editors/images/message-setting.png",
-        "sequence"
-      );
+      if (this.one) {
+        // thêm 1 sequence
+        that.addSidebarIcon(graph, sidebar_sequences, sequence, "./assets/editors/images/message-setting.png", "sequence");
 
-      //thêm 1 rule
-      that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
+        //thêm 1 rule
+        that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
+      }
 
       //load Xml
       graph.getModel().beginUpdate();
       try {
+
+        for (let i = 2; i < graph.getModel().nextId; i++) {
+          graph.getModel().remove(graph.getModel().cells[i]);
+        }
         var doc = mxUtils.parseXml(model.graphXml);
         var dec = new mxCodec(doc);
         dec.decode(doc.documentElement, graph.getModel());
@@ -314,29 +328,35 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   }
 
   load() {
-    this.tcareService.get(this.id).subscribe(
-      result => {
-        this.campaign = result;
-        this.formGroup.get('name').patchValue(result.name);
-        if (result.graphXml) {
-          this.main(
-            document.getElementById("graphContainer"),
-            document.getElementById("sidebarContainer_sequences"),
-            document.getElementById("sidebarContainer_goals"),
-            result
-          );
-        } else {
-          var value = {
-            state: 'draf'
-          }
-          this.main(
-            document.getElementById("graphContainer"),
-            document.getElementById("sidebarContainer_sequences"),
-            document.getElementById("sidebarContainer_goals"), value
-          );
-        }
+
+    this.formCampaign.get('name').patchValue(this.campaign.name);
+    if (this.campaign.sheduleStart) {
+      this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
+    } else {
+      this.formCampaign.get('sheduleStart').patchValue(null);
+    }
+    if (this.campaign.graphXml) {
+      this.main(
+        document.getElementById("graphContainer"),
+        document.getElementById("sidebarContainer_sequences"),
+        document.getElementById("sidebarContainer_goals"),
+        this.editor,
+        this.editor.graph,
+        this.campaign
+      );
+    } else {
+      var value = {
+        state: 'draf'
       }
-    )
+      this.main(
+        document.getElementById("graphContainer"),
+        document.getElementById("sidebarContainer_sequences"),
+        document.getElementById("sidebarContainer_goals"),
+        this.editor,
+        this.editor.graph,
+        value
+      );
+    }
   }
 
   addToolbarButton(editor, toolbar, action, label, image, isTransparent?) {
@@ -428,7 +448,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         graph.setSelectionCell(v1);
       } finally {
         model.endUpdate();
-        that.saveChange(graph)
+        that.onSave()
       }
 
     }
@@ -449,16 +469,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     sidebar.appendChild(div);
     // When drag Icon image
     var dragImage = div.cloneNode(true);
-    var ds = mxUtils.makeDraggable(
-      img,
-      graph,
-      funct,
-      dragImage,
-      0,
-      0,
-      true,
-      true
-    );
+    var ds = mxUtils.makeDraggable(img, graph, funct, dragImage, 0, 0, true, true);
     ds.setGuidesEnabled(true);
   }
 
@@ -624,15 +635,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
             a.conditions.push(Object.assign({}, con.$));
           });
         }
-        let modalRef = that.modalService.open(
-          TcareCampaignDialogRuleComponent,
-          {
-            size: "lg",
-            windowClass: "o_technical_modal",
-            backdrop: "static",
-            keyboard: false,
-          }
-        );
+        let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: "lg", windowClass: "o_technical_modal", backdrop: "static", keyboard: false, });
         modalRef.componentInstance.title = "Cài đặt điều kiện";
         modalRef.componentInstance.audience_filter = a;
         modalRef.result.then(
@@ -695,7 +698,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         graph.getModel().beginUpdate();
         try {
           var userObject = that.doc.createElement("sequence");
-          userObject.setAttribute("campaignId", that.id);
+          userObject.setAttribute("campaignId", that.campaign.id);
           for (var p in result) {
             userObject.setAttribute(p, result[p]);
           }
@@ -766,7 +769,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               }
               finally {
                 graph.getModel().endUpdate();
-                that.saveChange(graph);
+                that.onSave();
               }
 
             }
@@ -843,7 +846,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   checkConnection() {
     var listCell = [];
-    var graph = this.editorDefind.graph;
+    var graph = this.editor.graph;
     var cells = graph.getModel().cells;
     for (let index = 0; index < graph.getModel().nextId + 1; index++) {
       if (cells[index])
@@ -862,8 +865,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     } else { return false; }
   }
 
-  startCampaign() {
+  get sheduleStartControl() { return this.formCampaign.get('sheduleStart') }
+
+
+
+  onChangeTimeStartCampaign() {
     if (!this.checkConnection()) {
+      this.formCampaign.get('sheduleStart').patchValue(new Date());
       this.notificationService.show({
         content: 'Bạn chưa hoàn thành 1 kịch bản, vui lòng hoàn thành sau đó chạy lại kịch bản!.',
         hideAfter: 3000,
@@ -872,70 +880,40 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         type: { style: 'error', icon: true }
       });
       return false;
-    }
-    let modalRef = this.modalService.open(TcareCampaignStartDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', backdrop: 'static', keyboard: false });
-    modalRef.componentInstance.title = 'Cài đặt thời gian chạy kịch bản';
-    modalRef.result.then((result: any) => {
-      if (result) {
-        result.id = this.id;
-        result.sheduleStart = this.intlService.formatDate(
-          result.sheduleStart,
-          "yyyy-MM-ddTHH:mm:ss"
-        );
-        this.campaign.sheduleStart = result.sheduleStart;
-        this.tcareService.actionStartCampaign(result).subscribe(() => {
-          this.campaign.state = "running";
-          this.notificationService.show({
-            content: "Chạy kịch bản thành công!.",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
-        });
+    } else {
+      var value = {
+        id: this.campaign ? this.campaign.id : null,
+        sheduleStart: this.intlService.formatDate(this.formCampaign.get('sheduleStart').value, "yyyy-MM-ddTHH:mm:ss")
       }
-    });
-  }
-
-  stopCampaign() {
-    if (this.campaign.id) {
-      var value = [];
-      value.push(this.campaign.id);
-      this.tcareService.actionStopCampaign(value).subscribe(() => {
-        this.campaign.state = "stopped";
-        this.notificationService.show({
-          content: "Dừng kịch bản thành công!.",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
-      });
+      this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
+        () => {
+          this.authService.actionNext.next('load');
+          this.notificationService.show({
+            content: 'Cài thời gian chạy chiến dịch thành công !',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }
+      )
     }
-  }
 
-  saveChange(graph) {
-    var value = this.formGroup.value;
-    var enc = new mxCodec(mxUtils.createXmlDocument());
-    var node = enc.encode(graph.getModel());
-    value.graphXml = mxUtils.getPrettyXml(node);
-    if (this.id) {
-      this.tcareService.update(this.id, value).subscribe(() => { });
-    }
   }
 
   onSave() {
     this.submited = true;
-    if (this.formGroup.invalid) {
+    if (this.formCampaign.invalid) {
       return false;
     }
 
-    var value = this.formGroup.value;
+    var value = this.formCampaign.value;
     var enc = new mxCodec(mxUtils.createXmlDocument());
-    var node = enc.encode(this.editorDefind.graph.getModel());
+    var node = enc.encode(this.editor.graph.getModel());
     value.graphXml = mxUtils.getPrettyXml(node);
-    if (this.id) {
-      this.tcareService.update(this.id, value).subscribe(() => {
+    if (this.campaign && this.campaign.id) {
+      this.tcareService.update(this.campaign.id, value).subscribe(() => {
+        this.authService.actionNext.next('load');
         this.notificationService.show({
           content: "Thành công",
           hideAfter: 3000,
@@ -948,6 +926,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   }
 
   get nameControl() {
-    return this.formGroup.get("name");
+    return this.formCampaign.get("name");
   }
 }

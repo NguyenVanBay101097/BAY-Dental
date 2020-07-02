@@ -1,0 +1,205 @@
+.sidebar-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+}
+
+.sidebar-icon label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.flow {
+    stroke-dasharray: 8;
+    animation: dash 0.5s linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -16;
+    }
+}
+
+.content_script {
+    padding-left: 15px;
+    position: relative;
+}
+
+.campaign {
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    padding: 0;
+}
+
+.campaign .campaign_title {
+    padding: 7.7px;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+.campaign .campaign_content {
+    padding: 15px;
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.campaign_content_title {
+    width: 80%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.campaign_content_action {
+    width: 20%;
+    display: inline-flex;
+}
+
+.campaign_content_action_active {
+    padding-top: 5px;
+    padding-right: 10px;
+}
+
+.campaign_content_action_delete .fa-trash-alt {
+    color: #cccccc;
+}
+
+.campaign_content_action_delete .fa-trash-alt:hover {
+    color: #8f8f8f;
+}
+
+.campaign_action_icon {
+    display: none;
+    position: absolute;
+    top: 14px;
+    right: 5px;
+}
+
+.act {
+    background-color: #dddcdc !important;
+}
+
+.campaign .campaign_content:hover {
+    background-color: #dddcdc;
+}
+
+.graph_title {
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+.graph_content {
+    padding-left: 0
+}
+
+.o_form_sheet_scenario {
+    margin-bottom: 15px;
+}
+
+.graph_content .graph_container {
+    overflow: hidden;
+    min-height: 555px;
+    height: 555px;
+    cursor: default;
+}
+
+.graph_icon_sidebar {
+    padding-right: 0;
+    border-radius: 3px;
+}
+
+.shadow-sm {
+    overflow: hidden;
+    min-height: 555px;
+    height: 555px;
+    padding: 10px;
+}
+
+.campaign_add {
+    padding: 5px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: #007bff;
+}
+
+.campaign_add:hover {
+    background-color: #0164ce;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 29px;
+    height: 15px;
+    margin-bottom: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 2px;
+    bottom: 1.5px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #008cff;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+
+/* Rounded sliders */
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.slider.round:hover {
+    background-color: #7f7f7f;
+}

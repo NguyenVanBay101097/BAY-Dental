@@ -25,7 +25,14 @@ export class TCareCampaignDisplay {
   graphXml: string;
   state: string;
   sheduleStart: string;
-  RecurringJobId: string;
+  recurringJobId: string;
+  active: boolean;
+}
+
+export class TCareScenarioDisplay {
+  id: string;
+  name: string;
+  campaigns: TCareCampaignDisplay[];
 }
 
 
@@ -82,6 +89,12 @@ export class TCareRuleCondition {
   //truyển kiểu String
 }
 
+export class TCareScenarioPaged {
+  search: string;
+  limit: number;
+  offset: number;
+}
+
 
 export class TCareRule {
   logic: string;
@@ -98,7 +111,7 @@ export class TcareService {
     private http: HttpClient
   ) { }
   private readonly apiUrlCampaign = "api/TCareCampaigns"
-
+  private readonly apiUrlScenario = "api/TCareScenarios"
   //TCareCampaign
 
   nameCreate(val): Observable<TCareCampaignBasic> {
@@ -129,7 +142,31 @@ export class TcareService {
     return this.http.post(this.base_api + this.apiUrlCampaign + "/ActionStopCampaign", val)
   }
 
+  actionSetSheduleStartCampaign(val) {
+    return this.http.post(this.base_api + this.apiUrlCampaign + '/ActionSetSheduleStartCampaign', val);
+  }
+
   autocomplete(val: TCareCampaignPaged): Observable<TCareCampaignBasic[]> {
     return this.http.post<TCareCampaignBasic[]>(this.base_api + this.apiUrlCampaign + '/autocomplete', val);
+  }
+
+  getScenario(id): Observable<TCareScenarioDisplay> {
+    return this.http.get<TCareScenarioDisplay>(this.base_api + this.apiUrlScenario + '/' + id);
+  }
+
+  getPagedScenario(params) {
+    return this.http.get(this.base_api + this.apiUrlScenario, { params: params });
+  }
+
+  deleteScenario(id) {
+    return this.http.delete(this.base_api + this.apiUrlScenario + '/' + id);
+  }
+
+  createScenario(val): Observable<TCareScenarioDisplay> {
+    return this.http.post<TCareScenarioDisplay>(this.base_api + this.apiUrlScenario, val);
+  }
+
+  updateScenario(id, val) {
+    return this.http.put(this.base_api + this.apiUrlScenario + "/" + id, val);
   }
 }

@@ -51,6 +51,7 @@ namespace Infrastructure.Services
             var campaign = new TCareCampaign()
             {
                 Name = val.Name,
+                TCareScenarioId = val.TCareScenarioId,
                 State = "draft"
             };
             return await CreateAsync(campaign);
@@ -60,22 +61,19 @@ namespace Infrastructure.Services
         {
             var jobService = GetService<ITCareJobService>();
             var states = new string[] { "draft", "stopped" };
-            var campaign = await SearchQuery(x => x.Id == val.Id && states.Contains(x.State)).FirstOrDefaultAsync();
-            var runAt = val.SheduleStart.Value;
+            var campaign = await SearchQuery(x => x.Id == val.Id && x.Active == false).FirstOrDefaultAsync();
+            var runAt = campaign.SheduleStart.HasValue ? campaign.SheduleStart.Value : DateTime.Today;
             campaign.State = "running";
+            campaign.Active = true;
             campaign.SheduleStart = runAt;
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             if (campaign.RecurringJobId == null)
             {
                 //đặt tên lưu lại trong hangfire
-                campaign.RecurringJobId = $"{tenant}-{campaign.Name}-RecurringJob";
+                campaign.RecurringJobId = $"{tenant}-{campaign.Id}-RecurringJob";
 
             }
             RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(_tenant != null ? _tenant.Hostname : "localhost", campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
-
-
-
-
             await UpdateAsync(campaign);
         }
 
@@ -87,7 +85,8 @@ namespace Infrastructure.Services
             foreach (var campaign in campaigns)
             {
                 campaign.State = "stopped";
-                campaign.SheduleStart = null;
+                campaign.Active = false;
+                //campaign.SheduleStart = null;
                 using (var connection = JobStorage.Current.GetConnection())
                 {
                     //truy vấn danh sách RecurringJob
@@ -107,6 +106,16 @@ namespace Infrastructure.Services
 
 
             await UpdateAsync(campaigns);
+        }
+
+        public async Task SetSheduleStart(TCareCampaignSetSheduleStart val)
+        {
+            var campaign = await GetByIdAsync(val.Id);
+            if (campaign != null)
+            {
+                campaign.SheduleStart = val.SheduleStart.HasValue ? val.SheduleStart.Value : DateTime.Today;
+                await UpdateAsync(campaign);
+            }
         }
     }
 }

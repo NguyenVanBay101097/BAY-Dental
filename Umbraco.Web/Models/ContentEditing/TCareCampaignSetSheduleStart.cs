@@ -4,8 +4,10 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class TCareCampaignStart
+    public class TCareCampaignSetSheduleStart
     {
         public Guid Id { get; set; }
+
+        public DateTime? SheduleStart { get; set; }
     }
 }
