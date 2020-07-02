@@ -11,6 +11,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IUploadService _uploadService;
         private readonly IIrConfigParameterService _irConfigParameterService;
         private readonly IImportSampleDataService _importSampleDataService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
 
         public WebController(
@@ -36,14 +38,14 @@ namespace TMTDentalAPI.Controllers
             IMapper mapper,
             IUploadService uploadService,
             IIrConfigParameterService irConfigParameterService,
-            IImportSampleDataService importSampleDataService
-            )
+            IImportSampleDataService importSampleDataService, IUnitOfWorkAsync unitOfWork)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
             _uploadService = uploadService;
             _irConfigParameterService = irConfigParameterService;
             _importSampleDataService = importSampleDataService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("[action]")]
@@ -51,11 +53,16 @@ namespace TMTDentalAPI.Controllers
         {
             //Cancel / bo qua
             //Installed / import
+            await _unitOfWork.BeginTransactionAsync();
             if (action == "Installed")
             {
+               
                 await _importSampleDataService.ImportSampleData();
             }
+
             await _irConfigParameterService.SetParam("import_sample_data", action);
+            _unitOfWork.Commit();
+
             return NoContent();
 
         }
