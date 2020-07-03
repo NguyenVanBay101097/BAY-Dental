@@ -7,8 +7,7 @@
             <div *ngIf="accountPaymentPrint.companyEmail">Email: {{accountPaymentPrint.companyEmail}}</div>
         </div>
         <div class="text-center">
-            <h1>Thanh toán</h1>
-            <span>Ngày: {{accountPaymentPrint.paymentDate | date: 'shortDate'}}</span>
+            <h1 class="text-uppercase">Biên lai thanh toán</h1>
         </div>
         <div class="o_group">
             <table class="o_group o_inner_group o_group_col_6">
@@ -16,21 +15,11 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Mã khách hàng
+                                Ngày thanh toán
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.partnerRef}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Số điện thoại
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.partnerPhone}}
+                            {{accountPaymentPrint.paymentDate | date: 'shortDate'}}
                         </td>
                     </tr>
                     <tr>
@@ -50,7 +39,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.amount}}
+                            {{accountPaymentPrint.amount | number}}
                         </td>
                     </tr>
                 </tbody>
@@ -64,7 +53,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.partnerName}}
+                            {{accountPaymentPrint.partnerDisplayName}}
                         </td>
                     </tr>
                     <tr>
@@ -77,25 +66,27 @@
                             {{accountPaymentPrint.partnerAddress}}
                         </td>
                     </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table class="table table-sm table-bordered">
+                <thead>
                     <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ngày thanh toán
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.paymentDate | date: 'shortDate'}}
-                        </td>
+                        <th>Số phiếu điều trị</th>
+                        <th>Ngày lập phiếu</th>
+                        <th class="text-right">Tổng tiền</th>
+                        <th class="text-right">Thanh toán</th>
+                        <th class="text-right">Còn nợ</th>
                     </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Nội dung
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{accountPaymentPrint.communication}}
-                        </td>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of accountPaymentPrint.saleOrders; let i=index">
+                        <td>{{ order.name }}</td>
+                        <td>{{ order.dateOrder | date: 'short' }}</td>
+                        <td class="text-right">{{ order.amountTotal | number }}</td>
+                        <td class="text-right">{{ (order.amountTotal - order.residual) | number }}</td>
+                        <td class="text-right">{{ order.residual | number }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -103,12 +94,12 @@
         <div class="row">
             <div class="col-sm">
                 <div class="text-center font-weight-bold">
-                    Người lập
+                    Khách hàng
                 </div>
             </div>
             <div class="col-sm">
                 <div class="text-center font-weight-bold">
-                    Khách hàng
+                    Người lập
                 </div>
             </div>
         </div>
