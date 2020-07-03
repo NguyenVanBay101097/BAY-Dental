@@ -1,27 +1,17 @@
-<div class="graph_title">
-    <div class="o_form_statusbar" [formGroup]="formCampaign">
-        <div class="o_statusbar_buttons">
-            <!-- <button type="button" *ngIf="campaign.state == 'draft' || campaign.state == 'stopped'"
-                class="btn btn-primary btn-sm" (click)="startCampaign()">
-                Chạy chiến dịch
-            </button>
-            <button type="button" *ngIf="campaign.state == 'running'" class="btn btn-primary btn-sm"
-                (click)="stopCampaign()">
-                Dừng chiến dịch
-            </button> -->
+<div>
+    <div class="d-flex" [formGroup]="formCampaign">
+        <!-- <div class="o_statusbar_buttons">
             <input type="text" (blur)="onSave()" class="form-control o_statusbar_input_title " formControlName="name">
-        </div>
-        <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-            <span class="o_statusbar_status_lable_right">hằng ngày</span>
-            <kendo-timepicker [disabled]="campaign.active" (valueChange)="onChangeTimeStartCampaign()"
-                class="o_statusbar_shedule_start_date" formControlName="sheduleStart">
+        </div> -->
+        <div class="mb-2">
+            <span class="mr-2">Chạy mỗi ngày vào lúc</span>
+            <kendo-timepicker [disabled]="campaign.active" style="width: 100px;" (valueChange)="onChangeTimeStartCampaign()"
+                formControlName="sheduleStart">
             </kendo-timepicker>
-            <!-- <span><strong>16:30</strong></span> -->
-            <span class="o_statusbar_status_lable_left">Chạy vào</span>
         </div>
     </div>
 </div>
-<div class="row" style="margin-top: -1px;">
+<div class="row">
     <div class="col-2 graph_icon_sidebar">
         <div id="sidebarContainer" class="border shadow-sm">
             <div>
@@ -40,14 +30,5 @@
         <div id="graphContainer" class="graph_container"
             style="background-image: url('./assets/editors/images/grid.gif');">
         </div>
-        <!-- <div class="noti_time" *ngIf="campaign && campaign.state == 'running'">
-            <label style="margin-bottom: 0">Chạy vào lúc
-                {{campaign.sheduleStart | date:'shortTime'}}
-                mỗi ngày</label>
-        </div> -->
-        <!-- <div class="action_save">
-            <button type="button" accesskey="s" class="btn btn-primary btn-sm" (click)="onSave()">
-                Lưu chiến dịch</button>
-        </div> -->
     </div>
 </div>

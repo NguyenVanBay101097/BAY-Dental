@@ -72,6 +72,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết nối facebook page', link: '/facebook-connect' },
         { name: 'Kết nối Zalo', link: '/zalo-config' },
         { name: 'Danh sách kênh', link: '/channels' },
+        { name: 'Kịch bản', link: '/tcare-scenarios' },
       ],
     },
     {
@@ -104,7 +105,6 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm quyền', link: '/res-groups' },
         // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
-        { name: 'Kịch bản', link: '/tcare-scenarios' },
       ]
     },
     {

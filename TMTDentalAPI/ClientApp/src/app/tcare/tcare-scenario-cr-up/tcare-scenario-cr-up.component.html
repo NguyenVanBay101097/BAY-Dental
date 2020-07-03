@@ -27,43 +27,44 @@
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="o_form_sheet_scenario">
-                    <label for="formGroupExampleInput">Tên kịch bản</label>
-                    <input type="text" class="form-control" formControlName="name" id="formGroupExampleInput"
-                        placeholder="Example input">
-                    <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submited)">
-                        <label *ngIf="nameControl.errors.required" style="color: red;">Nội dung gửi
-                            không được để trống !</label>
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên kịch bản</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submitted)">
+                        <label *ngIf="nameControl.errors.required">Nhập tên kịch bản</label>
                     </div>
                 </div>
-                <div class="row content_script">
-                    <div class="col-4 campaign">
-                        <div class="campaign_title">
-                            Danh sách chiến dịch
-                        </div>
-                        <div class="campaign_content" [ngClass]="{'act': campaign && item.id == campaign.id}"
-                            (click)="editCampaign(item)" *ngFor="let item of scenario.campaigns">
-                            <div class="campaign_content_title">
-                                <span [title]="item.name">{{item.name}}</span>
-                            </div>
-                            <div class="campaign_content_action">
-                                <div class="campaign_content_action_active">
-                                    <label class="switch">
-                                        <input type="checkbox" [disabled]="!item.sheduleStart" [checked]="item.active"
-                                            (change)="changeCheckedCampaign($event,item)">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                                <div class="campaign_content_action_delete">
-                                    <i (click)="removeCampaign(item)" class="far fa-trash-alt"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="campaign_add" (click)="addCampaign()">
-                            Thêm mới chiến dịch
+                <div class="mb-2">
+                    <button type="button" (click)="addCampaign()" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Thêm chiến dịch
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div>
+                            <ul class="list-group">
+                                <li *ngFor="let item of scenario.campaigns" class="list-group-item" [class.list-group-item-secondary]="campaign == item" (click)="editCampaign(item)">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="mb-1">{{item.name}}</h5>
+                                        <div class="d-flex">
+                                            <span>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" [id]="'customSwitch' + item.id" (change)="changeCheckedCampaign($event,item)" [checked]="item.active">
+                                                    <label class="custom-control-label" [for]="'customSwitch' + item.id"></label>
+                                                </div>
+                                            </span>
+                                            <a (click)="removeCampaign(item)">
+                                                <i class="far fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="col-8 graph" *ngIf="campaign">
+                    <div class="col-8" *ngIf="campaign">
                         <app-tcare-campaign-create-update (actionNext)="loadData()" [campaign]="campaign">
                         </app-tcare-campaign-create-update>
                     </div>
