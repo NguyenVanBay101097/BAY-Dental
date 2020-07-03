@@ -28,6 +28,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   samplePrescriptionAdded: any;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('samplePrescriptionCbx', { static: true }) samplePrescriptionCbx: ComboBoxComponent;
+  title: string;
 
   public filterSettings: DropDownFilterSettings = {
     caseSensitive: false,

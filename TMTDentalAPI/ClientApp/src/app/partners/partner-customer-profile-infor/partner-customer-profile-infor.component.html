@@ -1,8 +1,7 @@
 <div *ngIf="customerInfo" class="o_form_view">
-    <div class="oe_title">
+    <div class="oe_title clearfix">
         <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="customerInfo.avatar"></app-image-file-upload>
         <h2><span>{{customerInfo.name}}</span></h2>
-        <div class="clearfix"></div>
     </div>
     <div class="form-group row">
         <label class="col-sm-4">Mã khách hàng</label>

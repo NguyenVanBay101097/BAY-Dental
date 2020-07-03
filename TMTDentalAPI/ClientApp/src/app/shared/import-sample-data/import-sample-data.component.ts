@@ -15,9 +15,9 @@ export class ImportSampleDataComponent implements OnInit {
 
   title = "Tạo dữ liệu mẫu"
   constructor(
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private http: HttpClient,
-    private authService: AuthService,
+    public authService: AuthService,
     private webService: WebService
   ) { }
 
