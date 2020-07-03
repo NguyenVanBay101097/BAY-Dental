@@ -40,13 +40,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       name: ['', Validators.required],
     });
 
-    this.tcareService.actionNext.subscribe(
-      value => {
-        if (value == "load") {
-          this.loadData();
-        }
-      }
-    )
+
   }
 
   get nameControl() {
@@ -85,7 +79,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
       this.tcareService.actionStopCampaign(value).subscribe(
         () => {
           this.campaign.active = false;
-          this.tcareService.actionNext.next(this.campaign);
           this.notificationService.show({
             content: "Dừng kịch bản thành công!.",
             hideAfter: 3000,
@@ -103,7 +96,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
       this.tcareService.actionStartCampaign(val).subscribe(
         () => {
           this.campaign.active = true;
-          this.tcareService.actionNext.next(this.campaign);
           this.notificationService.show({
             content: "Chạy kịch bản thành công!.",
             hideAfter: 3000,
@@ -120,7 +112,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
 
   editCampaign(campaign) {
     this.campaign = campaign;
-    this.tcareService.actionNext.next(this.campaign);
   }
 
   addCampaign() {
@@ -131,7 +122,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
       if (result) {
         this.campaign = result
         this.scenario.campaigns.push(this.campaign);
-        this.tcareService.actionNext.next(this.campaign);
       }
 
     }, () => {
@@ -155,13 +145,9 @@ export class TcareScenarioCrUpComponent implements OnInit {
       modalRef.result.then(() => {
         this.tcareService.delete(item.id).subscribe(() => {
           if (item.id == this.campaign.id) {
-            this.campaign = null;
+            this.campaign = this.scenario.campaigns[0];
           }
           this.loadData();
-          setTimeout(() => {
-            if (this.campaign)
-              this.tcareService.actionNext.next(this.campaign);
-          }, 100);
         });
       });
     }

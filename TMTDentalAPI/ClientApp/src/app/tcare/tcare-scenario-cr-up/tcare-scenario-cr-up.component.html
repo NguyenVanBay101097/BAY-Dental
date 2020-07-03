@@ -41,7 +41,7 @@
                         <div class="campaign_title">
                             Danh sách chiến dịch
                         </div>
-                        <div class="campaign_content" [ngClass]="{'act': item.id == campaign.id}"
+                        <div class="campaign_content" [ngClass]="{'act': campaign && item.id == campaign.id}"
                             (click)="editCampaign(item)" *ngFor="let item of scenario.campaigns">
                             <div class="campaign_content_title">
                                 <span [title]="item.name">{{item.name}}</span>
@@ -64,7 +64,8 @@
                         </div>
                     </div>
                     <div class="col-8 graph" *ngIf="campaign">
-                        <app-tcare-campaign-create-update [campaign]="campaign"></app-tcare-campaign-create-update>
+                        <app-tcare-campaign-create-update (actionNext)="loadData()" [campaign]="campaign">
+                        </app-tcare-campaign-create-update>
                     </div>
 
                 </div>

@@ -106,13 +106,11 @@ export class TCareRule {
 })
 export class TcareService {
 
-  public actionNext: BehaviorSubject<any>;
 
   constructor(
     @Inject('BASE_API') private base_api: string,
     private http: HttpClient
   ) {
-    this.actionNext = new BehaviorSubject<any>(null);
   }
   private readonly apiUrlCampaign = "api/TCareCampaigns"
   private readonly apiUrlScenario = "api/TCareScenarios"
