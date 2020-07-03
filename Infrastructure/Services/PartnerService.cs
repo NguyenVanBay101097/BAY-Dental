@@ -1165,6 +1165,49 @@ namespace Infrastructure.Services
             return new PartnerImportResponse { Success = true };
         }
 
+        public async Task<PartnerPrintProfileVM> GetPrint(Guid id)
+        {
+            var result = new PartnerPrintProfileVM();
+
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
+
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == user.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+
+            var partnerObj = GetService<IPartnerService>();
+            var partner = await GetByIdAsync(id);
+
+            var companyPrint = _mapper.Map<CompanyPrintVM>(company);
+            companyPrint.Address = partnerObj.GetFormatAddress(company.Partner);
+
+            var partnerPrint = _mapper.Map<PartnerPrintVM>(partner);
+            partnerPrint.Address = partnerObj.GetFormatAddress(partner);
+
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var saleOrderLines = saleOrderLineObj.SearchQuery(x => x.OrderPartnerId == id).Select(x => new
+            {
+                DateOrder = x.Order.DateOrder,
+                OrderPartner = x.OrderPartner,
+                ProductName = x.ProductUOMQty + ": " + x.Product.Name
+            }).ToList();
+
+            var accountPaymentObj = GetService<IAccountPaymentService>();
+            var accountPayments = accountPaymentObj.SearchQuery(x => x.PartnerId == id).Select(x => new
+            {
+                PaymentDate = x.PaymentDate,
+                JournalName = x.Journal.Name,
+                Amount = x.Amount
+            }).ToList();
+            //
+            result.Company = companyPrint;
+            result.Partner = partnerPrint;
+            result.ServiceList = (IEnumerable<PartnerPrintProfileService>)saleOrderLines;
+            result.PaymentList = (IEnumerable<PartnerPrintProfilePayment>)accountPayments;
+
+            return result;
+        }
+
         public async Task<IDictionary<Guid, Partner>> GetPartnerDictByIds(IEnumerable<Guid> ids)
         {
             var limit = 200;

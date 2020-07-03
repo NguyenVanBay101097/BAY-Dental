@@ -129,6 +129,12 @@ export class PartnerCustomerListComponent implements OnInit {
     }, er => { })
   }
 
+  printItem(item: PartnerBasic) {
+    this.partnerService.getPrint(item.id).subscribe(result => {
+      // this.partnerPrintComponent.print(result);
+    });
+  }
+
   editItem(item: PartnerBasic) {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa khách hàng';

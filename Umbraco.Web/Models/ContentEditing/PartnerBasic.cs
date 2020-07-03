@@ -152,4 +152,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool Employee { get; set; }
     }
+
+    public class PartnerPrintVM
+    {
+        public string Ref { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+    }
 }

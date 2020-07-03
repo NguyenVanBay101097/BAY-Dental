@@ -44,6 +44,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<Partner, PartnerChangePhone>();
             CreateMap<PartnerChangePhone , Partner>();
+            CreateMap<Partner , PartnerPrintVM>();
         }
     }
 }
