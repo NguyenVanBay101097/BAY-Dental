@@ -26,6 +26,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string PartnerName { get; set; }
 
+        public string PartnerDisplayName { get; set; }
+
         public string PartnerCity { get; set; }
 
         public string PartnerDistrict { get; set; }
@@ -45,5 +47,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
 
         public string Communication { get; set; }
+
+        public IEnumerable<AccountPaymentSaleOrderPrintVM> SaleOrders { get; set; } = new List<AccountPaymentSaleOrderPrintVM>();
+    }
+
+    public class AccountPaymentSaleOrderPrintVM
+    {
+        public string Name { get; set; }
+
+        public DateTime DateOrder { get; set; }
+
+        public decimal? AmountTotal { get; set; }
+
+        public decimal? Residual { get; set; }
     }
 }

@@ -943,11 +943,18 @@ namespace Infrastructure.Services
                 PartnerCity = x.Partner.CityName,
                 PartnerDistrict = x.Partner.DistrictName,
                 PartnerName = x.Partner.Name,
+                PartnerDisplayName = x.Partner.DisplayName,
                 PartnerPhone = x.Partner.Phone,
                 PartnerRef = x.Partner.Ref,
                 PartnerStreet = x.Partner.Street,
                 PartnerWard = x.Partner.WardName,
-                PaymentDate = x.PaymentDate
+                PaymentDate = x.PaymentDate,
+                SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM { 
+                   AmountTotal = s.SaleOrder.AmountTotal,
+                   DateOrder = s.SaleOrder.DateOrder,
+                   Name = s.SaleOrder.Name,
+                   Residual = s.SaleOrder.Residual
+                }),
             }).FirstOrDefaultAsync();
 
             if (res == null)

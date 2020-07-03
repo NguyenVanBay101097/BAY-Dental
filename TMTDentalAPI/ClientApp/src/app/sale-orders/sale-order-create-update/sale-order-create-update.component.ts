@@ -39,6 +39,8 @@ import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+
 declare var $: any;
 
 @Component({
@@ -61,6 +63,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
+  @ViewChild(AccountPaymentPrintComponent, {static: true}) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
@@ -79,7 +83,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService,public activeModal: NgbActiveModal,) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService,public activeModal: NgbActiveModal, ) {
   }
 
   ngOnInit() {
@@ -1044,6 +1048,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
         this.loadPayments();
       });
+    });
+  }
+
+  printPayment(payment) {
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
+      this.accountPaymentPrintComponent.print(result);
     });
   }
 
