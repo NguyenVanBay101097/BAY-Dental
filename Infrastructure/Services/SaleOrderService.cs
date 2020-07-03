@@ -95,7 +95,7 @@ namespace Infrastructure.Services
             });
         }
 
-        private void _AmountAll(SaleOrder order)
+        public void _AmountAll(SaleOrder order)
         {
             var totalAmountUntaxed = 0M;
             var totalAmountTax = 0M;
@@ -221,6 +221,9 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
+                    if (line.State == "cancel")
+                        continue;
+
                     line.State = "draft";
                 }
 
@@ -1041,23 +1044,11 @@ namespace Infrastructure.Services
             var self = new List<SaleOrder>() { order };
             await _GenerateDotKhamSteps(self);
 
-            //if (order.InvoiceStatus == "to invoice" && order.State == "sale")
-            //{
-            //    var invoices = await _CreateInvoices(self, final: true);
-            //    var moveObj = GetService<IAccountMoveService>();
-            //    await moveObj.ActionPost(invoices);
-
-            //    foreach (var so in self)
-            //    {
-            //        saleLineObj._GetInvoiceQty(so.OrderLines);
-            //        saleLineObj._GetToInvoiceQty(so.OrderLines);
-            //        saleLineObj._ComputeInvoiceStatus(so.OrderLines);
-            //    }
-
-            //    _GetInvoiced(self);
-            //    _ComputeResidual(self);
-            //    await UpdateAsync(self);
-            //}
+            // nếu phiếu điều trị ở trạng thái sale thì tính lại công nợ khi update
+            if (order.State == "sale")
+            {
+                await ActionInvoiceCreateV2(order.Id);
+            }
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -1295,6 +1286,9 @@ namespace Infrastructure.Services
                 order.State = "sale";
                 foreach (var line in order.OrderLines)
                 {
+                    if (line.State == "cancel")
+                        continue;
+
                     line.State = "sale";
                 }
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
@@ -1362,13 +1356,14 @@ namespace Infrastructure.Services
                         continue;
                     if (!(line.Product.SaleOK == true && line.Product.Type2 == "service"))
                         continue;
-                    //nếu số lượng bằng 0, nếu có steps thì remove
-                    if (line.ProductUOMQty == 0 && line.DotKhamSteps.Any())
+                    if (line.ProductUOMQty == 0)
                     {
-                        await dotKhamStepService.Unlink(line.DotKhamSteps);
+                        //Nếu update số lượng về 0 thì nếu có steps thì unlink
+                        if (line.DotKhamSteps.Any())
+                            await dotKhamStepService.Unlink(line.DotKhamSteps);
                         continue;
                     }
-
+                        
                     if (line.DotKhamSteps.Any())
                         continue;
 
@@ -1540,6 +1535,9 @@ namespace Infrastructure.Services
                .Include("OrderLines.Product")
                .FirstOrDefaultAsync();
             var res = _mapper.Map<SaleOrderPrintVM>(order);
+            //Lược bỏ những dòng số lượng bằng 0
+            res.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);
+
             var partnerObj = GetService<IPartnerService>();
             res.CompanyAddress = partnerObj.GetFormatAddress(order.Company.Partner);
             res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
@@ -1922,14 +1920,20 @@ namespace Infrastructure.Services
             }
 
 
+
+
             saleLineObj.UpdateOrderInfo(saleOrder.OrderLines, saleOrder);
             saleLineObj.ComputeAmount(saleOrder.OrderLines);
             _AmountAll(saleOrder);
             _GetInvoiced(new List<SaleOrder>() { saleOrder });
 
+
+
             await UpdateAsync(saleOrder);
 
         }
+
+
 
         //kiểm tra product chiết khấu tổng có tồn tại chưa
         private async Task<Product> CheckProductDiscount(ApplyDiscountSaleOrderViewModel val)
@@ -2000,5 +2004,7 @@ namespace Infrastructure.Services
             return reward_string;
         }
     }
+
+
 
 }
