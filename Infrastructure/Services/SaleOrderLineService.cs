@@ -336,9 +336,8 @@ namespace Infrastructure.Services
                 {
                     await dotkhamstepObj.Unlink(line.DotKhamSteps);
                 }
-
-
             }
+
             await UpdateAsync(lines);
 
             _GetInvoiceQty(lines);
@@ -358,7 +357,6 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(order);
             // tính lại công nợ
             await orderObj.ActionInvoiceCreateV2(orderId);
-
         }
     }
 }

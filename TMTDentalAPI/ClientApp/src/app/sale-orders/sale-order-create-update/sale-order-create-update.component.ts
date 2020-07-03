@@ -943,9 +943,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.loadRecord();
         });
       }
-      
-    
-    
     }, () => {
     });
   }
