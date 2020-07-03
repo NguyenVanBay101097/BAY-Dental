@@ -28,7 +28,7 @@ export class SaleOrderLineService {
     }
 
     cancelOrderLine(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/CancelServiceBySaleOrder', ids);
+        return this.http.post(this.baseApi + this.apiUrl + '/CancelSaleOrderLine', ids);
     }
 
 }

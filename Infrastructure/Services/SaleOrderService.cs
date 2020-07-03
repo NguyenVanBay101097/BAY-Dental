@@ -95,7 +95,7 @@ namespace Infrastructure.Services
             });
         }
 
-        private void _AmountAll(SaleOrder order)
+        public void _AmountAll(SaleOrder order)
         {
             var totalAmountUntaxed = 0M;
             var totalAmountTax = 0M;
@@ -1995,7 +1995,7 @@ namespace Infrastructure.Services
         //    saleLineObj._ComputeInvoiceStatus(lines);
         //    await saleLineObj.UpdateAsync(lines);
 
-        //    _AmountAll(order);
+        //  _ AmountAll(order);
         //    _GetInvoiced(new List<SaleOrder>() { order });
 
         //    await UpdateAsync(order);

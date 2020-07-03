@@ -47,6 +47,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
         Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
+        void _AmountAll(SaleOrder order);
 
         //Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);
 

@@ -1024,7 +1024,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.title = "Hủy: Dịch vụ";
     modalRef.result.then(() => {    
       if (this.id) {
-        this.saleOrderLineService.cancelOrderLine(ids).subscribe(() => {
+        this.saleOrderLineService.cancelOrderLine([ids]).subscribe(() => {
           this.notificationService.show({
             content: 'hủy dịch vụ thành công',
             hideAfter: 3000,

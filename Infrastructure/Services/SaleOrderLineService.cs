@@ -318,11 +318,11 @@ namespace Infrastructure.Services
             await DeleteAsync(self);
         }
 
-        public async Task CancelSaleOrderLine(IEnumerable<Guid> Ids)
+        public async Task CancelSaleOrderLine(IEnumerable<Guid> ids)
         {
             var orderObj = GetService<ISaleOrderService>();
             var dotkhamstepObj = GetService<IDotKhamStepService>();
-            var lines = await SearchQuery(x => Ids.Contains(x.Id)).Include("DotKhamStep").Include(x => x.Order)
+            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include("DotKhamSteps").Include(x => x.Order)
                 .Include(x => x.Product)
                .Include(x => x.SaleOrderLineInvoice2Rels)
                .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
@@ -339,9 +339,7 @@ namespace Infrastructure.Services
 
 
             }
-
             await UpdateAsync(lines);
-
 
             _GetInvoiceQty(lines);
             _GetToInvoiceQty(lines);
@@ -351,7 +349,11 @@ namespace Infrastructure.Services
 
             var orderId = lines.Select(x => x.OrderId).FirstOrDefault();
             var order = await orderObj.GetSaleOrderWithLines(orderId);
+            
             ComputeAmount(order.OrderLines);
+
+            //tính lại tổng tiền phiếu điều trị
+             orderObj._AmountAll(order);
 
             await orderObj.UpdateAsync(order);
             // tính lại công nợ
