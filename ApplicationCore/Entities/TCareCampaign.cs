@@ -44,7 +44,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string RecurringJobId { get; set; }
 
-        public Guid TCareScenarioId { get; set; }
+        public Guid? TCareScenarioId { get; set; }
         public TCareScenario TCareScenario { get; set; }
 
         /// <summary>

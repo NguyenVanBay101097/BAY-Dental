@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Renderer2, Input } from "@angular/core";
+import { Component, OnInit, Inject, Renderer2, Input, Output, EventEmitter, OnChanges, SimpleChanges } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -11,7 +11,7 @@ import { TcareCampaignDialogRuleComponent } from "../tcare-campaign-dialog-rule/
 
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { TcareCampaignDialogMessageComponent } from "../tcare-campaign-dialog-message/tcare-campaign-dialog-message.component";
-import { IntlService } from "@progress/kendo-angular-intl";
+import { IntlService, load } from "@progress/kendo-angular-intl";
 import * as xml2js from "xml2js";
 import { TcareCampaignStartDialogComponent } from "../tcare-campaign-start-dialog/tcare-campaign-start-dialog.component";
 import { mxgraph } from 'src/mxgraph-types';
@@ -40,8 +40,10 @@ declare var mxKeyHandler: any;
   templateUrl: "./tcare-campaign-create-update.component.html",
   styleUrls: ["./tcare-campaign-create-update.component.css"],
 })
-export class TcareCampaignCreateUpdateComponent implements OnInit {
+export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   @Input() campaign: TCareCampaignDisplay;
+  @Output('actionNext') actionNext = new EventEmitter<boolean>();
+
   offsetY = 30;
   formCampaign: FormGroup;
   priority = null;
@@ -54,7 +56,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   disableTime = false;
   submited = false;
   constructor(
-    private activeRoute: ActivatedRoute,
     private fb: FormBuilder,
     @Inject("BASE_API") private base_url: string,
     private modalService: NgbModal,
@@ -64,34 +65,29 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     private intlService: IntlService,
   ) {
     this.editor = new mxEditor();
-  }
-
-  ngOnInit() {
-
     this.formCampaign = this.fb.group({
       name: ["", Validators.required],
       sheduleStart: null
     });
-    this.doc = mxUtils.createXmlDocument();
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.campaign) {
+      this.load();
+    }
+  }
+
+  ngOnInit() {
     this.load();
-    this.tcareService.actionNext.subscribe(
-      value => {
-        if (value && value != "load" && this.campaign && value.id != this.campaign.id) {
-          this.campaign = value;
-          this.one = false;
-          this.load();
-        }
-      }
-    )
   }
 
 
-  main(container, sidebar_sequences, sidebar_goals, editor, graph, model) {
+  main(container, sidebar_sequences, sidebar_goals, model) {
     var that = this;
     if (!mxClient.isBrowserSupported()) {
       // Displays an error message if the browser is not supported.
       mxUtils.error("Browser is not supported!", 200, false);
     } else {
+      this.doc = mxUtils.createXmlDocument();
       mxConstants.MIN_HOTSPOT_SIZE = 16;
       mxConstants.DEFAULT_HOTSPOT = 1;
       // Enables guides
@@ -116,28 +112,23 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       var sequence = that.doc.createElement("sequence");
       var rule = that.doc.createElement("rule");
 
-
-      graph.setCellsMovable(true);
-      graph.setAutoSizeCells(true);
-      graph.setPanning(true);
-      graph.centerZoom = true;
-      graph.panningHandler.useLeftButtonForPanning = true;
+      that.editor.graph.setCellsMovable(true);
+      that.editor.graph.setAutoSizeCells(true);
+      that.editor.graph.setPanning(true);
+      that.editor.graph.centerZoom = true;
+      that.editor.graph.panningHandler.useLeftButtonForPanning = true;
 
       // Uses the port icon while connections are previewed
-      mxConnectionHandler.prototype.connectImage = new mxImage(
-        that.base_url + "assets/editors/images/connector.gif",
-        16,
-        16
-      );
+      mxConnectionHandler.prototype.connectImage = new mxImage(that.base_url + "assets/editors/images/connector.gif", 16, 16);
 
       // Centers the port icon on the cellSequence port
-      graph.connectionHandler.cellSequenceConnectImage = true;
+      that.editor.graph.connectionHandler.cellSequenceConnectImage = true;
 
       // Does not allow dangling edges
-      graph.setAllowDanglingEdges(false);
+      that.editor.graph.setAllowDanglingEdges(false);
 
       // Sets the graph container and configures the editor
-      editor.setGraphContainer(container);
+      that.editor.setGraphContainer(container);
       var iconTolerance = 20;
       var splash = document.getElementById("splash");
       if (splash != null) {
@@ -150,16 +141,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         }
       }
 
-      // var mgr = new mxAutoSaveManager(editor.graph, 1, 1);
-      // if (mgr.isEnabled) {
-      //   mgr.graphModelChanged = function () {
-      //     that.onSave(graph);
-      //   };
-      // }
-
-
       //validate Connection
-      graph.isValidConnection = function (source, cellSequence) {
+      that.editor.graph.isValidConnection = function (source, cellSequence) {
         const source_id = source.id;
         const cellSequence_id = cellSequence.id;
         var source_edge_length = 0;
@@ -195,19 +178,19 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         else {
           var value = cellSequence.getValue();
           value.setAttribute('parent', source.id);
-          graph.getModel().setValue(cellSequence, value);
+          that.editor.graph.getModel().setValue(cellSequence, value);
           return true;
         }
 
       };
 
       //Add ContextMenu
-      graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-        return that.createPopupMenu(editor, graph, menu, cell, evt);
+      that.editor.graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+        return that.createPopupMenu(that.editor, that.editor.graph, menu, cell, evt);
       };
 
       //defind NodeName
-      graph.convertValueToString = function (cell) {
+      that.editor.graph.convertValueToString = function (cell) {
         if (mxUtils.isNode(cell.value)) {
           if (cell.value.nodeName.toLowerCase() == "rule") {
             return "Điều kiện";
@@ -232,18 +215,18 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       };
 
       //double click Action
-      graph.dblClick = function (evt, cell) {
-        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && that.campaign.state != 'running') {
+      that.editor.graph.dblClick = function (evt, cell) {
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && !that.campaign.active) {
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
-            that.popupSequence(graph, cell);
+            that.popupSequence(that.editor.graph, cell);
           }
 
           if (cell.value.nodeName.toLowerCase() == "rule") {
-            that.popupRule(graph, cell);
+            that.popupRule(that.editor.graph, cell);
           }
 
           if (cell.value.nodeName.toLowerCase() == "addtag") {
-            that.popupAddTag(graph, cell);
+            that.popupAddTag(that.editor.graph, cell);
           }
         }
         else {
@@ -261,30 +244,32 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       };
 
       // Enables new connections
-      graph.setConnectable(true);
+      that.editor.graph.setConnectable(true);
 
       // Adds all required styles to the graph (see below)
-      that.configureStylesheet(graph);
+      that.configureStylesheet(that.editor.graph);
 
       //Delete cell
-      var keyHandler = new mxKeyHandler(graph);
+      var keyHandler = new mxKeyHandler(that.editor.graph);
       keyHandler.target;
       keyHandler.bindKey(46, function (evt) {
-        if (graph.isEnabled) {
+        if (that.editor.graph.isEnabled) {
           if (that.campaign.state != 'running') {
-            var cell = graph.getSelectionCell();
+
+            var cell = that.editor.graph.getSelectionCell();
             if (cell.style == 'sequence' && cell.edges) {
               cell.edges.forEach(edge => {
                 if (edge.value != '' && edge.value != null && edge.target) {
-                  var cellTag = graph.getModel().getCell(edge.target.id);
+                  var cellTag = that.editor.graph.getModel().getCell(edge.target.id);
                   if (cellTag) {
-                    graph.getModel().remove(cellTag);
+                    that.editor.graph.getModel().remove(cellTag);
                   }
                 }
               });
             }
+            that.editor.graph.removeCells();
+
             that.onSave();
-            graph.removeCells();
           }
           else {
             that.notificationService.show({
@@ -300,46 +285,38 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
       if (this.one) {
         // thêm 1 sequence
-        that.addSidebarIcon(graph, sidebar_sequences, sequence, "./assets/editors/images/message-setting.png", "sequence");
+        that.addSidebarIcon(that.editor.graph, sidebar_sequences, sequence, "./assets/editors/images/message-setting.png", "sequence");
 
         //thêm 1 rule
-        that.addSidebarIcon(graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
+        that.addSidebarIcon(that.editor.graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
       }
 
       //load Xml
-      graph.getModel().beginUpdate();
+      that.editor.graph.getModel().beginUpdate();
       try {
-
-        for (let i = 2; i < graph.getModel().nextId; i++) {
-          graph.getModel().remove(graph.getModel().cells[i]);
+        for (let i = 2; i < that.editor.graph.getModel().nextId + 4; i++) {
+          if (that.editor.graph.getModel().cells[i])
+            that.editor.graph.getModel().remove(that.editor.graph.getModel().cells[i]);
         }
         var doc = mxUtils.parseXml(model.graphXml);
         var dec = new mxCodec(doc);
-        dec.decode(doc.documentElement, graph.getModel());
-        graph.setSelectionCells(graph.getModel().cells);
+        dec.decode(doc.documentElement, that.editor.graph.getModel());
+        that.editor.graph.setSelectionCells(that.editor.graph.getModel().cells);
       }
       finally {
-        graph.getModel().endUpdate();
+        that.editor.graph.getModel().endUpdate();
       }
-
     }
   }
 
   load() {
-
     this.formCampaign.get('name').patchValue(this.campaign.name);
-    if (this.campaign.sheduleStart) {
-      this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
-    } else {
-      this.formCampaign.get('sheduleStart').patchValue(null);
-    }
+    this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
     if (this.campaign.graphXml) {
       this.main(
         document.getElementById("graphContainer"),
         document.getElementById("sidebarContainer_sequences"),
         document.getElementById("sidebarContainer_goals"),
-        this.editor,
-        this.editor.graph,
         this.campaign
       );
     } else {
@@ -350,11 +327,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
         document.getElementById("graphContainer"),
         document.getElementById("sidebarContainer_sequences"),
         document.getElementById("sidebarContainer_goals"),
-        this.editor,
-        this.editor.graph,
         value
       );
     }
+    this.one = false;
   }
 
   addToolbarButton(editor, toolbar, action, label, image, isTransparent?) {
@@ -574,16 +550,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
           });
         }
 
-        let modalRef = that.modalService.open(
-          TcareCampaignDialogMessageComponent,
-          {
-            size: "sm",
-            windowClass: "o_technical_modal",
-            scrollable: true,
-            backdrop: "static",
-            keyboard: false,
-          }
-        );
+        let modalRef = that.modalService.open(TcareCampaignDialogMessageComponent, { size: "sm", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false, });
         modalRef.componentInstance.item = item;
 
         modalRef.result.then(
@@ -653,7 +620,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
                 for (var p in con) {
                   conEl.setAttribute(p, con[p]);
                 }
-
                 userObject.appendChild(conEl);
               });
 
@@ -677,17 +643,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       var attribute = value.attributes[i];
       objx[attribute.name] = attribute.nodeValue;
     }
-
-    let modalRef = that.modalService.open(
-      TcareCampaignDialogSequencesComponent,
-      {
-        size: "lg",
-        windowClass: "o_technical_modal",
-        scrollable: true,
-        backdrop: "static",
-        keyboard: false,
-      }
-    );
+    let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: "lg", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false, });
     modalRef.componentInstance.title = "Cài đặt gửi tin";
     modalRef.componentInstance.model = objx;
 
@@ -747,18 +703,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               try {
                 var addTagEl = that.doc.createElement("addTag");
                 addTagEl.setAttribute("label", "Gán nhãn");
-
-                var addTagVertex = graph.insertVertex(
-                  parent,
-                  null,
-                  addTagEl,
-                  cell.geometry.x + 200,
-                  cell.geometry.y - 50,
-                  40,
-                  40,
-                  "read"
-                );
-
+                var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y - 50, 40, 40, "read");
                 var messageOpenEl = that.doc.createElement('messageOpen');
                 messageOpenEl.setAttribute('label', 'Đã đọc');
                 messageOpenEl.setAttribute('name', 'message_open');
@@ -803,18 +748,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
               try {
                 var addTagEl = that.doc.createElement("addTag");
                 addTagEl.setAttribute("label", "Gán nhãn");
-
-                var addTagVertex = graph.insertVertex(
-                  parent,
-                  null,
-                  addTagEl,
-                  cell.geometry.x + 200,
-                  cell.geometry.y + 50,
-                  40,
-                  40,
-                  "unread"
-                );
-
+                var addTagVertex = graph.insertVertex(parent, null, addTagEl, cell.geometry.x + 200, cell.geometry.y + 50, 40, 40, "unread");
                 var messageDeliveredEl = that.doc.createElement('messageDelivered');
                 messageDeliveredEl.setAttribute('label', 'Đã nhận');
                 messageDeliveredEl.setAttribute('name', 'message_delivered');
@@ -865,8 +799,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
 
   get sheduleStartControl() { return this.formCampaign.get('sheduleStart') }
 
-
-
   onChangeTimeStartCampaign() {
     if (!this.checkConnection()) {
       this.formCampaign.get('sheduleStart').patchValue(new Date());
@@ -885,7 +817,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
       }
       this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
         () => {
-          this.tcareService.actionNext.next('load');
+          this.actionNext.emit(null);
           this.notificationService.show({
             content: 'Cài thời gian chạy chiến dịch thành công !',
             hideAfter: 3000,
@@ -911,7 +843,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
     value.graphXml = mxUtils.getPrettyXml(node);
     if (this.campaign && this.campaign.id) {
       this.tcareService.update(this.campaign.id, value).subscribe(() => {
-        this.tcareService.actionNext.next('load');
+        this.actionNext.emit(null);
         this.notificationService.show({
           content: "Thành công",
           hideAfter: 3000,
