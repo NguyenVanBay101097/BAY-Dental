@@ -147,7 +147,7 @@ namespace Infrastructure.Services
                                     "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
                                     "Where pn.Customer = 1 and sale.State = @sale " +
                                     "Group by pn.Id " +
-                                    "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value), sale = "sale" }).ToList();
+                                    "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value), sale = "('sale','done')" }).ToList();
                             lstRule.Add(new RulePartnerIds() { Ids = lastSaleOrderPartnerIds });
                             break;
                         case "categPartner":
@@ -196,7 +196,7 @@ namespace Infrastructure.Services
                                         "Where pn.Customer = 1 and EXISTS (Select orlines.OrderPartnerId " +
                                         "From SaleOrderLines orlines " +
                                         "Left join Products sp On sp.Id = orlines.ProductId " +
-                                        $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
+                                        $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
                                             .ToList();
                                         lstRule.Add(new RulePartnerIds() { Ids = usedServicePartnerIds });
                                         break;
@@ -207,7 +207,7 @@ namespace Infrastructure.Services
                                        "From Partners pn " +
                                        "Where pn.Customer = 1 and NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
                                        "Left join Products sp On sp.Id = orlines.ProductId " +
-                                      $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
+                                      $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
                                            .ToList();
                                         lstRule.Add(new RulePartnerIds() { Ids = usedServiceNotPartnerIds });
                                         break;
@@ -230,7 +230,7 @@ namespace Infrastructure.Services
                                             "From SaleOrderLines orlines " +
                                             "Left join Products sp On sp.Id = orlines.ProductId " +
                                             "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                            "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
+                                            "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
                                             .ToList();
 
                                         lstRule.Add(new RulePartnerIds() { Ids = usedCategServicePartnerIds });
@@ -243,7 +243,7 @@ namespace Infrastructure.Services
                                            "From SaleOrderLines orlines " +
                                            "Left join Products sp On sp.Id = orlines.ProductId " +
                                            "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                           "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
+                                           "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
                                             .ToList();
                                         lstRule.Add(new RulePartnerIds() { Ids = usedCategServiceNotPartnerIds });
                                         break;

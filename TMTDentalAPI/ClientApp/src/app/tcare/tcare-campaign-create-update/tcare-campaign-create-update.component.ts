@@ -216,7 +216,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
       //double click Action
       that.editor.graph.dblClick = function (evt, cell) {
-        if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null && !that.campaign.active) {
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) &&  !that.campaign.active) {
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
             that.popupSequence(that.editor.graph, cell);
           }
