@@ -42,6 +42,7 @@ import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-custom
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -71,7 +72,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     PartnerCustomerAppointmentComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
     PartnerCustomerTreatmentPaymentChildComponent,
-    PartnerCustomerProductToaThuocListComponent],
+    PartnerCustomerProductToaThuocListComponent,
+    PartnerCustomerCategoriesComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
