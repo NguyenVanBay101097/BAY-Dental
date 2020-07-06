@@ -12,6 +12,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { PartnerPrintComponent } from 'src/app/shared/partner-print/partner-print.component';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -34,6 +35,7 @@ export class PartnerCustomerListComponent implements OnInit {
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild(PartnerPrintComponent, {static: true}) partnerPrintComponent: PartnerPrintComponent;
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal, 
     private partnerCategoryService: PartnerCategoryService) { }
@@ -121,18 +123,18 @@ export class PartnerCustomerListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  printItem(item: PartnerBasic) {
+    this.partnerService.getPrint(item.id).subscribe(result => {
+      this.partnerPrintComponent.print(result);
+    });
+  }
+
   createItem() {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, er => { })
-  }
-
-  printItem(item: PartnerBasic) {
-    this.partnerService.getPrint(item.id).subscribe(result => {
-      // this.partnerPrintComponent.print(result);
-    });
   }
 
   editItem(item: PartnerBasic) {

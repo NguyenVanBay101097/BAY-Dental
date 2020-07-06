@@ -1183,27 +1183,31 @@ namespace Infrastructure.Services
 
             var partnerPrint = _mapper.Map<PartnerPrintVM>(partner);
             partnerPrint.Address = partnerObj.GetFormatAddress(partner);
+            partnerPrint.Gender = partnerObj.GetGenderDisplay(partner);
+            partnerPrint.DateOfBirth = this.GetDateOfBirthDisplay(partner);
 
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
-            var saleOrderLines = saleOrderLineObj.SearchQuery(x => x.OrderPartnerId == id).Select(x => new
+            var states = new string[] { "draft", "cancel" };
+            var saleOrderLines = saleOrderLineObj.SearchQuery(x => x.OrderPartnerId == id && x.Product.Type2 == "service" && !states.Contains(x.State)).Select(x => new PartnerPrintProfileService
             {
                 DateOrder = x.Order.DateOrder,
-                OrderPartner = x.OrderPartner,
-                ProductName = x.ProductUOMQty + ": " + x.Product.Name
+                UserName = x.Salesman.Name,
+                ProductName = x.Product.Name,
+                Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name)
             }).ToList();
 
             var accountPaymentObj = GetService<IAccountPaymentService>();
-            var accountPayments = accountPaymentObj.SearchQuery(x => x.PartnerId == id).Select(x => new
+            var accountPayments = accountPaymentObj.SearchQuery(x => x.PartnerId == id).Select(x => new PartnerPrintProfilePayment
             {
                 PaymentDate = x.PaymentDate,
                 JournalName = x.Journal.Name,
                 Amount = x.Amount
             }).ToList();
-            //
+            
             result.Company = companyPrint;
             result.Partner = partnerPrint;
-            result.ServiceList = (IEnumerable<PartnerPrintProfileService>)saleOrderLines;
-            result.PaymentList = (IEnumerable<PartnerPrintProfilePayment>)accountPayments;
+            result.ServiceList = saleOrderLines;
+            result.PaymentList = accountPayments;
 
             return result;
         }

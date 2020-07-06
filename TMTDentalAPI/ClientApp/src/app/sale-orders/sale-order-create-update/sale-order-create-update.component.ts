@@ -114,7 +114,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
-
+        console.log(result);
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);

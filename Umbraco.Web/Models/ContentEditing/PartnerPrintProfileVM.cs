@@ -20,9 +20,11 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime DateOrder { get; set; }
 
-        public string OrderPartner { get; set; }
+        public string UserName { get; set; }
 
         public string ProductName { get; set; }
+
+        public IEnumerable<string> Teeth { get; set; }
     }
 
     public class PartnerPrintProfilePayment
@@ -31,6 +33,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string JournalName { get; set; }
 
-        public string Amount { get; set; }
+        public decimal? Amount { get; set; }
     }
 }

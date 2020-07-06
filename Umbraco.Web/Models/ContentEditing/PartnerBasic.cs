@@ -155,8 +155,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerPrintVM
     {
-        public string Ref { get; set; }
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
+        public string Gender { get; set; }
+        public string DateOfBirth { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
     }
