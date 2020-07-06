@@ -72,7 +72,7 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent,{size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Thêm toa thuốc mẫu";
+    modalRef.componentInstance.title = "Thêm đơn thuốc mẫu";
     modalRef.result.then(
       () => {
         this.loadDataFromApi();
@@ -83,7 +83,7 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   editItem(item: SamplePrescriptionsDisplay ) {
     let modalRef = this.modalService.open( SamplePrescriptionCreateUpdateDialogComponent, {size: "lg",windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Sửa toa thuốc mẫu";
+    modalRef.componentInstance.title = "Sửa đơn thuốc mẫu";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       () => {
@@ -95,7 +95,7 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   deleteItem(item: SamplePrescriptionBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xóa: Nguồn khách hàng";
+    modalRef.componentInstance.title = "Xóa: đơn thuốc mẫu";
     modalRef.result.then(
       () => {
         this.samplePrescriptionsService.delete(item.id).subscribe(

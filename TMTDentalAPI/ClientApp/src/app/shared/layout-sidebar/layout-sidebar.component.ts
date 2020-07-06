@@ -87,7 +87,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm vật tư', link: '/product-categories/product' },
         { name: 'Thuốc', link: '/product-medicines' },
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
-        { name: 'Toa thuốc mẫu', link: '/sample-prescriptions' },
+        { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },

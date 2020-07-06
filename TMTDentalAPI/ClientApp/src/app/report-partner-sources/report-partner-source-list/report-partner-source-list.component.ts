@@ -70,7 +70,7 @@ export class ReportPartnerSourceListComponent implements OnInit {
 
   loadItems(): void {   
     for (let i = 0; i < this.reportResults.length; i++) {
-      this.pieData.push({category: this.reportResults[i].name || 'Chưa xác định', value:this.reportResults[i].countPartner , percentage: Math.round(this.reportResults[i].countPartner / this.reportResults[i].totalPartner * 100) })
+      this.pieData.push({category: this.reportResults[i].name || 'Chưa xác định', value:this.reportResults[i].countPartner , percentage: (this.reportResults[i].countPartner / this.reportResults[i].totalPartner * 100).toFixed(2)})
      };
   }
 
