@@ -48,7 +48,7 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
 import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
 import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
 import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
-import { PartnerPrintComponent } from './partner-print/partner-print.component';
+import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +89,7 @@ import { PartnerPrintComponent } from './partner-print/partner-print.component';
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
     ImportSampleDataComponent, 
-    PartnerPrintComponent
+    PartnerProfilePrintComponent
   ],
   exports: [
     HeaderComponent,
@@ -126,8 +126,7 @@ import { PartnerPrintComponent } from './partner-print/partner-print.component';
     RedirectComponentDirective,
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
-    PartnerPrintComponent
-
+    PartnerProfilePrintComponent
   ],
   imports: [
     CommonModule,

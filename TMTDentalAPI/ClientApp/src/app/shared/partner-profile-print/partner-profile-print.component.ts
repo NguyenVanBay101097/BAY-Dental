@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-partner-print',
-  templateUrl: './partner-print.component.html',
-  styleUrls: ['./partner-print.component.css']
+  selector: 'app-partner-profile-print',
+  templateUrl: './partner-profile-print.component.html',
+  styleUrls: ['./partner-profile-print.component.css']
 })
-export class PartnerPrintComponent implements OnInit {
+export class PartnerProfilePrintComponent implements OnInit {
   partnerPrint: any;
 
   constructor() { }
@@ -14,7 +14,6 @@ export class PartnerPrintComponent implements OnInit {
   }
 
   print(item: any) {
-    console.log(item);
     this.partnerPrint = item;
     setTimeout(() => {
       var printContents = document.getElementById('printPartnerDiv').innerHTML;

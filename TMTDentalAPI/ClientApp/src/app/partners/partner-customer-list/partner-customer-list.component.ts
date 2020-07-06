@@ -12,7 +12,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerPrintComponent } from 'src/app/shared/partner-print/partner-print.component';
+import { PartnerProfilePrintComponent } from 'src/app/shared/partner-profile-print/partner-profile-print.component';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -35,7 +35,7 @@ export class PartnerCustomerListComponent implements OnInit {
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
-  @ViewChild(PartnerPrintComponent, {static: true}) partnerPrintComponent: PartnerPrintComponent;
+  @ViewChild(PartnerProfilePrintComponent, {static: true}) partnerPrintComponent: PartnerProfilePrintComponent;
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal, 
     private partnerCategoryService: PartnerCategoryService) { }
