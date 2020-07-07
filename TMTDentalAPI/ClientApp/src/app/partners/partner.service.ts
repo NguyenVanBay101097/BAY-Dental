@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel } from './partner-simple';
+import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
@@ -337,6 +337,10 @@ export class PartnerService {
 
     saveAvatar(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/SaveAvatar", data);
+    }
+
+    getPrint(id: string): Observable<PartnerPrint> {
+        return this.http.get<PartnerPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
 }
 

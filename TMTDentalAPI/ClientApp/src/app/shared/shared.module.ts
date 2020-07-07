@@ -48,6 +48,7 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
 import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
 import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
 import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
+import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
 import { AccountPaymentPrintComponent } from './account-payment-print/account-payment-print.component';
 
 @NgModule({
@@ -89,6 +90,7 @@ import { AccountPaymentPrintComponent } from './account-payment-print/account-pa
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
     ImportSampleDataComponent, 
+    PartnerProfilePrintComponent,
     AccountPaymentPrintComponent
   ],
   exports: [
@@ -126,6 +128,7 @@ import { AccountPaymentPrintComponent } from './account-payment-print/account-pa
     RedirectComponentDirective,
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
+    PartnerProfilePrintComponent,
     AccountPaymentPrintComponent
   ],
   imports: [

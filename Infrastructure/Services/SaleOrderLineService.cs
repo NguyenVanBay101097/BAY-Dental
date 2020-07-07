@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
@@ -18,20 +19,28 @@ namespace Infrastructure.Services
     public class SaleOrderLineService : BaseService<SaleOrderLine>, ISaleOrderLineService
     {
         private readonly IMapper _mapper;
-        public SaleOrderLineService(IAsyncRepository<SaleOrderLine> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        private readonly CatalogDbContext _dbContext;
+
+        public SaleOrderLineService(IAsyncRepository<SaleOrderLine> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper,
+            CatalogDbContext dbContext)
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _dbContext = dbContext;
         }
 
         public override async Task<IEnumerable<SaleOrderLine>> CreateAsync(IEnumerable<SaleOrderLine> entities)
         {
             UpdateProps(entities);
             ComputeAmount(entities);
-            _GetInvoiceQty(entities);
-            _GetToInvoiceQty(entities);
-            _ComputeInvoiceStatus(entities);
             return await base.CreateAsync(entities);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<SaleOrderLine> entities)
+        {
+            UpdateProps(entities);
+            ComputeAmount(entities);
+            await base.UpdateAsync(entities);
         }
 
         public void ComputeAmount(IEnumerable<SaleOrderLine> self)
@@ -99,12 +108,8 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 var order = line.Order;
-                if (order == null)
-                    continue;
-                line.SalesmanId = order.UserId;
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
-                line.Order = order;
                 line.State = order.State;
             }
         }
@@ -116,15 +121,13 @@ namespace Infrastructure.Services
 
             foreach (var line in self)
             {
-                if(line.Id == Guid.Empty)
-                {
-                    line.SalesmanId = order.UserId;
-                    line.OrderPartnerId = order.PartnerId;
-                    line.CompanyId = order.CompanyId;
-                    line.Order = order;
+                //line.SalesmanId = order.UserId;
+                line.OrderPartnerId = order.PartnerId;
+                line.CompanyId = order.CompanyId;
+                line.Order = order;
+
+                if (line.Id == Guid.Empty)
                     line.State = order.State;
-                }
-               
             }
         }
 
@@ -276,21 +279,21 @@ namespace Infrastructure.Services
             var serviceCardObj = GetService<IServiceCardCardService>();
 
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon)
-                .Include(x => x.Order).Include("Order.AppliedCoupons").Include("Order.AppliedCoupons.Program")
-                .Include("Order.NoCodePromoPrograms")
-                .Include("Order.SaleOrderCardRels").Include("Order.SaleOrderCardRels.Card")
-                .Include("Order.SaleOrderCardRels.Card.CardType").ToListAsync();
+                .Include(x => x.Order).ToListAsync();
 
             if (self.Any(x => x.State != "draft" && x.State != "cancel"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
-            foreach(var line in self.Where(x => x.IsRewardLine))
+            foreach (var line in self.Where(x => x.IsRewardLine))
             {
-                var coupons_to_reactivate = line.Order.AppliedCoupons.Where(x => x.Program.DiscountLineProductId == line.ProductId).ToList();
+                var appliedCoupons = await couponObj.SearchQuery(x => x.SaleOrderId == line.OrderId)
+                    .Include(x => x.Program).ToListAsync();
+
+                var coupons_to_reactivate = appliedCoupons.Where(x => x.Program.DiscountLineProductId == line.ProductId).ToList();
                 foreach (var coupon in coupons_to_reactivate)
                 {
                     coupon.State = "new";
-                    line.Order.AppliedCoupons.Remove(coupon);
+                    coupon.SaleOrderId = null;
                 }
 
                 await couponObj.UpdateAsync(coupons_to_reactivate);
@@ -300,16 +303,19 @@ namespace Infrastructure.Services
                 {
                     foreach(var program in related_program)
                     {
-                        if (line.Order.NoCodePromoPrograms.Any(x => x.ProgramId == program.Id))
-                            line.Order.NoCodePromoPrograms.Remove(line.Order.NoCodePromoPrograms.FirstOrDefault(x => x.ProgramId == program.Id));
+                        var promo_programs = await _dbContext.SaleOrderNoCodePromoPrograms.Where(x => x.ProgramId == program.Id).ToListAsync();
+                        _dbContext.SaleOrderNoCodePromoPrograms.RemoveRange(promo_programs);
+                        await _dbContext.SaveChangesAsync();
+
                         if (program.Id == line.Order.CodePromoProgramId)
                             line.Order.CodePromoProgramId = null;
                     }
                 }
+
                 await saleObj.UpdateAsync(line.Order);
 
-                var card_rels_to_unlink = line.Order.SaleOrderCardRels.Where(x => x.Card.CardType.ProductId == line.ProductId).ToList();
-                var card_ids = line.Order.SaleOrderCardRels.Select(x => x.CardId).Distinct().ToList();
+                var card_rels_to_unlink = await saleCardRelObj.SearchQuery(x => x.SaleOrderId == line.OrderId && x.Card.CardType.ProductId == line.ProductId).ToListAsync();
+                var card_ids = card_rels_to_unlink.Select(x => x.CardId).Distinct().ToList();
                 await saleCardRelObj.DeleteAsync(card_rels_to_unlink);
 
                 await serviceCardObj._ComputeResidual(card_ids);

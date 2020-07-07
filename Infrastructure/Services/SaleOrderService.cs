@@ -49,17 +49,64 @@ namespace Infrastructure.Services
                     order.Name = await sequenceService.NextByCode("sale.order");
             }
 
-            var saleLineService = (ISaleOrderLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderLineService));
+            var saleLineService = GetService<ISaleOrderLineService>();
             saleLineService.UpdateOrderInfo(order.OrderLines, order);
             saleLineService.ComputeAmount(order.OrderLines);
-            saleLineService._GetInvoiceQty(order.OrderLines);
-            saleLineService._GetToInvoiceQty(order.OrderLines);
-            saleLineService._ComputeInvoiceStatus(order.OrderLines);
+            //saleLineService._GetInvoiceQty(order.OrderLines);
+            //saleLineService._GetToInvoiceQty(order.OrderLines);
+            //saleLineService._ComputeInvoiceStatus(order.OrderLines);
 
-            _ComputeResidual(new List<SaleOrder>() { order });
+            //_ComputeResidual(new List<SaleOrder>() { order });
             _AmountAll(order);
 
             return await CreateAsync(order);
+        }
+
+        public async Task<SaleOrder> CreateOrderAsync(SaleOrderSave val)
+        {
+            var order = _mapper.Map<SaleOrder>(val);
+            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
+            {
+                var sequenceService = GetService<IIRSequenceService>();
+                if (order.IsQuotation == true)
+                {
+                    order.Name = await sequenceService.NextByCode("sale.quotation");
+                    if (string.IsNullOrEmpty(order.Name))
+                    {
+                        await InsertSaleQuotationSequence();
+                        order.Name = await sequenceService.NextByCode("sale.quotation");
+                    }
+                }
+                else
+                    order.Name = await sequenceService.NextByCode("sale.order");
+            }
+
+            await CreateAsync(order);
+
+            var lines = new List<SaleOrderLine>();
+            var sequence = 0;
+            foreach (var item in val.OrderLines)
+            {
+                var saleLine = _mapper.Map<SaleOrderLine>(item);
+                saleLine.Order = order;
+                saleLine.Sequence = sequence++;
+                foreach (var toothId in item.ToothIds)
+                {
+                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+
+                lines.Add(saleLine);
+            }
+
+            var saleLineService = GetService<ISaleOrderLineService>();
+            await saleLineService.CreateAsync(lines);
+
+            _AmountAll(order);
+            await UpdateAsync(order);
+            return order;
         }
 
         public IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self)
@@ -181,22 +228,19 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
-                .Include("OrderLines.Order")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .ToListAsync();
 
             var saleLineObj = GetService<ISaleOrderLineService>();
             var move_ids = new List<Guid>().AsEnumerable();
             var dotKhamIds = new List<Guid>().AsEnumerable();
+            var amlObj = GetService<IAccountMoveLineService>();
             foreach (var sale in self)
             {
                 if (sale.DotKhams.Any())
                     throw new Exception("Không thể hủy phiếu điều trị đã có đợt khám.");
 
-                foreach (var line in sale.OrderLines)
-                    move_ids = move_ids.Union(line.SaleOrderLineInvoice2Rels.Select(x => x.InvoiceLine.Move.Id).Distinct().ToList());
+                var mIds = await amlObj.SearchQuery(x => x.SaleLineRels.Any(s => s.OrderLine.OrderId == sale.Id)).Select(x => x.MoveId).Distinct().ToListAsync();
+                move_ids = move_ids.Union(mIds);
 
                 dotKhamIds = dotKhamIds.Union(sale.DotKhams.Select(x => x.Id).ToList());
             }
@@ -1000,6 +1044,12 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
+        {
+            var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            return res;
+        }
+
         public async Task<SaleOrder> GetSaleOrderWithLines(Guid id)
         {
             return await SearchQuery(x => x.Id == id)
@@ -1012,7 +1062,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateOrderAsync(Guid id, SaleOrderSave val)
         {
-            var order = await GetSaleOrderWithLines(id);
+            var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             order = _mapper.Map(val, order);
 
             await SaveOrderLines(val, order);
@@ -1022,27 +1072,27 @@ namespace Infrastructure.Services
             saleLineObj.ComputeAmount(order.OrderLines);
             await UpdateAsync(order);
 
-            var linesIds = order.OrderLines.Select(x => x.Id).ToList();
-            var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
-                .Include(x => x.Order)
-                .Include(x => x.Product)
-               .Include(x => x.SaleOrderLineInvoice2Rels)
-               .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
-               .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move")
-               .ToListAsync();
+            //var linesIds = order.OrderLines.Select(x => x.Id).ToList();
+            //var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
+            //    .Include(x => x.Order)
+            //    .Include(x => x.Product)
+            //   .Include(x => x.SaleOrderLineInvoice2Rels)
+            //   .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
+            //   .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move")
+            //   .ToListAsync();
 
-            saleLineObj._GetInvoiceQty(lines);
-            saleLineObj._GetToInvoiceQty(lines);
-            saleLineObj._ComputeInvoiceStatus(lines);
-            await saleLineObj.UpdateAsync(lines);
+            //saleLineObj._GetInvoiceQty(lines);
+            //saleLineObj._GetToInvoiceQty(lines);
+            //saleLineObj._ComputeInvoiceStatus(lines);
+            //await saleLineObj.UpdateAsync(lines);
 
             _AmountAll(order);
-            _GetInvoiced(new List<SaleOrder>() { order });
+            //_GetInvoiced(new List<SaleOrder>() { order });
 
             await UpdateAsync(order);
 
-            var self = new List<SaleOrder>() { order };
-            await _GenerateDotKhamSteps(self);
+            //var self = new List<SaleOrder>() { order };
+            //await _GenerateDotKhamSteps(self);
 
             // nếu phiếu điều trị ở trạng thái sale thì tính lại công nợ khi update
             if (order.State == "sale")
@@ -1101,7 +1151,7 @@ namespace Infrastructure.Services
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var existLines = order.OrderLines.ToList();
+            var existLines = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.SaleOrderLineToothRels).ToListAsync();
             var lineToRemoves = new List<SaleOrderLine>();
             foreach (var existLine in existLines)
             {
@@ -1124,12 +1174,16 @@ namespace Infrastructure.Services
 
             //Cập nhật sequence cho tất cả các line của val
             int sequence = 0;
+            var to_add = new List<SaleOrderLine>();
+            var to_update = new List<SaleOrderLine>();
+
             foreach (var line in val.OrderLines)
             {
                 if (line.Id == Guid.Empty)
                 {
                     var saleLine = _mapper.Map<SaleOrderLine>(line);
                     saleLine.Sequence = sequence++;
+                    saleLine.Order = order;
                     foreach (var toothId in line.ToothIds)
                     {
                         saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
@@ -1137,15 +1191,16 @@ namespace Infrastructure.Services
                             ToothId = toothId
                         });
                     }
-                    order.OrderLines.Add(saleLine);
+                    to_add.Add(saleLine);
                 }
                 else
                 {
-                    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                    var saleLine = existLines.FirstOrDefault(c => c.Id == line.Id);
                     if (saleLine != null)
                     {
                         _mapper.Map(line, saleLine);
                         saleLine.Sequence = sequence++;
+                        saleLine.Order = order;
                         saleLine.SaleOrderLineToothRels.Clear();
                         foreach (var toothId in line.ToothIds)
                         {
@@ -1154,9 +1209,13 @@ namespace Infrastructure.Services
                                 ToothId = toothId
                             });
                         }
+                        to_update.Add(saleLine);
                     }
                 }
             }
+
+            await saleLineObj.CreateAsync(to_add);
+            await saleLineObj.UpdateAsync(to_update);
         }
 
         public async Task<SaleOrder> GetSaleOrderByIdAsync(Guid id)
@@ -1276,9 +1335,6 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
-                .Include("OrderLines.Order")
-                .Include("OrderLines.Product")
-                .Include("OrderLines.DotKhamSteps")
                 .ToListAsync();
 
             foreach (var order in self)
@@ -1291,6 +1347,7 @@ namespace Infrastructure.Services
 
                     line.State = "sale";
                 }
+
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             }
@@ -1315,11 +1372,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
         {
-            var self = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
-              .Include("OrderLines.SaleOrderLineInvoice2Rels")
-              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine").FirstOrDefaultAsync();
-
-            var invoiceIds = self.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.MoveId).Distinct().ToList();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var invoiceIds = await amlObj.SearchQuery(x => x.SaleLineRels.Any(s => s.OrderLine.OrderId == id)).Select(x => x.MoveId).Distinct().ToListAsync();
             var invoiceObj = GetService<IAccountMoveService>();
             var invoices = await invoiceObj._ComputePaymentsWidgetReconciledInfo(invoiceIds);
             var dict = new Dictionary<Guid, PaymentInfoContent>();
@@ -1348,9 +1402,13 @@ namespace Infrastructure.Services
         {
             var dotKhamStepService = GetService<IDotKhamStepService>();
             var productStepObj = GetService<IProductStepService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
             foreach (var order in self)
             {
-                foreach (var line in order.OrderLines)
+                var orderLines = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.Product)
+                    .Include(x => x.DotKhamSteps).ToListAsync();
+
+                foreach (var line in orderLines)
                 {
                     if (!line.ProductId.HasValue || line.Product == null)
                         continue;

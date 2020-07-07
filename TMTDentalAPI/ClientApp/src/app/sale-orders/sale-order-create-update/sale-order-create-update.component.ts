@@ -119,7 +119,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
-
+        console.log(result);
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
@@ -886,6 +886,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
+      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
@@ -931,6 +932,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
+      debugger;
       var a = result as any;
       line.patchValue(result);
       line.setControl('teeth', this.fb.array(a.teeth || []));

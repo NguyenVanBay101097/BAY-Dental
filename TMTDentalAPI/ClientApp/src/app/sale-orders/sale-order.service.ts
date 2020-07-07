@@ -67,7 +67,6 @@ export class SaleOrderService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
-
     getPrint(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
     }

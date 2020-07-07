@@ -27,10 +27,9 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ToothDisplay>> GetAllDisplay(ToothFilter val)
         {
-            var teeth = await SearchQuery(domain: x => !val.CategoryId.HasValue || x.CategoryId == val.CategoryId,
-                orderBy: x => x.OrderBy(s => s.Name)).Include(x => x.Category).ToListAsync();
-            var res = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
-            return res;
+            var teeth = await _mapper.ProjectTo<ToothDisplay>(SearchQuery(domain: x => !val.CategoryId.HasValue || x.CategoryId == val.CategoryId,
+                orderBy: x => x.OrderBy(s => s.Name)).Include(x => x.Category)).ToListAsync();
+            return teeth;
         }
 
         public async Task<PagedResult2<Tooth>> GetPagedResultAsync(int offset = 0, int limit = 20, string search = "")

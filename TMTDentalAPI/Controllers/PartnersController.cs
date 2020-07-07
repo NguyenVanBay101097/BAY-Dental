@@ -339,6 +339,13 @@ namespace TMTDentalAPI.Controllers
             return BadRequest();
         }
 
+        [HttpGet("{id}/Print")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _partnerService.GetPrint(id);
+            return Ok(res);
+        }
+
         private async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
         {
             int offset = 0;
