@@ -8,6 +8,9 @@ import { CompanyBasic } from 'src/app/companies/company.service';
 import { UserChangeCurrentCompanyVM, UserService } from 'src/app/users/user.service';
 import { environment } from 'src/environments/environment';
 import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit.component';
+import { WebService } from 'src/app/core/services/web.service';
+import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-layout-header',
@@ -17,14 +20,25 @@ import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit
 export class LayoutHeaderComponent implements OnInit {
 
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
-  constructor(private sidebarService: NavSidebarService, private modalService: NgbModal,
-    public authService: AuthService, private router: Router, private userService: UserService) { }
+  valueIrConfigParamRemove: string;
+  valueIrConfigParamImport: string;
+  constructor(
+    private sidebarService: NavSidebarService,
+    private modalService: NgbModal,
+    public authService: AuthService,
+    private router: Router,
+    private userService: UserService,
+    private webService: WebService,
+    private irConfigParameterService: IrConfigParameterService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit() {
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }
-
+    this.loadIrConfigParameterImport();
+    this.loadIrConfigParameterRemove();
     this.authService.currentUser.subscribe(result => {
       if (result) {
         this.loadChangeCurrentCompany();
@@ -66,6 +80,38 @@ export class LayoutHeaderComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['login']);
+  }
+
+  loadIrConfigParameterImport() {
+    var key = "remove_sample_data";
+    this.irConfigParameterService.getParam(key).subscribe(
+      res => {
+        this.valueIrConfigParamRemove = res['value'];
+      }
+    )
+  }
+
+  loadIrConfigParameterRemove() {
+    var key = "import_sample_data";
+    this.irConfigParameterService.getParam(key).subscribe(
+      res => {
+        this.valueIrConfigParamImport = res['value'];
+      }
+    )
+  }
+
+  removeSampleData() {
+    this.webService.removeSampleData().subscribe(
+      () => {
+        this.notificationService.show({
+          content: 'Xóa dữ liệu mẫu thành công !',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+    )
   }
 
   getAvatarImgSource(obj: string) {

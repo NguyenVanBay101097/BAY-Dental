@@ -31,6 +31,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IIrConfigParameterService _irConfigParameterService;
         private readonly IImportSampleDataService _importSampleDataService;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IUserService _userService;
 
 
         public WebController(
@@ -38,7 +39,9 @@ namespace TMTDentalAPI.Controllers
             IMapper mapper,
             IUploadService uploadService,
             IIrConfigParameterService irConfigParameterService,
-            IImportSampleDataService importSampleDataService, IUnitOfWorkAsync unitOfWork)
+            IImportSampleDataService importSampleDataService,
+            IUnitOfWorkAsync unitOfWork,
+            IUserService userService)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
@@ -46,6 +49,7 @@ namespace TMTDentalAPI.Controllers
             _irConfigParameterService = irConfigParameterService;
             _importSampleDataService = importSampleDataService;
             _unitOfWork = unitOfWork;
+            _userService = userService;
         }
 
         [HttpGet("[action]")]
@@ -56,15 +60,27 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             if (action == "Installed")
             {
-               
                 await _importSampleDataService.ImportSampleData();
-            }
 
+            }
             await _irConfigParameterService.SetParam("import_sample_data", action);
             _unitOfWork.Commit();
 
             return NoContent();
 
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DeleteSampleData()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var user =await _userService.GetCurrentUser();
+            if (!user.IsUserRoot)
+                throw new Exception("Chỉ có admin mới có thể thực hiện chức năng này !!!");
+            await _importSampleDataService.DeleteSampleData();
+            await _irConfigParameterService.SetParam("remove_sample_data", "True");
+            _unitOfWork.Commit();
+            return NoContent();
         }
 
 

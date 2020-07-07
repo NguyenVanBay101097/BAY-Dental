@@ -1493,7 +1493,6 @@ namespace Infrastructure.Services
         }
 
 
-
         //public async Task<File> ExportExcelFile(PartnerPaged val)
         //{
         //    val.Offset = 0;

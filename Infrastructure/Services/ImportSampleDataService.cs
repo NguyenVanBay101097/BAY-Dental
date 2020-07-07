@@ -86,31 +86,31 @@ namespace Infrastructure.Services
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                       partner.Name = itemField.Text;
+                                        partner.Name = itemField.Text;
                                         break;
                                     case "email":
-                                       partner.Email = itemField.Text;
+                                        partner.Email = itemField.Text;
                                         break;
                                     case "phone":
-                                       partner.Phone = itemField.Text;
+                                        partner.Phone = itemField.Text;
                                         break;
                                     case "gender":
-                                       partner.Gender = itemField.Text;
+                                        partner.Gender = itemField.Text;
                                         break;
                                     case "birth_day":
-                                       partner.BirthDay = Int32.Parse(itemField.Text);
+                                        partner.BirthDay = Int32.Parse(itemField.Text);
                                         break;
                                     case "birth_month":
-                                       partner.BirthMonth = Int32.Parse(itemField.Text);
+                                        partner.BirthMonth = Int32.Parse(itemField.Text);
                                         break;
                                     case "birth_year":
-                                       partner.BirthYear = Int32.Parse(itemField.Text);
+                                        partner.BirthYear = Int32.Parse(itemField.Text);
                                         break;
                                     case "supplier":
-                                       partner.Supplier = Boolean.Parse(itemField.Text);
+                                        partner.Supplier = Boolean.Parse(itemField.Text);
                                         break;
                                     case "customer":
-                                       partner.Customer = Boolean.Parse(itemField.Text);
+                                        partner.Customer = Boolean.Parse(itemField.Text);
                                         break;
                                     default:
                                         break;
@@ -251,6 +251,52 @@ namespace Infrastructure.Services
                 await partnerSourceObj.CreateAsync(partner_source_dict.Values);
             }
         }
+
+        public async Task DeleteSampleData()
+        {
+            await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete DotKhamSteps");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocs");
+            await _dbContext.ExecuteSqlCommandAsync("Delete DotKhams");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockQuants");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockMoves");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ProductSteps");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountPartialReconciles");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoveLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoves");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardCards");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardTypes");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptionLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptions");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleCouponPrograms");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Products");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ProductCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete CardHistories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete CardCards");
+            await _dbContext.ExecuteSqlCommandAsync("Delete CardTypes");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ResConfigSettings");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Histories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockPickings");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Appointments");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountPayments");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PartnerCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete CardCards");
+            await _dbContext.ExecuteSqlCommandAsync("delete Partners where CreatedById is not NULL");
+            //reset NextNumber ve 1
+            await _dbContext.ExecuteSqlCommandAsync("update  IRSequences set NumberNext = 1");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IrConfigParameters Where [Key] != 'import_sample_data'");
+            await GetService<IResGroupService>().ResetSecurityData();
+        }
+
 
         protected T GetService<T>()
         {

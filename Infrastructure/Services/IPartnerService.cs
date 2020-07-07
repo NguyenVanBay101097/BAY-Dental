@@ -45,6 +45,5 @@ namespace Infrastructure.Services
 
         Task<AppointmentBasic> GetNextAppointment(Guid id);
 
-        
     }
 }
