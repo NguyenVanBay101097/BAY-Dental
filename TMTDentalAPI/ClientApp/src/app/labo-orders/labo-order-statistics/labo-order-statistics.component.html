@@ -72,7 +72,7 @@
                     <ng-template #popContent>
                         <div class="d-flex">
                             <input type="text" class="form-control" [value]="dataItem.warrantyCode" id="code" />
-                            <button class="btn btn-primary btn-sm" (click)="UpdateWarrantyCode(popOver,dataItem.id)">Lưu</button>
+                            <button class="btn btn-primary btn-sm" (click)="updateWarrantyCode(popOver,dataItem.id)">Lưu</button>
                         </div>
                     </ng-template>
                 </ng-template>
@@ -85,7 +85,7 @@
                     <ng-template #popContentwarrantyPeriod>
                         <div class="d-flex">                            
                             <kendo-datepicker [(value)]="value" (valueChange)="onChange($event)"></kendo-datepicker>
-                            <button class="btn btn-primary btn-sm" (click)="UpdateWarrantyPeriod(popOver,dataItem.id)">Lưu</button>             
+                            <button class="btn btn-primary btn-sm" (click)="updateWarrantyPeriod(popOver,dataItem.id)">Lưu</button>             
                         </div>
                     </ng-template>
                 </ng-template>

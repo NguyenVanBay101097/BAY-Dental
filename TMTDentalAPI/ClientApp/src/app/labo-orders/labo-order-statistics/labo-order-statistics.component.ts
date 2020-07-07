@@ -199,7 +199,7 @@ export class LaboOrderStatisticsComponent implements OnInit {
       );
   }
 
-  UpdateWarrantyCode(popover, id) {
+  updateWarrantyCode(popover, id) {
     var code = document.getElementById("code")["value"];
     var name = "WarrantyCode";
     var ar = [];
@@ -211,7 +211,7 @@ export class LaboOrderStatisticsComponent implements OnInit {
     });
   }
 
-  UpdateWarrantyPeriod(popover,id) {
+  updateWarrantyPeriod(popover,id) {
     var formardate = this.intlService.formatDate(this.value, 'yyyy-MM-dd');   
     var name = "WarrantyPeriod";
     var ar = [];
