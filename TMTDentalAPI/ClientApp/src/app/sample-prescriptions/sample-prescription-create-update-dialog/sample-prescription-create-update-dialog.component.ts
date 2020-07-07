@@ -138,18 +138,12 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     this.activeModal.dismiss();
   }
 
-  public onChange(value: number) {
-    setTimeout(() => {
-      this.updateQuantity();
-    }, 200);
-  }
-
-  updateQuantity() {
-    var numberOfTimes = this.lineForm.get('numberOfTimes').value || 0;
-    var numberOfDays = this.lineForm.get('numberOfDays').value || 0;
-    var amountOfTimes = this.lineForm.get('amountOfTimes').value || 0;
+  updateQuantity(line: FormGroup) {
+    var numberOfTimes = line.get('numberOfTimes').value || 0;
+    var numberOfDays = line.get('numberOfDays').value || 0;
+    var amountOfTimes = line.get('amountOfTimes').value || 0;
     var quantity = numberOfTimes * amountOfTimes * numberOfDays;
-    this.lineForm.get('quantity').setValue(quantity);
+    line.get('quantity').setValue(quantity);
   }
 
 
