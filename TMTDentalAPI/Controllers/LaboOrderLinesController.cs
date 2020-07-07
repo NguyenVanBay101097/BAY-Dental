@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -100,6 +101,17 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderLineService.OnChangeProduct(val);
             return Ok(res);
+        }
+
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(Guid id, [FromBody] JsonPatchDocument<LaboOrderLine> patchDoc)
+        {
+            var line = await _laboOrderLineService.GetByIdAsync(id);
+            patchDoc.ApplyTo(line, ModelState);
+            await _laboOrderLineService.UpdateAsync(line);
+
+            return NoContent();
         }
     }
 }
