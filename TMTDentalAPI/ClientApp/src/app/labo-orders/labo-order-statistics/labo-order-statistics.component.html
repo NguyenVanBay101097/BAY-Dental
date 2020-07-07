@@ -65,17 +65,41 @@
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">                  
+                    <a class="text-primary mr-2" [ngbPopover]="popContent" #popOver="ngbPopover" triggers="manual"  [autoClose]="'outside'" placement="left" (click)="toggleWithGreeting(popOver, dataItem)" >
+                    <span>{{dataItem.warrantyCode ? dataItem.warrantyCode : 'Rỗng'}}</span>
+                    </a>
+                    <ng-template #popContent>
+                        <div class="d-flex">
+                            <input type="text" class="form-control" [value]="dataItem.warrantyCode" id="code" />
+                            <button class="btn btn-primary btn-sm" (click)="UpdateWarrantyCode(popOver,dataItem.id)">Lưu</button>
+                        </div>
+                    </ng-template>
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.warrantyPeriod | date : 'shortDate'}}
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">                  
+                    <a  class="text-primary mr-2" [ngbPopover]="popContentwarrantyPeriod" #popOver="ngbPopover" triggers="manual" [autoClose]="false" placement="left" (click)="toggleWithGreeting(popOver, dataItem)">
+                        <span>{{dataItem.warrantyPeriod ? (dataItem.warrantyPeriod | date : 'dd/MM/yyyy') : 'Rỗng'}}</span>
+                      </a>
+                    <ng-template #popContentwarrantyPeriod>
+                        <div class="d-flex">                            
+                            <kendo-datepicker [(value)]="value" (valueChange)="onChange($event)"></kendo-datepicker>
+                            <button class="btn btn-primary btn-sm" (click)="UpdateWarrantyPeriod(popOver,dataItem.id)">Lưu</button>             
+                        </div>
+                    </ng-template>
                 </ng-template>
+                <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.warrantyPeriod | date : 'shortDate'}}
+                </ng-template> -->
             </kendo-grid-column>
             <kendo-grid-column field="state" title="Trạng thái" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{stateGet(dataItem.state)}}
                 </ng-template>
-            </kendo-grid-column>
+            </kendo-grid-column>         
         </kendo-grid>
     </div>
 </div>
+
+
