@@ -198,6 +198,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     )
   }
 
+  deleteLine(index: number) {
+    this.lines.removeAt(index);      
+  }
+
   onSaveSamplePrescription(name) {
     var val = new SamplePrescriptionsDisplay();
     val.name = name;

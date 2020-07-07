@@ -2,9 +2,8 @@ import { SamplePrescriptionLineSave, SamplePrescriptionsService } from './../sam
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { WindowService } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
@@ -17,15 +16,12 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   PrescriptionForm: FormGroup;
   lineForm: FormGroup;
-  editingLine: FormGroup;//line đang được chỉnh sửa
   id: string;
   submitted = false;
-  lineId: number;//toa thuoc line Id
   filteredProducts: ProductSimple[];
-  lineSelected: SamplePrescriptionLineSave;
-  lines: SamplePrescriptionLineSave[] = [];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   title: string;
+ 
   constructor(private fb: FormBuilder, private samplePrescriptionsService: SamplePrescriptionsService, private intlService: IntlService,
     private productService: ProductService, public activeModal: NgbActiveModal,
     private errorService: AppSharedShowErrorService) { }
@@ -39,44 +35,54 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
     if (this.id) {
       setTimeout(() => {
-        this.samplePrescriptionsService.get(this.id).subscribe((result) => {
-          this.PrescriptionForm.patchValue(result);
-          this.lines = result.lines;    
-        });
+        this.loadRecord();       
       });
     }
+    
+    setTimeout(() => {    
+      this.loadFilteredProducts();
+    });
+   
   }
 
-  // productChange(value: any) {
-  //   if (value && value.id) {
-  //     var val = new SamplePrescriptionLineSave();
-  //     val.productId = value.id;
-  //     this.samplePrescriptionsService.lineDefaultGet(val).subscribe(result => {
-  //       var lines = this.PrescriptionForm.get('lines') as FormArray;
-  //       lines.push(this.fb.group(result));
-  //       this.productCbx.reset();
-  //     });
-  //   }
-  // }
+  loadRecord() {
+    this.samplePrescriptionsService.get(this.id).subscribe(
+      (result: any) => {
+        this.PrescriptionForm.patchValue(result);
+        let date = new Date(result.date);      
 
-  onSelectLine(line: SamplePrescriptionLineSave) {
-    this.lineSelected = line;
+        this.lines.clear();
+
+        result.lines.forEach(line => {
+          this.lines.push(this.fb.group({
+            product: [line.product, Validators.required],
+            numberOfTimes: line.numberOfTimes, 
+            amountOfTimes: line.amountOfTimes, 
+            quantity: line.quantity,  
+            numberOfDays: line.numberOfDays, 
+            useAt: line.useAt,
+          }));
+        });
+      });
   }
 
-  onLineUpdated() {
-    this.lineSelected = null;
+  public filterSettings: DropDownFilterSettings = {
+    caseSensitive: false,
+    operator: 'startsWith'
+  };
+
+  get lines() {
+    return this.PrescriptionForm.get('lines') as FormArray;
   }
 
-  onLineCreated(line: SamplePrescriptionLineSave) {
-    this.lines.push(line);
+  loadFilteredProducts() {
+    return this.searchProducts().subscribe(result => {
+      this.filteredProducts = result;
+    });
   }
-
+ 
   deleteLine(index: number) {
-    if (this.lineId == index) {
-      this.lineId = null;
-      this.resetLineForm(this.lineForm);
-    }
-    this.lines.splice(index, 1);
+    this.lines.removeAt(index);      
   }
 
   searchProducts(search?: string) {
@@ -86,86 +92,58 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     return this.productService.autocomplete2(val);
   }
 
-
   onSave() {
     this.submitted = true;
     if (!this.PrescriptionForm.valid) {
-      return;
+      return false;
     }
 
-    var val = this.PrescriptionForm.value;
-    val.lines = this.lines;
+    var val = Object.assign({}, this.PrescriptionForm.value);   
+    val.lines.forEach(line => {
+      line.productId = line.product.id;
+    });
+
     if (this.id) {
       this.samplePrescriptionsService.update(this.id, val).subscribe(() => {
-        this.activeModal.close(true);
+       this.activeModal.close();
       }, err => {
         this.errorService.show(err);
       });
     } else {
       this.samplePrescriptionsService.create(val).subscribe(result => {
-        this.activeModal.close(result);
+        this.activeModal.close({
+          item: result,
+          
+        });
       }, err => {
         this.errorService.show(err);
       });
     }
   }
 
-  editLine(id: number) {
-    this.lineId = id;
+  onCreate() {
     var lines = this.PrescriptionForm.get('lines') as FormArray;
-    this.lineForm.patchValue(lines.at(id).value);
+    lines.push(this.fb.group({
+      product: [null, Validators.required],
+      numberOfTimes: 1, 
+      amountOfTimes: 1, 
+      quantity: 1,  
+      numberOfDays: 1, 
+      useAt: 'after_meal',
+    }));
   }
 
-  //Thêm toa thuốc list tạm
-  onSaveLines(action) {
-    if (!this.lineForm.valid) {
-      return;
-    }
-    var val = this.lineForm.value;
-    val.productId = val.product.id;
-
-    var line = this.lineForm.value;
-    line.productId = val.product.id;
-    var lines = this.PrescriptionForm.get('lines') as FormArray;
-    if (!action) {
-      lines.push(this.fb.group(line));
-      this.resetLineForm(this.lineForm);
-    } else {
-      lines.at(this.lineId).patchValue(line);
-      this.lineId = null;
-      this.resetLineForm(this.lineForm);
-    }
-  }
-
-  onUpdateToaThuoc() {
-    if (!this.PrescriptionForm.valid) {
-      return;
-    }
-
-    if (this.id) {
-      var val = this.PrescriptionForm.value;
-      this.samplePrescriptionsService.update(this.id, val).subscribe(() => {
-        this.activeModal.close(true);
-      });
-    }
-  }
 
   onCancel() {
     this.activeModal.dismiss();
   }
 
-  public onChange(value: number) {
-    setTimeout(() => {
-      this.updateQuantity();
-    }, 200);
-  }
-
-  updateQuantity() {
-    var numberOfTimes = this.lineForm.get('numberOfTimes').value || 0;
-    var numberOfDays = this.lineForm.get('numberOfDays').value || 0;
-    var amountOfTimes = this.lineForm.get('amountOfTimes').value || 0;
+  updateQuantity(line: FormGroup) {
+    var numberOfTimes = line.get('numberOfTimes').value || 0;
+    var numberOfDays = line.get('numberOfDays').value || 0;
+    var amountOfTimes = line.get('amountOfTimes').value || 0;
     var quantity = numberOfTimes * amountOfTimes * numberOfDays;
-    this.lineForm.get('quantity').setValue(quantity);
+    line.get('quantity').setValue(quantity);
   }
 
 
@@ -182,19 +160,6 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       default:
         return 'sau khi ăn';
     }
-  }
-
-  // computeName() {
-  //   return `Ngày uống ${this.getNumberOfTimes()} lần, mỗi lần ${this.getAmountOfTimes()} viên, uống ${this.getUsedAt()}`
-  // }
-
-  resetLineForm(form: FormGroup) {
-    form.get('product').setValue(null);
-    form.get('numberOfTimes').setValue(1);
-    form.get('numberOfDays').setValue(1);
-    form.get('amountOfTimes').setValue(1);
-    form.get('quantity').setValue(1);
-    form.get('useAt').setValue('after_meal');
   }
 
   get f() {
