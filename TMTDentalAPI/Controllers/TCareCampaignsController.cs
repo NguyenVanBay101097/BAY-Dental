@@ -60,8 +60,11 @@ namespace TMTDentalAPI.Controllers
             {
                 return BadRequest();
             }
+
             campain.Name = val.Name;
             campain.GraphXml = val.GraphXml;
+            campain.SheduleStart = val.SheduleStart;
+
             await _campaignService.UpdateAsync(campain);
             return NoContent();
         }

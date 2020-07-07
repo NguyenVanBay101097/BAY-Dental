@@ -1,13 +1,18 @@
 <div>
-    <div class="d-flex" [formGroup]="formCampaign">
+    <div [formGroup]="formCampaign">
         <!-- <div class="o_statusbar_buttons">
             <input type="text" (blur)="onSave()" class="form-control o_statusbar_input_title " formControlName="name">
         </div> -->
-        <div class="mb-2">
-            <span class="mr-2">Chạy mỗi ngày vào lúc</span>
-            <kendo-timepicker [disabled]="campaign.active" style="width: 100px;" (valueChange)="onChangeTimeStartCampaign()"
-                formControlName="sheduleStart">
-            </kendo-timepicker>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <span class="mr-2">Chạy mỗi ngày vào lúc</span>
+                <kendo-timepicker [disabled]="campaign.active" style="width: 100px;"
+                  formControlName="scheduleStart">
+                </kendo-timepicker>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu chiến dịch</button>
+            </div>
         </div>
     </div>
 </div>

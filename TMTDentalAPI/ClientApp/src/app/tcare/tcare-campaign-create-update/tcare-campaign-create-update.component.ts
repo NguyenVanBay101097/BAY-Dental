@@ -42,7 +42,7 @@ declare var mxKeyHandler: any;
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   @Input() campaign: TCareCampaignDisplay;
-  @Output('actionNext') actionNext = new EventEmitter<boolean>();
+  @Output('actionNext') actionNext = new EventEmitter<any>();
 
   offsetY = 30;
   formCampaign: FormGroup;
@@ -65,18 +65,27 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     private intlService: IntlService,
   ) {
     this.editor = new mxEditor();
-    this.formCampaign = this.fb.group({
-      name: ["", Validators.required],
-      sheduleStart: null
-    });
   }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.campaign) {
-      this.load();
-    }
+    this.formCampaign = this.fb.group({
+      // name: ["", Validators.required],
+      scheduleStart: null
+    });
+
+    var scheduleStart = new Date(this.campaign.sheduleStart);
+    this.formCampaign.patchValue({scheduleStart});
+    this.load();
   }
 
   ngOnInit() {
+    this.formCampaign = this.fb.group({
+      // name: ["", Validators.required],
+      scheduleStart: null
+    });
+
+    var scheduleStart = new Date(this.campaign.sheduleStart);
+    this.formCampaign.patchValue({scheduleStart});
     this.load();
   }
 
@@ -269,7 +278,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
             }
             that.editor.graph.removeCells();
 
-            that.onSave();
+            // that.onSave();
           }
           else {
             that.notificationService.show({
@@ -294,24 +303,37 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
       //load Xml
       that.editor.graph.getModel().beginUpdate();
       try {
-        for (let i = 2; i < that.editor.graph.getModel().nextId + 4; i++) {
-          if (that.editor.graph.getModel().cells[i])
-            that.editor.graph.getModel().remove(that.editor.graph.getModel().cells[i]);
-        }
+        // for (let i = 2; i < that.editor.graph.getModel().nextId + 4; i++) {
+        //   if (that.editor.graph.getModel().cells[i])
+        //     that.editor.graph.getModel().remove(that.editor.graph.getModel().cells[i]);
+        // }
         var doc = mxUtils.parseXml(model.graphXml);
         var dec = new mxCodec(doc);
         dec.decode(doc.documentElement, that.editor.graph.getModel());
-        that.editor.graph.setSelectionCells(that.editor.graph.getModel().cells);
+        // that.editor.graph.setSelectionCells(that.editor.graph.getModel().cells);
       }
       finally {
         that.editor.graph.getModel().endUpdate();
       }
+
+      // var mgr = new mxAutoSaveManager(that.editor.graph);
+      // mxAutoSaveManager.prototype.autoSaveDelay = 1;
+      // mxAutoSaveManager.prototype.autoSaveThreshold = 1;
+      // mgr.save = function()
+      // {
+      //   console.log('save');
+      //   that.onSave();
+      // };
+
+      // mgr.graphModelChanged = function(	changes	) {
+      //   console.log(changes);
+      // }
     }
   }
 
   load() {
-    this.formCampaign.get('name').patchValue(this.campaign.name);
-    this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
+    // this.formCampaign.get('name').patchValue(this.campaign.name);
+    // this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
     if (this.campaign.graphXml) {
       this.main(
         document.getElementById("graphContainer"),
@@ -422,7 +444,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         graph.setSelectionCell(v1);
       } finally {
         model.endUpdate();
-        that.onSave()
+        // that.onSave()
       }
 
     }
@@ -575,7 +597,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
             }
             finally {
               graph.getModel().endUpdate();
-              that.onSave();
+              // that.onSave();
             }
           }, () => {
           });
@@ -627,7 +649,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
             }
             finally {
               graph.getModel().endUpdate();
-              that.onSave();
+              // that.onSave();
             }
           }, () => {
           });
@@ -660,7 +682,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
           graph.getModel().setValue(cell, userObject);
         } finally {
           graph.getModel().endUpdate();
-          that.onSave();
+          // that.onSave();
         }
       }, () => {
       });
@@ -712,7 +734,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
               }
               finally {
                 graph.getModel().endUpdate();
-                that.onSave();
+                // that.onSave();
               }
 
             }
@@ -800,59 +822,80 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   get sheduleStartControl() { return this.formCampaign.get('sheduleStart') }
 
   onChangeTimeStartCampaign() {
-    if (!this.checkConnection()) {
-      this.formCampaign.get('sheduleStart').patchValue(new Date());
-      this.notificationService.show({
-        content: 'Bạn chưa hoàn thành 1 kịch bản, vui lòng hoàn thành sau đó chạy lại kịch bản!.',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return false;
-    } else {
-      var value = {
-        id: this.campaign ? this.campaign.id : null,
-        sheduleStart: this.intlService.formatDate(this.formCampaign.get('sheduleStart').value, "yyyy-MM-ddTHH:mm:ss")
+    var scheduleStartControl = this.formCampaign.get('scheduleStart');
+    var value = {
+      id: this.campaign ? this.campaign.id : null,
+      sheduleStart: scheduleStartControl ? this.intlService.formatDate(scheduleStartControl.value, "yyyy-MM-ddTHH:mm:ss") : null
+    };
+
+    this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
+      () => {
+        this.actionNext.emit({sheduleStart: value.sheduleStart});
+        console.log(this.campaign);
+        // this.notificationService.show({
+        //   content: 'Cài thời gian chạy chiến dịch thành công !',
+        //   hideAfter: 3000,
+        //   position: { horizontal: 'center', vertical: 'top' },
+        //   animation: { type: 'fade', duration: 400 },
+        //   type: { style: 'success', icon: true }
+        // });
       }
-      this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
-        () => {
-          this.actionNext.emit(null);
-          this.notificationService.show({
-            content: 'Cài thời gian chạy chiến dịch thành công !',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-        }
-      )
-    }
+    )
+
+    // if (!this.checkConnection()) {
+    //   this.formCampaign.get('sheduleStart').patchValue(new Date());
+    //   this.notificationService.show({
+    //     content: 'Bạn chưa hoàn thành 1 kịch bản, vui lòng hoàn thành sau đó chạy lại kịch bản!.',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
+    //   return false;
+    // } else {
+    //   var value = {
+    //     id: this.campaign ? this.campaign.id : null,
+    //     sheduleStart: this.intlService.formatDate(this.formCampaign.get('sheduleStart').value, "yyyy-MM-ddTHH:mm:ss")
+    //   }
+    //   this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
+    //     () => {
+    //       this.actionNext.emit(null);
+    //       this.notificationService.show({
+    //         content: 'Cài thời gian chạy chiến dịch thành công !',
+    //         hideAfter: 3000,
+    //         position: { horizontal: 'center', vertical: 'top' },
+    //         animation: { type: 'fade', duration: 400 },
+    //         type: { style: 'success', icon: true }
+    //       });
+    //     }
+    //   )
+    // }
 
   }
 
   onSave() {
-    this.submited = true;
-    if (this.formCampaign.invalid) {
-      return false;
-    }
+    // this.submited = true;
+    // if (this.formCampaign.invalid) {
+    //   return false;
+    // }
 
     var value = this.formCampaign.value;
+    this.campaign.sheduleStart = value.scheduleStart ? this.intlService.formatDate(value.scheduleStart, "yyyy-MM-ddTHH:mm:ss") : null;
+
     var enc = new mxCodec(mxUtils.createXmlDocument());
     var node = enc.encode(this.editor.graph.getModel());
-    value.graphXml = mxUtils.getPrettyXml(node);
-    if (this.campaign && this.campaign.id) {
-      this.tcareService.update(this.campaign.id, value).subscribe(() => {
-        this.actionNext.emit(null);
-        this.notificationService.show({
-          content: "Thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
+    this.campaign.graphXml = mxUtils.getPrettyXml(node);
+
+    this.tcareService.update(this.campaign.id, this.campaign).subscribe(() => {
+      this.actionNext.emit(this.campaign);
+      this.notificationService.show({
+        content: "Lưu chiến dịch thành công",
+        hideAfter: 3000,
+        position: { horizontal: "center", vertical: "top" },
+        animation: { type: "fade", duration: 400 },
+        type: { style: "success", icon: true },
       });
-    }
+    });
   }
 
   get nameControl() {

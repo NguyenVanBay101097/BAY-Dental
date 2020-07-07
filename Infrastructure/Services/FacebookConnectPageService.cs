@@ -52,7 +52,7 @@ namespace Infrastructure.Services
                     UserAccesstoken = page.Connect.FbUserAccessToken,
                     UserId = page.Connect.FbUserId,
                     UserName = page.Connect.FbUserName,
-                    Avatar = page.Picture,
+                    Avatar = $"https://graph.facebook.com/{page.PageId}/picture?type=large",
                     Type = "facebook",
                 });
 

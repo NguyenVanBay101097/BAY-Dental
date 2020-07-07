@@ -31,9 +31,9 @@ export class TcareScenarioCrUpComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.activeRoute.params["_value"].id;
+    this.id = this.activeRoute.snapshot.paramMap.get('id');
     if (this.id) {
-      this.loadData()
+      this.loadData();
     }
     this.scenario = new TCareScenarioDisplay();
     this.formGroup = this.fb.group({
@@ -53,9 +53,8 @@ export class TcareScenarioCrUpComponent implements OnInit {
         this.scenario = result;
         this.formGroup.patchValue(this.scenario);
         console.log(this.scenario);
-        if (this.scenario && this.scenario.campaigns && !this.campaign && this.scenario.campaigns.length > 0)
-          this.campaign = this.scenario.campaigns[0];
-
+        // if (this.scenario && this.scenario.campaigns && !this.campaign && this.scenario.campaigns.length > 0)
+        //   this.campaign = this.scenario.campaigns[0];
       }
     )
   }
@@ -66,9 +65,27 @@ export class TcareScenarioCrUpComponent implements OnInit {
     var value = this.formGroup.value;
     this.tcareService.updateScenario(this.scenario.id, value).subscribe(
       () => {
-        this.router.navigateByUrl('tcare-scenarios');
+        this.notificationService.show({
+          content: "Lưu thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
+
+        this.loadData();
       }
     )
+  }
+
+  actionNext(data) {
+    if (data.graphXml) {
+      this.campaign.graphXml = data.graphXml;
+    }
+
+    if (data.sheduleStart) {
+      this.campaign.sheduleStart = data.sheduleStart;
+    }
   }
 
   changeCheckedCampaign(e, campaign) {
@@ -140,7 +157,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       });
     } else {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Xóa: ' + this.title;
+      modalRef.componentInstance.title = 'Xóa chiến dịch';
 
       modalRef.result.then(() => {
         this.tcareService.delete(item.id).subscribe(() => {

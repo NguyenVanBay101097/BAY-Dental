@@ -148,6 +148,10 @@ export class TcareService {
     return this.http.post(this.base_api + this.apiUrlCampaign + '/ActionSetSheduleStartCampaign', val);
   }
 
+  saveGraphXml(val) {
+    return this.http.post(this.base_api + this.apiUrlCampaign + '/SaveGraphXml', val);
+  }
+
   autocomplete(val: TCareCampaignPaged): Observable<TCareCampaignBasic[]> {
     return this.http.post<TCareCampaignBasic[]>(this.base_api + this.apiUrlCampaign + '/autocomplete', val);
   }
