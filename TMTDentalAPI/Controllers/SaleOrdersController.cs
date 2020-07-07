@@ -51,20 +51,18 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var saleOrder = await _saleOrderService.GetSaleOrderForDisplayAsync(id);
-            if (saleOrder == null)
-            {
+            var res = await _saleOrderService.GetDisplayAsync(id);
+            if (res == null)
                 return NotFound();
-            }
 
-            var res = _mapper.Map<SaleOrderDisplay>(saleOrder);
-            res.InvoiceCount = saleOrder.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
-                .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Distinct().Count();
-            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            foreach (var inl in res.OrderLines)
-            {
-                inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
-            }
+            //var res = _mapper.Map<SaleOrderDisplay>(res);
+            //res.InvoiceCount = res.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
+            //    .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Distinct().Count();
+            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            //foreach (var inl in res.OrderLines)
+            //{
+            //    inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
+            //}
 
             return Ok(res);
         }
@@ -72,12 +70,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SaleOrderSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
-            var order = _mapper.Map<SaleOrder>(val);
-            await SaveOrderLines(val, order);
-            await _saleOrderService.CreateOrderAsync(order);
+            await _unitOfWork.BeginTransactionAsync();
+            var order = await _saleOrderService.CreateOrderAsync(val);
+            _unitOfWork.Commit();
 
             var basic = _mapper.Map<SaleOrderBasic>(order);
             return Ok(basic);

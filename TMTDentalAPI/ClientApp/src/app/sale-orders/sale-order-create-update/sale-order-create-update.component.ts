@@ -882,6 +882,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
+      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
@@ -907,6 +908,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
+      debugger;
       var a = result as any;
       line.patchValue(result);
       line.setControl('teeth', this.fb.array(a.teeth || []));

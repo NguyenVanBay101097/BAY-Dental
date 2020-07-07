@@ -69,6 +69,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
     }, 200);
 
     if (this.line) {
+      console.log(this.line);
       setTimeout(() => {
         if (this.line.product) {
           this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
@@ -299,6 +300,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
     val.salesmanId = val.salesman ? val.salesman.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
+    console.log(val);
     this.activeModal.close(val);
   }
 
