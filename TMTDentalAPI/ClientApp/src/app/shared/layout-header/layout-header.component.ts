@@ -11,6 +11,7 @@ import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit
 import { WebService } from 'src/app/core/services/web.service';
 import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-layout-header',
@@ -37,8 +38,6 @@ export class LayoutHeaderComponent implements OnInit {
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }
-    this.loadIrConfigParameterImport();
-    this.loadIrConfigParameterRemove();
     this.authService.currentUser.subscribe(result => {
       if (result) {
         this.loadChangeCurrentCompany();
@@ -82,36 +81,25 @@ export class LayoutHeaderComponent implements OnInit {
     this.router.navigate(['login']);
   }
 
-  loadIrConfigParameterImport() {
-    var key = "remove_sample_data";
-    this.irConfigParameterService.getParam(key).subscribe(
-      res => {
-        this.valueIrConfigParamRemove = res['value'];
-      }
-    )
-  }
-
-  loadIrConfigParameterRemove() {
-    var key = "import_sample_data";
-    this.irConfigParameterService.getParam(key).subscribe(
-      res => {
-        this.valueIrConfigParamImport = res['value'];
-      }
-    )
-  }
-
   removeSampleData() {
-    this.webService.removeSampleData().subscribe(
-      () => {
-        this.notificationService.show({
-          content: 'Xóa dữ liệu mẫu thành công !',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-      }
-    )
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa dữ liệu mẫu';
+    modalRef.componentInstance.body = 'Bạn đang tiến hành xóa hết dữ liệu trong phần mềm, Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.webService.removeSampleData().subscribe(
+        () => {
+          this.notificationService.show({
+            content: 'Xóa dữ liệu mẫu thành công !',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          window.location.reload();
+        }
+      )
+    });
+
   }
 
   getAvatarImgSource(obj: string) {

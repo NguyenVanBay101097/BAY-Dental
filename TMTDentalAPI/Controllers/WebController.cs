@@ -33,7 +33,6 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IUserService _userService;
 
-
         public WebController(
             IIrAttachmentService attachmentService,
             IMapper mapper,
@@ -74,9 +73,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> DeleteSampleData()
         {
             await _unitOfWork.BeginTransactionAsync();
-            var user =await _userService.GetCurrentUser();
-            if (!user.IsUserRoot)
-                throw new Exception("Chỉ có admin mới có thể thực hiện chức năng này !!!");
             await _importSampleDataService.DeleteSampleData();
             await _irConfigParameterService.SetParam("remove_sample_data", "True");
             _unitOfWork.Commit();
