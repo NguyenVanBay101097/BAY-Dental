@@ -67,7 +67,8 @@
             <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">                  
                     <a class="text-primary mr-2" [ngbPopover]="popContent" #popOver="ngbPopover" triggers="manual"  [autoClose]="'outside'" placement="left" (click)="toggleWithGreeting(popOver, dataItem)" >
-                    <span>{{dataItem.warrantyCode ? dataItem.warrantyCode : 'Rỗng'}}</span>
+                        <span *ngIf="dataItem.warrantyCode">{{dataItem.warrantyCode}}</span>
+                        <i *ngIf="!dataItem.warrantyCode" class="far fa-edit"></i>
                     </a>
                     <ng-template #popContent>
                         <div class="d-flex">
@@ -80,8 +81,9 @@
             <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">                  
                     <a  class="text-primary mr-2" [ngbPopover]="popContentwarrantyPeriod" #popOver="ngbPopover" triggers="manual" [autoClose]="false" placement="left" (click)="toggleWithGreeting(popOver, dataItem)">
-                        <span>{{dataItem.warrantyPeriod ? (dataItem.warrantyPeriod | date : 'dd/MM/yyyy') : 'Rỗng'}}</span>
-                      </a>
+                        <span *ngIf="dataItem.warrantyPeriod">{{dataItem.warrantyPeriod | date : 'shortDate'}}</span>
+                        <i *ngIf="!dataItem.warrantyPeriod" class="far fa-edit"></i>
+                    </a>
                     <ng-template #popContentwarrantyPeriod>
                         <div class="d-flex">                            
                             <kendo-datepicker [(value)]="value" (valueChange)="onChange($event)"></kendo-datepicker>
