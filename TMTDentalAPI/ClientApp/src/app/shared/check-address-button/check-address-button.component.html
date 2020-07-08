@@ -1,20 +1,33 @@
 <div class="input-group-append">
-    <button class="btn btn-secondary btn-sm" title="Kiểm tra địa chỉ" popoverTitle="Kiểm tra địa chỉ"  type="button"  [ngbPopover]="checkAddress" #popOver="ngbPopover" triggers="manual"  [autoClose]="'outside'" placement="bottom" (click)="toggleWithGreeting(popOver)">
+    <button class="btn btn-secondary btn-sm" title="Kiểm tra địa chỉ" popoverClass="popover-xl" popoverTitle="Kiểm tra địa chỉ"  type="button"  [ngbPopover]="checkAddress" #popOver="ngbPopover" triggers="manual"  [autoClose]="'outside'" placement="bottom" (click)="toggleWithGreeting(popOver)">
         <i class="fas fa-map-marker-alt"></i>
     </button>
 </div>
 
 <ng-template #checkAddress>
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" #gf placeholder="nhập địa chỉ ...">
+  <div>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control" #myinput  placeholder="nhập địa chỉ ..." [autofocus]="true">
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary btn-sm" (click)="checkAddressApi(gf.value)"><i class="fa fa-search" aria-hidden="true"></i></button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="checkAddressApi(myinput.value)"><i class="fa fa-search" aria-hidden="true"></i></button>
         </div>
-      </div>                                            
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item p-0" *ngFor="let ad of addressCheck; let i = index">
-            {{ad.address}}
-            <a class="text-primary" (click)="onClickAddress(ad)">chọn</a>
-        </li>     
-      </ul>                                          
+      </div> 
+      <div class="text-center" *ngIf="isLoading">
+        <div class="spinner-border text-primary text-center" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <div *ngIf="!isLoading">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item px-0 py-2" *ngFor="let ad of addressCheck; let i = index">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>{{ad.address}}</div>
+              <button type="button" class="btn btn-outline-secondary btn-sm " (click)="onClickAddress(ad)">Chọn</button>
+            </div>
+          </li>     
+      </ul>    
+      </div>                                         
+        
+  </div>
+                                      
 </ng-template>

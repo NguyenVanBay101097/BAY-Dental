@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
 import { AshipRequest, AshipData, PartnerSourceSimple, District, City, Ward } from 'src/app/partners/partner-simple';
 import { NgbPopover, NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -16,7 +16,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 export class CheckAddressButtonComponent implements OnInit {
   @Output() clickAddress : EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('popOver',{static: true}) public popover: NgbPopover;
-  
+  @ViewChild('myinput', {static: true}) myinput: ElementRef;
   id: string;
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
@@ -31,6 +31,7 @@ export class CheckAddressButtonComponent implements OnInit {
   provincesFilter: City[] = [];
   wardsFilter: Ward[] = [];
   cusId: string;
+  isLoading : boolean;
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
@@ -70,6 +71,7 @@ export class CheckAddressButtonComponent implements OnInit {
     public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
+    
   }
 
   checkAddressApi(searchValue: string) {
@@ -77,8 +79,10 @@ export class CheckAddressButtonComponent implements OnInit {
     if (!address) {
       return false;
     }
+    this.isLoading = true;
     this.partnerService.checkAddressApi(address).subscribe(
       rs => {
+        this.isLoading= false;
         this.addressCheck = rs;
         this.addressCheck = this.addressCheck.slice(0, 5);
         console.log(rs);      
@@ -92,12 +96,13 @@ export class CheckAddressButtonComponent implements OnInit {
     this.addressCheck = [];
   }
 
-  toggleWithGreeting(popover) {         
+  toggleWithGreeting(popover) {   
     if (popover.isOpen()) {       
       popover.close();
     } else { 
+      
       this.addressCheck = [];  
-      popover.open();
+      popover.open();   
     }
   }
 
