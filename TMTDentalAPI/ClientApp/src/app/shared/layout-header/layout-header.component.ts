@@ -21,8 +21,6 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 export class LayoutHeaderComponent implements OnInit {
 
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
-  valueIrConfigParamRemove: string;
-  valueIrConfigParamImport: string;
   constructor(
     private sidebarService: NavSidebarService,
     private modalService: NgbModal,
@@ -30,7 +28,6 @@ export class LayoutHeaderComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private webService: WebService,
-    private irConfigParameterService: IrConfigParameterService,
     private notificationService: NotificationService
   ) { }
 
@@ -84,12 +81,12 @@ export class LayoutHeaderComponent implements OnInit {
   removeSampleData() {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa dữ liệu mẫu';
-    modalRef.componentInstance.body = 'Bạn đang tiến hành xóa hết dữ liệu trong phần mềm, Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.body = 'Hệ thống sẽ xóa toàn bộ dữ liệu về trạng thái ban đầu, bạn có chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.webService.removeSampleData().subscribe(
         () => {
           this.notificationService.show({
-            content: 'Xóa dữ liệu mẫu thành công !',
+            content: 'Xóa dữ liệu mẫu thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -98,7 +95,7 @@ export class LayoutHeaderComponent implements OnInit {
           window.location.reload();
         }
       )
-    });
+    }, () => {});
 
   }
 

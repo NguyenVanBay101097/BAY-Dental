@@ -74,7 +74,6 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             await _importSampleDataService.DeleteSampleData();
-            await _irConfigParameterService.SetParam("remove_sample_data", "True");
             _unitOfWork.Commit();
             return NoContent();
         }
