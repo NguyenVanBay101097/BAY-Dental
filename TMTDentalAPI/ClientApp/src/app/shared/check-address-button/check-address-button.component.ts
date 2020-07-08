@@ -92,11 +92,11 @@ export class CheckAddressButtonComponent implements OnInit {
     this.addressCheck = [];
   }
 
-  onClickPopover(popover){
-    if(popover.isOpen()){
+  toggleWithGreeting(popover) {         
+    if (popover.isOpen()) {       
       popover.close();
-    }else{
-      this.addressCheck = [];
+    } else { 
+      this.addressCheck = [];  
       popover.open();
     }
   }
