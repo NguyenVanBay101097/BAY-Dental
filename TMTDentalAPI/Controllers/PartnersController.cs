@@ -236,6 +236,20 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddTags(PartnerAddRemoveTagsVM val)
+        {
+            await _partnerService.AddOrRemoveTags(val, true);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RemoveTags(PartnerAddRemoveTagsVM val)
+        {
+            await _partnerService.AddOrRemoveTags(val, false);
+            return Ok();
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetValidServiceCards(Guid id)
         {

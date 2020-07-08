@@ -125,10 +125,16 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<PartnerCategoryBasic>> GetPagedResultAsync(PartnerCategoryPaged val)
         {
             var query = GetQueryPaged(val);
+            var items = new List<PartnerCategory>();
+            if (val.PartnerId.HasValue) {
+                items = await query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.PartnerId == val.PartnerId)).Skip(val.Offset).Take(val.Limit)
+                    .ToListAsync();
+            } else {
+                items = await query.Skip(val.Offset).Take(val.Limit)
+                    .ToListAsync();
+            }
 
-            var items = await query.Skip(val.Offset).Take(val.Limit)
-                .ToListAsync();
-            var totalItems = await query.CountAsync();
+            var totalItems = items.Count();
 
             return new PagedResult2<PartnerCategoryBasic>(totalItems, val.Offset, val.Limit)
             {

@@ -1,1 +1,57 @@
-<p>partner-customer-categories works!</p>
+<div class="px-3 py-3 bg-white">
+    <div class="mb-2 d-flex justify-content-between">
+        <div class="d-flex">
+            <kendo-multiselect 
+                class="mr-1"
+                style="min-width: 400px;"
+                [data]="partnerCategories" 
+                [(ngModel)]="value_partnerCategory"
+                [filterable]="true"
+                (filterChange)="handleFilter($event); this.searchUpdate.next($event)"
+                textField="name"
+                valueField="id"
+                placeholder="Chọn nhãn khách hàng"
+            >
+            </kendo-multiselect>
+            <button type="button" class="btn btn-primary height_fit-content white-space_nowrap" 
+                (click)="addPartnerCategories()" accesskey="c">
+                <i class="fas fa-plus"></i> Thêm nhãn
+            </button>
+        </div>
+        <div class="dropdown">
+            <button *ngIf="showBtnManipulation" 
+                class="btn btn-secondary height_fit-content dropdown-toggle" 
+                type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Thao tác
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <span class="dropdown-item" (click)="deletePartnerCategories()">Xóa</span>
+            </div>
+          </div>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid [data]="gridData"
+                [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)" 
+                [selectable]="{ enabled: true, checkboxOnly: true }"
+                kendoGridSelectBy="id"
+                [selectedKeys]="selectedPartnerCategories" 
+                (selectedKeysChange)="onSelectedKeysChange($event)"
+            >
+                <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+                <kendo-grid-column field="name" title="Tên">
+                </kendo-grid-column>
+                <kendo-grid-column field="id">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deletePartnerCategory(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

@@ -43,6 +43,8 @@ import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-
 import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { PopupModule } from '@progress/kendo-angular-popup';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -86,7 +88,9 @@ import { PartnerCustomerCategoriesComponent } from './partner-customer-categorie
     SharedModule,
     CustomComponentModule,
     SaleReportModule,
-    FlexLayoutModule
+    FlexLayoutModule, 
+    DropDownsModule, 
+    PopupModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,
