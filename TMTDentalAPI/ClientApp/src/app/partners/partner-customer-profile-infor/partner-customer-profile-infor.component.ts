@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PartnerDisplay } from '../partner-simple';
+import { PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-profile-infor',
@@ -10,7 +11,7 @@ export class PartnerCustomerProfileInforComponent implements OnInit {
 
   @Input() customerInfo: PartnerDisplay;
 
-  constructor() { }
+  constructor(private partnerService: PartnerService) { }
 
   ngOnInit() {
 
@@ -54,6 +55,11 @@ export class PartnerCustomerProfileInforComponent implements OnInit {
     return customerInfo.histories.map(x => x.name).join(', ');
   }
 
+  onAvatarUploaded(data: any) {
+    this.customerInfo.avatar = data ? data.id : null;
+    this.partnerService.saveAvatar({ partnerId: this.customerInfo.id, imageId: data ? data.id : null }).subscribe(() => {
+    });
+  }
 }
 
 

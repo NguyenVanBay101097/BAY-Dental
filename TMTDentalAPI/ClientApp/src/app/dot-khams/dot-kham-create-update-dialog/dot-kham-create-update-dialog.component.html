@@ -240,12 +240,12 @@
                           </ng-template>
                         </li>
                         <li [ngbNavItem]="2">
-                          <a ngbNavLink>Toa thuốc</a>
+                          <a ngbNavLink>Đơn thuốc</a>
                           <ng-template ngbNavContent>
                             <div>
                                 <div class="mb-2">
                                     <button type="button" class="btn btn-secondary btn-sm" (click)="actionCreateToaThuoc()">
-                                        Kê toa thuốc
+                                        Kê đơn thuốc
                                     </button>
                                 </div>
                                 <table class="table table-sm">
@@ -253,6 +253,8 @@
                                         <tr>
                                             <th>Số</th>
                                             <th>Ngày</th>
+                                            <th>Bác sĩ</th>
+                                            <th>Chuẩn đoán</th>
                                             <th>#</th>
                                         </tr>
                                     </thead>
@@ -262,10 +264,13 @@
                                                 <a class="text-primary" style="cursor: pointer;"
                                                     (click)="editToaThuoc(line)">{{line.name}}</a>
                                             </td>
+                                            
                                             <td>{{ line.date | date : 'short' }}</td>
+                                            <td>{{ line.userName }}</td>
+                                            <td>{{ line.diagnostic }}</td>
                                             <td>
                                                 <button [disabled]="invoiceState=='cancel'" type="button"
-                                                    class="btn btn-icon btn-sm btn-light mr-1" title="In toa thuốc"
+                                                    class="btn btn-icon btn-sm btn-light mr-1" title="In đơn thuốc"
                                                     (click)="printToaThuoc(line)">
                                                     <i class="fas fa-print"></i> In
                                                 </button>
@@ -339,101 +344,7 @@
         </form>
     </div>
 
-    <div id="printToaThuocDiv" *ngIf="toaThuocPrint" style="display: none;">
-        <div class="o_form_view o_print">
-            <div class="text-center">
-                <h5 class="mb-0">{{toaThuocPrint.companyName}}</h5>
-                <div>Địa chỉ: {{toaThuocPrint.companyAddress}}</div>
-                <div>ĐT: {{toaThuocPrint.companyPhone}} - Email: {{toaThuocPrint.companyEmail}}</div>
-            </div>
-            <div class="text-center">
-                <h1>Đơn thuốc</h1>
-                <span>Số: {{toaThuocPrint.name}} - Ngày: {{toaThuocPrint.date | date: 'shortDate'}}</span>
-            </div>
-            <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Khách hàng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{toaThuocPrint.partnerName}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Địa chỉ
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{toaThuocPrint.partnerAddress}}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Phái
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{toaThuocPrint.partnerGender}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Tuổi
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{toaThuocPrint.partnerAge}}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <table class="table table-sm table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Thuốc</th>
-                            <th class="text-right">Số lượng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let line of toaThuocPrint.lines; let i=index">
-                            <td>
-                                <span class="font-weight-bold">{{ line.productName }}</span> <br />
-                                <span class="font-italic">{{ line.name }}</span>
-                            </td>
-                            <td class="text-right">{{ line.quantity | number }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="row">
-                <div class="col-sm">
-                    <div class="text-center font-weight-bold">
-                        &nbsp;
-                    </div>
-                </div>
-                <div class="col-sm">
-                    <div class="text-center font-weight-bold">
-                        Bác sĩ
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="k-overlay" *ngIf="opened"></div>
+    <app-toa-thuoc-print></app-toa-thuoc-print>
 </div>
 
 <div class="modal-footer">

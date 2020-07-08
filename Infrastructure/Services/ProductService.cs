@@ -729,6 +729,8 @@ namespace Infrastructure.Services
             return res;
         }
 
+       
+
         //public override ISpecification<Product> RuleDomainGet(IRRule rule)
         //{
         //    var companyId = CompanyId;
@@ -968,4 +970,6 @@ namespace Infrastructure.Services
 
         public ISpecification<StockMove> domain_move_out_loc { get; set; }
     }
+
+   
 }

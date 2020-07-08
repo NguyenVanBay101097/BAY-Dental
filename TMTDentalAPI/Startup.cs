@@ -125,6 +125,7 @@ namespace TMTDentalAPI
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
+            
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
@@ -152,6 +153,8 @@ namespace TMTDentalAPI
             services.AddScoped<IDotKhamLineService, DotKhamLineService>();
             services.AddScoped<IDotKhamLineOperationService, DotKhamLineOperationService>();
             services.AddScoped<IToaThuocService, ToaThuocService>();
+            services.AddScoped<ISamplePrescriptionService, SamplePrescriptionService>();
+            services.AddScoped<ISamplePrescriptionLineService, SamplePrescriptionLineService>();
             services.AddScoped<IStockWarehouseService, StockWarehouseService>();
             services.AddScoped<IStockLocationService, StockLocationService>();
             services.AddScoped<IStockPickingTypeService, StockPickingTypeService>();
@@ -209,7 +212,7 @@ namespace TMTDentalAPI
             services.AddScoped<IPromotionRuleService, PromotionRuleService>();
             services.AddScoped<IResConfigSettingsService, ResConfigSettingsService>();
             services.AddScoped<IIrModuleCategoryService, IrModuleCategoryService>();
-            services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
+            services.AddScoped<IImportSampleDataService, ImportSampleDataService>();
             services.AddScoped<IZaloOAConfigService, ZaloOAConfigService>();
             services.AddScoped(typeof(BirthdayMessageJobService));
             services.AddScoped<IRevenueReportService, RevenueReportService>();
@@ -224,6 +227,7 @@ namespace TMTDentalAPI
             services.AddScoped<IMarketingMessageService, MarketingMessageService>();
             services.AddScoped<IPartnerMapPSIDFacebookPageService, PartnerMapPSIDFacebookPageService>();
             services.AddScoped<IFacebookConnectService, FacebookConnectService>();
+            services.AddScoped<IIrConfigParameterService, IrConfigParameterService>();
             services.AddScoped<IFacebookConnectPageService, FacebookConnectPageService>();
             services.AddScoped<IFacebookUserProfileService, FacebookUserProfileService>();
             services.AddScoped<IFacebookMassMessagingService, FacebookMassMessagingService>();
@@ -255,6 +259,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
+                mc.AddProfile(new PartnerSourceProfile());
                 mc.AddProfile(new ProvinceProfile());
                 mc.AddProfile(new DistrictProfile());
                 mc.AddProfile(new WardProfile());
@@ -276,6 +281,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new DotKhamLineOperationProfile());
                 mc.AddProfile(new ToaThuocProfile());
                 mc.AddProfile(new ToaThuocLineProfile());
+                mc.AddProfile(new SamplePrescriptionProfile());
+                mc.AddProfile(new SamplePrescriptionLineProfile());
                 mc.AddProfile(new StockPickingTypeProfile());
                 mc.AddProfile(new StockPickingProfile());
                 mc.AddProfile(new StockMoveProfile());

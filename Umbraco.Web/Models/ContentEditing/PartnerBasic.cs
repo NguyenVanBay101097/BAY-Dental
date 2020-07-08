@@ -91,6 +91,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Employee { get; set; }
 
         public bool? Supplier { get; set; }
+
+        public Guid? CategoryId { get; set; }
     }
 
     public class PartnerPatch
@@ -149,5 +151,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Active { get; set; }
 
         public bool Employee { get; set; }
+    }
+
+    public class PartnerPrintVM
+    {
+        public string DisplayName { get; set; }
+        public string Gender { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
     }
 }

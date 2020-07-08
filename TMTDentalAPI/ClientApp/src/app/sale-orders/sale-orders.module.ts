@@ -20,9 +20,11 @@ import { SaleOrderInvoiceListComponent } from './sale-order-invoice-list/sale-or
 import { SaleOrderApplyServiceCardsDialogComponent } from './sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { SaleOrderCuDialogComponent } from './sale-order-cu-dialog/sale-order-cu-dialog.component';
 import { SaleOrderCuFormComponent } from './sale-order-cu-form/sale-order-cu-form.component';
+import { PopupModule } from '@progress/kendo-angular-popup';
+import { SaleOrderApplyDiscountDefaultDialogComponent } from './sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent, SaleOrderCuDialogComponent, SaleOrderCuFormComponent],
+  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent, SaleOrderCuDialogComponent, SaleOrderCuFormComponent, SaleOrderApplyDiscountDefaultDialogComponent],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,
@@ -30,7 +32,8 @@ import { SaleOrderCuFormComponent } from './sale-order-cu-form/sale-order-cu-for
     MyCustomKendoModule,
     FormsModule,
     SharedModule,
-    NgbModule
+    NgbModule,
+    PopupModule
   ],
   providers: [
     SaleOrderService,
@@ -43,6 +46,7 @@ import { SaleOrderCuFormComponent } from './sale-order-cu-form/sale-order-cu-for
     SaleOrderCreateDotKhamDialogComponent,
     SaleOrderApplyCouponDialogComponent,
     SaleOrderApplyServiceCardsDialogComponent,
+    SaleOrderApplyDiscountDefaultDialogComponent,
     SaleOrderCuDialogComponent
   ]
 })

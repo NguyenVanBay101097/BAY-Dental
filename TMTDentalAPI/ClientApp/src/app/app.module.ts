@@ -101,6 +101,8 @@ import { UomModule } from './uoms/uom.module';
 import { TcareModule } from './tcare/tcare.module';
 import { PartnerCustomerDetailComponent } from './partners/partner-customer-detail/partner-customer-detail.component';
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
+import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
+import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -186,6 +188,7 @@ registerLocaleData(localeVi, "vi");
     MailMessagesModule,
     PartnerReportModule,
     PartnerSourcesModule,
+    ReportPartnerSourcesModule,
     ResBanksModule,
     ResPartnerBanksModule,
     JournalReportsModule,
@@ -209,8 +212,9 @@ registerLocaleData(localeVi, "vi");
     // thắng import
     UomCategoryModule,
     UomModule,
-    TcareModule
+    TcareModule,
     // end
+    SamplePrescriptionsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

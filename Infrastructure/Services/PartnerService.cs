@@ -426,6 +426,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                 || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+            if (val.CategoryId.HasValue)
+                query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
             query = query.OrderByDescending(s => s.DateCreated);
             return query;
@@ -1161,6 +1163,53 @@ namespace Infrastructure.Services
             }
 
             return new PartnerImportResponse { Success = true };
+        }
+
+        public async Task<PartnerPrintProfileVM> GetPrint(Guid id)
+        {
+            var result = new PartnerPrintProfileVM();
+
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
+
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == user.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+
+            var partnerObj = GetService<IPartnerService>();
+            var partner = await GetByIdAsync(id);
+
+            var companyPrint = _mapper.Map<CompanyPrintVM>(company);
+            companyPrint.Address = partnerObj.GetFormatAddress(company.Partner);
+
+            var partnerPrint = _mapper.Map<PartnerPrintVM>(partner);
+            partnerPrint.Address = partnerObj.GetFormatAddress(partner);
+            partnerPrint.Gender = partnerObj.GetGenderDisplay(partner);
+            partnerPrint.DateOfBirth = this.GetDateOfBirthDisplay(partner);
+
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var states = new string[] { "draft", "cancel" };
+            var saleOrderLines = saleOrderLineObj.SearchQuery(x => x.OrderPartnerId == id && x.Product.Type2 == "service" && !states.Contains(x.State)).Select(x => new PartnerPrintProfileService
+            {
+                DateOrder = x.Order.DateOrder,
+                UserName = x.Salesman.Name,
+                ProductName = x.Product.Name,
+                Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name)
+            }).ToList();
+
+            var accountPaymentObj = GetService<IAccountPaymentService>();
+            var accountPayments = accountPaymentObj.SearchQuery(x => x.PartnerId == id).Select(x => new PartnerPrintProfilePayment
+            {
+                PaymentDate = x.PaymentDate,
+                JournalName = x.Journal.Name,
+                Amount = x.Amount
+            }).ToList();
+            
+            result.Company = companyPrint;
+            result.Partner = partnerPrint;
+            result.ServiceList = saleOrderLines;
+            result.PaymentList = accountPayments;
+
+            return result;
         }
 
         public async Task<IDictionary<Guid, Partner>> GetPartnerDictByIds(IEnumerable<Guid> ids)

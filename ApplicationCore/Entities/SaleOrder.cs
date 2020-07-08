@@ -15,6 +15,7 @@ namespace ApplicationCore.Entities
             DateOrder = DateTime.Now;
             Name = "/";
             IsQuotation = false;
+            InvoiceStatus = "no";
         }
 
         public SaleOrder(SaleOrder order)

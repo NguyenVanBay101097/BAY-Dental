@@ -1,3 +1,4 @@
+import { DiscountDefault } from './../sale-order.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, map, mergeMap } from 'rxjs/operators';
@@ -13,7 +14,7 @@ import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog
 import { SaleOrderDisplay } from '../sale-order-display';
 import * as _ from 'lodash';
 import { UserSimple } from 'src/app/users/user-simple';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
@@ -38,6 +39,9 @@ import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { SaleOrderLineService } from '../sale-order-line.service';
+import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+
 declare var $: any;
 
 @Component({
@@ -55,9 +59,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
+  discountDefault:DiscountDefault;
+  
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
+  @ViewChild(AccountPaymentPrintComponent, {static: true}) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
@@ -72,11 +80,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
-    private productService: ProductService, private intlService: IntlService, private modalService: NgbModal,
+    private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService,public activeModal: NgbActiveModal, ) {
   }
 
   ngOnInit() {
@@ -92,8 +100,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       pricelist: [null, Validators.required],
     });
     this.routeActive();
-
-
 
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
@@ -113,7 +119,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
-
+        console.log(result);
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
@@ -370,6 +376,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+ 
+
   getCouponLines() {
     var lines = this.orderLines.value;
     var list = [];
@@ -474,6 +482,38 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.saleOrderService.applyPromotion(result.id).subscribe(() => {
           this.loadRecord();
+        });
+      });
+    }
+  }
+
+  onApplyDiscount(val: any){
+    if (this.id) {
+      this.discountDefault = val;
+      this.discountDefault.saleOrderId = this.id;
+      this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
+        this.loadRecord();      
+      }, (error) => {
+        this.errorService.show(error);
+      });
+    }
+    else {
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
+      this.createRecord().subscribe(result => {
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
+
+        val.saleOrderId = result.id;
+        this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
+          this.loadRecord();        
+        }, (error) => {
+          this.errorService.show(error);
         });
       });
     }
@@ -746,7 +786,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
@@ -810,9 +849,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionCancel() {
     if (this.id) {
-      this.saleOrderService.actionCancel([this.id]).subscribe(() => {
-        this.loadRecord();
-      });
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Hủy phiếu điều trị';
+        modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
+        modalRef.result.then(() => {
+          this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+            this.loadRecord();
+          });
+        }, () => {
+        });
     }
   }
 
@@ -841,13 +886,34 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
+      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
       this.orderLines.markAsDirty();
       this.computeAmountTotal();
+
+      /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
+
+      if (this.formGroup.get('state').value == "sale"){
+        var val = this.getFormDataSave();    
+        this.saleOrderService.update(this.id,val).subscribe(() => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadRecord();
+        }, () => {
+          this.loadRecord();
+        });
+      }
     }, () => {
     });
+
+
   }
 
   //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -866,12 +932,29 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
+      debugger;
       var a = result as any;
       line.patchValue(result);
       line.setControl('teeth', this.fb.array(a.teeth || []));
       this.computeAmountTotal();
-
       this.orderLines.markAsDirty();
+
+      /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
+      if (this.formGroup.get('state').value == "sale"){
+        var val = this.getFormDataSave();    
+        this.saleOrderService.update(this.id,val).subscribe(() => {
+          this.notificationService.show({
+            content: 'Sửa thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadRecord();
+        }, () => {
+          this.loadRecord();
+        });
+      }
     }, () => {
     });
   }
@@ -944,6 +1027,31 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  // hủy dịch vụ
+  cancelSaleOrderLine(ids) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    modalRef.componentInstance.title = "Hủy: Dịch vụ";
+    modalRef.result.then(() => {    
+      if (this.id) {
+        this.saleOrderLineService.cancelOrderLine([ids]).subscribe(() => {
+          this.notificationService.show({
+            content: 'hủy dịch vụ thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadRecord();
+        }, () => {
+          this.loadRecord();
+        });      
+        }},(err) => {
+           console.log(err);
+          }
+        );
+      }
+   
+
   loadPayments() {
     if (this.id) {
       this.saleOrderService.getPayments(this.id).subscribe(result => {
@@ -1003,6 +1111,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
         this.loadPayments();
       });
+    });
+  }
+
+  printPayment(payment) {
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
+      this.accountPaymentPrintComponent.print(result);
     });
   }
 

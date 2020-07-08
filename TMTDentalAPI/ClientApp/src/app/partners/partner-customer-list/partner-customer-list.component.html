@@ -19,6 +19,12 @@
         </div>
     </div>
     <div class="o_cp_right">
+        <div>
+            <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm khách hàng'" [filterable]="true"
+            (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg"
+            [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+            </kendo-combobox>
+        </div>
     </div>
 </div>
 
@@ -45,11 +51,13 @@
                 {{dataItem.lastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="60">
+        <kendo-grid-column field="id" width="80">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
+                    <span class="fas fa-print"></span></button>
                 <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <i class="far fa-edit"></i></button>
                 <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
@@ -88,4 +96,5 @@
             </div>
         </div> -->
     </kendo-grid>
+    <app-partner-profile-print></app-partner-profile-print>
 </div>

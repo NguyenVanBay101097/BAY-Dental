@@ -5,6 +5,12 @@ import { PrintService } from './print.service';
 declare var $: any;
 import * as _ from 'lodash';
 import { PermissionService } from './shared/permission.service';
+import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
+import { environment } from 'src/environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
 
 @Component({
   selector: 'app-root',
@@ -14,18 +20,32 @@ import { PermissionService } from './shared/permission.service';
 export class AppComponent {
   title = 'tmt-dental';
   _areAccessKeyVisible = false;
-
-  constructor(public authService: AuthService, private router: Router, public printService: PrintService,
-    private el: ElementRef, private permissionService: PermissionService) {
+  value: string;
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    public printService: PrintService,
+    private notificationService: NotificationService,
+    private el: ElementRef,
+    private permissionService: PermissionService,
+    private http: HttpClient,
+    private modalService: NgbModal,
+    private irConfigParamService: IrConfigParameterService) {
     this.loadGroups();
+
+    this.authService.currentUser.subscribe((user) => {
+      if (user) {
+        this.loadIrConfigParam();
+      }
+    })
     if (this.authService.isAuthenticated()) {
+      this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
         console.log(result);
         this.permissionService.define(result);
       });
     }
   }
-
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
     if (!this._areAccessKeyVisible &&
       (keyDownEvent.altKey || keyDownEvent.key === 'Alt') &&
@@ -76,12 +96,45 @@ export class AppComponent {
   }
 
   loadGroups() {
-    this.authService.currentUser.subscribe(user => {
-      if (user) {
-        this.authService.getGroups().subscribe((result: any) => {
-          this.permissionService.define(result);
+    if (this.authService.isAuthenticated()) {
+      this.authService.currentUser.subscribe(user => {
+        if (user) {
+          this.authService.getGroups().subscribe((result: any) => {
+            this.permissionService.define(result);
+          });
+        }
+      });
+    }
+  }
+
+  loadIrConfigParam() {
+    var key = "import_sample_data";
+    this.irConfigParamService.getParam(key).subscribe(
+      (result: any) => {
+        this.value = result.value;
+        if (!this.value) {
+          this.openPopupImportSimpleData();
+        }
+      }
+    )
+  }
+
+  openPopupImportSimpleData() {
+    const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.value = this.value;
+    modalRef.result.then(result => {
+      if (result) {
+        this.notificationService.show({
+          content: 'Khởi tạo dữ liệu mẫu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
         });
       }
+    }, err => {
+      console.log(err);
     });
   }
+
 }

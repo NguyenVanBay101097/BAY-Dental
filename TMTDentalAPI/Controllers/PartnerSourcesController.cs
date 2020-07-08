@@ -62,7 +62,11 @@ namespace TMTDentalAPI.Controllers
 
             var result = _mapper.Map<PartnerSource>(val);
 
+            await _unitOfWork.BeginTransactionAsync();
+
             await _partnerSourceService.CreateAsync(result);
+
+            _unitOfWork.Commit();
 
             var basic = _mapper.Map<PartnerSourceBasic>(result);
 

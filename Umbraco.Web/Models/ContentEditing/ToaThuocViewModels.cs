@@ -14,6 +14,25 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày tạo
         /// </summary>
         public DateTime Date { get; set; }
+
+        public string Note { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Diagnostic { get; set; }
+    }
+
+    public class ToaThuocPaged
+    {
+        public ToaThuocPaged()
+        {
+            Limit = 20;
+        }
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public string Search { get; set; }
+
+        public Guid? PartnerId { get; set; }
     }
 
     public class ToaThuocDisplay: ToaThuocBasic
@@ -30,6 +49,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public PartnerSimple Partner { get; set; }
 
         public string Note { get; set; }
+
+        public string Diagnostic { get; set; }
 
         /// <summary>
         /// Liên kết với đợt khám nào?
@@ -51,6 +72,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ToaThuocDefaultGet
     {
         public Guid? DotKhamId { get; set; }
+
+        public Guid? PartnerId { get; set; }
     }
 
     public class ToaThuocLineDefaultGet
@@ -72,6 +95,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
 
         public string Note { get; set; }
+        public string Diagnostic { get; set; }
 
         public IEnumerable<ToaThuocLinePrintViewModel> Lines { get; set; } = new List<ToaThuocLinePrintViewModel>();
     }

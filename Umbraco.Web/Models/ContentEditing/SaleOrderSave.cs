@@ -6,6 +6,11 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderSave
     {
+        public SaleOrderSave()
+        {
+            IsQuotation = false;
+        }
+
         public Guid Id { get; set; }
 
         public DateTime DateOrder { get; set; }

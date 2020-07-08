@@ -9,6 +9,7 @@ import { PartnerCustomerDetailComponent } from './partner-customer-detail/partne
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
+import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
-      { path: 'appointment', component: PartnerCustomerAppointmentComponent }
+      { path: 'appointment', component: PartnerCustomerAppointmentComponent }, 
+      { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent }, 
     ]
   },
   {

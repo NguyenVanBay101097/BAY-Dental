@@ -26,7 +26,10 @@ namespace Infrastructure.Services
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (value != old)
+                    {
                         param.Value = value;
+                        await UpdateAsync(param);
+                    }
                 }
                 else
                     await DeleteAsync(param);

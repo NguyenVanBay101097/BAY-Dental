@@ -1,0 +1,317 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sampleData>
+  <data>
+
+    <!-- Resource: Start Partner_Category -->
+    <record id="res_partner_category_1" model="res.partner.category">
+      <field name="name">Thân thiết</field>
+    </record>
+    <record id="res_partner_category_2" model="res.partner.category">
+      <field name="name">Khó tính</field>
+    </record>
+
+    <!-- Resource: Enđ Partner_Category -->
+
+    <!-- Resource: Start Partner -->
+    <record id="res_partner_1" model="res.partner">
+      <field name="name">Đặng thế Tài</field>
+      <field name="email">dttaipllayku@gmail.com</field>
+      <field name="phone">0983800609</field>
+      <field name="gender">male</field>
+      <field name="birth_day">12</field>
+      <field name="birth_month">12</field>
+      <field name="birth_year">1992</field>
+    </record>
+    <record id="res_partner_2" model="res.partner">
+      <field name="name">Trần Việt Thương</field>
+      <field name="email">vietthuongtpos@gmail.com</field>
+      <field name="phone">0983830609</field>
+      <field name="gender">male</field>
+      <field name="birth_day">06</field>
+      <field name="birth_month">09</field>
+      <field name="birth_year">1992</field>
+    </record>
+    <record id="res_partner_3" model="res.partner">
+      <field name="name">Nguyễn Văn Nam</field>
+      <field name="email">nguyennamtpos@gmail.com</field>
+      <field name="phone">0906520609</field>
+      <field name="gender">male</field>
+      <field name="birth_day">06</field>
+      <field name="birth_month">12</field>
+      <field name="birth_year">1989</field>
+    </record>
+    <record id="res_partner_4" model="res.partner">
+      <field name="name">Huỳnh Tấn Vinh</field>
+      <field name="email">htvinh@gmail.com</field>
+      <field name="phone">0983830609</field>
+      <field name="gender">Male</field>
+      <field name="birth_day">06</field>
+      <field name="birth_month">10</field>
+      <field name="birth_year">1997</field>
+    </record>
+    <record id="res_partner_5" model="res.partner">
+      <field name="name">Nguyễn Thị Tú Quyên</field>
+      <field name="email">nguyenthangdhv95@gmail.com</field>
+      <field name="phone">0983830609</field>
+      <field name="gender">Female</field>
+      <field name="birth_day">15</field>
+      <field name="birth_month">06</field>
+      <field name="birth_year">1998</field>
+    </record>
+    <record id="res_partner_6" model="res.partner">
+      <field name="name">Nguyễn Văn Thắng</field>
+      <field name="email">nguyenthangdhv95@gmail.com</field>
+      <field name="phone">0983830609</field>
+      <field name="gender">male</field>
+      <field name="birth_day">6</field>
+      <field name="birth_month">9</field>
+      <field name="birth_year">1995</field>
+    </record>
+    <!-- Resource: End Partner -->
+
+    <!-- Resource: Start Product_Service_Category -->
+    <record id="product_category_1" model="product.category">
+      <field name="name">Nha khoa tổng quát</field>
+      <field name="type">service</field>
+    </record>
+    <record id="product_category_2" model="product.category">
+      <field name="name">Điều trị nội nha</field>
+      <field name="type">service</field>
+    </record>
+    <record id="product_category_3" model="product.category">
+      <field name="name">Tư vấn cấy ghép Implant</field>
+      <field name="type">service</field>
+    </record>
+    <record id="product_category_4" model="product.category">
+      <field name="name">Phục hình răng sứ</field>
+      <field name="type">service</field>
+    </record>
+    <!-- Resource: End Product_Service_Category -->
+
+    <!-- Resource: Start Product_Service -->
+    <record id="product_1" model="product.product">
+      <field name="categ_id" ref="product_category_1"/>
+      <field name="name">Lấy cao răng và đánh bóng</field>
+      <field name="list_price">100000</field>
+      <field name="purchase_ok">False</field>
+      <field name="sale_ok">True</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_2" model="product.product">
+      <field name="categ_id" ref="product_category_1"/>
+      <field name="name">Tẩy trắng răng tại nhà</field>
+      <field name="list_price">1500000</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_3" model="product.product">
+      <field name="categ_id" ref="product_category_1"/>
+      <field name="name">Tẩy trắng răng bằng đèn Laser Zoom II</field>
+      <field name="list_price">2500000</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_6" model="product.product">
+      <field name="categ_id" ref="product_category_3"/>
+      <field name="name">Tư vấn cấy ghép Implant (Hàn quốc)</field>
+      <field name="list_price">14000000</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_8" model="product.product">
+      <field name="categ_id" ref="product_category_3"/>
+      <field name="name">Tư vấn cấy ghép Implant USA (Mỹ)</field>
+      <field name="list_price">20000000</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_9" model="product.product">
+      <field name="categ_id" ref="product_category_3"/>
+      <field name="name">Tư vấn cấy ghép Implant Thụy Sĩ</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="list_price">30000000</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_10" model="product.product">
+      <field name="categ_id" ref="product_category_2"/>
+      <field name="name">Điều trị tủy răng vĩnh viễn</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="list_price">500000</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_11" model="product.product">
+      <field name="categ_id" ref="product_category_4"/>
+      <field name="name">Răng sứ Titan</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="list_price">1800000</field>
+      <field name="labo_price">1000000</field>
+      <field name="is_labo">True</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_12" model="product.product">
+      <field name="categ_id" ref="product_category_4"/>
+      <field name="name">Răng sứ Nacera</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="list_price">9000000</field>
+      <field name="labo_price">6000000</field>
+      <field name="is_labo">True</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <record id="product_13" model="product.product">
+      <field name="categ_id" ref="product_category_4"/>
+      <field name="name">Răng sứ Nacera Q thế hệ mới</field>
+      <field name="sale_ok">True</field>
+      <field name="purchase_ok">False</field>
+      <field name="list_price">10000000</field>
+      <field name="labo_price">8000000</field>
+      <field name="is_labo">True</field>
+      <field name="type">service</field>
+      <field name="type_2">service</field>
+    </record>
+    <!-- Resource: End Product_Service -->
+
+    <!-- Resource: Start Product_Service_Step -->
+    <record id="product_service_step_1" model="product.step">
+      <field name="product_id" ref="product_10"/>
+      <field name="name">Mở để trống</field>
+      <field name="order">1</field>
+    </record>
+    <record id="product_service_step_2" model="product.step">
+      <field name="product_id" ref="product_10"/>
+      <field name="name">Đặt As</field>
+      <field name="order">2</field>
+    </record>
+    <record id="product_service_step_3" model="product.step">
+      <field name="product_id" ref="product_10"/>
+      <field name="name">Sữa soạn ống tủy</field>
+      <field name="order">3</field>
+    </record>
+    <record id="product_service_step_4" model="product.step">
+      <field name="product_id" ref="product_10"/>
+      <field name="name">Quay CA(OH)2</field>
+      <field name="order">4</field>
+    </record>
+    <record id="product_service_step_5" model="product.step">
+      <field name="product_id" ref="product_10"/>
+      <field name="name">Trám bít ống tủy</field>
+      <field name="order">5</field>
+    </record>
+    <record id="product_service_step_6" model="product.step">
+      <field name="product_id" ref="product_10"/>
+      <field name="name">Trám kết thúc</field>
+      <field name="order">6</field>
+    </record>
+    <!-- Resource: End Product_Service_Step -->
+
+    <!-- Resource: Start Product_Product_Category -->
+    <record id="product_category_5" model="product.category">
+      <field name="name">Dụng cụ</field>
+      <field name="type">product</field>
+    </record>
+    <!-- Resource: End Product_Product_Category -->
+
+    <!-- Resource: Start Product_Product-->
+    <record id="product_14" model="product.product">
+      <field name="categ_id" ref="product_category_5"/>
+      <field name="name">Kiêm tiêm</field>
+      <field name="purchase_price">15000</field>
+      <field name="purchase_ok">True</field>
+      <field name="sale_ok">False</field>
+      <field name="type">product</field>
+      <field name="type_2">product</field>
+    </record>
+    <record id="product_15" model="product.product">
+      <field name="categ_id" ref="product_category_5"/>
+      <field name="name">Banh môi</field>
+      <field name="purchase_price">100000</field>
+      <field name="purchase_ok">True</field>
+      <field name="sale_ok">False</field>
+      <field name="type">product</field>
+      <field name="type_2">product</field>
+    </record>
+  
+    <!-- Resource: End Product_Product-->
+
+    <!-- Resource: Start Product_Medicine_Category -->
+    <record id="product_category_7" model="product.category">
+      <field name="name">Thuốc giảm đau</field>
+      <field name="type">medicine</field>
+    </record>
+    <!-- Resource: End Product_Medicine_Category -->
+
+    <!-- Resource: Start Product_Medicine-->
+    <record id="product_23" model="product.product">
+      <field name="categ_id" ref="product_category_7"/>
+      <field name="name">Paracetamol</field>
+      <field name="purchase_ok">False</field>
+      <field name="sale_ok">False</field>
+      <field name="ketoa_ok">True</field>
+      <field name="type">consu</field>
+      <field name="type_2">medicine</field>
+    </record>
+    <!-- Resource: End Product_Medicine-->
+
+    <!-- Resource: Start Partner_Supplier-->
+    <record id="res_partner_7" model="res.partner">
+      <field name="name">Labo Việt Tiến</field>
+      <field name="email">lvvietien@gmail.com</field>
+      <field name="phone">0983830609</field>
+      <field name="supplier">True</field>
+      <field name="customer">False</field>
+    </record>
+    <!-- Resource: End Partner_Supplier-->
+
+    <!-- Resource: Start History-->
+    <record id="history_1" model="history">
+      <field name="name">Bệnh tim</field>
+    </record>
+    <record id="history_3" model="history">
+      <field name="name">Bệnh phổi</field>
+    </record>
+    <record id="history_4" model="history">
+      <field name="name">Tiểu đường</field>
+    </record>
+    <record id="history_5" model="history">
+      <field name="name">Huyết áp cao</field>
+    </record>
+    <record id="history_7" model="history">
+      <field name="name">Chảy máu lâu</field>
+    </record>
+    <!-- Resource: End History-->
+
+    <!-- Resource: Start History-->
+    <record id="res_partner_source_1" model="res.partner.source">
+      <field name="name">Quảng cáo trên tờ rơi, áp phích</field>
+    </record>
+    <record id="res_partner_source_2" model="res.partner.source">
+      <field name="name">Quảng cáo trên truyền hình, internet</field>
+    </record>
+    <record id="res_partner_source_3" model="res.partner.source">
+      <field name="name">Bạn bè giới thiệu</field>
+    </record>
+    <record id="res_partner_source_4" model="res.partner.source">
+      <field name="name">Bác sĩ giới thiệu, cố vấn</field>
+      <field name="type">referral</field>
+    </record>
+    <!-- Resource: End History-->
+  </data>
+</sampleData>
+
+

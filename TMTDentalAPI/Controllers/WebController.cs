@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.ViewModels;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -22,14 +28,45 @@ namespace TMTDentalAPI.Controllers
         private readonly IIrAttachmentService _attachmentService;
         private readonly IMapper _mapper;
         private readonly IUploadService _uploadService;
+        private readonly IIrConfigParameterService _irConfigParameterService;
+        private readonly IImportSampleDataService _importSampleDataService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public WebController(IIrAttachmentService attachmentService,
-            IMapper mapper, IUploadService uploadService)
+
+        public WebController(
+            IIrAttachmentService attachmentService,
+            IMapper mapper,
+            IUploadService uploadService,
+            IIrConfigParameterService irConfigParameterService,
+            IImportSampleDataService importSampleDataService, IUnitOfWorkAsync unitOfWork)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
             _uploadService = uploadService;
+            _irConfigParameterService = irConfigParameterService;
+            _importSampleDataService = importSampleDataService;
+            _unitOfWork = unitOfWork;
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ImportSampleData([FromQuery]string action)
+        {
+            //Cancel / bo qua
+            //Installed / import
+            await _unitOfWork.BeginTransactionAsync();
+            if (action == "Installed")
+            {
+               
+                await _importSampleDataService.ImportSampleData();
+            }
+
+            await _irConfigParameterService.SetParam("import_sample_data", action);
+            _unitOfWork.Commit();
+
+            return NoContent();
+
+        }
+
 
         [HttpPost("[action]")]
         public async Task<IActionResult> BinaryUploadAttachment([FromForm]UploadAttachmentViewModel val)
@@ -122,6 +159,17 @@ namespace TMTDentalAPI.Controllers
             var fileName = System.Web.HttpUtility.UrlEncode(attachment.DatasFname);
             Response.Headers.Add("Content-Disposition", String.Format("attachment;filename*=UTF-8\"{0}\"", fileName));
             return File(content, attachment.MineType, attachment.DatasFname);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                var result = await _HandleUploadAsync(Convert.ToBase64String(memoryStream.ToArray()), file.FileName);
+                return Ok(result);
+            }
         }
     }
 }

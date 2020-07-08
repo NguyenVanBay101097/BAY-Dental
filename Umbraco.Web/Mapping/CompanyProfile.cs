@@ -16,6 +16,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<Company, CompanyDisplay>();
             CreateMap<CompanyDisplay, Company>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<Company, CompanyPrintVM>();
         }
     }
 }

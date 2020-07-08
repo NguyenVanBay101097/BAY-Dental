@@ -1,24 +1,34 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { PartnerCategorySimple } from '../partner-simple';
-import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
-import { PartnerService } from '../partner.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { HistorySimple } from 'src/app/history/history';
-import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
-import * as _ from 'lodash';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { ActivatedRoute } from '@angular/router';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
+import { HttpClient } from "@angular/common/http";
+import { PartnerCategorySimple, PartnerSourceSimple } from "../partner-simple";
+import {
+  PartnerCategoryService,
+  PartnerCategoryPaged,
+} from "src/app/partner-categories/partner-category.service";
+import { PartnerService } from "../partner.service";
+import { WindowRef } from "@progress/kendo-angular-dialog";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HistorySimple } from "src/app/history/history";
+import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
+import * as _ from "lodash";
+import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { ActivatedRoute } from "@angular/router";
+import { IntlService } from "@progress/kendo-angular-intl";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { UserSimple } from "src/app/users/user-simple";
+import { PartnerSourceService, PartnerSourcePaged } from "src/app/partner-sources/partner-source.service";
+import { UserService, UserPaged } from "src/app/users/user.service";
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-partner-customer-cu-dialog',
-  templateUrl: './partner-customer-cu-dialog.component.html',
-  styleUrls: ['./partner-customer-cu-dialog.component.css']
+  selector: "app-partner-customer-cu-dialog",
+  templateUrl: "./partner-customer-cu-dialog.component.html",
+  styleUrls: ["./partner-customer-cu-dialog.component.css"],
 })
 export class PartnerCustomerCuDialogComponent implements OnInit {
+  @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
+  @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
 
   id: string;
   formGroup: FormGroup;
@@ -26,13 +36,40 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   isDisabledWards: boolean = true;
   title: string;
 
-  dataSourceCities: Array<{ code: string, name: string }>;
-  dataSourceDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;
-  dataSourceWards: Array<{ code: string, name: string, districtCode: string, districtName: string, cityCode: string, cityName: string }>;
+  filteredSources: PartnerSourceSimple[] = [];
+  filteredReferralUsers: UserSimple[] = [];
 
-  dataResultCities: Array<{ code: string, name: string }>;
-  dataResultDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;
-  dataResultWards: Array<{ code: string, name: string, districtCode: string, districtName: string, cityCode: string, cityName: string }>;
+  dataSourceCities: Array<{ code: string; name: string }>;
+  dataSourceDistricts: Array<{
+    code: string;
+    name: string;
+    cityCode: string;
+    cityName: string;
+  }>;
+  dataSourceWards: Array<{
+    code: string;
+    name: string;
+    districtCode: string;
+    districtName: string;
+    cityCode: string;
+    cityName: string;
+  }>;
+
+  dataResultCities: Array<{ code: string; name: string }>;
+  dataResultDistricts: Array<{
+    code: string;
+    name: string;
+    cityCode: string;
+    cityName: string;
+  }>;
+  dataResultWards: Array<{
+    code: string;
+    name: string;
+    districtCode: string;
+    districtName: string;
+    cityCode: string;
+    cityName: string;
+  }>;
 
   categoriesList: PartnerCategorySimple[] = [];
 
@@ -42,25 +79,28 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   historiesList: HistorySimple[] = [];
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private http: HttpClient,
     private partnerCategoryService: PartnerCategoryService,
+    private partnerSourceService: PartnerSourceService,
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
-    private intlService: IntlService
-  ) { }
+    private intlService: IntlService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
-      gender: 'male',
+      name: ["", Validators.required],
+      gender: "male",
       ref: null,
       medicalHistory: null,
-      birthDay: null,
-      birthMonth: null,
-      birthYear: null,
+      birthDayStr: '',
+      birthMonthStr: '',
+      birthYearStr: '',
       street: null,
       city: null,
       district: null,
@@ -68,17 +108,22 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       email: null,
       phone: null,
       categories: null,
+      source: null,
+      referralUserId: null,
+      referralUser: null,
       comment: null,
       jobTitle: null,
       customer: true,
       histories: this.fb.array([]),
       companyId: null,
-      dateObj: null
+      dateObj: null,
     });
+
+    
 
     setTimeout(() => {
       if (this.id) {
-        this.partnerService.getPartner(this.id).subscribe(result => {
+        this.partnerService.getPartner(this.id).subscribe((result) => {
           this.formGroup.patchValue(result);
           if (result.city && result.city.code) {
             this.handleCityChange(result.city);
@@ -91,19 +136,39 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           }
 
           if (result.histories.length) {
-            result.histories.forEach(history => {
-              var histories = this.formGroup.get('histories') as FormArray;
+            result.histories.forEach((history) => {
+              var histories = this.formGroup.get("histories") as FormArray;
               histories.push(this.fb.group(history));
             });
           }
 
           if (result.date) {
             var date = new Date(result.date);
-            this.formGroup.get('dateObj').setValue(date);
+            this.formGroup.get("dateObj").setValue(date);
+          }
+
+          if (result.birthYear) {
+            this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
+          }
+
+          if (result.birthMonth) {
+            this.formGroup.get("birthMonthStr").setValue(result.birthMonth + '');
+          }
+
+          if (result.birthDay) {
+            this.formGroup.get("birthDayStr").setValue(result.birthDay + '');
+          }
+
+          if (result.source) {
+            this.filteredSources = _.unionBy(this.filteredSources, [result.source], 'id');
+          }
+
+          if (result.referralUser) {
+            this.filteredReferralUsers = _.unionBy(this.filteredReferralUsers, [result.referralUser], 'id');
           }
         });
       } else {
-        this.formGroup.get('dateObj').setValue(new Date());
+        this.formGroup.get("dateObj").setValue(new Date());
       }
 
       this.dayList = _.range(1, 32);
@@ -112,17 +177,47 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.loadSourceCities();
       this.loadCategoriesList();
       this.loadHistoriesList();
+      this.loadSourceList();
+      this.loadReferralUserList();
+
+      this.sourceCbx.filterChange
+        .asObservable()
+        .pipe(
+          debounceTime(300),
+          tap(() => (this.sourceCbx.loading = true)),
+          switchMap((value) => this.searchSources(value))
+        )
+        .subscribe((result) => {
+          this.filteredSources = result;
+          this.sourceCbx.loading = false;
+        });
+
+    this.userCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.userCbx.loading = true)),
+        switchMap((value) => this.searchReferralUsers(value))
+      )
+      .subscribe((result) => {
+        this.filteredReferralUsers = result;
+        this.userCbx.loading = false;
+      });
     });
   }
 
+  get sourceValue() {
+    return this.formGroup.get('source').value;
+  }
+
   loadHistoriesList() {
-    this.partnerService.getHistories().subscribe(result => {
+    this.partnerService.getHistories().subscribe((result) => {
       this.historiesList = result;
     });
   }
 
   checked(item: HistorySimple) {
-    var histories = this.formGroup.get('histories') as FormArray;
+    var histories = this.formGroup.get("histories") as FormArray;
     for (var i = 0; i < histories.controls.length; i++) {
       var control = histories.controls[i];
       if (control.value.id == item.id) {
@@ -134,15 +229,15 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   checkboxChange(hist: HistorySimple, isCheck: boolean) {
-    var histories = this.formGroup.get('histories') as FormArray;
+    var histories = this.formGroup.get("histories") as FormArray;
 
     if (isCheck) {
-      let index = histories.controls.findIndex(x => x.value.id == hist.id);
+      let index = histories.controls.findIndex((x) => x.value.id == hist.id);
       if (index == -1) {
         histories.push(this.fb.group(hist));
       }
     } else {
-      let index = histories.controls.findIndex(x => x.value.id == hist.id);
+      let index = histories.controls.findIndex((x) => x.value.id == hist.id);
       if (index != -1) {
         histories.removeAt(index);
       }
@@ -150,72 +245,94 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   loadSourceCities() {
-    this.http.post('https://aship.skyit.vn/api/ApiShippingCity/GetCities', {
-      provider: 'Undefined'
-    }).subscribe((result: any) => {
-      this.dataSourceCities = result;
-      this.dataResultCities = this.dataSourceCities.slice();
-    });
+    this.http
+      .post("https://aship.skyit.vn/api/ApiShippingCity/GetCities", {
+        provider: "Undefined",
+      })
+      .subscribe((result: any) => {
+        this.dataSourceCities = result;
+        this.dataResultCities = this.dataSourceCities.slice();
+      });
   }
 
   loadSourceDistricts(cityCode: string) {
-    this.http.post('https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts', {
-      data: {
-        code: cityCode
-      },
-      provider: 'Undefined'
-    }).subscribe((result: any) => {
-      this.dataSourceDistricts = result;
-      this.dataResultDistricts = this.dataSourceDistricts.slice();
-    });
+    this.http
+      .post("https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts", {
+        data: {
+          code: cityCode,
+        },
+        provider: "Undefined",
+      })
+      .subscribe((result: any) => {
+        this.dataSourceDistricts = result;
+        this.dataResultDistricts = this.dataSourceDistricts.slice();
+      });
   }
 
   loadSourceWards(districtCode: string) {
-    this.http.post('https://aship.skyit.vn/api/ApiShippingWard/GetWards', {
-      data: {
-        code: districtCode
-      },
-      provider: 'Undefined'
-    }).subscribe((result: any) => {
-      this.dataSourceWards = result;
-      this.dataResultWards = this.dataSourceWards.slice();
-    });
+    this.http
+      .post("https://aship.skyit.vn/api/ApiShippingWard/GetWards", {
+        data: {
+          code: districtCode,
+        },
+        provider: "Undefined",
+      })
+      .subscribe((result: any) => {
+        this.dataSourceWards = result;
+        this.dataResultWards = this.dataSourceWards.slice();
+      });
   }
 
   handleCityFilter(value) {
-    this.dataResultCities = this.dataSourceCities.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    this.dataResultCities = this.dataSourceCities.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
   }
 
   handleDistrictFilter(value) {
-    this.dataResultDistricts = this.dataSourceDistricts.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    this.dataResultDistricts = this.dataSourceDistricts.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
   }
 
   handleWardFilter(value) {
-    this.dataResultWards = this.dataSourceWards.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    this.dataResultWards = this.dataSourceWards.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
+  }
+
+  handleSourceFilter(value) {
+    this.filteredSources = this.filteredSources.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
+  }
+
+  handleReferralUserFilter(value) {
+    this.searchReferralUsers(value).subscribe((result) => {
+      this.filteredReferralUsers = result;
+    });
   }
 
   handleCityChange(value) {
-    this.formGroup.get('city').setValue(value);
-    this.formGroup.get('district').setValue(null);
-    this.formGroup.get('ward').setValue(null);
+    this.formGroup.get("city").setValue(value);
+    this.formGroup.get("district").setValue(null);
+    this.formGroup.get("ward").setValue(null);
 
     if (value == undefined) {
       this.isDisabledDistricts = true;
       this.dataResultDistricts = [];
-    }
-    else {
+    } else {
       this.isDisabledDistricts = false;
       this.loadSourceDistricts(value.code);
     }
 
     this.isDisabledWards = true;
     this.dataResultWards = [];
-
   }
 
   handleDistrictChange(value) {
-    this.formGroup.get('district').setValue(value);
-    this.formGroup.get('ward').setValue(null);
+    this.formGroup.get("district").setValue(value);
+    this.formGroup.get("ward").setValue(null);
 
     if (value == undefined) {
       this.isDisabledWards = true;
@@ -227,29 +344,60 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   handleWardChange(value) {
-    this.formGroup.get('ward').setValue(value);
+    this.formGroup.get("ward").setValue(value);
   }
 
   loadCategoriesList() {
-    this.searchCategories().subscribe(result => {
+    this.searchCategories().subscribe((result) => {
       this.categoriesList = result;
     });
   }
 
-  quickCreatePartnerCategory() {
-    let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm nhóm khách hàng';
-
-    modalRef.result.then(() => {
-      this.loadCategoriesList();
-    }, () => {
+  loadSourceList() {
+    this.searchSources().subscribe((result) => {
+      this.filteredSources = _.unionBy(this.filteredSources, result, 'id');
     });
+  }
+
+  loadReferralUserList() {
+    this.searchReferralUsers().subscribe((result) => {
+      this.filteredReferralUsers = _.unionBy(this.filteredReferralUsers, result, 'id');
+    });
+  }
+
+  quickCreatePartnerCategory() {
+    let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Thêm nhóm khách hàng";
+
+    modalRef.result.then(
+      () => {
+        this.loadCategoriesList();
+      },
+      () => {}
+    );
   }
 
   searchCategories(q?: string) {
     var val = new PartnerCategoryPaged();
     val.search = q;
     return this.partnerCategoryService.autocomplete(val);
+  }
+
+  searchSources(q?: string) {
+    var val = new PartnerSourcePaged();
+    val.search = q;
+    return this.partnerSourceService.autocomplete(val);
+  }
+
+  searchReferralUsers(q?: string) {
+    var val = new UserPaged();
+    val.search = q;
+    return this.userService.autocompleteSimple(val);
   }
 
   birthInit(begin: number, end: number) {
@@ -266,17 +414,27 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, 'yyyy-MM-dd') : null;
+    val.sourceId = val.source ? val.source.id : null;
+    val.referralUserId = val.referralUser ? val.referralUser.id : null;
+    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd"): null;
+    val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
+    val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
+    val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
 
     if (this.id) {
-     
-      this.partnerService.update(this.id, val).subscribe(() => {
-        this.activeModal.close(true);
-      }, err => this.showErrorService.show(err));
+      this.partnerService.update(this.id, val).subscribe(
+        () => {
+          this.activeModal.close(true);
+        },
+        (err) => this.showErrorService.show(err)
+      );
     } else {
-      this.partnerService.create(val).subscribe(result => {
-        this.activeModal.close(result);
-      }, err => this.showErrorService.show(err));
+      this.partnerService.create(val).subscribe(
+        (result) => {
+          this.activeModal.close(result);
+        },
+        (err) => this.showErrorService.show(err)
+      );
     }
   }
 

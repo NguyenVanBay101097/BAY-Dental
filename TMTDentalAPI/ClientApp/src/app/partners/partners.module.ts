@@ -39,6 +39,7 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
 import { SaleReportModule } from '../sale-report/sale-report.module';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
+import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -69,7 +70,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     PartnerCustomerTreatmentPaymentComponent,
     PartnerCustomerAppointmentComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
-    PartnerCustomerTreatmentPaymentChildComponent],
+    PartnerCustomerTreatmentPaymentChildComponent,
+    PartnerCustomerProductToaThuocListComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,

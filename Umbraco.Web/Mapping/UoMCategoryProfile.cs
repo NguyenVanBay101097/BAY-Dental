@@ -13,6 +13,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<UoMCategorySave, UoMCategory>();
             CreateMap<UoMCategory, UoMCategoryBasic>();
+
+            CreateMap<UoMCategory, UoMCategorySimple>();
         }
     }
 }

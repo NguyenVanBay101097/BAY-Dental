@@ -32,5 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DiscountType { get; set; }
 
         public decimal? DiscountFixed { get; set; }
+
+        public string SalesmanId { get; set; }
     }
 }

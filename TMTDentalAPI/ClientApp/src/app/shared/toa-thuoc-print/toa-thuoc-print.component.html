@@ -1,0 +1,112 @@
+<div id="printToaThuocDiv" *ngIf="toaThuocPrint" style="display: none;">
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">{{toaThuocPrint.companyName}}</h5>
+            <div>Địa chỉ: {{toaThuocPrint.companyAddress}}</div>
+            <div *ngIf="toaThuocPrint.companyPhone">ĐT: {{toaThuocPrint.companyPhone}}</div>
+            <div *ngIf="toaThuocPrint.companyEmail">Email: {{toaThuocPrint.companyEmail}}</div>
+        </div>
+        <div class="text-center">
+            <h1>Đơn thuốc</h1>
+            <span>Số: {{toaThuocPrint.name}} - Ngày: {{toaThuocPrint.date | date: 'shortDate'}}</span>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerAddress}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Phái
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerGender}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tuổi
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.partnerAge}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="o_group mt-0 mb-0">
+            <table class="o_group o_inner_group mt-0">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Chuẩn đoán
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{toaThuocPrint.diagnostic}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Thuốc</th>
+                        <th class="text-right">Số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let line of toaThuocPrint.lines; let i=index">
+                        <td>
+                            <span class="font-weight-bold">{{ line.productName }}</span> <br />
+                            <span class="font-italic">{{ line.name }}</span>
+                        </td>
+                        <td class="text-right">{{ line.quantity | number }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>Lời dặn: {{toaThuocPrint.note}}</div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    Bác sĩ
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

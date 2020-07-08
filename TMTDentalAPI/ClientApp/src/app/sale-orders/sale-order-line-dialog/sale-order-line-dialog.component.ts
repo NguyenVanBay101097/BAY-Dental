@@ -69,6 +69,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
     }, 200);
 
     if (this.line) {
+      console.log(this.line);
       setTimeout(() => {
         if (this.line.product) {
           this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
@@ -292,25 +293,14 @@ export class SaleOrderLineDialogComponent implements OnInit {
     if (!this.saleLineForm.valid) {
       return;
     }
-
     var val = this.saleLineForm.value;
-    val.productId = val.product.id;
+    val.productId = val.product ? val.product.id : null;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.salesmanId = val.salesman ? val.salesman.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    if (this.saleOrderId) {
-      val.saleOrderId = this.saleOrderId;
-      this.saleLineService.create(val).subscribe(
-        result => {
-          console.log(result);
-          this.activeModal.close(val);
-        }
-      )
-    }
-    else {
-      this.activeModal.close(val);
-    }
+    console.log(val);
+    this.activeModal.close(val);
   }
 
   onCancel() {

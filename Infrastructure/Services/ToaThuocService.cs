@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -50,6 +52,15 @@ namespace Infrastructure.Services
                 res.DotKhamId = dk.Id;
                 res.DotKham = _mapper.Map<DotKhamSimple>(dk);
             }
+
+            if (val.PartnerId.HasValue)
+            {
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(val.PartnerId);
+                res.PartnerId = partner.Id;
+                res.Partner = _mapper.Map<PartnerSimple>(partner);
+            }
+
             return res;
         }
 
@@ -95,9 +106,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ToaThuocBasic>> GetToaThuocsForDotKham(Guid dotKhamId)
         {
-            var toaThuocs = await SearchQuery(x => x.DotKhamId == dotKhamId).ToListAsync();
-            var res = _mapper.Map<IEnumerable<ToaThuocBasic>>(toaThuocs);
-            return res;
+            var toaThuocs = await _mapper.ProjectTo<ToaThuocBasic>(SearchQuery(x => x.DotKhamId == dotKhamId)).ToListAsync();
+            return toaThuocs;
         }
 
         public async Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id)
@@ -138,6 +148,24 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task<PagedResult2<ToaThuocBasic>> GetPagedResultAsync(ToaThuocPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
     }
 }

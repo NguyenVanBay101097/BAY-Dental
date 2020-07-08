@@ -25,6 +25,8 @@ export class PartnerSourcePaging {
   items: PartnerSourceBasic[];
 }
 
+
+
 @Injectable()
 export class PartnerSourceService {
   apiUrl = "api/PartnerSources";
@@ -60,4 +62,6 @@ export class PartnerSourceService {
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
+
+ 
 }

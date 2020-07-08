@@ -45,6 +45,11 @@ import { CharCountDirective } from './char-count.directive';
 import { SelectUomProductDialogComponent } from './select-uom-product-dialog/select-uom-product-dialog.component';
 import { RedirectComponentDirective } from './redirect-component.directive';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
+import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
+import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
+import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
+import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
+import { AccountPaymentPrintComponent } from './account-payment-print/account-payment-print.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +86,12 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
     AnchorHostDirective,
     MyAutosizeDirective,
     CharCountDirective,
-    SelectUomProductDialogComponent
+    SelectUomProductDialogComponent,
+    ImageFileUploadComponent,
+    ToaThuocPrintComponent,
+    ImportSampleDataComponent, 
+    PartnerProfilePrintComponent,
+    AccountPaymentPrintComponent
   ],
   exports: [
     HeaderComponent,
@@ -115,7 +125,11 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
     MyAutosizeDirective,
     CharCountDirective,
     SelectUomProductDialogComponent,
-    RedirectComponentDirective
+    RedirectComponentDirective,
+    ImageFileUploadComponent,
+    ToaThuocPrintComponent,
+    PartnerProfilePrintComponent,
+    AccountPaymentPrintComponent
   ],
   imports: [
     CommonModule,
@@ -141,7 +155,8 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
     UserProfileEditComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    SelectUomProductDialogComponent
+    SelectUomProductDialogComponent,
+    ImportSampleDataComponent
   ],
 })
 export class SharedModule { }
