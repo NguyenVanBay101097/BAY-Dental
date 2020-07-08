@@ -31,7 +31,7 @@ import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-se
 import { CustomComponentModule } from '../common/common.module';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
 import { HttpClientModule } from '@angular/common/http';
-import { NgbActiveModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
 import { PartnerCustomerProfileNextAppointmentComponent } from './partner-customer-profile-next-appointment/partner-customer-profile-next-appointment.component';
@@ -84,7 +84,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     SharedModule,
     CustomComponentModule,
     SaleReportModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgbModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

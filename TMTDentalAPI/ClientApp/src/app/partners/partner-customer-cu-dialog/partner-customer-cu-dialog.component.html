@@ -9,7 +9,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Họ tên</label>
+                    <label class="o_form_label oe_edit_only">Họ tên </label>
                     <h1>
                         <input class="form-control" formControlName="name" name="name">
                     </h1>
@@ -127,15 +127,21 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Địa chỉ
-                                    </label>
+                                    <div class="d-flex">
+                                        <label class="o_form_label">
+                                            Địa chỉ
+                                        </label>
+                                        <div class="pl-3">
+                                            <app-check-address-button (clickAddress)="handleAddress($event)"></app-check-address-button>
+                                        </div>
+                                    </div>
+                                    
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="o_address_format mb-2">
                                         <div class="mb-2">
                                             <input class="form-control" placeholder="Số nhà, đường..." type="text"
-                                                formControlName="street" />
+                                                formControlName="street" />                                               
                                         </div>
                                         <div class="mb-2">
                                             <kendo-combobox [data]="dataResultCities" [textField]="'name'"

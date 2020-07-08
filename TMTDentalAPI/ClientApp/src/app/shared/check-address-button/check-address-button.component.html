@@ -1,0 +1,20 @@
+<div class="input-group-append">
+    <button class="btn btn-secondary btn-sm" title="Kiểm tra địa chỉ"  type="button"  [ngbPopover]="checkAddress" popoverTitle="Kiểm tra địa chỉ" #popOver="ngbPopover"  [autoClose]="'outside'" placement="bottom" (click)="onClickPopover(popOver)">
+        <i class="fas fa-map-marker-alt"></i>
+    </button>
+</div>
+
+<ng-template #checkAddress>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" #gf placeholder="nhập địa chỉ ...">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary btn-sm" (click)="checkAddressApi(gf.value)"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </div>
+      </div>                                            
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item p-0" *ngFor="let ad of addressCheck; let i = index">
+            {{ad.address}}
+            <a class="text-primary" (click)="onClickAddress(ad)">chọn</a>
+        </li>     
+      </ul>                                          
+</ng-template>
