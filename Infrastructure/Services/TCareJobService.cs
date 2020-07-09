@@ -253,6 +253,27 @@ namespace Infrastructure.Services
                             }
 
                             break;
+                        case "lastExamination":
+                            //ngày khám cuối cùng sau bao nhiêu ngày 
+                            var lastExaminationPartnerIds = conn.Query<Guid>("" +
+                                    "Select pn.Id From Partners pn " +
+                                    "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
+                                    "Left join DotKhams dk ON dk.SaleOrderId = sale.Id " +
+                                    "Where pn.Customer = 1 and sale.State = @sale " +
+                                    "Group by pn.Id " +
+                                    "Having (Max(dk.Date) < DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value), sale = "('sale','done')" }).ToList();
+                               lstRule.Add(new RulePartnerIds() { Ids = lastExaminationPartnerIds });
+                            break;
+                        case "lastAppointment":
+                            //lịch hẹn tiếp theo/gần đây trước bao nhiêu ngày
+                            var lastAppointmentPartnerIds = conn.Query<Guid>("" +
+                                    "Select pn.Id From Partners pn " +
+                                    "Left join Appointments am ON am.PartnerId = pn.Id " +                                
+                                    "Where pn.Customer = 1 " +
+                                    "Group by pn.Id " +
+                                    "Having (Max(am.Date) > DATEADD(day, @number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
+                            lstRule.Add(new RulePartnerIds() { Ids = lastAppointmentPartnerIds });
+                            break;
                     }
 
                 }
