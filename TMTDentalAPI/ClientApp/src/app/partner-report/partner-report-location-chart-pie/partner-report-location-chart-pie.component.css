@@ -1,0 +1,12 @@
+.pie_chart {
+    display: inline-flex;
+    width: 100%;
+}
+
+.pie_chart_district {
+    width: 50%;
+}
+
+.pie_chart_ward {
+    width: 50%;
+}

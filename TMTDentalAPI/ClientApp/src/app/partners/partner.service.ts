@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
@@ -337,6 +337,14 @@ export class PartnerService {
 
     saveAvatar(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/SaveAvatar", data);
+    }
+
+    getReportLocationCompanyWard(val): Observable<PartnerReportLocationWard[]> {
+        return this.http.get<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyWard', { params: val });
+    }
+
+    getReportLocationCompanyDistrict(val): Observable<PartnerReportLocationDistrict[]> {
+        return this.http.get<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyDistrict', { params: val });
     }
 }
 

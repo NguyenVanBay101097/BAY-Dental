@@ -1,0 +1,47 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê khách hàng theo khu vực
+            </li>
+        </ol>
+        <div class="o_cp_right">
+
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div>
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="pie_chart">
+        <div class="pie_chart_district">
+            <kendo-chart *ngIf="pieDataDistrict" title="Báo cáo theo quận/huyện lân cận phòng khám"
+                (seriesClick)="changeDistrict($event)">
+                <kendo-chart-legend position="bottom"></kendo-chart-legend>
+                <kendo-chart-series>
+                    <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataDistrict" field="value"
+                        categoryField="category" [labels]="{ visible: true, content: labelContent }">
+                    </kendo-chart-series-item>
+                </kendo-chart-series>
+            </kendo-chart>
+        </div>
+        <div class="pie_chart_ward">
+            <kendo-chart *ngIf="pieDataWard" title="Báo cáo theo phường/xã lân cận phòng khám">
+                <kendo-chart-legend position="bottom"></kendo-chart-legend>
+                <kendo-chart-series>
+                    <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataWard" field="value"
+                        categoryField="category" [labels]="{ visible: true, content: labelContent }">
+                    </kendo-chart-series-item>
+                </kendo-chart-series>
+            </kendo-chart>
+        </div>
+    </div>
+</div>
