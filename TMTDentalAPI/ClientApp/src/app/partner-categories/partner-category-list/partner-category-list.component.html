@@ -1,6 +1,6 @@
 <div class="o_control_panel">
     <ol class="breadcrumb">
-        <li class="active">Quản lý nhãn</li>
+        <li class="active">Nhãn khách hàng</li>
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
@@ -33,23 +33,21 @@
     </div>
 </div>
 
-<div class="k-overlay" *ngIf="opened"></div>
-<div kendoWindowContainer></div>
-<div kendoDialogContainer></div>
-
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column field="name" title="Tên">
-    </kendo-grid-column>
-    <kendo-grid-column field="id">
-        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-            Thao tác
-        </ng-template>
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                <span class="far fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                <span class="far fa-trash-alt"></span></button>
-        </ng-template>
-    </kendo-grid-column>
-</kendo-grid>
+        <kendo-grid-column field="name" title="Tên">
+        </kendo-grid-column>
+        <kendo-grid-column field="id">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

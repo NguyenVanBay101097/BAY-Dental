@@ -110,13 +110,6 @@ export class PartnerCustomerCategoriesComponent implements OnInit {
     this.partnerService.addTags(val).subscribe(() => {
       this.loadDataFromApi();
       this.value_partnerCategory = [];
-      this.notificationService.show({
-        content: 'Thêm nhãn thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
     });
   }
 
@@ -137,13 +130,6 @@ export class PartnerCustomerCategoriesComponent implements OnInit {
           }
           if (this.selectedPartnerCategories.length == 0)
             this.showBtnManipulation = false;
-          this.notificationService.show({
-            content: 'Xóa nhãn thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
         });
       }, () => {
     });
@@ -163,13 +149,6 @@ export class PartnerCustomerCategoriesComponent implements OnInit {
           this.loadDataFromApi();
           this.selectedPartnerCategories = [];
           this.showBtnManipulation = false;
-          this.notificationService.show({
-            content: 'Xóa nhãn thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
         });
       }, () => {
     });

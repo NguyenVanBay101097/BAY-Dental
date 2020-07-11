@@ -118,6 +118,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.CompleteName.Contains(val.Search));
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == val.PartnerId));
+
             query = query.OrderBy(s => s.ParentLeft);
             return query;
         }
@@ -125,20 +128,13 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<PartnerCategoryBasic>> GetPagedResultAsync(PartnerCategoryPaged val)
         {
             var query = GetQueryPaged(val);
-            var items = new List<PartnerCategory>();
-            if (val.PartnerId.HasValue) {
-                items = await query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.PartnerId == val.PartnerId)).Skip(val.Offset).Take(val.Limit)
-                    .ToListAsync();
-            } else {
-                items = await query.Skip(val.Offset).Take(val.Limit)
-                    .ToListAsync();
-            }
 
-            var totalItems = items.Count();
+            var items = await _mapper.ProjectTo<PartnerCategoryBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var totalItems = query.Count();
 
             return new PagedResult2<PartnerCategoryBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<PartnerCategoryBasic>>(items)
+                Items = items
             };
         }
 
