@@ -330,7 +330,6 @@ namespace Infrastructure.Services
                     //Xử lý trường hợp khi có nhiều Rule 
                     //partner_ids = SearchPartnerIdsInRules(resultingMessage.Root.Rule, resultingMessage.Root.Rule.Logic, conn);
 
-
                     partner_ids = SearchPartnerIds(resultingMessage.Root.Rule.Condition, resultingMessage.Root.Rule.Logic, conn);
 
                     //Get partnerIds in list rules
@@ -346,6 +345,8 @@ namespace Infrastructure.Services
 
                     if (channelSocial == null)
                         return;
+
+                  
 
                     profiles = GetUserProfiles(Guid.Parse(resultingMessage.Root.Sequence.ChannelSocialId), partner_ids, conn);
                     if (profiles == null)
@@ -399,7 +400,7 @@ namespace Infrastructure.Services
                                 return;
                             if (channel.Type == "facebook")
                             {
-                                var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId) , channel.Id)).ToList();
+                                var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content,x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId) , channel.Id)).ToList();
                                 var limit = 200;
                                 var offset = 0;
                                 var subTasks = tasks.Skip(offset).Take(limit).ToList();
@@ -472,8 +473,8 @@ namespace Infrastructure.Services
             var now = DateTime.Now;
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
-
-            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
+           
+            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text.Replace("{{ten_khach_hang}}", profile.Name).Replace("{{gioi_tinh}}", profile.Partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", profile.Partner.Company.Name), profile.PSID, access_token);
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" , ChannelSocialId = channelSocialId });
             else
@@ -487,7 +488,7 @@ namespace Infrastructure.Services
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
             var zaloClient = new ZaloClient(access_token);
-            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text).Root.ToObject<RootZalo>().data;
+            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", profile.Name).Replace("{{gioi_tinh}}", profile.Partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", profile.Partner.Company.Name)).Root.ToObject<RootZalo>().data;
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
             else
