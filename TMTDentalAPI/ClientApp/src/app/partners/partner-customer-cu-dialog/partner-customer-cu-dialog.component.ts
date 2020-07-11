@@ -30,7 +30,6 @@ import { AddressCheckApi } from 'src/app/price-list/price-list';
 export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild('popOver',{static: true}) public popover: NgbPopover;
   
   id: string;
   formGroup: FormGroup;
@@ -38,7 +37,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   isDisabledWards: boolean = true;
   title: string;
   addressCheck: AddressCheckApi[] = [];
-  checkedText: string;
   filteredSources: PartnerSourceSimple[] = [];
   filteredReferralUsers: UserSimple[] = [];
   districtsList: District[] = [];
@@ -47,7 +45,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   districtsFilter: District[] = [];
   provincesFilter: City[] = [];
   wardsFilter: Ward[] = [];
-  cusId: string;
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
@@ -270,10 +267,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.handleWardChange(ward);
     }
   }
-
- 
-
-
 
   get getStreet() {
     return this.formGroup.get('street');
