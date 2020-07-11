@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ namespace Infrastructure.Services
             var steps = await SearchQuery(x => x.SaleLineId == step.SaleLineId, x => x.OrderBy(s => s.Order)).ToListAsync();
             var clone = new DotKhamStep(step);
             await CreateAsync(clone);
-         
+
             if (val.CloneInsert == "down")
             {
                 var index = steps.IndexOf(step);
@@ -103,7 +104,7 @@ namespace Infrastructure.Services
         public async Task AssignDotKham(DotKhamStepAssignDotKhamVM val)
         {
             var steps = await SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
-            foreach(var step in steps)
+            foreach (var step in steps)
             {
                 if (step.IsDone)
                     continue;
@@ -142,6 +143,38 @@ namespace Infrastructure.Services
             if (self.Any(x => x.IsDone))
                 throw new Exception("Không thể xóa chi tiết khám đã hoàn thành");
             await DeleteAsync(self);
+        }
+
+        public async Task<PagedResult2<DotKhamStepReport>> DotKhamStepReport(DotKhamStepPaged val)
+        {
+            var query = SearchQuery(x => x.IsDone == true, orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            if (val.DateFrom.HasValue && val.DateTo.HasValue)
+                query = query.Where(x => x.DotKham.Date >= val.DateFrom && x.DotKham.Date <= val.DateTo);
+            if (!string.IsNullOrEmpty(val.UserId))
+                query = query.Where(x => x.DotKham.UserId == val.UserId);
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.DotKham.PartnerId == val.PartnerId.Value);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                x.DotKham.User.Name.Contains(val.Search) ||
+                x.DotKham.AssistantUser.Name.Contains(val.Search) ||
+                x.DotKham.Partner.Name.Contains(val.Search) ||
+                x.Product.Name.Contains(val.Search));
+            var items = await query.Select(x => new DotKhamStepReport
+            {
+                Date = x.DotKham.Date,
+                AssistantName = x.DotKham.AssistantUser != null ? x.DotKham.AssistantUser.Name : "",
+                DoctorName = x.DotKham.User != null ? x.DotKham.User.Name : "",
+                PartnerName = x.DotKham.Partner != null ? x.DotKham.Partner.Name : "",
+                ServiceName = x.Product != null ? x.Product.Name : "",
+                StepName = x.Name
+            }).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<DotKhamStepReport>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
     }
 }

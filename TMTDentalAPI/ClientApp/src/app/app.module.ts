@@ -103,6 +103,7 @@ import { PartnerCustomerDetailComponent } from './partners/partner-customer-deta
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
+import { DotKhamStepsModule } from './dot-kham-steps/dot-kham-steps.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -152,6 +153,7 @@ registerLocaleData(localeVi, "vi");
     EmployeeCategoriesModule,
     RoutingsModule,
     HttpClientModule,
+    DotKhamStepsModule,
     StockPickingsModule,
     StockPickingTypesModule,
     LaboOrderLinesModule,
@@ -239,4 +241,4 @@ registerLocaleData(localeVi, "vi");
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
