@@ -313,30 +313,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
-            if (val.Type == "customer")
-            {
-                await _unitOfWork.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
 
-                var result = await _partnerService.ImportCustomer(val);
+            var result = await _partnerService.ActionImport(val);
 
-                if (result.Success)
-                    _unitOfWork.Commit();
+            if (result.Success)
+                _unitOfWork.Commit();
 
-                return Ok(result);
-            }
-            else if (val.Type == "supplier")
-            {
-                await _unitOfWork.BeginTransactionAsync();
-
-                var result = await _partnerService.ImportSupplier(val);
-
-                if (result.Success)
-                    _unitOfWork.Commit();
-
-                return Ok(result);
-            }
-
-            return BadRequest();
+            return Ok(result);
         }
 
         [HttpGet("{id}/Print")]

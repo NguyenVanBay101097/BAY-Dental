@@ -40,7 +40,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone);
         //Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val);
 
-        Task<PartnerImportResponse> ImportCustomer(PartnerImportExcelViewModel val);
+        Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val);
         Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val);
 
         Task<PartnerPrintProfileVM> GetPrint(Guid id);

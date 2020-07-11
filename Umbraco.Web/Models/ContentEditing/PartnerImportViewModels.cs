@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class PartnerCustomerRowExcel
+    public class PartnerImportRowExcel
     {
         public string Name { get; set; }
         public string Ref { get; set; }
@@ -17,6 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Job { get; set; }
         public string Email { get; set; }
         public string Note { get; set; }
+        public string Fax { get; set; }
     }
 
     public class PartnerSupplierRowExcel
