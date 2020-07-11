@@ -6,6 +6,8 @@ import { AudienceFilterServiceComponent } from './audience-filter-dropdown/audie
 import { AudienceFilterPartnerCategoryComponent } from './audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
 import { AudienceFilterServiceCategoryComponent } from './audience-filter-dropdown/audience-filter-service-category/audience-filter-service-category.component';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { AudienceFilterLastExaminationComponent } from './audience-filter-dropdown/audience-filter-last-examination/audience-filter-last-examination.component';
+import { AudienceFilterAppointmentDayComponent } from './audience-filter-dropdown/audience-filter-appointment-day/audience-filter-appointment-day.component';
 declare var $: any;
 
 @Component({
@@ -34,6 +36,12 @@ export class AudienceFilterComponent implements OnInit {
     }, {
       type: 'lastSaleOrder',
       name: 'Ngày điều trị cuối'
+    }, {
+      type: 'lastExamination',
+      name: 'Ngày khám cuối'
+    }, {
+      type: 'lastAppointment',
+      name: 'Lịch hẹn tiếp theo/gần đây'
     }, {
       type: 'categPartner',
       name: 'Nhóm khách hàng'
@@ -143,6 +151,18 @@ export class AudienceFilterComponent implements OnInit {
             data: this.AudienceFilter_Item
           }
           break;
+        case "lastExamination":
+          this.audience_filter_comp_data = {
+            component: AudienceFilterLastExaminationComponent,
+            data: this.AudienceFilter_Item
+          }
+          break;
+        case "lastAppointment":
+          this.audience_filter_comp_data = {
+              component: AudienceFilterAppointmentDayComponent,
+              data: this.AudienceFilter_Item
+          }
+          break;
         case "categPartner":
           this.audience_filter_comp_data = {
             component: AudienceFilterPartnerCategoryComponent,
@@ -243,6 +263,18 @@ export class AudienceFilterComponent implements OnInit {
           component: AudienceFilterLastTreatmentDayComponent,
           data: this.AudienceFilter_Item
         }
+        break;
+      case "lastExamination":
+        this.audience_filter_comp_data = {
+          component: AudienceFilterLastExaminationComponent,
+          data: this.AudienceFilter_Item
+        }
+        break;
+      case "lastAppointment":
+          this.audience_filter_comp_data = {
+            component: AudienceFilterAppointmentDayComponent,
+            data: this.AudienceFilter_Item
+          }
         break;
       case "categPartner":
         this.audience_filter_comp_data = {

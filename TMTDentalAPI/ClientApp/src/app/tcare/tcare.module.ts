@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { TcareRoutingModule } from './tcare-routing.module';
 import { TcareCampaignCreateUpdateComponent } from './tcare-campaign-create-update/tcare-campaign-create-update.component';
 import { TcareService } from './tcare.service';
@@ -26,6 +25,13 @@ import { SharedModule } from '../shared/shared.module';
 import { TcareScenarioListComponent } from './tcare-scenario-list/tcare-scenario-list.component';
 import { TcareScenarioCrUpComponent } from './tcare-scenario-cr-up/tcare-scenario-cr-up.component';
 import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare-scenario-cr-dialog.component';
+import { AudienceFilterLastExaminationComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-last-examination/audience-filter-last-examination.component';
+import { AudienceFilterAppointmentDayComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-appointment-day/audience-filter-appointment-day.component';
+import { FacebookPluginTextareaComponent } from '../socials-channel/facebook-plugin-textarea/facebook-plugin-textarea.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
+import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +53,11 @@ import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare
     TcareCampaignStartDialogComponent,
     TcareScenarioListComponent,
     TcareScenarioCrUpComponent,
-    TcareScenarioCrDialogComponent
+    TcareScenarioCrDialogComponent,
+    AudienceFilterLastExaminationComponent,
+    AudienceFilterAppointmentDayComponent,
+    TcareScenarioMessageTextareaComponent
+    
   ],
   imports: [
     CommonModule,
@@ -57,7 +67,9 @@ import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
-    SharedModule
+    SharedModule, 
+    PickerModule,
+    EmojiModule
   ],
 
   providers: [TcareService],
@@ -71,8 +83,11 @@ import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare
     AudienceFilterPartnerCategoryComponent,
     AudienceFilterServiceComponent,
     AudienceFilterServiceCategoryComponent,
+    AudienceFilterLastExaminationComponent,
+    AudienceFilterAppointmentDayComponent,
     TcareCampaignStartDialogComponent,
     TcareScenarioCrDialogComponent
+    
   ]
 })
 export class TcareModule { }

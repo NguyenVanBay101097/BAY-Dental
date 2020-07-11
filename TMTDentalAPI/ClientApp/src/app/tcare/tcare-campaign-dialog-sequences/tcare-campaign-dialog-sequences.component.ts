@@ -23,6 +23,11 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   filterdChannelSocials: ChannelSocial[] = [];
   submited = false;
   title: string;
+  showPluginTextarea: boolean = false;
+  selectArea_start: number;
+  selectArea_end: number;
+  audience_filter: any;
+  showAudienceFilter: boolean = false;
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -94,5 +99,38 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : 0;
     value.sheduleDate = value.sheduleDate ? this.intlService.formatDate(value.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '';
     this.activeModal.close(value);
+  }
+
+  selectArea(event) {
+    this.selectArea_start = event.target.selectionStart;
+    this.selectArea_end = event.target.selectionEnd;
+  }
+  getLimitText() {
+    var limit = 640;
+    var text = this.formGroup.get('content').value;
+    if (text) {
+      return limit - text.length;
+    } else {
+      return limit;
+    }
+  }
+  addContentPluginTextarea(event) {  
+    if (this.formGroup.value.content) {
+      this.formGroup.patchValue({
+        content: this.formGroup.value.content.slice(0, this.selectArea_start) + event + this.formGroup.value.content.slice(this.selectArea_end)
+      });
+      this.selectArea_start = this.selectArea_start + event.length;
+      this.selectArea_end = this.selectArea_start;
+    } else {
+      this.formGroup.patchValue({
+        content: event
+      });
+    }
+  }
+  showEmoji() {
+    this.showPluginTextarea = true;
+  }
+  hideEmoji() {
+    this.showPluginTextarea = false;
   }
 }

@@ -255,15 +255,15 @@ namespace Infrastructure.Services
                             break;
                         case "lastExamination":
                             //ngày khám cuối cùng sau bao nhiêu ngày 
-                            var lastExaminationPartnerIds = conn.Query<Guid>("" +
+                             var lastExaminationPartnerIds = conn.Query<Guid>("" +
                                     "Select pn.Id From Partners pn " +
                                     "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
                                     "Left join DotKhams dk ON dk.SaleOrderId = sale.Id " +
-                                    "Where pn.Customer = 1 and sale.State = @sale " +
+                                    "Where pn.Customer = 1 and sale.State in ('sale','done') " +
                                     "Group by pn.Id " +
-                                    "Having (Max(dk.Date) < DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value), sale = "('sale','done')" }).ToList();
-                               lstRule.Add(new RulePartnerIds() { Ids = lastExaminationPartnerIds });
-                            break;
+                                    "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
+                             lstRule.Add(new RulePartnerIds() { Ids = lastExaminationPartnerIds });
+                             break;
                         case "lastAppointment":
                             //lịch hẹn tiếp theo/gần đây trước bao nhiêu ngày
                             var lastAppointmentPartnerIds = conn.Query<Guid>("" +
@@ -271,7 +271,7 @@ namespace Infrastructure.Services
                                     "Left join Appointments am ON am.PartnerId = pn.Id " +                                
                                     "Where pn.Customer = 1 " +
                                     "Group by pn.Id " +
-                                    "Having (Max(am.Date) > DATEADD(day, @number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
+                                    "Having (Max(am.Date) >= DATEADD(day, @number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
                             lstRule.Add(new RulePartnerIds() { Ids = lastAppointmentPartnerIds });
                             break;
                     }
@@ -449,13 +449,15 @@ namespace Infrastructure.Services
 
         private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid ChannelSocialId, IEnumerable<Guid> partIds,
            SqlConnection conn = null)
-        {
+        {     
             var builder = new SqlBuilder();
             var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM FacebookUserProfiles us /**leftjoin**/ /**where**/ /**orderby**/ ");
 
-            builder.Select("us.id , us.PSID , us.Name , us.PartnerId ");
+            builder.Select("us.* ");
             builder.Where("us.FbPageId = @PageId ", new { PageId = ChannelSocialId });
             var iUserprofiles = conn.Query<FacebookUserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
+
+
             // lấy danh sách userprofiles theo filter
             //var profiles = GetProfilesActivity(activity, pageId, conn);
             var lstUserProfile = iUserprofiles.Where(x => partIds.Any(s => s == x.PartnerId)).ToList();
@@ -473,8 +475,28 @@ namespace Infrastructure.Services
             var now = DateTime.Now;
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
-           
-            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text.Replace("{{ten_khach_hang}}", profile.Name).Replace("{{gioi_tinh}}", profile.Partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", profile.Partner.Company.Name), profile.PSID, access_token);
+
+            //khách hàng
+            var partner = conn.Query<Partner>("" +
+                         "SELECT * " +
+                         "FROM Partners " +
+                         "where Id = @id" +
+                         "", new { id = profile.PartnerId }).FirstOrDefault();
+
+            if (partner == null)
+                return;
+
+            ///chi nhánh
+            var company = conn.Query<Company>("" +
+                        "SELECT * " +
+                        "FROM Companies " +
+                        "where Id = @id" +
+                        "", new { id = partner.CompanyId }).FirstOrDefault();
+
+            if (company == null)
+                return;
+
+            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name), profile.PSID, access_token);
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" , ChannelSocialId = channelSocialId });
             else
@@ -487,8 +509,28 @@ namespace Infrastructure.Services
             var now = DateTime.Now;
             var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             date = date.AddSeconds(-1);
+            //khách hàng
+            var partner = conn.Query<Partner>("" +
+                         "SELECT * " +
+                         "FROM Partners " +
+                         "where Id = @id" +
+                         "", new { id = profile.PartnerId }).FirstOrDefault();
+
+            if (partner == null)
+                return;
+
+            ///chi nhánh
+            var company = conn.Query<Company>("" +
+                        "SELECT * " +
+                        "FROM Companies " +
+                        "where Id = @id" +
+                        "", new { id = partner.CompanyId }).FirstOrDefault();
+
+            if (company == null)
+                return;
+
             var zaloClient = new ZaloClient(access_token);
-            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", profile.Name).Replace("{{gioi_tinh}}", profile.Partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", profile.Partner.Company.Name)).Root.ToObject<RootZalo>().data;
+            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name)).Root.ToObject<RootZalo>().data;
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
             else

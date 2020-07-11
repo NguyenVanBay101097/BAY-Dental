@@ -101,11 +101,18 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea formControlName="content" class="form-control"></textarea>
+                                    <div class="position-relative" (clickOutside)=hideEmoji()>
+                                        <textarea type="text" my-autosize charCount [limit]="640" class="form-control" id="textarea_mass"
+                                                formControlName="content" 
+                                                (click)="selectArea($event)" 
+                                                (keyup)="selectArea($event)"
+                                                (focus)="showEmoji()">
+                                        </textarea>
+                                        <app-tcare-scenario-message-textarea *ngIf="showPluginTextarea" [num_CharLeft]="getLimitText() | number" (content_send)="addContentPluginTextarea($event)"></app-tcare-scenario-message-textarea>
+                                    </div>
                                     <div
                                         *ngIf="contentControl.invalid && (contentControl.dirty || contentControl.touched || submited)">
-                                        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi
-                                            không được để trống !</label>
+                                        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi không được để trống !</label>
                                     </div>
                                 </td>
                             </tr>
