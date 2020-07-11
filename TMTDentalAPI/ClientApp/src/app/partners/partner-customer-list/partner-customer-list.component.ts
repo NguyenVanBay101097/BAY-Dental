@@ -12,7 +12,6 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerProfilePrintComponent } from 'src/app/shared/partner-profile-print/partner-profile-print.component';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -35,9 +34,8 @@ export class PartnerCustomerListComponent implements OnInit {
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
-  @ViewChild(PartnerProfilePrintComponent, {static: true}) partnerPrintComponent: PartnerProfilePrintComponent;
 
-  constructor(private partnerService: PartnerService, private modalService: NgbModal, 
+  constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService) { }
 
   ngOnInit() {
@@ -47,18 +45,18 @@ export class PartnerCustomerListComponent implements OnInit {
       .subscribe(() => {
         this.loadDataFromApi();
       });
-    
+
     this.categCbx.filterChange
-    .asObservable()
-    .pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap((value) => this.searchCategories(value))
-    )
-    .subscribe((result) => {
-      this.filteredCategs = result;
-      this.categCbx.loading = false;
-    });
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.categCbx.loading = true)),
+        switchMap((value) => this.searchCategories(value))
+      )
+      .subscribe((result) => {
+        this.filteredCategs = result;
+        this.categCbx.loading = false;
+      });
 
     this.loadDataFromApi();
     this.loadFilteredCategs();
@@ -123,9 +121,28 @@ export class PartnerCustomerListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  printItem(item: PartnerBasic) {
-    this.partnerService.getPrint(item.id).subscribe(result => {
-      this.partnerPrintComponent.print(result);
+  exportPartnerExcelFile() {
+    var paged = new PartnerPaged();
+    paged.customer = true;
+    paged.search = this.search || "";
+    paged.categoryId = this.searchCateg ? this.searchCateg.id : "";
+    this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
+      let filename = "ExportedExcelFile";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      console.log(rs);
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
     });
   }
 

@@ -13,6 +13,8 @@
             <div class="o_form_buttons_view">
                 <button type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
                 <button type="button" class="btn btn-secondary btn-sm" (click)="importFromExcel()">Import</button>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="exportPartnerExcelFile()"><i
+                        class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
             </div>
         </div>
         <div class="o_cp_sidebar">
@@ -21,8 +23,8 @@
     <div class="o_cp_right">
         <div>
             <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm khách hàng'" [filterable]="true"
-            (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg"
-            [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg"
+                [valueField]="'id'" [popupSettings]="{width: 'auto'}">
             </kendo-combobox>
         </div>
     </div>
