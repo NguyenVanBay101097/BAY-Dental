@@ -75,6 +75,11 @@ export class ImportExcelDirect {
     isCreateNew: boolean;
 }
 
+export class PartnerAddRemoveTags {
+    id: string;
+    tagIds: string[];
+}
+
 @Injectable()
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -337,6 +342,14 @@ export class PartnerService {
 
     saveAvatar(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/SaveAvatar", data);
+    }
+
+    addTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/AddTags', val);
+    }
+
+    removeTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/RemoveTags', val);
     }
 
     getPrint(id: string): Observable<PartnerPrint> {

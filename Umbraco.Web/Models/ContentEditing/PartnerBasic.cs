@@ -153,6 +153,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Employee { get; set; }
     }
 
+    public class PartnerAddRemoveTagsVM
+    {
+        public Guid Id { get; set; }
+        public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
+    }
+
     public class PartnerPrintVM
     {
         public string DisplayName { get; set; }

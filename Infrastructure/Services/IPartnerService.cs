@@ -47,6 +47,6 @@ namespace Infrastructure.Services
 
         Task<AppointmentBasic> GetNextAppointment(Guid id);
 
-        
+        Task AddOrRemoveTags(PartnerAddRemoveTagsVM val, bool isAdd);
     }
 }

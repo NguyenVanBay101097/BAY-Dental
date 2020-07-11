@@ -108,7 +108,7 @@ namespace Infrastructure.Services
                 .Include(x => x.ReferralUser)
                 .Include(x => x.PartnerHistoryRels)
                 .Include(x => x.Source)
-                .Include(x =>  x.ReferralUser)
+                .Include(x => x.ReferralUser)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")
                 .FirstOrDefaultAsync();
@@ -219,6 +219,36 @@ namespace Infrastructure.Services
                 if (!partner.CompanyId.HasValue && company_id != Guid.Empty)
                     partner.CompanyId = company_id;
             }
+        }
+
+        public async Task AddOrRemoveTags(PartnerAddRemoveTagsVM val, bool isAdd)
+        {
+            var partner = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.PartnerPartnerCategoryRels)
+                .FirstOrDefaultAsync();
+
+            if (partner == null)
+                return;
+
+            if (isAdd)
+            {
+                foreach (var tagId in val.TagIds)
+                {
+                    if (!partner.PartnerPartnerCategoryRels.Any(x => x.CategoryId == tagId))
+                        partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { CategoryId = tagId });
+                }
+            }
+            else
+            {
+                foreach (var tagId in val.TagIds)
+                {
+                    var rel = partner.PartnerPartnerCategoryRels.FirstOrDefault(x => x.CategoryId == tagId);
+                    if (rel != null)
+                        partner.PartnerPartnerCategoryRels.Remove(rel);
+                }
+            }
+
+            await UpdateAsync(partner);
         }
 
         private async Task _GenerateRefIfEmpty(IEnumerable<Partner> self)
