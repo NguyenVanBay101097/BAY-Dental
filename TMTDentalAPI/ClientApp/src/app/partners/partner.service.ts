@@ -344,9 +344,9 @@ export class PartnerService {
     }
 
     exportPartnerExcelFile(paged) {
-        return this.http.get(
-            this.baseApi + this.apiUrl + "/ExportPartnerExcelFile",
-            { responseType: "blob", params: paged }
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportExcelFile", paged,
+            { responseType: "blob" }
         );
     }
 }

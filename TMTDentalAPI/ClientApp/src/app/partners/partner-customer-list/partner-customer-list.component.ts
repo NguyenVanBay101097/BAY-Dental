@@ -68,7 +68,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   importFromExcel() {
-    const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = 'customer';
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -125,14 +125,13 @@ export class PartnerCustomerListComponent implements OnInit {
     var paged = new PartnerPaged();
     paged.customer = true;
     paged.search = this.search || "";
-    paged.categoryId = this.searchCateg ? this.searchCateg.id : "";
+    paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
     this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
-      let filename = "ExportedExcelFile";
+      let filename = "danh_sach_khach_hang";
       let newBlob = new Blob([rs], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      console.log(rs);
 
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement("a");
