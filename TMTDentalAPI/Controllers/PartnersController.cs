@@ -21,6 +21,7 @@ using System.Net.Http.Headers;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
+using Infrastructure;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -401,16 +402,22 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("CheckAddress")]
         public async Task<IActionResult> CheckAddress([FromQuery]string text)
         {
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
-            if (response.IsSuccessStatusCode)
+            //HttpClient client = new HttpClient();
+            HttpResponseMessage response = null;
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
             {
-                return Ok(response.Content.ReadAsAsync<IEnumerable<AddressCheckApi>>());
+                response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
+                if (response.IsSuccessStatusCode)
+                {
+                    var res = await response.Content.ReadAsAsync<IEnumerable<AddressCheckApi>>();
+                    return Ok(res);
+                }
+                else
+                {
+                    return Ok(new List<AddressCheckApi>());
+                }
             }
-            else
-            {
-                return Ok();
-            }
+            
         }
 
         [HttpGet("{id}/[action]")]

@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
-import { PartnerCategorySimple, PartnerSourceSimple } from "../partner-simple";
+import { PartnerCategorySimple, PartnerSourceSimple, District, City, AshipRequest, AshipData, Ward } from "../partner-simple";
 import {
   PartnerCategoryService,
   PartnerCategoryPaged,
 } from "src/app/partner-categories/partner-category.service";
 import { PartnerService } from "../partner.service";
 import { WindowRef } from "@progress/kendo-angular-dialog";
-import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
 import * as _ from "lodash";
@@ -20,6 +20,7 @@ import { UserSimple } from "src/app/users/user-simple";
 import { PartnerSourceService, PartnerSourcePaged } from "src/app/partner-sources/partner-source.service";
 import { UserService, UserPaged } from "src/app/users/user.service";
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { AddressCheckApi } from 'src/app/price-list/price-list';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -29,15 +30,21 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
-
+  
   id: string;
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
   title: string;
-
+  addressCheck: AddressCheckApi[] = [];
   filteredSources: PartnerSourceSimple[] = [];
   filteredReferralUsers: UserSimple[] = [];
+  districtsList: District[] = [];
+  provincesList: City[] = [];
+  wardsList: Ward[] = [];
+  districtsFilter: District[] = [];
+  provincesFilter: City[] = [];
+  wardsFilter: Ward[] = [];
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
@@ -117,6 +124,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       histories: this.fb.array([]),
       companyId: null,
       dateObj: null,
+      addressCheckDetail: 0
     });
 
     
@@ -190,7 +198,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         )
         .subscribe((result) => {
           this.filteredSources = result;
-          this.sourceCbx.loading = false;
+          this.sourceCbx.loading = false;       
         });
 
     this.userCbx.filterChange
@@ -244,6 +252,27 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       }
     }
   }
+
+  handleAddress(adr: AddressCheckApi){
+    var city = { code: adr.cityCode, name: adr.cityName };
+    var district = { code: adr.districtCode, name: adr.districtName };
+    var ward = { code: adr.wardCode, name: adr.wardName };
+    this.getStreet.setValue(adr.shortAddress);
+    if (city && city.code) {
+      this.handleCityChange(city);
+    }
+    if (district && district.code) {
+      this.handleDistrictChange(district);
+    }
+    if (ward && ward.code) {
+      this.handleWardChange(ward);
+    }
+  }
+
+  get getStreet() {
+    return this.formGroup.get('street');
+  }
+
 
   loadSourceCities() {
     this.http
@@ -438,6 +467,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       );
     }
   }
+
+
 
   onCancel() {
     this.activeModal.dismiss();
