@@ -665,7 +665,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
       var attribute = value.attributes[i];
       objx[attribute.name] = attribute.nodeValue;
     }
-    let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: "lg", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false, });
+    let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: "lg", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false });
     modalRef.componentInstance.title = "Cài đặt gửi tin";
     modalRef.componentInstance.model = objx;
 

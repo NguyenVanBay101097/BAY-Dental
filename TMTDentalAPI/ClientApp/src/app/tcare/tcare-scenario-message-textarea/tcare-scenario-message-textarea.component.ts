@@ -12,14 +12,24 @@ export class TcareScenarioMessageTextareaComponent implements OnInit {
   @Input()  num_CharLeft: string;
   @Output() content_send = new EventEmitter<string>();
 
+  tabs = [
+    { name: 'Tên khách hàng' , value: '{{ten_khach_hang}}' },
+    {  name: 'Giới tính' , value: '{{gioi_tinh}}' },
+    { name: 'Tên chi nhánh' , value: '{{ten_chi_nhanh}}' },
+    
+  ];
+
   constructor() { }
 
   ngOnInit() {
+   
   }
 
-  selectEmoji(event) {
-    var icon_emoji = event.emoji.native;   
-    this.content_send.emit(icon_emoji);
+   
+  
+  clickTab(value) {
+    this.content_send.emit(value);
+    this.popOver.close();
   }
 
   toggleWithGreeting(popover) {         

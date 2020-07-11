@@ -159,3 +159,7 @@
     bottom: 10px;
     right: 20px;
 }
+
+.modal-xl{
+    min-height: 500px !important;
+}
