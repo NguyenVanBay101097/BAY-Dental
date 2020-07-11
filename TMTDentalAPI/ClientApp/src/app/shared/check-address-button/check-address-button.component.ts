@@ -35,8 +35,7 @@ export class CheckAddressButtonComponent implements OnInit {
       rs => {
         this.isLoading= false;
         this.addressCheck = rs;
-        this.addressCheck = this.addressCheck.slice(0, 5);
-        console.log(rs);      
+        this.addressCheck = this.addressCheck.slice(0, 5);    
       }
     )
   }

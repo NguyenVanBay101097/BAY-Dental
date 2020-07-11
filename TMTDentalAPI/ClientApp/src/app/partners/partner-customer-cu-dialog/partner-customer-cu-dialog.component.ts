@@ -197,7 +197,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         )
         .subscribe((result) => {
           this.filteredSources = result;
-          this.sourceCbx.loading = false;
+          this.sourceCbx.loading = false;       
         });
 
     this.userCbx.filterChange
