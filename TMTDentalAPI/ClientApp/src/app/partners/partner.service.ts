@@ -355,6 +355,13 @@ export class PartnerService {
     getPrint(id: string): Observable<PartnerPrint> {
         return this.http.get<PartnerPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
+
+    exportPartnerExcelFile(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportExcelFile", paged,
+            { responseType: "blob" }
+        );
+    }
 }
 
 
