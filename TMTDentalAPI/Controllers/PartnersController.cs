@@ -21,6 +21,7 @@ using System.Net.Http.Headers;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
+using Infrastructure;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -236,6 +237,20 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddTags(PartnerAddRemoveTagsVM val)
+        {
+            await _partnerService.AddOrRemoveTags(val, true);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RemoveTags(PartnerAddRemoveTagsVM val)
+        {
+            await _partnerService.AddOrRemoveTags(val, false);
+            return Ok();
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetValidServiceCards(Guid id)
         {
@@ -283,7 +298,7 @@ namespace TMTDentalAPI.Controllers
 
         }
 
-    
+
 
         [HttpGet("{id}/GetInfo")]
         public async Task<IActionResult> GetInfo(Guid id)
@@ -313,30 +328,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
-            if (val.Type == "customer")
-            {
-                await _unitOfWork.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
 
-                var result = await _partnerService.ImportCustomer(val);
+            var result = await _partnerService.ActionImport(val);
 
-                if (result.Success)
-                    _unitOfWork.Commit();
+            if (result.Success)
+                _unitOfWork.Commit();
 
-                return Ok(result);
-            }
-            else if (val.Type == "supplier")
-            {
-                await _unitOfWork.BeginTransactionAsync();
-
-                var result = await _partnerService.ImportSupplier(val);
-
-                if (result.Success)
-                    _unitOfWork.Commit();
-
-                return Ok(result);
-            }
-
-            return BadRequest();
+            return Ok(result);
         }
 
         [HttpGet("{id}/Print")]
@@ -387,16 +386,22 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("CheckAddress")]
         public async Task<IActionResult> CheckAddress([FromQuery]string text)
         {
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
-            if (response.IsSuccessStatusCode)
+            //HttpClient client = new HttpClient();
+            HttpResponseMessage response = null;
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
             {
-                return Ok(response.Content.ReadAsAsync<IEnumerable<AddressCheckApi>>());
+                response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
+                if (response.IsSuccessStatusCode)
+                {
+                    var res = await response.Content.ReadAsAsync<IEnumerable<AddressCheckApi>>();
+                    return Ok(res);
+                }
+                else
+                {
+                    return Ok(new List<AddressCheckApi>());
+                }
             }
-            else
-            {
-                return Ok();
-            }
+            
         }
 
         [HttpGet("{id}/[action]")]
@@ -446,62 +451,65 @@ namespace TMTDentalAPI.Controllers
             return res;
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> ExportExcelFile([FromQuery]PartnerPaged val)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcelFile(PartnerPaged val)
         {
             var stream = new MemoryStream();
-            var partners = await _partnerService.GetQueryPaged(val).ToListAsync();
+            var data = await _partnerService.GetExcel(val);
             byte[] fileContent;
+
+            var gender_dict = new Dictionary<string, string>()
+            {
+                { "male", "Nam" },
+                { "female", "Nữ" },
+                { "other", "Khác" }
+            };
+
             using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets.Add("Thông tin Đối tác");
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
                 worksheet.Cells[1, 1].Value = "Tên KH";
                 worksheet.Cells[1, 2].Value = "Mã KH";
-                worksheet.Cells[1, 3].Value = "Giới tính";
-                worksheet.Cells[1, 4].Value = "Ngày sinh";
-                worksheet.Cells[1, 5].Value = "SĐT";
-                worksheet.Cells[1, 6].Value = "Địa chỉ";
-                worksheet.Cells[1, 7].Value = "Tiền căn";
-                worksheet.Cells[1, 8].Value = "Nghề nghiệp";
-                worksheet.Cells[1, 9].Value = "Email";
-                worksheet.Cells[1, 10].Value = "Ghi chú";
+                worksheet.Cells[1, 3].Value = "Ngày tạo";
+                worksheet.Cells[1, 4].Value = "Giới tính";
+                worksheet.Cells[1, 5].Value = "Ngày sinh";
+                worksheet.Cells[1, 6].Value = "SĐT";
+                worksheet.Cells[1, 7].Value = "Địa chỉ";
+                worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
+                worksheet.Cells[1, 9].Value = "Nghề nghiệp";
+                worksheet.Cells[1, 10].Value = "Email";
+                worksheet.Cells[1, 11].Value = "Ghi chú";
 
-                for (int row = 2; row < partners.Count + 2; row++)
+                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data)
                 {
-                    var item = partners[row - 2];
-                    var entity = await _partnerService.GetPartnerForDisplayAsync(item.Id);
-
-                    var ar = new List<string>();
-
-                    if (!string.IsNullOrWhiteSpace(item.Street)) ar.Add(item.Street);
-                    if (!string.IsNullOrWhiteSpace(item.WardName)) ar.Add(item.WardName);
-                    if (!string.IsNullOrWhiteSpace(item.DistrictName)) ar.Add(item.DistrictName);
-                    if (!string.IsNullOrWhiteSpace(item.CityName)) ar.Add(item.CityName);
-
-                    var address = String.Join(", ", ar);
-
-                    var histories = entity.PartnerHistoryRels.Select(x => x.History.Name).ToList();
-                    histories.Add(item.MedicalHistory);
-
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
-                    worksheet.Cells[row, 3].Value = (item.Gender == "male") ? "Nam" : (item.Gender == "female") ? "Nữ" : "Khác";
-                    worksheet.Cells[row, 4].Value = item.BirthDay + "/" + item.BirthMonth + "/" + item.BirthYear;
-                    worksheet.Cells[row, 5].Value = item.Phone;
-                    worksheet.Cells[row, 6].Value = address;
-                    worksheet.Cells[row, 7].Value = string.Join(", ", histories);
-                    worksheet.Cells[row, 8].Value = item.JobTitle;
-                    worksheet.Cells[row, 9].Value = item.Email;
-                    worksheet.Cells[row, 10].Value = item.Comment;
+                    worksheet.Cells[row, 3].Value = item.Date;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
+                    worksheet.Cells[row, 5].Value = item.DateOfBirth;
+                    worksheet.Cells[row, 6].Value = item.Phone;
+                    worksheet.Cells[row, 7].Value = item.Address;
+                    worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
+                    worksheet.Cells[row, 9].Value = item.Job;
+                    worksheet.Cells[row, 10].Value = item.Email;
+                    worksheet.Cells[row, 11].Value = item.Note;
+
+                    row++;
                 }
+
+                worksheet.Column(4).Style.Numberformat.Format = "@";
+                worksheet.Column(5).Style.Numberformat.Format = "@";
 
                 package.Save();
 
                 fileContent = stream.ToArray();
             }
 
-            string fileName = @"Thông tin đối tác.xlsx";
             string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             stream.Position = 0;
 

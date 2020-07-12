@@ -50,6 +50,7 @@ import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.compon
 import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
 import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
 import { AccountPaymentPrintComponent } from './account-payment-print/account-payment-print.component';
+import { CheckAddressButtonComponent } from './check-address-button/check-address-button.component';
 
 @NgModule({
   declarations: [
@@ -90,8 +91,9 @@ import { AccountPaymentPrintComponent } from './account-payment-print/account-pa
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
     ImportSampleDataComponent, 
-    PartnerProfilePrintComponent,
-    AccountPaymentPrintComponent
+    AccountPaymentPrintComponent,
+    CheckAddressButtonComponent,
+    PartnerProfilePrintComponent
   ],
   exports: [
     HeaderComponent,
@@ -128,8 +130,9 @@ import { AccountPaymentPrintComponent } from './account-payment-print/account-pa
     RedirectComponentDirective,
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
-    PartnerProfilePrintComponent,
-    AccountPaymentPrintComponent
+    AccountPaymentPrintComponent,
+    CheckAddressButtonComponent,
+    PartnerProfilePrintComponent
   ],
   imports: [
     CommonModule,

@@ -75,6 +75,11 @@ export class ImportExcelDirect {
     isCreateNew: boolean;
 }
 
+export class PartnerAddRemoveTags {
+    id: string;
+    tagIds: string[];
+}
+
 @Injectable()
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -339,8 +344,23 @@ export class PartnerService {
         return this.http.post(this.baseApi + this.apiUrl + "/SaveAvatar", data);
     }
 
+    addTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/AddTags', val);
+    }
+
+    removeTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/RemoveTags', val);
+    }
+
     getPrint(id: string): Observable<PartnerPrint> {
         return this.http.get<PartnerPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
+    }
+
+    exportPartnerExcelFile(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportExcelFile", paged,
+            { responseType: "blob" }
+        );
     }
 }
 

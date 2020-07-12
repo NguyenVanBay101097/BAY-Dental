@@ -1,24 +1,34 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LaboOrderService, LaboOrderStatisticsPaged } from '../labo-order.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
-import { ProductService, ProductPaged } from 'src/app/products/product.service';
-import * as _ from 'lodash';
+import { Component, ViewChild, OnInit, Output, EventEmitter, ElementRef } from "@angular/core";
+import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
+import {
+  map,
+  debounceTime,
+  distinctUntilChanged,
+  tap,
+  switchMap,
+} from "rxjs/operators";
+import { Subject } from "rxjs";
+import { IntlService } from "@progress/kendo-angular-intl";
+import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
+import {
+  LaboOrderService,
+  LaboOrderStatisticsPaged,
+  LaboOrderBasic,
+} from "../labo-order.service";
+import { ComboBoxComponent, PopupSettings } from "@progress/kendo-angular-dropdowns";
+import { PartnerService } from "src/app/partners/partner.service";
+import { PartnerPaged } from "src/app/partners/partner-simple";
+import { ProductService, ProductPaged } from "src/app/products/product.service";
+import * as _ from "lodash";
+import { LaboOrderLineService } from "../labo-order-line.service";
 
 @Component({
-  selector: 'app-labo-order-statistics',
-  templateUrl: './labo-order-statistics.component.html',
-  styleUrls: ['./labo-order-statistics.component.css'],
+  selector: "app-labo-order-statistics",
+  templateUrl: "./labo-order-statistics.component.html",
+  styleUrls: ["./labo-order-statistics.component.css"],
   host: {
-    class: 'o_action o_view_controller'
-  }
+    class: "o_action o_view_controller",
+  },
 })
 export class LaboOrderStatisticsComponent implements OnInit {
   gridData: GridDataResult;
@@ -35,63 +45,73 @@ export class LaboOrderStatisticsComponent implements OnInit {
   receivedDateFrom: Date;
   receivedDateTo: Date;
   searchUpdate = new Subject<string>();
-
+  id: string;
+  @ViewChild("popOver", { static: true }) public popover: NgbPopover;
   paged: LaboOrderStatisticsPaged;
-
+  public value: Date = new Date();
   filteredSuppliers: any;
-  @ViewChild('supplierCbx', {static: true}) supplierCbx: ComboBoxComponent;
-  
-  filteredProducts: any;
-  @ViewChild('productCbx', {static: true}) productCbx: ComboBoxComponent;
+  @ViewChild("supplierCbx", { static: true }) supplierCbx: ComboBoxComponent;
 
-  constructor(private laboOrderService: LaboOrderService, private partnerService: PartnerService,
-    private productService: ProductService, private intlService: IntlService) {
-  }
+  filteredProducts: any;
+  @ViewChild("productCbx", { static: true }) productCbx: ComboBoxComponent;
+
+  constructor(
+    private laboOrderService: LaboOrderService,
+    private partnerService: PartnerService,
+    private laboOrderLineService: LaboOrderLineService,
+    private productService: ProductService,
+    private intlService: IntlService,
+  ) {}
 
   ngOnInit() {
     this.paged = new LaboOrderStatisticsPaged();
 
     this.loadDataFromApi();
 
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
+    this.searchUpdate
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((value) => {
         this.loadDataFromApi();
       });
 
     this.loadFilteredPartners();
     this.loadFilteredProducts();
 
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+    this.productCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.productCbx.loading = true)),
+        switchMap((value) => this.searchProducts(value))
+      )
+      .subscribe((result) => {
+        this.filteredProducts = result;
+        this.productCbx.loading = false;
+      });
 
-    this.supplierCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.supplierCbx.loading = true)),
-      switchMap(value => this.searchSuppliers(value))
-    ).subscribe(result => {
-      this.filteredSuppliers = result;
-      this.supplierCbx.loading = false;
-    });
+    this.supplierCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.supplierCbx.loading = true)),
+        switchMap((value) => this.searchSuppliers(value))
+      )
+      .subscribe((result) => {
+        this.filteredSuppliers = result;
+        this.supplierCbx.loading = false;
+      });
   }
 
-  
   loadFilteredProducts() {
-    this.searchProducts().subscribe(result => this.filteredProducts = result);
+    this.searchProducts().subscribe(
+      (result) => (this.filteredProducts = result)
+    );
   }
 
-  
   searchProducts(search?: string) {
     var val = new ProductPaged();
     val.isLabo = true;
-    val.search = search || '';
+    val.search = search || "";
     return this.productService.autocomplete2(val);
   }
 
@@ -102,15 +122,15 @@ export class LaboOrderStatisticsComponent implements OnInit {
   }
 
   loadFilteredPartners() {
-    this.searchSuppliers().subscribe(result => {
-      this.filteredSuppliers = _.unionBy(this.filteredSuppliers, result, 'id');
+    this.searchSuppliers().subscribe((result) => {
+      this.filteredSuppliers = _.unionBy(this.filteredSuppliers, result, "id");
     });
   }
 
   searchSuppliers(filter?: string) {
     var val = new PartnerPaged();
     val.supplier = true;
-    val.search = filter || '';
+    val.search = filter || "";
     return this.partnerService.getAutocompleteSimple(val);
   }
 
@@ -120,48 +140,89 @@ export class LaboOrderStatisticsComponent implements OnInit {
 
   stateGet(state) {
     switch (state) {
-      case 'purchase':
-        return 'Đơn hàng';
-      case 'done':
-        return 'Đã khóa';
-      case 'cancel':
-        return 'Đã hủy';
+      case "purchase":
+        return "Đơn hàng";
+      case "done":
+        return "Đã khóa";
+      case "cancel":
+        return "Đã hủy";
       default:
-        return 'Nháp';
+        return "Nháp";
     }
   }
 
   onDateOrderSearchChange(data) {
-    this.paged.dateOrderFrom = data.dateFrom ? this.intlService.formatDate(data.dateFrom, 'yyyy-MM-dd') : null;
-    this.paged.dateOrderTo = data.dateTo ? this.intlService.formatDate(data.dateTo, 'yyyy-MM-dd') : null;
+    this.paged.dateOrderFrom = data.dateFrom
+      ? this.intlService.formatDate(data.dateFrom, "yyyy-MM-dd")
+      : null;
+    this.paged.dateOrderTo = data.dateTo
+      ? this.intlService.formatDate(data.dateTo, "yyyy-MM-dd")
+      : null;
     this.loadDataFromApi();
   }
 
   onDatePlannedSearchChange(data) {
-    this.paged.datePlannedFrom = data.dateFrom ? this.intlService.formatDate(data.dateFrom, 'yyyy-MM-dd') : null;
-    this.paged.datePlannedTo = data.dateTo ? this.intlService.formatDate(data.dateTo, 'yyyy-MM-dd') : null;
+    this.paged.datePlannedFrom = data.dateFrom
+      ? this.intlService.formatDate(data.dateFrom, "yyyy-MM-dd")
+      : null;
+    this.paged.datePlannedTo = data.dateTo
+      ? this.intlService.formatDate(data.dateTo, "yyyy-MM-dd")
+      : null;
     this.loadDataFromApi();
   }
-
 
   loadDataFromApi() {
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
     console.log(this.paged);
 
-    this.laboOrderService.getStatistics(this.paged).pipe(
-      map((response: any) => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      this.gridData = res;
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
-    })
+    this.laboOrderService
+      .getStatistics(this.paged)
+      .pipe(
+        map(
+          (response: any) =>
+            <GridDataResult>{
+              data: response.items,
+              total: response.totalItems,
+            }
+        )
+      )
+      .subscribe(
+        (res) => {
+          this.gridData = res;
+          this.loading = false;
+        },
+        (err) => {
+          console.log(err);
+          this.loading = false;
+        }
+      );
   }
+
+  updateWarrantyCode(popover, id) {
+    var code = document.getElementById("code")["value"];
+    var name = "WarrantyCode";
+    var ar = [];
+    var o = { op: "replace", path: "/" + name, value: code };
+    ar.push(o);
+    this.laboOrderLineService.updateStatistic(id, ar).subscribe(() => {
+      popover.close();
+      this.loadDataFromApi();
+    });
+  }
+
+  updateWarrantyPeriod(popover,id) {
+    var formardate = this.intlService.formatDate(this.value, 'yyyy-MM-dd');   
+    var name = "WarrantyPeriod";
+    var ar = [];
+    var o = { op: "replace", path: "/" + name, value: formardate };
+    ar.push(o);
+    this.laboOrderLineService.updateStatistic(id, ar).subscribe(() => {
+      popover.close();
+      this.loadDataFromApi();
+    });
+  }
+
 
   onAdvanceSearchChange(data) {
     this.sentDateFrom = data.sentDateFrom;
@@ -176,5 +237,19 @@ export class LaboOrderStatisticsComponent implements OnInit {
     this.skip = event.skip;
     this.loadDataFromApi();
   }
-}
 
+  public onChange(value: Date): void {
+    this.value = value;  
+  }
+
+ 
+  toggleWithGreeting(popover,dataItem) {         
+    if (popover.isOpen()) {       
+      popover.close();
+    } else { 
+      this.value = new Date(dataItem.warrantyPeriod ? dataItem.warrantyPeriod : Date());    
+      popover.open();
+    }
+  }
+
+}

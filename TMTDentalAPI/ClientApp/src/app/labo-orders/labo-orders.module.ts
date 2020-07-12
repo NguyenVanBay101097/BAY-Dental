@@ -1,3 +1,4 @@
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -12,6 +13,8 @@ import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderQuickCreateDialogComponent } from './labo-order-quick-create-dialog/labo-order-quick-create-dialog.component';
 import { LaboOrderStatisticsComponent } from './labo-order-statistics/labo-order-statistics.component';
+import { LaboOrderLineService } from './labo-order-line.service';
+
 
 @NgModule({
   declarations: [
@@ -28,10 +31,12 @@ import { LaboOrderStatisticsComponent } from './labo-order-statistics/labo-order
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
+    NgbModule
   ],
   providers: [
-    LaboOrderService
+    LaboOrderService,
+    LaboOrderLineService
   ],
   entryComponents: [
     LaboOrderCuLineDialogComponent,

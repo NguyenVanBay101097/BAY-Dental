@@ -48,6 +48,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class LaboOrderStatisticsBasic
     {
+        public Guid id { get; set; }
         public decimal ProductQty { get; set; }
 
         public string ProductName { get; set; }
