@@ -23,8 +23,7 @@
 <div class="o_content">
     <div class="pie_chart">
         <div class="pie_chart_district">
-            <kendo-chart *ngIf="pieDataDistrict" title="Báo cáo theo quận/huyện lân cận phòng khám"
-                (seriesClick)="changeDistrict($event)">
+            <kendo-chart *ngIf="pieDataDistrict" title="Báo cáo theo quận/huyện lân cận phòng khám">
                 <kendo-chart-legend position="bottom"></kendo-chart-legend>
                 <kendo-chart-series>
                     <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataDistrict" field="value"

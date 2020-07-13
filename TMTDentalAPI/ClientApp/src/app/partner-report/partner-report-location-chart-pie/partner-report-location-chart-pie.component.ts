@@ -29,7 +29,7 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
 
 
   labelContent(args: LegendLabelsContentArgs): string {
-    return `${args.dataItem.category}: ${this.intl.formatNumber(args.dataItem.value, 'p2')}`;
+    return `${args.dataItem.category}: ${args.dataItem.total} người - Chiếm ${this.intl.formatNumber(args.dataItem.value, 'p2')}`;
   }
 
   getReportLocationCompanyWard() {
@@ -45,10 +45,15 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
           var model = {
             category: '',
             value: 0,
-            code: ''
+            total: ''
           }
-          model.code = item.wardCode;
-          model.category = item.wardName;
+          if (item.wardCode && item.wardName) {
+            model.total = item.total.toString();
+            model.category = item.wardName;
+          } else {
+            model.category = "Khác";
+            model.total = item.total.toString();
+          }
           model.value = Number.parseFloat(item.percentage.toFixed(2)) / 100;
 
           this.pieDataWard.push(model);
@@ -59,12 +64,12 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
     )
   }
 
-  changeDistrict(value) {
-    console.log('seriesClick', value);
-    if (value && value.dataItem && value.dataItem.code)
-      this.districtCode = value.dataItem.code;
-    this.getReportLocationCompanyWard();
-  }
+  // changeDistrict(value) {
+  //   console.log('seriesClick', value);
+  //   if (value && value.dataItem && value.dataItem.code)
+  //     this.districtCode = value.dataItem.code;
+  //   this.getReportLocationCompanyWard();
+  // }
 
   getReportLocationCompanyDistrict() {
     if (this.dateFrom && this.dateTo)
@@ -79,10 +84,15 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
           var model = {
             category: '',
             value: 0,
-            code: ''
+            total: ''
           }
-          model.code = item.districtCode;
-          model.category = item.districtName;
+          if (item.districtName && item.districtCode) {
+            model.total = item.total.toString();
+            model.category = item.districtName;
+          } else {
+            model.category = "Khác";
+            model.total = item.total.toString();
+          }
           model.value = Number.parseFloat(item.percentage.toFixed(2)) / 100;
           this.pieDataDistrict.push(model);
         });

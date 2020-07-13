@@ -1421,57 +1421,43 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
         {
-            var partnerCompany = await SearchQuery(x => !x.Customer && !x.Supplier && x.Active).FirstOrDefaultAsync();
+            var partnerCompany = await SearchQuery(x => x.CompanyId == CompanyId).FirstOrDefaultAsync();
             var query = SearchQuery(x => x.Customer && x.Active);
-            if (val.DateFrom.HasValue && val.DateTo.HasValue)
+            if (val.DateFrom.HasValue || val.DateTo.HasValue)
             {
-                query = query.Where(x => val.DateFrom.Value <= x.DateCreated && x.DateCreated <= val.DateTo.Value);
+                query = query.Where(x => val.DateFrom.Value <= x.Date && x.Date <= val.DateTo.Value);
             }
-            var listPartner = await query.ToListAsync();
-            var res = listPartner.Where(x => x.CityCode == partnerCompany.CityCode).GroupBy(x => new { x.DistrictCode, x.DistrictName }).Select(x => new PartnerReportLocationDistrict
-            {
-                DistrictCode = x.Key.DistrictCode,
-                DistrictName = x.Key.DistrictName,
-                Total = x.Count(),
-                Percentage = x.Count() * 100f / listPartner.Count()
-            }).ToList();
 
-            if (listPartner.Where(x => x.CityCode != partnerCompany.CityCode).Count() > 0)
-                res.Add(new PartnerReportLocationDistrict
+            var res = await query.Where(x => x.CityCode == partnerCompany.CityCode)
+                .GroupBy(x => new { x.DistrictCode, x.DistrictName })
+                .Select(x => new PartnerReportLocationDistrict
                 {
-                    DistrictName = "another",
-                    Total = listPartner.Where(x => x.CityCode != partnerCompany.CityCode).Count(),
-                    Percentage = listPartner.Where(x => x.CityCode != partnerCompany.CityCode).Count() * 100f / listPartner.Count()
-                });
+                    DistrictCode = x.Key.DistrictCode,
+                    DistrictName = x.Key.DistrictName,
+                    Total = x.Count(),
+                    Percentage = x.Count() * 100f / query.Count()
+                }).ToListAsync();
             return res;
         }
 
         public async Task<IEnumerable<PartnerReportLocationWard>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
         {
-            var partnerCompany = await SearchQuery(x => !x.Customer && !x.Supplier && x.Active).FirstOrDefaultAsync();
+            var partnerCompany = await SearchQuery(x => x.CompanyId == CompanyId).FirstOrDefaultAsync();
             var query = SearchQuery(x => x.Customer && x.Active);
-            if (val.DateFrom.HasValue && val.DateTo.HasValue)
+            if (val.DateFrom.HasValue || val.DateTo.HasValue)
             {
-                query = query.Where(x => x.DateCreated >= val.DateFrom.Value && x.DateCreated <= val.DateTo.Value);
+                query = query.Where(x => x.Date >= val.DateFrom.Value && x.Date <= val.DateTo.Value);
             }
 
-            if (!string.IsNullOrEmpty(val.DistrictCode))
-            {
-                query = query.Where(x => x.DistrictCode == val.DistrictCode && x.CityCode == partnerCompany.CityCode);
-            }
+            query = query.Where(x => x.DistrictCode == partnerCompany.DistrictCode && x.CityCode == partnerCompany.CityCode);
 
-            else
-            {
-                query = query.Where(x => x.DistrictCode == partnerCompany.DistrictCode && x.CityCode == partnerCompany.CityCode);
-            }
-            var listPartner = await query.ToListAsync();
-            var res = listPartner.GroupBy(x => new { x.WardCode, x.WardName }).Select(x => new PartnerReportLocationWard
+            var res = await query.GroupBy(x => new { x.WardCode, x.WardName }).Select(x => new PartnerReportLocationWard
             {
                 WardCode = x.Key.WardCode,
                 WardName = x.Key.WardName,
                 Total = x.Count(),
-                Percentage = x.Count() * 100f / listPartner.Count()
-            }).ToList();
+                Percentage = x.Count() * 100f / query.Count()
+            }).ToListAsync();
 
             return res;
         }
