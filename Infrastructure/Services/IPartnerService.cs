@@ -30,8 +30,8 @@ namespace Infrastructure.Services
        DateTime? fromDate = null,
        DateTime? toDate = null);
 
-        Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val);
-        Task<IEnumerable<PartnerReportLocationWard>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val);
+        Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val);
+        Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val);
         Task<IEnumerable<PartnerReportLocationCity>> ReportLocationCity(ReportLocationCitySearch val);
         Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationDistrict(PartnerReportLocationCity val);
         Task<IEnumerable<PartnerReportLocationWard>> ReportLocationWard(PartnerReportLocationDistrict val);

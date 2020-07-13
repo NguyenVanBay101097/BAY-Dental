@@ -340,11 +340,11 @@ export class PartnerService {
     }
 
     getReportLocationCompanyWard(val): Observable<PartnerReportLocationWard[]> {
-        return this.http.get<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyWard', { params: val });
+        return this.http.post<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyWard', val);
     }
 
     getReportLocationCompanyDistrict(val): Observable<PartnerReportLocationDistrict[]> {
-        return this.http.get<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyDistrict', { params: val });
+        return this.http.post<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyDistrict', val);
     }
 }
 

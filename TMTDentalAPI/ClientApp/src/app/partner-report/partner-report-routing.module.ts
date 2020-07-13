@@ -6,12 +6,8 @@ import { PartnerReportLocationChartPieComponent } from './partner-report-locatio
 const routes: Routes = [
   {
     path: 'partner-report-location',
-    component: PartnerReportLocationComponent
-  },
-  {
-    path: 'partner-report-location-chart',
     component: PartnerReportLocationChartPieComponent
-  }
+  },
 ];
 
 @NgModule({

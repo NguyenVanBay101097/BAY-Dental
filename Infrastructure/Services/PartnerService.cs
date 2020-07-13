@@ -1419,42 +1419,43 @@ namespace Infrastructure.Services
             return list;
         }
 
-        public async Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
+        public async Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
         {
-            var partnerCompany = await SearchQuery(x => x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            var query = SearchQuery(x => x.Customer && x.Active);
-            if (val.DateFrom.HasValue || val.DateTo.HasValue)
-            {
-                query = query.Where(x => val.DateFrom.Value <= x.Date && x.Date <= val.DateTo.Value);
-            }
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+            var query = SearchQuery(x => x.Customer && x.Active && x.CityCode == company.Partner.CityCode);
 
-            var res = await query.Where(x => x.CityCode == partnerCompany.CityCode)
-                .GroupBy(x => new { x.DistrictCode, x.DistrictName })
-                .Select(x => new PartnerReportLocationDistrict
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo);
+
+            var res = await query.GroupBy(x => new { x.DistrictCode, x.DistrictName })
+                .Select(x => new PartnerReportLocationItem
                 {
-                    DistrictCode = x.Key.DistrictCode,
-                    DistrictName = x.Key.DistrictName,
+                    Name = x.Key.DistrictName,
                     Total = x.Count(),
                     Percentage = x.Count() * 100f / query.Count()
                 }).ToListAsync();
             return res;
         }
 
-        public async Task<IEnumerable<PartnerReportLocationWard>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
+        public async Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
         {
-            var partnerCompany = await SearchQuery(x => x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            var query = SearchQuery(x => x.Customer && x.Active);
-            if (val.DateFrom.HasValue || val.DateTo.HasValue)
-            {
-                query = query.Where(x => x.Date >= val.DateFrom.Value && x.Date <= val.DateTo.Value);
-            }
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+            var query = SearchQuery(x => x.Customer && x.Active && x.CityCode == company.Partner.CityCode && x.DistrictCode == company.Partner.DistrictCode);
 
-            query = query.Where(x => x.DistrictCode == partnerCompany.DistrictCode && x.CityCode == partnerCompany.CityCode);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
 
-            var res = await query.GroupBy(x => new { x.WardCode, x.WardName }).Select(x => new PartnerReportLocationWard
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo);
+
+            var res = await query.GroupBy(x => new { x.WardCode, x.WardName }).Select(x => new PartnerReportLocationItem
             {
-                WardCode = x.Key.WardCode,
-                WardName = x.Key.WardName,
+                Name = x.Key.WardName,
                 Total = x.Count(),
                 Percentage = x.Count() * 100f / query.Count()
             }).ToListAsync();
