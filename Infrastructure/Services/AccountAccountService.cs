@@ -1,20 +1,53 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
     public class AccountAccountService : BaseService<AccountAccount>, IAccountAccountService
     {
-        public AccountAccountService(IAsyncRepository<AccountAccount> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public AccountAccountService(IAsyncRepository<AccountAccount> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
            : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
+        }
+
+        public async Task<PagedResult2<AccountAccountBasic>> GetPagedResultAsync(AccountAccountPaged val)
+        {
+            ISpecification<AccountAccount> spec = new InitialSpecification<AccountAccount>(x => true);
+            if (!string.IsNullOrEmpty(val.Type))
+                spec = spec.And(new InitialSpecification<AccountAccount>(x => x.UserType.Type == val.Type));
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<AccountAccount>(x => x.Name.Contains(val.Search)));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Name));
+
+            var items = await query.Select(x => new AccountAccountBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                CompanyName = x.Company.Name,
+                Code = x.Code,
+                Note = x.Note,
+                InternalType = x.InternalType
+            }).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<AccountAccountBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         public async Task<AccountAccount> GetAccountPayableCurrentCompany()
@@ -28,6 +61,120 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             return await SearchQuery(x => x.InternalType == "receivable" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
+
+        public async Task<AccountAccountSave> DefaultGet(AccountAccountDefault val)
+        {
+
+            var res = new AccountAccountSave();
+            var objCompany = GetService<ICompanyService>();
+            res.CompanyId = CompanyId;
+            var company = await objCompany.GetByIdAsync(CompanyId);
+            res.Company = _mapper.Map<CompanySimple>(company);
+            var usertype = await CheckAccountType(val);
+            if (usertype != null)
+            {
+                res.UserTypeId = usertype.Id;
+
+            }
+            res.Reconcile = false;
+
+            return res;
+        }
+
+
+       
+        //create loại thu chi
+        public async Task<AccountAccount> CreateAccountAccount(AccountAccountSave val)
+        {
+            var accountaccount = _mapper.Map<AccountAccount>(val);
+
+            return await CreateAsync(accountaccount);
+        }
+
+        //update loại thu chi
+        public async Task UpdateAccountAccount(Guid id, AccountAccountSave val)
+        {
+            var accountAccoun = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.UserType).FirstOrDefaultAsync();
+            if (accountAccoun == null)
+                throw new Exception("Loại không tồn tại");
+
+            accountAccoun = _mapper.Map(val, accountAccoun);
+
+            await UpdateAsync(accountAccoun);
+        }
+
+        public async Task<AccountAccountType> CheckAccountType(AccountAccountDefault val)
+        {
+            var accountType = new AccountAccountType();
+
+            var accountTypeService = GetService<IAccountAccountTypeService>();
+            var objModel = GetService<IIRModelDataService>();
+            if (val.Type == "paymenttype")
+            {
+                accountType = await objModel.GetRef<AccountAccountType>("accounttype.payment_type");
+                if (accountType == null)
+                {
+                    accountType = await GetOrCreateAccountType(val);
+                    var modeldata = new IRModelData
+                    {
+                        Model = "account.type.paymment",
+                        Module = "accounttype",
+                        Name = "paymment_type",
+                        ResId = accountType.Id.ToString()
+                    };
+                    await objModel.CreateAsync(modeldata);
+                }
+            }
+            else
+            {
+                accountType = await objModel.GetRef<AccountAccountType>("accounttype.receipt_type");
+                if (accountType == null)
+                {
+                    accountType = await GetOrCreateAccountType(val);
+                    var modeldata = new IRModelData
+                    {
+                        Model = "account.type.receipt",
+                        Module = "accounttype",
+                        Name = "receipt_type",
+                        ResId = accountType.Id.ToString()
+                    };
+                    await objModel.CreateAsync(modeldata);
+                }
+            }
+
+
+            return accountType;
+        }
+
+        private async Task<AccountAccountType> GetOrCreateAccountType(AccountAccountDefault val)
+        {
+            var accountTypeObj = GetService<IAccountAccountTypeService>();
+            var accountType = new AccountAccountType();
+            if (val.Type == "paymenttype")
+            {
+                accountType = new AccountAccountType()
+                {
+                    Name = "Payment Type",
+                    Type = "paymenttype",
+                    IncludeInitialBalance = false,
+                };
+                await accountTypeObj.CreateAsync(accountType);
+            }
+            else
+            {
+                accountType = new AccountAccountType()
+                {
+                    Name = "Receipt Type",
+                    Type = "receipttype",
+                    IncludeInitialBalance = false,
+                };
+                await accountTypeObj.CreateAsync(accountType);
+            }
+
+
+            return accountType;
+        }
+
 
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {
