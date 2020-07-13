@@ -35,7 +35,6 @@ namespace Infrastructure.Services
         {
             var dbContext = GetService<CatalogDbContext>();
             await dbContext.Database.MigrateAsync();
-
             var partnerObj = GetService<IPartnerService>();
             var companyObj = GetService<ICompanyService>();
             //tạo công ty và user_root
@@ -84,7 +83,7 @@ namespace Infrastructure.Services
             mainPartner.Company = mainCompany;
             await partnerObj.UpdateAsync(mainPartner);
 
-            await InsertModuleAccountData(mainCompany);
+                await InsertModuleAccountData(mainCompany);
 
             await InsertModuleStockData(mainCompany);
 

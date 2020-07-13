@@ -252,12 +252,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task DeleteSampleData()
+        public async Task<ApplicationUser> DeleteSampleData()
         {
             var userObj = GetService<IUserService>();
+            var companyObj = GetService<ICompanyService>();
             var irConfigParameterObj = GetService<IIrConfigParameterService>();
             var valueRemove = irConfigParameterObj.GetParam("remove_sample_data").ToString();
             var valueImport = irConfigParameterObj.GetParam("import_sample_data").ToString();
+            var company = await companyObj.GetByIdAsync(CompanyId);
             var user = await userObj.GetCurrentUser();
             if (!user.IsUserRoot)
                 throw new Exception("Chỉ có admin mới có thể thực hiện chức năng này !!!");
@@ -265,49 +267,75 @@ namespace Infrastructure.Services
                 throw new Exception("Bạn không thể xóa dữ liệu mẫu !!!");
             else
             {
-                await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrderLines");
-                await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrders");
-                await _dbContext.ExecuteSqlCommandAsync("Delete DotKhamSteps");
-                await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocs");
-                await _dbContext.ExecuteSqlCommandAsync("Delete DotKhams");
-                await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrderLines");
-                await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrders");
-                await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocLines");
-                await _dbContext.ExecuteSqlCommandAsync("Delete StockQuants");
-                await _dbContext.ExecuteSqlCommandAsync("Delete StockMoves");
-                await _dbContext.ExecuteSqlCommandAsync("Delete ProductSteps");
+                await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
+                await _dbContext.ExecuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null");
                 await _dbContext.ExecuteSqlCommandAsync("Delete AccountPartialReconciles");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AccountFullReconciles");
                 await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoveLines");
                 await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoves");
-                await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrders");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AccountAccounts");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AccountAccountTypes");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AccountPayments");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AccountJournals");
+                await _dbContext.ExecuteSqlCommandAsync("Delete DotKhamSteps");
+                await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrderLines");
+                await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrderLines");
+                await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrders");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocLines");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocs");
+                await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptionLines");
+                await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptions");
+                await _dbContext.ExecuteSqlCommandAsync("Delete DotKhams");
+                await _dbContext.ExecuteSqlCommandAsync("Delete SaleCoupons");
+                await _dbContext.ExecuteSqlCommandAsync("Delete SaleCouponPrograms");
+                await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrders");
+                await _dbContext.ExecuteSqlCommandAsync("Delete StockMoves");
+                await _dbContext.ExecuteSqlCommandAsync("Delete StockQuants");
+                await _dbContext.ExecuteSqlCommandAsync("Delete StockPickings");
                 await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrderLines");
+                await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrders");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardCards");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardOrderLines");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardOrders");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardTypes");
-                await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptionLines");
-                await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptions");
-                await _dbContext.ExecuteSqlCommandAsync("Delete SaleCouponPrograms");
-                await _dbContext.ExecuteSqlCommandAsync("Delete Products");
-                await _dbContext.ExecuteSqlCommandAsync("Delete ProductCategories");
-                await _dbContext.ExecuteSqlCommandAsync("Delete CardHistories");
                 await _dbContext.ExecuteSqlCommandAsync("Delete CardCards");
                 await _dbContext.ExecuteSqlCommandAsync("Delete CardTypes");
-                await _dbContext.ExecuteSqlCommandAsync("Delete ResConfigSettings");
-                await _dbContext.ExecuteSqlCommandAsync("Delete Histories");
-                await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
-                await _dbContext.ExecuteSqlCommandAsync("Delete StockPickings");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ProductSteps");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Products");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ProductCategories");
                 await _dbContext.ExecuteSqlCommandAsync("Delete Appointments");
-                await _dbContext.ExecuteSqlCommandAsync("Delete AccountPayments");
+                await _dbContext.ExecuteSqlCommandAsync("update StockPickingTypes set DefaultLocationSrcId = null, DefaultLocationDestId = null, WarehouseId = null");
+                await _dbContext.ExecuteSqlCommandAsync("Delete StockWarehouses");
+                await _dbContext.ExecuteSqlCommandAsync("Delete StockLocations");
+                await _dbContext.ExecuteSqlCommandAsync("Delete StockPickingTypes");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IRSequences");
+                await _dbContext.ExecuteSqlCommandAsync("update Partners set CompanyId = null, CreatedById = null, WriteById = null");
                 await _dbContext.ExecuteSqlCommandAsync("Delete PartnerCategories");
-                await _dbContext.ExecuteSqlCommandAsync("Delete CardCards");
-                await _dbContext.ExecuteSqlCommandAsync("Delete AspNetUsers where IsUserRoot = 0");
-                await _dbContext.ExecuteSqlCommandAsync("delete Partners where CreatedById is not NULL");
-                //reset NextNumber ve 1
-                await _dbContext.ExecuteSqlCommandAsync("update  IRSequences set NumberNext = 1");
-                await _dbContext.ExecuteSqlCommandAsync("Delete IrConfigParameters Where [Key] != 'import_sample_data'");
-                await GetService<IResGroupService>().ResetSecurityData();
+                await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Histories");
+                await _dbContext.ExecuteSqlCommandAsync("Update IrConfigParameters set CreatedById = null , WriteById = null");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IrConfigParameters");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ResConfigSettings");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IrModuleCategories");
+                await _dbContext.ExecuteSqlCommandAsync("Update Companies set CreatedById = null , WriteById = null");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AspNetUsers");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Companies");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Partners");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IRModelAccesses");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ResGroups");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IRRules");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IRModels");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ProductPricelists");
+                await _dbContext.ExecuteSqlCommandAsync("Delete UoMs");
+                await _dbContext.ExecuteSqlCommandAsync("Delete UoMCategories");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Teeth");
+                await _dbContext.ExecuteSqlCommandAsync("Delete ToothCategories");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IrAttachments");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IRModelDatas");
             }
+
+            return user;
+
         }
 
 
