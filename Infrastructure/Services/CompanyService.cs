@@ -37,6 +37,9 @@ namespace Infrastructure.Services
             await dbContext.Database.MigrateAsync();
             var partnerObj = GetService<IPartnerService>();
             var companyObj = GetService<ICompanyService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var groupObj = GetService<IResGroupService>();
+
             //tạo công ty và user_root
             var mainPartner = new Partner
             {
@@ -47,6 +50,14 @@ namespace Infrastructure.Services
 
             await partnerObj.CreateAsync(mainPartner);
 
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "main_partner",
+                Module = "base",
+                Model = "res.partner",
+                ResId = mainPartner.Id.ToString(),
+            });
+
             var mainCompany = new Company
             {
                 Name = companyName,
@@ -54,6 +65,14 @@ namespace Infrastructure.Services
             };
 
             await companyObj.CreateAsync(mainCompany);
+           
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "main_company",
+                Module = "base",
+                Model = "res.company",
+                ResId = mainCompany.Id.ToString(),
+            });
 
             var partnerRoot = new Partner
             {
@@ -63,6 +82,14 @@ namespace Infrastructure.Services
                 Email = email,
             };
             partnerObj.Create(partnerRoot);
+
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "partner_root",
+                Module = "base",
+                Model = "res.partner",
+                ResId = partnerRoot.Id.ToString(),
+            });
 
             var userRoot = new ApplicationUser
             {
@@ -80,6 +107,14 @@ namespace Infrastructure.Services
             var userObj = GetService<UserManager<ApplicationUser>>();
             await userObj.CreateAsync(userRoot, password);
 
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "user_root",
+                Module = "base",
+                Model = "res.users",
+                ResId = userRoot.Id,
+            });
+
             mainPartner.Company = mainCompany;
             await partnerObj.UpdateAsync(mainPartner);
 
@@ -91,10 +126,7 @@ namespace Infrastructure.Services
 
             await InsertModuleDentalData();
 
-            //await InsertSecurityData();
-
-            var groupObj = GetService<IResGroupService>();
-            await groupObj.ResetSecurityData();
+            await groupObj.InsertSecurityData();
         }
 
 
