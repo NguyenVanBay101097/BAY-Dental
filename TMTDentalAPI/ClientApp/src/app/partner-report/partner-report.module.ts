@@ -9,9 +9,10 @@ import { PartnerReportWardComponent } from './partner-report-ward/partner-report
 import { PartnerReportLocationFilterComponent } from './partner-report-location-filter/partner-report-location-filter.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { PartnerReportLocationChartPieComponent } from './partner-report-location-chart-pie/partner-report-location-chart-pie.component';
 
 @NgModule({
-  declarations: [PartnerReportLocationComponent, PartnerReportDistrictComponent, PartnerReportWardComponent, PartnerReportLocationFilterComponent],
+  declarations: [PartnerReportLocationComponent, PartnerReportDistrictComponent, PartnerReportWardComponent, PartnerReportLocationFilterComponent, PartnerReportLocationChartPieComponent],
   imports: [
     CommonModule,
     PartnerReportRoutingModule,

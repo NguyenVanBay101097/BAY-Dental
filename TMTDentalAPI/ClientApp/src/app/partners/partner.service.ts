@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
@@ -361,6 +361,14 @@ export class PartnerService {
             this.baseApi + this.apiUrl + "/ExportExcelFile", paged,
             { responseType: "blob" }
         );
+    }
+
+    getReportLocationCompanyWard(val): Observable<PartnerReportLocationWard[]> {
+        return this.http.post<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyWard', val);
+    }
+
+    getReportLocationCompanyDistrict(val): Observable<PartnerReportLocationDistrict[]> {
+        return this.http.post<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyDistrict', val);
     }
 }
 
