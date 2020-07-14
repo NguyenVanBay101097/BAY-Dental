@@ -6,7 +6,7 @@ import { AccountAccountListComponent } from './account-account-list/account-acco
 import { AccountAccountFormComponent } from './account-account-form/account-account-form.component';
 import { AccountAccountService } from './account-account.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AccountAccountListComponent, AccountAccountFormComponent],
@@ -14,9 +14,13 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     AccountAccountsRoutingModule, 
     MyCustomKendoModule, 
-    FormsModule
+    FormsModule, 
+    ReactiveFormsModule
   ], providers: [
     AccountAccountService
-  ]
+  ],
+  entryComponents: [
+    AccountAccountFormComponent,
+  ],
 })
 export class AccountAccountsModule { }

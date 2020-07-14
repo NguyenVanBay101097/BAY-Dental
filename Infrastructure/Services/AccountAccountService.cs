@@ -39,8 +39,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 CompanyName = x.Company.Name,
                 Code = x.Code,
-                Note = x.Note,
-                InternalType = x.InternalType
+                Note = x.Note
             }).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -74,19 +73,28 @@ namespace Infrastructure.Services
             if (usertype != null)
             {
                 res.UserTypeId = usertype.Id;
+                res.UserType = usertype;
 
             }
+            res.Active = true;
             res.Reconcile = false;
 
             return res;
         }
 
+        public async Task<AccountAccount> GetById (Guid id)
+        {
+            return await SearchQuery(x => x.Id == id)
+                .Include(x => x.Company)
+                .Include(x => x.UserType)
+                .FirstOrDefaultAsync();
+        }
 
-       
         //create loại thu chi
         public async Task<AccountAccount> CreateAccountAccount(AccountAccountSave val)
         {
             var accountaccount = _mapper.Map<AccountAccount>(val);
+            accountaccount.InternalType = val.UserType.Type;
 
             return await CreateAsync(accountaccount);
         }
@@ -94,13 +102,15 @@ namespace Infrastructure.Services
         //update loại thu chi
         public async Task UpdateAccountAccount(Guid id, AccountAccountSave val)
         {
-            var accountAccoun = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.UserType).FirstOrDefaultAsync();
-            if (accountAccoun == null)
+            var accountAccount = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.UserType).FirstOrDefaultAsync();
+            if (accountAccount == null)
                 throw new Exception("Loại không tồn tại");
 
-            accountAccoun = _mapper.Map(val, accountAccoun);
+            accountAccount = _mapper.Map(val, accountAccount);
 
-            await UpdateAsync(accountAccoun);
+            accountAccount.InternalType = accountAccount.UserType.Type;
+
+            await UpdateAsync(accountAccount);
         }
 
         public async Task<AccountAccountType> CheckAccountType(AccountAccountDefault val)

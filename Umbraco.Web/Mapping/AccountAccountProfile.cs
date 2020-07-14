@@ -19,7 +19,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<AccountAccountSave, AccountAccount>()
                  .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Company, x => x.Ignore());
+                .ForMember(x => x.Company, x => x.Ignore())
+                .ForMember(x => x.UserType, x => x.Ignore());
         }
     }
 }

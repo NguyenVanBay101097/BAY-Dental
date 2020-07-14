@@ -39,7 +39,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _accountAccountService.GetByIdAsync(id);
+            var res = await _accountAccountService.GetById(id);
             if (res == null)
                 return NotFound();
           

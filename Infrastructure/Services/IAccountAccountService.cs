@@ -16,6 +16,8 @@ namespace Infrastructure.Services
 
         Task<AccountAccountSave> DefaultGet(AccountAccountDefault val);
 
+        Task<AccountAccount> GetById(Guid id);
+
         Task<AccountAccount> CreateAccountAccount(AccountAccountSave val);
         Task UpdateAccountAccount(Guid id, AccountAccountSave val);
     }
