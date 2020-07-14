@@ -10,10 +10,6 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { Observable } from "rxjs";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 
-interface Item {
-  text: string;
-  value: string;
-}
 
 @Component({
   selector: "app-partner-source-create-update-dialog",
@@ -22,20 +18,10 @@ interface Item {
 })
 export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   myform: FormGroup;
-  filterdCategories: PartnerSourceBasic[];
-  @ViewChild("form", { static: true }) formView: any;
-  @ViewChild("nameInput", { static: true }) nameInput: ElementRef;
-  @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
-
   @Input() public id: string;
   title: string;
   submitted = false;
-  public lstType: Array<Item> = [
-    { text: "Bình thường", value: "normal" },
-    { text: "Giới thiệu", value: "referral" },
-  ];
 
-  public selectedValue: string = "normal";
 
   constructor(
     private fb: FormBuilder,
@@ -47,7 +33,7 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   ngOnInit() {
     this.myform = this.fb.group({
       name: ["", Validators.required],
-      type: [null, Validators.required],
+      type: ['normal'],
     });
 
     if (this.id) {
@@ -59,11 +45,6 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
     }
   }
 
-  // searchCategories(q?: string): Observable<PartnerSourceBasic[]> {
-  //   var val = new PartnerSourcePaged();
-  //   val.search = q;
-  //   return this.partnerSourceService.autocomplete(val);
-  // }
 
   onSave() {
     this.submitted = true;
@@ -86,17 +67,11 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
 
   saveOrUpdate() {
     var val = this.myform.value;
-    val.type = val.type;
     if (!this.id) {
       return this.partnerSourceService.create(val);
     } else {
       return this.partnerSourceService.update(this.id, val);
     }
-  }
-
-  onCancel() {
-    this.submitted = false;
-    this.activeModal.close();
   }
 
   get f() {

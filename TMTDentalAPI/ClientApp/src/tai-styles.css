@@ -1211,3 +1211,113 @@ span.char-count {
 }
 
 
+.GAL03TOCDKB {
+    margin-left: 10px;
+    white-space: nowrap;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.GAL03TOCHKB {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.GAL03TOCHKB>* {
+    margin: 0 10px;
+}
+
+.GAL03TOCHKB>*>span:LAST-CHILD {
+    font-size: 15px;
+    font-weight: 300;
+}
+
+.GAL03TOCH3B {
+    margin-top: 30px;
+    box-shadow: 0 -1px 5px 1px #efefef;
+    padding: 20px 15px;
+    height: 75px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.GAL03TOCB3B {
+    font-weight: 600;
+    margin-right: 5px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.GAL03TOCK3B {
+    display: block;
+    position: absolute;
+    right: 3px;
+    top: 0px;
+    cursor: pointer;
+}
+
+.GAL03TOCJ3B {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-left: 10px;
+    align-items: center;
+    white-space: nowrap;
+    height: 36px;
+    text-transform: none;
+    position: absolute;
+    max-width: 80px;
+    right: 80px;
+    font-weight: 300;
+    justify-content: space-between;
+    color: #777;
+    background: none;
+}
+
+.GAL03TOCL2B {
+    font-size: 10px;
+    padding: 4px 5px 4px 5px;
+    min-width: 30px;
+    font-weight: 300;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    justify-content: center;
+    color: #777;
+    border-color: #ddd;
+    min-height: 20px;
+}
+
+.treatment-action {
+    display: inline-flex;
+    position: relative;
+    width: 100%;
+}
+
+.action {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-left: 10px;
+    align-items: center;
+    white-space: nowrap;
+    position: absolute;
+    right: 0px;
+    margin-top: 8px;
+}
+
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none !important;
+}
+
+.popover-xl {
+    max-width: 400px!important;  
+    width: 400px;
+}

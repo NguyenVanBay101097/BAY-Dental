@@ -42,6 +42,8 @@ import { environment } from 'src/environments/environment';
 import { Operation } from 'fast-json-patch';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
 declare var $: any;
 
 @Component({
@@ -111,6 +113,8 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   title: string;
   activeTabId = 1;
+
+  @ViewChild(ToaThuocPrintComponent, {static: true}) toaThuocPrintComponent: ToaThuocPrintComponent;
 
 
   constructor(
@@ -436,24 +440,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   printToaThuoc(item: ToaThuocBasic) {
     this.toaThuocService.getPrint(item.id).subscribe(result => {
-      this.toaThuocPrint = result;
-      setTimeout(() => {
-        var printContents = document.getElementById('printToaThuocDiv').innerHTML;
-        var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-        popupWin.document.open();
-        popupWin.document.write(`
-            <html>
-              <head>
-                <title>Print tab</title>
-                <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-                <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
-              </head>
-          <body onload="window.print();window.close()">${printContents}</body>
-            </html>`
-        );
-        popupWin.document.close();
-        this.toaThuocPrint = null;
-      }, 500);
+      this.toaThuocPrintComponent.print(result);
     });
   }
 
@@ -481,12 +468,15 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   // }
 
   editToaThuoc(item: ToaThuocBasic) {
-    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-    modalRef.componentInstance.title = 'Sửa toa thuốc';
+    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa đơn thuốc';
     modalRef.componentInstance.id = item.id;
 
-    modalRef.result.then(() => {
+    modalRef.result.then((result: any) => {
       this.loadToaThuocs();
+      if (result.print) {
+        this.printToaThuoc(item);
+      }
     }, () => {
     });
   }
@@ -556,62 +546,19 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   actionCreateToaThuoc() {
     if (this.id) {
-      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-      modalRef.componentInstance.title = 'Kê toa thuốc';
-      modalRef.componentInstance.dotKhamId = this.id;
+      let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thêm đơn thuốc';
+      modalRef.componentInstance.defaultVal = { dotKhamId: this.id };
 
       modalRef.result.then(result => {
-        if (result.toaThuoc && result.print) {
-          this.printToaThuoc(result.toaThuoc);
-        }
-
         this.loadToaThuocs();
+        if (result.print) {
+          this.printToaThuoc(result.item);
+        }
       }, () => {
       });
     }
-
-    // const windowRef = this.windowService.open({
-    //   title: 'Tạo toa thuốc',
-    //   content: ToaThuocCuDialogComponent,
-    //   resizable: false,
-    //   autoFocusedElement: '[name="name"]',
-    // });
-
-    // const instance = windowRef.content.instance;
-    // instance.dotKhamId = this.id;
-
-    // this.opened = true;
-
-    // windowRef.result.subscribe((result) => {
-    //   this.opened = false;
-    //   if (result instanceof WindowCloseResult) {
-    //   } else {
-    //     this.loadToaThuocs();
-    //   }
-    // });
   }
-
-  // actionCreateAppointment() {
-  //   const windowRef = this.windowService.open({
-  //     title: 'Hẹn tái khám',
-  //     content: AppointmentCreateUpdateComponent,
-  //     resizable: false,
-  //     autoFocusedElement: '[name="name"]',
-  //   });
-
-  //   const instance = windowRef.content.instance;
-  //   instance.dotKhamId = this.id;
-
-  //   this.opened = true;
-
-  //   windowRef.result.subscribe((result) => {
-  //     this.opened = false;
-  //     if (result instanceof WindowCloseResult) {
-  //     } else {
-  //       this.loadAppointments();
-  //     }
-  //   });
-  // }
 
   getDefault() {
     var val = new DotKhamDefaultGet();

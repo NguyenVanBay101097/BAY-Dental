@@ -106,9 +106,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ToaThuocBasic>> GetToaThuocsForDotKham(Guid dotKhamId)
         {
-            var toaThuocs = await SearchQuery(x => x.DotKhamId == dotKhamId).ToListAsync();
-            var res = _mapper.Map<IEnumerable<ToaThuocBasic>>(toaThuocs);
-            return res;
+            var toaThuocs = await _mapper.ProjectTo<ToaThuocBasic>(SearchQuery(x => x.DotKhamId == dotKhamId)).ToListAsync();
+            return toaThuocs;
         }
 
         public async Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id)

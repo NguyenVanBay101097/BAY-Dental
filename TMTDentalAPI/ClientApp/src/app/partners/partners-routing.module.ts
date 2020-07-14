@@ -10,6 +10,7 @@ import { PartnerCustomerProfileComponent } from './partner-customer-profile/part
 import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
+import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,7 @@ const routes: Routes = [
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
       { path: 'appointment', component: PartnerCustomerAppointmentComponent }, 
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent }, 
+      { path: 'categories', component: PartnerCustomerCategoriesComponent },
     ]
   },
   {

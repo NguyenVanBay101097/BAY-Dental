@@ -40,6 +40,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
     }
 
+    public class CompanyPrintVM
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+    }
+
     public class CompanySimple
     {
         public Guid Id { get; set; }

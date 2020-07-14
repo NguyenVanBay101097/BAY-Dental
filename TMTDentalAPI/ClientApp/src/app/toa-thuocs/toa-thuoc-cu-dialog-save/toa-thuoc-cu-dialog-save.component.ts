@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDisplay, ToaThuocLineSave } from '../toa-thuoc.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
@@ -8,7 +8,10 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
+import { DropDownFilterSettings, ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { SamplePrescriptionsService, SamplePrescriptionsDisplay, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { result } from 'lodash';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog-save',
@@ -22,6 +25,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   userSimpleFilter: UserSimple[] = [];
   filteredProducts: ProductSimple[];
   defaultVal: any;
+  samplePrescriptionAdded: any;
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('samplePrescriptionCbx', { static: true }) samplePrescriptionCbx: ComboBoxComponent;
+  title: string;
 
   public filterSettings: DropDownFilterSettings = {
     caseSensitive: false,
@@ -31,7 +38,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, 
     private userService: UserService, public activeModal: NgbActiveModal, 
     private intlService: IntlService, private errorService: AppSharedShowErrorService,
-    private productService: ProductService) { }
+    private productService: ProductService, private samplePrescriptionsService: SamplePrescriptionsService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
@@ -61,6 +68,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       this.getUserList(); 
       this.loadFilteredProducts();
     });
+
+    this.filterChangeCombobox();
   }
 
   searchProducts() {
@@ -168,5 +177,69 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         this.errorService.show(err);
       });
     }
+  }
+
+  searchUsers(filter: string) {
+    var val = new UserPaged();
+    val.search = filter;
+    return this.userService.autocompleteSimple(val);
+  }
+
+  filterChangeCombobox() {
+    this.userCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.userCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+    ).subscribe(
+      result => {
+        this.userSimpleFilter = result;
+        this.userCbx.loading = false;
+      }
+    )
+  }
+
+  deleteLine(index: number) {
+    this.lines.removeAt(index);      
+  }
+
+  onSaveSamplePrescription(name) {
+    var val = new SamplePrescriptionsDisplay();
+    val.name = name;
+    val.note = this.toaThuocForm.get('note').value;
+    val.lines = this.lines.value;
+    val.lines.forEach(line => {
+      line.productId = line.product['id'];
+    });
+    this.samplePrescriptionsService.create(val).subscribe(result => {
+      this.samplePrescriptionAdded = result;
+    }, err => {
+      this.errorService.show(err);
+    });
+  }
+
+  getNameSamplePrescription(nameSamplePrescription) {
+    this.onSaveSamplePrescription(nameSamplePrescription);
+  }
+
+  getItemSamplePrescription(itemSamplePrescription) {
+    this.samplePrescriptionsService.get(itemSamplePrescription.id).subscribe(result => {
+      console.log(result);
+      this.toaThuocForm.get('note').patchValue(result.note);
+
+      this.lines.clear();
+
+      result.lines.forEach(line => {
+        this.lines.push(this.fb.group({
+          product: [line.product, Validators.required],
+          numberOfTimes: line.numberOfTimes, 
+          amountOfTimes: line.amountOfTimes, 
+          quantity: line.quantity,  
+          numberOfDays: line.numberOfDays, 
+          useAt: line.useAt,
+        }));
+      });
+    }, err => {
+      this.errorService.show(err);
+    });
   }
 }

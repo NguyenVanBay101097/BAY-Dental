@@ -101,17 +101,17 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public WardSimple Ward { get; set; }
 
-        ///// <summary>
-        ///// Nguồn biết đến
-        ///// </summary>
-        //public Guid? SourceId { get; set; }
-        //public PartnerSourceBasic Source { get; set; }
+        /// <summary>
+        /// Nguồn biết đến
+        /// </summary>
+        public Guid? SourceId { get; set; }
+        public PartnerSourceBasic Source { get; set; }
 
-        ///// <summary>
-        ///// Người giới thiệu
-        ///// </summary>
-        //public string ReferralUserId { get; set; }
-        //public ApplicationUserSimple ReferralUser { get; set; }
+        /// <summary>
+        /// Người giới thiệu
+        /// </summary>
+        public string ReferralUserId { get; set; }
+        public ApplicationUserSimple ReferralUser { get; set; }
 
         /// <summary>
         /// Ghi chú khi nguồn là 'Khác'

@@ -11,8 +11,14 @@ namespace ApplicationCore.Entities
             Active = true;
         }
 
+        /// <summary>
+        /// Tên
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Mã
+        /// </summary>
         public string Code { get; set; }
 
         public Guid UserTypeId { get; set; }

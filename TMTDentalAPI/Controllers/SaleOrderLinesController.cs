@@ -49,6 +49,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(paged);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CancelSaleOrderLine(IEnumerable<Guid> Ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.CancelSaleOrderLine(Ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
         //[HttpPost]
         //public async Task<IActionResult> Create(SaleOrderLineSave val)
         //{

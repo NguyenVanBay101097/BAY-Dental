@@ -47,12 +47,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<AccountMove>> _ComputePaymentsWidgetReconciledInfo(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.Lines).Include("Lines.Account").Include("Lines.MatchedCredits").Include("Lines.MatchedDebits")
-                .Include("Lines.MatchedDebits.DebitMove").Include("Lines.MatchedDebits.DebitMove.Move").Include("Lines.MatchedDebits.DebitMove.Journal")
-                .Include("Lines.MatchedDebits.CreditMove").Include("Lines.MatchedDebits.CreditMove.Move").Include("Lines.MatchedDebits.CreditMove.Journal")
-                .Include("Lines.MatchedCredits.DebitMove").Include("Lines.MatchedCredits.DebitMove.Move").Include("Lines.MatchedCredits.DebitMove.Journal")
-                .Include("Lines.MatchedCredits.CreditMove").Include("Lines.MatchedCredits.CreditMove.Move").Include("Lines.MatchedCredits.CreditMove.Journal")
-                .Include("Lines.Move").Include("Lines.Journal").ToListAsync();
+                .Include(x => x.Lines).ToListAsync();
 
             foreach(var move in self)
             {
@@ -62,7 +57,7 @@ namespace Infrastructure.Services
                     continue;
                 }
 
-                var reconciled_vals = _GetReconciledInfoJSONValues(move);
+                var reconciled_vals = await _GetReconciledInfoJSONValues(move);
                 if (reconciled_vals.Any())
                     move.InvoicePaymentsWidget = JsonConvert.SerializeObject(reconciled_vals);
                 else
@@ -72,14 +67,19 @@ namespace Infrastructure.Services
             return self;
         }
 
-        public IList<PaymentInfoContent> _GetReconciledInfoJSONValues(AccountMove self)
+        public async Task<IList<PaymentInfoContent>> _GetReconciledInfoJSONValues(AccountMove self)
         {
+            var amlObj = GetService<IAccountMoveLineService>();
             var reconciled_vals = new List<PaymentInfoContent>();
-            var pay_term_line_ids = self.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable").ToList();
+            var pay_term_line_ids = await amlObj.SearchQuery(x => x.MoveId == self.Id && (x.Account.InternalType == "receivable" || x.Account.InternalType == "payable"))
+                .Include(x => x.MatchedDebits).Include(x => x.MatchedCredits).ToListAsync();
+
             var partials = pay_term_line_ids.SelectMany(x => x.MatchedDebits).Concat(pay_term_line_ids.SelectMany(x => x.MatchedCredits)).ToList();
             foreach(var partial in partials)
             {
-                var counterpart_lines = new List<AccountMoveLine>() { partial.DebitMove, partial.CreditMove };
+                var counterpart_lines = await amlObj.SearchQuery(x => x.Id == partial.DebitMoveId || x.Id == partial.CreditMoveId)
+                    .Include(x => x.Journal).Include(x => x.Move).ToListAsync();
+
                 var counterpart_line = counterpart_lines.Where(x => !self.Lines.Contains(x)).FirstOrDefault();
                 var amount = partial.Amount;
 
