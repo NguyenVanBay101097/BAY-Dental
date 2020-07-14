@@ -88,7 +88,7 @@ namespace Infrastructure.Services
             }
             else if (val.Type == "chi")
             {
-                reference_account_type = "account.data_account_type_thu";
+                reference_account_type = "account.data_account_type_chi";
                 name = "Chi";
             }
             var res = new AccountAccountSave();
