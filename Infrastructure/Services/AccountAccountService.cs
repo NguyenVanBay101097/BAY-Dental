@@ -41,7 +41,7 @@ namespace Infrastructure.Services
                 name = "Chi";
             }
             else
-                throw new Exception("");
+                throw new Exception("Not support");
 
             var account_type = await GetAccountTypeThuChi(reference_account_type, name);
 
