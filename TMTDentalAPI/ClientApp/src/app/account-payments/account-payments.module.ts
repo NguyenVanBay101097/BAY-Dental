@@ -9,9 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { AccountPaymentCreateUpdateComponent } from './account-payment-create-update/account-payment-create-update.component';
 import { SharedModule } from '../shared/shared.module';
+import { AccountPaymentListTComponent } from './account-payment-list-t/account-payment-list-t.component';
 
 @NgModule({
-  declarations: [AccountPaymentListComponent, AccountPaymentCreateUpdateComponent],
+  declarations: [AccountPaymentListComponent, AccountPaymentCreateUpdateComponent, AccountPaymentListTComponent],
   imports: [
     CommonModule,
     AccountPaymentsRoutingModule,
