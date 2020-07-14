@@ -49,9 +49,7 @@ export class AccountAccountFormComponent implements OnInit {
     var val = new accountAccountDefault();
     val.type = this.type;
     this.accountAccountService.defaultGet(val).subscribe(result => {
-      console.log(result);
       this.accountForm.patchValue(result);
-      console.log(this.accountForm.value);
     }, err => {
       console.log(err);
       this.activeModal.dismiss();
@@ -60,9 +58,7 @@ export class AccountAccountFormComponent implements OnInit {
   
   get() {
     this.accountAccountService.get(this.itemId).subscribe(result => {
-      console.log(result);
       this.accountForm.patchValue(result);
-      console.log(this.accountForm.value);
     }, err => {
       console.log(err);
       this.activeModal.dismiss();
@@ -81,7 +77,6 @@ export class AccountAccountFormComponent implements OnInit {
   save() {
     var value = this.accountForm.value;
     value.companyId = value.company ? value.company.id : null;
-    console.log(value);
     if (!this.itemId) {
       this.accountAccountService.create(value).subscribe(result => {
         this.activeModal.close(true);

@@ -90,13 +90,13 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
-                    case "account.type.paymment":
+                    case "account.data_account_type_thu":
                         {
                             var service = GetService<IAccountAccountTypeService>();
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
-                    case "account.type.receipt":
+                    case "account.data_account_type_chi":
                         {
                             var service = GetService<IAccountAccountTypeService>();
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
