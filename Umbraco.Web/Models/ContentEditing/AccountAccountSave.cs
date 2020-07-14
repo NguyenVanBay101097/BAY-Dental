@@ -36,5 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InternalType { get; set; }
 
         public bool Reconcile { get; set; }
+
+        public bool IsExcludedProfitAndLossReport { get; set; }
     }
 }

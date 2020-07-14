@@ -70,9 +70,9 @@ export class AccountAccountListComponent implements OnInit {
 
   convertResultSelection() {
     switch (this.resultSelection) {
-      case 'receipttype':
+      case 'thu':
         return 'loại thu';
-      case 'paymenttype':
+      case 'chi':
         return 'loại chi';
     }
   }

@@ -21,7 +21,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
 
-      
 
     }
 }
