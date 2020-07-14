@@ -21,8 +21,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
 
-        //UserType.Type
-        public string InternalType { get; set; }
 
     }
 }

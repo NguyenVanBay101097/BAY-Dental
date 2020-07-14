@@ -12,10 +12,11 @@ namespace Infrastructure.Services
     {
         Task<AccountAccount> GetAccountReceivableCurrentCompany();
         Task<AccountAccount> GetAccountPayableCurrentCompany();
-        Task<PagedResult2<AccountAccountBasic>> GetPagedResultAsync(AccountAccountPaged val);
+        Task<PagedResult2<AccountAccountBasic>> GetThuChiPagedResultAsync(AccountAccountThuChiPaged val);
 
         Task<AccountAccountSave> DefaultGet(AccountAccountDefault val);
 
+        Task<AccountAccount> GetByIdThuChi(Guid id);
         Task<AccountAccount> CreateAccountAccount(AccountAccountSave val);
         Task UpdateAccountAccount(Guid id, AccountAccountSave val);
     }

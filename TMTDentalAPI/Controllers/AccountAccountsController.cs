@@ -27,19 +27,16 @@ namespace TMTDentalAPI.Controllers
 
         //api get phan trang loai thu , chi
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]AccountAccountPaged val)
+        public async Task<IActionResult> GetLoaiThuChi([FromQuery]AccountAccountThuChiPaged val)
         {
-            if (val == null || !ModelState.IsValid)
-                return BadRequest();
-
-            var res = await _accountAccountService.GetPagedResultAsync(val);
+            var res = await _accountAccountService.GetThuChiPagedResultAsync(val);
             return Ok(res);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _accountAccountService.GetByIdAsync(id);
+            var res = await _accountAccountService.GetByIdThuChi(id);
             if (res == null)
                 return NotFound();
           
