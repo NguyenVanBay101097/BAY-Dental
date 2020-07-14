@@ -139,7 +139,7 @@ namespace Infrastructure.Services
         {
             //reference: account.data_account_type_thu
             var accountTypeObj = GetService<IAccountAccountTypeService>();
-            var modelDataObj = GetService<IRModelDataService>();
+            var modelDataObj = GetService<IIRModelDataService>();
             var accountType = await modelDataObj.GetRef<AccountAccountType>(reference);
             if (accountType == null)
             {
