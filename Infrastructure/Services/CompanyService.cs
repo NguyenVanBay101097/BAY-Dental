@@ -65,7 +65,7 @@ namespace Infrastructure.Services
             };
 
             await companyObj.CreateAsync(mainCompany);
-           
+
             await modelDataObj.CreateAsync(new IRModelData
             {
                 Name = "main_company",
@@ -76,7 +76,7 @@ namespace Infrastructure.Services
 
             var partnerRoot = new Partner
             {
-                Name = !string.IsNullOrEmpty(name) ? name: userName,
+                Name = !string.IsNullOrEmpty(name) ? name : userName,
                 Company = mainCompany,
                 Customer = false,
                 Email = email,
@@ -118,7 +118,7 @@ namespace Infrastructure.Services
             mainPartner.Company = mainCompany;
             await partnerObj.UpdateAsync(mainPartner);
 
-                await InsertModuleAccountData(mainCompany);
+            await InsertModuleAccountData(mainCompany);
 
             await InsertModuleStockData(mainCompany);
 
@@ -574,7 +574,7 @@ namespace Infrastructure.Services
             await modelDataObj.CreateAsync(modelDatas);
 
             var whObj = GetService<IStockWarehouseService>();
-            foreach(var wh in stock_warehouses_dict.Values)
+            foreach (var wh in stock_warehouses_dict.Values)
             {
                 await whObj.CreateAsync(wh);
             }
@@ -628,7 +628,8 @@ namespace Infrastructure.Services
                         if (field_name == "name")
                         {
                             uom_categ.Name = field.InnerText;
-                        } else if (field_name == "measure_type")
+                        }
+                        else if (field_name == "measure_type")
                         {
                             uom_categ.MeasureType = field.InnerText;
                         }
@@ -995,7 +996,7 @@ namespace Infrastructure.Services
                 foreach (var partner_id in partner_ids)
                     await ExcuteSqlCommandAsync("delete Partners where Id=@p0", partner_id);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw new Exception("Dữ liệu đã phát sinh cho chi nhánh này, không thể xóa!.");

@@ -252,19 +252,28 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<ApplicationUser> DeleteSampleData()
+        public async Task<Company> DeleteSampleData()
         {
             var userObj = GetService<IUserService>();
             var companyObj = GetService<ICompanyService>();
             var irConfigParameterObj = GetService<IIrConfigParameterService>();
-            var valueRemove = irConfigParameterObj.GetParam("remove_sample_data").ToString();
-            var valueImport = irConfigParameterObj.GetParam("import_sample_data").ToString();
-            var company = await companyObj.GetByIdAsync(CompanyId);
+            var irModelDataObj = GetService<IIRModelDataService>();
+
+            var partner_main = await irModelDataObj.SearchQuery(x => x.Name == "main_partner").FirstOrDefaultAsync();
+            var company_main = await irModelDataObj.SearchQuery(x => x.Name == "main_company").FirstOrDefaultAsync();
+            var user_root = await irModelDataObj.SearchQuery(x => x.Name == "user_root").FirstOrDefaultAsync();
+            var partner_root = await irModelDataObj.SearchQuery(x => x.Name == "partner_root").FirstOrDefaultAsync();
+            var valueRemove = await irConfigParameterObj.GetParam("remove_sample_data");
+            var valueImport = await irConfigParameterObj.GetParam("import_sample_data");
+            var company = await companyObj.GetByIdAsync(company_main.ResId);
+
             var user = await userObj.GetCurrentUser();
             if (!user.IsUserRoot)
                 throw new Exception("Chỉ có admin mới có thể thực hiện chức năng này !!!");
-            else if (valueImport != "Installed" && valueRemove == "True")
-                throw new Exception("Bạn không thể xóa dữ liệu mẫu !!!");
+            else if (valueImport == "Installed" && valueRemove == "True")
+                throw new Exception("Xóa dữ liệu mẫu chỉ được phép xóa một lần duy nhất !!!");
+            else if (valueImport != "Installed" && valueRemove != "True")
+                throw new Exception("Bạn chưa import dữ liệu mẫu !!!");
             else
             {
                 await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
@@ -309,7 +318,7 @@ namespace Infrastructure.Services
                 await _dbContext.ExecuteSqlCommandAsync("Delete StockLocations");
                 await _dbContext.ExecuteSqlCommandAsync("Delete StockPickingTypes");
                 await _dbContext.ExecuteSqlCommandAsync("Delete IRSequences");
-                await _dbContext.ExecuteSqlCommandAsync("update Partners set CompanyId = null, CreatedById = null, WriteById = null");
+                await _dbContext.ExecuteSqlCommandAsync("update Partners set CompanyId = null, CreatedById = null, WriteById = null where Id != '" + partner_main.ResId.ToString() + "' and Id != '" + partner_root.ResId.ToString() + "'");
                 await _dbContext.ExecuteSqlCommandAsync("Delete PartnerCategories");
                 await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
                 await _dbContext.ExecuteSqlCommandAsync("Delete Histories");
@@ -317,10 +326,10 @@ namespace Infrastructure.Services
                 await _dbContext.ExecuteSqlCommandAsync("Delete IrConfigParameters");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ResConfigSettings");
                 await _dbContext.ExecuteSqlCommandAsync("Delete IrModuleCategories");
-                await _dbContext.ExecuteSqlCommandAsync("Update Companies set CreatedById = null , WriteById = null");
-                await _dbContext.ExecuteSqlCommandAsync("Delete AspNetUsers");
-                await _dbContext.ExecuteSqlCommandAsync("Delete Companies");
-                await _dbContext.ExecuteSqlCommandAsync("Delete Partners");
+                await _dbContext.ExecuteSqlCommandAsync("Update Companies set CreatedById = null , WriteById = null where Id !='" + company_main.ResId.ToString() + "'");
+                await _dbContext.ExecuteSqlCommandAsync("Delete AspNetUsers where Id != '" + user_root.ResId.ToString() + "'");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Companies where Id != '" + company_main.ResId.ToString() + "'");
+                await _dbContext.ExecuteSqlCommandAsync("Delete Partners where Id != '" + partner_main.ResId.ToString() + "' and Id != '" + partner_root.ResId.ToString() + "'");
                 await _dbContext.ExecuteSqlCommandAsync("Delete IRModelAccesses");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ResGroups");
                 await _dbContext.ExecuteSqlCommandAsync("Delete IRRules");
@@ -331,11 +340,10 @@ namespace Infrastructure.Services
                 await _dbContext.ExecuteSqlCommandAsync("Delete Teeth");
                 await _dbContext.ExecuteSqlCommandAsync("Delete ToothCategories");
                 await _dbContext.ExecuteSqlCommandAsync("Delete IrAttachments");
-                await _dbContext.ExecuteSqlCommandAsync("Delete IRModelDatas");
+                await _dbContext.ExecuteSqlCommandAsync("Delete IRModelDatas where Name !='main_partner' and name != 'main_company' and name != 'partner_root' and name !='user_root'");
             }
 
-            return user;
-
+            return company;
         }
 
 

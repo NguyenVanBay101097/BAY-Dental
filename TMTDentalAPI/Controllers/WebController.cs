@@ -35,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IUserService _userService;
         private readonly ICompanyService _companyService;
         private readonly CatalogDbContext _dbContext;
+        private readonly IResGroupService _groupService;
 
         public WebController(
             IIrAttachmentService attachmentService,
@@ -45,7 +46,8 @@ namespace TMTDentalAPI.Controllers
             IUnitOfWorkAsync unitOfWork,
             IUserService userService,
             ICompanyService companyService,
-             CatalogDbContext dbContext)
+             CatalogDbContext dbContext,
+             IResGroupService groupService)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
@@ -56,6 +58,7 @@ namespace TMTDentalAPI.Controllers
             _userService = userService;
             _companyService = companyService;
             _dbContext = dbContext;
+            _groupService = groupService;
         }
 
         [HttpGet("[action]")]
@@ -80,20 +83,17 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> DeleteSampleData()
         {
             await _unitOfWork.BeginTransactionAsync();
-            var userSetup = await _importSampleDataService.DeleteSampleData();
+            var company = await _importSampleDataService.DeleteSampleData();
             _unitOfWork.Commit();
-            var tenant = new CompanySetupTenant()
-            {
-                Name = userSetup.Name,
-                CompanyName = userSetup.Company.Name,
-                Username = userSetup.UserName,
-                Phone = userSetup.PhoneNumber,
-                Password = "123123@",
-                Email = userSetup.Email
-            };
-            await _companyService.SetupTenant(tenant);
-            await _dbContext.ExecuteSqlCommandAsync($"update AspNetUsers set PasswordHash = 'AQAAAAEAACcQAAAAENLslBsvrAA2BgwGZNRz4RVoiSwzm+3ucjbjI5VYGT1O/AVE+RstID0putp0PKylVQ==' where IsUserRoot = 1");
+
+            await _companyService.InsertModuleAccountData(company);
+            await _companyService.InsertModuleStockData(company);
+            await _companyService.InsertModuleProductData();
+            await _companyService.InsertModuleDentalData();
+            await _groupService.InsertSecurityData();
+
             await _irConfigParameterService.SetParam("remove_sample_data", "True");
+            await _irConfigParameterService.SetParam("import_sample_data", "Installed");
             return NoContent();
         }
 

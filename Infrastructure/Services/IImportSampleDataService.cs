@@ -9,6 +9,6 @@ namespace Infrastructure.Services
     public interface IImportSampleDataService
     {
         Task ImportSampleData();
-        Task<ApplicationUser> DeleteSampleData();
+        Task<Company> DeleteSampleData();
     }
 }
