@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -61,6 +61,11 @@ export class AccountAccountListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
   }
 
   convertResultSelection() {
