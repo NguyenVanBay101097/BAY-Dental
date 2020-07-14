@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public CompanyProfile()
         {
             CreateMap<Company, CompanyBasic>();
+            CreateMap<Company, CompanySimple>();
 
             CreateMap<Company, CompanyDisplay>();
             CreateMap<CompanyDisplay, Company>()

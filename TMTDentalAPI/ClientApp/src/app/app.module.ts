@@ -103,6 +103,7 @@ import { PartnerCustomerDetailComponent } from './partners/partner-customer-deta
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
+import { AccountAccountsModule } from './account-accounts/account-accounts.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -214,7 +215,8 @@ registerLocaleData(localeVi, "vi");
     UomModule,
     TcareModule,
     // end
-    SamplePrescriptionsModule
+    SamplePrescriptionsModule, 
+    AccountAccountsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

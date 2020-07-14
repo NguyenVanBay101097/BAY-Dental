@@ -100,8 +100,10 @@ namespace Infrastructure.Services
             if (usertype != null)
             {
                 res.UserTypeId = usertype.Id;
+                res.UserType = usertype;
 
             }
+            res.Active = true;
             res.Reconcile = false;
 
             return res;
