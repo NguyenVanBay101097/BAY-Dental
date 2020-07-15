@@ -13,10 +13,9 @@ export class loaiThuChiPaged {
 export class loaiThuChiBasic { 
   id: string;
   name: string;
-  companyName: string;
   code: string;
-  active: boolean;
   note: string;
+  isInclude: boolean;
 }
 
 export class loaiThuChiDefault { 

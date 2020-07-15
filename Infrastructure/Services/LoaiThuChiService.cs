@@ -132,6 +132,7 @@ namespace Infrastructure.Services
                 account.Active = true;
                 account.Reconcile = false;
                 account.IsExcludedProfitAndLossReport = val.IsInclude = false ? true : false;
+                account = _mapper.Map<AccountAccount>(account);
                 await accountObj.UpdateAsync(account);
             }
 
