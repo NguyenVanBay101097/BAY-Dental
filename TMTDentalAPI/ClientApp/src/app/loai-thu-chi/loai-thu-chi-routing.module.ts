@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AccountAccountListComponent } from './account-account-list/account-account-list.component';
+import { LoaiThuChiListComponent } from './loai-thu-chi-list/loai-thu-chi-list.component';
 
 const routes: Routes = [
   {
-    path: 'account-accounts',
-    component: AccountAccountListComponent
+    path: 'loai-thu-chi',
+    component: LoaiThuChiListComponent
   }
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AccountAccountsRoutingModule { }
+export class LoaiThuChiRoutingModule { }

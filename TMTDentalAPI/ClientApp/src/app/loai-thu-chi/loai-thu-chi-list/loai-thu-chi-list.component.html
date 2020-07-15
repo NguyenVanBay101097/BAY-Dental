@@ -1,0 +1,42 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                <span *ngIf="resultSelection === 'thu'">Loại thu</span>
+                <span *ngIf="resultSelection === 'chi'">Loại chi</span>
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <button type="button" class="btn btn-primary btn-sm" accesskey="c"
+                (click)="createItem()">Thêm</button>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="code" title="Mã"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
+        <kendo-grid-command-column title="Thao tác">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
+                        class="far fa-edit"></i></button>
+                <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i title="Xóa"
+                        class="far fa-trash-alt"></i></button>
+            </ng-template>
+        </kendo-grid-command-column>
+    </kendo-grid>
+</div>

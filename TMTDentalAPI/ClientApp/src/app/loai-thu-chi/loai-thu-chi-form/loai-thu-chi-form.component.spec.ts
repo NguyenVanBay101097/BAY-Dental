@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountAccountFormComponent } from './account-account-form.component';
+import { LoaiThuChiFormComponent } from './loai-thu-chi-form.component';
 
 describe('AccountAccountFormComponent', () => {
-  let component: AccountAccountFormComponent;
-  let fixture: ComponentFixture<AccountAccountFormComponent>;
+  let component: LoaiThuChiFormComponent;
+  let fixture: ComponentFixture<LoaiThuChiFormComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AccountAccountFormComponent ]
+      declarations: [ LoaiThuChiFormComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AccountAccountFormComponent);
+    fixture = TestBed.createComponent(LoaiThuChiFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

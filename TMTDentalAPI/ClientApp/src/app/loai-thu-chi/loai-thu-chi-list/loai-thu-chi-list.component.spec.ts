@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountAccountListComponent } from './account-account-list.component';
+import { LoaiThuChiListComponent } from './loai-thu-chi-list.component';
 
 describe('AccountAccountListComponent', () => {
-  let component: AccountAccountListComponent;
-  let fixture: ComponentFixture<AccountAccountListComponent>;
+  let component: LoaiThuChiListComponent;
+  let fixture: ComponentFixture<LoaiThuChiListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AccountAccountListComponent ]
+      declarations: [ LoaiThuChiListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AccountAccountListComponent);
+    fixture = TestBed.createComponent(LoaiThuChiListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

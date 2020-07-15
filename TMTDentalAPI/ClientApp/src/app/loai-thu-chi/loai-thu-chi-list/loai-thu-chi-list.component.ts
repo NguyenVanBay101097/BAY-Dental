@@ -3,17 +3,17 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AccountAccountFormComponent } from '../account-account-form/account-account-form.component';
-import { AccountAccountService, accountAccountPaged, accountAccountBasic } from '../account-account.service';
+import { LoaiThuChiFormComponent } from '../loai-thu-chi-form/loai-thu-chi-form.component';
+import { LoaiThuChiService, loaiThuChiPaged, loaiThuChiBasic, loaiThuChi } from '../loai-thu-chi.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-account-account-list',
-  templateUrl: './account-account-list.component.html',
-  styleUrls: ['./account-account-list.component.css']
+  selector: 'app-loai-thu-chi-list',
+  templateUrl: './loai-thu-chi-list.component.html',
+  styleUrls: ['./loai-thu-chi-list.component.css']
 })
-export class AccountAccountListComponent implements OnInit {
+export class LoaiThuChiListComponent implements OnInit {
   loading = false;
   items: any[];
   gridData: GridDataResult;
@@ -25,7 +25,7 @@ export class AccountAccountListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private route: ActivatedRoute, private modalService: NgbModal, 
-    private accountAccountService: AccountAccountService) { }
+    private loaiThuChiService: LoaiThuChiService) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -43,13 +43,13 @@ export class AccountAccountListComponent implements OnInit {
   
   loadDataFromApi() {
     this.loading = true;
-    var val = new accountAccountPaged();
+    var val = new loaiThuChiPaged();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
     val.type = this.resultSelection;
 
-    this.accountAccountService.getPaged(val).pipe(
+    this.loaiThuChiService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -78,7 +78,7 @@ export class AccountAccountListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(AccountAccountFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ' + this.convertResultSelection();
     modalRef.componentInstance.type = this.resultSelection;
     modalRef.result.then(() => {
@@ -88,10 +88,11 @@ export class AccountAccountListComponent implements OnInit {
     });
   }
 
-  editItem(item: accountAccountBasic) {
-    const modalRef = this.modalService.open(AccountAccountFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  editItem(item: loaiThuChi) {
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa ' + item.name;
     modalRef.componentInstance.itemId = item.id;
+    modalRef.componentInstance.type = this.resultSelection;
     modalRef.result.then(() => {
        this.loadDataFromApi();
     }, () => {
@@ -99,12 +100,12 @@ export class AccountAccountListComponent implements OnInit {
     });
   }
 
-  deleteItem(item: accountAccountBasic) {
+  deleteItem(item: loaiThuChiBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa ' + this.convertResultSelection();
 
     modalRef.result.then(() => {
-      this.accountAccountService.delete(item.id).subscribe(() => {
+      this.loaiThuChiService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       }, () => {
       });
