@@ -1,0 +1,145 @@
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li class="active">Báo cáo tài chính</li>
+    </ol>
+</div>
+
+<div class="o_form_view o_form_nosheet o_form_editable">
+    <div class="o_group">
+        <table class="o_group o_inner_group" [formGroup]="formGroup">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Ngày bắt đầu
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 50%;">
+                        <kendo-datepicker class="form-control" formControlName="dateFrom"></kendo-datepicker>
+                    </td>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Ngày kết thúc
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 50%;">
+                        <kendo-datepicker class="form-control" formControlName="dateTo"></kendo-datepicker>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label for="o_field_input_10" class="o_form_label o_form_label_help" data-original-title=""
+                            title="">
+                            Hiển thị nợ có
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 50%;">
+                        <div class="o_checkbox o_form_field_boolean o_form_field">
+                            <input type="checkbox" formControlName="debitCredit">
+                        </div>
+                    </td>
+                    <td colspan="1" class="o_td_label">
+                        <label for="o_field_input_10" class="o_form_label o_form_label_help" data-original-title=""
+                            title="">
+                            Chi nhánh
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 50%;">
+                        <kendo-combobox [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx
+                            formControlName="company" [valueField]="'id'">
+                        </kendo-combobox>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan=" 3" class="o_td_label">
+                        <label class="o_form_label">
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <button type="button" class="btn btn-primary" style=" float: right;"
+                            (click)="reportFinancial()">Xác nhận</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="o_form_field o_view_manager_content" *ngIf="accountLines.length > 0">
+            <div class="table-responsive">
+                <div>
+                    <table *ngIf="debitCredit == true" class="o_list_view table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <td>Tên</td>
+                                <td class="text-right">Nợ</td>
+                                <td class="text-right">Có</td>
+                                <td class="text-right">Cân đối</td>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="accountLines.length > 0">
+                            <tr *ngFor="let line of accountLines">
+                                <td *ngIf="line.level != 0">
+                                    <span
+                                        [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.name}}</span>
+                                </td>
+                                <td class="text-right" *ngIf="line.level != 0">
+                                    <span
+                                        [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.debit | number}}</span>
+                                </td>
+                                <td class="text-right" *ngIf="line.level != 0">
+                                    <span
+                                        [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.credit | number}}</span>
+                                </td>
+                                <td class="text-right" *ngIf="line.level != 0">
+                                    <span
+                                        [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.balance | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot *ngIf="accountLines.length > 0">
+                            <tr *ngFor="let line of accountLines">
+                                <td class="text-right" *ngIf="line.level == 0"></td>
+                                <td class="text-right" *ngIf="line.level == 0">
+                                    <strong>{{line.debit | number}}</strong>
+                                </td>
+                                <td class="text-right" *ngIf="line.level == 0">
+                                    <strong>{{line.credit | number}}</strong>
+                                </td>
+                                <td class="text-right" *ngIf="line.level == 0">
+                                    <strong>{{line.balance | number}}</strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <table class="o_list_view table table-condensed table-striped" *ngIf="debitCredit == false">
+                        <thead>
+                            <tr>
+                                <td>Tên</td>
+                                <td class="text-right">Cân đối</td>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="accountLines.length > 0">
+                            <tr *ngFor="let line of accountLines">
+                                <td *ngIf="line.level != 0">
+                                    <span
+                                        [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.name}}</span>
+                                </td>
+                                <td class="text-right" *ngIf="line.level != 0">
+                                    <span
+                                        [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.balance | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr *ngFor="let line of accountLines">
+                                <td class="text-right" *ngIf="line.level == 0"></td>
+                                <td class="text-right" *ngIf="line.level == 0">
+                                    <strong>{{line.balance | number}}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

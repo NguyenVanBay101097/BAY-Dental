@@ -74,7 +74,7 @@ namespace TMTDentalAPI
             services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
-          
+
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -125,7 +125,7 @@ namespace TMTDentalAPI
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
-            
+
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
@@ -201,7 +201,7 @@ namespace TMTDentalAPI
             services.AddScoped<IServiceCardOrderLineService, ServiceCardOrderLineService>();
             services.AddScoped<IServiceCardCardService, ServiceCardCardService>();
             services.AddScoped<ISaleOrderServiceCardCardRelService, SaleOrderServiceCardCardRelService>();
-
+            services.AddScoped<IReportFinancialService, ReportFinancialService>();
             services.AddScoped<ICardTypeService, CardTypeService>();
             services.AddScoped<ICardCardService, CardCardService>();
             services.AddScoped<ISaleSettingsService, SaleSettingsService>();
@@ -372,7 +372,7 @@ namespace TMTDentalAPI
                     UsePageLocksOnDequeue = true,
                     DisableGlobalLocks = true
                 }));
-           
+
             // Add the processing server as IHostedService
             services.AddHangfireServer(option =>
             {
@@ -419,7 +419,7 @@ namespace TMTDentalAPI
                         new List<string>()
                     }
                 });
-                
+
             });
 
 
