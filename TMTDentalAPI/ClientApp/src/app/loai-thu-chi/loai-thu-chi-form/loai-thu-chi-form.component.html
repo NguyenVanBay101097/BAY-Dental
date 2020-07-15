@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myForm">
+    <form class="o_form_view o_form_editable" [formGroup]="accountForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet" style="min-width: auto;">
                 <div class="o_group">
@@ -20,9 +20,6 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="code"  
                                         placeholder="Nhập mã..." />
-                                    <div *ngIf="f.code.errors && (f.code.touched || f.code.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.code.errors.required">Nhập mã</div>
-                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -34,9 +31,6 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="name"
                                         placeholder="Nhập tên..." />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.name.errors.required">Nhập tên</div>
-                                    </div>
                                 </td>
                             </tr>
                             <tr>

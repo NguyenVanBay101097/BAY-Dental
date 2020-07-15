@@ -14,15 +14,14 @@ export class LoaiThuChiFormComponent implements OnInit {
   title: string;
   type: string;
   itemId: string;
-  myForm: FormGroup;
-  submitted = false;
+  accountForm: FormGroup;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
     private loaiThuChiService: LoaiThuChiService, 
     private companyService: CompanyService) { }
 
   ngOnInit() { 
-    this.myForm = this.fb.group({
+    this.accountForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', Validators.required],
       note: null,
@@ -33,7 +32,6 @@ export class LoaiThuChiFormComponent implements OnInit {
       companyId: null,
       company: null
     });
-    .0
 
     setTimeout(() => {
       if (!this.itemId) 
@@ -48,7 +46,7 @@ export class LoaiThuChiFormComponent implements OnInit {
     val.type = this.type;
     this.loaiThuChiService.defaultGet(val).subscribe(result => {
       console.log(result);
-      this.myForm.patchValue(result);
+      this.accountForm.patchValue(result);
     }, err => {
       console.log(err);
       this.activeModal.dismiss();
@@ -57,7 +55,7 @@ export class LoaiThuChiFormComponent implements OnInit {
   
   get() {
     this.loaiThuChiService.get(this.itemId).subscribe(result => {
-      this.myForm.patchValue(result);
+      this.accountForm.patchValue(result);
     }, err => {
       console.log(err);
       this.activeModal.dismiss();
@@ -65,23 +63,19 @@ export class LoaiThuChiFormComponent implements OnInit {
   }
 
   save() {
-    this.submitted = true;
-
-    if (!this.myForm.valid) {
-      return;
-    }
-
-    var value = this.myForm.value;
+    var value = this.accountForm.value;
     value.type = this.type;
-
+    console.log(value);
     if (!this.itemId) {
       this.loaiThuChiService.create(value).subscribe(result => {
+        console.log(result);
         this.activeModal.close(true);
       }, err => {
         console.log(err);
       })
     } else {
       this.loaiThuChiService.update(this.itemId, value).subscribe(result => {
+        console.log(result);
         this.activeModal.close(result);
       }, err => {
         console.log(err);
@@ -90,11 +84,6 @@ export class LoaiThuChiFormComponent implements OnInit {
   }
 
   cancel() {
-    this.submitted = false;
     this.activeModal.dismiss();
-  }
-
-  get f() {
-    return this.myForm.controls;
   }
 }
