@@ -3,14 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
 
-export class accountAccountPaged { 
+export class loaiThuChiPaged { 
   limit: number;
   offset: number;
   search: string;
   type: string;
 }
 
-export class accountAccountBasic { 
+export class loaiThuChiBasic { 
   id: string;
   name: string;
   companyName: string;
@@ -19,11 +19,11 @@ export class accountAccountBasic {
   note: string;
 }
 
-export class accountAccountDefault { 
+export class loaiThuChiDefault { 
   type: string;
 }
 
-export class accountAccountDefaultGet { 
+export class loaiThuChiDefaultGet { 
   name: string;
   code: string;
   active: boolean;
@@ -34,25 +34,26 @@ export class accountAccountDefaultGet {
   reconcile: boolean;
   userType: any;
   userTypeId: string;
+  isExcludedProfitAndLossReport: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountAccountService {
-  apiUrl = 'api/AccountAccounts';
+export class LoaiThuChiService {
+  apiUrl = 'api/LoaiThuChi';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getPaged(val: any): Observable<PagedResult2<accountAccountBasic>> {
-    return this.http.get<PagedResult2<accountAccountBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+  getPaged(val: any): Observable<PagedResult2<loaiThuChiBasic>> {
+    return this.http.get<PagedResult2<loaiThuChiBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
-  get(id): Observable<accountAccountBasic> {
-    return this.http.get<accountAccountBasic>(this.baseApi + this.apiUrl + "/" + id);
+  get(id): Observable<loaiThuChiBasic> {
+    return this.http.get<loaiThuChiBasic>(this.baseApi + this.apiUrl + "/" + id);
 }
 
-  defaultGet(val: accountAccountDefault): Observable<accountAccountDefaultGet> {
-    return this.http.post<accountAccountDefaultGet>(this.baseApi + this.apiUrl + "/defaultget", val);
+  defaultGet(val: loaiThuChiDefault): Observable<loaiThuChiDefaultGet> {
+    return this.http.post<loaiThuChiDefaultGet>(this.baseApi + this.apiUrl + "/defaultget", val);
   }
 
   create(val) {

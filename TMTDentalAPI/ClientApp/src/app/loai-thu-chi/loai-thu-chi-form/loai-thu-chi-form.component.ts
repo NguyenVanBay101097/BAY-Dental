@@ -1,25 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { accountAccountDefault, AccountAccountService } from '../account-account.service';
+import { loaiThuChiDefault, LoaiThuChiService } from '../loai-thu-chi.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-account-account-form',
-  templateUrl: './account-account-form.component.html',
-  styleUrls: ['./account-account-form.component.css']
+  selector: 'app-loai-thu-chi-form',
+  templateUrl: './loai-thu-chi-form.component.html',
+  styleUrls: ['./loai-thu-chi-form.component.css']
 })
-export class AccountAccountFormComponent implements OnInit {
+export class LoaiThuChiFormComponent implements OnInit {
   title: string;
   type: string;
   itemId: string;
   accountForm: FormGroup;
 
-  companies: any[];
-
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
-    private accountAccountService: AccountAccountService, 
+    private loaiThuChiService: LoaiThuChiService, 
     private companyService: CompanyService) { }
 
   ngOnInit() { 
@@ -33,7 +31,8 @@ export class AccountAccountFormComponent implements OnInit {
       note: null, 
       reconcile: null, 
       userType: null, 
-      userTypeId: null 
+      userTypeId: null, 
+      isExcludedProfitAndLossReport: null 
     });
 
     setTimeout(() => {
@@ -41,14 +40,13 @@ export class AccountAccountFormComponent implements OnInit {
         this.defaultGet();
       else 
         this.get();
-      this.loadCompanies();
     });
   }
 
   defaultGet() {
-    var val = new accountAccountDefault();
+    var val = new loaiThuChiDefault();
     val.type = this.type;
-    this.accountAccountService.defaultGet(val).subscribe(result => {
+    this.loaiThuChiService.defaultGet(val).subscribe(result => {
       this.accountForm.patchValue(result);
     }, err => {
       console.log(err);
@@ -57,7 +55,7 @@ export class AccountAccountFormComponent implements OnInit {
   }
   
   get() {
-    this.accountAccountService.get(this.itemId).subscribe(result => {
+    this.loaiThuChiService.get(this.itemId).subscribe(result => {
       this.accountForm.patchValue(result);
     }, err => {
       console.log(err);
@@ -65,26 +63,17 @@ export class AccountAccountFormComponent implements OnInit {
     })
   }
 
-  loadCompanies() {
-    var val = new CompanyPaged();
-    this.companyService.getPaged(val).subscribe(result => {
-      this.companies = result.items;
-    }, err => {
-      console.log(err);
-    })
-  }
-
   save() {
     var value = this.accountForm.value;
     value.companyId = value.company ? value.company.id : null; 
     if (!this.itemId) {
-      this.accountAccountService.create(value).subscribe(result => {
+      this.loaiThuChiService.create(value).subscribe(result => {
         this.activeModal.close(true);
       }, err => {
         console.log(err);
       })
     } else {
-      this.accountAccountService.update(this.itemId, value).subscribe(result => {
+      this.loaiThuChiService.update(this.itemId, value).subscribe(result => {
         this.activeModal.close(result);
       }, err => {
         console.log(err);

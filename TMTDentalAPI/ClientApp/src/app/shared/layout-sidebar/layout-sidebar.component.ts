@@ -95,8 +95,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
         { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
         { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Loại thu', link: '/account-accounts', params: { result_selection: 'thu' } },
-{ name: 'Loại chi', link: '/account-accounts', params: { result_selection: 'chi' } },
+        { name: 'Loại thu', link: '/loai-thu-chi', params: { result_selection: 'thu' } },
+        { name: 'Loại chi', link: '/loai-thu-chi', params: { result_selection: 'chi' } },
         { name: 'Phiếu thu', link: '/account-payments-t', params: { result_selection: 'receipttype' } },
         { name: 'Phiếu chi', link: '/account-payments-t', params: { result_selection: 'paymenttype' } },
       ]
