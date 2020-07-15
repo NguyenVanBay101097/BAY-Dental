@@ -23,5 +23,7 @@ namespace Infrastructure.Services
         Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids);
 
         Task<AccountPaymentPrintVM> GetPrint(Guid id);
+
+     
     }
 }

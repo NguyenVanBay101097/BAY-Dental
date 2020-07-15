@@ -12,6 +12,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime Date { get; set; }
 
+        public string PayerReceiver { get; set; }
+
         /// <summary>
         /// loại thu chi
         /// </summary>
