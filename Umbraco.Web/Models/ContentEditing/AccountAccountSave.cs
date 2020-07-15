@@ -27,7 +27,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public Guid? UserTypeId { get; set; }
-        public AccountAccountType UserType { get; set; }
+        public AccountAccountTypeSimple UserType { get; set; }
 
         public Guid? CompanyId { get; set; }
         public CompanySimple Company { get; set; }

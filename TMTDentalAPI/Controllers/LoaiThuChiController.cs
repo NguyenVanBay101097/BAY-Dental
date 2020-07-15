@@ -45,10 +45,10 @@ namespace TMTDentalAPI.Controllers
 
         //api get default loại thu , chi
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> DefaultGetAsync()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultGetAsync(LoaiThuChiDefault val)
         {
-            var res = await _loaiThuChiService.DefaultGet();
+            var res = await _loaiThuChiService.DefaultGet(val);
             return Ok(res);
         }
 
