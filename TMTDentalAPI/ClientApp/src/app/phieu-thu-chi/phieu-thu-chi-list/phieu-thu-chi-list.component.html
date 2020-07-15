@@ -2,8 +2,8 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span *ngIf="resultSelection === 'receipttype'">Phiếu thu</span>
-                <span *ngIf="resultSelection === 'paymenttype'">Phiếu chi</span>
+                <span *ngIf="resultSelection === 'thu'">Phiếu thu</span>
+                <span *ngIf="resultSelection === 'chi'">Phiếu chi</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -30,7 +30,6 @@
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="code" title="Mã"></kendo-grid-column>
         <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
-        <kendo-grid-column field="companyName" title="Chi nhánh"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"

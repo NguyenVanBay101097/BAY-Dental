@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { loaiThuChiDefault, LoaiThuChiService } from '../loai-thu-chi.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { CompanyService, CompanyPaged } from 'src/app/companies/company.service';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-loai-thu-chi-form',
@@ -18,8 +16,7 @@ export class LoaiThuChiFormComponent implements OnInit {
   submitted = false;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
-    private loaiThuChiService: LoaiThuChiService, 
-    private companyService: CompanyService) { }
+    private loaiThuChiService: LoaiThuChiService) { }
 
   ngOnInit() { 
     this.myForm = this.fb.group({
@@ -33,7 +30,6 @@ export class LoaiThuChiFormComponent implements OnInit {
       companyId: null,
       company: null
     });
-    .0
 
     setTimeout(() => {
       if (!this.itemId) 
