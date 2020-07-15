@@ -30,7 +30,8 @@ namespace ApplicationCore.Entities
         public string State { get; set; }
 
         /// <summary>
-        /// Mã
+        /// Mã THU/năm/sequence
+        ///    CHI/năm/sequence
         /// </summary>
         public string Name { get; set; }
 
