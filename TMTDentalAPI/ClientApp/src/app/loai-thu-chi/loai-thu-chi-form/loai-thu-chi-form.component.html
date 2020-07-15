@@ -5,11 +5,11 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myForm">
+    <form class="o_form_view o_form_editable" [formGroup]="accountForm">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet" style="min-width: auto;">
+            <div class="o_form_sheet">
                 <div class="o_group">
-                    <table class="o_group o_inner_group">
+                    <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -18,25 +18,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="code"  
-                                        placeholder="Nhập mã..." />
-                                    <div *ngIf="f.code.errors && (f.code.touched || f.code.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.code.errors.required">Nhập mã</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label for="o_field_input_46" class="o_form_label">
-                                        Tên
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name"
-                                        placeholder="Nhập tên..." />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.name.errors.required">Nhập tên</div>
-                                    </div>
+                                    <input class="form-control" formControlName="code"  placeholder="Nhập mã..." />
                                 </td>
                             </tr>
                             <tr>
@@ -50,14 +32,28 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label"></td>
-                                <td colspan="1" style="width: 100%;">
+                                <td colspan="2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" formControlName="isInclude" id="isInclude">
                                         <label class="form-check-label" for="isInclude">
                                             Hạch toán vào kết quả hoạt động kinh doanh
                                         </label>
                                     </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name"
+                                        placeholder="Nhập tên..." />
                                 </td>
                             </tr>
                         </tbody>

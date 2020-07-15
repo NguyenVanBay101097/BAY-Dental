@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class PhieuThuChi: BaseEntity
+    public class PhieuThuChiSave
     {
+        public PhieuThuChiSave()
+        {
+            State = "draft";
+        }
+
         /// <summary>
         /// Chi nhánh
         /// </summary>
         public Guid? CompanyId { get; set; }
-        public Company Company { get; set; }
+        public CompanySimple Company { get; set; }
 
         /// <summary>
         /// Ngày lập phiếu
@@ -21,7 +26,7 @@ namespace ApplicationCore.Entities
         /// Sổ nhật ký: tiền mặt, ngân hàng
         /// </summary>
         public Guid JournalId { get; set; }
-        public AccountJournal Journal { get; set; }
+        public AccountJournalSimple Journal { get; set; }
 
         /// <summary>
         /// draft: Nháp
@@ -70,8 +75,6 @@ namespace ApplicationCore.Entities
         /// Loại thu/Loại chi
         /// </summary>
         public Guid LoaiThuChiId { get; set; }
-        public LoaiThuChi LoaiThuChi { get; set; }
-
-        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
+        public LoaiThuChiSimple LoaiThuChi { get; set; }
     }
 }
