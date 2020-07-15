@@ -30,23 +30,6 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Name.Contains(val.Search)));
 
-            //string name = "";
-            //string reference_account_type = "";
-            //if (val.Type == "thu")
-            //{
-            //    reference_account_type = "account.data_account_type_thu";
-            //    name = "Thu";
-            //}
-            //else if (val.Type == "chi")
-            //{
-            //    reference_account_type = "account.data_account_type_chi";
-            //    name = "Chi";
-            //}
-            //else
-            //    throw new Exception("");
-
-            //var account_type = await GetAccountTypeThuChi(reference_account_type, name);
-
             spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Type == val.Type));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Name));
@@ -67,7 +50,7 @@ namespace Infrastructure.Services
         }
      
 
-        public async Task<LoaiThuChiSave> DefaultGet(AccountAccountDefault val)
+        public async Task<LoaiThuChiSave> DefaultGet()
         {
             
             var res = new LoaiThuChiSave();
@@ -76,7 +59,6 @@ namespace Infrastructure.Services
             var company = await objCompany.GetByIdAsync(CompanyId);
             res.Company = _mapper.Map<CompanySimple>(company);
            
-
             return res;
         }
 
@@ -86,7 +68,7 @@ namespace Infrastructure.Services
         }
 
         //create loại thu chi
-        public async Task<AccountAccount> CreateAccountAccount(LoaiThuChiSave val)
+        public async Task<LoaiThuChi> CreateLoaiThuChi(LoaiThuChiSave val)
         {
             
             var loaithuchi = _mapper.Map<LoaiThuChi>(val);
@@ -98,13 +80,13 @@ namespace Infrastructure.Services
                 loaithuchi.Account = account;
             }
 
-
-
             return await CreateAsync(loaithuchi);
         }
 
         public async Task<AccountAccount> CreateOrUpdateAccount(LoaiThuChi val)
         {
+            var accountObj = GetService<IAccountAccountService>();
+            var account = new AccountAccount();
             string name = "";
             string reference_account_type = "";
             if (val.Type == "thu")
@@ -117,21 +99,55 @@ namespace Infrastructure.Services
                 reference_account_type = "account.data_account_type_chi";
                 name = "Chi";
             }
-            var accountObj = GetService<IAccountAccountService>();
+            ///Create Account , Accounttype
+            if(val.CompanyId == null)
+            {
+                var res = new AccountAccountSave();
+                res.Name = val.Name;
+                res.Code = val.Code;
+                var objCompany = GetService<ICompanyService>();
+                res.CompanyId = CompanyId;
+                var company = await objCompany.GetByIdAsync(CompanyId);
+                res.Company = _mapper.Map<CompanySimple>(company);
+                var usertype = await GetAccountTypeThuChi(reference_account_type, name);
+                if (usertype != null)
+                {
+                    res.UserTypeId = usertype.Id;
+                    res.UserType = usertype;
 
+                }
+                res.InternalType = val.Type;
+                res.Active = true;
+                res.Reconcile = false;
+                res.IsExcludedProfitAndLossReport = val.IsInclude = false ? true : false;
+                account = _mapper.Map<AccountAccount>(res);
+                await accountObj.CreateAsync(account);
+            }
+            else
+            {
+                ///update Account 
+                account.Name = val.Name;
+                account.Code = val.Code;
+                account.InternalType = val.Type;
+                account.Active = true;
+                account.Reconcile = false;
+                account.IsExcludedProfitAndLossReport = val.IsInclude = false ? true : false;
+                await accountObj.UpdateAsync(account);
+            }
+
+            return account;
         }
 
         //update loại thu chi
-        public async Task UpdateAccountAccount(Guid id, AccountAccountSave val)
+        public async Task UpdateLoaiThuChi(Guid id, LoaiThuChiSave val)
         {
-            var accountAccount = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.UserType).FirstOrDefaultAsync();
-            if (accountAccount == null)
+            var loaithuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.Account).FirstOrDefaultAsync();
+            if (loaithuchi == null)
                 throw new Exception("Loại không tồn tại");
 
-            accountAccount = _mapper.Map(val, accountAccount);
-            accountAccount.InternalType = val.UserType.Type;
-
-            await UpdateAsync(accountAccount);
+            loaithuchi = _mapper.Map(val, loaithuchi);
+            var account = await CreateOrUpdateAccount(loaithuchi);
+            await UpdateAsync(loaithuchi);
         }
 
 
