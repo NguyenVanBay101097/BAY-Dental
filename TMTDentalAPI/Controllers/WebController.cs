@@ -83,17 +83,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> DeleteSampleData()
         {
             await _unitOfWork.BeginTransactionAsync();
-            var company = await _importSampleDataService.DeleteSampleData();
+            await _importSampleDataService.DeleteSampleData();
             _unitOfWork.Commit();
 
-            await _companyService.InsertModuleAccountData(company);
-            await _companyService.InsertModuleStockData(company);
-            await _companyService.InsertModuleProductData();
-            await _companyService.InsertModuleDentalData();
-            await _groupService.InsertSecurityData();
-
-            await _irConfigParameterService.SetParam("remove_sample_data", "True");
-            await _irConfigParameterService.SetParam("import_sample_data", "Installed");
             return NoContent();
         }
 
