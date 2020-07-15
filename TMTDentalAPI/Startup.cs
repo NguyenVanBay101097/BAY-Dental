@@ -269,6 +269,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleOrderLineProfile());
                 mc.AddProfile(new ApplicationUserProfile());
                 mc.AddProfile(new AccountAccountProfile());
+                mc.AddProfile(new AccountAccountTypeProfile());
                 mc.AddProfile(new AccountJournalProfile());
                 mc.AddProfile(new AccountInvoiceProfile());
                 mc.AddProfile(new AccountInvoiceLineProfile());

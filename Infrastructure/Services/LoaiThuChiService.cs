@@ -50,15 +50,26 @@ namespace Infrastructure.Services
         }
      
 
-        public async Task<LoaiThuChiSave> DefaultGet()
+        public async Task<LoaiThuChiSave> DefaultGet(LoaiThuChiDefault val)
         {
-            
+            string name = "";
+            string reference_account_type = "";
+            if (val.Type == "thu")
+            {
+                reference_account_type = "account.data_account_type_thu";
+                name = "Thu";
+            }
+            else if (val.Type == "chi")
+            {
+                reference_account_type = "account.data_account_type_chi";
+                name = "Chi";
+            }
             var res = new LoaiThuChiSave();
             var objCompany = GetService<ICompanyService>();
             res.CompanyId = CompanyId;
             var company = await objCompany.GetByIdAsync(CompanyId);
             res.Company = _mapper.Map<CompanySimple>(company);
-           
+             await GetAccountTypeThuChi(reference_account_type, name);          
             return res;
         }
 
@@ -79,7 +90,7 @@ namespace Infrastructure.Services
                 loaithuchi.AccountId = account.Id;
                 loaithuchi.Account = account;
             }
-
+           
             return await CreateAsync(loaithuchi);
         }
 
@@ -113,7 +124,7 @@ namespace Infrastructure.Services
                 if (usertype != null)
                 {
                     res.UserTypeId = usertype.Id;
-                    res.UserType = usertype;
+                    res.UserType = _mapper.Map<AccountAccountTypeSimple>(usertype); ;
 
                 }
                 res.InternalType = val.Type;
