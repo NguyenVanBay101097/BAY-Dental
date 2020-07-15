@@ -22,6 +22,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   userSimpleFilter: UserSimple[] = [];
   filteredProducts: ProductSimple[];
   defaultVal: any;
+  title: string;
 
   public filterSettings: DropDownFilterSettings = {
     caseSensitive: false,

@@ -20,6 +20,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
   campaign: TCareCampaignDisplay;
   campaignId: string;
   scenario: TCareScenarioDisplay;
+  submitted = false;
   constructor(
     private fb: FormBuilder,
     private activeRoute: ActivatedRoute,

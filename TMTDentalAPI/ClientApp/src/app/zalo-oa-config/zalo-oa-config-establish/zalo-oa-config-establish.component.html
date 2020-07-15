@@ -8,12 +8,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" *ngIf="config" class="btn btn-sm btn-primary" (click)="onSave()">
-                        <span>Lưu</span>
-                    </button>
-                    <button type="button" *ngIf="!config" class="btn btn-primary btn-sm" (click)="connectZalo()">Kết
-                        nối</button>
-                    <button type="button" *ngIf="config" class="btn btn-danger btn-sm" (click)="deleteConfig()">Xóa kết
+                    <button type="button" class="btn btn-primary btn-sm" (click)="connectZalo()">Kết
                         nối</button>
                 </div>
             </div>

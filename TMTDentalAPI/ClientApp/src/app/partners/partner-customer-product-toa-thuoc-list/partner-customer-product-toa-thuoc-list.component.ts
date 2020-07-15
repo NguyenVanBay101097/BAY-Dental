@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -57,6 +57,11 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadData();
   }
 
   printToaThuoc(item) {
