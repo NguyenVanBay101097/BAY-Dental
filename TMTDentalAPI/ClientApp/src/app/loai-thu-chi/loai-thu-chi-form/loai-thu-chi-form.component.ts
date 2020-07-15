@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { loaiThuChiDefault, LoaiThuChiService } from '../loai-thu-chi.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyService, CompanyPaged } from 'src/app/companies/company.service';
@@ -22,8 +22,8 @@ export class LoaiThuChiFormComponent implements OnInit {
 
   ngOnInit() { 
     this.accountForm = this.fb.group({
-      name: ['', Validators.required],
-      code: ['', Validators.required],
+      name: null,
+      code: null,
       note: null,
       type: null,
       isInclude: null,
