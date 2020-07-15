@@ -7,60 +7,107 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view o_form_editable" [formGroup]="myForm">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet" style="min-width: auto;">
+            <div class="o_form_sheet">
                 <div class="o_group">
-                    <table class="o_group o_inner_group">
-                        <!-- <tbody>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Mã
+                                        <span *ngIf="type === 'thu'">Loại thu</span>
+                                        <span *ngIf="type === 'chi'">Loại chi</span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="code"  
-                                        placeholder="Nhập mã..." />
-                                    <div *ngIf="f.code.errors && (f.code.touched || f.code.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.code.errors.required">Nhập mã</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label for="o_field_input_46" class="o_form_label">
-                                        Tên
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name"
-                                        placeholder="Nhập tên..." />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.name.errors.required">Nhập tên</div>
-                                    </div>
+                                    <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
+                                        #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Ghi chú
+                                        Phương thức
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                    <select class="form-control">
+                                        <option value="1">Ngân hảng</option>
+                                        <option value="2">Tiền mặt</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label"></td>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" formControlName="isInclude" id="isInclude">
-                                        <label class="form-check-label" for="isInclude">
-                                            Hạch toán vào kết quả hoạt động kinh doanh
-                                        </label>
-                                    </div>
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    </kendo-numerictextbox>
                                 </td>
                             </tr>
-                        </tbody> -->
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker >
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người nộp
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="null" [textField]="'name'" [filterable]="true"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Điện thoại
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" 
+                                        placeholder="Nhập số điện thoại..." />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Địa chỉ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" 
+                                        placeholder="Nhập địa chỉ..." />
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

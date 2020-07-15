@@ -56,7 +56,7 @@ export class PhieuThuChiListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(PhieuThuChiFormComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PhieuThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ' + this.convertResultSelection();
     modalRef.componentInstance.type = this.resultSelection;
     modalRef.result.then(() => {
@@ -67,7 +67,7 @@ export class PhieuThuChiListComponent implements OnInit {
   }
 
   editItem(item: any /*phieuThuChi*/) {
-    const modalRef = this.modalService.open(PhieuThuChiFormComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PhieuThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa ' + item.name;
     modalRef.componentInstance.itemId = item.id;
     modalRef.componentInstance.type = this.resultSelection;
