@@ -59,6 +59,10 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.InvoiceId);
 
+            builder.HasOne(x => x.PhieuThuChi)
+            .WithMany(x => x.MoveLines)
+            .HasForeignKey(x => x.PhieuThuChiId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);
