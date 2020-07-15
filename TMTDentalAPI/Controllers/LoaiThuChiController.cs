@@ -82,12 +82,8 @@ namespace TMTDentalAPI.Controllers
         //api xóa
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
-        {
-            var loaithuchi = await _loaiThuChiService.GetByIdAsync(id);
-            if (loaithuchi == null)
-                return NotFound();
-
-            await _loaiThuChiService.DeleteAsync(loaithuchi);
+        {         
+            await _loaiThuChiService.RemoveLoaiThuChi(id);
 
             return NoContent();
         }

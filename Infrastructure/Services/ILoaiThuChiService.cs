@@ -17,5 +17,6 @@ namespace Infrastructure.Services
         Task<LoaiThuChi> GetByIdThuChi(Guid id);
         Task<LoaiThuChi> CreateLoaiThuChi(LoaiThuChiSave val);
         Task UpdateLoaiThuChi(Guid id, LoaiThuChiSave val);
+        Task RemoveLoaiThuChi(Guid id);
     }
 }

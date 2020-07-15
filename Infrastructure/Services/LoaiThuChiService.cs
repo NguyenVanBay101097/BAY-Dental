@@ -67,6 +67,7 @@ namespace Infrastructure.Services
             var res = new LoaiThuChiSave();
             var objCompany = GetService<ICompanyService>();
             res.CompanyId = CompanyId;
+            res.IsInclude = true;
             var company = await objCompany.GetByIdAsync(CompanyId);
             res.Company = _mapper.Map<CompanySimple>(company);
              await GetAccountTypeThuChi(reference_account_type, name);          
@@ -83,14 +84,15 @@ namespace Infrastructure.Services
         {
             
             var loaithuchi = _mapper.Map<LoaiThuChi>(val);
-
+           
             if(loaithuchi.AccountId == null)
             {
                 var account = await CreateOrUpdateAccount(loaithuchi);
                 loaithuchi.AccountId = account.Id;
                 loaithuchi.Account = account;
             }
-           
+            loaithuchi.IsInclude = val.IsInclude;
+
             return await CreateAsync(loaithuchi);
         }
 
@@ -111,7 +113,7 @@ namespace Infrastructure.Services
                 name = "Chi";
             }
             ///Create Account , Accounttype
-            if(val.CompanyId == null)
+            if(val.AccountId == null)
             {
                 var res = new AccountAccountSave();
                 res.Name = val.Name;
@@ -124,26 +126,27 @@ namespace Infrastructure.Services
                 if (usertype != null)
                 {
                     res.UserTypeId = usertype.Id;
-                    res.UserType = _mapper.Map<AccountAccountTypeSimple>(usertype); ;
+                    res.UserType = _mapper.Map<AccountAccountTypeSimple>(usertype); 
 
                 }
                 res.InternalType = val.Type;
                 res.Active = true;
                 res.Reconcile = false;
-                res.IsExcludedProfitAndLossReport = val.IsInclude = false ? true : false;
+                res.IsExcludedProfitAndLossReport = val.IsInclude == false ? true : false;
                 account = _mapper.Map<AccountAccount>(res);
                 await accountObj.CreateAsync(account);
             }
             else
             {
-                ///update Account 
+                ///update Account    
+                 account = _mapper.Map<AccountAccount>(val.Account);
                 account.Name = val.Name;
                 account.Code = val.Code;
                 account.InternalType = val.Type;
                 account.Active = true;
                 account.Reconcile = false;
-                account.IsExcludedProfitAndLossReport = val.IsInclude = false ? true : false;
-                account = _mapper.Map<AccountAccount>(account);
+                account.IsExcludedProfitAndLossReport = val.IsInclude == false ? true : false;
+               
                 await accountObj.UpdateAsync(account);
             }
 
@@ -157,9 +160,25 @@ namespace Infrastructure.Services
             if (loaithuchi == null)
                 throw new Exception("Loại không tồn tại");
 
-            loaithuchi = _mapper.Map(val, loaithuchi);
+            loaithuchi = _mapper.Map(val, loaithuchi);          
             var account = await CreateOrUpdateAccount(loaithuchi);
+            loaithuchi.IsInclude = val.IsInclude;
             await UpdateAsync(loaithuchi);
+        }
+
+        //update loại thu chi
+        public async Task RemoveLoaiThuChi(Guid id)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+            var loaithuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.Account).FirstOrDefaultAsync();
+            if (loaithuchi == null)
+                throw new Exception("Loại không tồn tại");
+            if(loaithuchi.AccountId != null)
+            {
+                await accountObj.DeleteAsync(loaithuchi.Account);
+            }
+        
+            await DeleteAsync(loaithuchi);
         }
 
 

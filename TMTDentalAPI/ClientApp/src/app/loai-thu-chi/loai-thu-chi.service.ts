@@ -22,18 +22,29 @@ export class loaiThuChiDefault {
   type: string;
 }
 
-export class loaiThuChiDefaultGet { 
+export class loaiThuChiSave { 
   name: string;
   code: string;
-  active: boolean;
   note: string;
+  type: string;
+  isInclude: boolean;
+  accountId: string;
+  account: any;
   companyId: string;
   company: any;
-  internalType: string;
-  reconcile: boolean;
-  userType: any;
-  userTypeId: string;
-  isExcludedProfitAndLossReport: boolean;
+}
+
+export class loaiThuChi { 
+  id: string;
+  name: string;
+  code: string;
+  note: string;
+  type: string;
+  isInclude: boolean;
+  accountId: string;
+  account: any;
+  companyId: string;
+  company: any;
 }
 
 @Injectable({
@@ -47,12 +58,12 @@ export class LoaiThuChiService {
     return this.http.get<PagedResult2<loaiThuChiBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
-  get(id): Observable<loaiThuChiBasic> {
-    return this.http.get<loaiThuChiBasic>(this.baseApi + this.apiUrl + "/" + id);
+  get(id): Observable<loaiThuChi> {
+    return this.http.get<loaiThuChi>(this.baseApi + this.apiUrl + "/" + id);
 }
 
-  defaultGet(val: loaiThuChiDefault): Observable<loaiThuChiDefaultGet> {
-    return this.http.post<loaiThuChiDefaultGet>(this.baseApi + this.apiUrl + "/defaultget", val);
+  defaultGet(val: loaiThuChiDefault): Observable<loaiThuChiSave> {
+    return this.http.post<loaiThuChiSave>(this.baseApi + this.apiUrl + "/defaultget", val);
   }
 
   create(val) {

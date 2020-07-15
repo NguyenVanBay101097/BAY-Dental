@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoaiThuChiFormComponent } from '../loai-thu-chi-form/loai-thu-chi-form.component';
-import { LoaiThuChiService, loaiThuChiPaged, loaiThuChiBasic } from '../loai-thu-chi.service';
+import { LoaiThuChiService, loaiThuChiPaged, loaiThuChiBasic, loaiThuChi } from '../loai-thu-chi.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
@@ -88,10 +88,11 @@ export class LoaiThuChiListComponent implements OnInit {
     });
   }
 
-  editItem(item: loaiThuChiBasic) {
+  editItem(item: loaiThuChi) {
     const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa ' + item.name;
     modalRef.componentInstance.itemId = item.id;
+    modalRef.componentInstance.type = this.resultSelection;
     modalRef.result.then(() => {
        this.loadDataFromApi();
     }, () => {

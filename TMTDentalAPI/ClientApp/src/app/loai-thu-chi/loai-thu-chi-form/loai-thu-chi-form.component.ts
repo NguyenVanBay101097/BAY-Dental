@@ -22,17 +22,15 @@ export class LoaiThuChiFormComponent implements OnInit {
 
   ngOnInit() { 
     this.accountForm = this.fb.group({
-      active: null, 
-      code: null, 
-      company: null, 
-      companyId: null, 
-      internalType: null, 
-      name: null, 
-      note: null, 
-      reconcile: null, 
-      userType: null, 
-      userTypeId: null, 
-      isExcludedProfitAndLossReport: null 
+      name: null,
+      code: null,
+      note: null,
+      type: null,
+      isInclude: null,
+      accountId: null,
+      account: null,
+      companyId: null,
+      company: null
     });
 
     setTimeout(() => {
@@ -47,6 +45,7 @@ export class LoaiThuChiFormComponent implements OnInit {
     var val = new loaiThuChiDefault();
     val.type = this.type;
     this.loaiThuChiService.defaultGet(val).subscribe(result => {
+      console.log(result);
       this.accountForm.patchValue(result);
     }, err => {
       console.log(err);
@@ -65,15 +64,18 @@ export class LoaiThuChiFormComponent implements OnInit {
 
   save() {
     var value = this.accountForm.value;
-    value.companyId = value.company ? value.company.id : null; 
+    value.type = this.type;
+    console.log(value);
     if (!this.itemId) {
       this.loaiThuChiService.create(value).subscribe(result => {
+        console.log(result);
         this.activeModal.close(true);
       }, err => {
         console.log(err);
       })
     } else {
       this.loaiThuChiService.update(this.itemId, value).subscribe(result => {
+        console.log(result);
         this.activeModal.close(result);
       }, err => {
         console.log(err);
