@@ -15,6 +15,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<LoaiThuChi, LoaiThuChiSave>();
             CreateMap<LoaiThuChi, LoaiThuChiSimple>();
 
+            CreateMap<LoaiThuChiSimple, LoaiThuChi>();
+
             CreateMap<LoaiThuChiSave, LoaiThuChi>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Company, x => x.Ignore());

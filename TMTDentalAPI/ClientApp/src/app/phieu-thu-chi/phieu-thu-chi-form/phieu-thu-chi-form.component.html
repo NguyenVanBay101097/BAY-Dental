@@ -6,7 +6,7 @@
                 <a *ngIf="resultSelection === 'chi'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{result_selection: 'chi'}">Phiếu chi</a>
             </li>
             <li class="active">
-                <span *ngIf="itemId">{{saleOrder.name}}</span>
+                <span *ngIf="itemId">{{getValueForm('name')}}</span>
                 <span *ngIf="!itemId">Mới</span>
             </li>
         </ol>
@@ -33,6 +33,10 @@
                     <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" 
                         (click)="printPhieuThuChi()">
                         In phiếu
+                    </button>
+                    <button *ngIf="getValueForm('state') === 'posted'" type="button" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()">
+                        Hủy phiếu
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -63,7 +67,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
-                                        #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'">
+                                        #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'"
+                                        placeholder="Chọn loại ...">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -74,9 +79,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <select class="form-control">
-                                        <option value="1">Ngân hảng</option>
-                                        <option value="2">Tiền mặt</option>
+                                    <select class="form-control" formControlName="journalId">
+                                        <option *ngFor="let item of loaiJournalList" [value]="item.id">{{item.name}}</option>
                                     </select>
                                 </td>
                             </tr>
@@ -87,7 +91,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -98,7 +102,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control"></textarea>
+                                    <textarea type="text" class="form-control" formControlName="reason"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -112,19 +116,19 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker >
+                                    <kendo-datepicker formControlName="date">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Người nộp
+                                        Người {{getTypePayerReceiver()}}
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" 
-                                        placeholder="Nhập người nộp..." />
+                                    <input class="form-control" formControlName="payerReceiver"
+                                        [placeholder]="'Nhập người ' + getTypePayerReceiver() +' ...'" />
                                 </td>
                             </tr>
                             <tr>
@@ -134,8 +138,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" 
-                                        placeholder="Nhập địa chỉ..." />
+                                    <input class="form-control" formControlName="address" 
+                                        placeholder="Nhập địa chỉ ..." />
                                 </td>
                             </tr>
                             <tr>
@@ -145,7 +149,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" 
+                                    <input class="form-control" formControlName="communication"
                                         placeholder="" />
                                 </td>
                             </tr>

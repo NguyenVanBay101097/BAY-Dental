@@ -65,8 +65,37 @@ namespace Infrastructure.Services
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)
         {
+            var journalObj = GetService<IAccountJournalService>();
+            var loaithuchiObj = GetService<ILoaiThuChiService>();
+
             var phieuThuChi = _mapper.Map<PhieuThuChi>(val);
+            string sequence_code = "";
+            string name = "";
+            string suffix = "";
+            if (string.IsNullOrEmpty(phieuThuChi.Name))
+            {
+                if (phieuThuChi.Type == "thu")
+                {
+                    sequence_code = "payment.slip";
+                    name = "Phiếu Thu";
+                    suffix = "THU";
+                }
+
+                else if (phieuThuChi.Type == "chi")
+                {
+                    sequence_code = "receipt.slip";
+                    name = "Phiếu Chi";
+                    suffix = "CHI";
+                }
+                else
+                    throw new Exception("Not support");
+
+                phieuThuChi.Name = await CheckSequenceCode(sequence_code, name, suffix);
+            }
+            phieuThuChi.Journal = await journalObj.GetByIdAsync(val.JournalId);
+            phieuThuChi.LoaiThuChi = await loaithuchiObj.GetByIdAsync(val.LoaiThuChiId);
             phieuThuChi.CompanyId = CompanyId;
+            phieuThuChi.State = "draft";
             return await CreateAsync(phieuThuChi);
         }
 
@@ -95,6 +124,7 @@ namespace Infrastructure.Services
                  .Include(x => x.Company)
                  .Include(x => x.Journal)
                  .Include(x => x.LoaiThuChi)
+                 .Include(x => x.LoaiThuChi.Account)
                  .Include(x => x.MoveLines)
                  .ToListAsync();
 
@@ -215,6 +245,7 @@ namespace Infrastructure.Services
 
                 var lines = new List<AccountMoveLine>()
                 {
+                    
                     new AccountMoveLine
                     {
                         Name = rec_pay_line_name,
@@ -232,8 +263,8 @@ namespace Infrastructure.Services
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         DateMaturity = phieu.Date,
-                        AccountId = liquidity_line_account.Id,
-                        Account = liquidity_line_account,
+                        AccountId = phieu.LoaiThuChi.AccountId.Value,
+                        Account = phieu.LoaiThuChi.Account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
                     },

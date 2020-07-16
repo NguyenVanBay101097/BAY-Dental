@@ -58,6 +58,7 @@ export class PhieuThuChiListComponent implements OnInit {
     ).subscribe(res => {
       this.gridData = res;
       this.loading = false;
+      console.log(res);
     }, err => {
       console.log(err);
       this.loading = false;
@@ -67,6 +68,15 @@ export class PhieuThuChiListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  stateGet(state) {
+    switch (state) {
+      case 'posted':
+        return 'Đã xác nhận';
+      default:
+        return 'Nháp';
+    }
   }
 
   convertResultSelection() {
