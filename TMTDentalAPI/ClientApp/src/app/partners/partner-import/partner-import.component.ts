@@ -4,6 +4,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { PartnerService, ImportExcelDirect } from '../partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-partner-import',
@@ -13,7 +14,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 export class PartnerImportComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private partnerService: PartnerService) { }
+    private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService) { }
 
   formGroup: FormGroup;
   title = 'Import';
@@ -23,6 +24,7 @@ export class PartnerImportComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       fileBase64: [null, Validators.required],
+      checkAddress: false
     });
   }
 
@@ -44,6 +46,8 @@ export class PartnerImportComponent implements OnInit {
       } else {
         this.errors = result.errors;
       }
+    }, (err) => {
+      this.showErrorService.show(err);
     });
   }
 }

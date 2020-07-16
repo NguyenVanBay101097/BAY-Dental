@@ -150,7 +150,8 @@
                                 *ngFor="let vitri of ham.value | keyvalue">
                                 <div (click)="onSelected(rang)" class="tooth-item"
                                     [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                                    {{rang.name}}</div>
+                                    {{rang.name}}
+                                </div>
                             </td>
                         </tr>
                     </table>

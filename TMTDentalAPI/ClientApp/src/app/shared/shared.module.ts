@@ -47,6 +47,10 @@ import { RedirectComponentDirective } from './redirect-component.directive';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
 import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
+import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
+import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
+import { AccountPaymentPrintComponent } from './account-payment-print/account-payment-print.component';
+import { CheckAddressButtonComponent } from './check-address-button/check-address-button.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +89,11 @@ import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.compon
     CharCountDirective,
     SelectUomProductDialogComponent,
     ImageFileUploadComponent,
-    ToaThuocPrintComponent
+    ToaThuocPrintComponent,
+    ImportSampleDataComponent, 
+    AccountPaymentPrintComponent,
+    CheckAddressButtonComponent,
+    PartnerProfilePrintComponent
   ],
   exports: [
     HeaderComponent,
@@ -121,7 +129,10 @@ import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.compon
     SelectUomProductDialogComponent,
     RedirectComponentDirective,
     ImageFileUploadComponent,
-    ToaThuocPrintComponent
+    ToaThuocPrintComponent,
+    AccountPaymentPrintComponent,
+    CheckAddressButtonComponent,
+    PartnerProfilePrintComponent
   ],
   imports: [
     CommonModule,
@@ -147,7 +158,8 @@ import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.compon
     UserProfileEditComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    SelectUomProductDialogComponent
+    SelectUomProductDialogComponent,
+    ImportSampleDataComponent
   ],
 })
 export class SharedModule { }

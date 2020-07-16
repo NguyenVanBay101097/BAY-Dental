@@ -12,7 +12,10 @@ import { PartnerCategoryImportComponent } from '../partner-category-import/partn
 @Component({
   selector: 'app-partner-category-list',
   templateUrl: './partner-category-list.component.html',
-  styleUrls: ['./partner-category-list.component.css']
+  styleUrls: ['./partner-category-list.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 
 export class PartnerCategoryListComponent implements OnInit {
@@ -24,6 +27,8 @@ export class PartnerCategoryListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
+
+  title = 'Nhãn khách hàng';
 
   constructor(private partnerCategoryService: PartnerCategoryService,
     private modalService: NgbModal, private dialogService: DialogService) {
@@ -77,7 +82,7 @@ export class PartnerCategoryListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm nhóm khách hàng';
+    modalRef.componentInstance.title = 'Thêm: ' + this.title;
 
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -87,7 +92,7 @@ export class PartnerCategoryListComponent implements OnInit {
 
   editItem(item: PartnerCategoryBasic) {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa nhóm khách hàng';
+    modalRef.componentInstance.title = 'Sửa: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -97,7 +102,7 @@ export class PartnerCategoryListComponent implements OnInit {
 
   deleteItem(item: PartnerCategoryBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: Nhóm khách hàng';
+    modalRef.componentInstance.title = 'Xóa: ' + this.title;
     modalRef.result.then(() => {
       this.partnerCategoryService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();

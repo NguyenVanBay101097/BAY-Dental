@@ -74,6 +74,7 @@ export class PartnerPaged {
     employee: boolean;
     supplier: boolean;
     search: string;
+    categoryId: string;
 }
 
 export class PagedResult2<T>{
@@ -150,6 +151,18 @@ export class PartnerInfoViewModel {
     jobTitle: string;
 }
 
-
+export class PartnerPrint {
+    companyName: string;
+    companyAddress: string;
+    companyPhone: string;
+    companyEmail: string;
+    partnerName: string;
+    partnerAddress: string;
+    partnerPhone: string;
+    partnerAge: string;
+    partnerGender: string;
+    date: string;
+    note: string;
+}
 
 

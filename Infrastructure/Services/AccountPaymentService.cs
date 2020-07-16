@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,32 +19,33 @@ namespace Infrastructure.Services
     public class AccountPaymentService : BaseService<AccountPayment>, IAccountPaymentService
     {
         private readonly IMapper _mapper;
+        private readonly CatalogDbContext _dbContext;
+
         public AccountPaymentService(IAsyncRepository<AccountPayment> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper, CatalogDbContext dbContext)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _dbContext = dbContext;
         }
 
         public async Task Post(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.AccountMovePaymentRels)
                 .Include(x => x.SaleOrderPaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
-                .Include("AccountMovePaymentRels.Move")
-                .Include("AccountMovePaymentRels.Move.Lines")
-                .Include("AccountMovePaymentRels.Move.Lines.Account")
-                .Include(x => x.Journal).Include(x => x.Journal.DefaultDebitAccount)
-                .Include(x => x.Journal.DefaultCreditAccount).ToListAsync();
+                .Include(x => x.Journal).Include(x => x.Journal.DefaultCreditAccount)
+                .Include(x => x.Journal.DefaultDebitAccount).ToListAsync();
 
             var seqObj = GetService<IIRSequenceService>();
+            var moveObj = GetService<IAccountMoveService>();
+
             foreach (var rec in self)
             {
                 if (rec.State != "draft")
                     throw new Exception("Chỉ những thanh toán nháp mới được vào sổ.");
 
-                if (rec.AccountMovePaymentRels.Any(x => x.Move.State != "posted"))
+                if (await _dbContext.AccountMovePaymentRels.AnyAsync(x => x.PaymentId == rec.Id && x.Move.State != "posted"))
                     throw new Exception("The payment cannot be processed because the invoice is not open!");
 
                 string sequence_code = "";
@@ -77,7 +79,6 @@ namespace Infrastructure.Services
                         throw new Exception($"You have to define a sequence for {sequence_code} in your company.");
                 }
 
-                var moveObj = GetService<IAccountMoveService>();
                 var moves = await _PreparePaymentMoves(new List<AccountPayment>() { rec });
               
                 var amlObj = GetService<IAccountMoveLineService>();
@@ -943,11 +944,18 @@ namespace Infrastructure.Services
                 PartnerCity = x.Partner.CityName,
                 PartnerDistrict = x.Partner.DistrictName,
                 PartnerName = x.Partner.Name,
+                PartnerDisplayName = x.Partner.DisplayName,
                 PartnerPhone = x.Partner.Phone,
                 PartnerRef = x.Partner.Ref,
                 PartnerStreet = x.Partner.Street,
                 PartnerWard = x.Partner.WardName,
-                PaymentDate = x.PaymentDate
+                PaymentDate = x.PaymentDate,
+                SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM { 
+                   AmountTotal = s.SaleOrder.AmountTotal,
+                   DateOrder = s.SaleOrder.DateOrder,
+                   Name = s.SaleOrder.Name,
+                   Residual = s.SaleOrder.Residual
+                }),
             }).FirstOrDefaultAsync();
 
             if (res == null)

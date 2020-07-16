@@ -31,7 +31,7 @@ import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-se
 import { CustomComponentModule } from '../common/common.module';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
 import { HttpClientModule } from '@angular/common/http';
-import { NgbActiveModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
 import { PartnerCustomerProfileNextAppointmentComponent } from './partner-customer-profile-next-appointment/partner-customer-profile-next-appointment.component';
@@ -42,6 +42,9 @@ import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-custom
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { PopupModule } from '@progress/kendo-angular-popup';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -71,7 +74,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     PartnerCustomerAppointmentComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
     PartnerCustomerTreatmentPaymentChildComponent,
-    PartnerCustomerProductToaThuocListComponent],
+    PartnerCustomerProductToaThuocListComponent,
+    PartnerCustomerCategoriesComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
@@ -84,7 +88,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     SharedModule,
     CustomComponentModule,
     SaleReportModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgbModule,
+    DropDownsModule, 
+    PopupModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

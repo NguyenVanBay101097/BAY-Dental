@@ -19,6 +19,7 @@ export class PartnerCategoryPaged {
     offset: number;
     limit: number;
     search: string;
+    partnerId: string;
 }
 
 export class PartnerCategoryPaging {

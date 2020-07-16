@@ -33,6 +33,15 @@ export class AccountPaymentFilter {
     partnerId: string;
 }
 
+export class DiscountDefault{
+    saleOrderId: string;
+    discountType: string;
+    discountPercent: string;
+    discountFixed: string;
+
+}
+
+
 @Injectable()
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
@@ -57,7 +66,6 @@ export class SaleOrderService {
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
-
 
     getPrint(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
@@ -107,6 +115,10 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/ApplyPromotion', {});
     }
 
+    applyDiscountDefault(data: DiscountDefault) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountDefault', data);
+    }
+
     unlink(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
     }
@@ -130,6 +142,8 @@ export class SaleOrderService {
     defaultOrderGet(val: AccountRegisterPaymentDefaultGet): Observable<AccountRegisterPaymentDisplay> {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + "api/accountregisterpayments/OrderDefaultGet", val);
     }
+
+    
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
         return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });

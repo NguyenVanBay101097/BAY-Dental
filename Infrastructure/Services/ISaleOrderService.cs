@@ -11,7 +11,6 @@ namespace Infrastructure.Services
     public interface ISaleOrderService : IBaseService<SaleOrder>
     {
         Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "");
-        Task<SaleOrder> CreateOrderAsync(SaleOrder order);
         Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id);
         Task<SaleOrder> GetSaleOrderWithLines(Guid id);
         Task UpdateOrderAsync(Guid id, SaleOrderSave val);
@@ -46,6 +45,13 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderLineDisplay>>  GetServiceBySaleOrderId(Guid id);
         Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
+        Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
+        void _AmountAll(SaleOrder order);
 
+        //Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);
+
+        Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
+
+        Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
     }
 }

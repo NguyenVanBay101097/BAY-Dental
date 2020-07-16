@@ -9,7 +9,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Họ tên</label>
+                    <label class="o_form_label oe_edit_only">Họ tên </label>
                     <h1>
                         <input class="form-control" formControlName="name" name="name">
                     </h1>
@@ -62,18 +62,18 @@
                                 </td>
                                 <td colspan="1" style="width:100%">
                                     <div class="d-flex">
-                                        <select class="form-control" formControlName="birthDay">
-                                            <option value="null">Ngày</option>
+                                        <select class="form-control" formControlName="birthDayStr">
+                                            <option value="">Ngày</option>
                                             <option *ngFor="let i of dayList">
                                                 {{i}}</option>
                                         </select>
-                                        <select class="form-control" formControlName="birthMonth">
-                                            <option value="null">Tháng</option>
+                                        <select class="form-control" formControlName="birthMonthStr">
+                                            <option value="">Tháng</option>
                                             <option *ngFor="let i of monthList">
                                                 {{i}}</option>
                                         </select>
-                                        <select class="form-control" formControlName="birthYear">
-                                            <option value="null">Năm</option>
+                                        <select class="form-control" formControlName="birthYearStr">
+                                            <option value="">Năm</option>
                                             <option *ngFor="let i of yearList">
                                                 {{i}}</option>
                                         </select>
@@ -88,7 +88,7 @@
                                     <input type="text" class="form-control" formControlName="email" />
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Nhóm khách hàng</label>
                                 </td>
@@ -103,7 +103,7 @@
                                         </button>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Nghề nghiệp</label>
@@ -127,15 +127,21 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Địa chỉ
-                                    </label>
+                                    <div class="d-flex">
+                                        <label class="o_form_label">
+                                            Địa chỉ
+                                        </label>
+                                        <div class="pl-3">
+                                            <app-check-address-button (clickAddress)="handleAddress($event)"></app-check-address-button>
+                                        </div>
+                                    </div>
+                                    
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="o_address_format mb-2">
                                         <div class="mb-2">
                                             <input class="form-control" placeholder="Số nhà, đường..." type="text"
-                                                formControlName="street" />
+                                                formControlName="street" />                                               
                                         </div>
                                         <div class="mb-2">
                                             <kendo-combobox [data]="dataResultCities" [textField]="'name'"
@@ -162,6 +168,30 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                  <label class="o_form_label">Nguồn</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                  <div>
+                                    <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources"
+                                       [valueField]="'id'" #sourceCbx [textField]="'name'">
+                                    </kendo-combobox>                                 
+                                  </div>
+                                </td>             
+                              </tr>  
+                              <tr [class.d-none]="!sourceValue || sourceValue.type !== 'referral'">
+                                  <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người giới thiệu</label>
+                                  </td>
+                                  <td colspan="1" style="width: 100%;">
+                                    <div>
+                                      <kendo-combobox formControlName="referralUser" [filterable]="true" [data]="filteredReferralUsers"
+                                        [valueField]="'id'" #userCbx [textField]="'name'">
+                                      </kendo-combobox> 
+                                    </div>
+                                  </td>             
+                              </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
                                         chú</label></td>

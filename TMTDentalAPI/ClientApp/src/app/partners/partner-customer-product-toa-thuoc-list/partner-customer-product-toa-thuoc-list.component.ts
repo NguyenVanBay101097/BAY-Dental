@@ -83,6 +83,11 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     });
   }
 
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadData();
+  }
+
   editProductToaThuoc(item: any) {
     let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: Đơn Thuốc';

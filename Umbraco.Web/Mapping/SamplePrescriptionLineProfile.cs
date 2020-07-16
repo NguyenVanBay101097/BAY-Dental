@@ -19,6 +19,13 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
                 .ForMember(x => x.Prescription, x => x.Ignore());
+
+            CreateMap<SamplePrescriptionLine, SamplePrescriptionLineDisplay>();
+
+            CreateMap<SamplePrescriptionLineDisplay, SamplePrescriptionLine>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Product, x => x.Ignore())
+                .ForMember(x => x.Prescription, x => x.Ignore());
         }
     }
 }

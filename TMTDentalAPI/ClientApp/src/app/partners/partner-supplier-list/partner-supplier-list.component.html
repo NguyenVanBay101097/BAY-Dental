@@ -28,11 +28,6 @@
         <kendo-grid-column field="ref" title="Mã" width="100"></kendo-grid-column>
         <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
         <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
-        <kendo-grid-column field="debt" title="Nợ hiện tại" width="100" class="text-right">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.debt | number}}
-            </ng-template>
-        </kendo-grid-column>
         <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button title="Sửa" (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-1"><i

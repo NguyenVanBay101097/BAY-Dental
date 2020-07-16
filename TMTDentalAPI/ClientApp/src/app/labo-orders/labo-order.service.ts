@@ -30,6 +30,7 @@ export class LaboOrderBasic {
     amountTotal: string;
     saleOrderId: string;
     saleOrderName: string;
+    datePlanned: string;
 }
 
 export class LaboOrderDefaultGet {

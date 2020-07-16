@@ -84,6 +84,24 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "product.discount":
+                        {
+                            var service = GetService<IProductService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
+                    case "account.data_account_type_thu":
+                        {
+                            var service = GetService<IAccountAccountTypeService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
+                    case "account.data_account_type_chi":
+                        {
+                            var service = GetService<IAccountAccountTypeService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
                     default:
                         {
                             return null;
