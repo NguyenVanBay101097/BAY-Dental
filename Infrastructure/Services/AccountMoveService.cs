@@ -23,11 +23,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<AccountMove> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.account_move_comp_rule":
-                    return new InitialSpecification<AccountMove>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                    return new InitialSpecification<AccountMove>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }

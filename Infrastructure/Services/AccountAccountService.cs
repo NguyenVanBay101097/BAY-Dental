@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,11 +32,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.invoice_comp_rule":
-                    return new InitialSpecification<AccountAccount>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<AccountAccount>(x => companyIds.Contains(x.CompanyId));
                 default:
                     return null;
             }

@@ -918,11 +918,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<AccountPayment> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.account_payment_comp_rule":
-                    return new InitialSpecification<AccountPayment>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<AccountPayment>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }

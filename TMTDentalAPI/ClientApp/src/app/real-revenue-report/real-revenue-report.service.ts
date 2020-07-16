@@ -13,9 +13,8 @@ export class RealRevenueReportItem {
 export class RealRevenueReportResult {
     debit: number;
     credit: number;
-    balance: number;
-    totalAmountResidual: number;
-    items: RealRevenueReportItem[];
+    begin: number;
+    end: number;
 }
 
 export class RealRevenueReportItemDetail {
@@ -29,7 +28,9 @@ export class RealRevenueReportItemDetail {
 
 
 export class RealRevenueReportSearch {
-    search: string;
+    dateFrom: string;
+    dateTo: string;
+    companyId: string;
 }
 
 @Injectable()
