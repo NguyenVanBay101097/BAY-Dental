@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using CsvHelper;
 using Infrastructure.Data;
@@ -1054,6 +1055,21 @@ namespace Infrastructure.Services
             query = query.OrderBy(s => s.Name);
             return query;
         }
+
+        public override ISpecification<Company> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "base.res_company_rule_employee":
+                    return new InitialSpecification<Company>(x => companyIds.Contains(x.Id));
+                default:
+                    return null;
+            }
+
+        }
+
     }
 
     public class IRModelCsvLine

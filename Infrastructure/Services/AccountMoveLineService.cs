@@ -63,7 +63,7 @@ namespace Infrastructure.Services
         public void _OnChangePriceSubtotal(IEnumerable<AccountMoveLine> self)
         {
             var moveObj = GetService<IAccountMoveService>();
-            foreach(var line in self)
+            foreach (var line in self)
             {
                 if (!moveObj.IsInvoice(line.Move, include_receipts: true))
                     continue;
@@ -457,7 +457,7 @@ namespace Infrastructure.Services
         private async Task<IList<AccountMoveLine>> _ReconcileLines(List<AccountMoveLine> debit_moves, List<AccountMoveLine> credit_moves)
         {
             var to_create = new List<AccountPartialReconcile>();
-            while(debit_moves.Any() && credit_moves.Any())
+            while (debit_moves.Any() && credit_moves.Any())
             {
                 var debit_move = debit_moves[0];
                 var credit_move = credit_moves[0];
@@ -563,11 +563,13 @@ namespace Infrastructure.Services
 
         public override ISpecification<AccountMoveLine> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            //ra đc list company id ma nguoi dung dc phép
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.account_move_line_comp_rule":
-                    return new InitialSpecification<AccountMoveLine>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<AccountMoveLine>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }
