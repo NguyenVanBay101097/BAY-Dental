@@ -1,6 +1,6 @@
 <div class="o_control_panel o_breadcrumb_full">
     <ol class="breadcrumb">
-        <li class="active">Báo cáo tài chính</li>
+        <li class="active">Báo cáo kết quả kinh doanh</li>
     </ol>
 </div>
 
@@ -33,12 +33,11 @@
 
                 </tbody>
             </table>
-            <table class="o_group o_inner_group o_group_col_6" [hidden]="filteredCompanies.length == 1">
+            <table class="o_group o_inner_group o_group_col_6">
                 <tbody>
-                    <tr>
+                    <tr [class.d-none]="filteredCompanies.length < 2">
                         <td colspan="1" class="o_td_label">
-                            <label for="o_field_input_10" class="o_form_label o_form_label_help" data-original-title=""
-                                title="">
+                            <label for="o_field_input_10" class="o_form_label o_form_label_help">
                                 Chi nhánh
                             </label>
                         </td>
@@ -51,8 +50,6 @@
                     </tr>
                 </tbody>
             </table>
-
-
         </div>
         <div class="mb-2">
             <button type="button" class="btn btn-primary btn-sm" (click)="reportFinancial()">Báo cáo</button>
@@ -69,7 +66,7 @@
                                             <span
                                                 [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.name}}
                                                 <strong
-                                                    *ngIf="filteredCompanies.length > 1">{{line.companyName}}</strong></span>
+                                                    *ngIf="filteredCompanies.length > 1 && line.companyName"> - {{line.companyName}}</strong></span>
                                         </td>
                                         <td class="text-right">
                                             <span

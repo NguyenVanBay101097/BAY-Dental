@@ -68,7 +68,7 @@ namespace Infrastructure.Services
                             Type = "account",
                             Level = report.DisplayDetail == "detail_with_hierarchy" ? 4 : 0,
                             AccountType = account.InternalType,
-                            CompanyName = " - "+account.Company.Name
+                            CompanyName = account.Company.Name
                         };
                         if (data.DebitCredit == true)
                         {
