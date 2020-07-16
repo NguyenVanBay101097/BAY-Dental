@@ -4,7 +4,7 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { DotKhamService } from '../dot-kham.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
+import { PartnerService, PartnerFilter, PartnerImageBasic } from 'src/app/partners/partner.service';
 import { debounceTime, tap, switchMap, map, mergeMap } from 'rxjs/operators';
 import { AccountInvoiceCbx, AccountInvoiceService } from 'src/app/account-invoices/account-invoice.service';
 import { Observable, pipe } from 'rxjs';
@@ -86,7 +86,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   laboOrders: LaboOrderBasic[] = [];
   appointments: AppointmentBasic[] = [];
   customerInvoicesList: AccountInvoiceCbx[] = [];
-
+  partnerId: string;
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
   doctorSimpleFilter: EmployeeSimple[] = [];
@@ -100,8 +100,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   window: WindowRef;
 
-  imagesPreview: IrAttachmentBasic[] = [];
-  filesPreview: IrAttachmentBasic[] = [];
+  imagesPreview: PartnerImageBasic[] = [];
 
   dialog = false;//Component được mở dưới dạng Dialog hay Tab mới
   dotKham: DotKhamDisplay = new DotKhamDisplay();
@@ -114,7 +113,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   title: string;
   activeTabId = 1;
 
-  @ViewChild(ToaThuocPrintComponent, {static: true}) toaThuocPrintComponent: ToaThuocPrintComponent;
+  @ViewChild(ToaThuocPrintComponent, { static: true }) toaThuocPrintComponent: ToaThuocPrintComponent;
 
 
   constructor(
@@ -170,7 +169,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       } else {
         this.loadDefaultFormGroup();
       }
-  
+
       this.filterChangeCombobox();
     });
 
@@ -1014,51 +1013,55 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   }
 
   //ĐÍNH KÈM FILE/HÌNH ẢNH
-  addAttachments(e) {
+  addPartnerImages(e) {
     var file_node = e.target;
     var count = file_node.files.length;
-
     var formData = new FormData();
-
+    formData.append('partnerId', this.partnerId);
+    formData.append('dotKhamId', this.id);
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
       formData.append('files', file);
       var filereader = new FileReader();
       filereader.readAsDataURL(file);
-      var self = this;
     }
-    this.dotKhamService.uploadFiles(self.id, formData).subscribe(
+    this.partnerService.uploadPartnerImage(formData).subscribe(
       rs => {
         // this.getImageIds();
         rs.forEach(e => {
-          if (this.getFileMineType(e.mineType) == 'image') {
-            this.imagesPreview.push(e);
-          } else {
-            this.filesPreview.push(e);
-          }
+          this.imagesPreview.push(e);
         })
-      }
-    )
+      })
 
   }
 
-  //LOAD CÁC ATTACHMENT
+  deletePartnerImages(item, event) {
+    event.stopPropagation();
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa hình ảnh ' + item.name;
+
+    modalRef.result.then(() => {
+      this.partnerService.deleteParnerImage(item.id).subscribe(
+        () => {
+          var index = this.imagesPreview.findIndex(x => x.id == item.id);
+          this.imagesPreview.splice(index, 1);
+        })
+    })
+  }
+
   getImageIds() {
     this.imagesPreview = [];
-    this.filesPreview = [];
-    var ir = new IrAttachmentSearchRead;
-    ir.model = 'dotkham';
-    ir.resId = this.id;
-    this.dotKhamService.getImageIds(ir).subscribe(
-      rs => {
-        rs.forEach(e => {
-          // _.unionBy(this.imagesPreview, [src], 'id');
-          if (this.getFileMineType(e.mineType) == 'image') {
-            this.imagesPreview.push(e);
-          } else {
-            this.filesPreview.push(e);
-          }
-        });
+    var value = {
+      partnerId: this.partnerId,
+      dotKhamId: this.id
+    }
+    this.partnerService.getPartnerImageIds(value).subscribe(
+      result => {
+        if (result) {
+          result.forEach(item => {
+            this.imagesPreview.push(item);
+          });
+        }
       }
     )
   }
@@ -1067,46 +1070,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     event.stopPropagation();
   }
 
-  //GET ID CỦA CÁC ATTACHMENT
-  deleteAttachments(item, event) {
-    event.stopPropagation();
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa hình ảnh/đính kèm',
-      content: 'Bạn chắc chắn muốn xóa ' + item.name + ' ?',
-      actions: [
-        { text: 'Thoát', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ]
-    });
-    dialogRef.result.subscribe(
-      rs => {
-        if (!(rs instanceof DialogCloseResult)) {
-          if (rs['value']) {
-            this.dotKhamService.deleteAttachment(item.id).subscribe(
-              () => {
-                // this.getImageIds();
-                if (this.getFileMineType(item.mineType) == 'image') {
-                  var index = this.imagesPreview.findIndex(x => x.id == item.id);
-                  if (index > -1) {
-                    this.imagesPreview.splice(index, 1);
-                  } else {
-                    this.getImageIds();
-                  }
-                } else {
-                  index = this.filesPreview.findIndex(x => x.id == item.id);
-                  if (index > -1) {
-                    this.filesPreview.splice(index, 1);
-                  } else {
-                    this.getImageIds();
-                  }
-                }
-              }
-            )
-          }
-        }
-      }
-    )
-  }
 
   //LẤY ĐUÔI MỞ RỘNG CỦA FILE
   getFileExtension(name: string) {
