@@ -269,11 +269,19 @@ namespace Infrastructure.Services
 
             var companyObj = GetService<ICompanyService>();
             var groupObj = GetService<IResGroupService>();
+            var partnerObj = GetService<IPartnerService>();
             var irModelDataObj = GetService<IIRModelDataService>();
             var partner_main = await irModelDataObj.GetRef<Partner>("base.main_partner");
             var company_main = await irModelDataObj.GetRef<Company>("base.main_company");
             var user_root = await irModelDataObj.GetRef<ApplicationUser>("base.user_root");
             var partner_root = await irModelDataObj.GetRef<Partner>("base.partner_root");
+
+            if (partner_root == null)
+                partner_root = await partnerObj.GetByIdAsync(user_root.PartnerId);
+            if (company_main == null)
+                company_main = await companyObj.GetByIdAsync(user_root.CompanyId);
+            if (partner_main == null)
+                partner_main = await partnerObj.GetByIdAsync(company_main.PartnerId);
 
             await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
             await _dbContext.ExecuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null");
