@@ -40,7 +40,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Date = x.Date,
                 PayerReceiver = x.PayerReceiver,
-                JounalName = x.Journal.Name,
+                JournalName = x.Journal.Name,
                 TypeName = x.LoaiThuChi.Name,
                 Amount = x.Amount,
                 State = x.State

@@ -1,12 +1,55 @@
-<header class="modal-header">
-    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
-</header>
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a *ngIf="resultSelection === 'thu'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{result_selection: 'thu'}">Phiếu thu</a>
+                <a *ngIf="resultSelection === 'chi'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{result_selection: 'chi'}">Phiếu chi</a>
+            </li>
+            <li class="active">
+                <span *ngIf="itemId">{{saleOrder.name}}</span>
+                <span *ngIf="!itemId">Mới</span>
+            </li>
+        </ol>
+    </div>
+</div>
 
-<div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myForm">
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="myForm">
         <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
+                        (click)="onSaveConfirm()">
+                        Xác nhận
+                    </button>
+                    <button type="button" accesskey="1" *ngIf="itemId && getValueForm('state') == 'draft'"
+                        class="btn btn-primary btn-sm" (click)="actionConfirm()">
+                        Xác nhận
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
+                        *ngIf="getValueForm('state') === null" (click)="onSave()">
+                        Lưu nháp
+                    </button>
+                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" 
+                        (click)="printPhieuThuChi()">
+                        In phiếu
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="getValueForm('state') !== 'posted'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="getValueForm('state') === 'posted'" 
+                        [class.btn-secondary]="getValueForm('state') !== 'posted'"
+                        type="button">
+                        Đã xác nhận
+                    </button>
+                    <button [disabled]="getValueForm('state') !== 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="getValueForm('state') === 'draft'" 
+                        [class.btn-secondary]="getValueForm('state') !== 'draft'"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
@@ -14,8 +57,8 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        <span *ngIf="type === 'thu'">Loại thu</span>
-                                        <span *ngIf="type === 'chi'">Loại chi</span>
+                                        <span *ngIf="resultSelection === 'thu'">Loại thu</span>
+                                        <span *ngIf="resultSelection === 'chi'">Loại chi</span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -51,7 +94,7 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Nội dung
+                                        Lý do
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -80,20 +123,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="null" [textField]="'name'" [filterable]="true"
-                                        [valueField]="'id'">
-                                    </kendo-combobox>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Điện thoại
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
                                     <input class="form-control" 
-                                        placeholder="Nhập số điện thoại..." />
+                                        placeholder="Nhập người nộp..." />
                                 </td>
                             </tr>
                             <tr>
@@ -107,6 +138,17 @@
                                         placeholder="Nhập địa chỉ..." />
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Kèm theo
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" 
+                                        placeholder="" />
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -114,14 +156,3 @@
         </div>
     </form>
 </div>
-
-<footer class="modal-footer">
-    <button type="button" class="btn btn-primary" 
-        (click)="save()"  accesskey="s">
-        Thêm
-    </button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" 
-        (click)="cancel()" accesskey="q">
-        Đóng
-    </button>
-</footer>

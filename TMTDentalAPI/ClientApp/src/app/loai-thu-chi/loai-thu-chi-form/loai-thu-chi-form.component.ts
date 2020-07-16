@@ -42,7 +42,6 @@ export class LoaiThuChiFormComponent implements OnInit {
     var val = new loaiThuChiDefault();
     val.type = this.type;
     this.loaiThuChiService.defaultGet(val).subscribe(result => {
-      console.log(result);
       this.accountForm.patchValue(result);
     }, err => {
       console.log(err);
@@ -62,17 +61,14 @@ export class LoaiThuChiFormComponent implements OnInit {
   save() {
     var value = this.accountForm.value;
     value.type = this.type;
-    console.log(value);
     if (!this.itemId) {
       this.loaiThuChiService.create(value).subscribe(result => {
-        console.log(result);
         this.activeModal.close(true);
       }, err => {
         console.log(err);
       })
     } else {
       this.loaiThuChiService.update(this.itemId, value).subscribe(result => {
-        console.log(result);
         this.activeModal.close(result);
       }, err => {
         console.log(err);

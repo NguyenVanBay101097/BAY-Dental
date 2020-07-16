@@ -21,7 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// tên phương thức 
         /// </summary>
-        public string JounalName { get; set; }
+        public string JournalName { get; set; }
 
         /// <summary>
         /// Số tiền

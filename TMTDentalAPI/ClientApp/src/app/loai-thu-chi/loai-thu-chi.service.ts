@@ -60,7 +60,7 @@ export class LoaiThuChiService {
 
   get(id): Observable<loaiThuChi> {
     return this.http.get<loaiThuChi>(this.baseApi + this.apiUrl + "/" + id);
-}
+  }
 
   defaultGet(val: loaiThuChiDefault): Observable<loaiThuChiSave> {
     return this.http.post<loaiThuChiSave>(this.baseApi + this.apiUrl + "/defaultget", val);
