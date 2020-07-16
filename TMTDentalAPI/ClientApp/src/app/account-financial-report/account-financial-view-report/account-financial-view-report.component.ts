@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AccountLineItem, AccoutingReport, AccountFinancialReportService } from '../account-financial-report.service';
+import { AccountFinancialReportService, AccountFinancialReportBasic } from '../account-financial-report.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CompanyService, CompanyBasic, CompanyPaged } from 'src/app/companies/company.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { AccountLineItem, AccoutingReport, ReportFinancialService } from '../report-financial.service';
 
 @Component({
   selector: 'app-account-financial-view-report',
@@ -15,20 +16,24 @@ export class AccountFinancialViewReportComponent implements OnInit {
   @ViewChild('companyCbx', { static: true }) companyCbx: ComboBoxComponent;
   accountLines: AccountLineItem[] = []
   formGroup: FormGroup;
-  debitCredit = true;
+  accountFinancialReportBasic: AccountFinancialReportBasic = new AccountFinancialReportBasic();
   filteredCompanies: CompanyBasic[] = [];
   companyId: string;
+
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
   constructor(
-    private financialReportService: AccountFinancialReportService,
+    private reportFinancialService: ReportFinancialService,
+    private accountFinancialReportService: AccountFinancialReportService,
     private fb: FormBuilder,
     private companyService: CompanyService,
     private intl: IntlService
   ) { }
-  listItems: any[] = ['1', '2', '3'];
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateTo: new Date(),
-      dateFrom: null,
+      dateTo: this.monthEnd,
+      dateFrom: this.monthStart,
       debitCredit: true,
       company: null
     })
@@ -44,13 +49,22 @@ export class AccountFinancialViewReportComponent implements OnInit {
       });
 
     this.loadCompany();
+    this.getDefault();
+  }
+
+  getDefault() {
+    this.accountFinancialReportService.getProfitAndLossReport().subscribe(
+      result => {
+        this.accountFinancialReportBasic = result;
+        this.reportFinancial();
+      }
+    )
   }
 
   loadCompany() {
     this.searchCompany().subscribe(
       result => {
         this.filteredCompanies = result.items;
-        this.formGroup.get('company').patchValue(this.filteredCompanies[0]);
       }
     )
   }
@@ -72,8 +86,9 @@ export class AccountFinancialViewReportComponent implements OnInit {
     val.dateFrom = this.intl.formatDate(this.formGroup.get('dateFrom') ? this.formGroup.get('dateFrom').value : null, "yyyy-MM-dd");
     val.dateTo = this.intl.formatDate(this.formGroup.get('dateTo') ? this.formGroup.get('dateTo').value : null, "yyyy-MM-dd");
     val.debitCredit = this.formGroup.get('debitCredit') ? this.formGroup.get('debitCredit').value : false;
-    this.debitCredit = val.debitCredit;
-    this.financialReportService.getAccountLinesItem(val).subscribe(
+    if (this.accountFinancialReportBasic)
+      val.accountReportId = this.accountFinancialReportBasic.id;
+    this.reportFinancialService.getAccountLinesItem(val).subscribe(
       result => {
         this.accountLines = result;
       }

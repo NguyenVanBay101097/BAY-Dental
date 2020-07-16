@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using CsvHelper;
 using Infrastructure.Data;
@@ -58,7 +59,7 @@ namespace Infrastructure.Services
 
             var partnerRoot = new Partner
             {
-                Name = !string.IsNullOrEmpty(name) ? name: userName,
+                Name = !string.IsNullOrEmpty(name) ? name : userName,
                 Company = mainCompany,
                 Customer = false,
                 Email = email,
@@ -543,7 +544,7 @@ namespace Infrastructure.Services
             await modelDataObj.CreateAsync(modelDatas);
 
             var whObj = GetService<IStockWarehouseService>();
-            foreach(var wh in stock_warehouses_dict.Values)
+            foreach (var wh in stock_warehouses_dict.Values)
             {
                 await whObj.CreateAsync(wh);
             }
@@ -597,7 +598,8 @@ namespace Infrastructure.Services
                         if (field_name == "name")
                         {
                             uom_categ.Name = field.InnerText;
-                        } else if (field_name == "measure_type")
+                        }
+                        else if (field_name == "measure_type")
                         {
                             uom_categ.MeasureType = field.InnerText;
                         }
@@ -964,7 +966,7 @@ namespace Infrastructure.Services
                 foreach (var partner_id in partner_ids)
                     await ExcuteSqlCommandAsync("delete Partners where Id=@p0", partner_id);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw new Exception("Dữ liệu đã phát sinh cho chi nhánh này, không thể xóa!.");
@@ -1022,6 +1024,21 @@ namespace Infrastructure.Services
             query = query.OrderBy(s => s.Name);
             return query;
         }
+
+        public override ISpecification<Company> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "base.res_company_rule_employee":
+                    return new InitialSpecification<Company>(x => companyIds.Contains(x.Id));
+                default:
+                    return null;
+            }
+
+        }
+
     }
 
     public class IRModelCsvLine

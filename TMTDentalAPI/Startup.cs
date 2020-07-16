@@ -243,6 +243,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareJobService, TCareJobService>();
             services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
+            services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -339,6 +340,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareRuleProfile());
                 mc.AddProfile(new TCareMessagingProfile());
                 mc.AddProfile(new IrAttachmentProfile());
+                mc.AddProfile(new AccountFinancialReportProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

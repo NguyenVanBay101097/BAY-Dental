@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,28 +15,20 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class AccountFinancialReportsController : ControllerBase
     {
-        private readonly IReportFinancialService _reportFinancialService;
-        public AccountFinancialReportsController(IReportFinancialService reportFinancialService)
+        private readonly IAccountFinancialReportService _accountFinancialReportService;
+        private readonly IMapper _mapper;
+        public AccountFinancialReportsController(IAccountFinancialReportService accountFinancialReportService, IMapper mapper)
         {
-            _reportFinancialService = reportFinancialService;
+            _accountFinancialReportService = accountFinancialReportService;
+            _mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync(AccountFinancialReportSave val)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProfitAndLossReport()
         {
-            var model = new AccountFinancialReport();
-            model.Name = val.Name;
-            model.Type = val.Type;
-            model.DisplayDetail = val.DisplayDetail;
-            var res = await _reportFinancialService.CreateAsync(model);
-            return Ok(res);
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetAccountMoveLines(AccountingReport val)
-        {
-            var res = await _reportFinancialService.GetAccountLines(val);
-            return Ok(res);
+            var res =await _accountFinancialReportService.GetProfitAndLossReport();
+            var basic = _mapper.Map<AccountFinancialReportBasic>(res);
+            return Ok(basic);
         }
     }
 }

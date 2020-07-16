@@ -90,6 +90,12 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "account.financial.report":
+                        {
+                            var service = GetService<IAccountFinancialReportService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
                     default:
                         {
                             return null;

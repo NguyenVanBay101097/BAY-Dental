@@ -13,98 +13,82 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class ReportFinancialService : BaseService<AccountFinancialReport>, IReportFinancialService
+    public class ReportFinancialService : IReportFinancialService
     {
-        public ReportFinancialService(
-            IAsyncRepository<AccountFinancialReport> repository,
-            IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ReportFinancialService(IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<GetAccountLinesItem>> GetAccountLines(AccountingReport data)
         {
-            var accountFinancialReport = await GetByDisplayDetail(data.KeyDisplayDetail);
+            var accountFinancialReportObj = GetService<IAccountFinancialReportService>();
             var lines = new List<GetAccountLinesItem>();
-            if (accountFinancialReport != null)
+            var accountReport = await accountFinancialReportObj.SearchQuery(x => x.Id == data.AccountReportId).Include(x => x.FinancialReportAccountTypeRels).FirstOrDefaultAsync();
+            var childReports = await accountFinancialReportObj._GetChildrenByOrder(accountReport);
+            var res = await _ComputeReportBalance(childReports, data);
+            foreach (var report in childReports)
             {
-                var accountReport = await SearchQuery(x => x.Id == accountFinancialReport.Id).Include(x => x.FinancialReportAccountTypeRels).FirstOrDefaultAsync();
-                var childReports = await _GetChildrenByOrder(accountReport);
-                var res = await _ComputeReportBalance(childReports, data);
-                foreach (var report in childReports)
+                var vals = new GetAccountLinesItem
                 {
-                    var vals = new GetAccountLinesItem
-                    {
-                        Name = report.Name,
-                        Balance = res[report.Id].Balance * report.Sign,
-                        Type = "report",
-                        Level = report.Level,
-                        AccountType = report.Type
-                    };
-                    if (data.DebitCredit == true)
-                    {
-                        vals.Debit = res[report.Id].Debit;
-                        vals.Credit = res[report.Id].Credit;
-                    }
+                    Name = report.Name,
+                    Balance = res[report.Id].Balance * report.Sign,
+                    Type = "report",
+                    Level = report.Level,
+                    AccountType = report.Type
+                };
+                if (data.DebitCredit == true)
+                {
+                    vals.Debit = res[report.Id].Debit;
+                    vals.Credit = res[report.Id].Credit;
+                }
 
-                    lines.Add(vals);
-                    if (report.DisplayDetail == "no_detail")
-                        continue;
+                lines.Add(vals);
+                if (report.DisplayDetail == "no_detail")
+                    continue;
 
-                    if (res[report.Id].Account.Count() > 0)
+                if (res[report.Id].Account.Count() > 0)
+                {
+                    var subLines = new List<GetAccountLinesItem>();
+                    var i = 0;
+                    foreach (var item in res[report.Id].Account)
                     {
-                        var subLines = new List<GetAccountLinesItem>();
-                        var i = 0;
-                        foreach (var item in res[report.Id].Account)
+
+                        var accountId = item.Key;
+                        var value = item.Value;
+                        var flag = false;
+                        var accountObj = GetService<IAccountAccountService>();
+                        var account = await accountObj.SearchQuery(x => x.Id == accountId).Include(x => x.Company).FirstOrDefaultAsync();
+
+                        var subVals = new GetAccountLinesItem()
                         {
-
-                            var accountId = item.Key;
-                            var value = item.Value;
-                            var flag = false;
-                            var accountObj = GetService<IAccountAccountService>();
-                            var account = await accountObj.GetByIdAsync(accountId);
-
-                            var subVals = new GetAccountLinesItem()
-                            {
-                                Name = account.Code + " " + account.Name,
-                                Balance = value.Balance * report.Sign,
-                                Type = "account",
-                                Level = report.DisplayDetail == "detail_with_hierarchy" ? 4 : 0,
-                                AccountType = account.InternalType,
-                            };
-                            if (data.DebitCredit == true)
-                            {
-                                subVals.Debit = value.Debit;
-                                subVals.Credit = value.Credit;
-                                if (subVals.Debit != 0 || subVals.Credit != 0)
-                                    flag = true;
-                            }
-
-                            if (subVals.Balance != 0)
+                            Name = account.Code + " " + account.Name,
+                            Balance = value.Balance * report.Sign,
+                            Type = "account",
+                            Level = report.DisplayDetail == "detail_with_hierarchy" ? 4 : 0,
+                            AccountType = account.InternalType,
+                            CompanyName = " - "+account.Company.Name
+                        };
+                        if (data.DebitCredit == true)
+                        {
+                            subVals.Debit = value.Debit;
+                            subVals.Credit = value.Credit;
+                            if (subVals.Debit != 0 || subVals.Credit != 0)
                                 flag = true;
-                            if (flag)
-                                subLines.Add(subVals);
-                            i++;
                         }
 
-                        lines.AddRange(subLines.OrderBy(x => x.Name));
+                        if (subVals.Balance != 0)
+                            flag = true;
+                        if (flag)
+                            subLines.Add(subVals);
+                        i++;
                     }
+
+                    lines.AddRange(subLines.OrderBy(x => x.Name));
                 }
             }
             return lines;
-        }
-
-        public async Task<IEnumerable<AccountFinancialReport>> _GetChildrenByOrder(AccountFinancialReport report)
-        {
-            var res = new List<AccountFinancialReport>() { report };
-            var children = await SearchQuery(x => x.ParentId == report.Id, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.FinancialReportAccountTypeRels).ToListAsync();
-            if (children.Count() > 0)
-            {
-                foreach (var child in children)
-                {
-                    res.AddRange(await _GetChildrenByOrder(child));
-                }
-            }
-            return res;
         }
 
         public async Task<IDictionary<Guid, ComputeReportBalanceDictValue>> _ComputeReportBalance(IEnumerable<AccountFinancialReport> reports, AccountingReport data)
@@ -161,20 +145,12 @@ namespace Infrastructure.Services
 
             var accountIds = accounts.Select(x => x.Id).ToList();
             var amlObj = GetService<IAccountMoveLineService>();
-            if (accounts.Count() > 0)
+            if (accounts.Any())
             {
-                ISpecification<AccountMoveLine> spec = new InitialSpecification<AccountMoveLine>(x => accountIds.Any(s => s == x.AccountId));
+                ISpecification<AccountMoveLine> filter = amlObj._QueryGetSpec(dateFrom: data.DateFrom, dateTo: data.DateTo, companyId: data.CompanyId, state: data.TargetMove);
+                filter = filter.And(new InitialSpecification<AccountMoveLine>(x => accountIds.Contains(x.AccountId)));
 
-                if (data.DateFrom.HasValue)
-                    spec = spec.And(new InitialSpecification<AccountMoveLine>(x => x.Date >= data.DateFrom));
-
-                if (data.DateTo.HasValue)
-                    spec = spec.And(new InitialSpecification<AccountMoveLine>(x => x.Date <= data.DateTo));
-
-                if (data.CompanyId.HasValue)
-                    spec = spec.And(new InitialSpecification<AccountMoveLine>(x => x.CompanyId == data.CompanyId));
-
-                var list = await amlObj.SearchQuery(spec.AsExpression()).OrderBy(x => x.Date).GroupBy(x => x.AccountId).Select(x => new ComputeAccountBalanceRes
+                var list = await amlObj.SearchQuery(filter.AsExpression()).OrderBy(x => x.Date).GroupBy(x => x.AccountId).Select(x => new ComputeAccountBalanceRes
                 {
                     AccountId = x.Key,
                     Debit = x.Sum(s => s.Debit),
@@ -189,11 +165,6 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<AccountFinancialReport> GetByDisplayDetail(string key)
-        {
-            var model = await SearchQuery(x => x.DisplayDetail.Equals(key)).FirstOrDefaultAsync();
-            return model;
-        }
 
         public class ComputeAccountBalanceRes
         {
@@ -245,7 +216,15 @@ namespace Infrastructure.Services
             public decimal? Debit { get; set; }
 
             public decimal? Credit { get; set; }
+
+            public string CompanyName { get; set; }
         }
+
+        protected T GetService<T>()
+        {
+            return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+        }
+
     }
 }
 

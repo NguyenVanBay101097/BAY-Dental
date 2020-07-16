@@ -55,7 +55,8 @@ namespace Infrastructure.Services
             "IRModelData",
             "IRModelField",
             "IRProperty",
-            "UoMCategory"
+            "UoMCategory",
+            "AccountFinancialReport"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,

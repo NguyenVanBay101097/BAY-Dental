@@ -8,9 +8,8 @@ using static Infrastructure.Services.ReportFinancialService;
 
 namespace Infrastructure.Services
 {
-    public interface IReportFinancialService : IBaseService<AccountFinancialReport>
+    public interface IReportFinancialService
     {
         Task<IEnumerable<GetAccountLinesItem>> GetAccountLines(AccountingReport data);
-        Task<AccountFinancialReport> GetByDisplayDetail(string key);
     }
 }
