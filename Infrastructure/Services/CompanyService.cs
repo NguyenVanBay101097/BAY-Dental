@@ -35,9 +35,11 @@ namespace Infrastructure.Services
         {
             var dbContext = GetService<CatalogDbContext>();
             await dbContext.Database.MigrateAsync();
-
             var partnerObj = GetService<IPartnerService>();
             var companyObj = GetService<ICompanyService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var groupObj = GetService<IResGroupService>();
+
             //tạo công ty và user_root
             var mainPartner = new Partner
             {
@@ -48,6 +50,14 @@ namespace Infrastructure.Services
 
             await partnerObj.CreateAsync(mainPartner);
 
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "main_partner",
+                Module = "base",
+                Model = "res.partner",
+                ResId = mainPartner.Id.ToString(),
+            });
+
             var mainCompany = new Company
             {
                 Name = companyName,
@@ -56,14 +66,30 @@ namespace Infrastructure.Services
 
             await companyObj.CreateAsync(mainCompany);
 
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "main_company",
+                Module = "base",
+                Model = "res.company",
+                ResId = mainCompany.Id.ToString(),
+            });
+
             var partnerRoot = new Partner
             {
-                Name = !string.IsNullOrEmpty(name) ? name: userName,
+                Name = !string.IsNullOrEmpty(name) ? name : userName,
                 Company = mainCompany,
                 Customer = false,
                 Email = email,
             };
             partnerObj.Create(partnerRoot);
+
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "partner_root",
+                Module = "base",
+                Model = "res.partner",
+                ResId = partnerRoot.Id.ToString(),
+            });
 
             var userRoot = new ApplicationUser
             {
@@ -81,6 +107,14 @@ namespace Infrastructure.Services
             var userObj = GetService<UserManager<ApplicationUser>>();
             await userObj.CreateAsync(userRoot, password);
 
+            await modelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "user_root",
+                Module = "base",
+                Model = "res.users",
+                ResId = userRoot.Id,
+            });
+
             mainPartner.Company = mainCompany;
             await partnerObj.UpdateAsync(mainPartner);
 
@@ -92,10 +126,7 @@ namespace Infrastructure.Services
 
             await InsertModuleDentalData();
 
-            //await InsertSecurityData();
-
-            var groupObj = GetService<IResGroupService>();
-            await groupObj.ResetSecurityData();
+            await groupObj.InsertSecurityData();
         }
 
 
@@ -543,7 +574,7 @@ namespace Infrastructure.Services
             await modelDataObj.CreateAsync(modelDatas);
 
             var whObj = GetService<IStockWarehouseService>();
-            foreach(var wh in stock_warehouses_dict.Values)
+            foreach (var wh in stock_warehouses_dict.Values)
             {
                 await whObj.CreateAsync(wh);
             }
@@ -597,7 +628,8 @@ namespace Infrastructure.Services
                         if (field_name == "name")
                         {
                             uom_categ.Name = field.InnerText;
-                        } else if (field_name == "measure_type")
+                        }
+                        else if (field_name == "measure_type")
                         {
                             uom_categ.MeasureType = field.InnerText;
                         }
@@ -964,7 +996,7 @@ namespace Infrastructure.Services
                 foreach (var partner_id in partner_ids)
                     await ExcuteSqlCommandAsync("delete Partners where Id=@p0", partner_id);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw new Exception("Dữ liệu đã phát sinh cho chi nhánh này, không thể xóa!.");

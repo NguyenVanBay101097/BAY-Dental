@@ -55,7 +55,6 @@ namespace TMTDentalAdmin.Controllers
                 {
                     var user = await _userManager.FindByNameAsync(model.UserName);
                     var roles = new List<string>();
-
                     _authenticationResult = new LoggedInViewModel
                     {
                         Succeeded = true,

@@ -8,6 +8,10 @@ import { CompanyBasic } from 'src/app/companies/company.service';
 import { UserChangeCurrentCompanyVM, UserService } from 'src/app/users/user.service';
 import { environment } from 'src/environments/environment';
 import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit.component';
+import { WebService } from 'src/app/core/services/web.service';
+import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-layout-header',
@@ -17,14 +21,20 @@ import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit
 export class LayoutHeaderComponent implements OnInit {
 
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
-  constructor(private sidebarService: NavSidebarService, private modalService: NgbModal,
-    public authService: AuthService, private router: Router, private userService: UserService) { }
+  constructor(
+    private sidebarService: NavSidebarService,
+    private modalService: NgbModal,
+    public authService: AuthService,
+    private router: Router,
+    private userService: UserService,
+    private webService: WebService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit() {
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }
-
     this.authService.currentUser.subscribe(result => {
       if (result) {
         this.loadChangeCurrentCompany();
@@ -66,6 +76,27 @@ export class LayoutHeaderComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['login']);
+  }
+
+  removeSampleData() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa dữ liệu mẫu';
+    modalRef.componentInstance.body = 'Hệ thống sẽ xóa toàn bộ dữ liệu về trạng thái ban đầu, bạn có chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.webService.removeSampleData().subscribe(
+        () => {
+          this.notificationService.show({
+            content: 'Xóa dữ liệu mẫu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          window.location.reload();
+        }
+      )
+    }, () => { });
+
   }
 
   getAvatarImgSource(obj: string) {

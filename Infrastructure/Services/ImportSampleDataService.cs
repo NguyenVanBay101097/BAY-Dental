@@ -86,31 +86,31 @@ namespace Infrastructure.Services
                                 switch (itemField.Name)
                                 {
                                     case "name":
-                                       partner.Name = itemField.Text;
+                                        partner.Name = itemField.Text;
                                         break;
                                     case "email":
-                                       partner.Email = itemField.Text;
+                                        partner.Email = itemField.Text;
                                         break;
                                     case "phone":
-                                       partner.Phone = itemField.Text;
+                                        partner.Phone = itemField.Text;
                                         break;
                                     case "gender":
-                                       partner.Gender = itemField.Text;
+                                        partner.Gender = itemField.Text;
                                         break;
                                     case "birth_day":
-                                       partner.BirthDay = Int32.Parse(itemField.Text);
+                                        partner.BirthDay = Int32.Parse(itemField.Text);
                                         break;
                                     case "birth_month":
-                                       partner.BirthMonth = Int32.Parse(itemField.Text);
+                                        partner.BirthMonth = Int32.Parse(itemField.Text);
                                         break;
                                     case "birth_year":
-                                       partner.BirthYear = Int32.Parse(itemField.Text);
+                                        partner.BirthYear = Int32.Parse(itemField.Text);
                                         break;
                                     case "supplier":
-                                       partner.Supplier = Boolean.Parse(itemField.Text);
+                                        partner.Supplier = Boolean.Parse(itemField.Text);
                                         break;
                                     case "customer":
-                                       partner.Customer = Boolean.Parse(itemField.Text);
+                                        partner.Customer = Boolean.Parse(itemField.Text);
                                         break;
                                     default:
                                         break;
@@ -251,6 +251,145 @@ namespace Infrastructure.Services
                 await partnerSourceObj.CreateAsync(partner_source_dict.Values);
             }
         }
+
+        public async Task DeleteSampleData()
+        {
+            var irConfigParameterObj = GetService<IIrConfigParameterService>();
+            var userObj = GetService<IUserService>();
+            var valueRemove = await irConfigParameterObj.GetParam("remove_sample_data");
+            var valueImport = await irConfigParameterObj.GetParam("import_sample_data");
+            var user = await userObj.GetCurrentUser();
+
+            if (!user.IsUserRoot)
+                throw new Exception("Chỉ có admin mới có thể thực hiện chức năng này !!!");
+            if (valueImport == "Installed" && valueRemove == "True")
+                throw new Exception("Xóa dữ liệu mẫu chỉ được phép xóa một lần duy nhất !!!");
+            if (valueImport != "Installed" && valueRemove != "True")
+                throw new Exception("Bạn chưa import dữ liệu mẫu !!!");
+
+            var companyObj = GetService<ICompanyService>();
+            var groupObj = GetService<IResGroupService>();
+            var partnerObj = GetService<IPartnerService>();
+            var irModelDataObj = GetService<IIRModelDataService>();
+            var partner_main = await irModelDataObj.GetRef<Partner>("base.main_partner");
+            var company_main = await irModelDataObj.GetRef<Company>("base.main_company");
+            var user_root = await irModelDataObj.GetRef<ApplicationUser>("base.user_root");
+            var partner_root = await irModelDataObj.GetRef<Partner>("base.partner_root");
+
+            if (partner_root == null)
+                partner_root = await partnerObj.GetByIdAsync(user_root.PartnerId);
+            if (company_main == null)
+                company_main = await companyObj.GetByIdAsync(user_root.CompanyId);
+            if (partner_main == null)
+                partner_main = await partnerObj.GetByIdAsync(company_main.PartnerId);
+
+            await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
+            await _dbContext.ExecuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountPartialReconciles");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountFullReconciles");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoveLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoves");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountAccounts");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountAccountTypes");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountPayments");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AccountJournals");
+            await _dbContext.ExecuteSqlCommandAsync("Delete DotKhamSteps");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ToaThuocs");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptionLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SamplePrescriptions");
+            await _dbContext.ExecuteSqlCommandAsync("Delete DotKhams");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleCoupons");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleCouponPrograms");
+            await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockMoves");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockQuants");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockPickings");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PurchaseOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardCards");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardOrderLines");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardOrders");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ServiceCardTypes");
+            await _dbContext.ExecuteSqlCommandAsync("Delete CardCards");
+            await _dbContext.ExecuteSqlCommandAsync("Delete CardTypes");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ProductSteps");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Products");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ProductCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Appointments");
+            await _dbContext.ExecuteSqlCommandAsync("update StockPickingTypes set DefaultLocationSrcId = null, DefaultLocationDestId = null, WarehouseId = null");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockWarehouses");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockLocations");
+            await _dbContext.ExecuteSqlCommandAsync("Delete StockPickingTypes");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IRSequences");
+            await _dbContext.ExecuteSqlCommandAsync("update Partners set CompanyId = null, CreatedById = null, WriteById = null where Id != '" + partner_main.Id.ToString() + "' and Id != '" + partner_root.Id.ToString() + "'");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PartnerCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Histories");
+            await _dbContext.ExecuteSqlCommandAsync("Update IrConfigParameters set CreatedById = null , WriteById = null");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IrConfigParameters");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ResConfigSettings");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IrModuleCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Update Companies set CreatedById = null , WriteById = null where Id !='" + company_main.Id.ToString() + "'");
+            await _dbContext.ExecuteSqlCommandAsync("Delete AspNetUsers where Id != '" + user_root.Id.ToString() + "'");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Companies where Id != '" + company_main.Id.ToString() + "'");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Partners where Id != '" + partner_main.Id.ToString() + "' and Id != '" + partner_root.Id.ToString() + "'");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IRModelAccesses");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ResGroups");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IRRules");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IRModels");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ProductPricelists");
+            await _dbContext.ExecuteSqlCommandAsync("Delete UoMs");
+            await _dbContext.ExecuteSqlCommandAsync("Delete UoMCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete Teeth");
+            await _dbContext.ExecuteSqlCommandAsync("Delete ToothCategories");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IrAttachments");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IRModelDatas");
+
+            await irModelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "main_partner",
+                Module = "base",
+                Model = "res.partner",
+                ResId = partner_main.Id.ToString(),
+            });
+
+            await irModelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "main_company",
+                Module = "base",
+                Model = "res.company",
+                ResId = company_main.Id.ToString(),
+            });
+
+            await irModelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "partner_root",
+                Module = "base",
+                Model = "res.partner",
+                ResId = partner_root.Id.ToString(),
+            });
+
+            await irModelDataObj.CreateAsync(new IRModelData
+            {
+                Name = "user_root",
+                Module = "base",
+                Model = "res.users",
+                ResId = user_root.Id,
+            });
+
+            await companyObj.InsertModuleAccountData(company_main);
+            await companyObj.InsertModuleStockData(company_main);
+            await companyObj.InsertModuleProductData();
+            await companyObj.InsertModuleDentalData();
+            await groupObj.InsertSecurityData();
+            await irConfigParameterObj.SetParam("remove_sample_data", "True");
+            await irConfigParameterObj.SetParam("import_sample_data", "Installed");
+        }
+
 
         protected T GetService<T>()
         {
