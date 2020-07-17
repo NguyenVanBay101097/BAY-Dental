@@ -7,7 +7,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Umbraco.Web.Mapping
 {
-    public class PhieuThuChiProfile: Profile
+    public class PhieuThuChiProfile : Profile
     {
         public PhieuThuChiProfile()
         {
@@ -15,9 +15,13 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PhieuThuChi, PhieuThuChiSave>();
             CreateMap<PhieuThuChiSave, PhieuThuChi>()
-                 .ForMember(x => x.Id, x => x.Ignore());
+                 .ForMember(x => x.Id, x => x.Ignore())
+                 .ForMember(x => x.LoaiThuChi, x => x.Ignore())
+                 .ForMember(x => x.Journal, x => x.Ignore());
+
+            CreateMap<PhieuThuChi, PhieuThuChiDisplay>();
         }
 
-      
+
     }
 }

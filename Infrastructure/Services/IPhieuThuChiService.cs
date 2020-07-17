@@ -11,7 +11,7 @@ namespace Infrastructure.Services
     public interface IPhieuThuChiService : IBaseService<PhieuThuChi>
     {
         Task<PagedResult2<PhieuThuChiBasic>> GetPhieuThuChiPagedResultAsync(PhieuThuChiPaged val);
-        Task<PhieuThuChi> GetByIdPhieuThuChi(Guid id);
+        Task<PhieuThuChiDisplay> GetByIdPhieuThuChi(Guid id);
         Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val);
         Task UpdatePhieuThuChi(Guid id, PhieuThuChiSave val);
 

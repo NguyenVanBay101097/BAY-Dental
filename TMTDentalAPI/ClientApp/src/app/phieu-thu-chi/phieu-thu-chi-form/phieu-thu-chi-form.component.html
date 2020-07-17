@@ -27,7 +27,7 @@
                         Xác nhận
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
-                        *ngIf="getValueForm('state') === null" (click)="onSave()">
+                        *ngIf="getValueForm('state') !== 'posted'" (click)="onSave()">
                         Lưu nháp
                     </button>
                     <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" 
@@ -66,10 +66,15 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
-                                        #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'"
-                                        placeholder="Chọn loại ...">
-                                    </kendo-combobox>
+                                    <div class="d-flex">
+                                        <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
+                                            #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'"
+                                            placeholder="Chọn loại ...">
+                                        </kendo-combobox>
+                                        <a class="btn btn-sm btn-light" (click)="quickCreateLoaiThuChi()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -116,7 +121,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="date">
+                                    <kendo-datepicker formControlName="dateObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>

@@ -49,7 +49,7 @@ export class PhieuThuChiListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.type = this.resultSelection;
-
+    console.log(val);
     this.phieuThuChiService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -67,6 +67,7 @@ export class PhieuThuChiListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    console.log(this.skip);
     this.loadDataFromApi();
   }
 

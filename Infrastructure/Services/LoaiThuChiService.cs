@@ -40,7 +40,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Code = x.Code,
                 Note = x.Note
-            }).ToListAsync();
+            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<LoaiThuChiBasic>(totalItems, val.Offset, val.Limit)

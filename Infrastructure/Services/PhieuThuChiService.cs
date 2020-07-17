@@ -26,6 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<PhieuThuChiBasic>> GetPhieuThuChiPagedResultAsync(PhieuThuChiPaged val)
         {
+       
             ISpecification<PhieuThuChi> spec = new InitialSpecification<PhieuThuChi>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<PhieuThuChi>(x => x.Name.Contains(val.Search)));
@@ -44,7 +45,7 @@ namespace Infrastructure.Services
                 TypeName = x.LoaiThuChi.Name,
                 Amount = x.Amount,
                 State = x.State
-            }).ToListAsync();
+            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<PhieuThuChiBasic>(totalItems, val.Offset, val.Limit)
@@ -53,14 +54,9 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PhieuThuChi> GetByIdPhieuThuChi(Guid id)
+        public async Task<PhieuThuChiDisplay> GetByIdPhieuThuChi(Guid id)
         {
-            return await SearchQuery(x => x.Id == id)
-                .Include(x => x.Company)
-                .Include(x => x.Journal)
-                .Include(x => x.LoaiThuChi)
-                .Include(x => x.MoveLines)
-                .FirstOrDefaultAsync();
+            return await _mapper.ProjectTo<PhieuThuChiDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
         }
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)
@@ -101,15 +97,18 @@ namespace Infrastructure.Services
 
         public async Task UpdatePhieuThuChi(Guid id, PhieuThuChiSave val)
         {
+            var loaithuchiObj = GetService<ILoaiThuChiService>();
             var phieuthuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company)
                 .Include(x => x.Journal)
                 .Include(x => x.LoaiThuChi)
+                .Include(x => x.LoaiThuChi.Account)
                 .Include(x => x.MoveLines)
                 .FirstOrDefaultAsync();
             if (phieuthuchi == null)
                 throw new Exception("Phiếu không tồn tại");
 
             phieuthuchi = _mapper.Map(val, phieuthuchi);
+           
 
             await UpdateAsync(phieuthuchi);
         }
@@ -290,7 +289,9 @@ namespace Infrastructure.Services
             var phieuthuchis = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Company)
               .Include(x => x.Journal)
               .Include(x => x.LoaiThuChi)
+              .Include(x => x.LoaiThuChi.Account)
               .Include(x => x.MoveLines)
+              .Include("MoveLines.Move")
               .ToListAsync();
             foreach (var phieuthuchi in phieuthuchis)
             {
@@ -311,6 +312,7 @@ namespace Infrastructure.Services
             var phieuthuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company)
                .Include(x => x.Journal)
                .Include(x => x.LoaiThuChi)
+               .Include(x => x.LoaiThuChi.Account)
                .Include(x => x.MoveLines)
                .FirstOrDefaultAsync();
             if (phieuthuchi == null)
