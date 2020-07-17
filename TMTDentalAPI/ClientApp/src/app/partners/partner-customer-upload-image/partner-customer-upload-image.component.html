@@ -5,27 +5,33 @@
                 <div class="o_border_dashed">
                     <span class="o_attach_title">Hình ảnh</span>
                 </div>
-                <div class="o_attachments_previews">
-                    <!-- Preview hình ảnh -->
-                    <div class="o_attachment" *ngFor="let img of imagesPreview">
-                        <div class="o_attachment_wrap" (click)="viewImage(img)">
-                            <div class="o_image_box">
-                                <div class="o_attachment_image" id="{{img.name}}"
-                                    [style.background-image]="'url('+ webImageApi + '/' + img.uploadId + '/240x240)'">
-                                </div>
-                                <div class="o_image_overlay o_attachment_view">
-                                    <span class="fa fa-times o_attachment_delete_cross"
-                                        (click)="deletePartnerImages(img, $event)" title="Delete {{img.name}}"></span>
-                                    <span class="o_attachment_title text-white">{{img.name}}</span>
-                                    <a class="o_attachment_download" (click)="stopPropagation($event)"
-                                        href="{{webContentApi}}/{{img.uploadId}}">
-                                        <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
-                                    </a>
+
+                <div class="o_attachments_view_image" *ngFor="let item of imageViewModels">
+                    <div class="o_attachments_date">{{item.date | date:'dd/MM/yyyy'}}</div>
+                    <div class="o_attachments_previews" *ngIf="item.partnerImages && item.partnerImages.length > 0">
+                        <!-- Preview hình ảnh -->
+                        <div class="o_attachment" *ngFor="let img of item.partnerImages">
+                            <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                <div class="o_image_box">
+                                    <div class="o_attachment_image" id="{{img.name}}"
+                                        [style.background-image]="'url('+ webImageApi + '/' + img.uploadId + '/240x240)'">
+                                    </div>
+                                    <div class="o_image_overlay o_attachment_view">
+                                        <span class="fa fa-times o_attachment_delete_cross"
+                                            (click)="deletePartnerImages(img, $event)"
+                                            title="Delete {{img.name}}"></span>
+                                        <span class="o_attachment_title text-white">{{img.name}}</span>
+                                        <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                            href="{{webContentApi}}/{{img.uploadId}}">
+                                            <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="o_chatter_attachment_form">
                     <div class="o_hidden_input_file ">
                         <div class="o_form_binary_form">

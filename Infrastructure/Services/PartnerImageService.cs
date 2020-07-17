@@ -30,7 +30,7 @@ namespace Infrastructure.Services
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
 
-            var list = await query.Select(x => new PartnerImageBasic
+            var list = await query.OrderByDescending(x => x.Date).Select(x => new PartnerImageBasic
             {
                 Date = x.Date,
                 Id = x.Id,

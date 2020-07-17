@@ -1201,6 +1201,16 @@ td.oe_form_group_cell_label label {
     align-items: center;
 }
 
+.o_attachments_view_image {
+    padding: 10px 0;
+}
+
+.o_attachments_date {
+    font-weight: bold;
+    border-bottom: 1px solid lavender;
+    max-width: 90px;
+}
+
 span.char-count {
     position: absolute;
     right: 10px;

@@ -4,7 +4,7 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { DotKhamService } from '../dot-kham.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { PartnerService, PartnerFilter, PartnerImageBasic } from 'src/app/partners/partner.service';
+import { PartnerService, PartnerFilter, PartnerImageBasic, PartnerImageViewModel } from 'src/app/partners/partner.service';
 import { debounceTime, tap, switchMap, map, mergeMap } from 'rxjs/operators';
 import { AccountInvoiceCbx, AccountInvoiceService } from 'src/app/account-invoices/account-invoice.service';
 import { Observable, pipe } from 'rxjs';
@@ -90,6 +90,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
   doctorSimpleFilter: EmployeeSimple[] = [];
+  imageViewModels: PartnerImageViewModel[] = [];
   assistantSimpleFilter: EmployeeSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
   assistantUserSimpleFilter: UserSimple[] = [];
@@ -134,7 +135,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     private injector: Injector,
     private modalService: NgbModal,
     private dotKhamStepService: DotKhamStepService,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
   ) { }
 
 
@@ -1019,6 +1020,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     var formData = new FormData();
     formData.append('partnerId', this.partnerId);
     formData.append('dotKhamId', this.id);
+    formData.append('date', this.intlService.formatDate(new Date(), 'yyyy-MM-dd'));
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
       formData.append('files', file);
@@ -1027,10 +1029,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     }
     this.partnerService.uploadPartnerImage(formData).subscribe(
       rs => {
-        // this.getImageIds();
-        rs.forEach(e => {
-          this.imagesPreview.push(e);
-        })
+        this.getImageIds();
       })
 
   }
@@ -1043,8 +1042,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     modalRef.result.then(() => {
       this.partnerService.deleteParnerImage(item.id).subscribe(
         () => {
-          var index = this.imagesPreview.findIndex(x => x.id == item.id);
-          this.imagesPreview.splice(index, 1);
+          this.getImageIds();
         })
     })
   }
@@ -1052,14 +1050,22 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   getImageIds() {
     this.imagesPreview = [];
     var value = {
-      partnerId: this.partnerId,
-      dotKhamId: this.id
+      partnerId: this.id
     }
     this.partnerService.getPartnerImageIds(value).subscribe(
       result => {
         if (result) {
+
           result.forEach(item => {
-            this.imagesPreview.push(item);
+            var obj = new PartnerImageViewModel();
+            if (!this.imageViewModels.some(x => x.date == item.date)) {
+              obj.date = item.date;
+              if (!obj.partnerImages) {
+                obj.partnerImages = [];
+              }
+              obj.partnerImages = result.filter(x => x.date == item.date);
+              this.imageViewModels.push(obj)
+            }
           });
         }
       }
@@ -1087,10 +1093,10 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     return type;
   }
 
-  viewImage(attachment: IrAttachmentBasic) {
+  viewImage(partnerImage: PartnerImageBasic) {
     var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    modalRef.componentInstance.attachments = this.imagesPreview;
-    modalRef.componentInstance.attachmentSelected = attachment;
+    modalRef.componentInstance.partnerImages = this.imageViewModels;
+    modalRef.componentInstance.partnerImageSelected = partnerImage;
   }
   private propagateChange = (_: any) => { };
 }

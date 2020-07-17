@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PartnerImageBasic, PartnerService, PartnerImageSave } from '../partner.service';
+import { PartnerImageBasic, PartnerService, PartnerImageSave, PartnerImageViewModel } from '../partner.service';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -8,6 +8,8 @@ import { environment } from 'src/environments/environment';
 import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ActivatedRoute } from '@angular/router';
+import { mergeMap, groupBy, reduce } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-partner-customer-upload-image',
@@ -18,6 +20,7 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
   webImageApi: string;
   webContentApi: string;
   imagesPreview: PartnerImageBasic[] = [];
+  imageViewModels: PartnerImageViewModel[] = [];
   id: string;
   formGroup: FormGroup;
   constructor(
@@ -55,11 +58,8 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
       filereader.readAsDataURL(file);
     }
     this.partnerService.uploadPartnerImage(formData).subscribe(
-      rs => {
-        // this.getImageIds();
-        rs.forEach(e => {
-          this.imagesPreview.push(e);
-        })
+      () => {
+        this.getImageIds();
       })
 
   }
@@ -72,8 +72,13 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     modalRef.result.then(() => {
       this.partnerService.deleteParnerImage(item.id).subscribe(
         () => {
-          var index = this.imagesPreview.findIndex(x => x.id == item.id);
-          this.imagesPreview.splice(index, 1);
+          var imageViewModel = this.imageViewModels.find(x => x.date == item.date);
+          if (imageViewModel) {
+            var index = imageViewModel.partnerImages.findIndex(x => x.id == item.id);
+            imageViewModel.partnerImages.splice(index, 1);
+          } else {
+            this.getImageIds();
+          }
         })
     })
   }
@@ -86,18 +91,27 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     this.partnerService.getPartnerImageIds(value).subscribe(
       result => {
         if (result) {
+          this.imageViewModels = [];
           result.forEach(item => {
-            this.imagesPreview.push(item);
+            var obj = new PartnerImageViewModel();
+            if (!this.imageViewModels.some(x => x.date == item.date)) {
+              obj.date = item.date;
+              if (!obj.partnerImages) {
+                obj.partnerImages = [];
+              }
+              obj.partnerImages = result.filter(x => x.date == item.date);
+              this.imageViewModels.push(obj)
+            }
           });
         }
       }
     )
   }
 
-  viewImage(attachment: PartnerImageBasic) {
+  viewImage(partnerImage: PartnerImageBasic) {
     var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    modalRef.componentInstance.attachments = this.imagesPreview;
-    modalRef.componentInstance.attachmentSelected = attachment;
+    modalRef.componentInstance.partnerImages = this.imageViewModels;
+    modalRef.componentInstance.partnerImageSelected = partnerImage;
   }
 
 }

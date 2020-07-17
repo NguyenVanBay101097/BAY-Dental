@@ -95,6 +95,11 @@ export class PartnerImageSave {
     formData: FormData;
 }
 
+export class PartnerImageViewModel {
+    date: string;
+    partnerImages: PartnerImageBasic[];
+}
+
 @Injectable()
 export class PartnerService {
     apiUrl = 'api/Partners';

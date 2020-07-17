@@ -20,4 +20,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
     }
+
+    public class PartnerImageViewModel
+    {
+        public DateTime? Date { get; set; }
+        public IEnumerable<PartnerImageBasic> PartnerImages { get; set; } = new List<PartnerImageBasic>();
+    }
 }
