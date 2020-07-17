@@ -244,6 +244,8 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
+            services.AddScoped<IReportJournalService, ReportJournalService>();
+            services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();

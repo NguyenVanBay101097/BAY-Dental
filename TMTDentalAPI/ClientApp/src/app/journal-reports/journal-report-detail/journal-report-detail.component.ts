@@ -11,41 +11,9 @@ import { aggregateBy } from '@progress/kendo-data-query';
   styleUrls: ['./journal-report-detail.component.css']
 })
 export class JournalReportDetailComponent implements OnInit {
-
-  @Input() public item: JournalReportDetailPaged; //Id journal
-  gridView: GridDataResult;
-  loading = false;
-
-  skip = 0;
-  pageSize = 20;
-
-  public total: any;
-  public aggregates: any[] = [
-    { field: 'debit', aggregate: 'sum' },
-    { field: 'credit', aggregate: 'sum' },
-    { field: 'balance', aggregate: 'sum' }
-  ];
+  @Input() public items: any = []; //Id journal
   constructor(private service: JournalReportService) { }
 
   ngOnInit() {
-    this.getMoveLines();
   }
-
-  getMoveLines() {
-    this.loading = true;
-    this.service.getDetail(this.item).pipe(
-      map(rs1 => (<GridDataResult>{
-        data: rs1,
-        total: rs1.length
-      }))
-    ).subscribe(rs2 => {
-      this.total = aggregateBy(rs2.data, this.aggregates);
-      this.gridView = rs2;
-      this.loading = false;
-    }, er => {
-      this.loading = true;
-    }
-    );
-  }
-
 }

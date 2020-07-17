@@ -1,6 +1,10 @@
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading">
-    <!--[selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)"-->
-    <kendo-grid-column field="name" title="Thời gian" footerClass="text-right font-weight-bold">
+<kendo-grid [data]="items">
+    <kendo-grid-column field="date" title="Ngày" footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date : 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Diễn giải" footerClass="text-right font-weight-bold">
     </kendo-grid-column>
     <kendo-grid-column title="Thu" class="text-right" footerClass="text-right font-weight-bold">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -16,14 +20,6 @@
         </ng-template>
         <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['credit']">
             {{total['credit'].sum | number}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Cân đối" class="text-right" footerClass="text-right font-weight-bold">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.balance | number}}
-        </ng-template>
-        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['balance']">
-            {{total['balance'].sum | number}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>
