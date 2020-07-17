@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { AccountFinancialReportRoutingModule } from './account-financial-report-routing.module';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { SharedModule } from '@progress/kendo-angular-dialog';
 import { AccountFinancialViewReportComponent } from './account-financial-view-report/account-financial-view-report.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [AccountFinancialViewReportComponent],

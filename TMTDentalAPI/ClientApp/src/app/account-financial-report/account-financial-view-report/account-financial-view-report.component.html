@@ -35,7 +35,7 @@
             </table>
             <table class="o_group o_inner_group o_group_col_6">
                 <tbody>
-                    <tr [class.d-none]="filteredCompanies.length < 2">
+                    <tr hasGroups [groups]="'base.group_multi_company'">
                         <td colspan="1" class="o_td_label">
                             <label for="o_field_input_10" class="o_form_label o_form_label_help">
                                 Chi nhánh
@@ -65,11 +65,10 @@
                                         <td>
                                             <span
                                                 [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.name}}
-                                                <strong
-                                                    *ngIf="filteredCompanies.length > 1 && line.companyName"> - {{line.companyName}}</strong></span>
+                                                <span hasGroups [groups]="'base.group_multi_company'" *ngIf="line.companyName"> - {{line.companyName}}</span></span>
                                         </td>
                                         <td class="text-right">
-                                            <span
+                                            <span 
                                                 [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.balance | number}}</span>
                                         </td>
                                     </tr>

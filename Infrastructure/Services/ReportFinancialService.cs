@@ -104,7 +104,7 @@ namespace Infrastructure.Services
                 {
                     var accountObj = GetService<IAccountAccountService>();
                     var accountTypeIds = report.FinancialReportAccountTypeRels.Where(x => x.FinancialReportId == report.Id).Select(x => x.AccountTypeId).ToList();
-                    var spec = new InitialSpecification<AccountAccount>(x => accountTypeIds.Any(s => s == x.UserTypeId));
+                    var spec = new InitialSpecification<AccountAccount>(x => accountTypeIds.Contains(x.UserTypeId) && !x.IsExcludedProfitAndLossReport);
                     var accounts = await accountObj.SearchQuery(spec.AsExpression()).ToListAsync();
                     res[report.Id].Account = await _ComputeAccountBalance(accounts, data);
 

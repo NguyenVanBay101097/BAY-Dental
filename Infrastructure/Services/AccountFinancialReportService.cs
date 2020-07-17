@@ -24,6 +24,8 @@ namespace Infrastructure.Services
             {
                 var account_type_revenue = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
                 var account_type_expenses = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_expenses");
+                var account_type_thu = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_thu");
+                var account_type_chi = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_chi");
 
                 report = new AccountFinancialReport()
                 {
@@ -48,7 +50,11 @@ namespace Infrastructure.Services
                                 new AccountFinancialReportAccountAccountTypeRel()
                                 {
                                     AccountTypeId = account_type_revenue.Id,
-                                }
+                                },
+                                new AccountFinancialReportAccountAccountTypeRel()
+                                {
+                                    AccountTypeId = account_type_thu.Id,
+                                },
                             }
                         },
                         new AccountFinancialReport()
@@ -59,12 +65,16 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 2,
                             Sign = -1,
-                             FinancialReportAccountTypeRels = new List<AccountFinancialReportAccountAccountTypeRel>()
+                            FinancialReportAccountTypeRels = new List<AccountFinancialReportAccountAccountTypeRel>()
                             {
                                 new AccountFinancialReportAccountAccountTypeRel()
                                 {
                                     AccountTypeId = account_type_expenses.Id,
-                                }
+                                },
+                                new AccountFinancialReportAccountAccountTypeRel()
+                                {
+                                    AccountTypeId = account_type_chi.Id,
+                                },
                             }
                         }
                     }
