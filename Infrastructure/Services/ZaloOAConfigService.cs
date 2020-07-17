@@ -47,8 +47,7 @@ namespace Infrastructure.Services
                 page.PageName = profile.data.name;
                 page.Avatar = profile.data.avatar;
                 page.PageAccesstoken = accessToken;
-                await pageObj.UpdateAsync(page);
-                return page;
+                await pageObj.UpdateAsync(page);              
             }
             else
             {

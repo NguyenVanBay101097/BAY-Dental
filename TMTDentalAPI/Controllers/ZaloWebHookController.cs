@@ -51,8 +51,6 @@ namespace TMTDentalAPI.Controllers
                     await _tCareMessagingTraceService.AddTagWebhook(traces, "read");
                 }
 
-
-
             }
             else if (whzl.EventName == "user_received_message")
             {
