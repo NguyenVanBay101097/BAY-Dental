@@ -179,6 +179,9 @@ namespace Infrastructure.Data
         public DbSet<AccountFinancialReport> AccountFinancialReports { get; set; }
         public DbSet<AccountFinancialReportAccountAccountTypeRel> AccountFinancialReportAccountAccountTypeRels { get; set; }
 
+        public DbSet<LoaiThuChi> LoaiThuChis { get; set; }
+        public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -319,6 +322,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCarePropertyConfiguration());
             builder.ApplyConfiguration(new TCareMessagingConfiguration());
             builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
+            builder.ApplyConfiguration(new LoaiThuChiConfiguration());
+            builder.ApplyConfiguration(new PhieuThuChiConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
 

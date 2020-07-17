@@ -56,6 +56,16 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
+      name: 'Thu chi',
+      icon: 'fas fa-dollar-sign',
+      children: [
+        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
+      ],
+    },
+    {
       name: 'Thẻ tiền mặt',
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',

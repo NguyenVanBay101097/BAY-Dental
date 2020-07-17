@@ -243,6 +243,8 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareJobService, TCareJobService>();
             services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
+            services.AddScoped<ILoaiThuChiService, LoaiThuChiService>();
+            services.AddScoped<IPhieuThuChiService, PhieuThuChiService>();
             services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
             services.AddScoped<IReportJournalService, ReportJournalService>();
             services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
@@ -270,6 +272,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleOrderLineProfile());
                 mc.AddProfile(new ApplicationUserProfile());
                 mc.AddProfile(new AccountAccountProfile());
+                mc.AddProfile(new AccountAccountTypeProfile());
                 mc.AddProfile(new AccountJournalProfile());
                 mc.AddProfile(new AccountInvoiceProfile());
                 mc.AddProfile(new AccountInvoiceLineProfile());
@@ -342,6 +345,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareRuleProfile());
                 mc.AddProfile(new TCareMessagingProfile());
                 mc.AddProfile(new IrAttachmentProfile());
+                mc.AddProfile(new LoaiThuChiProfile());
+                mc.AddProfile(new PhieuThuChiProfile());
                 mc.AddProfile(new AccountFinancialReportProfile());
             };
 

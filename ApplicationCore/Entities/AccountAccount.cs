@@ -11,8 +11,14 @@ namespace ApplicationCore.Entities
             Active = true;
         }
 
+        /// <summary>
+        /// Tên
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Mã
+        /// </summary>
         public string Code { get; set; }
 
         public Guid UserTypeId { get; set; }
@@ -29,5 +35,10 @@ namespace ApplicationCore.Entities
         public string InternalType { get; set; }
 
         public bool Reconcile { get; set; }
+
+        /// <summary>
+        /// Co khong hien thi trong bao cao ket qua kinh doanh?
+        /// </summary>
+        public bool IsExcludedProfitAndLossReport { get; set; }
     }
 }

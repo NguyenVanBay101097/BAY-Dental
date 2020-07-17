@@ -103,6 +103,8 @@ import { PartnerCustomerDetailComponent } from './partners/partner-customer-deta
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
+import { LoaiThuChiModule } from './loai-thu-chi/loai-thu-chi.module';
+import { PhieuThuChiModule } from './phieu-thu-chi/phieu-thu-chi.module';
 import { AccountFinancialReportModule } from './account-financial-report/account-financial-report.module';
 import { AccountReportGeneralLedgersModule } from './account-report-general-ledgers/account-report-general-ledgers.module';
 
@@ -216,7 +218,9 @@ registerLocaleData(localeVi, "vi");
     UomModule,
     TcareModule,
     // end
-    SamplePrescriptionsModule,
+    SamplePrescriptionsModule, 
+    LoaiThuChiModule, 
+    PhieuThuChiModule,
     AccountFinancialReportModule,
     AccountReportGeneralLedgersModule,
   ],

@@ -98,5 +98,8 @@ namespace ApplicationCore.Entities
         public decimal? DiscountFixed { get; set; }
 
         public ICollection<ServiceCardOrderLineInvoiceRel> CardOrderLineRels { get; set; } = new List<ServiceCardOrderLineInvoiceRel>();
+
+        public Guid? PhieuThuChiId { get; set; }
+        public PhieuThuChi PhieuThuChi { get; set; }
     }
 }

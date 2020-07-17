@@ -12,6 +12,15 @@ namespace Umbraco.Web.Mapping
         public AccountAccountProfile()
         {
             CreateMap<AccountAccount, AccountAccountSimple>();
+
+            CreateMap<AccountAccount, AccountAccountBasic>();
+
+            CreateMap<AccountAccount, AccountAccountSave>();
+
+            CreateMap<AccountAccountSave, AccountAccount>()
+                 .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Company, x => x.Ignore())
+                .ForMember(x => x.UserType, x => x.Ignore());
         }
     }
 }
