@@ -56,6 +56,16 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
+      name: 'Thu chi',
+      icon: 'fas fa-dollar-sign',
+      children: [
+        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
+      ],
+    },
+    {
       name: 'Thẻ tiền mặt',
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',
@@ -95,10 +105,6 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
         { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
         { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Loại thu', link: '/loai-thu-chi', params: { result_selection: 'thu' } },
-        { name: 'Loại chi', link: '/loai-thu-chi', params: { result_selection: 'chi' } },
-        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { result_selection: 'thu' } },
-        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { result_selection: 'chi' } },
       ]
     },
     {

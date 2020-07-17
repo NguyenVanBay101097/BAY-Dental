@@ -2,20 +2,20 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span *ngIf="resultSelection === 'thu'">Phiếu thu</span>
-                <span *ngIf="resultSelection === 'chi'">Phiếu chi</span>
+                <span *ngIf="type === 'thu'">Phiếu thu</span>
+                <span *ngIf="type === 'chi'">Phiếu chi</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text"
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã" type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
-                    <i class="fas fa-plus"></i> Tạo {{convertResultSelection()}}
+                    Thêm
                 </button>
             </div>
             <div class="o_cp_sidebar">
@@ -29,15 +29,14 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="date" title="Ngày">
+        <kendo-grid-column field="date" title="Ngày" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="name" title="Mã"></kendo-grid-column>
-        <kendo-grid-column field="payerReceiver" [title]="getTypePayerReceiver()"></kendo-grid-column>
-        <kendo-grid-column field="journalName" title="Phương thức"></kendo-grid-column>
-        <kendo-grid-column field="typeName" title="Loại"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Mã" width="100"></kendo-grid-column>
+        <kendo-grid-column field="journalName" title="Phương thức" width="120"></kendo-grid-column>
+        <kendo-grid-column field="loaiThuChiName" title="Loại" width="120"></kendo-grid-column>
         <kendo-grid-column field="amount" title="Số tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amount | number}}
@@ -48,7 +47,7 @@
                 {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-command-column title="Thao tác">
+        <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
                         class="far fa-edit"></i></button>

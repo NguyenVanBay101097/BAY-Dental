@@ -17,7 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// loại thu chi
         /// </summary>
-        public string TypeName { get; set; }
+        public string LoaiThuChiName { get; set; }
         /// <summary>
         /// tên phương thức 
         /// </summary>

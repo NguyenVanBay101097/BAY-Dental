@@ -6,6 +6,12 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PhieuThuChiDisplay
     {
+        public PhieuThuChiDisplay()
+        {
+            Date = DateTime.Today;
+            State = "draft";
+        }
+
         public Guid Id { get; set; }
 
         /// <summary>
@@ -73,5 +79,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid LoaiThuChiId { get; set; }
         public LoaiThuChiSimple LoaiThuChi { get; set; }
+    }
+
+    public class PhieuThuChiDefaultGet
+    {
+        public string Type { get; set; }
     }
 }

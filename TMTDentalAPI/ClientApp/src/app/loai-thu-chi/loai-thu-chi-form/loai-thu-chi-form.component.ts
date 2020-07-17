@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { loaiThuChiDefault, LoaiThuChiService } from '../loai-thu-chi.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -19,15 +19,12 @@ export class LoaiThuChiFormComponent implements OnInit {
 
   ngOnInit() { 
     this.accountForm = this.fb.group({
-      name: null,
-      code: null,
+      name: [null, Validators.required],
+      code: [null, Validators.required],
       note: null,
       type: null,
       isInclude: null,
-      accountId: null,
-      account: null,
       companyId: null,
-      company: null
     });
 
     setTimeout(() => {
@@ -59,11 +56,15 @@ export class LoaiThuChiFormComponent implements OnInit {
   }
 
   save() {
+    if (!this.accountForm.valid) {
+      return false;
+    }
+
     var value = this.accountForm.value;
     value.type = this.type;
     if (!this.itemId) {
       this.loaiThuChiService.create(value).subscribe(result => {
-        this.activeModal.close(true);
+        this.activeModal.close(result);
       }, err => {
         console.log(err);
       })

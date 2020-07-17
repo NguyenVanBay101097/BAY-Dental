@@ -4,8 +4,10 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class LoaiThuChiSave
+    public class LoaiThuChiDisplay
     {
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
 
         public string Code { get; set; }

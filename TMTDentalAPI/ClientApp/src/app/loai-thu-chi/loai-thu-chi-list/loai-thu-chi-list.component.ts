@@ -19,7 +19,7 @@ export class LoaiThuChiListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  resultSelection: string;
+  type: string;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -29,7 +29,7 @@ export class LoaiThuChiListComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
-      this.resultSelection = params.get('result_selection');
+      this.type = params.get('type');
       this.loadDataFromApi();
     });
 
@@ -47,7 +47,7 @@ export class LoaiThuChiListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.type = this.resultSelection;
+    val.type = this.type;
 
     this.loaiThuChiService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -68,8 +68,8 @@ export class LoaiThuChiListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  convertResultSelection() {
-    switch (this.resultSelection) {
+  converttype() {
+    switch (this.type) {
       case 'thu':
         return 'loại thu';
       case 'chi':
@@ -79,8 +79,8 @@ export class LoaiThuChiListComponent implements OnInit {
 
   createItem() {
     const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm ' + this.convertResultSelection();
-    modalRef.componentInstance.type = this.resultSelection;
+    modalRef.componentInstance.title = 'Thêm ' + this.converttype();
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
        this.loadDataFromApi();
     }, () => {
@@ -90,9 +90,9 @@ export class LoaiThuChiListComponent implements OnInit {
 
   editItem(item: loaiThuChi) {
     const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa ' + item.name;
+    modalRef.componentInstance.title = 'Sửa ' + this.converttype();
     modalRef.componentInstance.itemId = item.id;
-    modalRef.componentInstance.type = this.resultSelection;
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
        this.loadDataFromApi();
     }, () => {
@@ -102,7 +102,7 @@ export class LoaiThuChiListComponent implements OnInit {
 
   deleteItem(item: loaiThuChiBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa ' + this.convertResultSelection();
+    modalRef.componentInstance.title = 'Xóa ' + this.converttype();
 
     modalRef.result.then(() => {
       this.loaiThuChiService.delete(item.id).subscribe(() => {

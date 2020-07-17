@@ -26,27 +26,15 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<PhieuThuChiBasic>> GetPhieuThuChiPagedResultAsync(PhieuThuChiPaged val)
         {
-       
             ISpecification<PhieuThuChi> spec = new InitialSpecification<PhieuThuChi>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<PhieuThuChi>(x => x.Name.Contains(val.Search)));
 
             spec = spec.And(new InitialSpecification<PhieuThuChi>(x => x.Type == val.Type));
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Name));
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await query.Select(x => new PhieuThuChiBasic
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Date = x.Date,
-                PayerReceiver = x.PayerReceiver,
-                JournalName = x.Journal.Name,
-                TypeName = x.LoaiThuChi.Name,
-                Amount = x.Amount,
-                State = x.State
-            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
-
+            var items = await _mapper.ProjectTo<PhieuThuChiBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<PhieuThuChiBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -61,54 +49,67 @@ namespace Infrastructure.Services
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)
         {
-            var journalObj = GetService<IAccountJournalService>();
-            var loaithuchiObj = GetService<ILoaiThuChiService>();
-
             var phieuThuChi = _mapper.Map<PhieuThuChi>(val);
-            string sequence_code = "";
-            string name = "";
-            string suffix = "";
+
             if (string.IsNullOrEmpty(phieuThuChi.Name))
             {
+                var seqObj = GetService<IIRSequenceService>();
                 if (phieuThuChi.Type == "thu")
                 {
-                    sequence_code = "payment.slip";
-                    name = "Phiếu Thu";
-                    suffix = "THU";
+                    phieuThuChi.Name = await seqObj.NextByCode("phieu.thu");
+                    if (string.IsNullOrEmpty(phieuThuChi.Name))
+                    {
+                        await _InsertPhieuThuSequence();
+                        phieuThuChi.Name = await seqObj.NextByCode("phieu.thu");
+                    }
                 }
-
                 else if (phieuThuChi.Type == "chi")
                 {
-                    sequence_code = "receipt.slip";
-                    name = "Phiếu Chi";
-                    suffix = "CHI";
+                    phieuThuChi.Name = await seqObj.NextByCode("phieu.chi");
+                    if (string.IsNullOrEmpty(phieuThuChi.Name))
+                    {
+                        await _InsertPhieuChiSequence();
+                        phieuThuChi.Name = await seqObj.NextByCode("phieu.chi");
+                    }
                 }
                 else
                     throw new Exception("Not support");
-
-                phieuThuChi.Name = await CheckSequenceCode(sequence_code, name, suffix);
             }
-            phieuThuChi.Journal = await journalObj.GetByIdAsync(val.JournalId);
-            phieuThuChi.LoaiThuChi = await loaithuchiObj.GetByIdAsync(val.LoaiThuChiId);
-            phieuThuChi.CompanyId = CompanyId;
-            phieuThuChi.State = "draft";
+
             return await CreateAsync(phieuThuChi);
+        }
+
+        private async Task _InsertPhieuThuSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Phiếu thu",
+                Code = "phieu.thu",
+                Prefix = "THU/{yyyy}/",
+                Padding = 4
+            });
+        }
+
+        private async Task _InsertPhieuChiSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Phiếu chi",
+                Code = "phieu.chi",
+                Prefix = "CHI/{yyyy}/",
+                Padding = 4
+            });
         }
 
         public async Task UpdatePhieuThuChi(Guid id, PhieuThuChiSave val)
         {
-            var loaithuchiObj = GetService<ILoaiThuChiService>();
-            var phieuthuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company)
-                .Include(x => x.Journal)
-                .Include(x => x.LoaiThuChi)
-                .Include(x => x.LoaiThuChi.Account)
-                .Include(x => x.MoveLines)
-                .FirstOrDefaultAsync();
+            var phieuthuchi = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (phieuthuchi == null)
                 throw new Exception("Phiếu không tồn tại");
 
             phieuthuchi = _mapper.Map(val, phieuthuchi);
-           
 
             await UpdateAsync(phieuthuchi);
         }
@@ -122,42 +123,19 @@ namespace Infrastructure.Services
             var phieuThuChis = await SearchQuery(x => ids.Contains(x.Id))
                  .Include(x => x.Company)
                  .Include(x => x.Journal)
+                 .Include(x => x.Journal.DefaultDebitAccount)
+                 .Include(x => x.Journal.DefaultCreditAccount)
                  .Include(x => x.LoaiThuChi)
                  .Include(x => x.LoaiThuChi.Account)
                  .Include(x => x.MoveLines)
                  .ToListAsync();
 
-
             var moveObj = GetService<IAccountMoveService>();
 
-        foreach(var phieuThuChi in phieuThuChis)
+            foreach (var phieuThuChi in phieuThuChis)
             {
                 if (phieuThuChi.State != "draft")
                     throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
-
-                string sequence_code = "";
-                string name = "";
-                string suffix = "";
-                if (string.IsNullOrEmpty(phieuThuChi.Name))
-                {
-                    if (phieuThuChi.Type == "thu")
-                    {
-                        sequence_code = "payment.slip";
-                        name = "Phiếu Thu";
-                        suffix = "THU";
-                    }
-
-                    else if (phieuThuChi.Type == "chi")
-                    {
-                        sequence_code = "receipt.slip";
-                        name = "Phiếu Chi";
-                        suffix = "CHI";
-                    }
-                    else
-                        throw new Exception("Not support");
-
-                    phieuThuChi.Name = await CheckSequenceCode(sequence_code, name, suffix);
-                }
 
                 var moves = _PreparePhieuThuChiMoves(phieuThuChis);
 
@@ -175,7 +153,6 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(phieuThuChis);
-
         }
 
         public async Task<string> CheckSequenceCode(string code, string name, string suffix)
@@ -207,9 +184,8 @@ namespace Infrastructure.Services
             var all_move_vals = new List<AccountMove>();
             foreach (var phieu in val)
             {
-                decimal counterpart_amount = 0;
-                AccountAccount liquidity_line_account = null;
-
+                AccountAccount liquidity_line_account;
+                decimal counterpart_amount;
                 if (phieu.Type == "chi")
                 {
                     counterpart_amount = phieu.Amount;
@@ -221,17 +197,14 @@ namespace Infrastructure.Services
                     liquidity_line_account = phieu.Journal.DefaultCreditAccount;
                 }
 
-                var balance = counterpart_amount;
-                var liquidity_amount = counterpart_amount;
-
-                var rec_pay_line_name = "";
+                var rec_pay_line_name = "/";
                 if (phieu.Type == "thu")
-                    rec_pay_line_name = "Phiếu Thu";
+                    rec_pay_line_name = "Thu tiền";
                 else if (phieu.Type == "chi")
-                    rec_pay_line_name = "Phiếu chi";
+                    rec_pay_line_name = "Chi tiền";
 
-                var liquidity_line_name = "";
-                liquidity_line_name = phieu.Name;
+                var balance = counterpart_amount;
+                var liquidity_line_name = phieu.Name;
 
                 var move_vals = new AccountMove
                 {
@@ -244,10 +217,9 @@ namespace Infrastructure.Services
 
                 var lines = new List<AccountMoveLine>()
                 {
-                    
                     new AccountMoveLine
                     {
-                        Name = rec_pay_line_name,
+                        Name = !string.IsNullOrEmpty(phieu.Reason) ? phieu.Reason : rec_pay_line_name,
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = phieu.Date,
@@ -262,19 +234,16 @@ namespace Infrastructure.Services
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         DateMaturity = phieu.Date,
-                        AccountId = phieu.LoaiThuChi.AccountId.Value,
-                        Account = phieu.LoaiThuChi.Account,
+                        AccountId = liquidity_line_account.Id,
+                        Account = liquidity_line_account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
                     },
                 };
 
                 move_vals.Lines = lines;
-
                 all_move_vals.Add(move_vals);
-
             }
-
 
             return all_move_vals;
         }
@@ -286,25 +255,19 @@ namespace Infrastructure.Services
         {
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var phieuthuchis = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Company)
-              .Include(x => x.Journal)
-              .Include(x => x.LoaiThuChi)
-              .Include(x => x.LoaiThuChi.Account)
-              .Include(x => x.MoveLines)
-              .Include("MoveLines.Move")
-              .ToListAsync();
-            foreach (var phieuthuchi in phieuthuchis)
+
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+
+            foreach (var phieuthuchi in self)
             {
-                foreach (var move in phieuthuchi.MoveLines.Select(x => x.Move).Distinct().ToList())
-                {
-                    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
-                    await moveObj.Unlink(new List<Guid>() { move.Id });
-                }
+                var move_ids = phieuthuchi.MoveLines.Select(x => x.MoveId).Distinct().ToList();
+                await moveObj.ButtonCancel(move_ids);
+                await moveObj.Unlink(move_ids);
 
                 phieuthuchi.State = "draft";
             }
 
-            await UpdateAsync(phieuthuchis);
+            await UpdateAsync(self);
         }
 
         public async Task Unlink(Guid id)

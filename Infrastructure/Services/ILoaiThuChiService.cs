@@ -12,7 +12,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<LoaiThuChiBasic>> GetThuChiPagedResultAsync(LoaiThuChiPaged val);
 
-        Task<LoaiThuChiSave> DefaultGet(LoaiThuChiDefault val);
+        LoaiThuChiDisplay DefaultGet(LoaiThuChiDefault val);
 
         Task<LoaiThuChi> GetByIdThuChi(Guid id);
         Task<LoaiThuChi> CreateLoaiThuChi(LoaiThuChiSave val);

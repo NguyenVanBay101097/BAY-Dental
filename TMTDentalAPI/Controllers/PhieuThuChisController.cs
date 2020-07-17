@@ -43,8 +43,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-     
-
         //api create
         [HttpPost]
         public async Task<IActionResult> Create(PhieuThuChiSave val)
@@ -99,6 +97,15 @@ namespace TMTDentalAPI.Controllers
             await _phieuThuChiService.Unlink(id);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult DefaultGet(PhieuThuChiDefaultGet val)
+        {
+            var res = new PhieuThuChiDisplay();
+            res.Type = val.Type;
+            res.CompanyId = CompanyId;
+            return Ok(res);
         }
     }
 }

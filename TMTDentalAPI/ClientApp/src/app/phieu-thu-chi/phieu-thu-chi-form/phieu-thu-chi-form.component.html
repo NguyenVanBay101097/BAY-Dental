@@ -2,11 +2,11 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a *ngIf="resultSelection === 'thu'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{result_selection: 'thu'}">Phiếu thu</a>
-                <a *ngIf="resultSelection === 'chi'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{result_selection: 'chi'}">Phiếu chi</a>
+                <a *ngIf="type === 'thu'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{type: 'thu'}">Phiếu thu</a>
+                <a *ngIf="type === 'chi'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{type: 'chi'}">Phiếu chi</a>
             </li>
             <li class="active">
-                <span *ngIf="itemId">{{getValueForm('name')}}</span>
+                <span *ngIf="itemId">{{phieuThuChi.name}}</span>
                 <span *ngIf="!itemId">Mới</span>
             </li>
         </ol>
@@ -22,33 +22,33 @@
                         (click)="onSaveConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" accesskey="1" *ngIf="itemId && getValueForm('state') == 'draft'"
+                    <button type="button" accesskey="1" *ngIf="itemId && phieuThuChi.state == 'draft'"
                         class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
-                        *ngIf="getValueForm('state') !== 'posted'" (click)="onSave()">
+                        *ngIf="phieuThuChi.state !== 'posted'" (click)="onSave()">
                         Lưu nháp
                     </button>
-                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" 
-                        (click)="printPhieuThuChi()">
-                        In phiếu
-                    </button>
-                    <button *ngIf="getValueForm('state') === 'posted'" type="button" class="btn btn-danger btn-sm"
+                    <button *ngIf="phieuThuChi.state === 'posted'" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
                         Hủy phiếu
                     </button>
+                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm"
+                        (click)="actionNew()">
+                        Thêm mới
+                    </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="getValueForm('state') !== 'posted'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') === 'posted'" 
-                        [class.btn-secondary]="getValueForm('state') !== 'posted'"
+                    <button [disabled]="phieuThuChi.state !== 'posted'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="phieuThuChi.state === 'posted'" 
+                        [class.btn-secondary]="phieuThuChi.state !== 'posted'"
                         type="button">
                         Đã xác nhận
                     </button>
-                    <button [disabled]="getValueForm('state') !== 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') === 'draft'" 
-                        [class.btn-secondary]="getValueForm('state') !== 'draft'"
+                    <button [disabled]="phieuThuChi.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="phieuThuChi.state === 'draft'" 
+                        [class.btn-secondary]="phieuThuChi.state !== 'draft'"
                         type="button">
                         Nháp
                     </button>
@@ -61,15 +61,14 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        <span *ngIf="resultSelection === 'thu'">Loại thu</span>
-                                        <span *ngIf="resultSelection === 'chi'">Loại chi</span>
+                                        <span *ngIf="type === 'thu'">Loại thu</span>
+                                        <span *ngIf="type === 'chi'">Loại chi</span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
-                                            #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'"
-                                            placeholder="Chọn loại ...">
+                                            #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'">
                                         </kendo-combobox>
                                         <a class="btn btn-sm btn-light" (click)="quickCreateLoaiThuChi()">
                                             <span class="k-icon k-i-plus"></span>
@@ -84,9 +83,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <select class="form-control" formControlName="journalId">
-                                        <option *ngFor="let item of loaiJournalList" [value]="item.id">{{item.name}}</option>
-                                    </select>
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        #journalCbx formControlName="journal" [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
@@ -128,12 +127,12 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Người {{getTypePayerReceiver()}}
+                                        <span *ngIf="type === 'thu'">Người nộp tiền</span>
+                                        <span *ngIf="type === 'chi'">Người nhận tiền</span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="payerReceiver"
-                                        [placeholder]="'Nhập người ' + getTypePayerReceiver() +' ...'" />
+                                    <input class="form-control" formControlName="payerReceiver" />
                                 </td>
                             </tr>
                             <tr>
@@ -143,8 +142,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="address" 
-                                        placeholder="Nhập địa chỉ ..." />
+                                    <input class="form-control" formControlName="address" />
                                 </td>
                             </tr>
                             <tr>
@@ -154,8 +152,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="communication"
-                                        placeholder="" />
+                                    <input class="form-control" formControlName="communication" />
                                 </td>
                             </tr>
                         </tbody>

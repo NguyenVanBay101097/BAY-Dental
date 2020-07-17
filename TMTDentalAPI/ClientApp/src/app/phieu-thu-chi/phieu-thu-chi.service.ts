@@ -3,14 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
 
-export class phieuThuChiPaged { 
+export class PhieuThuChiPaged { 
   limit: number;
   offset: number;
   search: string;
   type: string;
 }
 
-export class phieuThuChiBasic { 
+export class PhieuThuChiBasic { 
   id: string;
   name: string;
   date: Date; 
@@ -21,11 +21,11 @@ export class phieuThuChiBasic {
   state: string;
 }
 
-export class phieuThuChiDefault { 
+export class PhieuThuChiDefault { 
   type: string;
 }
 
-export class phieuThuChiSave { 
+export class PhieuThuChiSave { 
   companyId: string;
   company: any;
   date: Date; 
@@ -43,7 +43,7 @@ export class phieuThuChiSave {
   loaiThuChi: any;
 }
 
-export class phieuThuChi { 
+export class PhieuThuChi { 
   id: string;
   companyId: string;
   company: any;
@@ -69,12 +69,12 @@ export class PhieuThuChiService {
   apiUrl = 'api/PhieuThuChis';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getPaged(val: any): Observable<PagedResult2<phieuThuChiBasic>> {
-    return this.http.get<PagedResult2<phieuThuChiBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+  getPaged(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
-  get(id): Observable<phieuThuChi> {
-    return this.http.get<phieuThuChi>(this.baseApi + this.apiUrl + "/" + id);
+  get(id) {
+    return this.http.get(this.baseApi + this.apiUrl + "/" + id);
   }
 
   create(val) {
@@ -95,5 +95,9 @@ export class PhieuThuChiService {
 
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+  }
+
+  defaultGet(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', val);
   }
 }
