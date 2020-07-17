@@ -104,6 +104,7 @@ import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
 import { AccountFinancialReportModule } from './account-financial-report/account-financial-report.module';
+import { AccountReportGeneralLedgersModule } from './account-report-general-ledgers/account-report-general-ledgers.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -216,7 +217,8 @@ registerLocaleData(localeVi, "vi");
     TcareModule,
     // end
     SamplePrescriptionsModule,
-    AccountFinancialReportModule
+    AccountFinancialReportModule,
+    AccountReportGeneralLedgersModule,
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

@@ -33,7 +33,7 @@ namespace Infrastructure.Services
             var query = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: company_id,
                 journalIds: journal_ids);
 
-            var res = _mapper.ProjectTo<AccountMoveLineBasic>(query.OrderBy(x => x.Date)).ToList();
+            var res = _mapper.ProjectTo<AccountMoveLineBasic>(query.OrderBy(x => x.Date).ThenBy(x => x.DateCreated)).ToList();
             return res;
         }
 
@@ -78,10 +78,10 @@ namespace Infrastructure.Services
                 res.Add(new ReportJournalItem
                 {
                     Journal = journal,
-                    Begin = _SumInitialBalance(date_from: date_from, company_id: company_id, journal_ids: journal_ids),
-                    SumDebit = _SumDebit(date_from: date_from, date_to: date_to, company_id: company_id, journal_ids: journal_ids),
-                    SumCredit = _SumCredit(date_from: date_from, date_to: date_to, company_id: company_id, journal_ids: journal_ids),
-                    Lines = Lines(date_from: date_from, date_to: date_to, company_id: company_id, journal_ids: journal_ids)
+                    Begin = _SumInitialBalance(date_from: date_from, company_id: company_id, journal_ids: new List<Guid>() { journal.Id }),
+                    SumDebit = _SumDebit(date_from: date_from, date_to: date_to, company_id: company_id, journal_ids: new List<Guid>() { journal.Id }),
+                    SumCredit = _SumCredit(date_from: date_from, date_to: date_to, company_id: company_id, journal_ids: new List<Guid>() { journal.Id }),
+                    Lines = Lines(date_from: date_from, date_to: date_to, company_id: company_id, journal_ids: new List<Guid>() { journal.Id })
                 });
             }
 
