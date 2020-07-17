@@ -66,7 +66,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
+                                    <div [class.d-flex]="getValueForm('state') !== 'posted'" 
+                                        [class.d-none]="getValueForm('state') === 'posted'">
                                         <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
                                             #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'"
                                             placeholder="Chọn loại ...">
@@ -75,6 +76,9 @@
                                             <span class="k-icon k-i-plus"></span>
                                         </a>
                                     </div>
+                                    <span  [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('loaiThuChi').name}}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -84,9 +88,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <select class="form-control" formControlName="journalId">
+                                    <select [class.d-none]="getValueForm('state') === 'posted'"
+                                        class="form-control" formControlName="journalId">
                                         <option *ngFor="let item of loaiJournalList" [value]="item.id">{{item.name}}</option>
                                     </select>
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('journal').name}}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -96,8 +104,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount">
+                                    <kendo-numerictextbox [class.d-none]="getValueForm('state') === 'posted'"
+                                        [min]="0" [format]="'n0'" formControlName="amount">
                                     </kendo-numerictextbox>
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('amount')}}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -107,7 +119,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="reason"></textarea>
+                                    <textarea [class.d-none]="getValueForm('state') === 'posted'"
+                                        type="text" class="form-control" formControlName="reason">
+                                    </textarea>
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('reason')}}
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -121,8 +138,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj">
+                                    <kendo-datepicker [class.d-none]="getValueForm('state') === 'posted'"
+                                        formControlName="dateObj">
                                     </kendo-datepicker>
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('dateObj') | date: 'short'}}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -132,8 +153,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="payerReceiver"
+                                    <input [class.d-none]="getValueForm('state') === 'posted'"
+                                        class="form-control" formControlName="payerReceiver"
                                         [placeholder]="'Nhập người ' + getTypePayerReceiver() +' ...'" />
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('payerReceiver')}}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -143,8 +168,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="address" 
+                                    <input [class.d-none]="getValueForm('state') === 'posted'"
+                                        class="form-control" formControlName="address" 
                                         placeholder="Nhập địa chỉ ..." />
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('address')}}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -154,8 +183,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="communication"
+                                    <input [class.d-none]="getValueForm('state') === 'posted'"
+                                        class="form-control" formControlName="communication"
                                         placeholder="" />
+                                    <span [class.d-none]="getValueForm('state') !== 'posted'">
+                                        {{getValueForm('communication')}}
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
