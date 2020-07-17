@@ -117,6 +117,18 @@ namespace Infrastructure.Services
             list.Sum(x => x.CountPartner);
             return list;
         }
+
+        public override ISpecification<PartnerSource> RuleDomainGet(IRRule rule)
+        {
+
+            switch (rule.Code)
+            {
+                case "base.model_res_partner_source_rule":
+                    return new InitialSpecification<PartnerSource>(x => true);
+                default:
+                    return null;
+            }
+        }
     }
 
     public class ReportFilterPartnerSource

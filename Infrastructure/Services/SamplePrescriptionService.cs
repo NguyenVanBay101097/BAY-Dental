@@ -101,5 +101,18 @@ namespace Infrastructure.Services
             }
 
         }
+
+        public override ISpecification<SamplePrescription> RuleDomainGet(IRRule rule)
+        {
+
+            switch (rule.Code)
+            {
+                case "base.model_res_sample_prescription_rule":
+                    return new InitialSpecification<SamplePrescription>(x => true);
+                default:
+                    return null;
+            }
+        }
+
     }
 }
