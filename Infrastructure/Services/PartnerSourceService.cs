@@ -20,7 +20,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly CatalogDbContext _context;
-        public PartnerSourceService(IAsyncRepository<PartnerSource> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper , CatalogDbContext context)
+        public PartnerSourceService(IAsyncRepository<PartnerSource> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, CatalogDbContext context)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -85,12 +85,12 @@ namespace Infrastructure.Services
         }
 
         public async Task<List<ReportPartnerSourceItem>> GetReportPartnerSource(ReportFilterPartnerSource val)
-         {
+        {
             var companyId = CompanyId;
             //SearchQuery
             var partnerObj = GetService<IPartnerService>();
             var partners = partnerObj.SearchQuery(x => x.Customer == true);
-           
+
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
@@ -102,11 +102,13 @@ namespace Infrastructure.Services
                 partners = partners.Where(x => x.Date.Value <= dateTo);
             }
             var totalPartner = partners.ToList().Count;
-       
-            var query = partners.GroupBy(x => new {
+
+            var query = partners.GroupBy(x => new
+            {
                 x.Source.Id,
                 x.Source.Name
-            }).Select(x => new ReportPartnerSourceItem {             
+            }).Select(x => new ReportPartnerSourceItem
+            {
                 Id = x.Key.Id,
                 Name = x.Key.Name,
                 TotalPartner = totalPartner,
@@ -118,15 +120,29 @@ namespace Infrastructure.Services
             return list;
         }
 
-        public override ISpecification<PartnerSource> RuleDomainGet(IRRule rule)
+        public async Task InsertModelsIfNotExists()
         {
-
-            switch (rule.Code)
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var model = await modelDataObj.GetRef<IRModel>("base.model_res_partner_source");
+            if (model == null)
             {
-                case "base.model_res_partner_source_rule":
-                    return new InitialSpecification<PartnerSource>(x => true);
-                default:
-                    return null;
+                model = new IRModel
+                {
+                    Name = "Nguồn khách hàng",
+                    Model = "PartnerSource",
+                };
+
+                modelObj.Sudo = true;
+                await modelObj.CreateAsync(model);
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Name = "model_res_partner_source",
+                    Module = "base",
+                    Model = "res.partner.source",
+                    ResId = model.Id.ToString()
+                });
             }
         }
     }

@@ -22,5 +22,7 @@ namespace Infrastructure.Services
         Task<IDictionary<string, ResGroup>> InsertIfNotExist(IDictionary<string, ResGroup> dict);
 
         Task InsertSecurityData();
+
+        Task UpdateModels();
     }
 }

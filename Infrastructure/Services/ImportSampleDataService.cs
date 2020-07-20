@@ -282,8 +282,7 @@ namespace Infrastructure.Services
                 company_main = await companyObj.GetByIdAsync(user_root.CompanyId);
             if (partner_main == null)
                 partner_main = await partnerObj.GetByIdAsync(company_main.PartnerId);
-            await _dbContext.ExecuteSqlCommandAsync("Delete LoaiThuChis");
-            await _dbContext.ExecuteSqlCommandAsync("Delete PhieuThuChis");
+          
             await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
             await _dbContext.ExecuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountPartialReconciles");
@@ -297,8 +296,6 @@ namespace Infrastructure.Services
             await _dbContext.ExecuteSqlCommandAsync("Delete FacebookTags");
             await _dbContext.ExecuteSqlCommandAsync("Delete FacebookUserProfiles");
             await _dbContext.ExecuteSqlCommandAsync("Delete FacebookUserProfileTagRels");
-
-
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountFullReconciles");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoveLines");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoves");
@@ -306,6 +303,8 @@ namespace Infrastructure.Services
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountAccountTypes");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountPayments");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountJournals");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PhieuThuChis");
+            await _dbContext.ExecuteSqlCommandAsync("Delete LoaiThuChis");
             await _dbContext.ExecuteSqlCommandAsync("Delete DotKhamSteps");
             await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrderLines");
             await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrderLines");

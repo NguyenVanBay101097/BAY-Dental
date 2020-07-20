@@ -102,17 +102,30 @@ namespace Infrastructure.Services
 
         }
 
-        public override ISpecification<SamplePrescription> RuleDomainGet(IRRule rule)
+        public async Task InsertModelsIfNotExists()
         {
-
-            switch (rule.Code)
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var model = await modelDataObj.GetRef<IRModel>("base.model_sample_prescription");
+            if (model == null)
             {
-                case "base.model_res_sample_prescription_rule":
-                    return new InitialSpecification<SamplePrescription>(x => true);
-                default:
-                    return null;
+                model = new IRModel
+                {
+                    Name = "Đơn thuốc mẫu",
+                    Model = "SamplePrescription",
+                };
+
+                modelObj.Sudo = true;
+                await modelObj.CreateAsync(model);
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Name = "model_sample_prescription",
+                    Module = "base",
+                    Model = "sample.prescription",
+                    ResId = model.Id.ToString()
+                });
             }
         }
-
     }
 }

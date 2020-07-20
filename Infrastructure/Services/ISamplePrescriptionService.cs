@@ -15,8 +15,6 @@ namespace Infrastructure.Services
         Task<SamplePrescription> CreatePrescription(SamplePrescriptionSave val);
         Task UpdatePrescription(Guid id, SamplePrescriptionSave val);
 
-       
-
-
+        Task InsertModelsIfNotExists();
     }
 }

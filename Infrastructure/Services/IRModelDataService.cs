@@ -102,9 +102,21 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "res.partner.source":
+                        {
+                            var service = GetService<IPartnerSourceService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
                     case "res.company":
                         {
                             var service = GetService<ICompanyService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
+                    case "sample.prescription":
+                        {
+                            var service = GetService<ISamplePrescriptionService>();
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }

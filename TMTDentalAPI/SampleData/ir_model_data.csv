@@ -53,7 +53,7 @@ service_card.model_service_card_card,ServiceCardCard,Thẻ tiền mặt,0
 service_card.model_service_card_order,ServiceCardOrder,Đơn bán thẻ tiền mặt,0
 service_card.model_service_card_order_line,ServiceCardOrderLine,Service Card Order Line,1
 service_card.model_service_card_sale_order_service_card_card_rel,SaleOrderServiceCardCardRel,Sale Order Card Rel,1
-base.model_res_sample_prescription,SamplePrescription,Đơn thuốc mẫu,0
+base.model_sample_prescription,SamplePrescription,Đơn thuốc mẫu,0
 
 
 
