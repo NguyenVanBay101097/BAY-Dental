@@ -19,13 +19,14 @@ namespace Infrastructure.Services
         public async Task<AccountFinancialReport> GetProfitAndLossReport()
         {
             var irModelDataObj = GetService<IIRModelDataService>();
+            var accountTypeObj = GetService<IAccountAccountTypeService>();
             var report = await irModelDataObj.GetRef<AccountFinancialReport>("report.profit_and_loss_report");
             if (report == null)
             {
                 var account_type_revenue = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
                 var account_type_expenses = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_expenses");
-                var account_type_thu = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_thu");
-                var account_type_chi = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_chi");
+                var account_type_thu = await accountTypeObj.GetDefaultAccountTypeThu();
+                var account_type_chi = await accountTypeObj.GetDefaultAccountTypeChi();
 
                 report = new AccountFinancialReport()
                 {
