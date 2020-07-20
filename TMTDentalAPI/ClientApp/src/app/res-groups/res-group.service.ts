@@ -79,4 +79,7 @@ export class ResGroupService {
         return this.http.post(this.baseApi + this.apiUrl + '/ResetSecurityData', {});
     }
 
+    updateModels() {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateModels', {});
+    }
 }

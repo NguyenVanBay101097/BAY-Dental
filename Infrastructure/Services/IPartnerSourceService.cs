@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<PartnerSourceBasic>> GetPagedResultAsync(PartnerSourcePaged val);
         Task<IEnumerable<PartnerSourceBasic>> GetAutocompleteAsync(PartnerSourcePaged val);
         Task<List<ReportPartnerSourceItem>> GetReportPartnerSource(ReportFilterPartnerSource val);
+        Task InsertModelsIfNotExists();
     }
 }

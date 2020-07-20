@@ -24,6 +24,7 @@
 "access_service_card_card_group_user","service_card_card group_user","service_card.model_service_card_card","group_user",1,1,1,1
 "access_service_card_type_group_user","service_card_type group_user","service_card.model_service_card_type","group_user",1,1,1,1
 "access_service_card_order_group_user","service_card_order group_user","service_card.model_service_card_order","group_user",1,1,1,1
+"access_sample_prescription_group_user","sample_prescription group_user","base.model_sample_prescription","group_user",1,1,1,1
 "access_res_user_group_manager","res_user group_manager","base.model_res_user","group_manager",1,0,0,0
 "access_res_partner_group_manager","res_partner group_manager","base.model_res_partner","group_manager",1,0,0,0
 "access_partner_category_group_manager","partner_category group_manager","base.model_res_partner_category","group_manager",1,0,0,0
@@ -49,6 +50,7 @@
 "access_service_card_card_group_manager","service_card_card group_manager","service_card.model_service_card_card","group_manager",1,0,0,0
 "access_service_card_type_group_manager","service_card_type group_manager","service_card.model_service_card_type","group_manager",1,0,0,0
 "access_service_card_order_group_manager","service_card_order group_manager","service_card.model_service_card_order","group_manager",1,0,0,0
+"access_sample_prescription_group_manager","sample_prescription group_manager","base.model_sample_prescription","group_manager",1,1,1,1
 "access_res_user_group_admin","res_user group_admin","base.model_res_user","group_admin",1,1,1,1
 "access_res_partner_group_admin","res_partner group_admin","base.model_res_partner","group_admin",1,0,0,0
 "access_partner_category_group_admin","partner_category group_admin","base.model_res_partner_category","group_admin",1,0,0,0
@@ -74,3 +76,4 @@
 "access_service_card_card_group_admin","service_card_card group_admin","service_card.model_service_card_card","group_admin",1,0,0,0
 "access_service_card_type_group_admin","service_card_type group_admin","service_card.model_service_card_type","group_admin",1,0,0,0
 "access_service_card_order_group_admin","service_card_order group_admin","service_card.model_service_card_order","group_admin",1,0,0,0
+"access_sample_prescription_group_admin","sample_prescription group_admin","base.model_sample_prescription","group_admin",1,0,0,0

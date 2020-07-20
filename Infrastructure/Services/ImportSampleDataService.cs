@@ -282,10 +282,20 @@ namespace Infrastructure.Services
                 company_main = await companyObj.GetByIdAsync(user_root.CompanyId);
             if (partner_main == null)
                 partner_main = await partnerObj.GetByIdAsync(company_main.PartnerId);
-
+          
             await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
             await _dbContext.ExecuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountPartialReconciles");
+            await _dbContext.ExecuteSqlCommandAsync("Delete IRProperties");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookConnectPages");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookConnects");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookMassMessagings");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookMessagingTraces");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookPages");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookScheduleAppointmentConfigs");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookTags");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookUserProfiles");
+            await _dbContext.ExecuteSqlCommandAsync("Delete FacebookUserProfileTagRels");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountFullReconciles");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoveLines");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountMoves");
@@ -293,6 +303,8 @@ namespace Infrastructure.Services
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountAccountTypes");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountPayments");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountJournals");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PhieuThuChis");
+            await _dbContext.ExecuteSqlCommandAsync("Delete LoaiThuChis");
             await _dbContext.ExecuteSqlCommandAsync("Delete DotKhamSteps");
             await _dbContext.ExecuteSqlCommandAsync("Delete SaleOrderLines");
             await _dbContext.ExecuteSqlCommandAsync("Delete LaboOrderLines");
@@ -327,7 +339,6 @@ namespace Infrastructure.Services
             await _dbContext.ExecuteSqlCommandAsync("Delete IRSequences");
             await _dbContext.ExecuteSqlCommandAsync("update Partners set CompanyId = null, CreatedById = null, WriteById = null where Id != '" + partner_main.Id.ToString() + "' and Id != '" + partner_root.Id.ToString() + "'");
             await _dbContext.ExecuteSqlCommandAsync("Delete PartnerCategories");
-            await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
             await _dbContext.ExecuteSqlCommandAsync("Delete Histories");
             await _dbContext.ExecuteSqlCommandAsync("Update IrConfigParameters set CreatedById = null , WriteById = null");
             await _dbContext.ExecuteSqlCommandAsync("Delete IrConfigParameters");
@@ -338,6 +349,7 @@ namespace Infrastructure.Services
             await _dbContext.ExecuteSqlCommandAsync("Delete Companies where Id != '" + company_main.Id.ToString() + "'");
             await _dbContext.ExecuteSqlCommandAsync("Delete Partners where Id != '" + partner_main.Id.ToString() + "' and Id != '" + partner_root.Id.ToString() + "'");
             await _dbContext.ExecuteSqlCommandAsync("Delete IRModelAccesses");
+            await _dbContext.ExecuteSqlCommandAsync("Delete PartnerSources");
             await _dbContext.ExecuteSqlCommandAsync("Delete ResGroups");
             await _dbContext.ExecuteSqlCommandAsync("Delete IRRules");
             await _dbContext.ExecuteSqlCommandAsync("Delete IRModels");
