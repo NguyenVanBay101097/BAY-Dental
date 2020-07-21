@@ -59,11 +59,6 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     })
   }
 
-  pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
-    this.loadData();
-  }
-
   printToaThuoc(item) {
     this.toaThuocService.getPrint(item.id).subscribe(result => {
       this.toaThuocPrintComponent.print(result);
