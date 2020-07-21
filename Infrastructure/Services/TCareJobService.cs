@@ -48,11 +48,9 @@ namespace Infrastructure.Services
                     var date = DateTime.UtcNow;
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
 
-                    //var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-                    //var messaging = conn.Query<TCareMessaging>("SELECT * FROM TCareMessagings WHERE TCareCampaignId = @id", new { id = campaign.Id }).FirstOrDefault();
 
                     if (CampaignXML.Root.Sequence.MethodType == "interval")
                     {
@@ -67,19 +65,16 @@ namespace Infrastructure.Services
                             date = date.AddMonths(intervalNumber);
                         else if (CampaignXML.Root.Sequence.IntervalType == "weeks")
                             date = date.AddDays((intervalNumber) * 7);
-
-                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, db), date);
-                        if (string.IsNullOrEmpty(jobId))
-                            throw new Exception("Can't not schedule job");
                     }
                     else
                     {
-                        date = DateTime.Parse(CampaignXML.Root.Sequence.SheduleDate);
-                        var jobId = BackgroundJob.Schedule(() => SendMessageSocial(campaignId, db), date);
-                        if (string.IsNullOrEmpty(jobId))
-                            throw new Exception("Can't not schedule job");
+                        if (!string.IsNullOrEmpty(CampaignXML.Root.Sequence.SheduleDate))
+                            date = DateTime.Parse(CampaignXML.Root.Sequence.SheduleDate).ToUniversalTime();
                     }
 
+                    var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
+                    foreach(var partner_id in partner_ids)
+                        BackgroundJob.Schedule(() => SendMessageSocial(campaignId, db, partner_id), date);
                 }
                 catch (Exception e)
                 {
@@ -305,7 +300,7 @@ namespace Infrastructure.Services
         }
 
         public async Task SendMessageSocial(Guid? campaignId = null,
-            string db = null)
+            string db = null, Guid? partner_id = null)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             builder["Database"] = $"TMTDentalCatalogDb__{db}";
@@ -318,21 +313,13 @@ namespace Infrastructure.Services
                     conn.Open();
 
                     var partner_ids = new List<Guid>().AsEnumerable();
-                    var profiles = new List<FacebookUserProfile>().AsEnumerable();
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
                     if (campaign == null)
                         return;
-                    //var campaignXml = ConvertXmlCampaign(campaign.GraphXml);
+
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-
-                    //Xử lý trường hợp khi có nhiều Rule 
-                    //partner_ids = SearchPartnerIdsInRules(resultingMessage.Root.Rule, resultingMessage.Root.Rule.Logic, conn);
-
-                    partner_ids = SearchPartnerIds(resultingMessage.Root.Rule.Condition, resultingMessage.Root.Rule.Logic, conn);
-
-                    //Get partnerIds in list rules
 
                     if (resultingMessage.Root.Sequence.Content == null)
                         return;
@@ -346,106 +333,28 @@ namespace Infrastructure.Services
                     if (channelSocial == null)
                         return;
 
-                  
-
-                    profiles = GetUserProfiles(Guid.Parse(resultingMessage.Root.Sequence.ChannelSocialId), partner_ids, conn);
-                    if (profiles == null)
+                    var profiles = GetUserProfiles(Guid.Parse(resultingMessage.Root.Sequence.ChannelSocialId), partner_id.Value, conn);
+                    if (!profiles.Any())
                         return;
-                    if (channelSocial.Type == "facebook")
-                    {
-                        var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channelSocial.Id)).ToList();
-                        var limit = 200;
-                        var offset = 0;
-                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        while (subTasks.Any())
-                        {
-                            await Task.WhenAll(subTasks);
-                            offset += limit;
-                            subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        }
-                    }
-                    else if (channelSocial.Type == "zalo")
-                    {
 
-                        var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequence.Content, x, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channelSocial.Id)).ToList();
-                        var limit = 200;
-                        var offset = 0;
-                        var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        while (subTasks.Any())
-                        {
-                            await Task.WhenAll(subTasks);
-                            offset += limit;
-                            subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        }
-                    }
-
-                    //lấy ra partnerids của danh sách profiles mới gửi
-                    partner_ids = partner_ids.Where(x => !profiles.Any(s => s.PartnerId == x)).ToList();
-
-                    // check điều kiện kênh ưu tiên
-                    if (resultingMessage.Root.Sequence.ChannelType == "priority")
-                    {
-                        var channelSocials = conn.Query<FacebookPage>("" +
-                             "SELECT * " +
-                             "FROM FacebookPages " +
-                             "where Id != @id" +
-                             "", new { id = resultingMessage.Root.Sequence.ChannelSocialId }).ToList();
-
-                        foreach (var channel in channelSocials)
-                        {
-                            if (partner_ids.Count() == 0)
-                                break;
-                            profiles = GetUserProfiles(channel.Id, partner_ids, conn);
-                            if (profiles == null)
-                                return;
-                            if (channel.Type == "facebook")
-                            {
-                                var tasks = profiles.Select(x => SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content,x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId) , channel.Id)).ToList();
-                                var limit = 200;
-                                var offset = 0;
-                                var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                                while (subTasks.Any())
-                                {
-                                    await Task.WhenAll(subTasks);
-                                    offset += limit;
-                                    subTasks = tasks.Skip(offset).Take(limit).ToList();
-                                }
-                            }
-                            else if (channel.Type == "zalo")
-                            {
-
-                                var tasks = profiles.Select(x => SendMessageAndTraceZalo(conn, resultingMessage.Root.Sequence.Content, x, channel.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channel.Id)).ToList();
-                                var limit = 200;
-                                var offset = 0;
-                                var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                                while (subTasks.Any())
-                                {
-                                    await Task.WhenAll(subTasks);
-                                    offset += limit;
-                                    subTasks = tasks.Skip(offset).Take(limit).ToList();
-                                }
-                            }
-                            partner_ids = partner_ids.Where(x => !profiles.Any(s => s.PartnerId == x)).ToList();
-                        }
-
-
-
-                    }
+                    var profile = profiles.First();
+                    await SendMessageAndTrace(conn, resultingMessage.Root.Sequence.Content, profile, channelSocial.PageAccesstoken, Guid.Parse(resultingMessage.Root.Sequence.CampaignId), channelSocial.Id);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
             }
-
-
-
-
-
-
-
         }
 
+        private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid ChannelSocialId, Guid partner_id,
+           SqlConnection conn = null)
+        {
+            var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where FbPageId = @PageId and PartnerId = @PartnerId",
+                new { PageId = ChannelSocialId, PartnerId = partner_id }).ToList();
+
+            return profiles;
+        }
 
         private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid ChannelSocialId, IEnumerable<Guid> partIds,
            SqlConnection conn = null)

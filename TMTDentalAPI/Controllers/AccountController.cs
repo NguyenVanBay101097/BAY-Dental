@@ -38,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IUserService _userService;
         private readonly IPartnerService _partnerService;
         private readonly BirthdayMessageJobService _birthdayMessageJobService;
+        private readonly ITCareJobService _tcareJobService;
 
         private readonly CatalogDbContext _context;
 
@@ -45,7 +46,8 @@ namespace TMTDentalAPI.Controllers
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
             IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository,
-            IUserService userService, IPartnerService partnerService, BirthdayMessageJobService birthdayMessageJobService)
+            IUserService userService, IPartnerService partnerService, BirthdayMessageJobService birthdayMessageJobService,
+            ITCareJobService tcareJobService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -56,6 +58,7 @@ namespace TMTDentalAPI.Controllers
             _userService = userService;
             _partnerService = partnerService;
             _birthdayMessageJobService = birthdayMessageJobService;
+            _tcareJobService = tcareJobService;
         }
 
         [AllowAnonymous]
@@ -143,8 +146,7 @@ namespace TMTDentalAPI.Controllers
         public IActionResult AddJob()
         {
             var host = _tenant.Hostname;
-            RecurringJob.AddOrUpdate($"{host}-birthday2", () => _birthdayMessageJobService.SendMessage(host), "39 9 * * *");
-            RecurringJob.AddOrUpdate($"{host}-birthday2", () => _birthdayMessageJobService.SendMessage(host), "39 2 * * *");
+            BackgroundJob.Schedule(() => _tcareJobService.Run("localhost", new Guid("1F27ED3B-B9DC-4FDE-F327-08D8288D4E7E")), TimeSpan.FromSeconds(0));
             return Ok(true);
         }
 
