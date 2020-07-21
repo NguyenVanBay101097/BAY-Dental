@@ -180,7 +180,20 @@ namespace Infrastructure.Services
                 foreach (var item in result.Details)
                     item.Name = new DateTime(item.Year, 1, 1).ToString("yyyy");
             }
+            if (val.GroupBy == "salesman")
+            {
+                result.Details = await query.GroupBy(x => new { 
+                    x.SalesmanId, x.Salesman.Name 
+                })
+                    .Select(x => new RevenueReportResultDetail
+                    {
+                        Name = x.Key.Name,
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                        Balance = x.Sum(s => s.Credit - s.Debit)
+                    }).ToListAsync();
 
+            }
             return result;
         }
     }
