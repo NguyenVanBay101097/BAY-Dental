@@ -10,16 +10,10 @@
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.debit | number}}
         </ng-template>
-        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['debit']">
-            {{total['debit'].sum | number}}
-        </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Chi" class="text-right" footerClass="text-right font-weight-bold">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.credit | number}}
-        </ng-template>
-        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['credit']">
-            {{total['credit'].sum | number}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>
