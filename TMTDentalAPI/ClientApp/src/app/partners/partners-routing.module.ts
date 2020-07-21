@@ -11,6 +11,7 @@ import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-tre
 import { PartnerCustomerAppointmentComponent } from './partner-customer-appointment/partner-customer-appointment.component';
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
+import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 
 const routes: Routes = [
   {
@@ -29,9 +30,10 @@ const routes: Routes = [
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
-      { path: 'appointment', component: PartnerCustomerAppointmentComponent }, 
-      { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent }, 
+      { path: 'appointment', component: PartnerCustomerAppointmentComponent },
+      { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
+      { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
     ]
   },
   {

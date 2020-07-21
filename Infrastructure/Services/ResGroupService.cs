@@ -284,6 +284,15 @@ namespace Infrastructure.Services
             return group;
         }
 
+        public async Task UpdateModels()
+        {
+            var samplePrescriptionObj = GetService<ISamplePrescriptionService>();
+            await samplePrescriptionObj.InsertModelsIfNotExists();
+
+            var partnerSourceObj = GetService<IPartnerSourceService>();
+            await partnerSourceObj.InsertModelsIfNotExists();
+        }
+
         public async Task ResetSecurityData()
         {
             //xóa tất cả dữ liệu

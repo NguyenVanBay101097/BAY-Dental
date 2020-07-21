@@ -36,7 +36,7 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Thống kê labo',
       icon: 'fas fa-tooth',
-      children: [], 
+      children: [],
       link: '/labo-statistics'
     },
     {
@@ -53,6 +53,16 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
         { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
+      ],
+    },
+    {
+      name: 'Thu chi',
+      icon: 'fas fa-dollar-sign',
+      children: [
+        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
       ],
     },
     {
@@ -113,16 +123,16 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
       children: [
+        { name: 'Kết quả kinh doanh', link: '/financial-report' },
+        { name: 'Tiền mặt, ngân hàng', link: '/report-cash-bank' },
+        { name: 'Thống kê doanh thu', link: '/revenue-report' },
         { name: 'Công nợ khách hàng', link: '/account-common-partner-reports', params: { result_selection: 'customer' } },
         { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
-        // { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
-        { name: 'Thống kê doanh thu', link: '/revenue-report' },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
         { name: 'Thống kê điều trị', link: '/sale-report' },
-        { name: 'Khách hàng theo khu vực', link: '/partner-report-location' },
+        { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location' },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },
-        { name: 'Báo cáo thu chi', link: '/journal-reports' },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report-partner' },
       ]
     },

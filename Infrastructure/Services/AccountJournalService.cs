@@ -309,14 +309,14 @@ namespace Infrastructure.Services
             };
         }
 
-
         public override ISpecification<AccountJournal> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.journal_comp_rule":
-                    return new InitialSpecification<AccountJournal>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<AccountJournal>(x => companyIds.Contains(x.CompanyId));
                 default:
                     return null;
             }

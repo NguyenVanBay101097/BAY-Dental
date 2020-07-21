@@ -1644,8 +1644,53 @@ namespace Infrastructure.Services
             return list;
         }
 
+        public async Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
+        {
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+            var query = SearchQuery(x => x.Customer && x.Active && x.CityCode == company.Partner.CityCode);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo);
+
+            var res = await query.GroupBy(x => new { x.DistrictCode, x.DistrictName })
+                .Select(x => new PartnerReportLocationItem
+                {
+                    Name = x.Key.DistrictName,
+                    Total = x.Count(),
+                    Percentage = x.Count() * 100f / query.Count()
+                }).ToListAsync();
+            return res;
+        }
+
+        public async Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
+        {
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+            var query = SearchQuery(x => x.Customer && x.Active && x.CityCode == company.Partner.CityCode && x.DistrictCode == company.Partner.DistrictCode);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo);
+
+            var res = await query.GroupBy(x => new { x.WardCode, x.WardName }).Select(x => new PartnerReportLocationItem
+            {
+                Name = x.Key.WardName,
+                Total = x.Count(),
+                Percentage = x.Count() * 100f / query.Count()
+            }).ToListAsync();
+
+            return res;
+        }
+
         public async Task<IEnumerable<PartnerReportLocationCity>> ReportLocationCity(ReportLocationCitySearch val)
         {
+
             var query = SearchQuery(x => x.Customer && x.Active);
             if (!string.IsNullOrEmpty(val.CityCode))
                 query = query.Where(x => x.CityCode == val.CityCode);
@@ -1670,6 +1715,7 @@ namespace Infrastructure.Services
             }
             return res;
         }
+
         public async Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationDistrict(PartnerReportLocationCity val)
         {
             var query = SearchQuery(x => x.Customer && x.Active && x.CityCode == val.CityCode && x.CityName == val.CityName);
@@ -1716,8 +1762,6 @@ namespace Infrastructure.Services
             }).ToListAsync();
             return res;
         }
-
-
 
         //public async Task<File> ExportExcelFile(PartnerPaged val)
         //{
@@ -1780,8 +1824,6 @@ namespace Infrastructure.Services
         //    return query;
 
         //}
-
-
 
     }
 

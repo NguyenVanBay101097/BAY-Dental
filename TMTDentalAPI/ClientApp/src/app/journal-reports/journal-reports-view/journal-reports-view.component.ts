@@ -7,6 +7,7 @@ import { SortDescriptor, aggregateBy } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { ReportJournalService, ReportCashBankJournalSearch } from '../report-journal.service';
 
 @Component({
   selector: 'app-journal-reports-view',
@@ -63,7 +64,10 @@ export class JournalReportsViewComponent implements OnInit {
     { field: 'balanceSum', aggregate: 'sum' }
   ];
 
-  constructor(private service: JournalReportService, private intlService: IntlService) { }
+  reportValues: any = [];
+
+  constructor(private service: JournalReportService, private intlService: IntlService,
+    private reportJournalService: ReportJournalService) { }
 
   ngOnInit() {
     var today = new Date;
@@ -75,37 +79,12 @@ export class JournalReportsViewComponent implements OnInit {
 
   getReports() {
     this.loading = true;
-    var paged = new JournalReportPaged;
-    if (this.search)
-      paged.search = this.search;
-    if (this.dateFrom) {
-      paged.dateFrom = this.intlService.formatDate(this.dateFrom, 'd', 'en-US');
-    }
-    if (this.dateTo) {
-      paged.dateTo = this.intlService.formatDate(this.dateTo, 'd', 'en-US');
-    }
-    paged.groupBy = this.groupBy;
-    paged.filter = this.filter;
-    // if (this.groupBy2 && this.groupBy == 'date') {
-    //   paged.groupBy = paged.groupBy + ":" + this.groupBy2;
-    // }
-    this.service.getReports(paged).pipe(
-      map(rs1 => (<GridDataResult>{
-        data: rs1,
-        total: rs1.length
-      }))
-    ).subscribe(rs2 => {
-      this.gridView = rs2;
-      console.log(rs2);
-      this.total = aggregateBy(rs2.data, this.aggregates);
-      this.loading = false;
-
-      console.log(rs2);
+    var paged = new ReportCashBankJournalSearch();
+    this.reportJournalService.getCashBankReport(paged).subscribe(result => {
+      this.reportValues = result;
     }, er => {
       this.loading = true;
-      console.log(er);
-    }
-    )
+    });
   }
 
   pageChange(event: PageChangeEvent): void {

@@ -172,10 +172,17 @@ namespace Infrastructure.Data
         public DbSet<FacebookPage> FacebookPages { get; set; }
 
         public DbSet<FacebookScheduleAppointmentConfig> FacebookScheduleAppointmentConfigs { get; set; }
+        public DbSet<PartnerImage> PartnerImages { get; set; }
+
 
 
         //nguyen thang
         public DbSet<ProductUoMRel> ProductUoMRels { get; set; }
+        public DbSet<AccountFinancialReport> AccountFinancialReports { get; set; }
+        public DbSet<AccountFinancialReportAccountAccountTypeRel> AccountFinancialReportAccountAccountTypeRels { get; set; }
+
+        public DbSet<LoaiThuChi> LoaiThuChis { get; set; }
+        public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -317,6 +324,11 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCarePropertyConfiguration());
             builder.ApplyConfiguration(new TCareMessagingConfiguration());
             builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
+            builder.ApplyConfiguration(new PartnerImageConfiguration());
+            builder.ApplyConfiguration(new LoaiThuChiConfiguration());
+            builder.ApplyConfiguration(new PhieuThuChiConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

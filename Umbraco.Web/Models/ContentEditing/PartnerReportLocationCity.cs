@@ -16,6 +16,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SearchWardCode { get; set; }
     }
 
+    public class PartnerReportLocationItem
+    {
+        public string Name { get; set; }
+        public int Total { get; set; }
+        public float Percentage { get; set; }
+    }
+
     public class PartnerReportLocationDistrict
     {
         public string DistrictCode { get; set; }

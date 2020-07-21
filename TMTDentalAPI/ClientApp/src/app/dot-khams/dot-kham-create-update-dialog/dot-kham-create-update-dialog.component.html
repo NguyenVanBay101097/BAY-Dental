@@ -1,7 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" ngbAutofocus data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" ngbAutofocus data-dismiss="modal" aria-label="Close"
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -151,80 +151,78 @@
 
                     <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav-tabs">
                         <li [ngbNavItem]="1">
-                          <a ngbNavLink>Điều trị</a>
-                          <ng-template ngbNavContent>
-                            <table class="table table-sm" id="table_details">
-                                <thead>
-                                    <tr>
-                                        <th width="200">Dịch vụ</th>
-                                        <th width="200">Công đoạn</th>
-                                        <th width="100">
-                                            <div
-                                                class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                                <input type="checkbox" id="o_field_input_28_all"
-                                                    [checked]="computeIsDoneAll()"
-                                                    (change)="toggleIsDoneAll($event)"
-                                                    class="custom-control-input">
-                                                <label for="o_field_input_28_all" class="custom-control-label">​
-                                                    Hoàn thành
-                                                </label>
-                                            </div>
-                                        </th>
-                                        <th width="100"></th>
-                                        <!-- <th>Hoàn tất</th> -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let step of dotKhamStepList;let i = index">
-                                        <td width="200">
-                                            {{step.product.name}}
-                                        </td>
-                                        <td width="200" (click)="setEditingStep(step)">
-                                            <span
-                                                *ngIf="!editingStep || editingStep.id != step.id">{{step.name}}</span>
-                                            <div class="d-flex"
-                                                *ngIf="editingStep && editingStep.id == step.id">
-                                                <input (keydown.enter)="updateStepName($event, step)"
-                                                    [value]="step.name" type="text"
-                                                    class="form-control updateStepName" />
-                                                <button type="button" class="btn btn-sm btn-light"
-                                                    (click)="$event.stopPropagation();setEditingStep(null);">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td width="100">
-                                            <div
-                                                class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                                <input type="checkbox" [checked]="step.isDone"
-                                                    (change)="$event.stopPropagation();toggleIsDone(step, $event)"
-                                                    [id]="'o_field_input_28' + i" class="custom-control-input">
-                                                <label [for]="'o_field_input_28' + i"
-                                                    class="custom-control-label">​</label>
-                                            </div>
-                                            <!-- <button class="btn btn-sm btn-secondary"
+                            <a ngbNavLink>Điều trị</a>
+                            <ng-template ngbNavContent>
+                                <table class="table table-sm" id="table_details">
+                                    <thead>
+                                        <tr>
+                                            <th width="200">Dịch vụ</th>
+                                            <th width="200">Công đoạn</th>
+                                            <th width="100">
+                                                <div
+                                                    class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                                    <input type="checkbox" id="o_field_input_28_all"
+                                                        [checked]="computeIsDoneAll()"
+                                                        (change)="toggleIsDoneAll($event)" class="custom-control-input">
+                                                    <label for="o_field_input_28_all" class="custom-control-label">​
+                                                        Hoàn thành
+                                                    </label>
+                                                </div>
+                                            </th>
+                                            <th width="100"></th>
+                                            <!-- <th>Hoàn tất</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let step of dotKhamStepList;let i = index">
+                                            <td width="200">
+                                                {{step.product.name}}
+                                            </td>
+                                            <td width="200" (click)="setEditingStep(step)">
+                                                <span
+                                                    *ngIf="!editingStep || editingStep.id != step.id">{{step.name}}</span>
+                                                <div class="d-flex" *ngIf="editingStep && editingStep.id == step.id">
+                                                    <input (keydown.enter)="updateStepName($event, step)"
+                                                        [value]="step.name" type="text"
+                                                        class="form-control updateStepName" />
+                                                    <button type="button" class="btn btn-sm btn-light"
+                                                        (click)="$event.stopPropagation();setEditingStep(null);">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td width="100">
+                                                <div
+                                                    class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                                    <input type="checkbox" [checked]="step.isDone"
+                                                        (change)="$event.stopPropagation();toggleIsDone(step, $event)"
+                                                        [id]="'o_field_input_28' + i" class="custom-control-input">
+                                                    <label [for]="'o_field_input_28' + i"
+                                                        class="custom-control-label">​</label>
+                                                </div>
+                                                <!-- <button class="btn btn-sm btn-secondary"
                                                 (click)="assignDotKham(step)">{{step.dotKham ? step.dotKham.name : 'Chưa khám'}}</button> -->
-                                        </td>
-                                        <td width="100">
-                                            <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
-                                                title="Thêm công đoạn lên trên"
-                                                (click)="$event.stopPropagation();copyInsert(step, 'up', i)">
-                                                <i class="far fa-copy mr-1"></i>
-                                                <i class="fas fa-arrow-up"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
-                                                title="Thêm công đoạn xuống dưới"
-                                                (click)="$event.stopPropagation();copyInsert(step, 'down', i)">
-                                                <i class="far fa-copy mr-1"></i>
-                                                <i class="fas fa-arrow-down"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger"
-                                                title="Xóa công đoạn"
-                                                (click)="$event.stopPropagation();deleteStep(step, i)">
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                        </td>
-                                        <!-- <td>
+                                            </td>
+                                            <td width="100">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
+                                                    title="Thêm công đoạn lên trên"
+                                                    (click)="$event.stopPropagation();copyInsert(step, 'up', i)">
+                                                    <i class="far fa-copy mr-1"></i>
+                                                    <i class="fas fa-arrow-up"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
+                                                    title="Thêm công đoạn xuống dưới"
+                                                    (click)="$event.stopPropagation();copyInsert(step, 'down', i)">
+                                                    <i class="far fa-copy mr-1"></i>
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    title="Xóa công đoạn"
+                                                    (click)="$event.stopPropagation();deleteStep(step, i)">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                            <!-- <td>
                                             <button *ngIf="step.dotKham" class="btn btn-sm btn-secondary"
                                                 (click)="toggleIsDone(step)">
                                                 <span *ngIf="step.isDone === false">Chưa xong</span>
@@ -234,107 +232,108 @@
                                                 Chưa khám
                                             </button>
                                         </td> -->
-                                    </tr>
-                                </tbody>
-                            </table>
-                          </ng-template>
-                        </li>
-                        <li [ngbNavItem]="2">
-                          <a ngbNavLink>Đơn thuốc</a>
-                          <ng-template ngbNavContent>
-                            <div>
-                                <div class="mb-2">
-                                    <button type="button" class="btn btn-secondary btn-sm" (click)="actionCreateToaThuoc()">
-                                        Kê đơn thuốc
-                                    </button>
-                                </div>
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Số</th>
-                                            <th>Ngày</th>
-                                            <th>Bác sĩ</th>
-                                            <th>Chuẩn đoán</th>
-                                            <th>#</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let line of toaThuocs">
-                                            <td>
-                                                <a class="text-primary" style="cursor: pointer;"
-                                                    (click)="editToaThuoc(line)">{{line.name}}</a>
-                                            </td>
-                                            
-                                            <td>{{ line.date | date : 'short' }}</td>
-                                            <td>{{ line.userName }}</td>
-                                            <td>{{ line.diagnostic }}</td>
-                                            <td>
-                                                <button [disabled]="invoiceState=='cancel'" type="button"
-                                                    class="btn btn-icon btn-sm btn-light mr-1" title="In đơn thuốc"
-                                                    (click)="printToaThuoc(line)">
-                                                    <i class="fas fa-print"></i> In
-                                                </button>
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                          </ng-template>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink>Đơn thuốc</a>
+                            <ng-template ngbNavContent>
+                                <div>
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            (click)="actionCreateToaThuoc()">
+                                            Kê đơn thuốc
+                                        </button>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Số</th>
+                                                <th>Ngày</th>
+                                                <th>Bác sĩ</th>
+                                                <th>Chuẩn đoán</th>
+                                                <th>#</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let line of toaThuocs">
+                                                <td>
+                                                    <a class="text-primary" style="cursor: pointer;"
+                                                        (click)="editToaThuoc(line)">{{line.name}}</a>
+                                                </td>
+
+                                                <td>{{ line.date | date : 'short' }}</td>
+                                                <td>{{ line.userName }}</td>
+                                                <td>{{ line.diagnostic }}</td>
+                                                <td>
+                                                    <button [disabled]="invoiceState=='cancel'" type="button"
+                                                        class="btn btn-icon btn-sm btn-light mr-1" title="In đơn thuốc"
+                                                        (click)="printToaThuoc(line)">
+                                                        <i class="fas fa-print"></i> In
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </ng-template>
                         </li>
                         <li [ngbNavItem]="3">
-                          <a ngbNavLink>Hình ảnh</a>
-                          <ng-template ngbNavContent>
-                            <div class="o_chatter oe_chatter">
-                                <div class="o_mail_chatter_attachments">
-                                    <div class="o_chatter_attachment">
-                                        <div class="o_border_dashed">
-                                            <span class="o_attach_title">Hình ảnh</span>
-                                        </div>
-                                        <div class="o_attachments_previews">
-                                            <!-- Preview hình ảnh -->
-                                            <div class="o_attachment" *ngFor="let img of imagesPreview">
-                                                <div class="o_attachment_wrap" (click)="viewImage(img)">
-                                                    <div class="o_image_box">
-                                                        <div class="o_attachment_image" id="{{img.name}}"
-                                                            [style.background-image]="'url('+ webImageApi + '/' + img.uploadId + '/240x240)'">
-                                                        </div>
-                                                        <div class="o_image_overlay o_attachment_view">
-                                                            <span class="fa fa-times o_attachment_delete_cross"
-                                                                (click)="deleteAttachments(img, $event)"
-                                                                title="Delete {{img.name}}"></span>
-                                                            <span
-                                                                class="o_attachment_title text-white">{{img.name}}</span>
-                                                            <a class="o_attachment_download"
-                                                                (click)="stopPropagation($event)"
-                                                                href="{{webContentApi}}/{{img.uploadId}}">
-                                                                <i aria-label="Download"
-                                                                    class="fa fa-download text-white"
-                                                                    role="img"></i>
-                                                            </a>
+                            <a ngbNavLink>Hình ảnh</a>
+                            <ng-template ngbNavContent>
+                                <div class="o_chatter oe_chatter">
+                                    <div class="o_mail_chatter_attachments">
+                                        <div class="o_chatter_attachment">
+                                            <div class="o_border_dashed">
+                                                <span class="o_attach_title">Hình ảnh</span>
+                                            </div>
+                                            <div class="o_attachments_previews">
+                                                <!-- Preview hình ảnh -->
+                                                <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
+                                                    <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                                        <div class="o_image_box">
+                                                            <div class="o_attachment_image" id="{{img.name}}"
+                                                                [style.background-image]="'url('+ webImageApi + '/' + img.uploadId + '/240x240?crop=true)'">
+                                                            </div>
+                                                            <div class="o_image_overlay o_attachment_view">
+                                                                <span class="fa fa-times o_attachment_delete_cross"
+                                                                    (click)="deleteAttachments(i, $event)"
+                                                                    title="Delete {{img.name}}"></span>
+                                                                <span
+                                                                    class="o_attachment_title text-white">{{img.name}}</span>
+                                                                <a class="o_attachment_download"
+                                                                    (click)="stopPropagation($event)"
+                                                                    href="{{webContentApi}}/{{img.uploadId}}">
+                                                                    <i aria-label="Download"
+                                                                        class="fa fa-download text-white"
+                                                                        role="img"></i>
+                                                                </a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="o_chatter_attachment_form">
-                                            <div class="o_hidden_input_file ">
-                                                <div class="o_form_binary_form"><input #inputFile
-                                                        class="o_input_file" multiple="multiple" name="ufile"
-                                                        type="file" accept="image/*"
-                                                        (change)="addAttachments($event)">
-                                                    <div class="text-center">
-                                                        <span class="btn btn-link o_upload_attachments_button"
-                                                            (click)="inputFile.click()">
-                                                            <span class="fa fa-plus-square"></span> Chọn file
-                                                        </span>
+                                            <div class="o_chatter_attachment_form">
+                                                <div class="o_hidden_input_file ">
+                                                    <div class="o_form_binary_form"><input #inputFile
+                                                            class="o_input_file" multiple="multiple" name="ufile"
+                                                            type="file" accept="image/*"
+                                                            (change)="addPartnerImages($event)">
+                                                        <div class="text-center">
+                                                            <span class="btn btn-link o_upload_attachments_button"
+                                                                (click)="inputFile.click()">
+                                                                <span class="fa fa-plus-square"></span> Chọn file
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                          </ng-template>
+                            </ng-template>
                         </li>
                     </ul>
 
@@ -349,13 +348,12 @@
 
 <div class="modal-footer">
     <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm" (click)="onSave()"
-    *ngIf="!id">
-    Lưu</button>
+        *ngIf="!id">
+        Lưu</button>
     <button type="button" class="btn btn-primary btn-sm" (click)="onUpdate()" *ngIf="id">
         Lưu</button>
     <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm" (click)="onConfirm()"
         *ngIf="id && getState === 'draft'">
         Xác nhận</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-light btn-sm mr-2" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </div>

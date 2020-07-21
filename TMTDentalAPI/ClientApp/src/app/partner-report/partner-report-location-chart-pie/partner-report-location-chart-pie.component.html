@@ -1,0 +1,50 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê khách hàng lân cận phòng khám
+            </li>
+        </ol>
+        <div class="o_cp_right">
+
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div>
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 text-center">
+                <kendo-chart *ngIf="pieDataDistrict.length" title="Theo quận/huyện lân cận phòng khám">
+                    <kendo-chart-legend position="bottom"></kendo-chart-legend>
+                    <kendo-chart-series>
+                        <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataDistrict" field="total"
+                            categoryField="name" [labels]="{ visible: true, content: labelContent }">
+                        </kendo-chart-series-item>
+                    </kendo-chart-series>
+                </kendo-chart>
+                <p *ngIf="!pieDataDistrict.length">Không có dữ liệu</p>
+            </div>
+            <div class="col-6 text-center">
+                <kendo-chart *ngIf="pieDataWard.length" title="Theo phường/xã lân cận phòng khám">
+                    <kendo-chart-legend position="bottom"></kendo-chart-legend>
+                    <kendo-chart-series>
+                        <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataWard" field="total"
+                            categoryField="name" [labels]="{ visible: true, content: labelContent }">
+                        </kendo-chart-series-item>
+                    </kendo-chart-series>
+                </kendo-chart>
+                <p *ngIf="!pieDataWard.length">Không có dữ liệu</p>
+            </div>
+        </div>
+    </div>
+</div>

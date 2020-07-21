@@ -231,6 +231,9 @@ namespace Infrastructure.Services
             if (string.IsNullOrEmpty(UserId))
                 return null;
 
+            if (IsUserRoot)
+                return null;
+
             if (Sudo)
                 return null;
 

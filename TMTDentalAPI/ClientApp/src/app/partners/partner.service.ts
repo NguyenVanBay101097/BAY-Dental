@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
@@ -80,10 +80,31 @@ export class PartnerAddRemoveTags {
     tagIds: string[];
 }
 
+export class PartnerImageBasic {
+    id: string;
+    name: string;
+    date: string;
+    note: string;
+    uploadId: string;
+}
+
+export class PartnerImageSave {
+    name: string;
+    date: string;
+    note: string;
+    formData: FormData;
+}
+
+export class PartnerImageViewModel {
+    date: string;
+    partnerImages: PartnerImageBasic[];
+}
+
 @Injectable()
 export class PartnerService {
     apiUrl = 'api/Partners';
     apiAccountInvoiceUrl = 'api/accountinvoices';
+    apiPartnerImage = "api/PartnerImages";
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     autocomplete(filter: string, customer: boolean)
@@ -361,6 +382,26 @@ export class PartnerService {
             this.baseApi + this.apiUrl + "/ExportExcelFile", paged,
             { responseType: "blob" }
         );
+    }
+
+    getReportLocationCompanyWard(val): Observable<PartnerReportLocationWard[]> {
+        return this.http.post<PartnerReportLocationWard[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyWard', val);
+    }
+
+    getReportLocationCompanyDistrict(val): Observable<PartnerReportLocationDistrict[]> {
+        return this.http.post<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyDistrict', val);
+    }
+
+    uploadPartnerImage(val): Observable<PartnerImageBasic[]> {
+        return this.http.post<PartnerImageBasic[]>(this.baseApi + this.apiPartnerImage + '/BinaryUploadPartnerImage', val)
+    }
+
+    getPartnerImageIds(val): Observable<PartnerImageBasic[]> {
+        return this.http.post<PartnerImageBasic[]>(this.baseApi + this.apiPartnerImage + '/SearchRead', val)
+    }
+
+    deleteParnerImage(id) {
+        return this.http.delete(this.baseApi + this.apiPartnerImage + '/' + id);
     }
 }
 

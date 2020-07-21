@@ -44,30 +44,34 @@ namespace Infrastructure.Services
 
         public async Task<RealRevenueReportResult> GetReport(RealRevenueReportSearch val)
         {
-            //thời gian, tiền thực thu, doanh thu, còn nợ
-            var companyId = CompanyId;
             var amlObj = GetService<IAccountMoveLineService>();
-            var query = amlObj._QueryGet(state: "posted", companyId: companyId);
-            query = query.Where(x => x.Account.InternalType == "receivable" && !x.FullReconcileId.HasValue && !x.Reconciled);
-
-            var result = await query.GroupBy(x => 0).Select(x => new RealRevenueReportResult
+            var date_from = val.DateFrom;
+            var date_to = val.DateTo.HasValue ? val.DateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
+            var accountTypes = new string[] { "receivable" };
+            decimal begin = 0;
+            if (date_from.HasValue)
             {
-                TotalAmountResidual = x.Sum(s => s.AmountResidual)
-            }).FirstOrDefaultAsync();
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
+                query = query.Where(x => accountTypes.Contains(x.Account.InternalType));
+                begin = (await query.SumAsync(x => x.Debit - x.Credit));
+            }
 
-            if (result == null)
-                return new RealRevenueReportResult();
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
+            query2 = query2.Where(x => accountTypes.Contains(x.Account.InternalType));
 
-            result.Items = await query.GroupBy(x => new {
-                PartnerId = x.PartnerId,
-                PartnerName = x.Partner.Name,
-            })
-                  .Select(x => new RealRevenueReportItem
-                  {
-                      Name = x.Key.PartnerName,
-                      AmountResidual = x.Sum(s => s.AmountResidual),
-                  }).ToListAsync();
-            return result;
+            var res = await query2.GroupBy(x => 0)
+                    .Select(x => new RealRevenueReportResult
+                    {
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                    }).FirstOrDefaultAsync();
+
+            if (res == null)
+                return res;
+
+            res.Begin = begin;
+            res.End = res.Begin + res.Debit - res.Credit;
+            return res;
         }
     }
 }

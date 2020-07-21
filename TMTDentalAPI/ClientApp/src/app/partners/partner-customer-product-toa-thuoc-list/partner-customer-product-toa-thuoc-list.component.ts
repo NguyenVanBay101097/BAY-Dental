@@ -88,7 +88,6 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa: Đơn Thuốc';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.partnerId = this.id;
-
     modalRef.result.then((result) => {
       this.loadData();
       if (result.print) {
@@ -102,7 +101,6 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: Đơn Thuốc';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa đơn thuốc này?';
-
     modalRef.result.then(() => {
       this.toaThuocService.delete(item.id).subscribe(() => {
         this.loadData();

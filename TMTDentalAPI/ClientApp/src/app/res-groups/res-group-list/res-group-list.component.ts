@@ -7,6 +7,7 @@ import { ResGroupService, ResGroupPaged, ResGroupBasic } from '../res-group.serv
 import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-res-group-list',
@@ -27,7 +28,7 @@ export class ResGroupListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private resGroupService: ResGroupService, private dialogService: DialogService,
-    private router: Router, private modalService: NgbModal) {
+    private router: Router, private modalService: NgbModal, private notificationService: NotificationService) {
   }
 
   ngOnInit() {
@@ -49,6 +50,18 @@ export class ResGroupListComponent implements OnInit {
     modalRef.result.then(() => {
       this.resGroupService.resetSecurityData().subscribe(() => {
         this.loadDataFromApi();
+      });
+    });
+  }
+
+  updateModels() {
+    this.resGroupService.updateModels().subscribe(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
       });
     });
   }

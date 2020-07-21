@@ -45,6 +45,7 @@ declare var mxKeyHandler: any;
   styleUrls: ["./tcare-campaign-create-update.component.css"],
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit {
+
   editorDefind: any;
   id: string;
   offsetY = 30;
@@ -55,6 +56,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit {
   cellRule: any;
   doc: any;
   submited = false;
+
   constructor(
     private activeRoute: ActivatedRoute,
     private fb: FormBuilder,

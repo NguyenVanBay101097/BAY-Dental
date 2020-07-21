@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
@@ -31,14 +32,22 @@ namespace TMTDentalAPI.Controllers
         private readonly IIrConfigParameterService _irConfigParameterService;
         private readonly IImportSampleDataService _importSampleDataService;
         private readonly IUnitOfWorkAsync _unitOfWork;
-
+        private readonly IUserService _userService;
+        private readonly ICompanyService _companyService;
+        private readonly CatalogDbContext _dbContext;
+        private readonly IResGroupService _groupService;
 
         public WebController(
             IIrAttachmentService attachmentService,
             IMapper mapper,
             IUploadService uploadService,
             IIrConfigParameterService irConfigParameterService,
-            IImportSampleDataService importSampleDataService, IUnitOfWorkAsync unitOfWork)
+            IImportSampleDataService importSampleDataService,
+            IUnitOfWorkAsync unitOfWork,
+            IUserService userService,
+            ICompanyService companyService,
+             CatalogDbContext dbContext,
+             IResGroupService groupService)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
@@ -46,6 +55,10 @@ namespace TMTDentalAPI.Controllers
             _irConfigParameterService = irConfigParameterService;
             _importSampleDataService = importSampleDataService;
             _unitOfWork = unitOfWork;
+            _userService = userService;
+            _companyService = companyService;
+            _dbContext = dbContext;
+            _groupService = groupService;
         }
 
         [HttpGet("[action]")]
@@ -56,15 +69,24 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             if (action == "Installed")
             {
-               
                 await _importSampleDataService.ImportSampleData();
-            }
 
+            }
             await _irConfigParameterService.SetParam("import_sample_data", action);
             _unitOfWork.Commit();
 
             return NoContent();
 
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DeleteSampleData()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _importSampleDataService.DeleteSampleData();
+            _unitOfWork.Commit();
+
+            return NoContent();
         }
 
 

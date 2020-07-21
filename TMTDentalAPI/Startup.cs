@@ -74,7 +74,7 @@ namespace TMTDentalAPI
             services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
-          
+
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -125,7 +125,7 @@ namespace TMTDentalAPI
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
-            
+
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
@@ -201,7 +201,9 @@ namespace TMTDentalAPI
             services.AddScoped<IServiceCardOrderLineService, ServiceCardOrderLineService>();
             services.AddScoped<IServiceCardCardService, ServiceCardCardService>();
             services.AddScoped<ISaleOrderServiceCardCardRelService, SaleOrderServiceCardCardRelService>();
+            services.AddScoped<IPartnerImageService, PartnerImageService>();
 
+            services.AddScoped<IReportFinancialService, ReportFinancialService>();
             services.AddScoped<ICardTypeService, CardTypeService>();
             services.AddScoped<ICardCardService, CardCardService>();
             services.AddScoped<ISaleSettingsService, SaleSettingsService>();
@@ -243,6 +245,11 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareJobService, TCareJobService>();
             services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
+            services.AddScoped<ILoaiThuChiService, LoaiThuChiService>();
+            services.AddScoped<IPhieuThuChiService, PhieuThuChiService>();
+            services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
+            services.AddScoped<IReportJournalService, ReportJournalService>();
+            services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -267,6 +274,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleOrderLineProfile());
                 mc.AddProfile(new ApplicationUserProfile());
                 mc.AddProfile(new AccountAccountProfile());
+                mc.AddProfile(new AccountAccountTypeProfile());
                 mc.AddProfile(new AccountJournalProfile());
                 mc.AddProfile(new AccountInvoiceProfile());
                 mc.AddProfile(new AccountInvoiceLineProfile());
@@ -339,6 +347,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareRuleProfile());
                 mc.AddProfile(new TCareMessagingProfile());
                 mc.AddProfile(new IrAttachmentProfile());
+                mc.AddProfile(new PartnerImageProfile());
+                mc.AddProfile(new LoaiThuChiProfile());
+                mc.AddProfile(new PhieuThuChiProfile());
+                mc.AddProfile(new AccountFinancialReportProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -372,7 +384,7 @@ namespace TMTDentalAPI
                     UsePageLocksOnDequeue = true,
                     DisableGlobalLocks = true
                 }));
-           
+
             // Add the processing server as IHostedService
             services.AddHangfireServer(option =>
             {
@@ -419,7 +431,7 @@ namespace TMTDentalAPI
                         new List<string>()
                     }
                 });
-                
+
             });
 
 

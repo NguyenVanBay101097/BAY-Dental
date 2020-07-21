@@ -80,9 +80,9 @@ namespace Infrastructure.Services
                 }
 
                 var moves = await _PreparePaymentMoves(new List<AccountPayment>() { rec });
-              
+
                 var amlObj = GetService<IAccountMoveLineService>();
-                foreach(var move in moves)
+                foreach (var move in moves)
                     amlObj.PrepareLines(move.Lines);
 
                 await moveObj.CreateMoves(moves);
@@ -148,7 +148,7 @@ namespace Infrastructure.Services
             {
                 lines = invoices.SelectMany(x => x.Lines).Where(x => !x.Reconciled && x.AccountId == self.DestinationAccount.Id).ToList();
             }
-         
+
 
             await amlObj.Reconcile(lines);
 
@@ -268,6 +268,8 @@ namespace Infrastructure.Services
             return all_move_vals;
         }
 
+       
+
         private async Task<AccountMove> _GetMoveVals(AccountPayment rec, AccountJournal journal = null)
         {
             var seqObj = GetService<IIRSequenceService>();
@@ -314,7 +316,7 @@ namespace Infrastructure.Services
 
             await amlObj.CreateAsync(counterpartAml);
 
-            var payment_diff = _ComputePaymentDifference(new List<AccountPayment>() { rec})[rec.Id];
+            var payment_diff = _ComputePaymentDifference(new List<AccountPayment>() { rec })[rec.Id];
             if (rec.PaymentDifferenceHandling == "reconcile" && payment_diff != 0)
             {
                 var writeoffLine = _GetSharedMoveLineVals(rec, 0, 0, move, null);
@@ -335,7 +337,7 @@ namespace Infrastructure.Services
                         amountWO = totalResidualCompanySigned - totalPaymentCompanySigned;
                     }
                 }
-           
+
 
                 var debitWO = amountWO > 0 ? amountWO : 0;
                 var creditWO = amountWO < 0 ? -amountWO : 0;
@@ -400,7 +402,7 @@ namespace Infrastructure.Services
             var commercialPartnerId = self.Partner.Id;
 
             var debt_lines = moveLineObj.SearchQuery(x => x.Reconciled == false && x.Id != paymentLine.Id && x.PartnerId == commercialPartnerId &&
-            ((self.PartnerType == "customer" && x.Account.InternalType == "receivable") 
+            ((self.PartnerType == "customer" && x.Account.InternalType == "receivable")
             || (self.PartnerType == "supplier" && x.Account.InternalType == "payable")),
             orderBy: x => x.OrderBy(s => s.Date)).Include(x => x.Invoice).Include("Invoice.PaymentMoveLines").Include(x => x.Move).ToList();
 
@@ -623,8 +625,8 @@ namespace Infrastructure.Services
         {
             foreach (var order in saleOrders)
             {
-                var invoices = order.OrderLines.SelectMany(x=>x.SaleOrderLineInvoiceRels).Select(x=>x.InvoiceLine).Select(x=>x.Invoice)
-                    .OrderByDescending(x=>x.DateDue).ToList();
+                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoiceRels).Select(x => x.InvoiceLine).Select(x => x.Invoice)
+                    .OrderByDescending(x => x.DateDue).ToList();
                 foreach (var inv in invoices)
                 {
                     if (amount > inv.Residual)
@@ -918,11 +920,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<AccountPayment> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.account_payment_comp_rule":
-                    return new InitialSpecification<AccountPayment>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<AccountPayment>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }
@@ -930,7 +933,8 @@ namespace Infrastructure.Services
 
         public async Task<AccountPaymentPrintVM> GetPrint(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id).Select(x => new AccountPaymentPrintVM { 
+            var res = await SearchQuery(x => x.Id == id).Select(x => new AccountPaymentPrintVM
+            {
                 CompanyName = x.Company.Name,
                 CompanyStreet = x.Company.Partner.Street,
                 CompanyCity = x.Company.Partner.CityName,
@@ -950,11 +954,12 @@ namespace Infrastructure.Services
                 PartnerStreet = x.Partner.Street,
                 PartnerWard = x.Partner.WardName,
                 PaymentDate = x.PaymentDate,
-                SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM { 
-                   AmountTotal = s.SaleOrder.AmountTotal,
-                   DateOrder = s.SaleOrder.DateOrder,
-                   Name = s.SaleOrder.Name,
-                   Residual = s.SaleOrder.Residual
+                SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM
+                {
+                    AmountTotal = s.SaleOrder.AmountTotal,
+                    DateOrder = s.SaleOrder.DateOrder,
+                    Name = s.SaleOrder.Name,
+                    Residual = s.SaleOrder.Residual
                 }),
             }).FirstOrDefaultAsync();
 

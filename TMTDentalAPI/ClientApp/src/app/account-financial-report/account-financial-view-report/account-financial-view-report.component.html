@@ -1,0 +1,93 @@
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li class="active">Báo cáo kết quả kinh doanh</li>
+    </ol>
+</div>
+
+<div class="container bg-white my-3">
+    <div class="o_form_view o_form_nosheet o_form_editable">
+        <div class="o_group" [formGroup]="formGroup">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Ngày bắt đầu
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker class="form-control" formControlName="dateFrom"></kendo-datepicker>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Ngày kết thúc
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker class="form-control" formControlName="dateTo"></kendo-datepicker>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr hasGroups [groups]="'base.group_multi_company'">
+                        <td colspan="1" class="o_td_label">
+                            <label for="o_field_input_10" class="o_form_label o_form_label_help">
+                                Chi nhánh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-combobox [data]="filteredCompanies" [placeholder]="'Tất cả chi nhánh'"
+                                [textField]="'name'" [filterable]="true" #companyCbx formControlName="company"
+                                [valueField]="'id'">
+                            </kendo-combobox>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mb-2">
+            <button type="button" class="btn btn-primary btn-sm" (click)="reportFinancial()">Báo cáo</button>
+        </div>
+        <div>
+            <div class="o_form_field o_view_manager_content" *ngIf="accountLines.length > 0">
+                <div class="table-responsive">
+                    <div>
+                        <table class="o_list_view table table-sm">
+                            <tbody>
+                                <ng-container *ngFor="let line of accountLines">
+                                    <tr *ngIf="line.level != 0">
+                                        <td>
+                                            <span
+                                                [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.name}}
+                                                <span hasGroups [groups]="'base.group_multi_company'" *ngIf="line.companyName"> - {{line.companyName}}</span></span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span 
+                                                [ngStyle]="line.level < 3 ? {'font-weight':'bold'} : {'font-weight':'normal'}">{{line.balance | number}}</span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                            <tfoot>
+                                <ng-container *ngFor="let line of accountLines">
+                                    <tr *ngIf="line.level == 0">
+                                        <td class="text-right"></td>
+                                        <td class="text-right">
+                                            <strong>{{line.balance | number}}</strong>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

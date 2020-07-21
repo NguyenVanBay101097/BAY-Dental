@@ -18,5 +18,7 @@ namespace Infrastructure.Services
         Task InsertSecurityData();
         Task InsertCompanyData(Company company);
         Task Unlink(Company self);
+        Task InsertModuleProductData();
+        Task InsertModuleDentalData();
     }
 }
