@@ -26,8 +26,7 @@ namespace TMTDentalAPI.Controllers
             IUploadService uploadService,
             IPartnerImageService partnerImageService,
             IPartnerService partnerService,
-            IMapper mapper
-            )
+            IMapper mapper)
         {
             _partnerImageService = partnerImageService;
             _uploadService = uploadService;
@@ -38,13 +37,6 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> BinaryUploadPartnerImage([FromForm]UploadPartnerImageViewModel val)
         {
-            var partner = await _partnerService.GetByIdAsync(val.PartnerId);
-
-            if (val == null || !ModelState.IsValid || partner == null)
-            {
-                return BadRequest();
-            }
-
             var res = await _partnerImageService.BinaryUploadPartnerImage(val);
             return Ok(res);
         }
@@ -55,7 +47,6 @@ namespace TMTDentalAPI.Controllers
             var res = await _partnerImageService.SearchRead(val);
             return Ok(res);
         }
-
 
 
         [HttpDelete("{id}")]

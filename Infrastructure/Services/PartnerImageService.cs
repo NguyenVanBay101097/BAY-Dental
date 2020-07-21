@@ -25,8 +25,8 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerImageBasic>> SearchRead(PartnerImageSearchRead val)
         {
             var query = SearchQuery();
-            if (val.DotkhamId.HasValue)
-                query = query.Where(x => x.DotkhamId == val.DotkhamId);
+            if (val.DotKhamId.HasValue)
+                query = query.Where(x => x.DotkhamId == val.DotKhamId);
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
 
@@ -65,8 +65,8 @@ namespace Infrastructure.Services
                 var partnerImage = new PartnerImage()
                 {
                     PartnerId = val.PartnerId,
-                    DotkhamId = val.DotkhamId.HasValue ? val.DotkhamId : null,
-                    Date = val.Date,
+                    DotkhamId = val.DotkhamId,
+                    Date = val.Date ?? DateTime.Now,
                     Name = item.Name,
                     Note = val.Note,
                     UploadId = item.Id,

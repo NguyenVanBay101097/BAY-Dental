@@ -10,6 +10,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap, groupBy, reduce } from 'rxjs/operators';
 import { of } from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-partner-customer-upload-image',
@@ -23,11 +24,12 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
   imageViewModels: PartnerImageViewModel[] = [];
   id: string;
   formGroup: FormGroup;
+  imagesGroup: any = [];
   constructor(
     private modalService: NgbModal,
     private partnerService: PartnerService,
     private fb: FormBuilder,
-    private intl: IntlService,
+    private intlService: IntlService,
     private activeRoute: ActivatedRoute
   ) { }
 
@@ -40,16 +42,15 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     });
     this.webImageApi = environment.uploadDomain + 'api/Web/Image';
     this.webContentApi = environment.uploadDomain + 'api/Web/Content';
-    if (this.id)
+    if (this.id) {
       this.getImageIds();
+    }
   }
 
   addPartnerImages(e) {
     var file_node = e.target;
     var count = file_node.files.length;
     var formData = new FormData();
-    formData.append('date', this.intl.formatDate(this.formGroup.get('date') ? this.formGroup.get('date').value : null, 'yyyy-MM-dd'));
-    formData.append('note', this.formGroup.get('note') ? this.formGroup.get('note').value : 'will be have');
     formData.append('partnerId', this.id);
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
@@ -64,7 +65,8 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
 
   }
 
-  deletePartnerImages(item, event) {
+  deletePartnerImages(index, event) {
+    var item = this.imagesPreview[index];
     event.stopPropagation();
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa hình ảnh ' + item.name;
@@ -72,13 +74,8 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     modalRef.result.then(() => {
       this.partnerService.deleteParnerImage(item.id).subscribe(
         () => {
-          var imageViewModel = this.imageViewModels.find(x => x.date == item.date);
-          if (imageViewModel) {
-            var index = imageViewModel.partnerImages.findIndex(x => x.id == item.id);
-            imageViewModel.partnerImages.splice(index, 1);
-          } else {
-            this.getImageIds();
-          }
+          this.imagesPreview.splice(index, 1);
+          this.processGroupImages();
         })
     })
   }
@@ -88,24 +85,30 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     var value = {
       partnerId: this.id
     }
+
     this.partnerService.getPartnerImageIds(value).subscribe(
       result => {
         if (result) {
-          this.imageViewModels = [];
-          result.forEach(item => {
-            var obj = new PartnerImageViewModel();
-            if (!this.imageViewModels.some(x => x.date == item.date)) {
-              obj.date = item.date;
-              if (!obj.partnerImages) {
-                obj.partnerImages = [];
-              }
-              obj.partnerImages = result.filter(x => x.date == item.date);
-              this.imageViewModels.push(obj)
-            }
-          });
+          this.imagesPreview = result;
+          this.processGroupImages();
         }
       }
     )
+  }
+
+  processGroupImages() {
+    var self = this;
+    var groups = _.groupBy(this.imagesPreview, function(obj) {
+      var date = new Date(obj.date);
+      return self.intlService.formatDate(date, 'dd/MM/yyyy');
+    });
+
+    this.imagesGroup = _.map(groups, function(group, day) {
+      return {
+        date: day,
+        images: group
+      }
+    });
   }
 
   viewImage(partnerImage: PartnerImageBasic) {

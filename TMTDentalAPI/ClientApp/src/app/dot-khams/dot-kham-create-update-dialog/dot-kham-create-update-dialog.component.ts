@@ -1020,7 +1020,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     var formData = new FormData();
     formData.append('partnerId', this.partnerId);
     formData.append('dotKhamId', this.id);
-    formData.append('date', this.intlService.formatDate(new Date(), 'yyyy-MM-dd'));
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
       formData.append('files', file);
@@ -1034,15 +1033,16 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   }
 
-  deletePartnerImages(item, event) {
+  deleteAttachments(index, event) {
     event.stopPropagation();
+    var item = this.imagesPreview[index];
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa hình ảnh ' + item.name;
 
     modalRef.result.then(() => {
       this.partnerService.deleteParnerImage(item.id).subscribe(
         () => {
-          this.getImageIds();
+          this.imagesPreview.splice(index, 1);
         })
     })
   }
@@ -1050,24 +1050,14 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   getImageIds() {
     this.imagesPreview = [];
     var value = {
-      partnerId: this.id
+      dotKhamId: this.id
     }
-    this.partnerService.getPartnerImageIds(value).subscribe(
-      result => {
-        if (result) {
 
-          result.forEach(item => {
-            var obj = new PartnerImageViewModel();
-            if (!this.imageViewModels.some(x => x.date == item.date)) {
-              obj.date = item.date;
-              if (!obj.partnerImages) {
-                obj.partnerImages = [];
-              }
-              obj.partnerImages = result.filter(x => x.date == item.date);
-              this.imageViewModels.push(obj)
-            }
-          });
-        }
+    this.partnerService.getPartnerImageIds(value).subscribe(
+      rs => {
+        rs.forEach(e => {
+          this.imagesPreview.push(e);
+        });
       }
     )
   }
@@ -1075,7 +1065,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   stopPropagation(event) {
     event.stopPropagation();
   }
-
 
   //LẤY ĐUÔI MỞ RỘNG CỦA FILE
   getFileExtension(name: string) {

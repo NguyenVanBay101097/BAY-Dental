@@ -1201,14 +1201,20 @@ td.oe_form_group_cell_label label {
     align-items: center;
 }
 
-.o_attachments_view_image {
-    padding: 10px 0;
+.o_attachments_date_separator {
+    margin-top: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 1px solid #ced4da;
 }
 
-.o_attachments_date {
+.o_attachments_date_separator .o_attachments_date {
+    position: relative;
+    top: 10px;
+    margin: 0 auto;
+    padding: 0 10px;
     font-weight: bold;
-    border-bottom: 1px solid lavender;
-    max-width: 90px;
+    background: white;
 }
 
 span.char-count {
