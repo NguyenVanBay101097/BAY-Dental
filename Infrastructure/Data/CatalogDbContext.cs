@@ -172,6 +172,8 @@ namespace Infrastructure.Data
         public DbSet<FacebookPage> FacebookPages { get; set; }
 
         public DbSet<FacebookScheduleAppointmentConfig> FacebookScheduleAppointmentConfigs { get; set; }
+        public DbSet<PartnerImage> PartnerImages { get; set; }
+
 
 
         //nguyen thang
@@ -322,6 +324,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCarePropertyConfiguration());
             builder.ApplyConfiguration(new TCareMessagingConfiguration());
             builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
+            builder.ApplyConfiguration(new PartnerImageConfiguration());
             builder.ApplyConfiguration(new LoaiThuChiConfiguration());
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());

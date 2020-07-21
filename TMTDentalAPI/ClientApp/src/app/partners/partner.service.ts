@@ -80,10 +80,31 @@ export class PartnerAddRemoveTags {
     tagIds: string[];
 }
 
+export class PartnerImageBasic {
+    id: string;
+    name: string;
+    date: string;
+    note: string;
+    uploadId: string;
+}
+
+export class PartnerImageSave {
+    name: string;
+    date: string;
+    note: string;
+    formData: FormData;
+}
+
+export class PartnerImageViewModel {
+    date: string;
+    partnerImages: PartnerImageBasic[];
+}
+
 @Injectable()
 export class PartnerService {
     apiUrl = 'api/Partners';
     apiAccountInvoiceUrl = 'api/accountinvoices';
+    apiPartnerImage = "api/PartnerImages";
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     autocomplete(filter: string, customer: boolean)
@@ -369,6 +390,18 @@ export class PartnerService {
 
     getReportLocationCompanyDistrict(val): Observable<PartnerReportLocationDistrict[]> {
         return this.http.post<PartnerReportLocationDistrict[]>(this.baseApi + this.apiUrl + '/ReportLocationCompanyDistrict', val);
+    }
+
+    uploadPartnerImage(val): Observable<PartnerImageBasic[]> {
+        return this.http.post<PartnerImageBasic[]>(this.baseApi + this.apiPartnerImage + '/BinaryUploadPartnerImage', val)
+    }
+
+    getPartnerImageIds(val): Observable<PartnerImageBasic[]> {
+        return this.http.post<PartnerImageBasic[]>(this.baseApi + this.apiPartnerImage + '/SearchRead', val)
+    }
+
+    deleteParnerImage(id) {
+        return this.http.delete(this.baseApi + this.apiPartnerImage + '/' + id);
     }
 }
 

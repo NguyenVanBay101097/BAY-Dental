@@ -201,6 +201,8 @@ namespace TMTDentalAPI
             services.AddScoped<IServiceCardOrderLineService, ServiceCardOrderLineService>();
             services.AddScoped<IServiceCardCardService, ServiceCardCardService>();
             services.AddScoped<ISaleOrderServiceCardCardRelService, SaleOrderServiceCardCardRelService>();
+            services.AddScoped<IPartnerImageService, PartnerImageService>();
+
             services.AddScoped<IReportFinancialService, ReportFinancialService>();
             services.AddScoped<ICardTypeService, CardTypeService>();
             services.AddScoped<ICardCardService, CardCardService>();
@@ -345,6 +347,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareRuleProfile());
                 mc.AddProfile(new TCareMessagingProfile());
                 mc.AddProfile(new IrAttachmentProfile());
+                mc.AddProfile(new PartnerImageProfile());
                 mc.AddProfile(new LoaiThuChiProfile());
                 mc.AddProfile(new PhieuThuChiProfile());
                 mc.AddProfile(new AccountFinancialReportProfile());

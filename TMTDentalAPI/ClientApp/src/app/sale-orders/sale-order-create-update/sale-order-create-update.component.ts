@@ -59,12 +59,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
-  discountDefault:DiscountDefault;
-  
+  discountDefault: DiscountDefault;
+
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
-  @ViewChild(AccountPaymentPrintComponent, {static: true}) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+  @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -84,7 +84,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService,public activeModal: NgbActiveModal, ) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, public activeModal: NgbActiveModal,) {
   }
 
   ngOnInit() {
@@ -376,7 +376,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
- 
+
 
   getCouponLines() {
     var lines = this.orderLines.value;
@@ -487,12 +487,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  onApplyDiscount(val: any){
+  onApplyDiscount(val: any) {
     if (this.id) {
       this.discountDefault = val;
       this.discountDefault.saleOrderId = this.id;
       this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
-        this.loadRecord();      
+        this.loadRecord();
       }, (error) => {
         this.errorService.show(error);
       });
@@ -511,7 +511,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         val.saleOrderId = result.id;
         this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
-          this.loadRecord();        
+          this.loadRecord();
         }, (error) => {
           this.errorService.show(error);
         });
@@ -850,14 +850,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionCancel() {
     if (this.id) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.title = 'Hủy phiếu điều trị';
-        modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
-        modalRef.result.then(() => {
-          this.saleOrderService.actionCancel([this.id]).subscribe(() => {
-            this.loadRecord();
-          });
-        }, () => {
+      modalRef.componentInstance.title = 'Hủy phiếu điều trị';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
+      modalRef.result.then(() => {
+        this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+          this.loadRecord();
         });
+      }, () => {
+      });
     }
   }
 
@@ -895,9 +895,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
 
-      if (this.formGroup.get('state').value == "sale"){
-        var val = this.getFormDataSave();    
-        this.saleOrderService.update(this.id,val).subscribe(() => {
+      if (this.formGroup.get('state').value == "sale") {
+        var val = this.getFormDataSave();
+        this.saleOrderService.update(this.id, val).subscribe(() => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -940,9 +940,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.orderLines.markAsDirty();
 
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-      if (this.formGroup.get('state').value == "sale"){
-        var val = this.getFormDataSave();    
-        this.saleOrderService.update(this.id,val).subscribe(() => {
+      if (this.formGroup.get('state').value == "sale") {
+        var val = this.getFormDataSave();
+        this.saleOrderService.update(this.id, val).subscribe(() => {
           this.notificationService.show({
             content: 'Sửa thành công',
             hideAfter: 3000,
@@ -1029,9 +1029,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   // hủy dịch vụ
   cancelSaleOrderLine(ids) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Hủy: Dịch vụ";
-    modalRef.result.then(() => {    
+    modalRef.result.then(() => {
       if (this.id) {
         this.saleOrderLineService.cancelOrderLine([ids]).subscribe(() => {
           this.notificationService.show({
@@ -1044,13 +1044,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.loadRecord();
         }, () => {
           this.loadRecord();
-        });      
-        }},(err) => {
-           console.log(err);
-          }
-        );
+        });
       }
-   
+    }, (err) => {
+      console.log(err);
+    }
+    );
+  }
+
 
   loadPayments() {
     if (this.id) {
@@ -1083,6 +1084,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật đợt khám';
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.partnerId = this.partner.id;
     if (this.partnerSend)
       modalRef.componentInstance.partner = this.partnerSend;
     modalRef.result.then(() => {
@@ -1099,7 +1101,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.dotKhamService.delete(dotKham.id).subscribe(() => {
         this.loadDotKhamList();
       });
-    }, () => {});
+    }, () => { });
   }
 
   deletePayment(payment) {

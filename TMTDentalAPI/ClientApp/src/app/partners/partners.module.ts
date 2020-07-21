@@ -45,6 +45,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { PopupModule } from '@progress/kendo-angular-popup';
+import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -75,7 +76,8 @@ import { PopupModule } from '@progress/kendo-angular-popup';
     PartnerCustomerTreatmentPaymentDetailComponent,
     PartnerCustomerTreatmentPaymentChildComponent,
     PartnerCustomerProductToaThuocListComponent,
-    PartnerCustomerCategoriesComponent],
+    PartnerCustomerCategoriesComponent,
+    PartnerCustomerUploadImageComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,
