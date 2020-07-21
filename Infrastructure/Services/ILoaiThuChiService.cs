@@ -18,5 +18,6 @@ namespace Infrastructure.Services
         Task<LoaiThuChi> CreateLoaiThuChi(LoaiThuChiSave val);
         Task UpdateLoaiThuChi(Guid id, LoaiThuChiSave val);
         Task RemoveLoaiThuChi(Guid id);
+        Task InsertModelsIfNotExists();
     }
 }

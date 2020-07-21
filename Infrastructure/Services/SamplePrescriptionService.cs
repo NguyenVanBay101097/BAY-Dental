@@ -122,7 +122,7 @@ namespace Infrastructure.Services
                 {
                     Name = "model_sample_prescription",
                     Module = "base",
-                    Model = "sample.prescription",
+                    Model = "ir.model",
                     ResId = model.Id.ToString()
                 });
             }
