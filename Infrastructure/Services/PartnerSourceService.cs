@@ -140,7 +140,7 @@ namespace Infrastructure.Services
                 {
                     Name = "model_res_partner_source",
                     Module = "base",
-                    Model = "res.partner.source",
+                    Model = "ir.model",
                     ResId = model.Id.ToString()
                 });
             }

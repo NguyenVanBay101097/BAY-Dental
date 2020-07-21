@@ -291,6 +291,12 @@ namespace Infrastructure.Services
 
             var partnerSourceObj = GetService<IPartnerSourceService>();
             await partnerSourceObj.InsertModelsIfNotExists();
+
+            var phieuThuChiObj = GetService<IPhieuThuChiService>();
+            await phieuThuChiObj.InsertModelsIfNotExists();
+
+            var loaiThuChiObj = GetService<ILoaiThuChiService>();
+            await loaiThuChiObj.InsertModelsIfNotExists();
         }
 
         public async Task ResetSecurityData()

@@ -19,5 +19,6 @@ namespace Infrastructure.Services
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> id);
 
+        Task InsertModelsIfNotExists();
     }
 }

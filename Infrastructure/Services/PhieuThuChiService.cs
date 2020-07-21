@@ -287,16 +287,43 @@ namespace Infrastructure.Services
             await DeleteAsync(phieuthuchi);
         }
 
-        /// <summary>
-        /// in phiếu
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        //public async Task PrintPhieuThuChi(Guid id)
-        //{
+        public async Task InsertModelsIfNotExists()
+        {
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var model = await modelDataObj.GetRef<IRModel>("account.model_phieu_thu_chi");
+            if (model == null)
+            {
+                model = new IRModel
+                {
+                    Name = "Phiếu thu chi",
+                    Model = "PhieuThuChi",
+                };
 
-        //}
+                modelObj.Sudo = true;
+                await modelObj.CreateAsync(model);
 
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Name = "model_phieu_thu_chi",
+                    Module = "account",
+                    Model = "ir.model",
+                    ResId = model.Id.ToString()
+                });
+            }
+        }
 
+        public override ISpecification<PhieuThuChi> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "account.phieu_thu_chi_comp_rule":
+                    return new InitialSpecification<PhieuThuChi>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
     }
 }
