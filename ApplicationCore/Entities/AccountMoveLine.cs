@@ -101,5 +101,8 @@ namespace ApplicationCore.Entities
 
         public Guid? PhieuThuChiId { get; set; }
         public PhieuThuChi PhieuThuChi { get; set; }
+
+        public string SalesmanId { get; set; }
+        public ApplicationUser Salesman { get; set; }
     }
 }

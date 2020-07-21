@@ -223,7 +223,8 @@ namespace Infrastructure.Services
                 Discount = self.Discount,
                 PriceUnit = self.PriceUnit,
                 DiscountType = self.DiscountType,
-                DiscountFixed = self.DiscountFixed
+                DiscountFixed = self.DiscountFixed, 
+                SalesmanId = self.SalesmanId
             };
 
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLine = self });
