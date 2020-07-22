@@ -14,9 +14,9 @@
             </div>
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
+            <div class="o_cp_buttons d-flex">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownAppointmentState"
+                    <button class="btn btn-primary dropdown-toggle btn-sm mr-1" type="button" id="dropdownAppointmentState"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Theo {{getTitle()}}
                     </button>
@@ -27,6 +27,10 @@
                         </button>
                     </div>
                 </div>
+                <kendo-combobox *ngIf="showCombobox" [data]="dataCombobox" [placeholder]="'Chọn ' + getTitle()" [filterable]="true"
+                    (valueChange)="onChangeCombobox($event)" #comboboxCbx [(ngModel)]="searchCombobox"
+                    [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
             </div>
             <div class="o_cp_sidebar">
             </div>

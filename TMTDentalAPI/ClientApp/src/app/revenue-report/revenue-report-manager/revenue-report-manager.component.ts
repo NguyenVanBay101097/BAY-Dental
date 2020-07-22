@@ -6,6 +6,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RevenueReportResult, RevenueReportService, RevenueReportSearch } from '../revenue-report.service';
+import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-revenue-report-manager',
@@ -29,6 +30,8 @@ export class RevenueReportManagerComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   viewType = 'list';
+  showCombobox = false;
+  listCompanies: CompanyBasic[] = [];
 
   groups: { text: string, value: string }[] = [
     { text: 'Ngày', value: 'date:day' },
@@ -39,6 +42,7 @@ export class RevenueReportManagerComponent implements OnInit {
     { text: 'Khách hàng', value: 'partner' },
     { text: 'Sản phẩm', value: 'product' },
     { text: 'Bác sĩ', value: 'salesman' },
+    { text: 'Chi nhánh', value: 'company' },
   ];
 
   public total: any;
@@ -46,7 +50,9 @@ export class RevenueReportManagerComponent implements OnInit {
     { field: 'balance', aggregate: 'sum' },
   ];
 
-  constructor(private intlService: IntlService, private revenueReportService: RevenueReportService) {
+  constructor(private intlService: IntlService, 
+    private revenueReportService: RevenueReportService, 
+    private companyService: CompanyService) {
   }
 
   ngOnInit() {
@@ -112,11 +118,27 @@ export class RevenueReportManagerComponent implements OnInit {
 
   setGroupBy(groupBy) {
     this.groupBy = groupBy;
-    this.loadDataFromApi();
+    if (this.groupBy == 'company') {
+      this.showCombobox = true;
+      this.loadListCompanies();
+    } else {
+      this.showCombobox = false;
+      this.loadDataFromApi();
+    }
   }
 
   setViewType(type) {
     this.viewType = type;
+  }
+
+  loadListCompanies() {
+    var val = new CompanyPaged();
+    this.companyService.getPaged(val).subscribe(result => {
+      console.log(result);
+      this.listCompanies = _.unionBy(this.listCompanies, result.items, 'id');
+      console.log(this.listCompanies);
+
+    });
   }
 }
 
