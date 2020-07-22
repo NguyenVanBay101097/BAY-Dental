@@ -79,7 +79,7 @@ namespace Infrastructure.Services
                 MessageTotal = x.Traces.Count(),
                 DeliveryTotal = x.Traces.Where(s => s.Delivery.HasValue).Count(),
                 ReadTotal = x.Traces.Where(s => s.Read.HasValue).Count(),
-
+                Active = x.Active
             }).ToListAsync();
 
             return reportItems;

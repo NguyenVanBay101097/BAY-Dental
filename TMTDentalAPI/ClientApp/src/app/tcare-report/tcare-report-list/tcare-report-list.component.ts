@@ -4,6 +4,7 @@ import {
   ReportTCareItem,
   TcareReportService,
   ReportTCareSearch,
+  ReportTCare,
 } from "../tcare-report.service";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { TCareScenarioService, TCareScenarioBasic } from "src/app/tcare/tcare-scenario.service";
@@ -21,7 +22,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 })
 export class TCareReportListComponent implements OnInit {
   loading = false;
-  items: ReportTCareItem[];
+  items: ReportTCare[];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;

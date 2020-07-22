@@ -21,5 +21,9 @@
             {{dataItem.readTotal | number}}
         </ng-template>
     </kendo-grid-column>
-
+    <kendo-grid-column field="readTotal" class="text-right" title="trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+           <div [class]="dataItem.active == false ? 'text-secondary' : 'text-success'">{{dataItem.active == false ? 'tạm dừng' : 'đang chạy'}}</div> 
+        </ng-template>
+    </kendo-grid-column>
 </kendo-grid>
