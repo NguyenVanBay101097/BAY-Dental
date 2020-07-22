@@ -245,6 +245,7 @@ namespace TMTDentalAPI
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<ITCareScenarioService, TCareScenarioService>();
             services.AddScoped<IFacebookWebhookJobService, FacebookWebhookJobService>();
+            services.AddScoped<ITCareReportService, TCareReportService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();

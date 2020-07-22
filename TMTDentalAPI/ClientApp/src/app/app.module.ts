@@ -104,6 +104,7 @@ import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
 import { AccountAccountsModule } from './account-accounts/account-accounts.module';
+import { TcareReportModule } from './tcare-report/tcare-report.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -214,6 +215,7 @@ registerLocaleData(localeVi, "vi");
     UomCategoryModule,
     UomModule,
     TcareModule,
+    TcareReportModule,
     // end
     SamplePrescriptionsModule, 
     AccountAccountsModule

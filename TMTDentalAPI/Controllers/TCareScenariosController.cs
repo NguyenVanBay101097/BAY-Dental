@@ -37,6 +37,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Autocomplete(TCareScenarioPaged val)
+        {
+            var res = await _scenarioService.GetAutocompleteAsync(val);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateAsync(TCareScenarioSave val)
         {

@@ -2,6 +2,25 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 
+export class TCareScenarioBasic
+{
+  id: string;
+  name: string;  
+}
+
+export class TCareScenarioPaged {
+  limit: number;
+  offset: number;
+  search: string;
+}
+
+export class TCareScenarioPaging {
+  offset: number;
+  limit: number;
+  totalItems: number;
+  items: TCareScenarioBasic[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,6 +50,10 @@ export class TCareScenarioService {
 
   delete(id) {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  autocomplete(val: TCareScenarioPaged): Observable<TCareScenarioBasic[]> {
+    return this.http.post<TCareScenarioBasic[]>(this.base_api + this.apiUrl + "/Autocomplete", val);
   }
 
   actionStartCampaign(val) {
