@@ -23,6 +23,7 @@ export class ReportTCareItem {
   messageTotal: number;
   deliveryTotal: number;
   readTotal: number;
+  active: boolean;
 }
 
 @Injectable({

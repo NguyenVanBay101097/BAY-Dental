@@ -30,5 +30,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int MessageTotal { get; set; }
         public int DeliveryTotal { get; set; }
         public int ReadTotal { get; set; }
+        public bool Active { get; set; }
     }
 }
