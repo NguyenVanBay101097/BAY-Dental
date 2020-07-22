@@ -74,6 +74,18 @@ namespace Infrastructure.Services
             if (result == null)
                 return new RevenueReportResult();
 
+            List<CompanyBasic> companyBasics = new List<CompanyBasic>();
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var companyObj = GetService<ICompanyService>();
+            foreach (Guid id in companyIds)
+            {
+                var companyTemp = await companyObj.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+                companyBasics.Add(new CompanyBasic() { Id = companyTemp.Id, Name = companyTemp.Name });
+            }
+            result.Company = companyBasics;
+
             if (val.GroupBy == "partner")
             {
                 result.Details = await query.GroupBy(x => new { x.PartnerId, x.Partner.Name }).Select(x => new RevenueReportResultDetail
@@ -192,6 +204,11 @@ namespace Infrastructure.Services
                         Credit = x.Sum(s => s.Credit),
                         Balance = x.Sum(s => s.Credit - s.Debit)
                     }).ToListAsync();
+
+            }
+
+            if (val.CompanyId.HasValue)
+            {
 
             }
 

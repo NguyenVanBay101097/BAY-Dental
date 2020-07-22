@@ -27,7 +27,7 @@
                         </button>
                     </div>
                 </div>
-                <kendo-combobox [data]="dataCombobox" [placeholder]="'Chọn Chi nhánh'" [filterable]="true"
+                <kendo-combobox [data]="listCompanies" [placeholder]="'Chọn Chi nhánh'" [filterable]="true"
                     (valueChange)="onChangeCombobox($event)" #comboboxCbx [(ngModel)]="searchCombobox"
                     [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
