@@ -147,7 +147,7 @@ namespace TMTDentalAPI.Controllers
         {
             var host = _tenant.Hostname;
             var now = DateTime.Now.AddMinutes(1);
-            RecurringJob.AddOrUpdate("campaign-1F27ED3B-B9DC-4FDE-F327-08D8288D4E7E", () => _tcareJobService.Run("localhost", new Guid("1F27ED3B-B9DC-4FDE-F327-08D8288D4E7E")), $"{now.Minute} {now.Hour} * * *", timeZone: TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate("campaign-AF252C6B-F3D0-4021-C2A2-08D82E22B8DE", () => _tcareJobService.Run("localhost", new Guid("AF252C6B-F3D0-4021-C2A2-08D82E22B8DE")), $"{now.Minute} {now.Hour} * * *", timeZone: TimeZoneInfo.Local);
             return Ok(true);
         }
 

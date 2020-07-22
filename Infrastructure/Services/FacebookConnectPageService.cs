@@ -67,7 +67,7 @@ namespace Infrastructure.Services
 
             var content = new ConnectWebhooks
             {
-                Host = host,
+                Host = $"{host}.{_appSettings.Domain}",
                 FacebookId = pageId,
                 FacebookToken = pageAccesstoken,
                 FacebookName = null,
@@ -75,7 +75,7 @@ namespace Infrastructure.Services
                 FacebookCover = null,
                 FacebookLink = null,
                 FacebookType = 2,
-                CallbackUrl = $"{_appSettings.Schema}://{host}.{_appSettings.Domain}/api/FacebookWebHook",
+                CallbackUrl = $"http://{host}.{_appSettings.Domain}/api/FacebookWebHook",
                 IsCallbackWithRaw = true
             };
 

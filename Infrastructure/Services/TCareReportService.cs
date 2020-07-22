@@ -60,7 +60,7 @@ namespace Infrastructure.Services
                 Items = x.Count(),
                 MessageTotal = x.Sum(s => s.Traces.Count),
                 DeliveryTotal = x.Sum(s => s.Traces.Where(s => s.Delivery.HasValue).Count()),
-                ReadTotal = x.Sum(s => s.Traces.Where(s => s.Read.HasValue).Count())
+                ReadTotal = x.Sum(s => s.Traces.Where(s => s.Opened.HasValue).Count())
 
             }).ToList();
 
@@ -78,7 +78,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 MessageTotal = x.Traces.Count(),
                 DeliveryTotal = x.Traces.Where(s => s.Delivery.HasValue).Count(),
-                ReadTotal = x.Traces.Where(s => s.Read.HasValue).Count(),
+                ReadTotal = x.Traces.Where(s => s.Opened.HasValue).Count(),
                 Active = x.Active
             }).ToListAsync();
 
