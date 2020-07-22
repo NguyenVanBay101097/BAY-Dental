@@ -42,10 +42,10 @@ namespace TMTDentalAPI.Controllers
                 foreach (var mgsId in whzl.Message.mgsIds)
                 {
                     var watermark = whzl.Timestamp.ToLocalTime();
-                    var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == whzl.Recipient.Id && x.Type == "zalo" && x.ChannelSocial.PageId == whzl.Sender.Id && x.MessageId == mgsId).ToListAsync();
+                    var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == whzl.Recipient.Id && x.Type == "zalo" && x.ChannelSocial.PageId == whzl.Sender.Id && x.MessageId == mgsId).ToListAsync();
                     //var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();
                     foreach (var trace in traces)
-                        trace.Read = watermark;
+                        trace.Opened = watermark;
 
                     await _tCareMessagingTraceService.UpdateAsync(traces);
                     await _tCareMessagingTraceService.AddTagWebhook(traces, "read");

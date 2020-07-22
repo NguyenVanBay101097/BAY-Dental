@@ -67,13 +67,9 @@ namespace Infrastructure.Services
             campaign.Active = true;
             campaign.SheduleStart = runAt;
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            if (campaign.RecurringJobId == null)
-            {
-                //đặt tên lưu lại trong hangfire
-                campaign.RecurringJobId = $"{tenant}-{campaign.Id}-RecurringJob";
-
-            }
-            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(_tenant != null ? _tenant.Hostname : "localhost", campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+            var jobId = $"{tenant}-tcare-campaign-{campaign.Id}";
+            campaign.RecurringJobId = jobId;
+            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(tenant, campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
             await UpdateAsync(campaign);
         }
 
@@ -81,29 +77,14 @@ namespace Infrastructure.Services
         {
             var states = new string[] { "running" };
             var campaigns = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).ToListAsync();
-            List<RecurringJobDto> list;
             foreach (var campaign in campaigns)
             {
                 campaign.State = "stopped";
                 campaign.Active = false;
-                //campaign.SheduleStart = null;
-                using (var connection = JobStorage.Current.GetConnection())
-                {
-                    //truy vấn danh sách RecurringJob
-                    list = connection.GetRecurringJobs();
-                }
-                var job = list?.FirstOrDefault(j => j.Id == campaign.RecurringJobId);  // jobId is the recurring job ID, whatever that is
-                if (job != null && !string.IsNullOrEmpty(job.LastJobId))
-                {
-                    BackgroundJob.Delete(job.LastJobId);
-                    RecurringJob.RemoveIfExists(job.LastJobId);
-                }
-                RecurringJob.RemoveIfExists(job.Id = campaign.RecurringJobId);
-
+                if (!string.IsNullOrEmpty(campaign.RecurringJobId))
+                    RecurringJob.RemoveIfExists(campaign.RecurringJobId);
                 campaign.RecurringJobId = null;
-
             }
-
 
             await UpdateAsync(campaigns);
         }

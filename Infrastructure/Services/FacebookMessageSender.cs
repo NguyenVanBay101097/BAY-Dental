@@ -111,4 +111,11 @@ namespace Infrastructure.Services
         public string message_id { get; set; }
         public string recipient_id { get; set; }
     }
+
+    public class FacebookMessageApiInfoReponse
+    {
+        public string id { get; set; }
+        public DateTime created_time { get; set; }
+        public string message { get; set; }
+    }
 }

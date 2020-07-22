@@ -43,7 +43,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       intervalNumber: [0],
       intervalType: ['minutes'],
       sheduleDate: null,
-      channelType: ['priority', Validators.required]
+      channelType: ['fixed', Validators.required]
     });
 
     this.channelSocialCbx.filterChange.asObservable().pipe(
