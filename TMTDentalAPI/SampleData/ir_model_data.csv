@@ -23,6 +23,7 @@ base.model_ir_sequence,IRSequence,IR Sequence,1
 base.model_res_partner,Partner,Đối tác,0
 base.model_res_partner_category,PartnerCategory,Nhóm đối tác,0
 base.model_res_partner_source,PartnerSource,Nguồn khách hàng,0
+base.model_res_partner_images,PartnerImage,Hình ảnh khách hàng,0
 product.model_product_product,Product,Sản phẩm,0
 product.model_product_category,ProductCategory,Nhóm sản phẩm,0
 product.model_product_pricelist,ProductPricelist,Bảng giá,0

@@ -237,6 +237,12 @@
       <field name="model_id" ref="account.model_loai_thu_chi"/>
       <field name="global" eval="True"/>
     </record>
+
+    <record model="ir.rule" id="base.res_partner_images_rule">
+      <field name="name">res.partner images company</field>
+      <field name="model_id" ref="base.model_res_partner_images"/>
+      <field name="global" eval="True"/>     
+    </record>
   </data>
 </odoo>
 
