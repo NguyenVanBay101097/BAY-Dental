@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <kendo-combobox [data]="listCompanies" [placeholder]="'Chọn Chi nhánh'" [filterable]="true"
-                    (filterChange)="fillChangeCompany($event)" #comboboxCbx 
+                    (filterChange)="fillChangeCompany($event); this.searchUpdateCompanies.next($event);" #comboboxCbx 
                     (valueChange)="changeCompany($event)"
                     [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>

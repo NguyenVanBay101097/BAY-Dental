@@ -6,7 +6,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RevenueReportResult, RevenueReportService, RevenueReportSearch } from '../revenue-report.service';
-import { CompanyBasic } from 'src/app/companies/company.service';
+import { CompanyBasic, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-revenue-report-manager',
@@ -29,10 +29,11 @@ export class RevenueReportManagerComponent implements OnInit {
   groupBy = "date:month";
   search: string;
   searchUpdate = new Subject<string>();
+  searchUpdateCompanies = new Subject<string>();
   viewType = 'list';
   listCompanies: CompanyBasic[] = [];
   selectedCompany: any;
-  searchCompanies: string = '';
+  searchCompanies: string;
 
   groups: { text: string, value: string }[] = [
     { text: 'Ngày', value: 'date:day' },
@@ -51,13 +52,15 @@ export class RevenueReportManagerComponent implements OnInit {
   ];
 
   constructor(private intlService: IntlService, 
-    private revenueReportService: RevenueReportService) {
+    private revenueReportService: RevenueReportService, 
+    private companyService: CompanyService) {
   }
 
   ngOnInit() {
     this.reportResult = new RevenueReportResult();
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
+    this.loadCompanies();
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -65,6 +68,12 @@ export class RevenueReportManagerComponent implements OnInit {
       distinctUntilChanged())
       .subscribe(() => {
         this.loadDataFromApi();
+      });
+    this.searchUpdateCompanies.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadCompanies();
       });
   }
 
@@ -97,7 +106,6 @@ export class RevenueReportManagerComponent implements OnInit {
     this.revenueReportService.getReport(val).subscribe(result => {
       this.reportResult = result;
       this.loadItems();
-      this.listCompanies = result.company;
       this.loading = false;
     }, () => {
       this.loading = false;
@@ -129,6 +137,15 @@ export class RevenueReportManagerComponent implements OnInit {
 
   setViewType(type) {
     this.viewType = type;
+  }
+
+  loadCompanies() {
+    var val = new CompanyPaged();
+    val.search = this.searchCompanies || '';
+    this.companyService.getPaged(val)
+    .subscribe(res => {
+      this.listCompanies = res.items;
+    })
   }
 
   fillChangeCompany(event) {

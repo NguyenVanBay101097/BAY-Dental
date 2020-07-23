@@ -78,9 +78,6 @@ namespace Infrastructure.Services
             if (result == null)
                 return new RevenueReportResult();
 
-            var companyObj = GetService<ICompanyService>();
-            result.Company = (await companyObj.GetPagedResultAsync(new CompanyPaged() { Search = "" })).Items;
-
             if (val.GroupBy == "partner")
             {
                 result.Details = await query.GroupBy(x => new { x.PartnerId, x.Partner.Name }).Select(x => new RevenueReportResultDetail

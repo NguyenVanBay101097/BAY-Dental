@@ -10,7 +10,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
         public decimal Balance { get; set; }
-        public IEnumerable<CompanyBasic> Company { get; set; }
         public IEnumerable<RevenueReportResultDetail> Details { get; set; } = new List<RevenueReportResultDetail>();
     }
 
