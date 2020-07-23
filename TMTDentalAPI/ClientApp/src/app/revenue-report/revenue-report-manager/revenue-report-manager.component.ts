@@ -31,7 +31,8 @@ export class RevenueReportManagerComponent implements OnInit {
   searchUpdate = new Subject<string>();
   viewType = 'list';
   listCompanies: CompanyBasic[] = [];
-  selectedCompany: string;
+  selectedCompany: any;
+  searchCompanies: string = '';
 
   groups: { text: string, value: string }[] = [
     { text: 'Ngày', value: 'date:day' },
@@ -85,7 +86,10 @@ export class RevenueReportManagerComponent implements OnInit {
       val.search = this.search;
     }
 
-    val.companyId = this.selectedCompany || '';
+    if (this.selectedCompany)
+      val.companyId = this.selectedCompany.id;
+    else
+      val.companyId = '';
 
     val.groupBy = this.groupBy;
 
@@ -95,7 +99,6 @@ export class RevenueReportManagerComponent implements OnInit {
       this.loadItems();
       this.listCompanies = result.company;
       this.loading = false;
-      console.log(result);
     }, () => {
       this.loading = false;
     });
@@ -128,8 +131,12 @@ export class RevenueReportManagerComponent implements OnInit {
     this.viewType = type;
   }
 
-  onChangeCombobox(event) {
-    this.selectedCompany = event.id;
+  fillChangeCompany(event) {
+    this.searchCompanies = event;
+  }
+
+  changeCompany(event) {
+    this.selectedCompany = event;
     this.loadDataFromApi();
   }
 }

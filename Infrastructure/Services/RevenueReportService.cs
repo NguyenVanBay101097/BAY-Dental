@@ -78,19 +78,8 @@ namespace Infrastructure.Services
             if (result == null)
                 return new RevenueReportResult();
 
-            List<CompanyBasic> companyBasics = new List<CompanyBasic>();
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             var companyObj = GetService<ICompanyService>();
-
-            var companies = (await companyObj.GetPagedResultAsync(new CompanyPaged() { Search = "" })).Items;
-            foreach (Guid id in companyIds)
-            {
-                var companyTemp = await companyObj.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-
-                companyBasics.Add(new CompanyBasic() { Id = companyTemp.Id, Name = companyTemp.Name });
-            }
-            result.Company = companyBasics;
+            result.Company = (await companyObj.GetPagedResultAsync(new CompanyPaged() { Search = "" })).Items;
 
             if (val.GroupBy == "partner")
             {
