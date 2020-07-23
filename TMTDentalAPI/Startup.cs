@@ -364,24 +364,15 @@ namespace TMTDentalAPI
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    UsePageLocksOnDequeue = true,
-                    DisableGlobalLocks = true
-                }));
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection")));
            
             // Add the processing server as IHostedService
-            services.AddHangfireServer(option =>
-            {
-                option.FilterProvider = new ServerFilterProvider();
-            });
+            //services.AddHangfireServer(option =>
+            //{
+            //    option.FilterProvider = new ServerFilterProvider();
+            //});
+
+            services.AddHangfireServer();
 
             GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
             GlobalJobFilters.Filters.Add(new ServerTenantFilter());
@@ -488,7 +479,7 @@ namespace TMTDentalAPI
 
             app.UseAuthorization();
 
-            app.UseHangfireServer();
+            //app.UseHangfireServer();
 
             app.UseHangfireDashboard();
 
