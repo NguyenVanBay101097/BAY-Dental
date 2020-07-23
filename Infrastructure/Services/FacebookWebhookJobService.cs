@@ -25,9 +25,8 @@ namespace Infrastructure.Services
         public async Task ProcessRead(string db, DateTime watermark, string sender_id, string recipient_id)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            if (db == "localhost")
-                builder["Database"] = "TMTDentalCatalogDb";
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
@@ -75,9 +74,8 @@ namespace Infrastructure.Services
         public async Task ProcessDelivery(string db, DateTime watermark, string sender_id, string recipient_id)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            if (db == "localhost")
-                builder["Database"] = "TMTDentalCatalogDb";
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {

@@ -37,9 +37,8 @@ namespace Infrastructure.Services
         public void Run(string db, Guid campaignId)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            if (db == "localhost")
-                builder["Database"] = "TMTDentalCatalogDb";
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
                 try
@@ -303,9 +302,9 @@ namespace Infrastructure.Services
             string db = null, Guid? partner_id = null)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            if (db == "localhost")
-                builder["Database"] = "TMTDentalCatalogDb";
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
+
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
                 try
@@ -501,9 +500,8 @@ namespace Infrastructure.Services
                 var result = response.GetResult();
 
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-                builder["Database"] = $"TMTDentalCatalogDb__{db}";
-                if (db == "localhost")
-                    builder["Database"] = "TMTDentalCatalogDb";
+                if (db != "localhost")
+                    builder["Database"] = $"TMTDentalCatalogDb__{db}";
 
                 using (var conn = new SqlConnection(builder.ConnectionString))
                 {
