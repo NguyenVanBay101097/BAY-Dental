@@ -490,6 +490,8 @@ namespace TMTDentalAPI
 
             app.UseHangfireServer();
 
+            app.UseHangfireDashboard();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
