@@ -23,7 +23,7 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompaniesController : ControllerBase
+    public class CompaniesController : BaseApiController
     {
         private readonly ICompanyService _companyService;
         private readonly IUploadService _uploadService;

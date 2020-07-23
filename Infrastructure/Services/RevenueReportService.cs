@@ -46,12 +46,16 @@ namespace Infrastructure.Services
             var modelDataObj = GetService<IIRModelDataService>();
             var amlObj = GetService<IAccountMoveLineService>();
             var account_type_revenue = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
-            var companyId = CompanyId;
 
             if (val.DateFrom.HasValue)
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
             if (val.DateTo.HasValue)
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
+
+            var companyId = CompanyId;
+
+            if (val.CompanyId.HasValue)
+                companyId = val.CompanyId.Value;
 
             var query = amlObj._QueryGet(dateTo: val.DateTo, dateFrom: val.DateFrom, state: "posted", companyId: companyId);
             query = query.Where(x => x.Account.UserTypeId == account_type_revenue.Id);
@@ -78,6 +82,8 @@ namespace Infrastructure.Services
             var userObj = GetService<IUserService>();
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             var companyObj = GetService<ICompanyService>();
+
+            var companies = (await companyObj.GetPagedResultAsync(new CompanyPaged() { Search = "" })).Items;
             foreach (Guid id in companyIds)
             {
                 var companyTemp = await companyObj.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -204,11 +210,6 @@ namespace Infrastructure.Services
                         Credit = x.Sum(s => s.Credit),
                         Balance = x.Sum(s => s.Credit - s.Debit)
                     }).ToListAsync();
-
-            }
-
-            if (val.CompanyId.HasValue)
-            {
 
             }
 
