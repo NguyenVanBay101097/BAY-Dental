@@ -361,9 +361,9 @@ namespace Infrastructure.Services
 
                             await conn.ExecuteAsync("insert into TCareMessingTraces(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)", new { Id = track_id, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook", ChannelSocialId = channelSocialId, DateCreated = now, LastUpdated = now });
                             var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocial.PageAccesstoken);
-                            if (sendResult == null)
+                            if (!string.IsNullOrEmpty(sendResult.error))
                             {
-                                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception where Id=@id", new { exception = DateTime.Now, id = track_id });
+                                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
                             }
                             else
                             {

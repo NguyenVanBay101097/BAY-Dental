@@ -85,23 +85,18 @@ namespace Infrastructure.Services
             request.AddParameter("message", JsonConvert.SerializeObject(new { text = message }));
             request.AddParameter("tag", tag);
 
-            try
+            var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
+            if (response.GetExceptions().Any())
             {
-                var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
-                if (response.GetExceptions().Any())
-                {
-                    return null;
-                }
-                else
-                {
-                    var result = response.GetResult();
-                    return result;
-                }
+                return new SendFacebookMessageReponse 
+                { 
+                    error = string.Join(";", response.GetExceptions().Select(x => x.Message))
+                };
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
-                return null;
+                var result = response.GetResult();
+                return result;
             }
         }
     }
@@ -110,6 +105,7 @@ namespace Infrastructure.Services
     {
         public string message_id { get; set; }
         public string recipient_id { get; set; }
+        public string error { get; set; }
     }
 
     public class FacebookMessageApiInfoReponse
