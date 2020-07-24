@@ -184,6 +184,8 @@ namespace Infrastructure.Data
         public DbSet<LoaiThuChi> LoaiThuChis { get; set; }
         public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
 
+        public DbSet<PartnerTitle> PartnerTitles { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -194,6 +196,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PartnerSourceConfiguration());
             builder.ApplyConfiguration(new PartnerCategoryConfiguration());
             builder.ApplyConfiguration(new PartnerPartnerCategoryRelConfiguration());
+            builder.ApplyConfiguration(new PartnerTitleConfiguration());
             builder.ApplyConfiguration(new UoMConfiguration());
             builder.ApplyConfiguration(new UoMCategoryConfiguration());
             builder.ApplyConfiguration(new SaleOrderConfiguration());
