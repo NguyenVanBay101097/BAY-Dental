@@ -31,7 +31,7 @@
                         <i class="fas fa-filter"></i>
                         {{getResultUser()}}
                         <span (click)="removeFilterUser($event)" class="remove_filter"
-                            *ngIf="formGroup.get('user').value"><i class="fas fa-ban"></i></span>
+                            *ngIf="formGroup.get('user').value"><i class="fas fa-times"></i></span>
                     </button>
                     <div ngbDropdownMenu aria-labelledby="dropdownUser">
                         <kendo-combobox style="margin: 15px;" (valueChange)="onChangeUser($event)"
@@ -46,7 +46,7 @@
                         <i class="fas fa-filter"></i>
                         {{getResultPartner()}}
                         <span (click)="removeFilterPartner($event)" class="remove_filter"
-                            *ngIf="formGroup.get('partner').value"><i class="fas fa-ban"></i></span>
+                            *ngIf="formGroup.get('partner').value"><i class="fas fa-times"></i></span>
                     </button>
                     <div ngbDropdownMenu aria-labelledby="dropdownPartner">
                         <kendo-combobox style="margin: 15px;" (valueChange)="onChangePartner($event)"
