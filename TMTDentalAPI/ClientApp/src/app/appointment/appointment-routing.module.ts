@@ -6,13 +6,8 @@ import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kan
 
 const routes: Routes = [
   {
-    path: 'appointments',
-    component: AppointmentListComponent,
-    children: [
-      { path: '', redirectTo: 'time', pathMatch: 'full' },
-      { path: 'calendar', component: AppointmentCalendarComponent },
-      { path: 'kanban', component: AppointmentKanbanComponent }
-    ]
+    path: 'appointments/kanban',
+    component: AppointmentKanbanComponent,
   },
 ];
 

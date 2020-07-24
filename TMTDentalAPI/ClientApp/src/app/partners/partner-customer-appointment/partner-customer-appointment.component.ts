@@ -53,7 +53,7 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     val.partnerId = this.id;
 
     this.appointmentService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
+      map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))

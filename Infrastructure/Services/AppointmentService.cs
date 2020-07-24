@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
@@ -80,21 +81,21 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
                 || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
                 || x.Partner.Ref.Contains(val.Search));
-            //if (!string.IsNullOrEmpty(val.SearchByCustomer))
-            //    query = query.Where(x => x.Partner.Name.Contains(val.SearchByCustomer) || x.Partner.Phone.Contains(val.SearchByCustomer) || x.Partner.Ref.Contains(val.SearchByCustomer));
-            //if (!string.IsNullOrEmpty(val.SearchByDoctor))
-            //    query = query.Where(x => x.User.Name.Contains(val.SearchByDoctor));
 
             if (val.DateTimeFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateTimeFrom);
+
             if (val.DateTimeTo.HasValue)
             {
-                var dateTo = val.DateTimeTo.Value.AddDays(1);
-                query = query.Where(x => x.Date < dateTo);
+                var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
             }
 
             if (val.DotKhamId.HasValue)
                 query = query.Where(x => x.DotKhamId == val.DotKhamId);
+
+            if (string.IsNullOrEmpty(val.UserId))
+                query = query.Where(x => x.UserId == val.UserId);
 
             string[] stateList = null;
             if (!string.IsNullOrEmpty(val.State))
@@ -108,29 +109,14 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.PartnerId == val.PartnerId);
             }
 
-
             query = query.OrderByDescending(x => x.DateCreated);
-            var items = new List<Appointment>();
-            if (val.Limit > 0)
-            {
-                items = await query.Skip(val.Offset).Take(val.Limit)
-                .Include(x => x.Partner).Include(x => x.User).Include(x => x.Doctor)
-                .ToListAsync();
-            }
-            else
-            {
-                items = await query
-                    .Include(x => x.Partner).Include(x => x.User).Include(x => x.Doctor)
-                .ToListAsync();
-            }
-
-
-
+            var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
             var totalItems = await query.CountAsync();
+            var items = await _mapper.ProjectTo<AppointmentBasic>(query.Skip(val.Offset).Take(limit)).ToListAsync();
 
-            return new PagedResult2<AppointmentBasic>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<AppointmentBasic>(totalItems, val.Offset, limit)
             {
-                Items = _mapper.Map<IEnumerable<AppointmentBasic>>(items)
+                Items = items
             };
         }
 
@@ -262,9 +248,12 @@ namespace Infrastructure.Services
             if (val.Date.HasValue)
             {
                 var dateFrom = val.Date.Value;
-                var dateTo = val.Date.Value.AddDays(1);
-                query = query.Where(x => x.Date >= dateFrom && x.Date < dateTo);
+                var dateTo = val.Date.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date >= dateFrom && x.Date <= dateTo);
             }
+
+            if (!string.IsNullOrEmpty(val.UserId))
+                query = query.Where(x => x.UserId == val.UserId);
 
             if (!string.IsNullOrEmpty(val.State))
             {
@@ -272,24 +261,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateList.Contains(x.State));
             }
 
-            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit).Select(x => new AppointmentBasic
-            {
-                Id = x.Id,
-                Name = x.Name,
-                PartnerName = x.Partner.Name,
-                DoctorName = x.Doctor.Name,
-                Date = x.Date,
-                State = x.State,
-                Note = x.Note,
-                PartnerPhone = x.Partner.Phone,
-                UserName = x.User.Name
-            }).ToListAsync();
-
+            var items = await _mapper.ProjectTo<AppointmentBasic>(query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var count = await query.CountAsync();
+
             var res = new PagedResult2<AppointmentBasic>(count, val.Offset, val.Limit) { Items = items };
-
             return res;
-
         }
 
         public async Task<AppointmentBasic> GetBasic(Guid id)
