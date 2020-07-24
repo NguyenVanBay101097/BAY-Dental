@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -86,6 +87,8 @@ namespace Infrastructure.Services
             var uploadObj = GetService<IUploadService>();
             return uploadObj.UploadBinaryAsync(base64, fileName: fileName);
         }
+
+      
 
     }
 
