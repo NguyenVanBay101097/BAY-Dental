@@ -95,11 +95,7 @@ export class RevenueReportManagerComponent implements OnInit {
       val.search = this.search;
     }
 
-    if (this.selectedCompany)
-      val.companyId = this.selectedCompany.id;
-    else
-      val.companyId = '';
-
+    val.companyId = this.selectedCompany? this.selectedCompany.id : '';
     val.groupBy = this.groupBy;
 
     this.loading = true;

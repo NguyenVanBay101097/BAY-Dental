@@ -27,13 +27,15 @@
                         </button>
                     </div>
                 </div>
-                <kendo-combobox [data]="listCompanies" [placeholder]="'Chọn Chi nhánh'" [filterable]="true"
+            </div>
+            <div class="o_cp_sidebar">
+                <div hasGroups [groups]="'base.group_multi_company'">
+                    <kendo-combobox [data]="listCompanies" [placeholder]="'Chọn Chi nhánh'" [filterable]="true"
                     (filterChange)="fillChangeCompany($event); this.searchUpdateCompanies.next($event);" #comboboxCbx 
                     (valueChange)="changeCompany($event)" class="cbbox-sm"
                     [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
-                </kendo-combobox>
-            </div>
-            <div class="o_cp_sidebar">
+                    </kendo-combobox>
+                </div>
             </div>
         </div>
         <div class="o_cp_right">
