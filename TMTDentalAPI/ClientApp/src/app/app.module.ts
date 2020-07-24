@@ -103,6 +103,7 @@ import { PartnerCustomerDetailComponent } from './partners/partner-customer-deta
 import { PartnerSourcesModule } from "./partner-sources/partner-sources.module";
 import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescriptions.module';
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
+import { DotKhamStepsModule } from './dot-kham-steps/dot-kham-steps.module';
 import { LoaiThuChiModule } from './loai-thu-chi/loai-thu-chi.module';
 import { PhieuThuChiModule } from './phieu-thu-chi/phieu-thu-chi.module';
 import { AccountFinancialReportModule } from './account-financial-report/account-financial-report.module';
@@ -156,6 +157,7 @@ registerLocaleData(localeVi, "vi");
     EmployeeCategoriesModule,
     RoutingsModule,
     HttpClientModule,
+    DotKhamStepsModule,
     StockPickingsModule,
     StockPickingTypesModule,
     LaboOrderLinesModule,

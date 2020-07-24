@@ -3,6 +3,33 @@ import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DotKhamStepDisplay } from './dot-khams';
 
+export class DotKhamStepPaged {
+    offset: number;
+    limit: number;
+    search: string;
+    dateTo: string;
+    dateFrom: string;
+    userId: string;
+    partnerId: string;
+}
+
+export class DotKhamStepReport {
+    stepName: string;
+    date: string;
+    doctorName: string;
+    serviceName: string;
+    assistantName: string;
+    partnerName: string;
+}
+
+export class DotKhamStepPaggingReport {
+    offset: number;
+    limit: number;
+    totalItems: number;
+    items: DotKhamStepReport[];
+}
+
+
 export class DotKhamStepAssignDotKhamVM {
     ids: string[];
     dotKhamId: string;
@@ -42,5 +69,9 @@ export class DotKhamStepService {
 
     patch(id: string, patch: any) {
         return this.http.patch(this.baseApi + this.apiUrl + "/" + id, patch);
+    }
+
+    dotKhamStepReport(params): Observable<DotKhamStepPaggingReport> {
+        return this.http.get<DotKhamStepPaggingReport>(this.baseApi + this.apiUrl + '/DotKhamStepReport', { params: params });
     }
 }
