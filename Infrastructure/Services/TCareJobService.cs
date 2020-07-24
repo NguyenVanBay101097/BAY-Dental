@@ -265,7 +265,7 @@ namespace Infrastructure.Services
                                     "Left join Appointments am ON am.PartnerId = pn.Id " +                                
                                     "Where pn.Customer = 1 " +
                                     "Group by pn.Id " +
-                                    "Having (Max(am.Date) >= DATEADD(day, @number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
+                                    "Having (Max(am.Date) >= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
                             lstRule.Add(new RulePartnerIds() { Ids = lastAppointmentPartnerIds });
                             break;
                     }
