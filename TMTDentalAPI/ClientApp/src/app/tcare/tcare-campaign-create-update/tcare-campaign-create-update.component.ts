@@ -117,9 +117,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         new mxDivResizer(sidebar_goals);
       }
 
-      //create obj
-      var sequence = that.doc.createElement("sequence");
-      var rule = that.doc.createElement("rule");
+      
+        //create obj
+        var sequence = that.doc.createElement("sequence");
+        var rule = that.doc.createElement("rule");
+      
+      
 
       that.editor.graph.setCellsMovable(true);
       that.editor.graph.setAutoSizeCells(true);
@@ -135,15 +138,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
       // Does not allow dangling edges
       that.editor.graph.setAllowDanglingEdges(false);
-
+     
       // Sets the graph container and configures the editor
       that.editor.setGraphContainer(container);
+       
       var iconTolerance = 20;
       var splash = document.getElementById("splash");
       if (splash != null) {
         try {
           mxEvent.release(splash);
           mxEffects.fadeOut(splash, 100, true);
+          
         } catch (e) {
           // mxUtils is not available (library not loaded)
           splash.parentNode.removeChild(splash);
@@ -300,13 +305,13 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         that.addSidebarIcon(that.editor.graph, sidebar_goals, rule, "./assets/editors/images/rule.png", "rule");
       }
 
-      //load Xml
+      //load Xml    
       that.editor.graph.getModel().beginUpdate();
       try {
-        // for (let i = 2; i < that.editor.graph.getModel().nextId + 4; i++) {
-        //   if (that.editor.graph.getModel().cells[i])
-        //     that.editor.graph.getModel().remove(that.editor.graph.getModel().cells[i]);
-        // }
+        for (let i = 2; i < that.editor.graph.getModel().nextId + 4; i++) {
+          if (that.editor.graph.getModel().cells[i])
+            that.editor.graph.getModel().remove(that.editor.graph.getModel().cells[i]);
+        }
         var doc = mxUtils.parseXml(model.graphXml);
         var dec = new mxCodec(doc);
         dec.decode(doc.documentElement, that.editor.graph.getModel());
@@ -332,6 +337,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   }
 
   load() {
+    
     // this.formCampaign.get('name').patchValue(this.campaign.name);
     // this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
     if (this.campaign.graphXml) {
@@ -349,7 +355,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         document.getElementById("graphContainer"),
         document.getElementById("sidebarContainer_sequences"),
         document.getElementById("sidebarContainer_goals"),
-        value
+        value 
       );
     }
     this.one = false;

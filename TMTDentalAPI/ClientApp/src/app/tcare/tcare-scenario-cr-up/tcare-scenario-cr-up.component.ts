@@ -80,6 +80,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
   }
 
   actionNext(data) {
+    debugger
     if (data.graphXml) {
       this.campaign.graphXml = data.graphXml;
     }
