@@ -6,6 +6,7 @@ export class RevenueReportResult {
     debit: number;
     credit: number;
     balance: number;
+    company: any;
     details: RevenueReportResultDetails[];
 }
 
@@ -21,6 +22,7 @@ export class RevenueReportSearch {
     dateTo: string;
     groupBy: string;
     search: string;
+    companyId: string;
 }
 
 @Injectable()
