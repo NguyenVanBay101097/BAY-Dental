@@ -305,13 +305,14 @@ namespace Infrastructure.Services
         public async Task SyncUsers(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            var fb_pages = self.Where(x => x.Type == "facebook").ToList();
-            if (fb_pages.Any())
-                await SyncFacebookUsers(fb_pages);
-
-            var zl_pages = self.Where(x => x.Type == "zalo").ToList();
-            if (zl_pages.Any())
-                await SyncZaloUsers(zl_pages);
+            //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
+            if (self.Where(x=>x.Type == "facebook").Any())
+                await SyncFacebookUsers(self);
+            else if(self.Where(x => x.Type == "zalo").Any())
+                await SyncZaloUsers(self);
+            //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
+            //if (zl_pages.Any())
+               
         }
 
         private async Task SyncZaloUsers(IEnumerable<FacebookPage> self)
@@ -319,9 +320,10 @@ namespace Infrastructure.Services
             foreach (var page in self)
             {
                 //Lấy danh sách người quan tâm
-                var user_ids = _GetFollowersZaloOA(page);
-
-                var profiles = await _GetProfileFollowers(page, user_ids);
+                var profiles = await _GetFollowersZaloOAAsync(page);
+                if (profiles.Count() == 0)
+                    continue;
+                //var profiles = await _GetProfileFollowers(page, user_ids);
 
                 await _ProcessProfilesZalo(page, profiles);
             }
@@ -339,8 +341,8 @@ namespace Infrastructure.Services
             while (tmp.Any())
             {
                 var user_ids = tmp.Select(x => x.data.user_id.ToString()).ToList();
-                var exist_psids = await userProfileObj.SearchQuery(x => user_ids.Contains(x.PSID) && x.FbPageId == self.Id).Select(x => x.PSID).ToListAsync();
-                user_ids = user_ids.Except(exist_psids).ToList();
+                //var exist_psids = await userProfileObj.SearchQuery(x => user_ids.Contains(x.PSID) && x.FbPageId == self.Id).Select(x => x.PSID).ToListAsync();
+                //user_ids = user_ids.Except(exist_psids).ToList();
 
                 var list = new List<FacebookUserProfile>();
                 foreach (var psid in user_ids)
@@ -378,9 +380,10 @@ namespace Infrastructure.Services
             return await Task.WhenAll(tasks);
         }
 
-        private IEnumerable<string> _GetFollowersZaloOA(FacebookPage self)
+        private async Task<IEnumerable<GetProfileOfFollowerResponse>> _GetFollowersZaloOAAsync(FacebookPage self)
         {
             var zaloClient = new ZaloClient(self.PageAccesstoken);
+            var userProfileObj = GetService<IFacebookUserProfileService>();
             var offset = 0;
             var count = 25;
             var res = zaloClient.getListFollower(offset, count).ToObject<GetFollowersResponse>();
@@ -388,14 +391,19 @@ namespace Infrastructure.Services
             var list = new List<string>().AsEnumerable();
             while (res.data != null && res.data.followers.Any())
             {
-                var tmp_ids = res.data.followers.Select(x => x.user_id);
-                list = list.Union(tmp_ids);
+                 list = res.data.followers.Select(x => x.user_id);
+                //list = list.Union(tmp_ids);
 
                 offset += count;
                 res = zaloClient.getListFollower(offset, count).ToObject<GetFollowersResponse>();
             }
 
-            return list;
+            list = list.Except(userProfileObj.SearchQuery(x => x.FbPageId == self.Id).Select(x => x.PSID));
+
+
+            var tasks = list.Select(x => _GetProfileZalo(self, x));
+
+            return await Task.WhenAll(tasks);
         }
 
         private async Task SyncFacebookUsers(IEnumerable<FacebookPage> self)
@@ -403,10 +411,11 @@ namespace Infrastructure.Services
             foreach (var page in self)
             {
                 //Tìm tất cả psid từ conversations
-                var psids = await _FindPSIDsFromConversations(page);
+                var user_infos = await _FindPSIDsFromConversations(page);
+                if (user_infos.Count() == 0)
+                    return;
 
-                var user_infos = await _GetUserInfosFromPSIDs(page, psids);
-
+                // var user_infos = await _GetUserInfosFromPSIDs(page, psids);
                 await _ProcessUserInfos(page, user_infos);
             }
         }
@@ -423,8 +432,8 @@ namespace Infrastructure.Services
             while (tmp.Any())
             {
                 var psids = tmp.Select(x => x.PSId).ToList();
-                var exist_psids = await userProfileObj.SearchQuery(x => psids.Contains(x.PSID) && x.FbPageId == self.Id).Select(x => x.PSID).ToListAsync();
-                psids = psids.Except(exist_psids).ToList();
+                //var exist_psids = await userProfileObj.SearchQuery(x => psids.Contains(x.PSID) && x.FbPageId == self.Id).Select(x => x.PSID).ToListAsync();
+                //psids = psids.Except(exist_psids).ToList();
 
                 var list = new List<FacebookUserProfile>();
                 foreach (var psid in psids)
@@ -455,37 +464,80 @@ namespace Infrastructure.Services
             return await Task.WhenAll(tasks);
         }
 
-        private async Task<IEnumerable<string>> _FindPSIDsFromConversations(FacebookPage self)
+        private async Task<IEnumerable<ApiUserProfileResponse>> _FindPSIDsFromConversations(FacebookPage self)
         {
             var psids = new List<string>().AsEnumerable();
-
+            var UserProfileObj = GetService<IFacebookUserProfileService>();
             var apiClient = new ApiClient(self.PageAccesstoken, FacebookApiVersions.V6_0);
-            var pagedRequestUrl = $"{self.PageId}/conversations?fields=participants";
+            var pagedRequestUrl = $"{self.PageId}/conversations?fields=participants";         
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", self.PageAccesstoken);
-            pagedRequest.AddPageLimit(1);
-
+            pagedRequest.AddPageLimit(25);
+            var errorMaessage = "";
+            var res = new List<ApiPagedConversationsDataItem>();
             var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsDataItem>();
-            if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
+            if (pagedRequestResponse.GetExceptions().Any())
             {
-                var tmp = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
-                psids = psids.Union(tmp);
-
-                //kiểm tra nếu có phân trang
-                while (pagedRequestResponse.IsNextPageDataAvailable())
-                {
-                    //lấy dữ liệu lần lượt các trang kế
-                    pagedRequestResponse = pagedRequestResponse.GetNextPageData();
-
-                    if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
-                    {
-                        var tmp2 = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
-                        psids = psids.Union(tmp2);
-                    }
-                }
+                errorMaessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
+                throw new Exception(errorMaessage);
             }
+            else
+            {
+                if (pagedRequestResponse.IsDataAvailable())
+                {
+                    res.AddRange(pagedRequestResponse.GetResultData());
+                    //kiểm tra nếu có phân trang
+                    while (pagedRequestResponse.IsNextPageDataAvailable())
+                    {
+                        //lấy dữ liệu lần lượt các trang kế
+                        pagedRequestResponse = pagedRequestResponse.GetNextPageData();
+                        //add vào data
+                        res.AddRange(pagedRequestResponse.GetResultData());
+                    }
+                    psids = res.Select(x => x.Participants.Data[0].Id).ToList();
 
-            return psids;
+                }
+                psids = psids.Except(UserProfileObj.SearchQuery(x => x.FbPageId == self.Id).Select(x => x.PSID)).ToList();
+
+                var user_infos = psids.Select(id => _LoadUserProfile(id, self.PageAccesstoken));
+
+                return await Task.WhenAll(user_infos);
+            }
+            //var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
+            //pagedRequest.AddQueryParameter("access_token", self.PageAccesstoken);
+            //pagedRequest.AddPageLimit(1);
+
+            //var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsDataItem>();
+
+            //if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
+            //{
+            //    var tmp = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
+            //    psids = psids.Union(tmp);
+
+            //    //kiểm tra nếu có phân trang
+            //    while (pagedRequestResponse.IsNextPageDataAvailable())
+            //    {
+            //        //lấy dữ liệu lần lượt các trang kế
+            //        pagedRequestResponse = pagedRequestResponse.GetNextPageData();
+
+            //        if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
+            //        {
+            //            var tmp2 = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
+            //            psids = psids.Union(tmp2);
+            //        }
+            //    }
+            //}
+
+            //psids = psids.Except(UserProfileObj.SearchQuery(x => x.FbPageId == self.Id).Select(x => x.PSID)).ToList();
+
+            //var user_infos = psids.Select(id => _LoadUserProfile(id, self.PageAccesstoken));
+
+            //return await Task.WhenAll(user_infos);
+
+            //var user_infos = await _GetUserInfosFromPSIDs(self, psids);
+
+            ////return psids;
+            //return user_infos;
         }
 
         private IEnumerable<string> _GetPSIDsFromApiConversationsResponse(FacebookPage self, IEnumerable<ApiPagedConversationsDataItem> items)
