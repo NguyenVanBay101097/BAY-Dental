@@ -53,7 +53,6 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(IEnumerable<PartnerTitle> entities)
         {
-
             await base.UpdateAsync(entities);
         }
     }
