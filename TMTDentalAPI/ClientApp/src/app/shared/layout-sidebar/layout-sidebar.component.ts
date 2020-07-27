@@ -90,6 +90,7 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Nhãn khách hàng', link: '/partner-categories' },
         { name: "Nguồn khách hàng", link: "/partner-sources" },
+        { name: "Danh xưng", link: "/partner-titles" },
         { name: 'Nhà cung cấp', link: '/suppliers' },
         { name: 'Dịch vụ', link: '/product-services' },
         { name: 'Nhóm dịch vụ', link: '/product-categories/service' },

@@ -3,35 +3,32 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LoaiThuChiFormComponent } from '../loai-thu-chi-form/loai-thu-chi-form.component';
-import { LoaiThuChiService, loaiThuChiPaged, loaiThuChiBasic, loaiThuChi } from '../loai-thu-chi.service';
+import { PartnerTitleService, PartnerTitlePaged, PartnerTitle } from '../partner-title.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-loai-thu-chi-list',
-  templateUrl: './loai-thu-chi-list.component.html',
-  styleUrls: ['./loai-thu-chi-list.component.css']
+  selector: 'app-partner-title-list',
+  templateUrl: './partner-title-list.component.html',
+  styleUrls: ['./partner-title-list.component.css']
 })
-export class LoaiThuChiListComponent implements OnInit {
+export class PartnerTitleListComponent implements OnInit {
   loading = false;
   items: any[];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  type: string;
-
+  
   search: string;
   searchUpdate = new Subject<string>();
-
-  constructor(private route: ActivatedRoute, private modalService: NgbModal, 
-    private loaiThuChiService: LoaiThuChiService) { }
+  
+  constructor(private route: ActivatedRoute, 
+    private modalService: NgbModal, 
+    private partnerTitleService: PartnerTitleService) { }
 
   ngOnInit() {
-    this.route.queryParamMap.subscribe(params => {
-      this.type = params.get('type');
-      this.loadDataFromApi();
-    });
+    this.loadDataFromApi();
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -40,17 +37,15 @@ export class LoaiThuChiListComponent implements OnInit {
         this.loadDataFromApi();
       });
   }
-  
+
   loadDataFromApi() {
     this.loading = true;
-    var val = new loaiThuChiPaged();
-    val.limit = this.limit;
+    var val = new PartnerTitlePaged();
     val.offset = this.skip;
+    val.limit = this.limit;
     val.search = this.search || '';
-    val.type = this.type;
-    console.log(val);
 
-    this.loaiThuChiService.getPaged(val).pipe(
+    this.partnerTitleService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -69,19 +64,9 @@ export class LoaiThuChiListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  converttype() {
-    switch (this.type) {
-      case 'thu':
-        return 'loại thu';
-      case 'chi':
-        return 'loại chi';
-    }
-  }
-
   createItem() {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm ' + this.converttype();
-    modalRef.componentInstance.type = this.type;
+    const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm danh xưng';
     modalRef.result.then(() => {
        this.loadDataFromApi();
     }, () => {
@@ -89,11 +74,10 @@ export class LoaiThuChiListComponent implements OnInit {
     });
   }
 
-  editItem(item: loaiThuChi) {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa ' + this.converttype();
+  editItem(item: PartnerTitle) {
+    const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa danh xưng';
     modalRef.componentInstance.itemId = item.id;
-    modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
        this.loadDataFromApi();
     }, () => {
@@ -101,12 +85,12 @@ export class LoaiThuChiListComponent implements OnInit {
     });
   }
 
-  deleteItem(item: loaiThuChiBasic) {
+  deleteItem(item: PartnerTitle) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa ' + this.converttype();
+    modalRef.componentInstance.title = 'Xóa danh xưng';
 
     modalRef.result.then(() => {
-      this.loaiThuChiService.delete(item.id).subscribe(() => {
+      this.partnerTitleService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       }, () => {
       });

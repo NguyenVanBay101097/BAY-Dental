@@ -250,6 +250,7 @@ namespace TMTDentalAPI
             services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
             services.AddScoped<IReportJournalService, ReportJournalService>();
             services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
+            services.AddScoped<IPartnerTitleService, PartnerTitleService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -267,6 +268,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PartnerProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
                 mc.AddProfile(new PartnerSourceProfile());
+                mc.AddProfile(new PartnerTitleProfile());
                 mc.AddProfile(new ProvinceProfile());
                 mc.AddProfile(new DistrictProfile());
                 mc.AddProfile(new WardProfile());
