@@ -207,6 +207,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Autocomplete3(PartnerPaged val)
+        {
+            var res = await _partnerService.SearchPartnersConnectSocial(val);
+            res = res.Skip(val.Offset).Take(val.Limit);
+            return Ok(res);
+        }
+
         [HttpPost("AutocompleteSimple")]
         public async Task<IActionResult> AutocompleteSimple(PartnerPaged val)
         {

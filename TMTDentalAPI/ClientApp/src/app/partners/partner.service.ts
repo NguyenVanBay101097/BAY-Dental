@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint } from './partner-simple';
+import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint, PartnerSimpleContact } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
@@ -97,6 +97,11 @@ export class PartnerService {
     autocomplete2(val: PartnerFilter)
         : Observable<PartnerSimple[]> {
         return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + "/autocomplete2", val);
+    }
+
+    autocomplete3(val: PartnerPaged)
+        : Observable<PartnerSimpleContact[]> {
+        return this.http.post<PartnerSimpleContact[]>(this.baseApi + this.apiUrl + "/Autocomplete3", val);
     }
 
     autocompletePartner(val: PartnerPaged): Observable<PartnerSimple[]> {
