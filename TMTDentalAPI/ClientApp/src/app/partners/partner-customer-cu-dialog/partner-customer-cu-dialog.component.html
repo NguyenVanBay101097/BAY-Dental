@@ -19,6 +19,18 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Danh xưng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-combobox formControlName="title" [filterable]="true" [data]="filteredTitles"
+                                           [valueField]="'id'" #titleCbx [textField]="'name'">
+                                        </kendo-combobox>                                 
+                                      </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Điện thoại</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">

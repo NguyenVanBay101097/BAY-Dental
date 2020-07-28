@@ -47,6 +47,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Autocomplete(PartnerTitlePaged val)
+        {
+            var res = await _partnerTitleService.GetAutocompleteAsync(val);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(PartnerTitleSave val)
         {

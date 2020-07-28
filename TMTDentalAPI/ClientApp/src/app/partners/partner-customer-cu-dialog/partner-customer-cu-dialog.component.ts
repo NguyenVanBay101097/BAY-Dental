@@ -21,6 +21,7 @@ import { PartnerSourceService, PartnerSourcePaged } from "src/app/partner-source
 import { UserService, UserPaged } from "src/app/users/user.service";
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { AddressCheckApi } from 'src/app/price-list/price-list';
+import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -30,6 +31,7 @@ import { AddressCheckApi } from 'src/app/price-list/price-list';
 export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild("titleCbx", { static: true }) titleCbx: ComboBoxComponent;
   
   id: string;
   formGroup: FormGroup;
@@ -45,6 +47,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   districtsFilter: District[] = [];
   provincesFilter: City[] = [];
   wardsFilter: Ward[] = [];
+  filteredTitles: PartnerTitle[] = [];
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
@@ -96,7 +99,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
     private intlService: IntlService,
-    private userService: UserService
+    private userService: UserService, 
+    private partnerTitleService: PartnerTitleService
   ) {}
 
   ngOnInit() {
@@ -124,7 +128,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       histories: this.fb.array([]),
       companyId: null,
       dateObj: null,
-      addressCheckDetail: 0
+      addressCheckDetail: 0, 
+      title: null
     });
 
     
@@ -132,7 +137,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     setTimeout(() => {
       if (this.id) {
         this.partnerService.getPartner(this.id).subscribe((result) => {
-          console.log(result);
           this.formGroup.patchValue(result);
           if (result.city && result.city.code) {
             this.handleCityChange(result.city);
@@ -175,6 +179,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           if (result.referralUser) {
             this.filteredReferralUsers = _.unionBy(this.filteredReferralUsers, [result.referralUser], 'id');
           }
+
+          if (result.title) {
+            this.filteredTitles = _.unionBy(this.filteredTitles, [result.title], 'id');
+          }
         });
       } else {
         this.formGroup.get("dateObj").setValue(new Date());
@@ -188,6 +196,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.loadHistoriesList();
       this.loadSourceList();
       this.loadReferralUserList();
+      this.loadTitleList();
 
       this.sourceCbx.filterChange
         .asObservable()
@@ -213,6 +222,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         this.userCbx.loading = false;
       });
     });
+
+    this.titleCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.titleCbx.loading = true)),
+        switchMap((value) => this.searchTitles(value))
+      )
+      .subscribe((result) => {
+        this.filteredTitles = result;
+        this.titleCbx.loading = false;       
+      });
   }
 
   get sourceValue() {
@@ -395,6 +416,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
   }
 
+  loadTitleList() {
+    this.searchTitles().subscribe((result) => {
+      this.filteredTitles = _.unionBy(this.filteredTitles, result, 'id');
+    });
+  }
+
   quickCreatePartnerCategory() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, {
       size: "lg",
@@ -430,6 +457,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return this.userService.autocompleteSimple(val);
   }
 
+  searchTitles(q?: string) {
+    var val = new PartnerTitlePaged();
+    val.search = q;
+    return this.partnerTitleService.autocomplete(val);
+  }
+
   birthInit(begin: number, end: number) {
     var list = new Array();
     for (let i = begin; i <= end; i++) {
@@ -446,6 +479,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     var val = this.formGroup.value;
     val.sourceId = val.source ? val.source.id : null;
     val.referralUserId = val.referralUser ? val.referralUser.id : null;
+    val.titleId = val.title ? val.title.id : null;
     val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd"): null;
     val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
     val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;

@@ -43,6 +43,10 @@ export class PartnerTitleService {
     return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
   }
 
+  autocomplete(val: PartnerTitlePaged): Observable<PartnerTitle[]> {
+    return this.http.post<PartnerTitle[]>(this.baseApi + this.apiUrl + "/Autocomplete", val);
+  }
+
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }

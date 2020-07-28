@@ -45,6 +45,18 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<IEnumerable<PartnerTitleBasic>> GetAutocompleteAsync(PartnerTitlePaged val)
+        {
+            ISpecification<PartnerTitle> spec = new InitialSpecification<PartnerTitle>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<PartnerTitle>(x => x.Name.Contains(val.Search)));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var items = await _mapper.ProjectTo<PartnerTitleBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+
+            return items;
+        }
+
         public override async Task<IEnumerable<PartnerTitle>> CreateAsync(IEnumerable<PartnerTitle> entities)
         {
             await base.CreateAsync(entities);
