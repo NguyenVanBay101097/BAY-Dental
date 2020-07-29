@@ -50,6 +50,7 @@ export class PartnerSupplierListComponent implements OnInit {
     val.offset = this.skip;
     val.supplier = true;
     val.search = this.search || '';
+    val.computeCreditDebit = true;
 
     this.loading = true;
     this.partnerService.getPaged(val).pipe(

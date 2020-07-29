@@ -66,6 +66,11 @@
                 {{dataItem.amountTotal | number}}
             </ng-template>
         </kendo-grid-column>
+        <kendo-grid-column field="amountResidual" title="Còn nợ" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountResidual | number}}
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{stateGet(dataItem.state)}}

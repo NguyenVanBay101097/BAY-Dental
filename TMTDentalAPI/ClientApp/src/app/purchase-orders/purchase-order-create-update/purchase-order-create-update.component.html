@@ -50,6 +50,10 @@
                         class="btn btn-primary btn-sm" (click)="buttonConfirm()">
                         Xác nhận
                     </button>
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1 && purchaseOrder.amountResidual > 0" type="button"
+                        class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
+                        Thanh toán
+                    </button>
                     <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy đơn
@@ -235,6 +239,18 @@
                                     <td colspan="1">
                                         <span
                                             class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="purchaseOrder.state != 'draft'">
+                                    <td colspan="1" class="o_td_label pb-0">
+                                        <label
+                                            class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                            Còn nợ
+                                        </label>
+                                    </td>
+                                    <td colspan="1">
+                                        <span
+                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{purchaseOrder.amountResidual | number}}</span>
                                     </td>
                                 </tr>
                             </tbody>

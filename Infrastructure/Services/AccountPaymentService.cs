@@ -32,6 +32,7 @@ namespace Infrastructure.Services
         public async Task Post(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.AccountMovePaymentRels)
                 .Include(x => x.SaleOrderPaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
                 .Include(x => x.Journal).Include(x => x.Journal.DefaultCreditAccount)
@@ -98,7 +99,11 @@ namespace Infrastructure.Services
                 {
                     if (rec.AccountMovePaymentRels.Any())
                     {
-                        var invoices = moves.Concat(rec.AccountMovePaymentRels.Select(x => x.Move));
+                        var move_ids = rec.AccountMovePaymentRels.Select(x => x.MoveId);
+                        var payment_moves = await moveObj.SearchQuery(x => move_ids.Contains(x.Id))
+                            .Include(x => x.Lines).Include("Lines.Account").ToListAsync();
+
+                        var invoices = moves.Concat(payment_moves);
                         await _AutoReconcile(rec, invoices);
                     }
                     else if (rec.SaleOrderPaymentRels.Any())
@@ -213,7 +218,12 @@ namespace Infrastructure.Services
                     }
 
                     if (payment.AccountMovePaymentRels.Any())
-                        rec_pay_line_name += $": {string.Join(", ", payment.AccountMovePaymentRels.Select(x => x.Move.Name))}";
+                    {
+                        var moveObj = GetService<IAccountMoveService>();
+                        var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
+                        var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
+                        rec_pay_line_name += $": {string.Join(", ", move_names)}";
+                    }
                 }
 
                 var liquidity_line_name = "";
@@ -486,7 +496,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> saleOrderIds)
+        public async Task<AccountRegisterPaymentDisplay> SaleDefaultGet(IEnumerable<Guid> saleOrderIds)
         {
             var orderObj = GetService<ISaleOrderService>();
             var orders = await orderObj.SearchQuery(x => saleOrderIds.Contains(x.Id) && x.Residual > 0).ToListAsync();
@@ -508,6 +518,52 @@ namespace Infrastructure.Services
                 PartnerType = "customer",
                 Communication = communication,
                 SaleOrderIds = saleOrderIds
+            };
+
+            return rec;
+        }
+
+        public async Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds)
+        {
+            var orderObj = GetService<IPurchaseOrderService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var invoice_ids = await amlObj.SearchQuery(x => purchaseOrderIds.Contains(x.PurchaseLine.OrderId)).Select(x => x.MoveId).Distinct().ToListAsync();
+            return await DefaultGet(invoice_ids);
+        }
+
+        public async Task<AccountRegisterPaymentDisplay> DefaultGet(IEnumerable<Guid> invoice_ids)
+        {
+            var amObj = GetService<IAccountMoveService>();
+            var invoices = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            invoices = invoices.Where(x => amObj.IsInvoice(x, include_receipts: true)).ToList();
+
+            if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
+                throw new Exception("You can only register payments for open invoices");
+            var dtype = invoices[0].Type;
+            foreach(var inv in invoices.Skip(1))
+            {
+                if (inv.Type != dtype)
+                {
+                    if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" && inv.Type == "in_refund"))
+                        throw new Exception("You cannot register payments for vendor bills and supplier refunds at the same time.");
+
+                    if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" && inv.Type == "out_refund"))
+                        throw new Exception("You cannot register payments for customer invoices and credit notes at the same time.");
+                }
+            }
+
+            var total_amount = invoices.Sum(x => x.AmountResidual * MAP_INVOICE_TYPE_PAYMENT_SIGN[x.Type]);
+            var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
+                (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
+
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount ?? 0),
+                PaymentType = total_amount > 0 ? "inbound" : "outbound",
+                PartnerId = invoices[0].PartnerId,
+                PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
+                //Communication = communication,
+                InvoiceIds = invoice_ids
             };
 
             return rec;
@@ -618,6 +674,19 @@ namespace Infrastructure.Services
             }
         }
 
+        public IDictionary<string, int> MAP_INVOICE_TYPE_PAYMENT_SIGN
+        {
+            get
+            {
+                var res = new Dictionary<string, int>();
+                res.Add("out_invoice", 1);
+                res.Add("in_refund", 1);
+                res.Add("in_invoice", -1);
+                res.Add("out_refund", -1);
+                return res;
+            }
+        }
+
         /// <summary>
         /// Thanh toán nợ, bắt đầu từ hóa đơn hết hạn sớm nhất của list phiếu điều trị truyền vào
         /// </summary>
@@ -714,8 +783,10 @@ namespace Infrastructure.Services
             {
                 if (payment.AccountMovePaymentRels.Any())
                 {
-                    payment.DestinationAccount = payment.AccountMovePaymentRels.SelectMany(x => x.Move.Lines)
-                        .Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
+                    var amlObj = GetService<IAccountMoveLineService>();
+                    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId).ToList();
+                    payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
+                        .Include(x => x.Account).Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
                 }
                 else if (payment.PartnerType == "customer")
                 {
@@ -795,9 +866,9 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated), limit: val.Limit, offSet: val.Offset);
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await _mapper.ProjectTo<AccountPaymentBasic>(query).ToListAsync();
+            var items = await _mapper.ProjectTo<AccountPaymentBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<AccountPaymentBasic>(totalItems, val.Offset, val.Limit)
