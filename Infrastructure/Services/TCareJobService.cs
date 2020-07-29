@@ -72,7 +72,7 @@ namespace Infrastructure.Services
                     //}
 
                     var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
-                    foreach(var partner_id in partner_ids)
+                    foreach (var partner_id in partner_ids)
                         BackgroundJob.Enqueue(() => SendMessageSocial(campaignId, db, partner_id));
                 }
                 catch (Exception e)
@@ -84,7 +84,7 @@ namespace Infrastructure.Services
 
 
 
-       
+
         // Xử lý nhiều rules
         //public IEnumerable<Guid> SearchPartnerIdsInRules(IEnumerable<Rule> rules, string typeRule, SqlConnection conn)
         //{
@@ -99,7 +99,7 @@ namespace Infrastructure.Services
 
         public IEnumerable<Guid> SearchPartnerIds(IEnumerable<Condition> conditions, string typeRule, SqlConnection conn)
         {
-          
+
             var lstRule = new List<RulePartnerIds>();
             var partner_ids = new List<Guid>();
             var builder = new SqlBuilder();
@@ -249,20 +249,20 @@ namespace Infrastructure.Services
                             break;
                         case "lastExamination":
                             //ngày khám cuối cùng sau bao nhiêu ngày 
-                             var lastExaminationPartnerIds = conn.Query<Guid>("" +
-                                    "Select pn.Id From Partners pn " +
-                                    "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
-                                    "Left join DotKhams dk ON dk.SaleOrderId = sale.Id " +
-                                    "Where pn.Customer = 1 and sale.State in ('sale','done') " +
-                                    "Group by pn.Id " +
-                                    "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
-                             lstRule.Add(new RulePartnerIds() { Ids = lastExaminationPartnerIds });
-                             break;
+                            var lastExaminationPartnerIds = conn.Query<Guid>("" +
+                                   "Select pn.Id From Partners pn " +
+                                   "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
+                                   "Left join DotKhams dk ON dk.SaleOrderId = sale.Id " +
+                                   "Where pn.Customer = 1 and sale.State in ('sale','done') " +
+                                   "Group by pn.Id " +
+                                   "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
+                            lstRule.Add(new RulePartnerIds() { Ids = lastExaminationPartnerIds });
+                            break;
                         case "lastAppointment":
                             //lịch hẹn tiếp theo/gần đây trước bao nhiêu ngày
                             var lastAppointmentPartnerIds = conn.Query<Guid>("" +
                                     "Select pn.Id From Partners pn " +
-                                    "Left join Appointments am ON am.PartnerId = pn.Id " +                                
+                                    "Left join Appointments am ON am.PartnerId = pn.Id " +
                                     "Where pn.Customer = 1 " +
                                     "Group by pn.Id " +
                                     "Having (Max(am.Date) >= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
@@ -291,10 +291,10 @@ namespace Infrastructure.Services
             {
                 partner_ids = PartnerIds;
             }
-                
 
 
-                //var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
+
+            //var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
             return partner_ids;
         }
 
@@ -335,22 +335,83 @@ namespace Infrastructure.Services
                 if (channelSocial == null)
                     return;
 
-                var profiles = GetUserProfiles(Guid.Parse(sequence.ChannelSocialId), partner_id.Value, conn);
-                if (!profiles.Any())
+                //khách hàng
+                var partner = conn.Query<Partner>("" +
+                             "SELECT * " +
+                             "FROM Partners " +
+                             "where Id = @id" +
+                             "", new { id = partner_id.Value }).FirstOrDefault();
+
+                if (partner == null)
                     return;
 
-                var profile = profiles.First();
 
-                //Xử lý cá nhân hóa nội dung gửi tin
-                var messageContent = sequence.Content;
 
-                //Xử lý gửi tin
+                //Xử lý gửi tin              
                 if (sequence.ChannelType == "priority")
                 {
+                   
+                    var profiles = GetUserProfilesPriority(partner_id.Value, conn);
+                    if (!profiles.Any())
+                        return;
+
+                    var profile = profiles.First();
+
+                    var channelSocials = conn.Query<FacebookPage>("" +
+                         "SELECT * " +
+                         "FROM FacebookPages " +
+                         "where Id = @id" +
+                         "", new { id = profile.FbPageId }).FirstOrDefault();
+
+                    //Xử lý cá nhân hóa nội dung gửi tin
+                    var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
+
+                    var now = DateTime.Now;
+                    var track_id = GuidComb.GenerateComb();
+                    var channelSocialId = channelSocials.Id;
+
+                    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)", new { Id = track_id, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = channelSocials.Type, ChannelSocialId = channelSocialId, DateCreated = now, LastUpdated = now });
+
+                    if (channelSocials.Type == "facebook")
+                    {
+                        var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocials.PageAccesstoken);
+                        if (!string.IsNullOrEmpty(sendResult.error))
+                        {
+                            await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
+                        }
+                        else
+                        {
+                            await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId where Id=@id", new { messageId = sendResult.message_id, id = track_id });
+                            BackgroundJob.Enqueue(() => GetInfoMessageFBApi(db, track_id, channelSocials.PageAccesstoken, sendResult.message_id));
+                        }
+                    }
+                    else if (channelSocials.Type == "zalo")
+                    {
+                       
+
+                        var sent = DateTime.Now;
+                        var zaloClient = new ZaloClient(channelSocials.PageAccesstoken);
+                        var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, messageContent).ToObject<SendMessageZaloResponse>();
+
+                        if (sendResult.error != 0)
+                            await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
+                        else
+                            await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = sent, id = track_id });
+                    }
+
 
                 }
-                else if (sequence.ChannelType == "fixed")
+                else if(sequence.ChannelType == "fixed")
                 {
+                    var profiles = GetUserProfilesFixed(Guid.Parse(sequence.ChannelSocialId), partner_id.Value, conn);
+                    if (!profiles.Any())
+                        return;
+
+                    var profile = profiles.First();
+
+                    //Xử lý cá nhân hóa nội dung gửi tin
+                    var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
+
                     var now = DateTime.Now;
                     var track_id = GuidComb.GenerateComb();
                     var channelSocialId = Guid.Parse(sequence.ChannelSocialId);
@@ -382,10 +443,13 @@ namespace Infrastructure.Services
                             await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = sent, id = track_id });
                     }
                 }
+
+
+
             }
         }
 
-        private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid ChannelSocialId, Guid partner_id,
+        private static IEnumerable<FacebookUserProfile> GetUserProfilesFixed(Guid ChannelSocialId, Guid partner_id,
            SqlConnection conn = null)
         {
             var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where FbPageId = @PageId and PartnerId = @PartnerId",
@@ -394,26 +458,18 @@ namespace Infrastructure.Services
             return profiles;
         }
 
-        private static IEnumerable<FacebookUserProfile> GetUserProfiles(Guid ChannelSocialId, IEnumerable<Guid> partIds,
+        private static IEnumerable<FacebookUserProfile> GetUserProfilesPriority( Guid partId,
            SqlConnection conn = null)
-        {     
-            var builder = new SqlBuilder();
-            var sqltemplate = builder.AddTemplate("SELECT /**select**/ FROM FacebookUserProfiles us /**leftjoin**/ /**where**/ /**orderby**/ ");
+        {
+            var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
+               new { PartnerId = partId }).ToList();
 
-            builder.Select("us.* ");
-            builder.Where("us.FbPageId = @PageId ", new { PageId = ChannelSocialId });
-            var iUserprofiles = conn.Query<FacebookUserProfile>(sqltemplate.RawSql, sqltemplate.Parameters).ToList();
-
-
-            // lấy danh sách userprofiles theo filter
-            //var profiles = GetProfilesActivity(activity, pageId, conn);
-            var lstUserProfile = iUserprofiles.Where(x => partIds.Any(s => s == x.PartnerId)).ToList();
-
-            return lstUserProfile;
+            return profiles;
 
         }
 
-       
+
+      
 
 
 
@@ -539,7 +595,7 @@ namespace Infrastructure.Services
 
     public class RulePartnerIds
     {
-        public List<Guid> Ids { get; set; } 
+        public List<Guid> Ids { get; set; }
     }
 
 }
