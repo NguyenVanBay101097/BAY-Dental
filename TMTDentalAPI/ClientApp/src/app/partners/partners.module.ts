@@ -46,6 +46,7 @@ import { PartnerCustomerCategoriesComponent } from './partner-customer-categorie
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { PopupModule } from '@progress/kendo-angular-popup';
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
+import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
 
 @NgModule({
   declarations: [PartnerListComponent,
@@ -77,7 +78,8 @@ import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-i
     PartnerCustomerTreatmentPaymentChildComponent,
     PartnerCustomerProductToaThuocListComponent,
     PartnerCustomerCategoriesComponent,
-    PartnerCustomerUploadImageComponent],
+    PartnerCustomerUploadImageComponent,
+    PartnerCustomerQuotationsComponent],
   imports: [
     CommonModule,
     PartnersRoutingModule,

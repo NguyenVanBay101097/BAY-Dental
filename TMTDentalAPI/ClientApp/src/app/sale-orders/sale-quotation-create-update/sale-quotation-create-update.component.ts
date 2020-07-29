@@ -71,15 +71,17 @@ import { EmployeeService } from "src/app/employees/employee.service";
 export class SaleQuotationCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
+  partnerId: string;
   submitted = false;
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredEmployees: EmployeeSimple[] = [];
   filteredPricelists: ProductPriceListBasic[];
-  @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
+  // @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("pricelistCbx", { static: true }) pricelistCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
+  partnerSend: any;
 
   constructor(
     private fb: FormBuilder,
@@ -113,17 +115,17 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
     this.routeActive();
 
-    this.partnerCbx.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(300),
-        tap(() => (this.partnerCbx.loading = true)),
-        switchMap((value) => this.searchPartners(value))
-      )
-      .subscribe((result) => {
-        this.filteredPartners = result;
-        this.partnerCbx.loading = false;
-      });
+    // this.partnerCbx.filterChange
+    //   .asObservable()
+    //   .pipe(
+    //     debounceTime(300),
+    //     tap(() => (this.partnerCbx.loading = true)),
+    //     switchMap((value) => this.searchPartners(value))
+    //   )
+    //   .subscribe((result) => {
+    //     this.filteredPartners = result;
+    //     this.partnerCbx.loading = false;
+    //   });
 
     this.userCbx.filterChange
       .asObservable()
@@ -160,25 +162,30 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       .pipe(
         switchMap((params: ParamMap) => {
           this.id = params.get("id");
+          this.partnerId = params.get("partner_id");
           if (this.id) {
             return this.saleOrderService.get(this.id);
           } else {
-            return this.saleOrderService.defaultGet({ isQuotation: true });
+            return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '', isQuotation: true });
           }
         })
       )
       .subscribe((result) => {
         this.saleOrder = result;
+        this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get("dateOrderObj").patchValue(dateOrder);
 
         if (result.user) {
-          this.filteredUsers = _.unionBy(
-            this.filteredUsers,
-            [result.user],
-            "id"
-          );
+          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        }
+
+        if (result.partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+          if (!this.id) {
+            this.onChangePartner(result.partner);
+          }
         }
 
         const control = this.formGroup.get("orderLines") as FormArray;
@@ -191,8 +198,22 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       });
   }
 
+  get customerId() {
+    var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
+    if (parterIdParam) {
+      return parterIdParam;
+    }
+
+    if (this.id && this.saleOrder) {
+      return this.saleOrder.partnerId;
+    }
+
+    return undefined;
+  }
+
   get partner() {
-    return this.formGroup.get("partner").value;
+    var control = this.formGroup.get('partner');
+    return control ? control.value : null;
   }
 
   updateCustomerModal() {
@@ -331,7 +352,9 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(["/sale-quotations/form"]);
+    if (this.customerId) {
+      this.router.navigate(['/sale-quotations/form'], { queryParams: { partner_id: this.customerId } });
+    }
   }
 
   actionConvertToOrder() {

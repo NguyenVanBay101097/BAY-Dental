@@ -2,24 +2,13 @@
   <div class="o_control_panel o_breadcrumb_full">
     <ol class="breadcrumb">
       <li>
-        <a routerLink="/sale-quotations">Phiếu tư vấn</a>
+        <a [routerLink]="['/customer/' + customerId + '/quotations']">Phiếu tư vấn</a>
       </li>
       <li class="active">
         <span *ngIf="id">{{saleOrder.name}}</span>
         <span *ngIf="!id">Mới</span>
       </li>
     </ol>
-    <div class="o_cp_left">
-      <div class="o_cp_buttons">
-        <div class="o_form_buttons_view">
-          <button type="button" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(saleOrder.state) !== -1"
-            (click)="onSave()">
-            Lưu</button>
-          <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
-            Thêm mới</button>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -28,6 +17,10 @@
     <div class="o_form_sheet_bg">
       <div class="o_form_statusbar">
         <div class="o_statusbar_buttons">
+          <button type="button" *ngIf="['draft'].indexOf(saleOrder.state) !== -1"
+            class="btn btn-primary btn-sm" (click)="onSave()">
+            Lưu
+          </button>
           <button type="button" *ngIf="id && saleOrder.state == 'draft' && !saleOrder.order"
             class="btn btn-primary btn-sm" (click)="actionConvertToOrder()">
             Tạo phiếu điều trị
@@ -35,6 +28,10 @@
           <button *ngIf="id && ['draft'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
             (click)="actionDone()">
             Khóa
+          </button>
+          <button *ngIf="id" type="button" class="btn btn-secondary btn-sm"
+            (click)="createNew()">
+            Thêm mới
           </button>
         </div>
         <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -72,6 +69,9 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%;">
+                  <a *ngIf="partner" [routerLink]="['/customer/' + partner.id]">{{partner.displayName}}</a>
+                </td>
+                <!-- <td colspan="1" style="width: 100%;">
                   <div class="d-flex">
                     <kendo-combobox [class.d-none]="saleOrder.state != 'draft'" [data]="filteredPartners"
                       [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'"
@@ -97,24 +97,25 @@
                     class="text-danger">
                     <span *ngIf="f.partner.errors.required">Chọn khách hàng</span>
                   </div>
-                </td>
+                </td> -->
               </tr>
               <!-- <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Bảng giá
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredPricelists"
-                                        [class.d-none]="saleOrder.state != 'draft'" [textField]="'name'"
-                                        [filterable]="true" #pricelistCbx formControlName="pricelist"
-                                        [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <span
-                                        [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.pricelist ? saleOrder.pricelist.name : ''}}</span>
-                                </td>
-                            </tr> -->
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">
+                    Bảng giá
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <kendo-combobox [data]="filteredPricelists"
+                      [class.d-none]="saleOrder.state != 'draft'" [textField]="'name'"
+                      [filterable]="true" #pricelistCbx formControlName="pricelist"
+                      [valueField]="'id'">
+                  </kendo-combobox>
+                    <span
+                      [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.pricelist ? saleOrder.pricelist.name : ''}}
+                    </span>
+                </td>
+              </tr> -->
               <tr *ngIf="saleOrder.order">
                 <td colspan="1" class="o_td_label">
                   <label class="o_form_label">
