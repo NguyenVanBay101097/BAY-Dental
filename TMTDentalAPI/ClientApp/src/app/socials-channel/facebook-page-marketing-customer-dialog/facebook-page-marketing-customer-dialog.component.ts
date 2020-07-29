@@ -78,7 +78,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     });
   }
 
-  quickCreateCateg() {
+  quickCreateCus() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then(result => {
