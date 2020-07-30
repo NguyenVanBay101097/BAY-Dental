@@ -78,7 +78,7 @@ namespace TMTDentalAPI.Controllers
                             //await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
                         }
 
-                        if(messaging.Message != null)
+                        if (messaging.Message != null)
                         {
                             var db = _tenant != null ? _tenant.Hostname : "localhost";
                         }
@@ -87,5 +87,7 @@ namespace TMTDentalAPI.Controllers
             }
             return Ok();
         }
+
+
     }
 }

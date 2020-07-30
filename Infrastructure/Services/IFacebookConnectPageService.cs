@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         Task AddConnect(IEnumerable<Guid> ids);
         Task RemoveConnect(IEnumerable<Guid> ids);
+        
     }
 }

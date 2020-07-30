@@ -782,5 +782,35 @@ namespace Infrastructure.Services
 
             }
         }
+
+        public async Task RefreshSocial(FacebookPageSimple val)
+        {
+            var connectObj = GetService<IFacebookConnectService>();
+            var connectPageObj = GetService<IFacebookConnectPageService>();
+            var socialChannel = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+
+
+            if(socialChannel.Type == "facebook")
+            {
+                var account = await connectObj.GetUserAccounts(socialChannel.UserAccesstoken, socialChannel.UserId);
+                var page = account.Accounts.Data.Where(x => x.Id == socialChannel.PageId).SingleOrDefault();
+
+                //update accesstoken connect page
+                var connectPage = await connectPageObj.SearchQuery(x => x.PageId == page.Id).SingleOrDefaultAsync();
+                connectPage.PageAccessToken = page.PageAccesstoken;
+
+                await connectPageObj.UpdateAsync(connectPage);
+
+                //update accesstoken facebook page
+
+                socialChannel.PageAccesstoken = page.PageAccesstoken;
+
+                await UpdateAsync(socialChannel);
+
+
+                connectObj.GetConnectWebhooksForPage(socialChannel.PageId, socialChannel.PageAccesstoken);
+
+            }
+        }
     }
 }

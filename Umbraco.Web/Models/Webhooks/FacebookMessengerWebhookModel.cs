@@ -81,11 +81,17 @@ namespace Umbraco.Web.Models.Webhooks
         [JsonProperty("text")]
         public string Type { get; set; }
 
-        //[JsonProperty("ref")]
-        //public string Ref { get; set; }
+        [JsonProperty("quick_reply")]
+        public MessageQuickReply QuickReply { get; set; }
 
         //[JsonProperty("referer_uri")]
         //public string RefererUri { get; set; }
+    }
+
+    public class MessageQuickReply
+    {
+        [JsonProperty("payload")]
+        public string Payload { get; set; }
     }
 
 
