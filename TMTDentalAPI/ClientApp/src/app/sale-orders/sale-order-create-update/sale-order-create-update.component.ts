@@ -698,7 +698,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Khóa phiếu điều trị';
       modalRef.componentInstance.body = 'Khi khóa phiếu điều trị sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
       modalRef.result.then(() => {
@@ -1110,6 +1110,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+
         this.loadRecord();
         this.loadPayments();
       });

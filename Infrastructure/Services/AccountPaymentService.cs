@@ -501,7 +501,10 @@ namespace Infrastructure.Services
             var orderObj = GetService<ISaleOrderService>();
             var orders = await orderObj.SearchQuery(x => saleOrderIds.Contains(x.Id) && x.Residual > 0).ToListAsync();
 
-            if (!orders.Any() || orders.Any(x => x.State != "sale" && x.State != "done"))
+            if (!orders.Any())
+                throw new Exception("Phiếu điều trị đã thanh toán đủ");
+
+            if (orders.Any(x => x.State != "sale" && x.State != "done"))
                 throw new Exception("Bạn chỉ có thể thanh toán cho phiếu điều trị đã xác nhận");
 
             if (orders.Any(x => x.PartnerId != orders[0].PartnerId))

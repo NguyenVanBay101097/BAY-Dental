@@ -57,9 +57,11 @@
                     </button>
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionDone()">
-                        Khóa
+                        Khóa phiếu
                     </button>
-                   
+                    <a [routerLink]="['/customer/' + customerId + '/treatment-payment']" class="btn btn-secondary btn-sm">
+                        Trở lại
+                    </a>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
@@ -456,7 +458,7 @@
                                         <th>Ngày thanh toán</th>
                                         <th>Phương thức</th>
                                         <th>Số tiền</th>
-                                        <th>Tham chiếu</th>
+                                        <!-- <th>Tham chiếu</th> -->
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -465,7 +467,7 @@
                                         <td>{{ payment.date | date : 'shortDate'}}</td>
                                         <td>{{ payment.journalName }}</td>
                                         <td>{{ payment.amount | number}}</td>
-                                        <td>{{ payment.ref }}</td>
+                                        <!-- <td>{{ payment.ref }}</td> -->
                                         <td>
                                             <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
                                                 (click)="printPayment(payment)">

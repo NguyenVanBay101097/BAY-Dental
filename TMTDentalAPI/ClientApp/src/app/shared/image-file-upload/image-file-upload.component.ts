@@ -13,6 +13,9 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   @Input() imageId: string;
   uploading = false;
   @Output() uploaded = new EventEmitter<any>();
+  @Input() width: number;
+  @Input() height: number;
+  @Input() crop: boolean;
 
   constructor(private webService: WebService) { }
 
@@ -39,6 +42,15 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   }
 
   get imageFileUrl() {
-    return environment.uploadDomain + 'api/Web/Image/' + this.imageId;
+    if (this.width || this.height) {
+      var url = environment.uploadDomain + 'api/Web/Image/' + this.imageId + `/${this.width}x${this.height}`;
+      if (this.crop) {
+        url = url + '?crop=true';
+      }
+
+      return url;
+    }
+    
+    return environment.uploadDomain + 'api/Web/Image/' + this.imageId + '/200x';
   }
 }
