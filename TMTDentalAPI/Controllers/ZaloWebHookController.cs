@@ -73,6 +73,12 @@ namespace TMTDentalAPI.Controllers
                 //await _tCareMessagingTraceService.UpdateAsync(traces);
                 //await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
             }
+            else if(whzl.EventName == "user_send_text")
+            {
+                var db = _tenant != null ? _tenant.Hostname : "localhost";
+                BackgroundJob.Enqueue(() => _webhookJobService.ProcessAddUserProfile(db, whzl.Recipient.Id, whzl.Sender.Id));
+            }
+
             return Ok();
         }
 

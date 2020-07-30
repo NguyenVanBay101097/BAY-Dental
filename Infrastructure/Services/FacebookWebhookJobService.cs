@@ -1,7 +1,10 @@
 ﻿using ApplicationCore.Entities;
 using Dapper;
+using Facebook.ApiClient.ApiEngine;
+using Facebook.ApiClient.Constants;
 using Infrastructure.Data;
 using Microsoft.Extensions.Options;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -11,10 +14,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Umbraco.Web.Models.ContentEditing;
+using ZaloDotNetSDK;
+using ZaloDotNetSDK.oa;
 
 namespace Infrastructure.Services
 {
-    public class FacebookWebhookJobService: IFacebookWebhookJobService
+    public class FacebookWebhookJobService : IFacebookWebhookJobService
     {
         private readonly ConnectionStrings _connectionStrings;
         public FacebookWebhookJobService(IOptions<ConnectionStrings> connectionStrings)
@@ -40,7 +45,7 @@ namespace Infrastructure.Services
                     if (item.PartnerId is null || item.TCareCampaignId is null)
                         continue;
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = item.TCareCampaignId }).FirstOrDefault();
-                  
+
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
@@ -70,7 +75,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task ProcessDelivery(string db, DateTime watermark, string psid, string page_id)
+        public async Task ProcessDelivery(string db, DateTime watermark, string psid, string page_id )
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
@@ -116,6 +121,49 @@ namespace Infrastructure.Services
                     }
 
                 }
+            }
+        }
+
+        public async Task ProcessAddUserProfile(string db, string psid, string page_id)
+        {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
+
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                var now = DateTime.Now;              
+                var page = conn.Query<FacebookPage>("select * from FacebookPages where PageId = @PageId ", new { PageId = page_id }).FirstOrDefault();
+                var profile = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PSID = @PSID AND FbPageId = @FbPageId", new { PSID = psid, FbPageId = page.Id }).FirstOrDefault();
+                if(page.Type == "facebook")
+                {
+                    if (profile == null)
+                    {
+                        var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
+                        var getRequestUrl = $"{psid}?fields=id,name,first_name,last_name,profile_pic";
+                        var getRequest = (GetRequest)ApiRequest.Create(ApiRequest.RequestType.Get, getRequestUrl, apiClient, false);
+                        var response = (await getRequest.ExecuteAsync<ApiUserProfileResponse>());
+                        if (!response.GetExceptions().Any())
+                        {
+                            var rs = response.GetResult();
+                            await conn.ExecuteAsync("insert into FacebookUserProfiles(Id,DateCreated,LastUpdated,Name,FirstName,LastName,Gender,PSID,FbPageId,Avatar) values (@Id,@DateCreated,@LastUpdated,@Name,@FirstName,@LastName,@Gender,@PSID,@FbPageId,@Avatar);", new { Id = GuidComb.GenerateComb(), DateCreated = now, LastUpdated = now, Name = rs.Name, FirstName = rs.FirstName, LastName = rs.LastName, Gender = rs.Gender, PSID = rs.PSId, FbPageId = page.Id, Avatar = rs.ProfilePic });
+                        }
+                    }
+                    return;
+                }
+                else if (page.Type == "zalo")
+                {
+                    if (profile == null)
+                    {
+                        var zaloClient = new ZaloClient(page.PageAccesstoken);
+                        var res = zaloClient.getProfileOfFollower(psid).ToObject<GetProfileOfFollowerResponse>();
+                        await conn.ExecuteAsync("insert into FacebookUserProfiles(Id,DateCreated,LastUpdated,Name,FirstName,LastName,Gender,PSID,FbPageId,Avatar) values (@Id,@DateCreated,@LastUpdated,@Name,@FirstName,@LastName,@Gender,@PSID,@FbPageId,@Avatar);", new { Id = GuidComb.GenerateComb(), DateCreated = now, LastUpdated = now, Name = res.data.display_name, Gender = res.data.user_gender, PSID = res.data.user_id.ToString(), FbPageId = page.Id, Avatar = res.data.avatar });
+                    }
+                    
+                }
+                
+
+               
             }
         }
     }

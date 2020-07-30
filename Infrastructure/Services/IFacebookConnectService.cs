@@ -11,6 +11,6 @@ namespace Infrastructure.Services
     {
         Task<FacebookConnect> SaveFromUI(FacebookConnectSaveFromUI val);
         Task<FacebookUserData> GetUserAccounts(string access_token, string user_id);
-        bool GetConnectWebhooksForPage(string pageId, string pageAccesstoken);
+       
     }
 }

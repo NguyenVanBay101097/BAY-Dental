@@ -35,14 +35,17 @@ namespace Infrastructure.Services
         private readonly FacebookAuthSettings _fbAuthSettings;
         private readonly AppTenant _tenant;
         private readonly ConnectionStrings _connectionStrings;
+        private readonly AppSettings _appSettings;
+
         public FacebookPageService(IAsyncRepository<FacebookPage> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IOptions<FacebookAuthSettings> fbAuthSettingsAccessor,
-            ITenant<AppTenant> tenant, IOptions<ConnectionStrings> connectionStrings)
+            ITenant<AppTenant> tenant, IOptions<ConnectionStrings> connectionStrings, IOptions<AppSettings> appSettings)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _fbAuthSettings = fbAuthSettingsAccessor?.Value;
             _tenant = tenant?.Value;
             _connectionStrings = connectionStrings?.Value;
+            _appSettings = appSettings?.Value;
         }
 
         public override async Task<FacebookPage> CreateAsync(FacebookPage entity)
@@ -808,9 +811,39 @@ namespace Infrastructure.Services
                 await UpdateAsync(socialChannel);
 
 
-                connectObj.GetConnectWebhooksForPage(socialChannel.PageId, socialChannel.PageAccesstoken);
+                GetConnectWebhooksForPage(socialChannel.PageId, socialChannel.PageAccesstoken);
 
             }
+        }
+
+        private bool GetConnectWebhooksForPage(string pageId, string pageAccesstoken)
+        {
+            var host = _tenant != null ? _tenant.Hostname : "localhost";
+
+            var content = new ConnectWebhooks
+            {
+                Host = $"{host}.{_appSettings.Domain}",
+                FacebookId = pageId,
+                FacebookToken = pageAccesstoken,
+                FacebookName = null,
+                FacebookAvatar = null,
+                FacebookCover = null,
+                FacebookLink = null,
+                FacebookType = 2,
+                CallbackUrl = $"{_appSettings.Schema}://{host}.{_appSettings.Domain}/api/FacebookWebHook",
+                IsCallbackWithRaw = true
+            };
+
+            HttpResponseMessage response = null;
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
+            {
+                response = client.PostAsJsonAsync("https://fba.tpos.vn/api/facebook/updatetoken", content).Result;
+            }
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Lỗi đăng ký fba.tpos.vn");
+
+            return true;
         }
     }
 }

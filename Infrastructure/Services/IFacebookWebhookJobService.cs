@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     {
         Task ProcessRead(string db, DateTime watermark, string sender_id, string recipient_id);
         Task ProcessDelivery(string db, DateTime watermark, string sender_id, string recipient_id);
+        Task ProcessAddUserProfile(string db, string psid, string page_id);
     }
 }

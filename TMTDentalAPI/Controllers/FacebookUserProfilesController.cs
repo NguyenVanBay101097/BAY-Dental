@@ -37,7 +37,7 @@ namespace TMTDentalAPI.Controllers
         {
             var profile = await _facebookUserProfileService.SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner).FirstOrDefaultAsync();
-
+            
             if (profile == null)
                 return NotFound();
 

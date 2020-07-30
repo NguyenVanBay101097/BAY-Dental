@@ -81,6 +81,7 @@ namespace TMTDentalAPI.Controllers
                         if (messaging.Message != null)
                         {
                             var db = _tenant != null ? _tenant.Hostname : "localhost";
+                            BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessAddUserProfile(db, messaging.Sender.Id, messaging.Recipient.Id));
                         }
                     }
                 }
