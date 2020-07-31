@@ -26,6 +26,9 @@ declare var $: any;
 })
 export class LaboOrderCuDialogComponent implements OnInit {
 
+saleOrderLineId: string;
+  saleOrderLine: string;
+
   formGroup: FormGroup;
   id: string;
   dotKhamId: string;
@@ -254,11 +257,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
     if (this.saleOrderId)
       val.saleOrderId = this.saleOrderId;
-    this.laboOrderService.create(val).subscribe(result => {
-      this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.activeModal.close(result);
-      });
-    });
+     this.laboOrderService.create(val).subscribe(result => {
+       this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
+         this.activeModal.close(result);
+       });
+     });
   }
 
   buttonConfirm() {
@@ -353,10 +356,14 @@ export class LaboOrderCuDialogComponent implements OnInit {
   showAddLineModal() {
     let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chi tiết';
+    modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
+    modalRef.componentInstance.saleOrderLine = this.saleOrderLine;
 
     modalRef.result.then(result => {
+      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
+      line.teethListVirtual = this.fb.array(line.teethListVirtual);
       this.orderLines.push(this.fb.group(line));
       this.computeAmountTotal();
     }, () => {

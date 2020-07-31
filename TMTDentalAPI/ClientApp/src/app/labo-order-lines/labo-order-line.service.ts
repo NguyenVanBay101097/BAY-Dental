@@ -42,6 +42,7 @@ export class LaboOrderLineDisplay {
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
     state: string;
+    teethListVirtual: ToothDisplay[];
 }
 
 export class LaboOrderLinePaged {

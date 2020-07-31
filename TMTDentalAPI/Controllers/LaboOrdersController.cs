@@ -39,6 +39,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetFromSaleOrder_OrderLine([FromQuery] LaboOrderPaged val)
+        {
+            var res = await _laboOrderService.GetFromSaleOrder_OrderLine(val);
+            return Ok(res);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
@@ -74,7 +81,9 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _laboOrderService.Unlink(new List<Guid>() { id });
+            _unitOfWork.Commit();
             return NoContent();
         }
 

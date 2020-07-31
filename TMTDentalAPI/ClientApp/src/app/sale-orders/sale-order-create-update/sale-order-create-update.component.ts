@@ -41,6 +41,7 @@ import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-c
 import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { SaleOrderLineService } from '../sale-order-line.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+import { LaboOrderListDialogComponent } from 'src/app/labo-orders/labo-order-list-dialog/labo-order-list-dialog.component';
 
 declare var $: any;
 
@@ -103,7 +104,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
-    this.loadLaboOrderList();
+    // this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
   }
@@ -225,7 +226,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       var val = new LaboOrderPaged();
       val.saleOrderId = this.id;
-      return this.laboOrderService.getPaged(val).subscribe(result => {
+      return this.laboOrderService.GetFromSaleOrder_OrderLine(val).subscribe(result => {
         this.laboOrders = result.items;
       });
     }
@@ -1132,4 +1133,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  ShowLaboList(id?: string) {
+    const modalRef = this.modalService.open(
+      LaboOrderListDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
+    );
+    modalRef.componentInstance.title = 'Danh sách labo';
+    modalRef.componentInstance.saleOrderLineId = id;
+    modalRef.componentInstance.saleOrderId = this.id;
+    modalRef.componentInstance.saleOrderLine = this.saleOrder.orderLines.find(x=>x.id==id);
+    modalRef.result.then((val) => {
+
+    }, er => { });
+  }
 }

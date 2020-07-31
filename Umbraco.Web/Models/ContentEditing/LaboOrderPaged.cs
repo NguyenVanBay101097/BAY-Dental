@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DatePlannedTo { get; set; }
         public string State { get; set; }
         public Guid? SaleOrderId { get; set; }
+        public Guid? SaleOrderLineId { get; set; }
+
     }
 
     public class LaboOrderStatisticsPaged
