@@ -157,7 +157,7 @@ namespace Infrastructure.Services
                     {
                         var zaloClient = new ZaloClient(page.PageAccesstoken);
                         var res = zaloClient.getProfileOfFollower(psid).ToObject<GetProfileOfFollowerResponse>();
-                        await conn.ExecuteAsync("insert into FacebookUserProfiles(Id,DateCreated,LastUpdated,Name,FirstName,LastName,Gender,PSID,FbPageId,Avatar) values (@Id,@DateCreated,@LastUpdated,@Name,@FirstName,@LastName,@Gender,@PSID,@FbPageId,@Avatar);", new { Id = GuidComb.GenerateComb(), DateCreated = now, LastUpdated = now, Name = res.data.display_name, Gender = res.data.user_gender, PSID = res.data.user_id.ToString(), FbPageId = page.Id, Avatar = res.data.avatar });
+                        await conn.ExecuteAsync("insert into FacebookUserProfiles(Id,DateCreated,LastUpdated,Name,Gender,PSID,FbPageId,Avatar) values (@Id,@DateCreated,@LastUpdated,@Name,@Gender,@PSID,@FbPageId,@Avatar);", new { Id = GuidComb.GenerateComb(), DateCreated = now, LastUpdated = now, Name = res.data.display_name, Gender = res.data.user_gender, PSID = res.data.user_id.ToString(), FbPageId = page.Id, Avatar = res.data.avatar });
                     }
                     
                 }
