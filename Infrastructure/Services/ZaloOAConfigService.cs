@@ -61,7 +61,7 @@ namespace Infrastructure.Services
                 };
 
                 await pageObj.CreateAsync(page);
-                //GetConnectWebhooksForZalo(page.PageId, page.PageAccesstoken);
+                GetConnectWebhooksForZalo(page.PageId, page.PageAccesstoken);
 
             }
             return page;
