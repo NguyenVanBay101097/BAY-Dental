@@ -42,6 +42,7 @@ import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-di
 import { SaleOrderLineService } from '../sale-order-line.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { LaboOrderListDialogComponent } from 'src/app/labo-orders/labo-order-list-dialog/labo-order-list-dialog.component';
+import { SaleOrderLineLaboOrdersDialogComponent } from '../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 
 declare var $: any;
 
@@ -1133,16 +1134,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  ShowLaboList(id?: string) {
+  showLaboList(id?: string) {
     const modalRef = this.modalService.open(
-      LaboOrderListDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
+      SaleOrderLineLaboOrdersDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
     );
-    modalRef.componentInstance.title = 'Danh sách labo';
-    modalRef.componentInstance.saleOrderLineId = id;
-    modalRef.componentInstance.saleOrderId = this.id;
-    modalRef.componentInstance.saleOrderLine = this.saleOrder.orderLines.find(x=>x.id==id);
-    modalRef.result.then((val) => {
 
+    modalRef.componentInstance.title = 'Danh sách Labo';
+    modalRef.componentInstance.saleOrderLineId = id;
+    modalRef.result.then((val) => {
     }, er => { });
   }
 }

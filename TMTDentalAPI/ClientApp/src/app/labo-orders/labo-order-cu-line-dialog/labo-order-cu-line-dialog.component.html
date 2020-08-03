@@ -19,7 +19,7 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   
-                  <label>{{formGroup.get('product').value.name}}</label>
+                  <label>{{formGroup.get('product').value ? formGroup.get('product').value.name : ''}}</label>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.product ? line.product.name : ''}}
                   </span>
                   <div *ngIf="f.product.errors && (f.product.touched || f.product.dirty || submitted)"

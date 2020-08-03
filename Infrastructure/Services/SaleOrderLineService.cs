@@ -365,5 +365,15 @@ namespace Infrastructure.Services
             // tính lại công nợ
             await orderObj.ActionInvoiceCreateV2(orderId);
         }
+
+        public async Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id)
+        {
+            var laboOrderLineObj = GetService<ILaboOrderLineService>();
+            var order_ids = await laboOrderLineObj.SearchQuery(x => x.SaleOrderLineId == id).Select(x => x.OrderId).Distinct().ToListAsync();
+
+            var laboOrderObj = GetService<ILaboOrderService>();
+            var res = await _mapper.ProjectTo<LaboOrderBasic>(laboOrderObj.SearchQuery(x => order_ids.Contains(x.Id), orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
+            return res;
+        }
     }
 }

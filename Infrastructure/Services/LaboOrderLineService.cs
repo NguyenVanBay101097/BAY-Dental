@@ -160,26 +160,20 @@ namespace Infrastructure.Services
         public async Task<LaboOrderLineDisplay> DefaultGet(LaboOrderLineDefaultGet val)
         {
             var res = new LaboOrderLineDisplay();
-            //res.CompanyId = CompanyId;
-            //if (val.InvoiceId.HasValue)
-            //{
-            //    var invObj = GetService<IAccountInvoiceService>();
-            //    var invoice = await invObj.SearchQuery(x => x.Id == val.InvoiceId).Include(x => x.Partner).FirstOrDefaultAsync();
-            //    res.InvoiceId = invoice.Id;
-            //    res.CustomerId = invoice.PartnerId;
-            //    res.Customer = _mapper.Map<PartnerSimple>(invoice.Partner);
-            //}
+            if (val.SaleOrderLineId.HasValue)
+            {
+                var saleLineObj = GetService<ISaleOrderLineService>();
+                var saleLine = await saleLineObj.GetByIdAsync(val.SaleOrderLineId);
 
-            //if (val.DotKhamId.HasValue)
-            //{
-            //    var dkObj = GetService<IDotKhamService>();
-            //    var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner).FirstOrDefaultAsync();
-            //    res.DotKhamId = dk.Id;
-            //    if (dk.PartnerId.HasValue)
-            //        res.CustomerId = dk.PartnerId.Value;
-            //    if (dk.Partner != null)
-            //        res.Customer = _mapper.Map<PartnerSimple>(dk.Partner);
-            //}
+                var productObj = GetService<IProductService>();
+                var product = await productObj.GetByIdAsync(saleLine.ProductId);
+
+                res.ProductId = product.Id;
+                res.Product = _mapper.Map<ProductSimple>(product);
+
+                var toothObj = GetService<IToothService>();
+                res.Teeth = await _mapper.ProjectTo<ToothBasic>(toothObj.SearchQuery(x => x.SaleLineToothRels.Any(x => x.SaleLineId == val.SaleOrderLineId))).ToListAsync();
+            }
             return res;
         }
 

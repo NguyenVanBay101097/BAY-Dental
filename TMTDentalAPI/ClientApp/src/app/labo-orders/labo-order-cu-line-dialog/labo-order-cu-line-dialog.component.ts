@@ -22,6 +22,7 @@ import {
   LaboOrderLineDisplay,
   LaboOrderLineService,
   LaboOrderLineOnChangeProduct,
+  LaboOrderLineDefaultGet,
 } from "src/app/labo-order-lines/labo-order-line.service";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
@@ -59,12 +60,12 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: "",
-      product: [this.line ? this.line.product : this.saleOrderLine.product, Validators.required],
+      product: [this.line ? this.line.product : null, Validators.required],
       productId: null,
       priceUnit: [0, Validators.required],
       productQty: [1, Validators.required],
       priceSubTotal: 1,
-      toothCategory: this.line ? this.line.toothCategory : this.saleOrderLine.toothCategory,
+      // toothCategory: this.line ? this.line.toothCategory : this.saleOrderLine.toothCategory,
       color: null,
       note: null,
       warrantyCode: null,
@@ -73,7 +74,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       saleOrderLineId: this.saleOrderLineId
     });
 
-    this.loadTeethMap();
+    // this.loadTeethMap();
 
     if (this.line) {
       setTimeout(() => {
@@ -87,8 +88,15 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       });
     } else {
       setTimeout(() => {
-        this.onChangeProduct(this.saleOrderLine.product);
-      this.formGroup.get("productQty").setValue(this.teethSelected.length);
+        var val = new LaboOrderLineDefaultGet();
+        val.saleOrderLineId = this.saleOrderLineId;
+
+        this.laboOrderLineService.defaultGet(val).subscribe((result: any) => {
+          this.formGroup.patchValue(result);
+        });
+
+        // this.onChangeProduct(this.saleOrderLine.product);
+        // this.formGroup.get("productQty").setValue(this.teethSelected.length);
       });
     }
   }

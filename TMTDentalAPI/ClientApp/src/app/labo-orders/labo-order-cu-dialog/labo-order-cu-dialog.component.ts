@@ -26,8 +26,7 @@ declare var $: any;
 })
 export class LaboOrderCuDialogComponent implements OnInit {
 
-saleOrderLineId: string;
-  saleOrderLine: string;
+  saleOrderLineId: string;
 
   formGroup: FormGroup;
   id: string;
@@ -357,10 +356,8 @@ saleOrderLineId: string;
     let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chi tiết';
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
-    modalRef.componentInstance.saleOrderLine = this.saleOrderLine;
 
     modalRef.result.then(result => {
-      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       line.teethListVirtual = this.fb.array(line.teethListVirtual);

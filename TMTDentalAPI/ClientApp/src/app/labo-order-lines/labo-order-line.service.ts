@@ -68,6 +68,7 @@ export class LaboOrderLinePaging {
 export class LaboOrderLineDefaultGet {
     invoiceId: string;
     dotKhamId: string;
+    saleOrderLineId: string;
 }
 
 export class LaboOrderLineOnChangeProduct {

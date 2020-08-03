@@ -30,5 +30,7 @@ namespace Infrastructure.Services
         AccountMoveLine _PrepareInvoiceLine(SaleOrderLine line);
 
         Task CancelSaleOrderLine(IEnumerable<Guid> Ids);
+
+        Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id);
     }
 }
