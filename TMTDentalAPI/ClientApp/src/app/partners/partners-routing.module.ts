@@ -12,6 +12,7 @@ import { PartnerCustomerAppointmentComponent } from './partner-customer-appointm
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
+import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,7 @@ const routes: Routes = [
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
+      { path: 'quotations', component: PartnerCustomerQuotationsComponent },
     ]
   },
   {

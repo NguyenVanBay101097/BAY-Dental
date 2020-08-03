@@ -208,6 +208,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.partnerId = this.partnerId;
+    val.isQuotation = false;
 
     this.saleOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

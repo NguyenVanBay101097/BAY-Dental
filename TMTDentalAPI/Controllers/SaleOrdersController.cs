@@ -146,9 +146,11 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionConvertToOrder(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ActionConvertToOrder(id);
+            var order = await _saleOrderService.ActionConvertToOrder(id);
             _unitOfWork.Commit();
-            return NoContent();
+
+            var basic = _mapper.Map<SaleOrderBasic>(order);
+            return Ok(basic);
         }
 
         [HttpPost("{id}/[action]")]
