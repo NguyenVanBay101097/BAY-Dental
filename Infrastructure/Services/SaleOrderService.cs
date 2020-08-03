@@ -282,7 +282,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task ActionConvertToOrder(Guid id)
+        public async Task<SaleOrder> ActionConvertToOrder(Guid id)
         {
             var self = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
                 .Include("OrderLines.SaleOrderLineToothRels").FirstOrDefaultAsync();
@@ -312,6 +312,8 @@ namespace Infrastructure.Services
 
             self.OrderId = order.Id;
             await UpdateAsync(self);
+
+            return order;
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)

@@ -83,7 +83,7 @@ export class PartnerCustomerQuotationsComponent implements OnInit {
     }
 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
+    modalRef.componentInstance.title = 'Xóa phiếu tư vấn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.saleOrderService.unlink(this.selectedIds).subscribe(() => {
@@ -141,7 +141,7 @@ export class PartnerCustomerQuotationsComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu tư vấn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

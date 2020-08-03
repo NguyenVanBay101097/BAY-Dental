@@ -81,7 +81,6 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("pricelistCbx", { static: true }) pricelistCbx: ComboBoxComponent;
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
-  partnerSend: any;
 
   constructor(
     private fb: FormBuilder,
@@ -172,7 +171,6 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       )
       .subscribe((result) => {
         this.saleOrder = result;
-        this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get("dateOrderObj").patchValue(dateOrder);
@@ -359,8 +357,8 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
   actionConvertToOrder() {
     if (this.id) {
-      this.saleOrderService.actionConvertToOrder(this.id).subscribe(() => {
-        this.loadRecord();
+      this.saleOrderService.actionConvertToOrder(this.id).subscribe((result: any) => {
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
       });
     }
   }

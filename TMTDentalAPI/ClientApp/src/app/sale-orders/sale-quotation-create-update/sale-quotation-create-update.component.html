@@ -17,24 +17,24 @@
     <div class="o_form_sheet_bg">
       <div class="o_form_statusbar">
         <div class="o_statusbar_buttons">
+          <button type="button" *ngIf="id && saleOrder.state == 'draft' && !saleOrder.order"
+          class="btn btn-primary btn-sm" (click)="actionConvertToOrder()">
+            Tạo và xem phiếu điều trị
+          </button>
           <button type="button" *ngIf="['draft'].indexOf(saleOrder.state) !== -1"
             class="btn btn-primary btn-sm" (click)="onSave()">
-            Lưu
+            Lưu phiếu
           </button>
-          <button type="button" *ngIf="id && saleOrder.state == 'draft' && !saleOrder.order"
-            class="btn btn-primary btn-sm" (click)="actionConvertToOrder()">
-            Tạo phiếu điều trị
-          </button>
-          <button *ngIf="id && ['draft'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
+          <!-- <button *ngIf="id && ['draft'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
             (click)="actionDone()">
             Khóa
-          </button>
+          </button> -->
           <button *ngIf="id" type="button" class="btn btn-secondary btn-sm"
             (click)="createNew()">
             Thêm mới
           </button>
         </div>
-        <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+        <!-- <div class="o_statusbar_status o_field_widget o_readonly_modifier">
           <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
             [ngClass]="{'btn-primary': saleOrder.state === 'done', 'btn-secondary': saleOrder.state !== 'done'}"
             type="button">
@@ -51,7 +51,7 @@
             type="button">
             Đã hủy
           </button>
-        </div>
+        </div> -->
       </div>
       <div class="o_form_sheet">
         <div class="oe_title">
