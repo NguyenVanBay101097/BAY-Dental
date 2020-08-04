@@ -36,5 +36,11 @@ namespace ApplicationCore.Entities
 
         public Guid? FacebookPageId { get; set; }
         public FacebookPage FacebookPage { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public Commission Commission { get; set; }
     }
 }
