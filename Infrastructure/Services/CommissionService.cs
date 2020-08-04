@@ -17,7 +17,7 @@ namespace Infrastructure.Services
     public class CommissionService : BaseService<Commission>, ICommissionService
     {
         private readonly IMapper _mapper;
-        public CommissionService(IAsyncRepository<Commission> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper) 
+        public CommissionService(IAsyncRepository<Commission> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -41,10 +41,22 @@ namespace Infrastructure.Services
 
         public async Task<CommissionDisplay> GetCommissionForDisplay(Guid id)
         {
-            var res = await _mapper.ProjectTo<CommissionDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<CommissionDisplay>(SearchQuery(x => x.Id == id)).Include(x => x.CommissionProductRules).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Commission not found");
-            res.CommissionProductRules = res.CommissionProductRules;
+            if (res.CommissionProductRules.Any())
+            {
+                res.CommissionProductRules = res.CommissionProductRules.Select(x => new CommissionProductRuleDisplay
+                {
+                    Id = x.Id,
+                    AppliedOn = x.AppliedOn,
+                    CategId = x.CategId,
+                    ProductId = x.ProductId,
+                    PercentFixed = x.PercentFixed,
+                    Name = x.AppliedOn == "3_global" ? "Áp dụng tất cả dịch vụ" : (x.AppliedOn == "2_product_category" ? x.Categ.Name : x.Product.Name)
+                });
+            }
+           
             return res;
         }
 
@@ -82,7 +94,7 @@ namespace Infrastructure.Services
             {
                 commission.CommissionProductRules.Remove(line);
             }
-         
+
 
             foreach (var item in val.CommissionProductRules)
             {
