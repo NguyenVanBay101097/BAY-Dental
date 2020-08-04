@@ -26,6 +26,8 @@ declare var $: any;
 })
 export class LaboOrderCuDialogComponent implements OnInit {
 
+  saleOrderLineId: string;
+
   formGroup: FormGroup;
   id: string;
   dotKhamId: string;
@@ -37,6 +39,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
   laboOrderPrint: any;
   title: string;
+  isChange = false;
 
   constructor(
     private fb: FormBuilder,
@@ -64,21 +67,23 @@ export class LaboOrderCuDialogComponent implements OnInit {
       dotKhamId: null
     });
 
-    if (this.id) {
-      this.loadData();
-    } else {
-      this.loadDefault();
-    }
-
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.partnerCbx.loading = true)),
-      switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
+    setTimeout(() => {
+      if (this.id) {
+        this.loadData();
+      } else {
+        this.loadDefault();
+      }
+  
+      this.partnerCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.partnerCbx.loading = true)),
+        switchMap(value => this.searchPartners(value))
+      ).subscribe(result => {
+        this.filteredPartners = result;
+        this.partnerCbx.loading = false;
+      });
+      this.loadPartners();
     });
-    this.loadPartners();
   }
 
   loadData() {
@@ -254,16 +259,17 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
     if (this.saleOrderId)
       val.saleOrderId = this.saleOrderId;
-    this.laboOrderService.create(val).subscribe(result => {
-      this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.activeModal.close(result);
-      });
-    });
+     this.laboOrderService.create(val).subscribe(result => {
+       this.laboOrderService.buttonConfirm([result.id]).subscribe(() => {
+         this.activeModal.close(result);
+       });
+     });
   }
 
   buttonConfirm() {
     if (this.id) {
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.isChange = true;
         this.loadRecord();
       });
     }
@@ -278,28 +284,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
-    val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
-
-    if (this.saleOrderId)
-      val.saleOrderId = this.saleOrderId;
-
+   
     if (this.id) {
       this.laboOrderService.update(this.id, val).subscribe(() => {
-        if (this.saleOrderId) {
-          val.id = this.id;
-          this.activeModal.close(val);
-        }
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
+        this.activeModal.close(true);
       });
     } else {
-
       this.laboOrderService.create(val).subscribe(result => {
         this.activeModal.close(result);
       });
@@ -341,6 +331,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   buttonCancel() {
     if (this.id) {
       this.laboOrderService.buttonCancel([this.id]).subscribe(() => {
+        this.isChange = true;
         this.loadRecord();
       });
     }
@@ -353,10 +344,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
   showAddLineModal() {
     let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chi tiết';
+    modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
 
     modalRef.result.then(result => {
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
+      line.teethListVirtual = this.fb.array(line.teethListVirtual);
       this.orderLines.push(this.fb.group(line));
       this.computeAmountTotal();
     }, () => {
@@ -367,6 +360,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa chi tiết';
     modalRef.componentInstance.line = line.value;
+    modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
 
     modalRef.result.then(result => {
       var a = result as any;
@@ -398,5 +392,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
     this.laboOrder.amountTotal = total;
     // this.formGroup.get('amountTotal').patchValue(total);
+  }
+
+  onCancel() {
+    if (this.isChange) {
+      this.activeModal.close(true);
+    } else {
+      this.activeModal.dismiss();
+    }
   }
 }

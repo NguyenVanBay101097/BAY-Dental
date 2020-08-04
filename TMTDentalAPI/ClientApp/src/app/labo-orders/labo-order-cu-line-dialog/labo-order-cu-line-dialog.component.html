@@ -18,10 +18,8 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%;">
-                  <kendo-combobox [data]="filteredProducts" [class.d-none]="lineState == 'purchase'" ngbAutofocus
-                    [textField]="'name'" [filterable]="true" (valueChange)="onChangeProduct($event)" #productCbx
-                    formControlName="product" [valueField]="'id'">
-                  </kendo-combobox>
+
+                  <label>{{formGroup.get('product').value ? formGroup.get('product').value.name : ''}}</label>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.product ? line.product.name : ''}}
                   </span>
                   <div *ngIf="f.product.errors && (f.product.touched || f.product.dirty || submitted)"
@@ -110,17 +108,14 @@
             <tbody>
               <tr>
                 <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">
-                    Loại răng
-                  </label>
+                  <label class="o_form_label">Răng</label>
                 </td>
                 <td colspan="1" style="width: 100%;">
-                  <kendo-combobox [data]="filteredToothCategories" [class.d-none]="lineState == 'purchase'"
-                    [textField]="'name'" [filterable]="true" formControlName="toothCategory"
-                    (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
-                  </kendo-combobox>
-                  <span *ngIf="line"
-                    [class.d-none]="lineState != 'purchase'">{{line.toothCategory ? line.toothCategory.name : ''}}</span>
+                  <div>
+                    <div *ngFor="let rang of toothList" (click)="onSelected(rang)" class="tooth-item"
+                      [ngClass]="{'selected': isSelected(rang)}">
+                      {{rang.name}}</div>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -150,18 +145,7 @@
               </tr>
             </tbody>
           </table>
-        </div>
 
-        <div class="teeth-map">
-          <table class="table">
-            <tr *ngFor="let ham of hamList | keyvalue">
-              <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
-                <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}"
-                  *ngFor="let rang of vitri.value">
-                  {{rang.name}}</div>
-              </td>
-            </tr>
-          </table>
         </div>
       </div>
     </div>

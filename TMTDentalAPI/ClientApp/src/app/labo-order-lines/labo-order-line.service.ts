@@ -42,6 +42,7 @@ export class LaboOrderLineDisplay {
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
     state: string;
+    teethListVirtual: ToothDisplay[];
 }
 
 export class LaboOrderLinePaged {
@@ -67,6 +68,7 @@ export class LaboOrderLinePaging {
 export class LaboOrderLineDefaultGet {
     invoiceId: string;
     dotKhamId: string;
+    saleOrderLineId: string;
 }
 
 export class LaboOrderLineOnChangeProduct {

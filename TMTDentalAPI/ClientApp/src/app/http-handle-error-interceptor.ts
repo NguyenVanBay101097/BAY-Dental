@@ -52,13 +52,16 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
 
                 // let modalRef = this.modalService.open(SharedErrorDialogComponent, { windowClass: 'o_technical_modal' });
                 // modalRef.componentInstance.body = message;
-                this.notificationService.show({
-                    content: message,
-                    hideAfter: 3000,
-                    position: { horizontal: 'center', vertical: 'top' },
-                    animation: { type: 'fade', duration: 400 },
-                    type: { style: 'error', icon: true }
-                });
+                if (message) {
+                    this.notificationService.show({
+                        content: message,
+                        hideAfter: 3000,
+                        position: { horizontal: 'center', vertical: 'top' },
+                        animation: { type: 'fade', duration: 400 },
+                        type: { style: 'error', icon: true }
+                    });
+                }
+            
 
                 return throwError(error);
             }),

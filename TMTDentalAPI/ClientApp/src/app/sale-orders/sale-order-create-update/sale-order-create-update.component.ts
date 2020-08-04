@@ -41,6 +41,8 @@ import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-c
 import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { SaleOrderLineService } from '../sale-order-line.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+import { LaboOrderListDialogComponent } from 'src/app/labo-orders/labo-order-list-dialog/labo-order-list-dialog.component';
+import { SaleOrderLineLaboOrdersDialogComponent } from '../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 
 declare var $: any;
 
@@ -103,7 +105,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
-    this.loadLaboOrderList();
+    // this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
   }
@@ -225,7 +227,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       var val = new LaboOrderPaged();
       val.saleOrderId = this.id;
-      return this.laboOrderService.getPaged(val).subscribe(result => {
+      return this.laboOrderService.GetFromSaleOrder_OrderLine(val).subscribe(result => {
         this.laboOrders = result.items;
       });
     }
@@ -1140,4 +1142,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  showLaboList(id?: string) {
+    const modalRef = this.modalService.open(
+      SaleOrderLineLaboOrdersDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
+    );
+
+    modalRef.componentInstance.title = 'Danh sách phiếu labo';
+    modalRef.componentInstance.saleOrderLineId = id;
+    modalRef.result.then((val) => {
+    }, er => { });
+  }
 }

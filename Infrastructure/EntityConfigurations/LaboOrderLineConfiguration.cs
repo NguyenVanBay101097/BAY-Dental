@@ -42,6 +42,11 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.SaleOrderLine)
+                .WithMany()
+                .HasForeignKey(x => x.SaleOrderLineId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

@@ -22,9 +22,10 @@ import { SaleOrderCuDialogComponent } from './sale-order-cu-dialog/sale-order-cu
 import { SaleOrderCuFormComponent } from './sale-order-cu-form/sale-order-cu-form.component';
 import { PopupModule } from '@progress/kendo-angular-popup';
 import { SaleOrderApplyDiscountDefaultDialogComponent } from './sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
+import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent, SaleOrderCuDialogComponent, SaleOrderCuFormComponent, SaleOrderApplyDiscountDefaultDialogComponent],
+  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent, SaleOrderCuDialogComponent, SaleOrderCuFormComponent, SaleOrderApplyDiscountDefaultDialogComponent, SaleOrderLineLaboOrdersDialogComponent],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,
@@ -47,7 +48,8 @@ import { SaleOrderApplyDiscountDefaultDialogComponent } from './sale-order-apply
     SaleOrderApplyCouponDialogComponent,
     SaleOrderApplyServiceCardsDialogComponent,
     SaleOrderApplyDiscountDefaultDialogComponent,
-    SaleOrderCuDialogComponent
+    SaleOrderCuDialogComponent,
+    SaleOrderLineLaboOrdersDialogComponent
   ]
 })
 export class SaleOrdersModule { }
