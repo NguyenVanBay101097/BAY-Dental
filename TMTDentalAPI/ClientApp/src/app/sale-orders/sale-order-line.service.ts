@@ -31,4 +31,11 @@ export class SaleOrderLineService {
         return this.http.post(this.baseApi + this.apiUrl + '/CancelSaleOrderLine', ids);
     }
 
+    getLaboOrders(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetLaboOrders');
+    }
+
+    getTeeth(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetTeeth');
+    }
 }

@@ -18,6 +18,7 @@ export class LaboOrderPaged {
     datePlannedTo: string;
     state: string;
     saleOrderId: string;
+    saleOrderLineId: string;
 }
 
 export class LaboOrderBasic {
@@ -113,5 +114,9 @@ export class LaboOrderService {
 
     getStatistics(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/Statistics', data);
+    }
+
+    GetFromSaleOrder_OrderLine(val: any): Observable<PagedResult2<LaboOrderBasic>> {
+        return this.http.get<PagedResult2<LaboOrderBasic>>(this.baseApi + this.apiUrl + '/GetFromSaleOrder_OrderLine', { params: new HttpParams({ fromObject: val }) });
     }
 }

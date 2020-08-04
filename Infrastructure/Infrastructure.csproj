@@ -23,6 +23,8 @@
     <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.Designer.cs" />
     <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.cs" />
     <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200804042345_CreateCommission.cs" />
+    <Compile Remove="Data\Migrations\20200804042345_CreateCommission.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
