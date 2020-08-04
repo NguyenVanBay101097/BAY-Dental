@@ -9,6 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public LaboOrderLineDisplay()
         {
             State = "draft";
+            ProductQty = 1;
         }
 
         public Guid Id { get; set; }

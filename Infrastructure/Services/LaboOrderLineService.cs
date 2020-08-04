@@ -170,9 +170,9 @@ namespace Infrastructure.Services
 
                 res.ProductId = product.Id;
                 res.Product = _mapper.Map<ProductSimple>(product);
+                res.PriceUnit = product.LaboPrice ?? 0;
 
-                var toothObj = GetService<IToothService>();
-                res.Teeth = await _mapper.ProjectTo<ToothBasic>(toothObj.SearchQuery(x => x.SaleLineToothRels.Any(x => x.SaleLineId == val.SaleOrderLineId))).ToListAsync();
+                res.SaleOrderLineId = val.SaleOrderLineId;
             }
             return res;
         }

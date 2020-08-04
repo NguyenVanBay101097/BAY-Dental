@@ -140,7 +140,20 @@ namespace Infrastructure.Services
 
             var query = lineObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await _mapper.ProjectTo<LaboOrderStatisticsBasic>(query).ToListAsync();
+            var items = await query.Select(x => new LaboOrderStatisticsBasic { 
+                PartnerDisplayName = x.Partner.DisplayName,
+                ProductName = x.Product.Name,
+                OrderName = x.Order.Name,
+                ProductQty = x.ProductQty,
+                PriceTotal = x.PriceTotal,
+                OrderDateOrder = x.Order.DateOrder,
+                OrderDatePlanned = x.Order.DatePlanned,
+                WarrantyCode = x.WarrantyCode,
+                WarrantyPeriod = x.WarrantyPeriod,
+                State = x.State,
+                SaleOrderName = x.SaleOrderLine.Order.Name,
+                SaleOrderId = x.SaleOrderLine.Order.Id
+            }).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<LaboOrderStatisticsBasic>(totalItems, val.Offset, val.Limit)

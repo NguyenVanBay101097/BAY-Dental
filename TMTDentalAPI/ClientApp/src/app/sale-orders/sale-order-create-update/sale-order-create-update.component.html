@@ -246,10 +246,10 @@
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
                                 aria-controls="profile" aria-selected="false">Đợt khám</a>
                         </li>
-                        <li class="nav-item" (click)="loadLaboOrderList()" *ngIf="saleOrder.state != 'draft'">
+                        <!-- <li class="nav-item" (click)="loadLaboOrderList()" *ngIf="saleOrder.state != 'draft'">
                             <a class="nav-link" id="labo-tab" data-toggle="tab" href="#labo" role="tab"
                                 aria-controls="labo" aria-selected="false">Phiếu labo</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                             <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
                                 aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
@@ -301,7 +301,7 @@
                                                             <button *ngIf="saleOrder.state != 'draft'" ngbDropdownItem type="button"
                                                             (click)="showLaboList(line.get('id').value)">
                                                             <i class="fa fa-bars" aria-hidden="true"></i>
-                                                            <span class="pl-2">Quản lý Labo</span>
+                                                            <span class="pl-2">Quản lý phiếu labo</span>
                                                         </button>
                                                             <button ngbDropdownItem type="button" *ngIf="lineEditable(line) && ['draft','cancel'].indexOf(saleOrder.state) === -1"
                                                                 (click)="cancelSaleOrderLine(line.get('id').value)">
@@ -413,14 +413,14 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
+                        <!-- <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
                             aria-labelledby="labo-tab">
-                            <!-- <div class="mb-2">
+                            <div class="mb-2">
                                 <button type="button" class="btn btn-secondary btn-sm"
                                     *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionLabo()">
                                     Tạo phiếu labo
                                 </button>
-                            </div> -->
+                            </div>
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -452,7 +452,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                         <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="payment" role="tabpanel"
                             aria-labelledby="payment-tab">
                             <table class="table table-sm">

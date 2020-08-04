@@ -375,5 +375,13 @@ namespace Infrastructure.Services
             var res = await _mapper.ProjectTo<LaboOrderBasic>(laboOrderObj.SearchQuery(x => order_ids.Contains(x.Id), orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
             return res;
         }
+
+        public async Task<IEnumerable<ToothBasic>> GetTeeth(Guid id)
+        {
+            var tooth_ids = await SearchQuery(x => x.Id == id).SelectMany(x => x.SaleOrderLineToothRels).Select(x => x.ToothId).ToListAsync();
+            var toothObj = GetService<IToothService>();
+            var res = await _mapper.ProjectTo<ToothBasic>(toothObj.SearchQuery(x => tooth_ids.Contains(x.Id), orderBy: x => x.OrderBy(s => s.Name))).ToListAsync();
+            return res;
+        }
     }
 }

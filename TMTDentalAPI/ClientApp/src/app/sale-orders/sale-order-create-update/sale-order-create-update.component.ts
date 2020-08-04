@@ -1139,7 +1139,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       SaleOrderLineLaboOrdersDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
     );
 
-    modalRef.componentInstance.title = 'Danh sách Labo';
+    modalRef.componentInstance.title = 'Danh sách phiếu labo';
     modalRef.componentInstance.saleOrderLineId = id;
     modalRef.result.then((val) => {
     }, er => { });

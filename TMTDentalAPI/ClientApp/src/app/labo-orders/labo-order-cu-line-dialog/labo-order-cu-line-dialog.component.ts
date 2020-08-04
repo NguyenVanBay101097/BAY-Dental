@@ -17,6 +17,7 @@ import {
   ToothDisplay,
   ToothFilter,
   ToothService,
+  ToothBasic,
 } from "src/app/teeth/tooth.service";
 import {
   LaboOrderLineDisplay,
@@ -26,6 +27,7 @@ import {
 } from "src/app/labo-order-lines/labo-order-line.service";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
+import { SaleOrderLineService } from 'src/app/sale-orders/sale-order-line.service';
 
 @Component({
   selector: "app-labo-order-cu-line-dialog",
@@ -46,6 +48,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
   teethList: ToothDisplay[] = [];
+  toothList: ToothBasic[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -54,7 +57,7 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
     private laboOrderLineService: LaboOrderLineService,
-    private intlService: IntlService
+    private intlService: IntlService, private saleLineService: SaleOrderLineService
   ) {}
 
   ngOnInit() {
@@ -74,11 +77,11 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
       saleOrderLineId: this.saleOrderLineId
     });
 
-    // this.loadTeethMap();
-
     if (this.line) {
       setTimeout(() => {
+        debugger;
         this.formGroup.patchValue(this.line);
+        this.teethSelected = [...this.line.teeth];
         if (this.line.warrantyPeriod) {
           let warrantyPeriod = this.intlService.parseDate(
             this.line.warrantyPeriod
@@ -94,9 +97,18 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
         this.laboOrderLineService.defaultGet(val).subscribe((result: any) => {
           this.formGroup.patchValue(result);
         });
+      });
+    }
 
-        // this.onChangeProduct(this.saleOrderLine.product);
-        // this.formGroup.get("productQty").setValue(this.teethSelected.length);
+    setTimeout(() => {
+      this.loadToothList(); 
+    });
+  }
+
+  loadToothList() {
+    if (this.saleOrderLineId) {
+      this.saleLineService.getTeeth(this.saleOrderLineId).subscribe((result: any) => {
+        this.toothList = result;
       });
     }
   }

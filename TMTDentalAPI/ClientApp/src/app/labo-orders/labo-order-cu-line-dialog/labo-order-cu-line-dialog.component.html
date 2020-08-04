@@ -18,7 +18,7 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%;">
-                  
+
                   <label>{{formGroup.get('product').value ? formGroup.get('product').value.name : ''}}</label>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.product ? line.product.name : ''}}
                   </span>
@@ -104,7 +104,22 @@
           </table>
         </div>
         <div class="o_group mt-0 mb-0">
-         
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">Răng</label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <div>
+                    <div *ngFor="let rang of toothList" (click)="onSelected(rang)" class="tooth-item"
+                      [ngClass]="{'selected': isSelected(rang)}">
+                      {{rang.name}}</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <table class="o_group o_inner_group o_group_col_6">
             <tbody>
               <tr>
@@ -130,26 +145,7 @@
               </tr>
             </tbody>
           </table>
-          
-        </div>
 
-        <div class="o_group mt-0 mb-0">
-          <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-            <tr>
-              <td colspan="1" class="o_td_label"> 
-                <label class="o_form_label">Chọn Răng</label>
-              </td>
-              <td  colspan="1" style="width: 100%;">
-                <div>
-                <div *ngFor="let rang of teethList" (click)="onSelected(rang)" class="tooth-item"
-                  [ngClass]="{'selected': isSelected(rang)}">
-                  {{rang.name}}</div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-          </table>
         </div>
       </div>
     </div>

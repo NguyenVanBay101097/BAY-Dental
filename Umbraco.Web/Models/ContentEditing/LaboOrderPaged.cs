@@ -80,5 +80,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public string State { get; set; }
+
+        public string SaleOrderName { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
     }
 }

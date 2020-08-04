@@ -32,5 +32,7 @@ namespace Infrastructure.Services
         Task CancelSaleOrderLine(IEnumerable<Guid> Ids);
 
         Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id);
+
+        Task<IEnumerable<ToothBasic>> GetTeeth(Guid id);
     }
 }

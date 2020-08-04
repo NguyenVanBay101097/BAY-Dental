@@ -64,5 +64,12 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleLineService.GetLaboOrderBasics(id);
             return Ok(res);
         }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetTeeth(Guid id)
+        {
+            var res = await _saleLineService.GetTeeth(id);
+            return Ok(res);
+        }
     }
 }
