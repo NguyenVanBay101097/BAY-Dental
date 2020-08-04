@@ -153,12 +153,7 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Commissions_WriteById",
                 table: "Commissions",
-                column: "WriteById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PartnerImages_WriteById",
-                table: "PartnerImages",
-                column: "WriteById");
+                column: "WriteById");           
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_Commissions_CommissionId",
