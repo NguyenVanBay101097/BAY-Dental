@@ -44,7 +44,7 @@
                         [ngClass]="{'btn-primary': campaign.state === 'running', 'btn-secondary': campaign.state !== 'running'}">
                         Đang chạy
                     </button>
-                    <button [disabled]="campaign.state !== 'draf t'" class="btn o_arrow_button disabled" type="button"
+                    <button [disabled]="campaign.state !== 'draft'" class="btn o_arrow_button disabled" type="button"
                         [ngClass]="{'btn-primary': campaign.state === 'draft', 'btn-secondary': campaign.state !== 'draft'}">
                         Nháp
                     </button>

@@ -174,6 +174,9 @@ namespace Infrastructure.Data
         public DbSet<FacebookScheduleAppointmentConfig> FacebookScheduleAppointmentConfigs { get; set; }
         public DbSet<PartnerImage> PartnerImages { get; set; }
 
+        public DbSet<Commission> Commissions { get; set; }
+        public DbSet<CommissionProductRule> CommissionProductRules { get; set; }
+
 
 
         //nguyen thang
@@ -329,6 +332,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
+            builder.ApplyConfiguration(new CommissionConfiguration());
+            builder.ApplyConfiguration(new CommissionProductRuleConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
