@@ -184,6 +184,7 @@ namespace Infrastructure.Data
         public DbSet<LoaiThuChi> LoaiThuChis { get; set; }
         public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
 
+        public DbSet<ChamCong> ChamCongs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -329,6 +330,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
+            builder.ApplyConfiguration(new ChamCongConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
