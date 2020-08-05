@@ -109,17 +109,17 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'far fa-chart-bar',
       children: [
         { name: 'Kết quả kinh doanh', link: '/financial-report' },
-        { name: 'Tiền mặt, ngân hàng', link: '/report-cash-bank' },
+        { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank' },
         { name: 'Thống kê doanh thu', link: '/revenue-report' },
-        { name: 'Công nợ khách hàng', link: '/account-common-partner-reports', params: { result_selection: 'customer' } },
-        { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
+        { name: 'Công nợ khách hàng', link: '/report-account-common/partner', params: { result_selection: 'customer' } },
+        { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
         { name: 'Thống kê điều trị', link: '/sale-report' },
         { name: 'Thống kê công việc', link: '/dot-kham-report' },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location' },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },
-        { name: 'Thống kê khách hàng cũ mới', link: '/sale-report-partner' },
+        { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner' },
       ]
     },
   ];
