@@ -8,7 +8,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        public string Name { get; set; }
         /// <summary>
         /// 3_global: Áp dụng tất cả dịch vụ
         /// 2_product_category: Áp dụng trên 1 nhóm dịch vụ cụ thể
@@ -29,6 +28,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductCategorySimple Categ { get; set; }
 
         public decimal? PercentFixed { get; set; }
+
+        public Guid? CompanyId { get; set; }
 
 
     }

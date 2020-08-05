@@ -1,6 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ProductSimple } from '../products/product-simple';
+import { ProductCategoryBasic } from '../product-categories/product-category.service';
 
 export class Commission {
   id: string;
@@ -18,6 +20,16 @@ export class CommissionPaging {
   limit: number;
   totalItems: number;
   items: any[];
+}
+
+export class CommissionProductRuleDisplay {
+  appliedOn: string;
+  productId: string;
+  product: ProductSimple;
+  categId: string;
+  categ: ProductCategoryBasic;
+  percentFixed: number;
+  companyId: string;
 }
 
 @Injectable({

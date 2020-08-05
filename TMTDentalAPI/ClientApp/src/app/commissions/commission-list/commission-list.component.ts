@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { CommissionCuDialogComponent } from '../commission-cu-dialog/commission-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-commission-list',
@@ -24,7 +25,7 @@ export class CommissionListComponent implements OnInit {
   title = 'Hoa hồng';
 
   constructor(private commissionService: CommissionService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private router: Router) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -66,20 +67,21 @@ export class CommissionListComponent implements OnInit {
   createItem() {
     let modalRef = this.modalService.open(CommissionCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
-
-    modalRef.result.then(() => {
-      this.loadDataFromApi();
+    modalRef.result.then(result => {
+      this.router.navigate(['/commissions/form'], {
+        queryParams: {
+          id: result.id
+        },
+      });
     }, () => {
     });
   }
 
   editItem(item: Commission) {
-    let modalRef = this.modalService.open(CommissionCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa: ' + this.title;
-    modalRef.componentInstance.id = item.id;
-    modalRef.result.then(() => {
-      this.loadDataFromApi();
-    }, () => {
+    this.router.navigate(['/commissions/form'], {
+      queryParams: {
+        id: item.id
+      },
     });
   }
 

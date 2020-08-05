@@ -41,21 +41,9 @@ namespace Infrastructure.Services
 
         public async Task<CommissionDisplay> GetCommissionForDisplay(Guid id)
         {
-            var res = await _mapper.ProjectTo<CommissionDisplay>(SearchQuery(x => x.Id == id)).Include(x => x.CommissionProductRules).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<CommissionDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Commission not found");
-            if (res.CommissionProductRules.Any())
-            {
-                res.CommissionProductRules = res.CommissionProductRules.Select(x => new CommissionProductRuleDisplay
-                {
-                    Id = x.Id,
-                    AppliedOn = x.AppliedOn,
-                    CategId = x.CategId,
-                    ProductId = x.ProductId,
-                    PercentFixed = x.PercentFixed,
-                    Name = x.AppliedOn == "3_global" ? "Áp dụng tất cả dịch vụ" : (x.AppliedOn == "2_product_category" ? x.Categ.Name : x.Product.Name)
-                });
-            }
            
             return res;
         }
@@ -63,6 +51,7 @@ namespace Infrastructure.Services
         public async Task<Commission> CreateCommission(CommissionSave val)
         {
             var commission = _mapper.Map<Commission>(val);
+            commission.CompanyId = CompanyId;
 
             return await CreateAsync(commission);
         }
@@ -98,6 +87,7 @@ namespace Infrastructure.Services
 
             foreach (var item in val.CommissionProductRules)
             {
+                item.CompanyId = commission.CompanyId;
                 if (item.Id == Guid.Empty)
                 {
                     commission.CommissionProductRules.Add(_mapper.Map<CommissionProductRule>(item));

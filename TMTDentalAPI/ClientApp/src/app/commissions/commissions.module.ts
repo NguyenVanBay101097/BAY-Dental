@@ -8,21 +8,29 @@ import { CommissionService } from './commission.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { CommissionCreateUpdateComponent } from './commission-create-update/commission-create-update.component';
+import { InputsModule } from '@progress/kendo-angular-inputs';
+import { CommissionCreateUpdateDialogComponent } from './commission-create-update-dialog/commission-create-update-dialog.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PopupModule } from '@progress/kendo-angular-popup';
 
 @NgModule({
-  declarations: [CommissionListComponent, CommissionCuDialogComponent, CommissionCreateUpdateComponent],
+  declarations: [CommissionListComponent, CommissionCuDialogComponent, CommissionCreateUpdateComponent, CommissionCreateUpdateDialogComponent],
   imports: [
     CommonModule,
     CommissionsRoutingModule, 
     FormsModule, 
     MyCustomKendoModule, 
-    ReactiveFormsModule
+    ReactiveFormsModule, 
+    InputsModule, 
+    NgbModule, 
+    PopupModule
   ],
   providers: [
     CommissionService
   ],
   entryComponents: [
-    CommissionCuDialogComponent
+    CommissionCuDialogComponent, 
+    CommissionCreateUpdateDialogComponent
   ]
 })
 export class CommissionsModule { }

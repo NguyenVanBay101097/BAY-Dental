@@ -2,11 +2,92 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="commissions">Hoa hồng</a>
+                <a [routerLink]="'/commissions'">Hoa hồng</a>
             </li>
             <li class="active">
-                <span>{{commission.name}}</span>
+                <span>{{getValueForm('name')}}</span>
             </li>
         </ol>
     </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" accesskey="s" [disabled]="saved"
+                        class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu thay đổi
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="!saved" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="saved" [class.btn-secondary]="!saved"
+                        type="button">
+                        Đã lưu thay đổi
+                    </button>
+                    <button [disabled]="saved" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="!saved" [class.btn-secondary]="saved"
+                        type="button">
+                        Chưa lưu thay đổi
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h1>
+                        <span>{{getValueForm('name')}}</span>
+                    </h1>
+                </div>
+                <div class="o_notebook">
+                    <div class="mb-2">
+                        <button type="button" accesskey="A" class="btn btn-secondary btn-sm"
+                            (click)="addLine()">Thêm</button>
+                    </div>
+                    <div>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th class="text-right">Hoa hồng</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="commissionProductRules">
+                                <ng-container *ngFor="let line of commissionProductRules.controls; let i=index">
+                                    <tr [formGroupName]="i">                                          
+                                        <td>{{ getValueLineForm(line, 'name') }}</td>
+                                        <td class="text-right">
+                                            {{ getValueLineForm(line, 'percentFixed') || 0 }} %
+                                        </td>
+                                        <td class="text-right">
+                                            <div ngbDropdown placement="bottom-right">
+                                                <button class="btn btn-light btn-sm mr-1" title="chức năng" id="dropdownMenuButton" ngbDropdownToggle>
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+                                                    <button ngbDropdownItem type="button"
+                                                        (click)="editLine(line)">
+                                                        <span class="k-icon k-i-edit"></span>
+                                                        <span class="pl-2">Sửa</span>
+                                                    </button>
+                                                    <button ngbDropdownItem type="button"
+                                                        (click)="deleteLine(i)">
+                                                        <span class="k-icon k-i-delete"></span>
+                                                        <span class="pl-2">Xóa</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
