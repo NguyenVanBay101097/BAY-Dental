@@ -250,6 +250,7 @@ namespace TMTDentalAPI
             services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
             services.AddScoped<IReportJournalService, ReportJournalService>();
             services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
+            services.AddScoped<IChamCongService, ChamCongService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -351,6 +352,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LoaiThuChiProfile());
                 mc.AddProfile(new PhieuThuChiProfile());
                 mc.AddProfile(new AccountFinancialReportProfile());
+                mc.AddProfile(new ChamCongProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
