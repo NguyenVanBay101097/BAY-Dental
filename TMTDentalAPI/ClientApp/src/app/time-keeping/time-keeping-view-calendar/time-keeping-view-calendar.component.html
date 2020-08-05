@@ -1,0 +1,60 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">{{title}}</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <!-- <div class="o_form_buttons_view">
+                    <button class="btn btn-primary btn-sm" accesskey="c">Thêm</button>
+                </div> -->
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <table class="table table-bordered table-content">
+        <thead>
+            <tr>
+                <th class="align-self-center" scope="col">Tên Nhân viên</th>
+                <th scope="col" *ngFor="let date of dateList">
+                    <div class="o_kanban_header">
+                        <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
+                            <span class="o_column_title">{{date | date: 'EE'}}</span>
+                            <span class="o_column_title"> {{date | date: 'dd'}}</span>
+                        </div>
+                        <div class="o_kanban_header_title" *ngIf="date.toDateString() == today.toDateString()">
+                            <span class="o_column_title">{{date | date: 'EE'}}</span>
+                            <span class="o_column_title"> {{date | date: 'dd'}}</span>
+                        </div>
+
+                    </div>
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of listEmployeies">
+                <th scope="row" style="min-width: 170px;">{{item.name}}</th>
+                <td *ngFor="let date of dateList;let i = index" (click)="clickTimeSheet(item.id,date)">
+                    <div *ngFor="let ob of list" class="oe_kanban_content">
+                        <div *ngIf="date.toDateString() == ob.date.toDateString()" class="oe_kanban_timekepping">
+                            <i *ngIf="ob.status=='finish'" (click)="clickTimeSheet(item.id,date)"
+                                class="fas fa-circle text-success"></i>
+                            <i *ngIf="ob.status=='chua'" (click)="clickTimeSheet(item.id,date)"
+                                class="fas fa-circle text-wraning"></i>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

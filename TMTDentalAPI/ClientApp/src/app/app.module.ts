@@ -108,6 +108,7 @@ import { LoaiThuChiModule } from './loai-thu-chi/loai-thu-chi.module';
 import { PhieuThuChiModule } from './phieu-thu-chi/phieu-thu-chi.module';
 import { AccountFinancialReportModule } from './account-financial-report/account-financial-report.module';
 import { AccountReportGeneralLedgersModule } from './account-report-general-ledgers/account-report-general-ledgers.module';
+import { TimeKeepingModule } from './time-keeping/time-keeping.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -186,6 +187,7 @@ registerLocaleData(localeVi, "vi");
     PurchaseOrdersModule,
     RealRevenueReportModule,
     SaleReportModule,
+    TimeKeepingModule,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
         m: 59,

@@ -1,0 +1,65 @@
+.o_kanban_view.o_kanban_grouped.o_kanban_small_column .o_kanban_group:not(.o_column_folded) {
+    width: 47px;
+    padding: 0;
+}
+
+p {
+    margin-top: -11px;
+    margin-bottom: -9px;
+}
+
+.o_kanban_employee {
+    max-width: 200px;
+}
+
+.o_kanban_record {
+    margin-top: 10px;
+}
+
+.o_kanban_view .o_kanban_record, .cdk-drag-preview .o_kanban_record, .o_kanban_record.cdk-drag-preview {
+    min-width: 47px;
+    max-width: 47px;
+}
+
+.oe_kanban_timekepping {
+    min-width: 35px;
+    min-height: 35px;
+    border-radius: 3px;
+    background-color: #f0eeee;
+    position: relative;
+}
+
+.table-content {}
+
+.oe_kanban_timekepping:hover {
+    background-color: burlywood;
+}
+
+.oe_kanban_content {
+    cursor: pointer;
+}
+
+.o_content {
+    max-width: 100%;
+    padding: 15px;
+    background-color: white;
+}
+
+.fa-circle {
+    position: absolute;
+    font-size: 10px;
+}
+
+.o_kanban_view .o_kanban_record, .o_kanban_view .o_kanban_quick_create, .cdk-drag-preview .o_kanban_record, .cdk-drag-preview .o_kanban_quick_create, .o_kanban_record.cdk-drag-preview {
+    padding: 5px 5px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+}
+
+.o_column_title {
+    text-align: center;
+}
+
+.table td, .table th {
+    padding: 6px !important;
+}
