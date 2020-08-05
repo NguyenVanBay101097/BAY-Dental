@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { AppointmentRoutingModule } from './appointment-routing.module';
 import { AppointmentListComponent } from './appointment-list/appointment-list.component';
-import { AppointmentService } from './appointment.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { AppointmentCreateUpdateComponent } from './appointment-create-update/appointment-create-update.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -14,7 +13,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppointmentDateFilterComponent } from './appointment-date-filter/appointment-date-filter.component';
 import { AppointmentStateFilterComponent } from './appointment-state-filter/appointment-state-filter.component';
 import { AppointmentCalendarComponent } from './appointment-calendar/appointment-calendar.component';
-import { AppointmentVMService } from './appointment-vm.service';
 import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kanban.component';
 import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
 
@@ -30,8 +28,9 @@ import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/ap
     NgbModule
   ],
   entryComponents: [AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
-  providers: [
-    AppointmentService,
+  providers: [],
+  exports: [
+    AppointmentCreateUpdateComponent
   ]
 })
 export class AppointmentModule { }

@@ -16,7 +16,7 @@ import { LaboOrderBasic } from '../labo-orders/labo-order.service';
 
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DotKhamService {
     apiUrl = 'api/dotkhams';
     readonly currentModel = 'dotkham';

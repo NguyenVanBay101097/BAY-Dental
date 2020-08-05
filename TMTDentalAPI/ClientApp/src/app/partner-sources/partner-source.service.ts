@@ -27,13 +27,13 @@ export class PartnerSourcePaging {
 
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PartnerSourceService {
   apiUrl = "api/PartnerSources";
   constructor(
     private http: HttpClient,
     @Inject("BASE_API") private baseApi: string
-  ) {}
+  ) { }
 
   getPaged(val: any): Observable<PartnerSourcePaging> {
     return this.http.get<PartnerSourcePaging>(this.baseApi + this.apiUrl, {
@@ -63,5 +63,5 @@ export class PartnerSourceService {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
 
- 
+
 }

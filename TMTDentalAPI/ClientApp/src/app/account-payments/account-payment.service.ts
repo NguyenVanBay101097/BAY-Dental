@@ -40,7 +40,7 @@ export class AccountPaymentDisplay {
     communication: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AccountPaymentService {
     apiUrl = 'api/AccountPayments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
