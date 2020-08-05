@@ -51,6 +51,12 @@ import { ImportSampleDataComponent } from './import-sample-data/import-sample-da
 import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
 import { AccountPaymentPrintComponent } from './account-payment-print/account-payment-print.component';
 import { CheckAddressButtonComponent } from './check-address-button/check-address-button.component';
+import { AppointmentCreateUpdateComponent } from './appointment-create-update/appointment-create-update.component';
+import { SaleOrderLineDialogComponent } from './sale-order-line-dialog/sale-order-line-dialog.component';
+import { ToaThuocCuDialogSaveComponent } from './toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocSamplePrescriptionComponent } from './toa-thuoc-sample-prescription/toa-thuoc-sample-prescription.component';
+import { DotKhamCreateUpdateDialogComponent } from './dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +99,13 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     ImportSampleDataComponent, 
     AccountPaymentPrintComponent,
     CheckAddressButtonComponent,
-    PartnerProfilePrintComponent
+    PartnerProfilePrintComponent,
+    AppointmentCreateUpdateComponent,
+    SaleOrderLineDialogComponent,
+    ToaThuocCuDialogSaveComponent,
+    ToaThuocSamplePrescriptionComponent,
+    DotKhamCreateUpdateDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component
   ],
   exports: [
     HeaderComponent,
@@ -132,7 +144,12 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     ToaThuocPrintComponent,
     AccountPaymentPrintComponent,
     CheckAddressButtonComponent,
-    PartnerProfilePrintComponent
+    PartnerProfilePrintComponent,
+    AppointmentCreateUpdateComponent,
+    SaleOrderLineDialogComponent,
+    ToaThuocCuDialogSaveComponent,
+    DotKhamCreateUpdateDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component
   ],
   imports: [
     CommonModule,
@@ -158,7 +175,12 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
     SelectUomProductDialogComponent,
-    ImportSampleDataComponent
+    ImportSampleDataComponent,
+    AppointmentCreateUpdateComponent,
+    SaleOrderLineDialogComponent,
+    ToaThuocCuDialogSaveComponent,
+    DotKhamCreateUpdateDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component
   ],
 })
 export class SharedModule { }

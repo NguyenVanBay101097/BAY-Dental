@@ -2,12 +2,12 @@ import { Component, OnInit, Input, AfterViewInit, AfterContentInit } from '@angu
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppointmentCreateUpdateComponent } from 'src/app/appointment/appointment-create-update/appointment-create-update.component';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { async } from '@angular/core/testing';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerService } from '../partner.service';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
 @Component({
   selector: 'app-partner-customer-profile-next-appointment',

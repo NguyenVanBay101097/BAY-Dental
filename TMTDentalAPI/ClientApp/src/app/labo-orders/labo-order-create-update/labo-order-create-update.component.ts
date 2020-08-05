@@ -31,7 +31,7 @@ import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import {
   SaleOrderPaged,
   SaleOrderService,
-} from "src/app/sale-orders/sale-order.service";
+} from "src/app/core/services/sale-order.service";
 declare var $: any;
 
 @Component({

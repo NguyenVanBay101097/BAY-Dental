@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PartnerBasic } from '../partner-simple';
-import { SaleOrderService, SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService, SaleOrderPaged } from 'src/app/core/services/sale-order.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';

@@ -6,7 +6,7 @@ import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-categor
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @Component({
   selector: 'app-partner-info',

@@ -29,7 +29,7 @@ export class PhieuThuChiFormComponent implements OnInit {
   phieuThuChi: any;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   
-  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
+  constructor(private fb: FormBuilder, 
     private phieuThuChiService: PhieuThuChiService, 
     private loaiThuChiService: LoaiThuChiService, 
     private route: ActivatedRoute, private modalService: NgbModal,

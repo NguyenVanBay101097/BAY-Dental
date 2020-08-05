@@ -7,6 +7,7 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
 import { LoaiThuChiService } from './loai-thu-chi.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [LoaiThuChiListComponent, LoaiThuChiFormComponent],
@@ -15,10 +16,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     LoaiThuChiRoutingModule, 
     MyCustomKendoModule, 
     FormsModule, 
-    ReactiveFormsModule
-  ], providers: [
-    LoaiThuChiService
-  ],
+    ReactiveFormsModule,
+    NgbModule
+  ], 
+  providers: [],
   entryComponents: [
     LoaiThuChiFormComponent,
   ],

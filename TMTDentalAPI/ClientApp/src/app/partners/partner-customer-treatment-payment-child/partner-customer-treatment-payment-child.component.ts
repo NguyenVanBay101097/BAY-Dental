@@ -4,7 +4,7 @@ import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { SharedService } from 'src/app/shared/shared.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { SaleOrderService } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 
 
 @Component({

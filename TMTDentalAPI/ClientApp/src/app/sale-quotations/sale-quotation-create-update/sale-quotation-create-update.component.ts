@@ -11,7 +11,6 @@ import { PartnerSimple, PartnerPaged } from "src/app/partners/partner-simple";
 import { PartnerService } from "src/app/partners/partner.service";
 import { UserService, UserPaged } from "src/app/users/user.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { SaleOrderService, AccountPaymentFilter } from "../sale-order.service";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import {
   ProductService,
@@ -22,35 +21,19 @@ import {
   WindowService,
   WindowCloseResult,
 } from "@progress/kendo-angular-dialog";
-import { SaleOrderDisplay } from "../sale-order-display";
 import * as _ from "lodash";
 import { UserSimple } from "src/app/users/user-simple";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { SaleOrderLineDialogComponent } from "../sale-order-line-dialog/sale-order-line-dialog.component";
-import { NotificationService } from "@progress/kendo-angular-notification";
-import { SaleOrderCreateDotKhamDialogComponent } from "../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component";
 import { DotKhamBasic } from "src/app/dot-khams/dot-khams";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
-import { AccountInvoiceRegisterPaymentDialogV2Component } from "src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component";
-import {
-  AccountRegisterPaymentDisplay,
-  AccountRegisterPaymentDefaultGet,
-} from "src/app/account-payments/account-register-payment.service";
-import {
-  AccountPaymentBasic,
-  AccountPaymentPaged,
-} from "src/app/account-payments/account-payment.service";
-import { PaymentInfoContent } from "src/app/account-invoices/account-invoice.service";
 import {
   CardCardService,
-  CardCardPaged,
 } from "src/app/card-cards/card-card.service";
 import {
   ProductPriceListBasic,
   ProductPricelistPaged,
 } from "src/app/price-list/price-list";
 import { PriceListService } from "src/app/price-list/price-list.service";
-import { SaleOrderApplyCouponDialogComponent } from "../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component";
 import { PartnerCustomerCuDialogComponent } from "src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component";
 import { PartnerSearchDialogComponent } from "src/app/partners/partner-search-dialog/partner-search-dialog.component";
 import {
@@ -59,6 +42,9 @@ import {
   EmployeeSimple,
 } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 
 @Component({
   selector: "app-sale-quotation-create-update",
@@ -80,7 +66,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   // @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("pricelistCbx", { static: true }) pricelistCbx: ComboBoxComponent;
-  saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
+  saleOrder: any = {};
 
   constructor(
     private fb: FormBuilder,

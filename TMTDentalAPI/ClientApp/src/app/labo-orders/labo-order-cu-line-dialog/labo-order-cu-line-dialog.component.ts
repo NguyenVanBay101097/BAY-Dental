@@ -27,7 +27,7 @@ import {
 } from "src/app/labo-order-lines/labo-order-line.service";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
-import { SaleOrderLineService } from 'src/app/sale-orders/sale-order-line.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 
 @Component({
   selector: "app-labo-order-cu-line-dialog",

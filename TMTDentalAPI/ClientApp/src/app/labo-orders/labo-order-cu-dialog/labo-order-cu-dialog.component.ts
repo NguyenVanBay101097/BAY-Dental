@@ -15,7 +15,7 @@ import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from '../labo
 import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { PartnerSupplierCuDialogComponent } from 'src/app/partners/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
-import { SaleOrderPaged, SaleOrderService } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 declare var $: any;
 
 

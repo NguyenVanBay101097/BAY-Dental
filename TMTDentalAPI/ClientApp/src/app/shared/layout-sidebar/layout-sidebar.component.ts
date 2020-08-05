@@ -44,10 +44,10 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Thu chi',
       icon: 'fas fa-dollar-sign',
       children: [
-        { name: 'Phiếu thu', link: '/account/phieu-thu-chi', params: { type: 'thu' } },
-        { name: 'Phiếu chi', link: '/account/phieu-thu-chi', params: { type: 'chi' } },
-        { name: 'Loại thu', link: '/account/loai-thu-chi', params: { type: 'thu' } },
-        { name: 'Loại chi', link: '/account/loai-thu-chi', params: { type: 'chi' } },
+        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
       ],
     },
     {

@@ -2,18 +2,14 @@ import { Component, OnInit, ViewChild, Injector, ElementRef, AfterViewInit } fro
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { DotKhamService } from '../dot-kham.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PartnerService, PartnerFilter, PartnerImageBasic, PartnerImageViewModel } from 'src/app/partners/partner.service';
 import { debounceTime, tap, switchMap, map, mergeMap } from 'rxjs/operators';
-import { AccountInvoiceCbx, AccountInvoiceService } from 'src/app/account-invoices/account-invoice.service';
 import { Observable, pipe } from 'rxjs';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { DotKhamLineService, DotKhamLineDisplay, DotKhamLineBasic } from '../dot-kham-line.service';
-import { DotKhamLineOperationService } from '../dot-kham-line-operation.service';
 import { WindowService, WindowCloseResult, WindowRef, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
 import { ToaThuocBasic, ToaThuocService, ToaThuocPrint } from 'src/app/toa-thuocs/toa-thuoc.service';
@@ -29,21 +25,22 @@ import { ProductStepDisplay } from 'src/app/products/product-step';
 import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { AppointmentCreateUpdateComponent } from 'src/app/appointment/appointment-create-update/appointment-create-update.component';
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch, DotKhamDisplay } from '../dot-khams';
 import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
-import { DotKhamStepService, DotKhamStepAssignDotKhamVM, DotKhamStepSetDone } from '../dot-kham-step.service';
 import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
 import { environment } from 'src/environments/environment';
 import { Operation } from 'fast-json-patch';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
-import { ToaThuocCuDialogSaveComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { DotKhamStepDisplay, DotKhamDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch } from 'src/app/dot-khams/dot-khams';
+import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
+import { DotKhamStepService, DotKhamStepAssignDotKhamVM, DotKhamStepSetDone } from 'src/app/dot-khams/dot-kham-step.service';
 declare var $: any;
 
 @Component({
@@ -85,7 +82,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   toaThuocs: ToaThuocBasic[] = [];
   laboOrders: LaboOrderBasic[] = [];
   appointments: AppointmentBasic[] = [];
-  customerInvoicesList: AccountInvoiceCbx[] = [];
   partnerId: string;
   isChange = false;
   customerSimpleFilter: PartnerSimple[] = [];
@@ -122,15 +118,11 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     private dotKhamService: DotKhamService,
     private intlService: IntlService,
     private partnerService: PartnerService,
-    private accountInvoiceService: AccountInvoiceService,
     private userService: UserService,
     private notificationService: NotificationService,
     private dialogService: DialogService,
     private router: Router,
-    private route: ActivatedRoute,
     private toaThuocService: ToaThuocService,
-    private appointmentService: AppointmentService,
-    private productService: ProductService,
     private employeeService: EmployeeService,
     private injector: Injector,
     private modalService: NgbModal,
@@ -224,44 +216,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       step.name = name;
       this.editingStep = null;
     });
-  }
-
-  loadDataFromHistory() {
-    if (this.id) {
-      this.dotKhamService.get(this.id).subscribe(
-        result => {
-          this.dotKhamForm.patchValue(result);
-          let date = this.intlService.parseDate(result.date);
-          this.dotKhamForm.get('dateObj').patchValue(date);
-
-          // this.dotKhamForm.get('doctor').setValue(result.doctor);
-          // this.dotKhamForm.get('assistant').setValue(result.doctor);
-
-          if (result.user) {
-            this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-          }
-        })
-    }
-    else if (this.invoiceId) {
-      var defaultVal = new DotKhamDefaultGet();
-      defaultVal.invoiceId = this.invoiceId;
-      this.dotKhamForm.get('invoice').enable();
-      this.dotKhamService.defaultGet(defaultVal).subscribe(
-        rs1 => {
-          this.dotKhamService.getCustomerInvoices(rs1.partnerId).subscribe(
-            rs2 => {
-              this.customerInvoicesList = rs2;
-              this.dotKhamForm.patchValue(rs1);
-              let date = this.intlService.parseDate(rs1.date);
-              this.dotKhamForm.get('dateObj').patchValue(date);
-            });
-
-
-          if (rs1.user) {
-            this.filteredUsers = _.unionBy(this.filteredUsers, [rs1.user], 'id');
-          }
-        })
-    }
   }
 
   loadToaThuocs() {
@@ -595,10 +549,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     return this.partnerService.autocompletePartner(partnerPaged);
   }
 
-  searchInvoices(search?: string) {
-    return this.accountInvoiceService.getOpenPaid(search);
-  }
-
   valueNormalizer(text: Observable<string>) {
     return text.pipe(
       map((a: string) => {
@@ -811,27 +761,8 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     return this.employeeService.getEmployeeSimpleList(empPaged);
   }
 
-  valueChangeCombobox() {
-    this.partnerCbx.valueChange.asObservable().subscribe(
-      rs => {
-        if (rs) {
-          this.dotKhamService.getCustomerInvoices(rs.id).subscribe(
-            rs2 => {
-              this.customerInvoicesList = rs2;
-              this.dotKhamForm.get('invoice').enable();
-              this.dotKhamForm.get('invoice').setValue(rs2[0]);
-            }
-          )
-        } else {
-          this.dotKhamForm.get('invoice').setValue(null);
-          this.dotKhamForm.get('invoice').disable();
-        }
-      }
-    );
-  }
-
   checkState(id, state) {
-    var save = new DotKhamStepSave;
+    var save = new DotKhamStepSave();
     var ar = [];
     save.dotKhamId = state != "done" ? this.id : null;
     save.state = (state == "draft") ? "progress" : (state == "progress") ? "done" : "draft";
@@ -936,7 +867,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       rs => {
         this.opened = false;
         if (rs.id) {
-          var dkpatch = new DotKhamPatch;
+          var dkpatch = new DotKhamPatch();
           dkpatch.appointmentId = rs['id'];
           dkpatch.dotKhamId = this.id;
           var ar = [];

@@ -2,10 +2,8 @@ import { UserPaged, UserService } from './../../users/user.service';
 import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { AppointmentService } from '../appointment.service';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
 import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
-import { AppointmentDisplay, ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentPatch, AppointmentDefaultGet } from '../appointment';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
@@ -19,6 +17,7 @@ import { Router } from '@angular/router';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { UserSimple } from 'src/app/users/user-simple';
+import { AppointmentService } from 'src/app/appointment/appointment.service';
 
 @Component({
   selector: 'app-appointment-create-update',
