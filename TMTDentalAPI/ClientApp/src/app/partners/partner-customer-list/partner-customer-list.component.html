@@ -36,7 +36,7 @@
         <kendo-grid-column field="name" title="Họ tên" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/customer/' + dataItem.id]">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
                         <span *ngIf="dataItem.ref">[{{dataItem.ref}}] </span>
                         {{dataItem.name}}
                     </a>

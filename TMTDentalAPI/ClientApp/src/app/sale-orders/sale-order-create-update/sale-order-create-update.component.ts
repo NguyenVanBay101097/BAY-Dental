@@ -14,7 +14,7 @@ import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog
 import { SaleOrderDisplay } from '../sale-order-display';
 import * as _ from 'lodash';
 import { UserSimple } from 'src/app/users/user-simple';
-import { NgbModal, NgbPopover, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
@@ -28,7 +28,6 @@ import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.ser
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
-import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
@@ -86,7 +85,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, public activeModal: NgbActiveModal,) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
   }
 
   ngOnInit() {

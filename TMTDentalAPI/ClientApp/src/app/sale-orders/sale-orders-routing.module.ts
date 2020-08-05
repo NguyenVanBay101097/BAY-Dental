@@ -8,11 +8,11 @@ import { SaleOrderInvoiceListComponent } from './sale-order-invoice-list/sale-or
 
 const routes: Routes = [
   {
-    path: 'sale-orders',
+    path: '',
     component: SaleOrderListComponent
   },
   {
-    path: 'sale-orders/form',
+    path: 'form',
     component: SaleOrderCreateUpdateComponent
   },
   {

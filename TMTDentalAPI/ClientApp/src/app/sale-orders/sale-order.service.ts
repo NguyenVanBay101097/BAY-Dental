@@ -33,7 +33,7 @@ export class AccountPaymentFilter {
     partnerId: string;
 }
 
-export class DiscountDefault{
+export class DiscountDefault {
     saleOrderId: string;
     discountType: string;
     discountPercent: string;
@@ -42,7 +42,7 @@ export class DiscountDefault{
 }
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -143,7 +143,7 @@ export class SaleOrderService {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + "api/accountregisterpayments/OrderDefaultGet", val);
     }
 
-    
+
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
         return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });

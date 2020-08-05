@@ -10,7 +10,6 @@ import { AccountInvoiceLineDisplay } from 'src/app/account-invoices/account-invo
 import { Subject } from 'rxjs';
 import { WindowRef, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog/';
 import { WindowService } from '@progress/kendo-angular-dialog';
-import { DotKhamCreateUpdateComponent } from 'src/app/dot-khams/dot-kham-create-update/dot-kham-create-update.component';
 import { PartnerCustomerInfoComponent } from '../partner-customer-info/partner-customer-info.component';
 import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
 import { CustomerInvoiceCreateUpdateComponent } from 'src/app/account-invoices/customer-invoice-create-update/customer-invoice-create-update.component';
@@ -223,37 +222,6 @@ export class PartnerHistoryComponent implements OnInit {
   }
 
   openDotKham(dotKhamid, invoiceId) {
-    const windowRef: WindowRef = this.windowService.open(
-      {
-        title: 'Thông tin đợt khám',
-        content: DotKhamCreateUpdateComponent,
-        minWidth: 900,
-      });
-    this.windowOpened = true;
-    const instance = windowRef.content.instance;
-    if (dotKhamid) {
-      instance.id = dotKhamid;
-    }
-    if (invoiceId) {
-      instance.invoiceId = invoiceId;
-    }
-    instance.invoiceState = this.getInvState;
-    instance.dialog = true;
-
-    windowRef.result.subscribe(
-      (result) => {
-        this.windowOpened = false;
-        if (!(result instanceof WindowCloseResult)) {
-          this.openDotKham(result, null);
-        }
-        else {
-          this.service.getDotKhamList(this.invSelectedId).subscribe(
-            rs2 => {
-              this.dotKhams = rs2;
-            });
-        }
-      }
-    )
   }
 
   rowSelectionChange(e) {

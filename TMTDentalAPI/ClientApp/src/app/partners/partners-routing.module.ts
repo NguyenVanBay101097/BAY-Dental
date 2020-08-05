@@ -16,9 +16,6 @@ import { PartnerCustomerQuotationsComponent } from './partner-customer-quotation
 
 const routes: Routes = [
   {
-    path: 'partners', component: PartnerListComponent
-  },
-  {
     path: 'customers', component: PartnerCustomerListComponent
   },
   {
@@ -38,10 +35,6 @@ const routes: Routes = [
       { path: 'quotations', component: PartnerCustomerQuotationsComponent },
     ]
   },
-  {
-    path: 'partners/history/:id',
-    component: PartnerHistoryComponent
-  }
 ];
 
 @NgModule({

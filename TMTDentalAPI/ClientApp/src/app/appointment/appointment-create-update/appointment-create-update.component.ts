@@ -7,7 +7,6 @@ import { AppointmentService } from '../appointment.service';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
 import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
 import { AppointmentDisplay, ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentPatch, AppointmentDefaultGet } from '../appointment';
-import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';

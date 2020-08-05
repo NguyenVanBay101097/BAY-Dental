@@ -1,6 +1,4 @@
-import { BrowserModule } from "@angular/platform-browser";
 import { NgModule, LOCALE_ID } from "@angular/core";
-
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HeroesModule } from "./heroes/heroes.module";
@@ -17,9 +15,7 @@ import { AuthInterceptor } from "./auth/auth-interceptor";
 import { IntlModule } from "@progress/kendo-angular-intl";
 // Load all required data for the bg locale
 import "@progress/kendo-angular-intl/locales/vi/all";
-import { SaleOrdersModule } from "./sale-orders/sale-orders.module";
 import { UsersModule } from "./users/users.module";
-import { PartnersModule } from "./partners/partners.module";
 import { AccountInvoicesModule } from "./account-invoices/account-invoices.module";
 import { AccountPaymentsModule } from "./account-payments/account-payments.module";
 import { HttpHandleErrorInterceptor } from "./http-handle-error-interceptor";
@@ -27,11 +23,10 @@ import { AccountJournalsModule } from "./account-journals/account-journals.modul
 import { ToothCategoriesModule } from "./tooth-categories/tooth-categories.module";
 import { TeethModule } from "./teeth/teeth.module";
 
-import { registerLocaleData } from "@angular/common";
+import { registerLocaleData, CommonModule } from "@angular/common";
 import localeVi from "@angular/common/locales/vi";
 import { DotKhamsModule } from "./dot-khams/dot-khams.module";
 import { ToaThuocsModule } from "./toa-thuocs/toa-thuocs.module";
-import { AppointmentModule } from "./appointment/appointment.module";
 
 import { JwtModule, JwtInterceptor } from "@auth0/angular-jwt";
 import { HomeModule } from "./home/home.module";
@@ -58,7 +53,6 @@ import { EmployeesModule } from "./employees/employees.module";
 import { EmployeeCategoriesModule } from "./employee-categories/employee-categories.module";
 import { InputsModule } from "@progress/kendo-angular-inputs";
 import { MatStepperModule } from "@angular/material/stepper";
-import { HistoryModule } from "./history/history.module";
 import { NgbModule, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { NgbDateCustomParserFormatter } from "./core/ngb-date-custom-parser-formatter";
 import { ResGroupsModule } from "./res-groups/res-groups.module";
@@ -121,13 +115,12 @@ registerLocaleData(localeVi, "vi");
     PrintLayoutComponent
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
     BrowserAnimationsModule,
     MatNativeDateModule,
     AppRoutingModule,
     HeroesModule,
     ProductCategoriesModule,
-    AppointmentModule,
     CoreModule,
     IntlModule,
     HttpClientModule,
@@ -142,9 +135,7 @@ registerLocaleData(localeVi, "vi");
     SharedModule,
     AuthModule,
     ProductsModule,
-    SaleOrdersModule,
     UsersModule,
-    PartnersModule,
     AccountInvoicesModule,
     AccountPaymentsModule,
     AccountJournalsModule,
@@ -177,7 +168,6 @@ registerLocaleData(localeVi, "vi");
     InputsModule,
     MatStepperModule,
     NgbModule,
-    HistoryModule,
     ResGroupsModule,
     IrModelsModule,
     IrRulesModule,

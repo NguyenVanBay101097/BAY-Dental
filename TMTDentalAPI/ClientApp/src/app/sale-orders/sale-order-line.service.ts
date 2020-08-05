@@ -14,7 +14,7 @@ export class SaleOrderLineOnChangeProductResult {
     priceUnit: number;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

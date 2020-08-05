@@ -6,7 +6,7 @@ import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kan
 
 const routes: Routes = [
   {
-    path: 'appointments/kanban',
+    path: 'kanban',
     component: AppointmentKanbanComponent,
   },
 ];

@@ -5,7 +5,6 @@ import { AppointmentBasic, AppointmentPaged, SchedulerConfig, ApplicationUserSim
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { WindowRef, WindowService, WindowCloseResult, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { FormGroup, FormControl } from '@angular/forms';
-import { PartnerInfoComponent } from 'src/app/partners/partner-info/partner-info.component';
 import { SchedulerEvent } from '@progress/kendo-angular-scheduler';
 import { formatDate } from '@angular/common';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -572,19 +571,6 @@ export class AppointmentListComponent implements OnInit {
   }
 
   openCustomerInfo(cusId: string) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Thông tin Khách hàng',
-      content: PartnerInfoComponent,
-      width: 900,
-      actions: [
-        { text: 'Đóng', value: false },
-        // { text: 'Tạo lịch hẹn', primary: true, value: true }
-      ]
-    });
-
-    this.customerInfoOpened = true;
-    const instance = dialogRef.content.instance;
-    instance.partnerId = cusId;
   }
 
   openEmployeeInfo(empId: string) {

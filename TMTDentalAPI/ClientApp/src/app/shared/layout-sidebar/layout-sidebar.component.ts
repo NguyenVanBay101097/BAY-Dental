@@ -14,7 +14,7 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
     },
-    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/customers' },
+    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },

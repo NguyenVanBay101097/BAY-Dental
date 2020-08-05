@@ -136,7 +136,6 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
   ],
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
     MyOwnCustomMaterialModule,
     FlexLayoutModule,
     RouterModule,
