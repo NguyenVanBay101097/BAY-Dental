@@ -32,7 +32,7 @@ export class CardCardDisplay {
     upgradeTypeId: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CardCardService {
     apiUrl = 'api/CardCards';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

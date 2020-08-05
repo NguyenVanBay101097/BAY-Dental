@@ -18,51 +18,36 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
-    // {
-    //   name: 'Điều trị',
-    //   icon: 'fas fa-medkit',
-    //   children: [
-    //     { name: 'Phiếu điều trị', link: '/sale-orders' },
-    //     { name: 'Phiếu tư vấn', link: '/sale-quotations' },
-    //     // { name: 'Đợt khám', link: '/dot-khams' },
-    //   ]
-    // },
-    // {
-    //   name: 'Phiếu labo',
-    //   icon: 'fas fa-tooth',
-    //   link: '/labo-orders',
-    //   children: []
-    // },
     {
       name: 'Thống kê labo',
       icon: 'fas fa-tooth',
       children: [],
-      link: '/labo-statistics'
+      link: '/labo-orders/statistics'
     },
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
       children: [
-        { name: 'Mua hàng', link: '/purchase-orders', params: { type: 'order' } },
-        { name: 'Trả hàng', link: '/purchase-orders', params: { type: 'refund' } },
+        { name: 'Mua hàng', link: '/purchase/orders', params: { type: 'order' } },
+        { name: 'Trả hàng', link: '/purchase/orders', params: { type: 'refund' } },
       ]
     },
     {
       name: 'Kho',
       icon: 'fas fa-th',
       children: [
-        { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
-        { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
+        { name: 'Phiếu xuất kho', link: '/stock/outgoing-pickings' },
+        { name: 'Phiếu nhập kho', link: '/stock/incoming-pickings' },
       ],
     },
     {
       name: 'Thu chi',
       icon: 'fas fa-dollar-sign',
       children: [
-        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
-        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
-        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
-        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
+        { name: 'Phiếu thu', link: '/account/phieu-thu-chi', params: { type: 'thu' } },
+        { name: 'Phiếu chi', link: '/account/phieu-thu-chi', params: { type: 'chi' } },
+        { name: 'Loại thu', link: '/account/loai-thu-chi', params: { type: 'thu' } },
+        { name: 'Loại chi', link: '/account/loai-thu-chi', params: { type: 'chi' } },
       ],
     },
     {
@@ -90,12 +75,12 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Nhãn khách hàng', link: '/partner-categories' },
         { name: "Nguồn khách hàng", link: "/partner-sources" },
-        { name: 'Nhà cung cấp', link: '/suppliers' },
-        { name: 'Dịch vụ', link: '/product-services' },
+        { name: 'Nhà cung cấp', link: '/partners/suppliers' },
+        { name: 'Dịch vụ', link: '/products/services' },
         { name: 'Nhóm dịch vụ', link: '/product-categories/service' },
-        { name: 'Vật tư', link: '/product-products' },
+        { name: 'Vật tư', link: '/products/products' },
         { name: 'Nhóm vật tư', link: '/product-categories/product' },
-        { name: 'Thuốc', link: '/product-medicines' },
+        { name: 'Thuốc', link: '/products/medicines' },
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },

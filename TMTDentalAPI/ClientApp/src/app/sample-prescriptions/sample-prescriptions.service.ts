@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ProductSimple } from '../products/product-simple';
 
 
-export class SamplePrescriptionBasic{
+export class SamplePrescriptionBasic {
   id: string;
   name: string;
 }
@@ -21,21 +21,21 @@ export class SamplePrescriptionsDisplay {
   lines: SamplePrescriptionLineSave[];
 }
 
-export class SamplePrescriptionsSave{
+export class SamplePrescriptionsSave {
   name: string;
   note: string;
   lines: [];
 }
 
-export class SamplePrescriptionLineSave{
+export class SamplePrescriptionLineSave {
   id: string;
   product: ProductSimple;
   productId: string;
-  numberOfTimes: number; 
-  amountOfTimes: number; 
-  numberOfDays: number; 
+  numberOfTimes: number;
+  amountOfTimes: number;
+  numberOfDays: number;
   quantity: number;
-  useAt: string; 
+  useAt: string;
 }
 
 export class SamplePrescriptionsPaged {
@@ -51,7 +51,7 @@ export class SamplePrescriptionsPaging {
   items: [];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SamplePrescriptionsService {
   apiUrl = 'api/sampleprescriptions';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -73,6 +73,6 @@ export class SamplePrescriptionsService {
   }
 
   delete(id: string) {
-      return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
 }

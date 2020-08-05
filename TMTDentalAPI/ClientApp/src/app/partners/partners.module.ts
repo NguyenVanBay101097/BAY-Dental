@@ -95,8 +95,6 @@ import { PartnerInfoComponent } from './partner-info/partner-info.component';
     SaleReportModule,
     FlexLayoutModule,
     NgbModule,
-    DropDownsModule, 
-    PopupModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

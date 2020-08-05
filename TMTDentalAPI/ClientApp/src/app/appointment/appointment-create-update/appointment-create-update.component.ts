@@ -2,7 +2,6 @@ import { UserPaged, UserService } from './../../users/user.service';
 import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { AppointmentService } from '../appointment.service';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
 import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
@@ -18,10 +17,8 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { Router } from '@angular/router';
 import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { UserSimple } from 'src/app/users/user-simple';
-import { remove } from 'lodash';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -41,14 +38,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
-    private employeeService: EmployeeService,
     private partnerService: PartnerService,
     private intlService: IntlService,
     private userService: UserService,
-    private notificationService: NotificationService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private router: Router,
     private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {

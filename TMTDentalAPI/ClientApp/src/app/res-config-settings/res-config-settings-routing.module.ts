@@ -4,7 +4,7 @@ import { ResConfigSettingsFormComponent } from './res-config-settings-form/res-c
 
 const routes: Routes = [
   {
-    path: 'config-settings',
+    path: '',
     component: ResConfigSettingsFormComponent
   }
 ];

@@ -11,7 +11,6 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { EmployeeInfoComponent } from 'src/app/employees/employee-info/employee-info.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -574,21 +573,6 @@ export class AppointmentListComponent implements OnInit {
   }
 
   openEmployeeInfo(empId: string) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Thông tin Nhân viên',
-      content: EmployeeInfoComponent,
-      width: 700,
-      height: 600,
-      minWidth: 250,
-      actions: [
-        { text: 'Đóng', value: false },
-        // { text: 'Tạo lịch hẹn', primary: true, value: true }
-      ]
-    });
-
-    this.customerInfoOpened = true;
-    const instance = dialogRef.content.instance;
-    instance.id = empId;
   }
 
   // setScrollTime(list: AppointmentBasic[]) {

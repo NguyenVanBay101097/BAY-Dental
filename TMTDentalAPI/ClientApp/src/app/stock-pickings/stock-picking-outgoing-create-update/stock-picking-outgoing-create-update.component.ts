@@ -264,7 +264,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       });
     } else {
       this.stockPickingService.create(val).subscribe(result => {
-        this.router.navigate(['outgoing-pickings/edit/', result.id]);
+        this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
       });
     }
   }
@@ -316,9 +316,9 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
       this.stockPickingService.create(val).subscribe(result => {
         this.stockPickingService.actionDone([result.id]).subscribe(() => {
-          this.router.navigate(['outgoing-pickings/edit/', result.id]);
+          this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
         }, () => {
-          this.router.navigate(['outgoing-pickings/edit/', result.id]);
+          this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
         });
       });
     }

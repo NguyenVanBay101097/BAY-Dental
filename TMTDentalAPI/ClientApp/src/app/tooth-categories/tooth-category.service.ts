@@ -7,7 +7,7 @@ export class ToothCategoryBasic {
     name: string;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ToothCategoryService {
     apiUrl = 'api/toothcategories';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

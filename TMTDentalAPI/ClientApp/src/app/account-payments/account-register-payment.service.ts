@@ -22,7 +22,7 @@ export class AccountRegisterPaymentCreatePayment {
     id: string;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AccountRegisterPaymentService {
     apiUrl = 'api/accountregisterpayments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

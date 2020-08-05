@@ -241,9 +241,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var data = Object.assign(this.purchaseOrder, val);
     this.purchaseOrderService.create(data).subscribe(result => {
       this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+        this.router.navigate(['/purchase/orders/edit/' + result.id]);
       }, () => {
-        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+        this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     });
   }
@@ -266,7 +266,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/purchase-orders/create'], { queryParams: { type: this.purchaseOrder.type } });
+    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
   }
 
   focusProductSearchInput() {
@@ -397,7 +397,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.purchaseOrderService.create(data).subscribe(result => {
-        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+        this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     }
   }
