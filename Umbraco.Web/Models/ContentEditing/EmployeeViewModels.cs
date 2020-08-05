@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -83,6 +84,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Là phụ tá
         /// </summary>
         public bool? IsAssistant { get; set; }
+        public IEnumerable<ChamCongDisplay> ChamCongs { get; set; }
+
     }
 
     public class EmployeePaged

@@ -56,5 +56,6 @@ namespace ApplicationCore.Entities
         /// Là phụ tá
         /// </summary>
         public bool IsAssistant { get; set; }
+        public ICollection<ChamCong> ChamCongs { get; set; } = new List<ChamCong>();
     }
 }
