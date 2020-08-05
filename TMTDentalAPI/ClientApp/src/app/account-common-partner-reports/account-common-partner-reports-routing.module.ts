@@ -4,7 +4,7 @@ import { AccountCommonPartnerReportListComponent } from './account-common-partne
 
 const routes: Routes = [
   {
-    path: 'account-common-partner-reports',
+    path: 'partner',
     component: AccountCommonPartnerReportListComponent
   }
 ];
