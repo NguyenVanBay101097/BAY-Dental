@@ -31,7 +31,6 @@ import { ToaThuocsModule } from "./toa-thuocs/toa-thuocs.module";
 import { JwtModule, JwtInterceptor } from "@auth0/angular-jwt";
 import { HomeModule } from "./home/home.module";
 import { RoutingsModule } from "./routings/routings.module";
-import { StockPickingsModule } from "./stock-pickings/stock-pickings.module";
 import { StockPickingTypesModule } from "./stock-picking-types/stock-picking-types.module";
 import { LaboOrderLinesModule } from "./labo-order-lines/labo-order-lines.module";
 import { StockMovesModule } from "./stock-moves/stock-moves.module";
@@ -59,8 +58,6 @@ import { ResGroupsModule } from "./res-groups/res-groups.module";
 import { IrModelsModule } from "./ir-models/ir-models.module";
 import { IrRulesModule } from "./ir-rules/ir-rules.module";
 import { PriceListModule } from "./price-list/price-list.module";
-import { LaboOrdersModule } from "./labo-orders/labo-orders.module";
-import { PurchaseOrdersModule } from "./purchase-orders/purchase-orders.module";
 
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { RealRevenueReportModule } from './real-revenue-report/real-revenue-report.module';
@@ -99,7 +96,6 @@ import { SamplePrescriptionsModule } from './sample-prescriptions/sample-prescri
 import { ReportPartnerSourcesModule } from './report-partner-sources/report-partner-sources.module';
 import { DotKhamStepsModule } from './dot-kham-steps/dot-kham-steps.module';
 import { LoaiThuChiModule } from './loai-thu-chi/loai-thu-chi.module';
-import { PhieuThuChiModule } from './phieu-thu-chi/phieu-thu-chi.module';
 import { AccountFinancialReportModule } from './account-financial-report/account-financial-report.module';
 import { AccountReportGeneralLedgersModule } from './account-report-general-ledgers/account-report-general-ledgers.module';
 
@@ -149,7 +145,6 @@ registerLocaleData(localeVi, "vi");
     RoutingsModule,
     HttpClientModule,
     DotKhamStepsModule,
-    StockPickingsModule,
     StockPickingTypesModule,
     LaboOrderLinesModule,
     StockMovesModule,
@@ -172,8 +167,6 @@ registerLocaleData(localeVi, "vi");
     IrModelsModule,
     IrRulesModule,
     PriceListModule,
-    LaboOrdersModule,
-    PurchaseOrdersModule,
     RealRevenueReportModule,
     SaleReportModule,
     MomentModule.forRoot({
@@ -211,8 +204,6 @@ registerLocaleData(localeVi, "vi");
     TcareModule,
     // end
     SamplePrescriptionsModule, 
-    LoaiThuChiModule, 
-    PhieuThuChiModule,
     AccountFinancialReportModule,
     AccountReportGeneralLedgersModule,
   ],

@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/purchase-orders']" [queryParams]="{type: purchaseOrder.type}">
+                <a [routerLink]="['/purchase/orders']" [queryParams]="{type: purchaseOrder.type}">
                     <span *ngIf="purchaseOrder.type === 'order'">Mua hàng</span>
                     <span *ngIf="purchaseOrder.type === 'refund'">Trả hàng</span>
                 </a>

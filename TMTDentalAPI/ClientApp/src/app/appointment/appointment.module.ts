@@ -8,7 +8,6 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { AppointmentCreateUpdateComponent } from './appointment-create-update/appointment-create-update.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppointmentCuDialogComponent } from './appointment-cu-dialog/appointment-cu-dialog.component';
-import { EmployeeInfoComponent } from '../employees/employee-info/employee-info.component';
 import { AppointmentAdvanceSearchComponent } from './appointment-advance-search/appointment-advance-search.component';
 import { SharedModule } from '../shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -30,7 +29,7 @@ import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/ap
     SharedModule,
     NgbModule
   ],
-  entryComponents: [AppointmentCreateUpdateComponent, EmployeeInfoComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
+  entryComponents: [AppointmentCreateUpdateComponent, AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
   providers: [
     AppointmentService,
   ]
