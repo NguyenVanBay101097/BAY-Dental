@@ -8,8 +8,8 @@
     <form class="o_form_view o_form_editable" [formGroup]="formGroup" (submit)="onSave()" #form="ngForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="o_group">
-                    <div class="o_group k-radio-list d-flex justify-content-between">
+                <div class="o_group mt-0 mb-0">
+                    <div class="my-select o_group k-radio-list d-flex justify-content-between">
                         <span class="k-radio-item">
                             <input type="radio" name="appliedOn" id="global" class="mr-2"
                                 value="3_global" formControlName="appliedOn" kendoRadioButton
@@ -33,19 +33,24 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
-                                    </kendo-numerictextbox>
-                                </td>
-                                <td colspan="1" class="o_td_label o_td_label_left mw-auto">
-                                    <h3 class="font-weight-bold">%</h3>
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
+                                        </kendo-numerictextbox>
+                                        <h3 class="ml-2 font-weight-bold">%</h3>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <table [class.d-none]="getValueForm('appliedOn') != '2_product_category'" class="o_group o_inner_group" style="width:100%">
+                    <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
-                                <td colspan="1" style="width: 70%;">
+                            <tr [class.d-none]="getValueForm('appliedOn') != '2_product_category'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        <span>Nhóm dịch vụ</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredProductCategories"
                                         [filterable]="true" formControlName="categ"
                                         #categCbx
@@ -55,19 +60,13 @@
                                         [loading]="categCbxLoading">
                                     </kendo-combobox>
                                 </td>
-                                <td colspan="1" style="width: 30%;">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
-                                    </kendo-numerictextbox>
-                                </td>
-                                <td colspan="1" class="o_td_label o_td_label_left mw-auto">
-                                    <h3 class="font-weight-bold">%</h3>
-                                </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <table [class.d-none]="getValueForm('appliedOn') != '0_product_variant'" class="o_group o_inner_group" style="width:100%">
-                        <tbody>
-                            <tr>
+                            <tr [class.d-none]="getValueForm('appliedOn') != '0_product_variant'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        <span>Dịch vụ</span>
+                                    </label>
+                                </td>
                                 <td colspan="1" style="width: 70%;">
                                     <kendo-combobox [data]="filteredProducts"
                                         [filterable]="true" formControlName="product"
@@ -78,12 +77,23 @@
                                         [loading]="productCbxLoading">
                                     </kendo-combobox>
                                 </td>
-                                <td colspan="1" style="width: 30%;">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
-                                    </kendo-numerictextbox>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table *ngIf="getValueForm('appliedOn') != '3_global'" class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Hoa hồng
+                                    </label>
                                 </td>
-                                <td colspan="1" class="o_td_label o_td_label_left mw-auto">
-                                    <h3 class="font-weight-bold">%</h3>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
+                                        </kendo-numerictextbox>
+                                        <h3 class="ml-2 font-weight-bold">%</h3>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

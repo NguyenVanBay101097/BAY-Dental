@@ -23,7 +23,7 @@ export class CommissionCuDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', Validators.required]
     });
   }
 

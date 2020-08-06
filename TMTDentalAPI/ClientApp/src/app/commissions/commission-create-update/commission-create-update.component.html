@@ -20,6 +20,10 @@
                         class="btn btn-primary btn-sm" (click)="onSave()">
                         Lưu thay đổi
                     </button>
+                    <button type="button" accesskey="s" *ngIf="!saved"
+                        class="btn btn-secondary btn-sm" (click)="onCancel()">
+                        Hủy thay đổi
+                    </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="!saved" class="btn o_arrow_button disabled"
@@ -35,10 +39,15 @@
                 </div>
             </div>
             <div class="o_form_sheet">
-                <div class="oe_title">
-                    <h1>
-                        <span>{{getValueForm('name')}}</span>
+                <div class="oe_title mt-2 mb-3">
+                    <h1 class="mb-1">
+                        <input class="form-control" formControlName="name" 
+                            name="name" required #nameInput
+                            (keyup)="changeName()">
                     </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                    </div>
                 </div>
                 <div class="o_notebook">
                     <div class="mb-2">

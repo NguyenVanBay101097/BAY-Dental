@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -17,8 +17,12 @@ import { result } from 'lodash';
 })
 export class CommissionCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
+
+  @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
+
   id: string;
   saved: boolean = true;
+  submitted = false;
 
   constructor(private fb: FormBuilder, 
     private route: ActivatedRoute, 
@@ -28,11 +32,11 @@ export class CommissionCreateUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: null,
+      name: ['', Validators.required],
       commissionProductRules: this.fb.array([])
     });
-    this.routeActive();
 
+    this.routeActive();
   }
 
   getValueForm(key) {
@@ -56,6 +60,10 @@ export class CommissionCreateUpdateComponent implements OnInit {
     return line.get(key) ? line.get(key).value : null;
   }
 
+  get f() {
+    return this.formGroup.controls;
+  }
+
   get commissionProductRules() {
     return this.formGroup.get('commissionProductRules') as FormArray;
   }
@@ -69,7 +77,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
         } else 
           return null;
       })).subscribe(result => {
-        console.log(result);
         this.formGroup.patchValue(result);
 
         const control = this.formGroup.get('commissionProductRules') as FormArray;
@@ -78,10 +85,12 @@ export class CommissionCreateUpdateComponent implements OnInit {
           var g = this.fb.group(line);
           control.push(g);
         });
-
         this.formGroup.markAsPristine();
-        console.log(this.formGroup);
       });
+  }
+
+  changeName() {
+    this.saved = false;
   }
 
   addLine() {
@@ -113,6 +122,12 @@ export class CommissionCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
+      return;
+    }
+
     var val = this.formGroup.value;
     this.commissionService.update(this.id, val)
     .subscribe(() => {
@@ -120,5 +135,10 @@ export class CommissionCreateUpdateComponent implements OnInit {
     }, err => {
       console.log(err);
     });
+  }
+
+  onCancel() {
+    this.routeActive();
+    this.saved = true;
   }
 }

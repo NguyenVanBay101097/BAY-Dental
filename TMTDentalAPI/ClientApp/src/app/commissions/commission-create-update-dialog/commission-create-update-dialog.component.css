@@ -1,3 +1,6 @@
 .mw-auto {
     min-width: auto !important;
 }
+.my-select {
+    padding: 0 45px 7px 0;
+}
