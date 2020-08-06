@@ -11,7 +11,6 @@ import * as _ from 'lodash';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DialogService } from '@progress/kendo-angular-dialog';
-import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPriceListItemSave, ProductPriceListSave } from '../price-list';
 import { FlexAlignStyleBuilder } from '@angular/flex-layout';

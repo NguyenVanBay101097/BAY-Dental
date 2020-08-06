@@ -1,12 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MyOwnCustomMaterialModule } from './my-own-custom-material.module';
-import { HeaderComponent } from './header/header.component';
-import { HeaderMenuComponent } from './header-menu/header-menu.component';
-import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { TopMenuComponent } from './top-menu/top-menu.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
@@ -44,7 +38,6 @@ import { MyAutosizeDirective } from './autosize.directive';
 import { CharCountDirective } from './char-count.directive';
 import { SelectUomProductDialogComponent } from './select-uom-product-dialog/select-uom-product-dialog.component';
 import { RedirectComponentDirective } from './redirect-component.directive';
-import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
 import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
 import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
@@ -60,10 +53,6 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
 
 @NgModule({
   declarations: [
-    HeaderComponent,
-    HeaderMenuComponent,
-    HeaderBarComponent,
-    TopMenuComponent,
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,
@@ -86,7 +75,6 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
-    RedirectComponentComponent,
     RedirectComponentDirective,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
@@ -108,10 +96,6 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
     AccountInvoiceRegisterPaymentDialogV2Component
   ],
   exports: [
-    HeaderComponent,
-    HeaderMenuComponent,
-    HeaderBarComponent,
-    TopMenuComponent,
     ConfirmDialogComponent,
     LayoutSidebarComponent,
     LayoutHeaderComponent,
@@ -134,7 +118,6 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
     SharedPartnerGridComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    RedirectComponentComponent,
     AnchorHostDirective,
     MyAutosizeDirective,
     CharCountDirective,
@@ -153,7 +136,6 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
   ],
   imports: [
     CommonModule,
-    MyOwnCustomMaterialModule,
     FlexLayoutModule,
     RouterModule,
     ReactiveFormsModule,

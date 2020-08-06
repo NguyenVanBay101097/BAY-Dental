@@ -100,7 +100,7 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "tmt-dental:build:production"
+              "browserTarget": "tmt-dental:build:production",
             },
             "production-vi": {
               "browserTarget": "kendo-i18n-sample:build:production-vi"

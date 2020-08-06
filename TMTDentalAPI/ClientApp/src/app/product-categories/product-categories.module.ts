@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { ProductCategoriesRoutingModule } from './product-categories-routing.module';
 import { ProductCategoryListComponent } from './product-category-list/product-category-list.component';
-import { MyOwnCustomMaterialModule } from '../shared/my-own-custom-material.module';
 import { ProductCategoryDialogComponent } from './product-category-dialog/product-category-dialog.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
