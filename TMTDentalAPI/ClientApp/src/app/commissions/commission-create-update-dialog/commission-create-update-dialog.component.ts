@@ -118,6 +118,7 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
     if (!this.formGroup.valid) {
       return;
     }
+
     var val = this.formGroup.value;
     val.categId = val.categ ? val.categ.id : null;
     val.productId = val.product ? val.product.id : null;
