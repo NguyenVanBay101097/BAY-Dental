@@ -69,14 +69,12 @@ export class CommissionCreateUpdateComponent implements OnInit {
   }
 
   routeActive() {
-    this.route.queryParamMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.id = params.get("id");
-        if (this.id) {
-          return this.commissionService.get(this.id);
-        } else 
-          return null;
-      })).subscribe(result => {
+    this.route.queryParams.subscribe(params => {
+      this.id = params['id'];
+    });
+
+    if (this.id) {
+      this.commissionService.get(this.id).subscribe(result => {
         this.formGroup.patchValue(result);
 
         const control = this.formGroup.get('commissionProductRules') as FormArray;
@@ -86,7 +84,12 @@ export class CommissionCreateUpdateComponent implements OnInit {
           control.push(g);
         });
         this.formGroup.markAsPristine();
+      }, err => {
+        console.log(err);
       });
+    } else {
+      console.log("Tèo");
+    } 
   }
 
   changeName() {
@@ -129,16 +132,25 @@ export class CommissionCreateUpdateComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    this.commissionService.update(this.id, val)
-    .subscribe(() => {
-      this.saved = true;
-    }, err => {
-      console.log(err);
-    });
-  }
 
-  onCancel() {
-    this.routeActive();
-    this.saved = true;
+    if (this.id) {
+      this.commissionService.update(this.id, val)
+      .subscribe(() => {
+        this.saved = true;
+      }, err => {
+        console.log(err);
+      });
+    } else {
+      this.commissionService.create(val)
+      .subscribe(result => {
+        this.router.navigate(['/commissions/form'], {
+          queryParams: {
+            id: result['id']
+          },
+        });
+      }, err => {
+        console.log(err);
+      });
+    }
   }
 }

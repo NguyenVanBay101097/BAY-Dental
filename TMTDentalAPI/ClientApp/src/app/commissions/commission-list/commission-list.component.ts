@@ -4,7 +4,6 @@ import { Subject } from 'rxjs';
 import { CommissionService, CommissionPaged, Commission } from '../commission.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { CommissionCuDialogComponent } from '../commission-cu-dialog/commission-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Router } from '@angular/router';
 
@@ -65,16 +64,7 @@ export class CommissionListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(CommissionCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
-    modalRef.result.then(result => {
-      this.router.navigate(['/commissions/form'], {
-        queryParams: {
-          id: result.id
-        },
-      });
-    }, () => {
-    });
+    this.router.navigate(['/commissions/form']);
   }
 
   editItem(item: Commission) {

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { CommissionsRoutingModule } from './commissions-routing.module';
 import { CommissionListComponent } from './commission-list/commission-list.component';
-import { CommissionCuDialogComponent } from './commission-cu-dialog/commission-cu-dialog.component';
 import { CommissionService } from './commission.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
@@ -14,7 +13,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PopupModule } from '@progress/kendo-angular-popup';
 
 @NgModule({
-  declarations: [CommissionListComponent, CommissionCuDialogComponent, CommissionCreateUpdateComponent, CommissionCreateUpdateDialogComponent],
+  declarations: [CommissionListComponent, CommissionCreateUpdateComponent, CommissionCreateUpdateDialogComponent],
   imports: [
     CommonModule,
     CommissionsRoutingModule, 
@@ -29,7 +28,6 @@ import { PopupModule } from '@progress/kendo-angular-popup';
     CommissionService
   ],
   entryComponents: [
-    CommissionCuDialogComponent, 
     CommissionCreateUpdateDialogComponent
   ]
 })

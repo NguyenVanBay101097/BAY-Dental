@@ -16,25 +16,9 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" accesskey="s" [disabled]="saved"
+                    <button type="button" accesskey="S" [disabled]="saved"
                         class="btn btn-primary btn-sm" (click)="onSave()">
-                        Lưu thay đổi
-                    </button>
-                    <button type="button" accesskey="s" *ngIf="!saved"
-                        class="btn btn-secondary btn-sm" (click)="onCancel()">
-                        Hủy thay đổi
-                    </button>
-                </div>
-                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="!saved" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="saved" [class.btn-secondary]="!saved"
-                        type="button">
-                        Đã lưu thay đổi
-                    </button>
-                    <button [disabled]="saved" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="!saved" [class.btn-secondary]="saved"
-                        type="button">
-                        Chưa lưu thay đổi
+                        Lưu
                     </button>
                 </div>
             </div>
