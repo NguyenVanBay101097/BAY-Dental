@@ -37,28 +37,26 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
         {
             var empObj = GetService<IEmployeeService>();
-            var query = empObj.SearchQuery();
+            var query = empObj.SearchQuery().Include(x => x.ChamCongs).
+                Select(x => new Employee()
+                {
+                    Id = x.Id,
+                    CompanyId = x.CompanyId,
+                    ChamCongs = x.ChamCongs.Where(y =>
+                    (!val.From.HasValue ||
+                    (y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date))
+                    &&
+                    (!val.To.HasValue ||
+                    (y.TimeIn.Value.Date <= val.To.Value.Date || y.TimeOut.Value.Date <= val.To.Value.Date))
+                    &&
+                    (string.IsNullOrEmpty(val.Status) ||
+                    (y.Status == val.Status))
+                ).ToList()
+                });
 
             var items = await query.Skip(val.Offset).Take(val.Limit)
                .ToListAsync();
-            foreach (var item in items)
-            {
-                var chamcongQuery = this.SearchQuery(x => x.EmployeeId == item.Id);
-                if (val.From.HasValue)
-                {
-                    chamcongQuery = chamcongQuery.Where(x => x.TimeIn.Value.Date >= val.From.Value.Date);
-                }
-                if (val.To.HasValue)
-                {
-                    chamcongQuery = chamcongQuery.Where(x => x.TimeIn.Value.Date <= val.To.Value.Date);
-                }
-                if (!string.IsNullOrEmpty(val.Status))
-                {
-                    chamcongQuery = chamcongQuery.Where(x => x.Status == val.Status);
-                }
-                item.ChamCongs = await chamcongQuery.ToListAsync();
 
-            }
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<EmployeeDisplay>(totalItems, val.Offset, val.Limit)
@@ -74,7 +72,7 @@ namespace Infrastructure.Services
         public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
         {
             var chamcong = await SearchQuery(x => x.EmployeeId == id
-            && (x.TimeIn.Value.Date.Equals(date.Date) ||x.TimeOut.Value.Date.Equals(date.Date)))
+            && (x.TimeIn.Value.Date.Equals(date.Date) || x.TimeOut.Value.Date.Equals(date.Date))).Include(x => x.Employee)
                 .FirstOrDefaultAsync();
             return _mapper.Map<ChamCongDisplay>(chamcong);
         }

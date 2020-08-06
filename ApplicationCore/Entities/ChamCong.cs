@@ -10,17 +10,28 @@ namespace ApplicationCore.Entities
     public class ChamCong : BaseEntity
     {
         public Guid EmployeeId { get; set; }
+        /// <summary>
+        /// nhân viên
+        /// </summary>
         public Employee Employee { get; set; }
-
+        /// <summary>
+        /// thời gian checkin
+        /// </summary>
         public DateTime? TimeIn { get; set; }
-
+        /// <summary>
+        /// thời gian checkout
+        /// </summary>
         public DateTime? TimeOut { get; set; }
-
+        /// <summary>
+        /// số giờ đã làm nếu có đủ checkin và checkout
+        /// </summary>
         public decimal? HourWorked { get; set; }
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
-
+        /// <summary>
+        /// trạng thái của chấm công: intitial, process, done
+        /// </summary>
         public string Status { get; set; }
     }
 }
