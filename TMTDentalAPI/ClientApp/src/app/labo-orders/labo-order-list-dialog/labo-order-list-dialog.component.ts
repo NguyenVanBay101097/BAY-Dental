@@ -24,6 +24,7 @@ export class LaboOrderListDialogComponent implements OnInit {
   saleOrderLineId: string;
   saleOrderId: string;
   saleOrderLine: SaleOrderLineDisplay;
+  title: string;
 
   laboOrders: LaboOrderBasic[] = [];
 

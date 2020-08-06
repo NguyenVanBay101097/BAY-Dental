@@ -8,7 +8,6 @@ import { PagedResult2 } from 'src/app/core/paged-result-2';
 import * as _ from 'lodash';
 import { NgbModal, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { DotkhamEntitySearchBy, DotKhamPaged } from 'src/app/dot-khams/dot-khams';
@@ -18,6 +17,7 @@ import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
 @Component({
   selector: 'app-appointment-kanban',

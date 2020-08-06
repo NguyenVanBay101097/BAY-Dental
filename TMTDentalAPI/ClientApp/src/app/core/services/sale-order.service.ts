@@ -1,16 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { PagedResult2 } from '../core/paged-result-2';
-import { SaleOrderBasic } from './sale-order-basic';
-import { SaleOrderDisplay } from './sale-order-display';
-import { DotKhamBasic, DotKhamDisplay } from '../dot-khams/dot-khams';
-import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../account-payments/account-register-payment.service';
-import { AccountPaymentPaged, AccountPaymentBasic } from '../account-payments/account-payment.service';
-import { PaymentInfoContent } from '../account-invoices/account-invoice.service';
-import { LaboOrderBasic, LaboOrderDisplay } from '../labo-orders/labo-order.service';
-import { SaleOrderLineBasic } from '../partners/partner.service';
-import { SaleOrderLineDisplay } from './sale-order-line-display';
+import { PagedResult2 } from '../paged-result-2';
+import { SaleOrderBasic } from '../../sale-orders/sale-order-basic';
+import { SaleOrderDisplay } from '../../sale-orders/sale-order-display';
+import { DotKhamBasic, DotKhamDisplay } from '../../dot-khams/dot-khams';
+import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../../account-payments/account-register-payment.service';
+import { AccountPaymentPaged, AccountPaymentBasic } from '../../account-payments/account-payment.service';
+import { PaymentInfoContent } from '../../account-invoices/account-invoice.service';
+import { LaboOrderBasic, LaboOrderDisplay } from '../../labo-orders/labo-order.service';
+import { SaleOrderLineBasic } from '../../partners/partner.service';
+import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 
 export class SaleOrderPaged {
     limit: number;

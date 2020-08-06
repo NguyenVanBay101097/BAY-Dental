@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderDisplay } from '../sale-order-display';
-import { SaleOrderService } from '../sale-order.service';
+import { SaleOrderService } from '../../core/services/sale-order.service';
 import { SaleOrderCuFormComponent } from '../sale-order-cu-form/sale-order-cu-form.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 

@@ -5,13 +5,10 @@ import { SaleOrdersRoutingModule } from './sale-orders-routing.module';
 import { SaleOrderCreateUpdateComponent } from './sale-order-create-update/sale-order-create-update.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { SaleOrderLineDialogComponent } from './sale-order-line-dialog/sale-order-line-dialog.component';
 import { SaleOrderListComponent } from './sale-order-list/sale-order-list.component';
 import { SaleOrderCreateDotKhamDialogComponent } from './sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { SaleOrderApplyCouponDialogComponent } from './sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
-import { SaleQuotationListComponent } from './sale-quotation-list/sale-quotation-list.component';
-import { SaleQuotationCreateUpdateComponent } from './sale-quotation-create-update/sale-quotation-create-update.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderCreateLaboOrderDialogComponent } from './sale-order-create-labo-order-dialog/sale-order-create-labo-order-dialog.component';
 import { SaleOrderInvoiceListComponent } from './sale-order-invoice-list/sale-order-invoice-list.component';
@@ -22,7 +19,19 @@ import { SaleOrderApplyDiscountDefaultDialogComponent } from './sale-order-apply
 import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 
 @NgModule({
-  declarations: [SaleOrderCreateUpdateComponent, SaleOrderLineDialogComponent, SaleOrderListComponent, SaleOrderCreateDotKhamDialogComponent, SaleOrderApplyCouponDialogComponent, SaleQuotationListComponent, SaleQuotationCreateUpdateComponent, SaleOrderCreateLaboOrderDialogComponent, SaleOrderInvoiceListComponent, SaleOrderApplyServiceCardsDialogComponent, SaleOrderCuDialogComponent, SaleOrderCuFormComponent, SaleOrderApplyDiscountDefaultDialogComponent, SaleOrderLineLaboOrdersDialogComponent],
+  declarations: [
+    SaleOrderCreateUpdateComponent,
+    SaleOrderListComponent,
+    SaleOrderCreateDotKhamDialogComponent,
+    SaleOrderApplyCouponDialogComponent,
+    SaleOrderCreateLaboOrderDialogComponent,
+    SaleOrderInvoiceListComponent,
+    SaleOrderApplyServiceCardsDialogComponent,
+    SaleOrderCuDialogComponent,
+    SaleOrderCuFormComponent,
+    SaleOrderApplyDiscountDefaultDialogComponent,
+    SaleOrderLineLaboOrdersDialogComponent
+  ],
   imports: [
     CommonModule,
     SaleOrdersRoutingModule,
@@ -36,7 +45,6 @@ import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-o
   exports: [
   ],
   entryComponents: [
-    SaleOrderLineDialogComponent,
     SaleOrderCreateDotKhamDialogComponent,
     SaleOrderApplyCouponDialogComponent,
     SaleOrderApplyServiceCardsDialogComponent,

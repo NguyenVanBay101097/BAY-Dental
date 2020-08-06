@@ -6,7 +6,7 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import * as _ from 'lodash';
-import { SaleOrderService } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { LaboOrderLineDisplay } from 'src/app/labo-order-lines/labo-order-line.service';
 import { IntlService } from '@progress/kendo-angular-intl';

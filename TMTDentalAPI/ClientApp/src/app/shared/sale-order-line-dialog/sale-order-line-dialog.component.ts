@@ -7,13 +7,12 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { ProductSimple } from 'src/app/products/product-simple';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderLineDisplay } from '../sale-order-line-display';
-import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from '../sale-order-line.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from 'src/app/core/services/sale-order-line.service';
 
 @Component({
   selector: 'app-sale-order-line-dialog',
@@ -24,7 +23,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
   saleLineForm: FormGroup;
   filteredUsers: UserSimple[] = [];
   filteredProducts: ProductSimple[];
-  line: SaleOrderLineDisplay;
+  line: any;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   @ViewChild('salesmanCbx', { static: true }) salesmanCbx: ComboBoxComponent;
   title: string;

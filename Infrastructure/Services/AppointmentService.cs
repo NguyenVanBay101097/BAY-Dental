@@ -94,7 +94,7 @@ namespace Infrastructure.Services
             if (val.DotKhamId.HasValue)
                 query = query.Where(x => x.DotKhamId == val.DotKhamId);
 
-            if (string.IsNullOrEmpty(val.UserId))
+            if (!string.IsNullOrEmpty(val.UserId))
                 query = query.Where(x => x.UserId == val.UserId);
 
             string[] stateList = null;

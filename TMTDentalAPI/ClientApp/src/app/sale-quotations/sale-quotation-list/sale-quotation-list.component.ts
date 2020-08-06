@@ -7,12 +7,11 @@ import { Router } from '@angular/router';
 import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
-import { SaleOrderService, SaleOrderPaged } from '../sale-order.service';
-import { SaleOrderBasic } from '../sale-order-basic';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { SaleOrderService, SaleOrderPaged } from 'src/app/core/services/sale-order.service';
+import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 
 @Component({
   selector: 'app-sale-quotation-list',

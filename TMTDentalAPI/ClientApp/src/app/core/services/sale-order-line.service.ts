@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { SaleOrderLineDisplay } from './sale-order-line-display';
+import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 
 export class SaleOrderLineOnChangeProduct {
     productId: string;
