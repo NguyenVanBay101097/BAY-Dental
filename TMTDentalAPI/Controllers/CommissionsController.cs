@@ -40,7 +40,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CommissionSave val)
+        public async Task<IActionResult> Create(CommissionDisplay val)
         {
             await _unitOfWork.BeginTransactionAsync();
 

@@ -48,10 +48,11 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<Commission> CreateCommission(CommissionSave val)
+        public async Task<Commission> CreateCommission(CommissionDisplay val)
         {
             var commission = _mapper.Map<Commission>(val);
             commission.CompanyId = CompanyId;
+            SaveProductRules(val, commission);
 
             return await CreateAsync(commission);
         }
