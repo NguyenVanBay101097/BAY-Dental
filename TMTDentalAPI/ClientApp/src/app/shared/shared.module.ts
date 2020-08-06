@@ -50,6 +50,7 @@ import { ToaThuocCuDialogSaveComponent } from './toa-thuoc-cu-dialog-save/toa-th
 import { ToaThuocSamplePrescriptionComponent } from './toa-thuoc-sample-prescription/toa-thuoc-sample-prescription.component';
 import { DotKhamCreateUpdateDialogComponent } from './dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { MyCustomNgbModule } from './my-custom-ngb.module';
 
 @NgModule({
   declarations: [
@@ -141,7 +142,7 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
     ReactiveFormsModule,
     MyCustomKendoModule,
     FormsModule,
-    NgbModule,
+    MyCustomNgbModule,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
         'm': 59

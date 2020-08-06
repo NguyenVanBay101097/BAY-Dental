@@ -38,27 +38,27 @@ registerLocaleData(localeVi, "vi");
     CommonModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    CoreModule,
-    IntlModule,
+    // CoreModule,
+    // IntlModule,
     HttpClientModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        whitelistedDomains: ["http://localhost:50396"],
-        blacklistedRoutes: [],
-      },
-    }),
-    FlexLayoutModule,
-    SharedModule,
+    // JwtModule.forRoot({
+    //   config: {
+    //     tokenGetter: tokenGetter,
+    //     whitelistedDomains: ["http://localhost:50396"],
+    //     blacklistedRoutes: [],
+    //   },
+    // }),
+    // FlexLayoutModule,
+    // SharedModule,
     RoutingsModule,
     HttpClientModule,
-    CustomComponentModule,
-    NgbModule,
-    MomentModule.forRoot({
-      relativeTimeThresholdOptions: {
-        m: 59,
-      },
-    }),
+    // CustomComponentModule,
+    // NgbModule,
+    // MomentModule.forRoot({
+    //   relativeTimeThresholdOptions: {
+    //     m: 59,
+    //   },
+    // }),
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
