@@ -12,7 +12,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<CommissionBasic>> GetPagedResultAsync(CommissionPaged val);
         Task<CommissionDisplay> GetCommissionForDisplay(Guid id);
-        Task<Commission> CreateCommission(CommissionSave val);
+        Task<Commission> CreateCommission(CommissionDisplay val);
         Task UpdateCommission(Guid id, CommissionDisplay val);
 
     }
