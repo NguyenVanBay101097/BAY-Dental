@@ -97,7 +97,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
   }
 
   addLine() {
-    let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.result.then(result => {
       let line = result as any;
       this.commissionProductRules.push(this.fb.group(line));
@@ -108,7 +108,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
   }
 
   editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.line = line.value;
     modalRef.result.then(result => {
       line.patchValue(result);

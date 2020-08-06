@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title">Thêm cấu hình hoa hồng<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title">Thêm quy định hoa hồng<span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
@@ -7,43 +7,51 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view o_form_editable" [formGroup]="formGroup" (submit)="onSave()" #form="ngForm">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
+            <div class="o_form_sheet min-w-auto">
                 <div class="o_group mt-0 mb-0">
-                    <div class="my-select o_group k-radio-list d-flex justify-content-between">
-                        <span class="k-radio-item">
-                            <input type="radio" name="appliedOn" id="global" class="mr-2"
-                                value="3_global" formControlName="appliedOn" kendoRadioButton
-                                (click)="changeAppliedOn('3_global')" />
-                            <label class="k-label" for="global">Áp dụng tất cả dịch vụ</label>
-                        </span>
-                        <span class="k-radio-item">
-                            <input type="radio" name="appliedOn" id="product_category" class="mr-2"
-                                value="2_product_category" formControlName="appliedOn" kendoRadioButton
-                                (click)="changeAppliedOn('2_product_category')" />
-                            <label class="k-label" for="product_category">Áp dụng theo nhóm dịch vụ</label>
-                        </span>
-                        <span class="k-radio-item">
-                            <input type="radio" name="appliedOn" id="product_variant" class="mr-2"
-                                value="0_product_variant" formControlName="appliedOn" kendoRadioButton 
-                                (click)="changeAppliedOn('0_product_variant')"/>
-                            <label class="k-label" for="product_variant">Áp dụng theo từng dịch vụ</label>
-                        </span>
-                    </div>
-                    <table *ngIf="getValueForm('appliedOn') == '3_global'" class="o_group o_inner_group" style="width:100%">
+                    <table class="o_group o_inner_group" style="width:100%">
                         <tbody>
                             <tr>
-                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Áp dụng cho
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="global" value="3_global" formControlName="appliedOn">
+                                        <label class="form-check-label" for="global">
+                                            Tất cả dịch vụ
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="product_category" value="2_product_category" formControlName="appliedOn">
+                                        <label class="form-check-label" for="product_category">
+                                            Nhóm dịch vụ
+                                        </label>
+                                      </div>
+                                      <div class="form-check disabled">
+                                        <input class="form-check-input" type="radio" id="product_variant" value="0_product_variant" formControlName="appliedOn">
+                                        <label class="form-check-label" for="product_variant">
+                                            Dịch vụ
+                                        </label>
+                                      </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getValueForm('appliedOn') == '3_global'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hoa hồng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
                                         </kendo-numerictextbox>
-                                        <h3 class="ml-2 font-weight-bold">%</h3>
+                                        <span class="ml-2">%</span>
                                     </div>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
                             <tr [class.d-none]="getValueForm('appliedOn') != '2_product_category'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -67,7 +75,7 @@
                                         <span>Dịch vụ</span>
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 70%;">
+                                <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredProducts"
                                         [filterable]="true" formControlName="product"
                                         #productCbx
@@ -78,11 +86,7 @@
                                     </kendo-combobox>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <table *ngIf="getValueForm('appliedOn') != '3_global'" class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
+                            <tr *ngIf="getValueForm('appliedOn') != '3_global'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Hoa hồng
@@ -92,7 +96,7 @@
                                     <div class="d-flex">
                                         <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
                                         </kendo-numerictextbox>
-                                        <h3 class="ml-2 font-weight-bold">%</h3>
+                                        <span class="ml-2">%</span>
                                     </div>
                                 </td>
                             </tr>
