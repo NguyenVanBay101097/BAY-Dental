@@ -73,8 +73,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
-  }
-   },
+  },
   {
     path: 'financial-report', 
     loadChildren: () => import('./account-financial-report/account-financial-report.module').then(m => m.AccountFinancialReportModule)
@@ -115,6 +114,38 @@ const routes: Routes = [
     path: 'report-partner-sources', 
     loadChildren: () => import('./report-partner-sources/report-partner-sources.module').then(m => m.ReportPartnerSourcesModule)
   },
+  {
+    path: 'card-cards', 
+    loadChildren: () => import('./card-cards/card-cards.module').then(m => m.CardCardsModule)
+  },
+  {
+    path: 'card-types', 
+    loadChildren: () => import('./card-types/card-types.module').then(m => m.CardTypesModule)
+  },
+  {
+    path: 'programs', 
+    loadChildren: () => import('./sale-coupon-promotion/sale-coupon-promotion.module').then(m => m.SaleCouponPromotionModule)
+  },
+  {
+    path: 'service-card-orders', 
+    loadChildren: () => import('./service-card-orders/service-card-orders.module').then(m => m.ServiceCardOrdersModule)
+  },
+  {
+    path: 'service-card-types', 
+    loadChildren: () => import('./service-card-types/service-card-types.module').then(m => m.ServiceCardTypesModule)
+  },
+  {
+    path: 'service-cards', 
+    loadChildren: () => import('./service-card-cards/service-card-cards.module').then(m => m.ServiceCardCardsModule)
+  },
+  {
+    path: 'uoms', 
+    loadChildren: () => import('./uoms/uom.module').then(m => m.UomModule)
+  },
+  {
+    path: 'uom-categories', 
+    loadChildren: () => import('./uom-categories/uom-category.module').then(m => m.UomCategoryModule)
+  }
 ];
 
 @NgModule({

@@ -55,7 +55,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',
       children: [
-        { name: 'Đơn bán thẻ', link: '/service-card-orders/list' },
+        { name: 'Đơn bán thẻ', link: '/service-card-orders' },
         { name: 'Loại thẻ', link: '/service-card-types' },
         { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
@@ -88,8 +88,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
         { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
-        { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Chương trình coupon', link: '/programs/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Chương trình khuyến mãi', link: '/programs/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
       ]
     },
     {
