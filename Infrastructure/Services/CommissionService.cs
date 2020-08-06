@@ -44,25 +44,14 @@ namespace Infrastructure.Services
             var res = await _mapper.ProjectTo<CommissionDisplay>(SearchQuery(x => x.Id == id)).Include(x => x.CommissionProductRules).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Commission not found");
-            if (res.CommissionProductRules.Any())
-            {
-                res.CommissionProductRules = res.CommissionProductRules.Select(x => new CommissionProductRuleDisplay
-                {
-                    Id = x.Id,
-                    AppliedOn = x.AppliedOn,
-                    CategId = x.CategId,
-                    ProductId = x.ProductId,
-                    PercentFixed = x.PercentFixed,
-                    Name = x.AppliedOn == "3_global" ? "Áp dụng tất cả dịch vụ" : (x.AppliedOn == "2_product_category" ? x.Categ.Name : x.Product.Name)
-                });
-            }
-           
+                   
             return res;
         }
 
-        public async Task<Commission> CreateCommission(CommissionSave val)
+        public async Task<Commission> CreateCommission(CommissionDisplay val)
         {
             var commission = _mapper.Map<Commission>(val);
+            SaveProductRules(val, commission);
 
             return await CreateAsync(commission);
         }
