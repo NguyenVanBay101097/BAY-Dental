@@ -56,11 +56,12 @@ namespace TMTDentalAPI.Controllers
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
             var companyId = CompanyId;
-            query = query.Where(x => x.CompanyId == companyId );
+            query = query.Where(x => x.CompanyId == companyId);
             query = query.OrderBy(x => x.Name);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
-            var result = new PagedResult2<ApplicationUserBasic>(totalItems, val.Offset, val.Limit) {
+            var result = new PagedResult2<ApplicationUserBasic>(totalItems, val.Offset, val.Limit)
+            {
                 Items = _mapper.Map<IEnumerable<ApplicationUserBasic>>(items)
             };
             return Ok(result);
@@ -70,7 +71,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(string id)
         {
             _modelAccessService.Check("ResUser", "Read");
-            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
+            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.Commission).Include(x => x.ResCompanyUsersRels)
                 .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.Group")
                 .Include("ResCompanyUsersRels.Company").Include(x => x.Partner).FirstOrDefaultAsync();
             if (user == null)
@@ -95,7 +96,8 @@ namespace TMTDentalAPI.Controllers
                 Name = val.Name,
                 Email = val.Email,
                 CompanyId = val.CompanyId,
-                Customer = false
+                Customer = false,
+
             };
 
             await SaveAvatar(partner, val);
@@ -104,6 +106,9 @@ namespace TMTDentalAPI.Controllers
 
             var user = _mapper.Map<ApplicationUser>(val);
             user.PartnerId = partner.Id;
+
+            if (val.CommissionId.HasValue)
+                user.CommissionId = val.CommissionId;
 
             foreach (var company in val.Companies)
             {
@@ -144,7 +149,7 @@ namespace TMTDentalAPI.Controllers
                 if (!addResult.Succeeded)
                     throw new Exception($"Add password fail");
             }
-                
+
 
             _unitOfWork.Commit();
 
@@ -158,7 +163,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             _modelAccessService.Check("ResUser", "Write");
-            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
+            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner).Include(x => x.Commission)
                 .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels)
                 .Include("ResGroupsUsersRels.Group").FirstOrDefaultAsync();
             if (user == null)
@@ -172,7 +177,7 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
             }
 
-         
+
             var to_remove = new List<Guid>();
             foreach (var rel in user.ResGroupsUsersRels)
             {
@@ -213,7 +218,7 @@ namespace TMTDentalAPI.Controllers
                         user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
                 }
             }
-             
+
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
                 throw new Exception(string.Join(", ", updateResult.Errors.Select(x => x.Description)));
@@ -260,7 +265,8 @@ namespace TMTDentalAPI.Controllers
             var companyId = CompanyId;
             var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(filter) || x.Name.Contains(filter))
             && x.CompanyId == companyId)
-                .Select(x => new ApplicationUserSimple {
+                .Select(x => new ApplicationUserSimple
+                {
                     Id = x.Id,
                     Name = x.Name
                 })
@@ -394,7 +400,7 @@ namespace TMTDentalAPI.Controllers
 
             var row_tmp = 2;
             await _unitOfWork.BeginTransactionAsync();
-            foreach(var item in data)
+            foreach (var item in data)
             {
                 var errs = new List<string>();
 
@@ -460,7 +466,8 @@ namespace TMTDentalAPI.Controllers
                     errors.Add($"Dòng {row_tmp}: {string.Join(", ", errs)}");
                     row_tmp++;
                     continue;
-                } else
+                }
+                else
                     row_tmp++;
             }
 
