@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -40,6 +41,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<CompanyBasic> Companies { get; set; } = new List<CompanyBasic>();
 
         public IEnumerable<ResGroupBasic> Groups { get; set; } = new List<ResGroupBasic>();
+
+        /// <summary>
+        /// bảng hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public CommissionBasic Commission { get; set; }
 
         public string Avatar { get; set; }
     }
