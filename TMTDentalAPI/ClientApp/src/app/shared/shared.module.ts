@@ -51,6 +51,8 @@ import { ToaThuocSamplePrescriptionComponent } from './toa-thuoc-sample-prescrip
 import { DotKhamCreateUpdateDialogComponent } from './dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { MyCustomNgbModule } from './my-custom-ngb.module';
+import { BinaryFileInputComponent } from './binary-file-input/binary-file-input.component';
+import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +96,9 @@ import { MyCustomNgbModule } from './my-custom-ngb.module';
     ToaThuocCuDialogSaveComponent,
     ToaThuocSamplePrescriptionComponent,
     DotKhamCreateUpdateDialogComponent,
-    AccountInvoiceRegisterPaymentDialogV2Component
+    AccountInvoiceRegisterPaymentDialogV2Component,
+    BinaryFileInputComponent,
+    PartnerSupplierCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -133,7 +137,9 @@ import { MyCustomNgbModule } from './my-custom-ngb.module';
     SaleOrderLineDialogComponent,
     ToaThuocCuDialogSaveComponent,
     DotKhamCreateUpdateDialogComponent,
-    AccountInvoiceRegisterPaymentDialogV2Component
+    AccountInvoiceRegisterPaymentDialogV2Component,
+    BinaryFileInputComponent,
+    PartnerSupplierCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -163,7 +169,8 @@ import { MyCustomNgbModule } from './my-custom-ngb.module';
     SaleOrderLineDialogComponent,
     ToaThuocCuDialogSaveComponent,
     DotKhamCreateUpdateDialogComponent,
-    AccountInvoiceRegisterPaymentDialogV2Component
+    AccountInvoiceRegisterPaymentDialogV2Component,
+    PartnerSupplierCuDialogComponent
   ],
 })
 export class SharedModule { }

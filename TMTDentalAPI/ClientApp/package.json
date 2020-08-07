@@ -39,7 +39,6 @@
     "@progress/kendo-angular-notification": "^2.0.0",
     "@progress/kendo-angular-pdf-export": "^2.0.0",
     "@progress/kendo-angular-popup": "^3.0.0",
-    "@progress/kendo-angular-scheduler": "^1.0.1",
     "@progress/kendo-angular-treeview": "^4.0.1",
     "@progress/kendo-angular-upload": "^5.0.0",
     "@progress/kendo-data-query": "^1.0.0",
@@ -94,6 +93,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.4.3"
+    "typescript": "~3.4.3",
+    "@babel/compat-data": "7.8.0"
   }
 }

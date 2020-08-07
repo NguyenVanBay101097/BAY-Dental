@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PartnerListComponent } from './partner-list/partner-list.component';
 import { PartnerCustomerListComponent } from './partner-customer-list/partner-customer-list.component';
-import { PartnerHistoryComponent } from './partner-history/partner-history.component';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';

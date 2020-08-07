@@ -10,10 +10,8 @@ import { PartnerCustomerListComponent } from './partner-customer-list/partner-cu
 import { PartnerCustomerListDetailComponent } from './partner-customer-list-detail/partner-customer-list-detail.component';
 import { PartnerCustomerInfoComponent } from './partner-customer-info/partner-customer-info.component';
 import { PartnerCustomerInvoicesComponent } from './partner-customer-invoices/partner-customer-invoices.component';
-import { PartnerHistoryComponent } from './partner-history/partner-history.component';
 import { PartnerDetailListComponent } from './partner-detail-list/partner-detail-list.component';
 import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-invoice-lines.component';
 import { PartnerImportComponent } from './partner-import/partner-import.component';
@@ -23,7 +21,6 @@ import { PartnerCardsTabPaneComponent } from './partner-cards-tab-pane/partner-c
 import { SharedModule } from '../shared/shared.module';
 import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
 import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
-import { CustomComponentModule } from '../common/common.module';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -49,10 +46,8 @@ import { PartnerInfoComponent } from './partner-info/partner-info.component';
     PartnerCustomerListDetailComponent,
     PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent,
-    PartnerHistoryComponent,
     PartnerDetailListComponent,
     PartnerCustomerCuDialogComponent,
-    PartnerSupplierCuDialogComponent,
     PartnerSupplierListComponent,
     PartnerInvoiceLinesComponent,
     PartnerImportComponent,
@@ -83,7 +78,6 @@ import { PartnerInfoComponent } from './partner-info/partner-info.component';
     HttpClientModule,
     FormsModule,
     SharedModule,
-    CustomComponentModule,
     FlexLayoutModule,
     NgbModule,
   ],
@@ -92,7 +86,6 @@ import { PartnerInfoComponent } from './partner-info/partner-info.component';
     PartnerImportComponent,
     PartnerCustomerCuDialogComponent,
     PartnerSearchDialogComponent,
-    PartnerSupplierCuDialogComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
   ],
   providers: [],

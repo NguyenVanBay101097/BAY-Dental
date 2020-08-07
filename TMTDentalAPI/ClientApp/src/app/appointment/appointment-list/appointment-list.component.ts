@@ -4,7 +4,6 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { AppointmentBasic, AppointmentPaged, SchedulerConfig, ApplicationUserSimple, AppointmentPatch, AppointmentSearch } from '../appointment';
 import { WindowRef, WindowService, WindowCloseResult, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { FormGroup, FormControl } from '@angular/forms';
-import { SchedulerEvent } from '@progress/kendo-angular-scheduler';
 import { formatDate } from '@angular/common';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -83,7 +82,7 @@ export class AppointmentListComponent implements OnInit {
   })
 
 
-  events: SchedulerEvent[];
+  events: any;
   resources: any[] = [{
     name: 'State',
     data: [
@@ -277,7 +276,7 @@ export class AppointmentListComponent implements OnInit {
       rs => {
         appointmentBasicList = rs['items'] as AppointmentBasic[];
         // this.setScrollTime(appointmentBasicList);
-        this.events = appointmentBasicList.map(rs1 => (<SchedulerEvent>{
+        this.events = appointmentBasicList.map(rs1 => (<any>{
           id: rs1.id,
           isAllDay: false,
           start: new Date(rs1.date),

@@ -160,9 +160,9 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(
       routes,
-      {
-        preloadingStrategy: PreloadAllModules
-      }
+      // {
+      //   preloadingStrategy: PreloadAllModules
+      // }
     )
   ],
   exports: [RouterModule]

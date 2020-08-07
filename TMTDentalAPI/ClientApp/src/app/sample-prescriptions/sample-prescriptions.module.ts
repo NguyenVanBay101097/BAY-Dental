@@ -4,7 +4,6 @@ import { SamplePrescriptionListComponent } from './sample-prescription-list/samp
 import { SamplePrescriptionCreateUpdateDialogComponent } from './sample-prescription-create-update-dialog/sample-prescription-create-update-dialog.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { CustomComponentModule } from '../common/common.module';
 import { SamplePrescriptionsRoutingModule } from './sample-prescriptions-routing.module';
 import { SamplePrescriptionLineCreateUpdateDialogComponent } from './sample-prescription-line-create-update-dialog/sample-prescription-line-create-update-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -16,7 +15,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    CustomComponentModule,
     FormsModule,
     NgbModule
   ],  

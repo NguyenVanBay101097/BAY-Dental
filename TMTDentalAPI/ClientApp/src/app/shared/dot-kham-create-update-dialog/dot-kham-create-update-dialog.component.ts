@@ -10,7 +10,6 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { WindowService, WindowCloseResult, WindowRef, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
 import { ToaThuocBasic, ToaThuocService, ToaThuocPrint } from 'src/app/toa-thuocs/toa-thuoc.service';
 import * as _ from 'lodash';
@@ -95,8 +94,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   skip: number = 0;
   limit: number = 20;
 
-  window: WindowRef;
-
   imagesPreview: PartnerImageBasic[] = [];
 
   dialog = false;//Component được mở dưới dạng Dialog hay Tab mới
@@ -120,7 +117,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     private partnerService: PartnerService,
     private userService: UserService,
     private notificationService: NotificationService,
-    private dialogService: DialogService,
     private router: Router,
     private toaThuocService: ToaThuocService,
     private employeeService: EmployeeService,
@@ -342,33 +338,8 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     )
   }
 
-  deleteSteps(id) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Xóa công đoạn',
-      content: 'Bạn chắc chắn muốn xóa công đoạn này ?',
-      width: 450,
-      height: 200,
-      minWidth: 250,
-      actions: [
-        { text: 'Hủy', value: false },
-        { text: 'Đồng ý', primary: true, value: true }
-      ]
-    });
-    dialogRef.result.subscribe(
-      rs => {
-        if (!(rs instanceof DialogCloseResult)) {
-          if (rs['value']) {
-            this.dotKhamService.deleteDKSteps(id).subscribe(
-              () => { this.loadDotKhamSteps(); }
-            );
-          }
-        }
-      }
-    )
-  }
-
   deleteStep(step: DotKhamStepDisplay, index) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa công đoạn';
     modalRef.result.then(() => {
       this.dotKhamStepService.delete(step.id).subscribe(() => {
@@ -808,17 +779,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
         this.userSimpleFilter = rs;
         this.assistantUserSimpleFilter = rs;
       });
-  }
-
-  closeWindow(id) {
-    this.window = this.injector.get<WindowRef>(WindowRef);
-    this.dialog = false;
-    if (id) {
-      this.window.close(id);
-    }
-    else {
-      this.window.close();
-    }
   }
 
   filterProductSimple(e) {

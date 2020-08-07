@@ -1,13 +1,11 @@
 import { NgModule, LOCALE_ID } from "@angular/core";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { CoreModule } from "./core/core.module";
 import { SharedModule } from "./shared/shared.module";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AuthInterceptor } from "./auth/auth-interceptor";
 
-import { IntlModule } from "@progress/kendo-angular-intl";
 // Load all required data for the bg locale
 import "@progress/kendo-angular-intl/locales/vi/all";
 import { HttpHandleErrorInterceptor } from "./http-handle-error-interceptor";
@@ -15,9 +13,8 @@ import { registerLocaleData, CommonModule } from "@angular/common";
 import localeVi from "@angular/common/locales/vi";
 import { JwtModule, JwtInterceptor } from "@auth0/angular-jwt";
 import { RoutingsModule } from "./routings/routings.module";
-import { CustomComponentModule } from "./common/common.module";
 import "hammerjs";
-import { NgbModule, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
+import { NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { NgbDateCustomParserFormatter } from "./core/ngb-date-custom-parser-formatter";
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { MomentModule } from 'ngx-moment';
@@ -38,27 +35,22 @@ registerLocaleData(localeVi, "vi");
     CommonModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    // CoreModule,
-    // IntlModule,
     HttpClientModule,
-    // JwtModule.forRoot({
-    //   config: {
-    //     tokenGetter: tokenGetter,
-    //     whitelistedDomains: ["http://localhost:50396"],
-    //     blacklistedRoutes: [],
-    //   },
-    // }),
-    // FlexLayoutModule,
-    // SharedModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        whitelistedDomains: ["http://localhost:50396"],
+        blacklistedRoutes: [],
+      },
+    }),
+    FlexLayoutModule,
+    SharedModule,
     RoutingsModule,
-    HttpClientModule,
-    // CustomComponentModule,
-    // NgbModule,
-    // MomentModule.forRoot({
-    //   relativeTimeThresholdOptions: {
-    //     m: 59,
-    //   },
-    // }),
+    MomentModule.forRoot({
+      relativeTimeThresholdOptions: {
+        m: 59,
+      },
+    }),
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

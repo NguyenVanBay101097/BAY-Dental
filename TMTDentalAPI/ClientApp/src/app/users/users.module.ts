@@ -9,7 +9,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UserCuDialogComponent } from './user-cu-dialog/user-cu-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserListImportComponent } from './user-list-import/user-list-import.component';
-import { CustomComponentModule } from '../common/common.module';
 
 @NgModule({
   declarations: [UserListComponent, UserCuDialogComponent, UserListImportComponent],
@@ -19,7 +18,6 @@ import { CustomComponentModule } from '../common/common.module';
     MyCustomKendoModule,
     ReactiveFormsModule,
     SharedModule,
-    CustomComponentModule
   ],
   providers: [
     UserService

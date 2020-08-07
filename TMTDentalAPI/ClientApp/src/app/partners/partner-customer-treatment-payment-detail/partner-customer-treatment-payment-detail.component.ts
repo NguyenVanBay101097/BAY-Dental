@@ -8,7 +8,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderQuickCreateDialogComponent } from 'src/app/labo-orders/labo-order-quick-create-dialog/labo-order-quick-create-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
@@ -121,15 +120,15 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   clickLabo(id) {
-    let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Chi tiết phiếu Labo';
-    if (id) {
-      modalRef.componentInstance.id = id;
-    }
-    modalRef.componentInstance.saleOrderId = this.saleOrderId;
-    modalRef.result.then(() => {
-      this.loadLabo();
-    });
+    // let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // modalRef.componentInstance.title = 'Chi tiết phiếu Labo';
+    // if (id) {
+    //   modalRef.componentInstance.id = id;
+    // }
+    // modalRef.componentInstance.saleOrderId = this.saleOrderId;
+    // modalRef.result.then(() => {
+    //   this.loadLabo();
+    // });
   }
 
   deleteLabo(id) {

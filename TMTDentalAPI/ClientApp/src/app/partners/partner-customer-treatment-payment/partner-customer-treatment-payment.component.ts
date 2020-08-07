@@ -6,7 +6,6 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserSimple } from 'src/app/users/user-simple';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -47,7 +46,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
   partnerId: string;
 
-  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router, private dialogService: DialogService,
+  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router,
     private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService,
     private route: ActivatedRoute) { }
 

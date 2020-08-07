@@ -11,11 +11,11 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from '../labo-order.service';
-import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
-import { PartnerSupplierCuDialogComponent } from 'src/app/partners/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from 'src/app/labo-orders/labo-order.service';
+import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
+import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 declare var $: any;
 
 

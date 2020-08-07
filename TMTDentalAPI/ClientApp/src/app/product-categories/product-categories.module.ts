@@ -12,7 +12,6 @@ import { DialogsModule } from '@progress/kendo-angular-dialog';
 import { ProductCategoryService } from './product-category.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ProductCategoryImportExcelDialogComponent } from './product-category-import-excel-dialog/product-category-import-excel-dialog.component';
-import { CustomComponentModule } from '../common/common.module';
 
 @NgModule({
   declarations: [ProductCategoryListComponent, ProductCategoryDialogComponent, ProductCategoryImportExcelDialogComponent],
@@ -21,7 +20,6 @@ import { CustomComponentModule } from '../common/common.module';
     ProductCategoriesRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    CustomComponentModule,
     SharedModule,
     GridModule,
     ButtonsModule,

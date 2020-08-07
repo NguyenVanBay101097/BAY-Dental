@@ -5,9 +5,9 @@ import {
   PartnerCategoryService,
   PartnerCategoryPaged,
 } from "src/app/partner-categories/partner-category.service";
-import { PartnerService } from "../partner.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
   selector: "app-partner-supplier-cu-dialog",

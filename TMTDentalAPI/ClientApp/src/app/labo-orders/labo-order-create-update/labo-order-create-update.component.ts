@@ -25,13 +25,12 @@ import {
   LaboOrderService,
   LaboOrderDefaultGet,
 } from "../labo-order.service";
-import { LaboOrderCuLineDialogComponent } from "../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component";
-import { PartnerSupplierCuDialogComponent } from "src/app/partners/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component";
 import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import {
   SaleOrderPaged,
   SaleOrderService,
 } from "src/app/core/services/sale-order.service";
+import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 declare var $: any;
 
 @Component({
@@ -398,44 +397,44 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   }
 
   showAddLineModal() {
-    let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Thêm chi tiết";
+    // let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, {
+    //   size: "lg",
+    //   windowClass: "o_technical_modal",
+    //   keyboard: false,
+    //   backdrop: "static",
+    // });
+    // modalRef.componentInstance.title = "Thêm chi tiết";
 
-    modalRef.result.then(
-      (result) => {
-        let line = result as any;
-        line.teeth = this.fb.array(line.teeth);
-        this.orderLines.push(this.fb.group(line));
-        this.computeAmountTotal();
-      },
-      () => {}
-    );
+    // modalRef.result.then(
+    //   (result) => {
+    //     let line = result as any;
+    //     line.teeth = this.fb.array(line.teeth);
+    //     this.orderLines.push(this.fb.group(line));
+    //     this.computeAmountTotal();
+    //   },
+    //   () => {}
+    // );
   }
 
   editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Sửa chi tiết";
-    modalRef.componentInstance.line = line.value;
+    // let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, {
+    //   size: "lg",
+    //   windowClass: "o_technical_modal",
+    //   keyboard: false,
+    //   backdrop: "static",
+    // });
+    // modalRef.componentInstance.title = "Sửa chi tiết";
+    // modalRef.componentInstance.line = line.value;
 
-    modalRef.result.then(
-      (result) => {
-        var a = result as any;
-        line.patchValue(result);
-        line.setControl("teeth", this.fb.array(a.teeth || []));
-        this.computeAmountTotal();
-      },
-      () => {}
-    );
+    // modalRef.result.then(
+    //   (result) => {
+    //     var a = result as any;
+    //     line.patchValue(result);
+    //     line.setControl("teeth", this.fb.array(a.teeth || []));
+    //     this.computeAmountTotal();
+    //   },
+    //   () => {}
+    // );
   }
 
   lineTeeth(line: FormGroup) {
