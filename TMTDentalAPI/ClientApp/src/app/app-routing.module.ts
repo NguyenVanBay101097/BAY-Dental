@@ -79,10 +79,6 @@ const routes: Routes = [
     loadChildren: () => import('./loai-thu-chi/loai-thu-chi.module').then(m => m.LoaiThuChiModule)
   },
   {
-    path: '',
-    loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
-  },
-  {
     path: 'financial-report', 
     loadChildren: () => import('./account-financial-report/account-financial-report.module').then(m => m.AccountFinancialReportModule)
   },
@@ -153,16 +149,24 @@ const routes: Routes = [
   {
     path: 'uom-categories', 
     loadChildren: () => import('./uom-categories/uom-category.module').then(m => m.UomCategoryModule)
-  }
+  },
+  {
+    path: 'auth', 
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: '',
+    loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
+  },
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(
       routes,
-      // {
-      //   preloadingStrategy: PreloadAllModules
-      // }
+      {
+        preloadingStrategy: PreloadAllModules
+      }
     )
   ],
   exports: [RouterModule]

@@ -35,7 +35,7 @@ export class ChangePasswordDialogComponent implements OnInit {
       if (result.success) {
         this.activeModal.close(true);
         this.authService.logout();
-        this.router.navigate(['login']);
+        this.router.navigate(['/auth/login']);
       } else {
         this.error = result.message;
       }

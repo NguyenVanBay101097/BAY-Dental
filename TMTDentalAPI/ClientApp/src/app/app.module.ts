@@ -1,4 +1,4 @@
-import { NgModule, LOCALE_ID } from "@angular/core";
+import { NgModule, LOCALE_ID, ErrorHandler } from "@angular/core";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { SharedModule } from "./shared/shared.module";
@@ -20,6 +20,7 @@ import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { MomentModule } from 'ngx-moment';
 import 'moment/locale/vi';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MyErrorHandler } from './my-error-handler';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -72,6 +73,7 @@ registerLocaleData(localeVi, "vi");
     },
     { provide: LOCALE_ID, useValue: "vi-VN" },
     { provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter },
+    { provide: ErrorHandler, useClass: MyErrorHandler }
   ],
   bootstrap: [AppComponent],
 })

@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
 import { StockMoveDisplay, StockPickingService, StockPickingDefaultGet, StockPickingDisplay } from '../stock-picking.service';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -46,7 +45,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private windowService: WindowService,
     private intlService: IntlService,
     private stockPickingService: StockPickingService,
     private router: Router,
@@ -172,7 +170,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
     if (index !== -1) {
       var control = this.moveLines.controls[index];
-      control.patchValue({ productQty: control.get('productQty').value + 1 });
+      control.patchValue({ productUOMQty: control.get('productUOMQty').value + 1 });
     } else {
       var val = new StockMoveOnChangeProduct();
       val.productId = product.id;
@@ -202,48 +200,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
       var $lastTr = $('tr:last', $('#table_details tbody'));
       $('input:first', $lastTr).focus();
     }, 70);
-  }
-
-  showAddLineModal() {
-    const windowRef = this.windowService.open({
-      title: 'Thêm chi tiết',
-      content: StockPickingMlDialogComponent,
-      resizable: false,
-    });
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        var line = result as StockMoveDisplay;
-        var lines = this.pickingForm.get('moveLines') as FormArray;
-        lines.push(this.fb.group(line));
-      }
-    });
-  }
-
-  editLine(line: FormGroup) {
-    const windowRef = this.windowService.open({
-      title: 'Sửa chi tiết',
-      content: StockPickingMlDialogComponent,
-      resizable: false,
-    });
-
-    const instance = windowRef.content.instance;
-    instance.line = line.value;
-
-    this.opened = true;
-
-    windowRef.result.subscribe((result) => {
-      this.opened = false;
-      if (result instanceof WindowCloseResult) {
-      } else {
-        var a = result as StockMoveDisplay;
-        line.patchValue(result);
-      }
-    });
   }
 
   deleteLine(index: number) {
