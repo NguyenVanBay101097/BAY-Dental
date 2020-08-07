@@ -185,6 +185,7 @@ namespace Infrastructure.Data
         public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
 
         public DbSet<ChamCong> ChamCongs { get; set; }
+        public DbSet<SetupChamcong> setupChamcongs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
