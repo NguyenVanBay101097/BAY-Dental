@@ -9,7 +9,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// User account
     /// </summary>
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public ApplicationUser()
         {
@@ -38,9 +38,11 @@ namespace ApplicationCore.Entities
         public FacebookPage FacebookPage { get; set; }
 
         /// <summary>
-        /// kết nối hoa hồng
+        /// kết nối bác sĩ
         /// </summary>
-        public Guid? CommissionId { get; set; }
-        public Commission Commission { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
+
     }
 }

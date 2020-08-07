@@ -56,5 +56,11 @@ namespace ApplicationCore.Entities
         /// Là phụ tá
         /// </summary>
         public bool IsAssistant { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public Commission Commission { get; set; }
     }
 }

@@ -83,6 +83,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Là phụ tá
         /// </summary>
         public bool? IsAssistant { get; set; }
+
+        public Guid? CommissionId { get; set; }
+        public CommissionBasic Commission { get; set; }
     }
 
     public class EmployeePaged

@@ -21,6 +21,8 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
   categCbxLoading = false;
   filteredProducts: ProductSimple[];
   productCbxLoading = false;
+  public min: number = 0;
+  public max: number = 100;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   

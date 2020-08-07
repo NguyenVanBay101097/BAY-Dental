@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Chi tiết bán dịch vụ
     /// </summary>
-    public class SaleOrderLine: BaseEntity
+    public class SaleOrderLine : BaseEntity
     {
         public SaleOrderLine()
         {
@@ -138,6 +138,14 @@ namespace ApplicationCore.Entities
         public decimal? DiscountFixed { get; set; }
 
         public decimal? PriceReduce { get; set; }
+
+        /// <summary>
+        /// bác sĩ được hưởng hoa hồng
+        /// </summary>
+       // public Guid SaleOrderLineUserCommissionId { get; set; }
+        //public SaleOrderLineUserCommission SaleOrderLineUserCommission{get;set;}
+
+
 
         public ICollection<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; } = new List<SaleOrderLineInvoice2Rel>();
     }

@@ -176,6 +176,8 @@ namespace Infrastructure.Data
 
         public DbSet<Commission> Commissions { get; set; }
         public DbSet<CommissionProductRule> CommissionProductRules { get; set; }
+        public DbSet<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; }
+        public DbSet<SaleOrderLinePartnerCommission> SaleOrderLinePartnerCommissions { get; set; }
 
 
 
@@ -334,6 +336,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
             builder.ApplyConfiguration(new CommissionConfiguration());
             builder.ApplyConfiguration(new CommissionProductRuleConfiguration());
+            builder.ApplyConfiguration(new SaleOrderLinePaymentRelConfiguration());
+            builder.ApplyConfiguration(new SaleOrderLinePaymentRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

@@ -38,20 +38,7 @@
                                       </div>
                                 </td>
                             </tr>
-                            <tr *ngIf="getValueForm('appliedOn') == '3_global'">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Hoa hồng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
-                                        </kendo-numerictextbox>
-                                        <span class="ml-2">%</span>
-                                    </div>
-                                </td>
-                            </tr>
+                 
                             <tr [class.d-none]="getValueForm('appliedOn') != '2_product_category'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -85,16 +72,16 @@
                                         [loading]="productCbxLoading">
                                     </kendo-combobox>
                                 </td>
-                            </tr>
-                            <tr *ngIf="getValueForm('appliedOn') != '3_global'">
+                            </tr>                         
+                            <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
+                                    <label class="o_form_label">
                                         Hoa hồng
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-numerictextbox [format]="'n0'" formControlName="percentFixed">
+                                    <div class="d-flex">                                      
+                                        <kendo-numerictextbox [autoCorrect]="true" [format]="'n0'" formControlName="percentFixed" [min]="min" [max]="max">
                                         </kendo-numerictextbox>
                                         <span class="ml-2">%</span>
                                     </div>
