@@ -76,5 +76,15 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             return _mapper.Map<ChamCongDisplay>(chamcong);
         }
+
+        public async Task<decimal> GetStandardWorkHour()
+        {
+          var st=   await GetService<ISetupChamcongService>().GetByCompanyId(CompanyId);
+            if (st == null)
+            {
+                throw new Exception("cần setup chấm công trước");
+            }
+            return st.StandardWorkHour;
+        }
     }
 }

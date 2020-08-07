@@ -51,6 +51,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ChamCongSave chamCongSave)
         {
+            if (chamCongSave.Status == "NP")
+            {
+                chamCongSave.HourWorked = await _chamCongService.GetStandardWorkHour();
+            }
             var chamcong = _mapper.Map<ChamCong>(chamCongSave);
             chamcong.CompanyId = _chamCongService.GetCurrentCompanyId();
             await _chamCongService.CreateAsync(chamcong);
