@@ -1,0 +1,9 @@
+.replace {
+    width: 37.97px;
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.none {
+    display: none !important;
+}

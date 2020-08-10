@@ -16,5 +16,6 @@ namespace Infrastructure.Services
         Guid GetCurrentCompanyId();
         Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date);
         Task<decimal> GetStandardWorkHour();
+        Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
     }
 }

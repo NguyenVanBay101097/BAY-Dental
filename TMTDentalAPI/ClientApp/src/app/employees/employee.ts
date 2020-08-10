@@ -1,4 +1,5 @@
 import { EmployeeCategoryBasic } from '../employee-categories/emp-category';
+import { ChamCongBasic } from '../time-keeping/time-keeping.service';
 
 export class EmployeePaged {
     offset: number;
@@ -17,6 +18,7 @@ export class EmployeeBasic {
     email: boolean;
     categoryId: string;
     category: EmployeeCategoryBasic;
+    chamCongs: ChamCongBasic[];
 }
 
 export class EmployeeDisplay extends EmployeeBasic {
