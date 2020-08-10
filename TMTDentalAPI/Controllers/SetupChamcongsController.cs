@@ -41,7 +41,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(SetupChamcongDisplay val)
         {
             var entity = _mapper.Map<SetupChamcong>(val);
-            entity.CompanyId = await _setupchamCongService.GetCurrentCompanyId();
+            entity.CompanyId = CompanyId;
             await _setupchamCongService.CreateAsync(entity);
             return Ok(entity);
         }
@@ -52,7 +52,7 @@ namespace TMTDentalAPI.Controllers
             var entity = await _setupchamCongService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             entity = _mapper.Map(val, entity);
-            entity.CompanyId = await _setupchamCongService.GetCurrentCompanyId();
+            entity.CompanyId = CompanyId;
             await _setupchamCongService.UpdateAsync(entity);
             return NoContent();
         }
