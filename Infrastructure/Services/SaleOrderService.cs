@@ -274,7 +274,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
-
+                await saleLineObj._RemovePartnerCommission(sale.OrderLines.Select(x=>x.Id).ToList());
                 sale.State = "draft";
             }
 
@@ -1336,7 +1336,7 @@ namespace Infrastructure.Services
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines)
+                .Include(x => x.OrderLines)                
                 .ToListAsync();
 
             foreach (var order in self)
@@ -1363,6 +1363,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetInvoiceQty(order.OrderLines);
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+               await saleLineObj._AddPartnerCommission(order.OrderLines.Select(x=>x.Id).ToList());
             }
 
             _GetInvoiced(self);

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class SaleOrderLinePaymentRel 
+    public class SaleOrderLinePaymentRel : BaseEntity
     {
         public Guid SaleOrderLineId { get; set; }
         public SaleOrderLine SaleOrderLine { get; set; }
@@ -15,6 +15,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// số tiền thanh toán
         /// </summary>
-        public decimal AmountPrepaid { get; set; }
+        public decimal? AmountPrepaid { get; set; }
     }
 }

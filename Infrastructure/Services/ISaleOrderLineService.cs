@@ -34,5 +34,9 @@ namespace Infrastructure.Services
         Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id);
 
         Task<IEnumerable<ToothBasic>> GetTeeth(Guid id);
+
+         Task _AddPartnerCommission(IEnumerable<Guid> ids);
+
+        Task _RemovePartnerCommission(IEnumerable<Guid> ids);
     }
 }

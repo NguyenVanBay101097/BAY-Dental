@@ -252,6 +252,8 @@ namespace TMTDentalAPI
             services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
             services.AddScoped<ICommissionService, CommissionService>();
             services.AddScoped<ICommissionProductRuleService, CommissionProductRuleService>();
+            services.AddScoped<ISaleOrderLinePartnerCommissionService, SaleOrderLinePartnerCommissionService>();
+            services.AddScoped<ISaleOrderLinePaymentRelService, SaleOrderLinePaymentRelService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
