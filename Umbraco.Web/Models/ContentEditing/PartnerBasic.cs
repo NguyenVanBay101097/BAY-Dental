@@ -71,6 +71,10 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? LastAppointmentDate { get; set; }
+
+        public decimal Debit { get; set; }
+
+        public decimal Credit { get; set; }
     }
 
     public class PartnerPaged
@@ -93,6 +97,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Supplier { get; set; }
 
         public Guid? CategoryId { get; set; }
+
+        public bool ComputeCreditDebit { get; set; }
     }
 
     public class PartnerPatch

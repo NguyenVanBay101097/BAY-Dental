@@ -16,7 +16,7 @@ namespace Infrastructure.Services
         Task UnlinkAsync(IEnumerable<Guid> ids);
         void _ComputeResidualPayment(IEnumerable<SaleOrder> saleOrders, decimal amount);
         Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val);
-        Task<AccountRegisterPaymentDisplay> OrderDefaultGet(IEnumerable<Guid> saleOrderIds);
+        Task<AccountRegisterPaymentDisplay> SaleDefaultGet(IEnumerable<Guid> saleOrderIds);
         Task<AccountPayment> CreateUI(AccountPaymentSave val);
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId);
         Task ActionDraftUnlink(IEnumerable<Guid> ids);
@@ -24,6 +24,6 @@ namespace Infrastructure.Services
 
         Task<AccountPaymentPrintVM> GetPrint(Guid id);
 
-     
+        Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds);
     }
 }

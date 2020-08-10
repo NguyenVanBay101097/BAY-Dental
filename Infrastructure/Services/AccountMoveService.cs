@@ -206,6 +206,14 @@ namespace Infrastructure.Services
             var seqObj = GetService<IIRSequenceService>();
             foreach (var move in self)
             {
+                if (!move.PartnerId.HasValue)
+                {
+                    if (IsSaleDocument(move))
+                        throw new Exception("The field 'Customer' is required, please complete it to validate the Customer Invoice.");
+                    else if (IsPurchaseDocument(move))
+                        throw new Exception("The field 'Vendor' is required, please complete it to validate the Vendor Bill.");
+                }
+
                 if (IsInvoice(move, include_receipts: true) && move.AmountTotal < 0)
                     throw new Exception("You cannot validate an invoice with a negative total amount. You should create a credit note instead. Use the action menu to transform it into a credit note or refund.");
 

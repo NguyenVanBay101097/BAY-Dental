@@ -1,8 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SaleOrderService } from '../sale-order.service';
-import { NgbActiveModal, NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-sale-order-apply-discount-default-dialog',
@@ -13,7 +11,7 @@ export class SaleOrderApplyDiscountDefaultDialogComponent implements OnInit {
   @Output() discountFormGroup = new EventEmitter<any>();
   @ViewChild('popOver',{static: true}) public popover: NgbPopover;
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal) { }
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

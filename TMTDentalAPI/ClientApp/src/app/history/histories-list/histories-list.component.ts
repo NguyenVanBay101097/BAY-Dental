@@ -2,7 +2,6 @@ import { HistoryImportExcelBaseViewModel } from './../history.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HistoryService } from '../history.service';
-import { DialogService, DialogCloseResult, DialogRef } from '@progress/kendo-angular-dialog';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -19,8 +18,7 @@ import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialo
 })
 export class HistoriesListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: HistoryService,
-    private dialogService: DialogService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, private service: HistoryService, private modalService: NgbModal) { }
 
   loading = false;
   gridView: GridDataResult;
@@ -96,7 +94,7 @@ export class HistoriesListComponent implements OnInit {
   }
 
   delete(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa tiểu sử bệnh';
     modalRef.result.then(() => {
       this.service.delete(id).subscribe(

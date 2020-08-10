@@ -24,7 +24,7 @@ export class ToothFilter {
     categoryId: string;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ToothService {
     apiUrl = 'api/teeth';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

@@ -11,7 +11,7 @@ export class StockMoveOnChangeProductResult {
     name: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class StockMoveService {
     apiUrl = 'api/stockmoves';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

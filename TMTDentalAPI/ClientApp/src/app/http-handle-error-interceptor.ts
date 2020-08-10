@@ -2,66 +2,66 @@ import { Injectable } from '@angular/core';
 import {
     HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse
 } from '@angular/common/http';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { map, catchError, finalize } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { map, catchError, finalize, retry, switchMap } from 'rxjs/operators';
+import { throwError, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { AppLoadingService } from './shared/app-loading.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SharedErrorDialogComponent } from './shared/shared-error-dialog/shared-error-dialog.component';
 import { AuthService } from './auth/auth.service';
-
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Injectable()
 export class HttpHandleErrorInterceptor implements HttpInterceptor {
 
-    constructor(private notificationService: NotificationService, private router: Router, private loadingService: AppLoadingService,
-        private modalService: NgbModal, private authService: AuthService) { }
+    constructor(private loadingService: AppLoadingService, private authService: AuthService,
+        private router: Router, private notificationService: NotificationService) { }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler) {
+    intercept(request: HttpRequest<any>, next: HttpHandler) {
         this.loadingService.setLoading(true);
-        return next.handle(req).pipe(
-            map((event: HttpEvent<any>) => {
-                if (event instanceof HttpResponse) {
-                }
-                return event;
-            }),
+        return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                if (error.status === 401) {
-                    this.authService.logout();
-                    this.router.navigate(['login']);
-                } else if (error.status === 402) {
-                    this.authService.logout();
-                    this.router.navigate(['expired']);
-                }
-
-                let message = '';
-                if (error.error) {
-                    if (error.error.error) {
-                        message = error.error.error;
-                    } else if (error.error.errors) {
-                        Object.keys(error.error.errors).forEach(keyError => {
-                            message += `${keyError}: ${error.error.errors[keyError]} `;
-                        });
-                    } else {
-                        message = error.error.title;
-                    }
-                } else {
+                let message;
+                if (error instanceof HttpErrorResponse) {
+                    // Server Error
                     message = error.message;
-                }
+                    if (error.error) {
+                        message = error.error.message;
+                    }
 
-                // let modalRef = this.modalService.open(SharedErrorDialogComponent, { windowClass: 'o_technical_modal' });
-                // modalRef.componentInstance.body = message;
-                this.notificationService.show({
-                    content: message,
-                    hideAfter: 3000,
-                    position: { horizontal: 'center', vertical: 'top' },
-                    animation: { type: 'fade', duration: 400 },
-                    type: { style: 'error', icon: true }
-                });
+                    this.notificationService.show({
+                        content: message,
+                        hideAfter: 3000,
+                        position: { horizontal: 'center', vertical: 'top' },
+                        animation: { type: 'fade', duration: 400 },
+                        type: { style: 'error', icon: true }
+                    });
+                } else {
+                    // Client Error
+                    if (!navigator.onLine) {
+                        message = 'No Internet Connection';
+                    } else {
+                        message = 'Client error';
+                    }
+                }
 
                 return throwError(error);
             }),
             finalize(() => this.loadingService.setLoading(false)));
+    }
+
+    addAuthenticationToken(request) {
+        // Get access token from Local Storage
+        const accessToken = this.authService.getAuthorizationToken();
+
+        // If access token is null this means that user is not logged in
+        // And we return the original request
+        if (!accessToken) {
+            return request;
+        }
+        // We clone the request, because the original request is immutable
+        return request.clone({
+            setHeaders: {
+                Authorization: 'Bearer ' + accessToken
+            }
+        });
     }
 }

@@ -10,8 +10,8 @@ import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-boot
 import { UserSimple } from 'src/app/users/user-simple';
 import { AccountInvoiceRegisterPaymentDialogComponent } from '../account-invoice-register-payment-dialog/account-invoice-register-payment-dialog.component';
 import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from '../account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @Component({
   selector: 'app-customer-invoice-list',

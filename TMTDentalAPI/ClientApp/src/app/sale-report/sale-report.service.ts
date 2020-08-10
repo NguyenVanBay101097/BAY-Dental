@@ -49,7 +49,7 @@ export class SaleReportTopSaleProductSearch {
 }
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class SaleReportService {
     apiUrl = 'api/SaleReports';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

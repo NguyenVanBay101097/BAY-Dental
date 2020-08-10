@@ -38,9 +38,9 @@ namespace ApplicationCore.Middlewares
             //else if (ex is MyException) code = HttpStatusCode.BadRequest;
 
             var msg = ex.Message;
-            if (ex.InnerException != null)
-                msg = ex.InnerException.Message;
-            var result = JsonConvert.SerializeObject(new { error = msg });
+            //if (ex.InnerException != null)
+            //    msg = ex.InnerException.Message;
+            var result = JsonConvert.SerializeObject(new { error = msg, message = msg });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);

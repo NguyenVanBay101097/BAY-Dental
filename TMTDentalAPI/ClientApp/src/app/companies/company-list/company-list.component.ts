@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { CompanyService, CompanyPaged, CompanyBasic } from '../company.service';
@@ -23,8 +22,7 @@ export class CompanyListComponent implements OnInit {
   opened = false;
   loading = false;
 
-  constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService,
-    private dialogService: DialogService) { }
+  constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService) { }
 
   ngOnInit() {
     this.loadDataFromApi();

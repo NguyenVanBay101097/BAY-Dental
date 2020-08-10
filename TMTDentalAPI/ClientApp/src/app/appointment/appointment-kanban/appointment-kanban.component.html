@@ -1,56 +1,101 @@
-<div class="o_view_controller">
-    <div class="o_kanban_view o_kanban_small_column o_kanban_grouped">
-        <div class="o_kanban_group o_kanban_has_progressbar" *ngFor="let date of dateList">
-            <div class="o_kanban_header">
-                <div class="o_kanban_header_title">
-                    <span class="o_column_title"
-                        *ngIf="date.toDateString() != today.toDateString()">{{date | date: 'EEEE'}},
-                        {{date | date: 'dd/MM'}}</span>
-                    <span class="o_column_title text-success" *ngIf="date.toDateString() == today.toDateString()">Hôm
-                        nay,
-                        {{date | date: 'dd/MM'}}</span>
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Lịch hẹn</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
+                        type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
-            <div class="oe_kanban_color_0 oe_kanban_card oe_kanban_global_click o_kanban_record"
-                [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 'oe_kanban_color_2': appointment.state == 'done', 'oe_kanban_color_5': appointment.state == 'cancel'}"
-                (click)="editAppointment(appointment);$event.stopPropagation();"
-                *ngFor="let appointment of appointmentByDate[date.toDateString()]">
-                <div class="oe_kanban_content">
-                    <div class="o_kanban_record_top">
-                        <div class="o_kanban_record_headings">
-                            <strong class="o_kanban_record_title">
-                                <span>{{appointment.name}} - {{appointment.partnerName}}</span>
-                            </strong>
-                            <small class="o_kanban_record_subtitle text-muted">
-                                <span class="oe_kanban_text_red">
-                                    <i><span>{{appointment.date | date: 'HH:mm'}}</span></i>
-                                </span>
-                            </small>
-                            <small class="o_kanban_record_subtitle text-muted" *ngIf="appointment.partnerPhone">
-                                SĐT KH: {{appointment.partnerPhone}}
-                            </small>
-                            <strong class="o_kanban_record_title" *ngIf="appointment.userName">
-                                Bác sĩ: {{appointment.userName}}
-                            </strong>
-                            <div class="o_kanban_record_description" *ngIf="appointment.note">{{appointment.note}}
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button class="btn btn-primary btn-sm" (click)="createAppointment()">
+                        <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
+                    <button class="btn btn-primary btn-sm" (click)="refreshData()">
+                        <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+                <div>
+                    <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)" class="kendo-combobox-sm" [filterable]="true" [data]="listUsers"
+                        #userCbx [valueField]="'id'" [textField]="'name'">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="btn-group o_search_options">
+                <app-appointment-state-filter (searchChange)="onStateSearchChange($event)">
+                </app-appointment-state-filter>
+                <app-appointment-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    (searchChange)="onDateSearchChange($event)">
+                </app-appointment-date-filter>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_view_controller">
+        <div class="o_kanban_view o_kanban_small_column o_kanban_grouped">
+            <div class="o_kanban_group o_kanban_has_progressbar" *ngFor="let date of dateList">
+                <div class="o_kanban_header">
+                    <div class="o_kanban_header_title">
+                        <span class="o_column_title"
+                            *ngIf="date.toDateString() != today.toDateString()">{{date | date: 'EEEE'}},
+                            {{date | date: 'dd/MM'}}</span>
+                        <span class="o_column_title text-success" *ngIf="date.toDateString() == today.toDateString()">Hôm
+                            nay,
+                            {{date | date: 'dd/MM'}}</span>
+                    </div>
+                </div>
+                <div class="oe_kanban_color_0 oe_kanban_card oe_kanban_global_click o_kanban_record"
+                    [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 'oe_kanban_color_2': appointment.state == 'done', 'oe_kanban_color_5': appointment.state == 'cancel'}"
+                    (click)="editAppointment(appointment);$event.stopPropagation();"
+                    *ngFor="let appointment of appointmentByDate[date.toDateString()]">
+                    <div class="oe_kanban_content">
+                        <div class="o_kanban_record_top">
+                            <div class="o_kanban_record_headings">
+                                <strong class="o_kanban_record_title">
+                                    <span>{{appointment.name}} - {{appointment.partnerName}}</span>
+                                </strong>
+                                <small class="o_kanban_record_subtitle text-muted">
+                                    <span class="oe_kanban_text_red">
+                                        <i><span>{{appointment.date | date: 'HH:mm'}}</span></i>
+                                    </span>
+                                </small>
+                                <small class="o_kanban_record_subtitle text-muted" *ngIf="appointment.partnerPhone">
+                                    SĐT KH: {{appointment.partnerPhone}}
+                                </small>
+                                <strong class="o_kanban_record_title" *ngIf="appointment.userName">
+                                    Bác sĩ: {{appointment.userName}}
+                                </strong>
+                                <div class="o_kanban_record_description" *ngIf="appointment.note">{{appointment.note}}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="o_dropdown_kanban dropdown" ngbDropdown (click)="$event.stopPropagation()">
-                        <button class="btn dropdown-toggle o-no-caret" type="button" id="dropdownMenuBtn"
-                            aria-expanded="false" data-toggle="dropdown" aria-haspopup="true" ngbDropdownToggle>
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuBtn" ngbDropdownMenu>
-                            <!-- <button type="button" class="dropdown-item" (click)="createDotKham(appointment.id)">
-                                Tạo đợt khám mới
+                        <div class="o_dropdown_kanban dropdown" ngbDropdown (click)="$event.stopPropagation()">
+                            <button class="btn dropdown-toggle o-no-caret" type="button" id="dropdownMenuBtn"
+                                aria-expanded="false" data-toggle="dropdown" aria-haspopup="true" ngbDropdownToggle>
+                                <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <button type="button" class="dropdown-item" (click)="getPreviousDotKham(appointment.id)">
-                                Xem đợt khám trước
-                            </button> -->
-                            <button type="button" class="dropdown-item" (click)="deleteAppointment(appointment)">
-                                Xóa
-                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuBtn" ngbDropdownMenu>
+                                <!-- <button type="button" class="dropdown-item" (click)="createDotKham(appointment.id)">
+                                    Tạo đợt khám mới
+                                </button>
+                                <button type="button" class="dropdown-item" (click)="getPreviousDotKham(appointment.id)">
+                                    Xem đợt khám trước
+                                </button> -->
+                                <button type="button" class="dropdown-item" (click)="deleteAppointment(appointment)">
+                                    Xóa
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -58,3 +103,4 @@
         </div>
     </div>
 </div>
+

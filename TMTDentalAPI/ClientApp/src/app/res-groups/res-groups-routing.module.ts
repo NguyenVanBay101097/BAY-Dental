@@ -5,15 +5,15 @@ import { ResGroupCreateUpdateComponent } from './res-group-create-update/res-gro
 
 const routes: Routes = [
   {
-    path: 'res-groups',
+    path: '',
     component: ResGroupListComponent
   },
   {
-    path: 'res-groups/create',
+    path: 'create',
     component: ResGroupCreateUpdateComponent
   },
   {
-    path: 'res-groups/edit/:id',
+    path: 'edit/:id',
     component: ResGroupCreateUpdateComponent
   }
 ];

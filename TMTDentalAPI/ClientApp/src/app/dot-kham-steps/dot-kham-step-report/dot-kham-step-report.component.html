@@ -1,0 +1,84 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê công việc
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input"
+                        placeholder="Tìm kiếm theo tên bác sĩ, phụ tá, dịch vụ, công đoạn, khách hàng..." type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="btn-group o_search_options" [formGroup]="formGroup">
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <div ngbDropdown #ngbPartner="ngbDropdown" class="d-inline-block">
+                    <button id="dropdownPartner" ngbDropdownToggle class="btn btn-secondary btn-sm">
+                        <i class="fas fa-filter"></i>
+                        {{getResultUser()}}
+                        <span (click)="removeFilterUser($event)" class="remove_filter"
+                            *ngIf="formGroup.get('user').value"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownUser">
+                        <kendo-combobox style="margin: 15px;" (valueChange)="onChangeUser($event)"
+                            formControlName="user" [filterable]="true" [data]="userSimpleFilter" #userCbx
+                            [valueField]="'id'" [textField]="'name'">
+                        </kendo-combobox>
+                    </div>
+                </div>
+
+                <div ngbDropdown #ngbUser="ngbDropdown" class="d-inline-block">
+                    <button id="dropdownUser" ngbDropdownToggle class="btn btn-secondary dropdown-toggle btn-sm">
+                        <i class="fas fa-filter"></i>
+                        {{getResultPartner()}}
+                        <span (click)="removeFilterPartner($event)" class="remove_filter"
+                            *ngIf="formGroup.get('partner').value"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownPartner">
+                        <kendo-combobox style="margin: 15px;" (valueChange)="onChangePartner($event)"
+                            formControlName="partner" [filterable]="true" [data]="partnerSimpleFilter" #partnerCbx
+                            [valueField]="'id'" [textField]="'name'">
+                        </kendo-combobox>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="date" title="Ngày">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.date | date:'short'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="doctorName" title="Bác sĩ">
+            </kendo-grid-column>
+            <kendo-grid-column field="assistantName" title="Phụ tá">
+            </kendo-grid-column>
+            <kendo-grid-column field="serviceName" title="Dịch vụ">
+            </kendo-grid-column>
+            <kendo-grid-column field="stepName" title="Công đoạn">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng">
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

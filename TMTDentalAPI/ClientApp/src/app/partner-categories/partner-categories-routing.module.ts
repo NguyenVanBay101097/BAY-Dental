@@ -4,7 +4,7 @@ import { PartnerCategoryListComponent } from './partner-category-list/partner-ca
 
 const routes: Routes = [
   {
-    path: 'partner-categories',
+    path: '',
     component: PartnerCategoryListComponent
   }
 ];

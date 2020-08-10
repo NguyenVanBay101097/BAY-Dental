@@ -5,11 +5,11 @@ import { PhieuThuChiFormComponent } from './phieu-thu-chi-form/phieu-thu-chi-for
 
 const routes: Routes = [
   {
-    path: 'phieu-thu-chi',
+    path: '',
     component: PhieuThuChiListComponent
   },
   {
-    path: 'phieu-thu-chi/form',
+    path: 'form',
     component: PhieuThuChiFormComponent
   }
 ];
