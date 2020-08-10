@@ -19,23 +19,12 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
         this.loadingService.setLoading(true);
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                console.log(error);
-                if (error.status !== 401) {
-                    
-                    let message;
-                    if (error instanceof HttpErrorResponse) {
-                        // Server Error
-                        message = error.message;
-                        if (error.error) {
-                            message = error.error.message;
-                        }
-                    } else {
-                        // Client Error
-                        if (!navigator.onLine) {
-                            message = 'No Internet Connection';
-                        } else {
-                            message = 'Client error';
-                        }
+                let message;
+                if (error instanceof HttpErrorResponse) {
+                    // Server Error
+                    message = error.message;
+                    if (error.error) {
+                        message = error.error.message;
                     }
 
                     this.notificationService.show({
@@ -45,12 +34,16 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                         animation: { type: 'fade', duration: 400 },
                         type: { style: 'error', icon: true }
                     });
-
-                    return throwError(error);
                 } else {
-                    this.authService.logout();
-                    this.router.navigate(['/auth/login']);
+                    // Client Error
+                    if (!navigator.onLine) {
+                        message = 'No Internet Connection';
+                    } else {
+                        message = 'Client error';
+                    }
                 }
+
+                return throwError(error);
             }),
             finalize(() => this.loadingService.setLoading(false)));
     }
