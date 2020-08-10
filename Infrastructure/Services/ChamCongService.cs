@@ -74,9 +74,22 @@ namespace Infrastructure.Services
         public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
         {
             var chamcong = await SearchQuery(x => x.EmployeeId == id
-            && (x.TimeIn.Value.Date.Equals(date.Date) ||x.TimeOut.Value.Date.Equals(date.Date)))
+            && (x.TimeIn.Value.Date.Equals(date.Date) || x.TimeOut.Value.Date.Equals(date.Date)))
                 .FirstOrDefaultAsync();
             return _mapper.Map<ChamCongDisplay>(chamcong);
         }
+
+        public async Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
+        {
+            ISpecification<ChamCong> spec = new InitialSpecification<ChamCong>(x => true);
+            if (val.From.HasValue)
+                spec = spec.And(new InitialSpecification<ChamCong>(x => x.TimeIn >= val.From));
+            if (val.To.HasValue)
+                spec = spec.And(new InitialSpecification<ChamCong>(x => x.TimeOut <= val.To));
+
+            var list = await SearchQuery(spec.AsExpression()).ToListAsync();
+            return (IEnumerable<ChamCongDisplay>)list;
+        }
+
     }
 }

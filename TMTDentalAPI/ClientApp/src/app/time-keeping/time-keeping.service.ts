@@ -1,8 +1,47 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EmployeeSimple, EmployeeBasic } from '../employees/employee';
 
 export class ChamCongSave {
+  employeeId: string;
+  timeIn: string;
+  timeOut: string;
+  hourWorked: number;
+  status: string;
+}
+
+export class EmployeeChamCongPaged {
+  limit: number;
+  offset: number;
+  from: string;
+  to: string;
+}
+
+export class EmployeeChamCongPaging {
+  offset: number;
+  limit: number;
+  totalItems: number;
+  items: EmployeeBasic[];
+}
+
+export class ChamCongBasic {
+  id: string;
+  timeIn: string;
+  timeOut: string;
+  status: string;
+  hourWorked: number;
+  employee: EmployeeBasic;
+  employeeId: string;
+}
+
+export class TimeSheetEmployee {
+  date: Date;
+  chamCong: ChamCongBasic;
+  empId: string;
+}
+
+export class TimeKeepingSave {
 
 }
 
@@ -12,7 +51,7 @@ export class ChamCongSave {
 export class TimeKeepingService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
-  apiUrl = "api/TimeKeeping";
+  apiUrl = "api/ChamCongs";
 
   create(val): Observable<ChamCongSave> {
     return this.http.post<ChamCongSave>(this.base_api + this.apiUrl, val);
@@ -22,5 +61,20 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  // get()
+  getEmpChamCong(val): Observable<EmployeeChamCongPaging> {
+    return this.http.get<EmployeeChamCongPaging>(this.base_api + this.apiUrl, { params: val });
+  }
+
+  setupTimeKeeping(val) {
+    return this.http.post(this.base_api + this.apiUrl, val);
+  }
+
+  get(id): Observable<ChamCongBasic> {
+    return this.http.get<ChamCongBasic>(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  exportTimeKeeping(val) {
+    return this.http.post(this.base_api + this.apiUrl + "/ExportExcelFile", val,
+      { responseType: "blob" });
+  }
 }

@@ -7,21 +7,75 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <!-- <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm" accesskey="c">Thêm</button>
-                </div> -->
+                <div class="o_form_buttons_view">
+                    <!-- <button class="btn btn-primary mr-2 btn-sm" (click)="changeWeekMonth('weeks')"
+                        accesskey="c">Tuần</button> -->
+                    <!-- <button class="btn btn-primary btn-sm" (click)="changeWeekMonth('months')"
+                        accesskey="c">Tháng</button> -->
+                </div>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_right">
+
         </div>
     </div>
 </div>
 
 <div class="o_content">
+    
+    <div ngbDropdown class="d-inline-flex mr-2 float-right pb-2">
+        <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1" ngbDropdownToggle><i
+                class="fas fa-cog"></i></button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button (click)="setupTimeKeeping()" ngbDropdownItem>Cài đặt</button>
+        </div>
+    </div>
+    <div class="float-right pb-2">
+        <div class="d-inline-flex">
+            <button class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i class="fas fa-file-export"></i></button>
+        </div>
+    </div>
     <table class="table table-bordered table-content">
         <thead>
+            <tr>
+                <th *ngIf="flag" colspan="32" scope="col">
+                    <button class="btn btn-secondary btn-sm" (click)="previousMonthFilter(filterMonth)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="title_month">Tháng {{filterMonth | date:'MM - yyyy'}}</span>
+                    <button class="btn btn-secondary btn-sm" (click)="nextMonthFilter(filterMonth)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
+                    <div class="float-right">
+                        <span class="mr-4 text-success">
+                            <i class="fas fa-circle mt-2 mr-1 "></i>
+                            <span class="pr-3"></span>
+                            Hoàn thành
+                        </span>
+                        <span class="mr-4 text-primary">
+                            <i class="fas fa-circle mt-2 mr-1"></i>
+                            <span class="pr-3"></span>
+                            Vào/ra
+                        </span>
+                        <span class="mr-4 text-warning">
+                            <i class="fas fa-circle mt-2 mr-1 "></i>
+                            <span class="pr-3"></span>
+                            Chưa chấm
+                        </span>
+                    </div>
+                </th>
+                <!-- <th *ngIf="!flag" colspan="31" scope="col">
+                    <button class="btn btn-primary btn-sm" (click)="previousWeekFilter()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    Tháng {{filterMonth | date:'MM - yyyy'}}
+                    <button class="btn btn-primary btn-sm" (click)="nextWeekFilter()"><i
+                            class="fas fa-chevron-right"></i></button>
+                </th> -->
+            </tr>
             <tr>
                 <th class="align-self-center" scope="col">Tên Nhân viên</th>
                 <th scope="col" *ngFor="let date of dateList">
@@ -30,11 +84,11 @@
                             <span class="o_column_title">{{date | date: 'EE'}}</span>
                             <span class="o_column_title"> {{date | date: 'dd'}}</span>
                         </div>
-                        <div class="o_kanban_header_title" *ngIf="date.toDateString() == today.toDateString()">
+                        <div class="o_kanban_header_title text-success"
+                            *ngIf="date.toDateString() == today.toDateString()">
                             <span class="o_column_title">{{date | date: 'EE'}}</span>
                             <span class="o_column_title"> {{date | date: 'dd'}}</span>
                         </div>
-
                     </div>
                 </th>
 
@@ -43,13 +97,17 @@
         <tbody>
             <tr *ngFor="let item of listEmployeies">
                 <th scope="row" style="min-width: 170px;">{{item.name}}</th>
-                <td *ngFor="let date of dateList;let i = index" (click)="clickTimeSheet(item.id,date)">
-                    <div *ngFor="let ob of list" class="oe_kanban_content">
-                        <div *ngIf="date.toDateString() == ob.date.toDateString()" class="oe_kanban_timekepping">
-                            <i *ngIf="ob.status=='finish'" (click)="clickTimeSheet(item.id,date)"
+                <td *ngFor="let date of this.listTimeSheetByEmpId[item.id]"
+                    (click)="clickTimeSheet((date.chamCong ? date.chamCong.id : null),date.date,item)">
+                    <div class="oe_kanban_content">
+                        <div class="oe_kanban_timekepping">
+                            <i title="Đã chấm giờ vào và giờ ra" *ngIf="date.chamCong && date.chamCong.status == 'done'"
                                 class="fas fa-circle text-success"></i>
-                            <i *ngIf="ob.status=='chua'" (click)="clickTimeSheet(item.id,date)"
-                                class="fas fa-circle text-wraning"></i>
+                            <i title="Đã chấm giờ vào hoặc giờ ra"
+                                *ngIf="date.chamCong && date.chamCong.status == 'process'"
+                                class="fas fa-circle text-primary"></i>
+                            <i title="Đã chấm giờ vào hoặc giờ ra" *ngIf="!date.chamCong && today >= date.date"
+                                class="fas fa-circle text-warning"></i>
                         </div>
                     </div>
                 </td>

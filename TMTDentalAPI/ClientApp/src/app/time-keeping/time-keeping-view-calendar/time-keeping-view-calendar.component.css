@@ -29,8 +29,6 @@ p {
     position: relative;
 }
 
-.table-content {}
-
 .oe_kanban_timekepping:hover {
     background-color: burlywood;
 }
@@ -62,4 +60,18 @@ p {
 
 .table td, .table th {
     padding: 6px !important;
+}
+
+.title_month {
+    padding-right: 3px;
+    padding-left: 3px;
+    padding-top: 2.5px;
+    background-color: #f0eeee;
+    padding-bottom: 8px;
+}
+
+.o_content {
+    max-width: 100%;
+    padding: 10px 15px 15px 15px;
+    background-color: white;
 }
