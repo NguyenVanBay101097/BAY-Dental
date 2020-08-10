@@ -30,9 +30,5 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
-        public Task<Guid> GetCurrentCompanyId()
-        {
-            return Task.FromResult(CompanyId);
-        }
     }
 }
