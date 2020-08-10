@@ -278,7 +278,7 @@ namespace Infrastructure.Services
             return all_move_vals;
         }
 
-       
+
 
         private async Task<AccountMove> _GetMoveVals(AccountPayment rec, AccountJournal journal = null)
         {
@@ -511,6 +511,7 @@ namespace Infrastructure.Services
                 throw new Exception("Để thanh toán nhiều phiếu điều trị cùng một lần, chúng phải có cùng khách hàng");
 
             var total_amount = orders.Sum(x => x.Residual);
+            var paymentLines = await LinePaymentRelDefaultGet(orders[0].Id);
 
             var communication = string.Join(", ", orders.Select(x => x.Name));
             var rec = new AccountRegisterPaymentDisplay
@@ -520,10 +521,47 @@ namespace Infrastructure.Services
                 PartnerId = orders[0].PartnerId,
                 PartnerType = "customer",
                 Communication = communication,
-                SaleOrderIds = saleOrderIds
+                SaleOrderIds = saleOrderIds,
+               SaleOrderLinePaymentRels = paymentLines
+
             };
 
             return rec;
+        }
+
+        public async Task<IEnumerable<SaleOrderLinePaymentRelDisplay>> LinePaymentRelDefaultGet(Guid saleOrderId)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            var paymentRels = new List<SaleOrderLinePaymentRelDisplay>();           
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
+            var lines = await SaleOrderLineDefaultGet(order.OrderLines);
+            foreach(var line in lines)
+            {
+                var res = new SaleOrderLinePaymentRelDisplay
+                {
+                    SaleOrderLineId = line.Id,
+                    SaleOrderLine = _mapper.Map<SaleOrderLineDisplay>(line),
+                    AmountPayment = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value),
+                    AmountPrepaid = 0
+                };
+                paymentRels.Add(res);
+            }
+
+            return paymentRels;
+        }
+
+        public async Task<IEnumerable<SaleOrderLine>> SaleOrderLineDefaultGet(IEnumerable<SaleOrderLine> lines)
+        {
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            foreach(var line in lines)
+            {
+                var amountPrepaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+                if (line.PriceTotal >= amountPrepaid)
+                    continue;
+            }
+
+            return lines;
         }
 
         public async Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds)
@@ -543,7 +581,7 @@ namespace Infrastructure.Services
             if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
                 throw new Exception("You can only register payments for open invoices");
             var dtype = invoices[0].Type;
-            foreach(var inv in invoices.Skip(1))
+            foreach (var inv in invoices.Skip(1))
             {
                 if (inv.Type != dtype)
                 {
@@ -655,6 +693,9 @@ namespace Infrastructure.Services
 
             foreach (var order_id in val.SaleOrderIds)
                 payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order_id });
+
+            foreach (var rel in val.SaleOrderLinePaymentRels)
+                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = rel.SaleOrderLineId, AmountPrepaid = rel.AmountPrepaid });
 
             foreach (var order_id in val.ServiceCardOrderIds)
                 payment.CardOrderPaymentRels.Add(new ServiceCardOrderPaymentRel { CardOrderId = order_id });
@@ -1068,4 +1109,6 @@ namespace Infrastructure.Services
         }
 
     }
+
+    
 }

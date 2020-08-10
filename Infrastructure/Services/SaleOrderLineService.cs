@@ -198,33 +198,29 @@ namespace Infrastructure.Services
         public async Task _AddPartnerCommission(IEnumerable<Guid> ids)
         {
             var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
+            var res = new SaleOrderLinePartnerCommission();
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x=>x.PartnerCommission)
                 .Include("Salesman.Partner")
                 .Include("Salesman.Employee")
                 .Include("Salesman.Employee.Commission").ToListAsync();
             foreach (var line in lines)
             {
-                if(line.PartnerCommissionId == null)
+                if (line.PartnerCommissionId == null)
                 {
-                    var res = new SaleOrderLinePartnerCommission
+                     res = new SaleOrderLinePartnerCommission
                     {
                         PartnerId = line.Salesman.PartnerId,
-                        Partner = line.Salesman.Partner,
                         CommissionId = line.Salesman.Employee.CommissionId.HasValue ? line.Salesman.Employee.CommissionId : null,
-                        SaleOrderLineId = line.Id
+                        SaleOrderLineId = line.Id,
                     };
 
-                    await partnerCommission.CreateAsync(res);
+                    await partnerCommission.CreateAsync(res);                  
                 }
-                else
-                {
-                    line.PartnerCommission.PartnerId = line.Salesman.PartnerId;
-                    line.PartnerCommission.Partner = line.Salesman.Partner;
-                    line.PartnerCommission.CommissionId = line.Salesman.Employee.CommissionId.HasValue ? line.Salesman.Employee.CommissionId : null;
-                    await partnerCommission.UpdateAsync(line.PartnerCommission);
-                }
-                                 
+
+                line.PartnerCommissionId = res.Id;
             }
+
+            await UpdateAsync(lines);
         }
 
         public async Task _RemovePartnerCommission(IEnumerable<Guid> ids)
