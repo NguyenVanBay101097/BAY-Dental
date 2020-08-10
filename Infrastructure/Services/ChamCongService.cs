@@ -86,5 +86,10 @@ namespace Infrastructure.Services
             }
             return st.StandardWorkHour;
         }
+
+        public Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
