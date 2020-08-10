@@ -142,8 +142,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>
-       // public Guid SaleOrderLineUserCommissionId { get; set; }
-        //public SaleOrderLineUserCommission SaleOrderLineUserCommission{get;set;}
+        public Guid? PartnerCommissionId { get; set; }
+        public SaleOrderLinePartnerCommission PartnerCommission { get; set; }
 
 
 
