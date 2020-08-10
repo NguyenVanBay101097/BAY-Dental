@@ -60,6 +60,10 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     });
   }
 
+  getValueForm(key) {
+    return this.formCreate.get(key).value;
+  }
+
   loadListCommissions() {
     var val = new CommissionPaged();
     this.commissionService.getPaged(val).subscribe(result => {
@@ -87,6 +91,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     //this.assignValue();
     var value = this.formCreate.value;
     value.categoryId = value.category ? value.category.id : null;
+    value.commission = this.getValueForm('isDoctor') ? value.commission : null;
     value.commissionId = value.commission ? value.commission.id : null;
     value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
     this.isChange = true;
