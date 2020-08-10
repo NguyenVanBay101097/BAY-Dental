@@ -52,7 +52,7 @@ namespace Infrastructure.Services
                     &&
                     (string.IsNullOrEmpty(val.Status) ||
                     (y.Status == val.Status))
-                    
+
                 ).ToList()
                 });
 
@@ -81,12 +81,12 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetStandardWorkHour()
         {
-          var st=   await GetService<ISetupChamcongService>().GetByCompanyId(CompanyId);
+            var st = await GetService<ISetupChamcongService>().GetByCompanyId(CompanyId);
             if (st == null)
             {
                 throw new Exception("cần setup chấm công trước");
             }
-            return st.StandardWorkHour;
+            return st.OneStandardWorkHour;
         }
 
         public Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)

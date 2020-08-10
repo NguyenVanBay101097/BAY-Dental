@@ -65,8 +65,8 @@ export class TimeKeepingService {
     return this.http.get<EmployeeChamCongPaging>(this.base_api + this.apiUrl, { params: val });
   }
 
-  setupTimeKeeping(val) {
-    return this.http.post(this.base_api + this.apiUrl, val);
+  GetsetupTimeKeeping() {
+    return this.http.get(this.base_api + 'api/SetupChamcongs');
   }
 
   get(id): Observable<ChamCongBasic> {
@@ -76,5 +76,15 @@ export class TimeKeepingService {
   exportTimeKeeping(val) {
     return this.http.post(this.base_api + this.apiUrl + "/ExportExcelFile", val,
       { responseType: "blob" });
+  }
+
+  CreateSetupChamcong(val)
+  {
+    return this.http.post(this.base_api + 'api/SetupChamcongs', val);
+  }
+
+  UpdateSetupChamcong(id, val)
+  {
+    return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
   }
 }

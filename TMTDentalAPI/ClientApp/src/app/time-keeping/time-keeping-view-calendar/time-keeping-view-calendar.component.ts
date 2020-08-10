@@ -7,6 +7,7 @@ import { EmployeeChamCongPaged, TimeKeepingService, TimeSheetEmployee, TimeKeepi
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { DateInputModule } from '@progress/kendo-angular-dateinputs';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -68,12 +69,11 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   setupTimeKeeping() {
-    var value = new TimeKeepingSave();
-    this.timeKeepingService.setupTimeKeeping(value).subscribe(
-      result => {
-        console.log(result);
-      }
-    )
+    const modalRef = this.modalService.open(TimeKeepingSettingDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thiết lập chấm công';
+    modalRef.result.then(() => {
+      // this.loadData();
+    });
   }
 
   exportFileTimeKeeping() {
