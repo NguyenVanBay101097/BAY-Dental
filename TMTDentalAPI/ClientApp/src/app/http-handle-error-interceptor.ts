@@ -19,6 +19,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
         this.loadingService.setLoading(true);
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
+                console.log(error);
                 if (error.status !== 401) {
                     
                     let message;
