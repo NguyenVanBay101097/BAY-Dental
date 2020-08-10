@@ -44,10 +44,10 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       result => {
         this.listEmployeies = result.items;
         console.log(this.listEmployeies);
+        
         this.listEmployeies.forEach(emp => {
           this.loadTimeSheet(emp);
         })
-        console.log(this.listTimeSheetByEmpId);
       }
     )
   }

@@ -42,6 +42,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     CompanyId = x.CompanyId,
+                    Name = x.Name,
                     ChamCongs = x.ChamCongs.Where(y =>
                     (!val.From.HasValue ||
                     (y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date))
@@ -51,6 +52,7 @@ namespace Infrastructure.Services
                     &&
                     (string.IsNullOrEmpty(val.Status) ||
                     (y.Status == val.Status))
+                    
                 ).ToList()
                 });
 
