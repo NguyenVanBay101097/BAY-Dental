@@ -7,17 +7,20 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimeKeepingSetupDialogComponent } from './time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { TimeKeepingSettingDialogComponent } from './time-keeping-setting-dialog/time-keeping-setting-dialog.component';
+import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 
 @NgModule({
-  declarations: [TimeKeepingViewCalendarComponent, TimeKeepingSetupDialogComponent],
+  declarations: [TimeKeepingViewCalendarComponent, TimeKeepingSetupDialogComponent, TimeKeepingSettingDialogComponent],
   imports: [
     CommonModule,
     TimeKeepingRoutingModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    MyCustomKendoModule
   ],
-  entryComponents: [TimeKeepingSetupDialogComponent]
+  entryComponents: [TimeKeepingSetupDialogComponent, TimeKeepingSettingDialogComponent]
 })
 export class TimeKeepingModule { }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -53,7 +54,7 @@ namespace Infrastructure.Services
                     &&
                     (string.IsNullOrEmpty(val.Status) ||
                     (y.Status == val.Status))
-                    
+
                 ).ToList()
                 });
 
@@ -61,11 +62,44 @@ namespace Infrastructure.Services
                .ToListAsync();
 
             var totalItems = await query.CountAsync();
-
+            var resItems = _mapper.Map<IEnumerable<EmployeeDisplay>>(items);
+            resItems = await CountNgayCong(resItems);
             return new PagedResult2<EmployeeDisplay>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<EmployeeDisplay>>(items)
+                Items = resItems
             };
+        }
+
+        public async Task<IEnumerable<EmployeeDisplay>> CountNgayCong(IEnumerable<EmployeeDisplay> lst)
+        {
+            var setupObj = GetService<ISetupChamcongService>();
+            var setup = await setupObj.GetByCompanyId();
+            //skipp if setup null
+            if (setup == null)
+            {
+                return lst;
+            }
+            var diffTime = Math.Round(setup.DifferenceTime / 60, 2);
+            var fromOne = setup.OneStandardWorkHour - diffTime;
+            var fromHalf = setup.HalfStandardWorkHour - diffTime;
+            double Tongcong = 0;
+            foreach (var emp in lst)
+            {
+                Tongcong = 0;
+                foreach (var chamcong in emp.ChamCongs)
+                {
+                    if (chamcong.HourWorked >= fromOne)
+                    {
+                        Tongcong += 1;
+                    }
+                    else if (chamcong.HourWorked >= fromHalf)
+                    {
+                        Tongcong += 0.5;
+                    }
+                    emp.SoNgayCong = Tongcong;
+                }
+            }
+            return lst;
         }
 
         public Guid GetCurrentCompanyId()
@@ -82,12 +116,12 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetStandardWorkHour()
         {
-          var st=   await GetService<ISetupChamcongService>().GetByCompanyId(CompanyId);
+            var st = await GetService<ISetupChamcongService>().GetByCompanyId(CompanyId);
             if (st == null)
             {
                 throw new Exception("cần setup chấm công trước");
             }
-            return st.StandardWorkHour;
+            return st.OneStandardWorkHour;
         }
 
         public Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
