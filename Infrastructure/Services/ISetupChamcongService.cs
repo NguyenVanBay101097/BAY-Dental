@@ -11,6 +11,5 @@ namespace Infrastructure.Services
     public interface ISetupChamcongService : IBaseService<SetupChamcong>
     {
         Task<SetupChamcong> GetByCompanyId(Guid? companyId = null);
-        Task<Guid> GetCurrentCompanyId();
     }
 }
