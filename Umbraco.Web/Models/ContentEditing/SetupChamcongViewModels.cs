@@ -9,10 +9,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SetupChamcongDisplay
     {
-        public decimal StandardWorkHour { get; set; }
-        public decimal OneStandardWorkFrom { get; set; }
-        public decimal OneStandardWorkTo { get; set; }
-        public decimal HalfStandardWorkFrom { get; set; }
-        public decimal HalfStandardWorkTo { get; set; }
+        public Guid? Id { get;set; }
+        public decimal OneStandardWorkHour { get; set; }
+        public decimal HalfStandardWorkHour { get; set; }
+        public decimal DifferenceTime { get; set; }
     }
 }
