@@ -2,20 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { AppointmentService } from '../appointment.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { AppointmentBasic, AppointmentPaged, SchedulerConfig, ApplicationUserSimple, AppointmentPatch, AppointmentSearch } from '../appointment';
-import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { WindowRef, WindowService, WindowCloseResult, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { FormGroup, FormControl } from '@angular/forms';
-import { PartnerInfoComponent } from 'src/app/partners/partner-info/partner-info.component';
-import { SchedulerEvent } from '@progress/kendo-angular-scheduler';
 import { formatDate } from '@angular/common';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { EmployeeInfoComponent } from 'src/app/employees/employee-info/employee-info.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
 @Component({
   selector: 'app-appointment-list',
@@ -85,7 +82,7 @@ export class AppointmentListComponent implements OnInit {
   })
 
 
-  events: SchedulerEvent[];
+  events: any;
   resources: any[] = [{
     name: 'State',
     data: [
@@ -279,7 +276,7 @@ export class AppointmentListComponent implements OnInit {
       rs => {
         appointmentBasicList = rs['items'] as AppointmentBasic[];
         // this.setScrollTime(appointmentBasicList);
-        this.events = appointmentBasicList.map(rs1 => (<SchedulerEvent>{
+        this.events = appointmentBasicList.map(rs1 => (<any>{
           id: rs1.id,
           isAllDay: false,
           start: new Date(rs1.date),
@@ -572,37 +569,9 @@ export class AppointmentListComponent implements OnInit {
   }
 
   openCustomerInfo(cusId: string) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Thông tin Khách hàng',
-      content: PartnerInfoComponent,
-      width: 900,
-      actions: [
-        { text: 'Đóng', value: false },
-        // { text: 'Tạo lịch hẹn', primary: true, value: true }
-      ]
-    });
-
-    this.customerInfoOpened = true;
-    const instance = dialogRef.content.instance;
-    instance.partnerId = cusId;
   }
 
   openEmployeeInfo(empId: string) {
-    const dialogRef: DialogRef = this.dialogService.open({
-      title: 'Thông tin Nhân viên',
-      content: EmployeeInfoComponent,
-      width: 700,
-      height: 600,
-      minWidth: 250,
-      actions: [
-        { text: 'Đóng', value: false },
-        // { text: 'Tạo lịch hẹn', primary: true, value: true }
-      ]
-    });
-
-    this.customerInfoOpened = true;
-    const instance = dialogRef.content.instance;
-    instance.id = empId;
   }
 
   // setScrollTime(list: AppointmentBasic[]) {

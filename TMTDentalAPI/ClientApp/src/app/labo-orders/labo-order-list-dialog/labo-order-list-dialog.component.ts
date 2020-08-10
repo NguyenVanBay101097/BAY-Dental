@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
@@ -24,6 +23,7 @@ export class LaboOrderListDialogComponent implements OnInit {
   saleOrderLineId: string;
   saleOrderId: string;
   saleOrderLine: SaleOrderLineDisplay;
+  title: string;
 
   laboOrders: LaboOrderBasic[] = [];
 
@@ -46,28 +46,28 @@ export class LaboOrderListDialogComponent implements OnInit {
   }
 
   actionLabo(item?) {
-    if (this.saleOrderId) {
-      const modalRef = this.modalService.open(LaboOrderCuDialogComponent,
-        { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      if (item && item.id) {
-        modalRef.componentInstance.title = 'Cập nhật phiếu labo';
-        modalRef.componentInstance.id = item.id;
-      } else {
-        modalRef.componentInstance.title = 'Tạo phiếu labo';
-      }
+    // if (this.saleOrderId) {
+    //   const modalRef = this.modalService.open(LaboOrderCuDialogComponent,
+    //     { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    //   if (item && item.id) {
+    //     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    //     modalRef.componentInstance.id = item.id;
+    //   } else {
+    //     modalRef.componentInstance.title = 'Tạo phiếu labo';
+    //   }
 
-      modalRef.componentInstance.saleOrderId = this.saleOrderId;
-      modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
-      modalRef.componentInstance.saleOrderLine = this.saleOrderLine;
+    //   modalRef.componentInstance.saleOrderId = this.saleOrderId;
+    //   modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
+    //   modalRef.componentInstance.saleOrderLine = this.saleOrderLine;
 
 
-      modalRef.result.then(res => {
-        if (res) {
-          this.LoadLaboOrderList();
-        }
-      }, () => {
-      });
-    }
+    //   modalRef.result.then(res => {
+    //     if (res) {
+    //       this.LoadLaboOrderList();
+    //     }
+    //   }, () => {
+    //   });
+    // }
   }
 
   deleteLabo(item) {

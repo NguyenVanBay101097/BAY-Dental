@@ -8,6 +8,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
 import { CardCardListComponent } from './card-card-list/card-card-list.component';
+import { CardTypeService } from '../card-types/card-type.service';
 
 @NgModule({
   declarations: [CardCardCuDialogComponent, CardCardListComponent],
@@ -22,10 +23,11 @@ import { CardCardListComponent } from './card-card-list/card-card-list.component
   exports: [
   ],
   entryComponents: [
-    CardCardCuDialogComponent
+    CardCardCuDialogComponent,
   ],
   providers: [
-    CardCardService
+    CardCardService,
+    CardTypeService
   ]
 })
 export class CardCardsModule { }

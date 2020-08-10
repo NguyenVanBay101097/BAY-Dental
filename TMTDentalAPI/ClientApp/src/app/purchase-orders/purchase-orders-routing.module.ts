@@ -5,15 +5,15 @@ import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order
 
 const routes: Routes = [
   {
-    path: 'purchase-orders',
+    path: 'orders',
     component: PurchaseOrderListComponent
   },
   {
-    path: 'purchase-orders/create',
+    path: 'orders/create',
     component: PurchaseOrderCreateUpdateComponent
   },
   {
-    path: 'purchase-orders/edit/:id',
+    path: 'orders/edit/:id',
     component: PurchaseOrderCreateUpdateComponent
   }
 ];

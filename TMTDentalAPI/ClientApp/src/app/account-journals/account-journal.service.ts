@@ -14,7 +14,7 @@ export class AccountJournalFilter {
     type: string;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AccountJournalService {
     apiUrl = 'api/accountjournals';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

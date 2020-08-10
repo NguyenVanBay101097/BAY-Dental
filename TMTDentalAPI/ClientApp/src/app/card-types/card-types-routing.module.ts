@@ -5,15 +5,15 @@ import { CardTypeCreateUpdateComponent } from './card-type-create-update/card-ty
 
 const routes: Routes = [
   {
-    path: 'card-types',
+    path: '',
     component: CardTypeListComponent
   },
   {
-    path: 'card-types/create',
+    path: 'create',
     component: CardTypeCreateUpdateComponent
   },
   {
-    path: 'card-types/edit/:id',
+    path: 'edit/:id',
     component: CardTypeCreateUpdateComponent
   }
 ];

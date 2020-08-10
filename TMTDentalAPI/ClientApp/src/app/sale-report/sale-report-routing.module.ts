@@ -5,11 +5,11 @@ import { SaleReportPartnerComponent } from './sale-report-partner/sale-report-pa
 
 const routes: Routes = [
   {
-    path: 'sale-report',
+    path: '',
     component: SaleReportOverviewComponent
   },
   {
-    path: 'sale-report-partner',
+    path: 'partner',
     component: SaleReportPartnerComponent
   }
 ];

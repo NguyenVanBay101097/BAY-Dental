@@ -79,7 +79,7 @@ export class LaboOrderLineOnChangeProductResult {
     priceUnit: number;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LaboOrderLineService {
     apiUrl = 'api/laboorderlines';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

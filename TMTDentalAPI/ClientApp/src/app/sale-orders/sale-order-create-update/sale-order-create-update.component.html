@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li *ngIf="customerId">
-                <a [routerLink]="['/customer/' + customerId + '/treatment-payment']">Phiếu điều trị</a>
+                <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']">Phiếu điều trị</a>
             </li>
             <li class="active">
                 <span *ngIf="id">{{saleOrder.name}}</span>
@@ -59,7 +59,7 @@
                         (click)="actionDone()">
                         Khóa phiếu
                     </button>
-                    <a [routerLink]="['/customer/' + customerId + '/treatment-payment']" class="btn btn-secondary btn-sm">
+                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']" class="btn btn-secondary btn-sm">
                         Trở lại
                     </a>
                 </div>
@@ -112,7 +112,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner" [routerLink]="['/customer/' + partner.id]">{{partner.displayName}}</a>
+                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
                                 </td>
                             </tr>
                             <!-- <tr>
@@ -329,7 +329,7 @@
                                 </table>
                             </div>
                             <div class="oe_right">
-                                <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog>                        
+                                <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog>
                                 <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                     class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">

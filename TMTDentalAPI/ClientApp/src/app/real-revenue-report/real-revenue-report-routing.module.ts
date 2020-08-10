@@ -4,7 +4,7 @@ import { RealRevenueReportOverviewComponent } from './real-revenue-report-overvi
 
 const routes: Routes = [
   {
-    path: 'real-revenue-report',
+    path: '',
     component: RealRevenueReportOverviewComponent
   }
 ];

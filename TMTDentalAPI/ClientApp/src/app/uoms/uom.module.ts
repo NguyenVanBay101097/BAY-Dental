@@ -6,6 +6,8 @@ import { UomCrUpComponent } from './uom-cr-up/uom-cr-up.component';
 import { UomListComponent } from './uom-list/uom-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from '@progress/kendo-angular-dialog';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UomRoutingModule,
     MyCustomKendoModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule,
+    SharedModule
   ],
   entryComponents: [
     UomCrUpComponent

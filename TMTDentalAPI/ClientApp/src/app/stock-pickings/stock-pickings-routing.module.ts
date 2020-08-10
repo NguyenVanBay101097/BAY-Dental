@@ -9,18 +9,6 @@ import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incom
 
 const routes: Routes = [
   {
-    path: 'pickings',
-    component: StockPickingListComponent
-  },
-  {
-    path: 'pickings/create',
-    component: StockPickingCreateUpdateComponent
-  },
-  {
-    path: 'pickings/edit/:id',
-    component: StockPickingCreateUpdateComponent
-  },
-  {
     path: 'outgoing-pickings',
     component: StockPickingOutgoingListComponent
   },

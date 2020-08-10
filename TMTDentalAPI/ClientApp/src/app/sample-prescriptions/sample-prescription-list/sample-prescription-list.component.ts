@@ -25,16 +25,16 @@ export class SamplePrescriptionListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   title = 'Đơn thuốc mẫu';
 
-  constructor( private samplePrescriptionsService: SamplePrescriptionsService, private modalService: NgbModal, private route: ActivatedRoute) {}
+  constructor(private samplePrescriptionsService: SamplePrescriptionsService, private modalService: NgbModal, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.loadDataFromApi();
 
     this.searchUpdate
-    .pipe(debounceTime(400), distinctUntilChanged())
-    .subscribe(() => {
-      this.loadDataFromApi();
-    });
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe(() => {
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
@@ -72,30 +72,30 @@ export class SamplePrescriptionListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent,{size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Thêm: " + this.title;
     modalRef.result.then(
       () => {
         this.loadDataFromApi();
       },
-      () => {}
+      () => { }
     );
   }
 
-  editItem(item: SamplePrescriptionsDisplay ) {
-    let modalRef = this.modalService.open( SamplePrescriptionCreateUpdateDialogComponent, {size: "lg",windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+  editItem(item: SamplePrescriptionsDisplay) {
+    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Sửa: " + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       () => {
         this.loadDataFromApi();
       },
-      () => {}
+      () => { }
     );
   }
 
   deleteItem(item: SamplePrescriptionBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Xóa: " + this.title;
     modalRef.result.then(
       () => {
@@ -108,7 +108,7 @@ export class SamplePrescriptionListComponent implements OnInit {
           }
         );
       },
-      () => {}
+      () => { }
     );
   }
 }

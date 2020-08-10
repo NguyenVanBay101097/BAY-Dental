@@ -91,11 +91,11 @@ export class StockPickingIncomingListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/incoming-pickings/create']);
+    this.router.navigate(['/stock/incoming-pickings/create']);
   }
 
   editItem(item: StockPickingBasic) {
-    this.router.navigate(['/incoming-pickings/edit', item.id]);
+    this.router.navigate(['/stock/incoming-pickings/edit', item.id]);
   }
 
   deleteItem(item) {

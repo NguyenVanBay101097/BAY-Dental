@@ -4,7 +4,7 @@ import { StockReportXuatNhapTonComponent } from './stock-report-xuat-nhap-ton/st
 
 const routes: Routes = [
   {
-    path: 'stock-report-xuat-nhap-ton',
+    path: '',
     component: StockReportXuatNhapTonComponent
   }
 ];

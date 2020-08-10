@@ -7,6 +7,7 @@ import { PhieuThuChiFormComponent } from './phieu-thu-chi-form/phieu-thu-chi-for
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PhieuThuChiService } from './phieu-thu-chi.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [PhieuThuChiListComponent, PhieuThuChiFormComponent],
@@ -15,9 +16,10 @@ import { PhieuThuChiService } from './phieu-thu-chi.service';
     PhieuThuChiRoutingModule, 
     MyCustomKendoModule, 
     FormsModule, 
-    ReactiveFormsModule
-  ], providers: [
-    PhieuThuChiService
+    ReactiveFormsModule,
+    NgbModule
+  ], 
+  providers: [
   ],
   entryComponents: [
     PhieuThuChiFormComponent,
