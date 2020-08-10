@@ -22,8 +22,8 @@ p {
 }
 
 .oe_kanban_timekepping {
-    min-width: 35px;
-    min-height: 35px;
+    min-width: 50px;
+    min-height: 50px;
     border-radius: 3px;
     background-color: #f0eeee;
     position: relative;
@@ -33,20 +33,28 @@ p {
     background-color: burlywood;
 }
 
+.oe_kanban_timekepping> span > i:hover{
+    opacity: 0.6;
+    border-radius: 50%;
+}
+
 .oe_kanban_content {
     cursor: pointer;
 }
 
 .o_content {
     max-width: 100%;
-    padding: 15px;
+    padding: 10px;
     background-color: white;
 }
 
 .fa-circle {
-    position: absolute;
-    font-size: 10px;
+    float: left;
+    font-size: 12px;
+    margin: 2px;
 }
+
+
 
 .o_kanban_view .o_kanban_record, .o_kanban_view .o_kanban_quick_create, .cdk-drag-preview .o_kanban_record, .cdk-drag-preview .o_kanban_quick_create, .o_kanban_record.cdk-drag-preview {
     padding: 5px 5px;
@@ -75,3 +83,4 @@ p {
     padding: 10px 15px 15px 15px;
     background-color: white;
 }
+

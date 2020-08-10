@@ -44,7 +44,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       result => {
         this.listEmployeies = result.items;
         console.log(this.listEmployeies);
-        
+
         this.listEmployeies.forEach(emp => {
           this.loadTimeSheet(emp);
         })
@@ -56,15 +56,20 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     this.listTimeSheetByEmpId[emp.id] = [];
     this.dateList.forEach(date => {
       var value = new TimeSheetEmployee();
-      var cc = emp.chamCongs.find(x => x.timeIn ? new Date(x.timeIn).toDateString() == date.toDateString() : new Date(x.timeOut).toDateString() == date.toDateString())
+      if (!value.chamCongs) {
+        value.chamCongs = [];
+      }
+      var cc = emp.chamCongs.filter(x => x.timeIn ? new Date(x.timeIn).toDateString() == date.toDateString() : new Date(x.timeOut).toDateString() == date.toDateString())
       if (cc) {
-        value.chamCong = cc;
+        value.chamCongs = cc;
         value.date = date;
       } else {
         value.date = date;
       }
       this.listTimeSheetByEmpId[emp.id].push(value);
+
     })
+    console.log(this.listTimeSheetByEmpId);
   }
 
   setupTimeKeeping() {
@@ -75,6 +80,8 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       }
     )
   }
+
+
 
   exportFileTimeKeeping() {
     if (!this.monthStart && !this.monthEnd)
@@ -149,21 +156,51 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     this.loadData();
   }
 
-  clickTimeSheet(id, date, employee) {
-    if (new Date().getDate() < date.getDate()) {
-      this.notificationService.show({
-        content: 'Chưa đến ngày bạn bạn không thể chấm công',
-        hideAfter: 3000,
-        position: { horizontal: 'right', vertical: 'bottom' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return;
+  buttonFilterMonth(event) {
+    if (event && event.dateFrom && event.dateTo) {
+     this.monthStart = event.dateFrom;
+     this.monthEnd = event.dateTo;
+     this.filterMonth = event.dateFrom;
+     this.getDateMonthList();
     }
+  }
 
+  clickTimeSheet(evt, id, date, employee) {
+    // if (new Date().getDate() < date.getDate()) {
+    //   this.notificationService.show({
+    //     content: 'Chưa đến ngày bạn bạn không thể chấm công',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'right', vertical: 'bottom' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
+    //   return;
+    // }
+    evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cài đặt';
     modalRef.componentInstance.id = id;
+    modalRef.componentInstance.employee = employee;
+    modalRef.componentInstance.dateTime = date;
+    modalRef.result.then(() => {
+      this.loadData();
+    });
+  }
+
+  clickTimeSheetCreate(date, employee) {
+    // if (new Date().getDate() < date.getDate()) {
+    //   this.notificationService.show({
+    //     content: 'Chưa đến ngày bạn bạn không thể chấm công',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'right', vertical: 'bottom' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
+    //   return;
+    // }
+
+    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cài đặt';
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
     modalRef.result.then(() => {

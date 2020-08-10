@@ -34,9 +34,9 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     if (this.id) {
       this.loadFormApi();
     }
-    if (this.today.getDate() > this.dateTime.getDate()) {
-      this.formGroup.disable();
-    }
+    // if (this.today.getDate() > this.dateTime.getDate()) {
+    //   this.formGroup.disable();
+    // }
   }
 
   loadFormApi() {
@@ -57,7 +57,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
 
   checkTimeIn(evt) {
     if (evt)
-      this.timeIn = new Date(new Date);
+      this.timeIn = new Date(this.dateTime.getFullYear(),this.dateTime.getMonth(),this.dateTime.getDate(),this.today.getHours(),this.today.getMinutes());
     else
       this.timeIn = null;
   }
@@ -86,15 +86,23 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
           this.activeModal.close();
         }
       )
-    } else if (this.today.getDate() == this.dateTime.getDate()) {
+    }
+    else {
       this.timeKeepingServive.create(val).subscribe(
         result => {
           this.activeModal.close();
         }
       )
-    } else {
-      this.activeModal.close();
     }
+    // else if (this.today.getDate() == this.dateTime.getDate()) {
+    //   this.timeKeepingServive.create(val).subscribe(
+    //     result => {
+    //       this.activeModal.close();
+    //     }
+    //   )
+    // } else {
+    //   this.activeModal.close();
+    // }
   }
 
 }

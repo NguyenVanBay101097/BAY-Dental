@@ -18,13 +18,11 @@
             </div>
         </div>
         <div class="o_cp_right">
-
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    
     <div ngbDropdown class="d-inline-flex mr-2 float-right pb-2">
         <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1" ngbDropdownToggle><i
                 class="fas fa-cog"></i></button>
@@ -36,6 +34,10 @@
         <div class="d-inline-flex">
             <button class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i class="fas fa-file-export"></i></button>
         </div>
+    </div>
+    <div class="float-right pb-2 mr-3">
+        <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" (searchChange)="buttonFilterMonth($event)"
+            [title]="'Thời gian'" [dateTo]="monthEnd"></app-tai-date-range-filter-dropdown>
     </div>
     <table class="table table-bordered table-content">
         <thead>
@@ -95,19 +97,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let item of listEmployeies">
-                <th scope="row" style="min-width: 170px;">{{item.name}}</th>
-                <td *ngFor="let date of this.listTimeSheetByEmpId[item.id]"
-                    (click)="clickTimeSheet((date.chamCong ? date.chamCong.id : null),date.date,item)">
+            <tr *ngFor="let empl of listEmployeies">
+                <th scope="row" style="min-width: 170px;">{{empl.name}}</th>
+                <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]"
+                    (click)="clickTimeSheetCreate(date.date,empl)">
                     <div class="oe_kanban_content">
                         <div class="oe_kanban_timekepping">
-                            <i title="Đã chấm giờ vào và giờ ra" *ngIf="date.chamCong && date.chamCong.status == 'done'"
-                                class="fas fa-circle text-success"></i>
-                            <i title="Đã chấm giờ vào hoặc giờ ra"
-                                *ngIf="date.chamCong && date.chamCong.status == 'process'"
-                                class="fas fa-circle text-primary"></i>
-                            <i title="Đã chấm giờ vào hoặc giờ ra" *ngIf="!date.chamCong && today >= date.date"
-                                class="fas fa-circle text-warning"></i>
+                            <span *ngFor="let cc of date.chamCongs"
+                                (click)="clickTimeSheet($event, cc.id, date.date, empl)">
+                                <i title="Đã chấm giờ vào và giờ ra" *ngIf="cc.status == 'done'"
+                                    class="fas fa-circle text-success"></i>
+                                <i title="Đã chấm giờ vào hoặc giờ ra" *ngIf="cc.status == 'process'"
+                                    class="fas fa-circle text-primary"></i>
+                            </span>
+                            <span *ngIf="date.chamCongs.length == 0 && today >= date.date">
+                                <i title="Chưa chấm công" class="fas fa-circle text-warning"></i>
+                            </span>
                         </div>
                     </div>
                 </td>

@@ -37,7 +37,7 @@ export class ChamCongBasic {
 
 export class TimeSheetEmployee {
   date: Date;
-  chamCong: ChamCongBasic;
+  chamCongs: ChamCongBasic[];
   empId: string;
 }
 

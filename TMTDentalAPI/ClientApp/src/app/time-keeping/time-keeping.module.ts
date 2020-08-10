@@ -6,6 +6,7 @@ import { TimeKeepingViewCalendarComponent } from './time-keeping-view-calendar/t
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimeKeepingSetupDialogComponent } from './time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [TimeKeepingViewCalendarComponent, TimeKeepingSetupDialogComponent],
@@ -14,7 +15,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     TimeKeepingRoutingModule,
     NgbModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ],
   entryComponents: [TimeKeepingSetupDialogComponent]
 })
