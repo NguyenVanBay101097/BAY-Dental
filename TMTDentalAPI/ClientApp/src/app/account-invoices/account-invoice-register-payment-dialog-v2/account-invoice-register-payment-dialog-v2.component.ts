@@ -42,6 +42,10 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       invoiceIds: null,
       saleOrderIds: null,
       serviceCardOrderIds: null,
+      // orderLines: this.fb.array([]),
+      price_dv1: 0,
+      price_dv2: 0,
+
     });
 
     setTimeout(() => {
@@ -123,4 +127,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     this.activeModal.dismiss();
   }
 
+  checkMoneyLine(key) {
+
+  }
 }

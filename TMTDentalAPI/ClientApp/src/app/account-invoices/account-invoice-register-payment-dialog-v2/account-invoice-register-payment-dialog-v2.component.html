@@ -61,6 +61,44 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="o_group">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Dịch vụ</th>
+                                <th>Số tiền</th>
+                            </tr>
+                        </thead>
+                        <!-- <tbody formArrayName="orderLines">
+                            <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                <tr [formGroupName]="i">                                          
+                                    <td>{{ line.get('name').value }}</td>
+                                    <td></td>
+                                </tr>
+                            </ng-container>
+                        </tbody> -->
+                        <tbody>
+                            <tr>
+                                <td>Dịch vụ 1</td>
+                                <td>
+                                    <kendo-numerictextbox [min]="0" [max]="100" [format]="'n0'"
+                                        formControlName="price_dv1" 
+                                        (change)="checkMoneyLine('price_dv1')">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dịch vụ 2</td>
+                                <td>
+                                    <kendo-numerictextbox [min]="0" [max]="100" [format]="'n0'"
+                                        formControlName="price_dv2" 
+                                        (change)="checkMoneyLine('price_dv2')">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </form>
