@@ -106,6 +106,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
         { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
         { name: 'Hoa hồng', link: '/commissions' },
+        { name: 'Nhân viên', link: '/employees' },
       ]
     },
     {

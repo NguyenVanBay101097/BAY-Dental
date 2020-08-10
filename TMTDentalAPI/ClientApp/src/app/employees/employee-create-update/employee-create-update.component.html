@@ -62,6 +62,18 @@
                                                 </kendo-datepicker>
                                             </td>
                                         </tr>
+                                        <tr *ngIf="getValueForm('isDoctor')">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hoa hồng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-combobox [data]="listCommissions" [textField]="'name'" #commissionCbx
+                                                    formControlName="commission" [valueField]="'id'">
+                                                </kendo-combobox>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">

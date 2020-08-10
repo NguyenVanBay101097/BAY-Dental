@@ -8,6 +8,8 @@ import { EmpCategoryService } from 'src/app/employee-categories/emp-category.ser
 import { EmployeeCategoryPaged, EmployeeCategoryBasic, EmployeeCategoryDisplay } from 'src/app/employee-categories/emp-category';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { CommissionPaged, CommissionService, Commission } from 'src/app/commissions/commission.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -17,7 +19,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 export class EmployeeCreateUpdateComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private service: EmployeeService,
-    private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, private modalService: NgbModal, private intlService: IntlService) { }
+    private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, 
+    private modalService: NgbModal, private intlService: IntlService, 
+    private commissionService: CommissionService) { }
   empId: string;
 
   isChange: boolean = false;
@@ -29,6 +33,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
 
   categoriesList: EmployeeCategoryBasic[] = [];
   categoriesList2: EmployeeCategoryDisplay[] = [];
+
+  listCommissions: Commission[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -42,12 +48,26 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       birthDayObj: null,
       category: [null],
       isDoctor: this.isDoctor || false,
-      isAssistant: this.isAssistant || false
+      isAssistant: this.isAssistant || false, 
+      commissionId: null, 
+      commission: null
     });
 
     setTimeout(() => {
       this.loadAutocompleteTypes(null);
+      this.loadListCommissions();
       this.getEmployeeInfo();
+    });
+  }
+
+  getValueForm(key) {
+    return this.formCreate.get(key).value;
+  }
+
+  loadListCommissions() {
+    var val = new CommissionPaged();
+    this.commissionService.getPaged(val).subscribe(result => {
+      this.listCommissions = _.unionBy(this.listCommissions, result.items, 'id');
     });
   }
 
@@ -71,6 +91,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     //this.assignValue();
     var value = this.formCreate.value;
     value.categoryId = value.category ? value.category.id : null;
+    value.commission = this.getValueForm('isDoctor') ? value.commission : null;
+    value.commissionId = value.commission ? value.commission.id : null;
     value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
     this.isChange = true;
     this.service.createUpdateEmployee(value, this.empId).subscribe(

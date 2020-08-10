@@ -18,6 +18,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Type { get; set; }
 
+
         public ICollection<TCareProperty> Properties { get; set; } = new List<TCareProperty>();
     }
 }
