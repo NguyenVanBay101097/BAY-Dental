@@ -53,10 +53,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ChamCongSave chamCongSave)
         {
-            var lst = new List<ChamCong>();
-            lst.Add(_mapper.Map<ChamCong>(chamCongSave));
-            await _chamCongService.CreateListChamcongs(lst);
-            return Ok();
+            if (chamCongSave.Status == "NP")
+            {
+                chamCongSave.HourWorked = await _chamCongService.GetStandardWorkHour();
+            }
+            var chamcong = _mapper.Map<ChamCong>(chamCongSave);
+            chamcong.CompanyId = _chamCongService.GetCurrentCompanyId();
+            await _chamCongService.CreateAsync(chamcong);
+            return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
 
         [HttpPost("CreateList")]

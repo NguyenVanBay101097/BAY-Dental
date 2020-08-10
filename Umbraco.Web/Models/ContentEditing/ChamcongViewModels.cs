@@ -9,6 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class employeePaged
     {
+
         public employeePaged()
         {
             Limit = 20;
@@ -37,6 +38,14 @@ namespace Umbraco.Web.Models.ContentEditing
             {
                 if (this.TimeIn.HasValue && this.TimeOut.HasValue)
                     return Math.Round((decimal)(this.TimeOut.Value - this.TimeIn.Value).TotalHours, 2);
+                else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
+                {
+                    if (this.Status == "NP")
+                    {
+                        return this.HourWorked;
+                    }
+                    else return null;
+                }
                 else return null;
             }
             set
@@ -55,6 +64,10 @@ namespace Umbraco.Web.Models.ContentEditing
                 }
                 else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
                 {
+                    if (this.Status == "NP")
+                    {
+                        return "NP";
+                    }
                     return "initial";
                 }
                 return "process";
