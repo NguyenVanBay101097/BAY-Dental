@@ -109,6 +109,7 @@ import { PhieuThuChiModule } from './phieu-thu-chi/phieu-thu-chi.module';
 import { AccountFinancialReportModule } from './account-financial-report/account-financial-report.module';
 import { AccountReportGeneralLedgersModule } from './account-report-general-ledgers/account-report-general-ledgers.module';
 import { CommissionsModule } from './commissions/commissions.module';
+import { CommissionReportsModule } from './commission-reports/commission-reports.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -226,7 +227,8 @@ registerLocaleData(localeVi, "vi");
     PhieuThuChiModule,
     AccountFinancialReportModule,
     AccountReportGeneralLedgersModule,
-    CommissionsModule
+    CommissionsModule,
+    CommissionReportsModule
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

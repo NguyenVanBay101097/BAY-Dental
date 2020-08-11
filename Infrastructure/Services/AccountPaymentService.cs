@@ -678,13 +678,19 @@ namespace Infrastructure.Services
             var journalObj = GetService<IAccountJournalService>();
             var journal = await journalObj.GetByIdAsync(payment.JournalId);
             payment.CompanyId = journal.CompanyId;
+            if (val.SaleOrderLinePaymentRels.Any())
+            {
+                if(val.Amount != val.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid))
+                {
+                    throw new Exception("Thanh toán thất bại");
+                }
+            }
 
             foreach (var invoice_id in val.InvoiceIds)
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
 
             foreach (var order_id in val.SaleOrderIds)
                 payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order_id });
-
 
 
             foreach (var order_id in val.ServiceCardOrderIds)
