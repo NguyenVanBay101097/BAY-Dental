@@ -1,4 +1,5 @@
-﻿using RestSharp.Extensions;
+﻿using ApplicationCore.Entities;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
@@ -38,14 +39,6 @@ namespace Umbraco.Web.Models.ContentEditing
             {
                 if (this.TimeIn.HasValue && this.TimeOut.HasValue)
                     return Math.Round((decimal)(this.TimeOut.Value - this.TimeIn.Value).TotalHours, 2);
-                else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
-                {
-                    if (this.Status == "NP")
-                    {
-                        return this.HourWorked;
-                    }
-                    else return null;
-                }
                 else return null;
             }
             set
@@ -74,6 +67,8 @@ namespace Umbraco.Web.Models.ContentEditing
             }
             set { }
         }
+        public Guid WorkEntryTypeId { get; set; }
+
     }
 
     public class ChamCongDisplay
@@ -90,5 +85,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
         public string Status { get; set; }
         public EmployeeBasic employee { get; set; }
+        public WorkEntryTypeDisplay WorkEntryType { get; set; }
     }
 }

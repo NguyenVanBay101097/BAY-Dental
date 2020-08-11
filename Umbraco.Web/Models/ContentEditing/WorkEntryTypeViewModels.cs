@@ -33,7 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public bool IsHasTimeKeeping { get; set; }
+        public bool IsHasTimeKeeping { get; set; } = false;
         public string Color { get; set; }
     }
 }
