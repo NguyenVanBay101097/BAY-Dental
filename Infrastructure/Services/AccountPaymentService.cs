@@ -522,7 +522,7 @@ namespace Infrastructure.Services
                 PartnerType = "customer",
                 Communication = communication,
                 SaleOrderIds = saleOrderIds,
-               SaleOrderLinePaymentRels = paymentLines
+                SaleOrderLinePaymentRels = paymentLines
 
             };
 
@@ -533,11 +533,14 @@ namespace Infrastructure.Services
         {
             var orderObj = GetService<ISaleOrderService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            var paymentRels = new List<SaleOrderLinePaymentRelDisplay>();           
-            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
-            var lines = await SaleOrderLineDefaultGet(order.OrderLines);
-            foreach(var line in lines)
+            var paymentRels = new List<SaleOrderLinePaymentRelDisplay>();
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();          
+            foreach (var line in order.OrderLines)
             {
+                var amountPrepaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+                if (amountPrepaid == line.PriceSubTotal)
+                    continue;
+
                 var res = new SaleOrderLinePaymentRelDisplay
                 {
                     SaleOrderLineId = line.Id,
@@ -550,19 +553,7 @@ namespace Infrastructure.Services
 
             return paymentRels;
         }
-
-        public async Task<IEnumerable<SaleOrderLine>> SaleOrderLineDefaultGet(IEnumerable<SaleOrderLine> lines)
-        {
-            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            foreach(var line in lines)
-            {
-                var amountPrepaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
-                if (line.PriceTotal >= amountPrepaid)
-                    continue;
-            }
-
-            return lines;
-        }
+      
 
         public async Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds)
         {
@@ -694,8 +685,7 @@ namespace Infrastructure.Services
             foreach (var order_id in val.SaleOrderIds)
                 payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order_id });
 
-            foreach (var rel in val.SaleOrderLinePaymentRels)
-                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = rel.SaleOrderLineId, AmountPrepaid = rel.AmountPrepaid });
+
 
             foreach (var order_id in val.ServiceCardOrderIds)
                 payment.CardOrderPaymentRels.Add(new ServiceCardOrderPaymentRel { CardOrderId = order_id });
@@ -1110,5 +1100,5 @@ namespace Infrastructure.Services
 
     }
 
-    
+
 }

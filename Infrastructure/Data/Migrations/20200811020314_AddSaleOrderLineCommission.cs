@@ -7,6 +7,10 @@ namespace Infrastructure.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_SaleOrderLinePaymentRels",
+                table: "SaleOrderLinePaymentRels");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "PartnerCommissionId",
                 table: "SaleOrderLines",
@@ -19,6 +23,12 @@ namespace Infrastructure.Data.Migrations
                 oldClrType: typeof(decimal),
                 oldType: "decimal(18,2)");
 
+            migrationBuilder.AddColumn<Guid>(
+                name: "Id",
+                table: "SaleOrderLinePaymentRels",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
             migrationBuilder.AddColumn<string>(
                 name: "CreatedById",
                 table: "SaleOrderLinePaymentRels",
@@ -28,12 +38,6 @@ namespace Infrastructure.Data.Migrations
                 name: "DateCreated",
                 table: "SaleOrderLinePaymentRels",
                 nullable: true);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "Id",
-                table: "SaleOrderLinePaymentRels",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "LastUpdated",
@@ -45,6 +49,11 @@ namespace Infrastructure.Data.Migrations
                 table: "SaleOrderLinePaymentRels",
                 nullable: true);
 
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_SaleOrderLinePaymentRels",
+                table: "SaleOrderLinePaymentRels",
+                column: "Id");
+
             migrationBuilder.CreateIndex(
                 name: "IX_SaleOrderLines_PartnerCommissionId",
                 table: "SaleOrderLines",
@@ -54,6 +63,11 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_SaleOrderLinePaymentRels_CreatedById",
                 table: "SaleOrderLinePaymentRels",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SaleOrderLinePaymentRels_PaymentId",
+                table: "SaleOrderLinePaymentRels",
+                column: "PaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleOrderLinePaymentRels_WriteById",
@@ -103,8 +117,16 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_SaleOrderLines_PartnerCommissionId",
                 table: "SaleOrderLines");
 
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_SaleOrderLinePaymentRels",
+                table: "SaleOrderLinePaymentRels");
+
             migrationBuilder.DropIndex(
                 name: "IX_SaleOrderLinePaymentRels_CreatedById",
+                table: "SaleOrderLinePaymentRels");
+
+            migrationBuilder.DropIndex(
+                name: "IX_SaleOrderLinePaymentRels_PaymentId",
                 table: "SaleOrderLinePaymentRels");
 
             migrationBuilder.DropIndex(
@@ -116,15 +138,15 @@ namespace Infrastructure.Data.Migrations
                 table: "SaleOrderLines");
 
             migrationBuilder.DropColumn(
+                name: "Id",
+                table: "SaleOrderLinePaymentRels");
+
+            migrationBuilder.DropColumn(
                 name: "CreatedById",
                 table: "SaleOrderLinePaymentRels");
 
             migrationBuilder.DropColumn(
                 name: "DateCreated",
-                table: "SaleOrderLinePaymentRels");
-
-            migrationBuilder.DropColumn(
-                name: "Id",
                 table: "SaleOrderLinePaymentRels");
 
             migrationBuilder.DropColumn(
@@ -142,6 +164,11 @@ namespace Infrastructure.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(decimal),
                 oldNullable: true);
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_SaleOrderLinePaymentRels",
+                table: "SaleOrderLinePaymentRels",
+                columns: new[] { "PaymentId", "SaleOrderLineId" });
         }
     }
 }
