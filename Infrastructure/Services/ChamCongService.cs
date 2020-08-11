@@ -61,7 +61,8 @@ namespace Infrastructure.Services
                     (string.IsNullOrEmpty(val.Status) ||
                     (y.Status == val.Status))
 
-                ).Select(y => new ChamCong(){
+                ).Select(y => new ChamCong()
+                {
                     Id = y.Id,
                     DateCreated = y.DateCreated,
                     Status = y.Status,
@@ -70,7 +71,7 @@ namespace Infrastructure.Services
                     TimeOut = y.TimeOut,
                     WorkEntryType = y.WorkEntryType,
                     HourWorked = y.HourWorked
-                        }).ToList()
+                }).ToList()
                 });
 
             var items = await query.Skip(val.Offset).Take(val.Limit)
@@ -125,7 +126,7 @@ namespace Infrastructure.Services
         {
             var chamcong = await SearchQuery(x => x.EmployeeId == id
             && (x.TimeIn.Value.Date.Equals(date.Date) || x.TimeOut.Value.Date.Equals(date.Date))).Include(x => x.Employee)
-                .Include(x=>x.WorkEntryType)
+                .Include(x => x.WorkEntryType)
                 .FirstOrDefaultAsync();
             return _mapper.Map<ChamCongDisplay>(chamcong);
         }

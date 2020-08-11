@@ -63,12 +63,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
 
-        [HttpPost("CreateList")]
-        public async Task<IActionResult> CreateList(IEnumerable<ChamCongSave> chamCongSaves)
-        {
-            await _chamCongService.CreateListChamcongs(_mapper.Map<IEnumerable<ChamCong>>(chamCongSaves));
-            return Ok();
-        }
+        //[HttpPost("CreateList")]
+        //public async Task<IActionResult> CreateList(IEnumerable<ChamCongSave> chamCongSaves)
+        //{
+        //    await _chamCongService.CreateListChamcongs(_mapper.Map<IEnumerable<ChamCong>>(chamCongSaves));
+        //    return Ok();
+        //}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ChamCongSave chamCongSave)

@@ -85,6 +85,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
         public string Status { get; set; }
         public EmployeeBasic employee { get; set; }
+        public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryTypeDisplay WorkEntryType { get; set; }
     }
 }

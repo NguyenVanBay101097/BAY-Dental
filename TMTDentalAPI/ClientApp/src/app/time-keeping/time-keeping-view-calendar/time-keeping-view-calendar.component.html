@@ -56,7 +56,7 @@
                         </button>
                     </div>
 
-                    <div class="float-right">
+                    <!-- <div class="float-right">
                         <span class="mr-4 text-success">
                             <i class="fas fa-circle mt-2 mr-1 "></i>
                             <span class="pr-3"></span>
@@ -72,7 +72,7 @@
                             <span class="pr-3"></span>
                             Chưa chấm
                         </span>
-                    </div>
+                    </div> -->
                 </th>
                 <!-- <th *ngIf="!flag" colspan="31" scope="col">
                     <button class="btn btn-primary btn-sm" (click)="previousWeekFilter()">
@@ -109,12 +109,10 @@
                     <div class="oe_kanban_content">
                         <div class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
                             (click)="clickTimeSheet($event, cc.id, date.date, empl)">
-                            <div class="oe_kanban_timeSheet" *ngIf="cc.status == 'done'">
-                                <span title="Chấm công">Chấm công</span>
-
-                            </div>
-                            <div class="oe_kanban_timeSheet" *ngIf="cc.status == 'process'">
-                                <span>Nghỉ bệnh</span>
+                            <div class="oe_kanban_timeSheet"
+                                [ngStyle]="{'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'}">
+                                <span
+                                    title="{{cc.workEntryType ? cc.workEntryType.name: ''}}">{{cc.workEntryType ? cc.workEntryType.name: ''}}</span>
                             </div>
                             <div class="oe_kanban_timeSheet_create"
                                 (click)="clickTimeSheetCreate($event,date.date,empl)">

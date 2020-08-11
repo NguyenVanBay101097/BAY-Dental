@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TimeKeepingService, ChamCongBasic, ChamCongSave, WorkEntryType, WorkEntryTypePage } from '../time-keeping.service';
 import { EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -36,7 +36,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       timeIn: false,
       timeOut: false,
-      workEntryTypeId: null
+      workEntryTypeId: [null, Validators.required]
     })
 
     if (this.id) {
@@ -61,6 +61,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     this.searchWorkEntryType().subscribe(
       result => {
         this.filterdWorks = result.items;
+        if (this.filterdWorks && this.filterdWorks.length > 0)
+          this.formGroup.get('workEntryTypeId').patchValue(this.filterdWorks[0].id);
       }
     )
   }
@@ -77,6 +79,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     this.timeKeepingServive.get(this.id).subscribe(
       result => {
         this.chamCong = result;
+        this.formGroup.get('workEntryTypeId').patchValue(this.chamCong.workEntryTypeId);
         if (this.chamCong && this.chamCong.timeIn) {
           this.formGroup.get('timeIn').setValue(true);
           this.timeIn = new Date(this.chamCong.timeIn);
@@ -111,6 +114,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     val.timeIn = this.timeIn ? this.intl.formatDate(this.timeIn, "yyyy-MM-ddThh:mm") : null;
     val.timeOut = this.timeOut ? this.intl.formatDate(this.timeOut, "yyyy-MM-ddThh:mm") : null
     val.employeeId = this.employee.id;
+    val.workEntryTypeId = this.formGroup.get('workEntryTypeId').value;
     if (!val.timeOut && !val.timeIn) {
       return false;
     }

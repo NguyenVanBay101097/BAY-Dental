@@ -88,7 +88,7 @@ p {
 }
 
 .oe_kanban_timeSheet {
-    background-color: #c2c2c2;
+    background-color: #dee2e6;
     height: 34px;
     border-radius: 5px;
     display: flex;
@@ -99,13 +99,18 @@ p {
     display: none;
 }
 
+.oe_kanban_timekepping> span > i:hover{
+    opacity: 0.6;
+    border-radius: 50%;
+}
+
 .oe_kanban_timeSheet_create>i {
     font-size: 30px;
 }
 
 .oe_kanban_timekepping:hover>.oe_kanban_timeSheet_create {
     display: block;
-    left: 55px;
+    left: 60px;
     top: 0px;
     z-index: 100;
     padding: 3px;

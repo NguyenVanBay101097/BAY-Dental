@@ -8,6 +8,7 @@ export class ChamCongSave {
   timeIn: string;
   timeOut: string;
   hourWorked: number;
+  workEntryTypeId: string;
   status: string;
 }
 

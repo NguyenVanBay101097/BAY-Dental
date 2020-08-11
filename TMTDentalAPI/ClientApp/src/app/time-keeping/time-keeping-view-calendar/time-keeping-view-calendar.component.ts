@@ -198,7 +198,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     // }
     evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Cài đặt';
+    modalRef.componentInstance.title = 'Sửa chấm công';
     modalRef.componentInstance.id = id;
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
@@ -220,7 +220,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     // }
     evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Cài đặt';
+    modalRef.componentInstance.title = 'Thêm 1 chấm công';
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
     modalRef.result.then(() => {
