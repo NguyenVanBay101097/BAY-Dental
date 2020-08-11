@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { TimeKeepingService, ChamCongBasic, ChamCongSave } from '../time-keeping.service';
+import { TimeKeepingService, ChamCongBasic, ChamCongSave, WorkEntryType, WorkEntryTypePage } from '../time-keeping.service';
 import { EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { offset } from '@progress/kendo-date-math';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -12,6 +15,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 })
 export class TimeKeepingSetupDialogComponent implements OnInit {
 
+  @ViewChild('workCbx', { static: true }) workCbx: ComboBoxComponent
   formGroup: FormGroup;
   id: string;
   dateTime: Date;
@@ -19,6 +23,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   today: Date = new Date();
   timeOut: any;
   employee: EmployeeBasic;
+  filterdWorks: WorkEntryType[] = [];
   chamCong: ChamCongBasic = new ChamCongBasic();
   constructor(
     private activeModal: NgbActiveModal,
@@ -30,7 +35,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       timeIn: false,
-      timeOut: false
+      timeOut: false,
+      workEntryTypeId: null
     })
 
     if (this.id) {
@@ -39,6 +45,32 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     // if (this.today.getDate() > this.dateTime.getDate()) {
     //   this.formGroup.disable();
     // }
+    this.loadWorkEntryType();
+    this.workCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.workCbx.loading = true)),
+      switchMap(value => this.searchWorkEntryType(value))
+    ).subscribe(result => {
+      this.filterdWorks = result.items;
+      this.workCbx.loading = false;
+    });
+
+  }
+
+  loadWorkEntryType() {
+    this.searchWorkEntryType().subscribe(
+      result => {
+        this.filterdWorks = result.items;
+      }
+    )
+  }
+
+  searchWorkEntryType(search?: string) {
+    var page = new WorkEntryTypePage();
+    page.limit = 20;
+    page.offset = 0;
+    page.filter = search ? search : '';
+    return this.timeKeepingServive.getPagedWorkEntryType(page);
   }
 
   loadFormApi() {
@@ -66,7 +98,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
 
   checkTimeOut(evt) {
     if (evt)
-      this.timeOut =new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), this.today.getHours(), this.today.getMinutes());
+      this.timeOut = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), this.today.getHours(), this.today.getMinutes());
     else
       this.timeOut = null;
   }

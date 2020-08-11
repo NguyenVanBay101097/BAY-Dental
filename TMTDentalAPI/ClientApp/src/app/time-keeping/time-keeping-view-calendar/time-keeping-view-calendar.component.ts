@@ -11,6 +11,8 @@ import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialo
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
+import { TimeKeepingWorkEntryTypeComponent } from '../time-keeping-work-entry-type/time-keeping-work-entry-type.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -39,6 +41,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     private employeeService: EmployeeService,
     private modalService: NgbModal,
     private timeKeepingService: TimeKeepingService,
+    private router: Router,
     private notificationService: NotificationService
   ) { }
 
@@ -64,7 +67,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       result => {
         this.listEmployeies = result.items;
         console.log(this.listEmployeies);
-
         this.listEmployeies.forEach(emp => {
           this.loadTimeSheet(emp);
         })
@@ -89,7 +91,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       this.listTimeSheetByEmpId[emp.id].push(value);
 
     })
-    console.log(this.listTimeSheetByEmpId);
   }
 
   setupTimeKeeping() {
@@ -206,7 +207,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     });
   }
 
-  clickTimeSheetCreate(evt,date, employee) {
+  clickTimeSheetCreate(evt, date, employee) {
     // if (new Date().getDate() < date.getDate()) {
     //   this.notificationService.show({
     //     content: 'Chưa đến ngày bạn bạn không thể chấm công',
@@ -225,6 +226,10 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.result.then(() => {
       this.loadData();
     });
+  }
+
+  setupWordEntryType() {
+    this.router.navigateByUrl("/work-entry-types");
   }
 
   nextMonthFilter(myDate) {

@@ -14,7 +14,7 @@ export class ChamCongSave {
 export class EmployeeChamCongPaged {
   limit: number;
   offset: number;
-  filter:string;
+  filter: string;
   from: string;
   to: string;
 }
@@ -34,6 +34,8 @@ export class ChamCongBasic {
   hourWorked: number;
   employee: EmployeeBasic;
   employeeId: string;
+  workEntryTypeId: string;
+  workEntryType: WorkEntryType;
 }
 
 export class TimeSheetEmployee {
@@ -46,6 +48,31 @@ export class TimeKeepingSave {
 
 }
 
+export class WorkEntryType {
+  id: string;
+  name: string;
+  isHasTimeKeeping: boolean;
+  color: string;
+}
+
+export class WorkEntryTypePage {
+  limit: number;
+  offset: number;
+  filter: string;
+}
+
+export class WorkEntryTypePaging {
+  offset: number;
+  limit: number;
+  totalItems: number;
+  items: WorkEntryType[];
+}
+
+export class WorkEntryTypeSave {
+  name: string;
+  color: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -53,7 +80,7 @@ export class TimeKeepingService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/ChamCongs";
-
+  apiUrlWorkingEntryType = "api/WorkEntryTypes";
   create(val): Observable<ChamCongSave> {
     return this.http.post<ChamCongSave>(this.base_api + this.apiUrl, val);
   }
@@ -79,13 +106,31 @@ export class TimeKeepingService {
       { responseType: "blob" });
   }
 
-  CreateSetupChamcong(val)
-  {
+  CreateSetupChamcong(val) {
     return this.http.post(this.base_api + 'api/SetupChamcongs', val);
   }
 
-  UpdateSetupChamcong(id, val)
-  {
+  UpdateSetupChamcong(id, val) {
     return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
+  }
+
+  getPagedWorkEntryType(val): Observable<WorkEntryTypePaging> {
+    return this.http.get<WorkEntryTypePaging>(this.base_api + this.apiUrlWorkingEntryType, { params: val });
+  }
+
+  deleteWorkEntryType(id) {
+    return this.http.delete(this.base_api + this.apiUrlWorkingEntryType + '/' + id);
+  }
+
+  getWorkEntryType(id): Observable<WorkEntryType> {
+    return this.http.get<WorkEntryType>(this.base_api + this.apiUrlWorkingEntryType + '/' + id);
+  }
+
+  createWorkEntryType(val) {
+    return this.http.post(this.base_api + this.apiUrlWorkingEntryType, val);
+  }
+
+  updateWorkEntryType(id, val) {
+    return this.http.put(this.base_api + this.apiUrlWorkingEntryType + '/id', val);
   }
 }

@@ -44,6 +44,18 @@
                                     {{dateTime | date:'EEEE , dd/MM/yyyy'}}
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Work Entry Type</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="form-control" [data]="filterdWorks" [textField]="'name'"
+                                        [filterable]="true" #workCbx formControlName="workEntryTypeId"
+                                        [valueField]="'id'" [valuePrimitive]="true">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -75,6 +87,8 @@
                                     <label class="o_form_label ">Giờ ra</label>
                                 </td>
                             </tr>
+
+
                         </tbody>
                     </table>
                 </div>

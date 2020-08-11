@@ -27,23 +27,8 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên nhóm đơn vị" width="250">
+        <kendo-grid-column field="name" title="Tên loại" width="250">
         </kendo-grid-column>
-        <kendo-grid-column field="categoryName" title="Nhóm" width="250">
-        </kendo-grid-column>
-        <kendo-grid-column field="uomType" title="Loại" width="250">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <label *ngIf="dataItem.uomType=='reference'">Đơn vị gốc của nhóm này</label>
-                <label *ngIf="dataItem.uomType=='bigger'">Lớn hơn đơn vị gốc</label>
-                <label *ngIf="dataItem.uomType=='smaller'">Nhỏ hơn đơn vị gốc</label>
-            </ng-template>
-        </kendo-grid-column>
-        <!-- <kendo-grid-column field="active" title="Hiệu lực" width="70">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    <i *ngIf="dataItem.active" class="fas fa-check" style="color: #008000;"></i>
-                    <i *ngIf="!dataItem.active" class="fas fa-times" style="color: red;"></i>
-                </ng-template>
-            </kendo-grid-column> -->
         <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
