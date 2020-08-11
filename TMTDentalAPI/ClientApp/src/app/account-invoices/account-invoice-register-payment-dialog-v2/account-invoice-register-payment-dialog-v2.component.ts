@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet, AccountRegisterPaymentCreatePayment, AccountRegisterPaymentDisplay } from 'src/app/account-payments/account-register-payment.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalService, AccountJournalSimple, AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
@@ -42,17 +42,25 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       invoiceIds: null,
       saleOrderIds: null,
       serviceCardOrderIds: null,
-      // orderLines: this.fb.array([]),
-      price_dv1: 0,
-      price_dv2: 0,
-
+      saleOrderLinePaymentRels: this.fb.array([])
     });
 
     setTimeout(() => {
       if (this.defaultVal) {
+        console.log(this.defaultVal);
         this.paymentForm.patchValue(this.defaultVal);
         var paymentDate = new Date(this.defaultVal.paymentDate);
         this.paymentForm.get('paymentDateObj').setValue(paymentDate);
+        
+        const control = this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
+        control.clear();
+        this.defaultVal['saleOrderLinePaymentRels'].forEach(line => {
+          var g = this.fb.group(line);
+          control.push(g);
+        });
+        this.paymentForm.markAsPristine();
+
+        console.log(this.paymentForm.value);
       }
   
       this.loadFilteredJournals();
@@ -120,6 +128,11 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
+    val.saleOrderLinePaymentRels.forEach(function(v){ 
+      delete v.amountPayment; 
+      delete v.saleOrderLine
+    });
+    console.log(val);
     return this.paymentService.create(val);
   }
 
@@ -127,7 +140,11 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     this.activeModal.dismiss();
   }
 
-  checkMoneyLine(key) {
+  get saleOrderLinePaymentRels() {
+    return this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
+  }
 
+  checkMoneyLine(value) {
+    console.log(value);
   }
 }

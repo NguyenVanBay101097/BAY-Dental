@@ -66,36 +66,25 @@
                         <thead>
                             <tr>
                                 <th>Dịch vụ</th>
-                                <th>Số tiền</th>
+                                <th class="text-right">Số tiền</th>
+                                <th class="text-right">Đã thanh toán</th>
+                                <th class="text-right">Tiền thanh toán</th>
                             </tr>
                         </thead>
-                        <!-- <tbody formArrayName="orderLines">
-                            <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                        <tbody formArrayName="saleOrderLinePaymentRels">
+                            <ng-container *ngFor="let line of saleOrderLinePaymentRels.controls; let i=index">
                                 <tr [formGroupName]="i">                                          
-                                    <td>{{ line.get('name').value }}</td>
-                                    <td></td>
+                                    <td>{{ line.get('saleOrderLine').value['name'] }}</td>
+                                    <td class="text-right">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
+                                    <td class="text-right">{{ line.get('amountPayment').value | number }}</td>
+                                    <td>
+                                        <kendo-numerictextbox [min]="0" [max]="line.get('saleOrderLine').value['priceSubTotal']" [format]="'n0'"
+                                            formControlName="amountPrepaid" 
+                                            (change)="checkMoneyLine($event)">
+                                        </kendo-numerictextbox>
+                                    </td>
                                 </tr>
                             </ng-container>
-                        </tbody> -->
-                        <tbody>
-                            <tr>
-                                <td>Dịch vụ 1</td>
-                                <td>
-                                    <kendo-numerictextbox [min]="0" [max]="100" [format]="'n0'"
-                                        formControlName="price_dv1" 
-                                        (change)="checkMoneyLine('price_dv1')">
-                                    </kendo-numerictextbox>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Dịch vụ 2</td>
-                                <td>
-                                    <kendo-numerictextbox [min]="0" [max]="100" [format]="'n0'"
-                                        formControlName="price_dv2" 
-                                        (change)="checkMoneyLine('price_dv2')">
-                                    </kendo-numerictextbox>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
