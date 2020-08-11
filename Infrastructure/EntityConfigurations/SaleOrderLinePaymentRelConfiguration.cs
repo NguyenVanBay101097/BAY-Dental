@@ -11,15 +11,23 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<SaleOrderLinePaymentRel> builder)
         {
-            builder.HasKey(x => new { x.PaymentId, x.SaleOrderLineId });
+           // builder.HasKey(x => new { x.PaymentId, x.SaleOrderLineId });
 
             builder.HasOne(x => x.Payment)
                 .WithMany(x => x.SaleOrderLinePaymentRels)
                 .HasForeignKey(x => x.PaymentId);
 
             builder.HasOne(x => x.SaleOrderLine)
-                .WithMany()
+                .WithMany(x=>x.SaleOrderLinePaymentRels)
                 .HasForeignKey(x => x.SaleOrderLineId);
+
+            builder.HasOne(x => x.CreatedBy)
+           .WithMany()
+           .HasForeignKey(x => x.CreatedById);
+
+            builder.HasOne(x => x.WriteBy)
+                .WithMany()
+                .HasForeignKey(x => x.WriteById);
         }
     }
 }

@@ -148,5 +148,7 @@ namespace ApplicationCore.Entities
 
 
         public ICollection<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; } = new List<SaleOrderLineInvoice2Rel>();
+
+        public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
     }
 }

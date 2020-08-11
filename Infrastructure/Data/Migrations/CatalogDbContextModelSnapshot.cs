@@ -5635,10 +5635,8 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLinePaymentRel", b =>
                 {
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SaleOrderLineId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("AmountPrepaid")
@@ -5650,18 +5648,23 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SaleOrderLineId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("PaymentId", "SaleOrderLineId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("SaleOrderLineId");
 
@@ -9701,7 +9704,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany()
+                        .WithMany("SaleOrderLinePaymentRels")
                         .HasForeignKey("SaleOrderLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
