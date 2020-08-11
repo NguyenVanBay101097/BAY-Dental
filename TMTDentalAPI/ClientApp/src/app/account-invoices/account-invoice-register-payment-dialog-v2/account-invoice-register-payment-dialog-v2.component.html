@@ -78,9 +78,11 @@
                                     <td class="text-right">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
                                     <td class="text-right">{{ line.get('amountPayment').value | number }}</td>
                                     <td>
-                                        <kendo-numerictextbox [min]="0" [max]="line.get('saleOrderLine').value['priceSubTotal']" [format]="'n0'"
+                                        <kendo-numerictextbox 
+                                            [min]="0" [max]="line.get('saleOrderLine').value['priceSubTotal']" 
+                                            [step]="1000" [format]="'n0'"
                                             formControlName="amountPrepaid" 
-                                            (change)="checkMoneyLine($event)">
+                                            (valueChange)="checkMoneyLine($event, line)">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>

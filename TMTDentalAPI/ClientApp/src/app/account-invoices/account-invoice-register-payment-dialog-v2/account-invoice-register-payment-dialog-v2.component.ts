@@ -144,7 +144,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     return this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
   }
 
-  checkMoneyLine(value) {
+  checkMoneyLine(value, line: FormGroup) {
     console.log(value);
+    console.log(line.get('saleOrderLine').value);
   }
 }
