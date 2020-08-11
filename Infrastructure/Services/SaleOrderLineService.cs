@@ -199,23 +199,24 @@ namespace Infrastructure.Services
         {
             var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
             var res = new SaleOrderLinePartnerCommission();
-            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x=>x.PartnerCommission)
+            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
                 .Include("Salesman.Partner")
                 .Include("Salesman.Employee")
                 .Include("Salesman.Employee.Commission").ToListAsync();
             foreach (var line in lines)
             {
-                if (line.PartnerCommissionId == null)
-                {
-                     res = new SaleOrderLinePartnerCommission
-                    {
-                        PartnerId = line.Salesman.PartnerId,
-                        CommissionId = line.Salesman.Employee.CommissionId.HasValue ? line.Salesman.Employee.CommissionId : null,
-                        SaleOrderLineId = line.Id,
-                    };
+                if (!line.Salesman.EmployeeId.HasValue || !line.Salesman.Employee.CommissionId.HasValue)
+                    continue;
 
-                    await partnerCommission.CreateAsync(res);                  
-                }
+                res = new SaleOrderLinePartnerCommission
+                {
+                    PartnerId = line.Salesman.PartnerId,
+                    CommissionId = line.Salesman.Employee.CommissionId.HasValue ? line.Salesman.Employee.CommissionId : null,
+                    SaleOrderLineId = line.Id,
+                };
+
+                await partnerCommission.CreateAsync(res);
+
 
                 line.PartnerCommissionId = res.Id;
             }
@@ -268,7 +269,7 @@ namespace Infrastructure.Services
                 Discount = self.Discount,
                 PriceUnit = self.PriceUnit,
                 DiscountType = self.DiscountType,
-                DiscountFixed = self.DiscountFixed, 
+                DiscountFixed = self.DiscountFixed,
                 SalesmanId = self.SalesmanId
             };
 
@@ -347,7 +348,7 @@ namespace Infrastructure.Services
                 var related_program = await programObj.SearchQuery(x => x.DiscountLineProductId == line.ProductId).ToListAsync();
                 if (related_program.Any())
                 {
-                    foreach(var program in related_program)
+                    foreach (var program in related_program)
                     {
                         var promo_programs = await _dbContext.SaleOrderNoCodePromoPrograms.Where(x => x.ProgramId == program.Id).ToListAsync();
                         _dbContext.SaleOrderNoCodePromoPrograms.RemoveRange(promo_programs);
@@ -400,11 +401,11 @@ namespace Infrastructure.Services
 
             var orderId = lines.Select(x => x.OrderId).FirstOrDefault();
             var order = await orderObj.GetSaleOrderWithLines(orderId);
-            
+
             ComputeAmount(order.OrderLines);
 
             //tính lại tổng tiền phiếu điều trị
-             orderObj._AmountAll(order);
+            orderObj._AmountAll(order);
 
             await orderObj.UpdateAsync(order);
             // tính lại công nợ

@@ -357,7 +357,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new AccountFinancialReportProfile());
                 mc.AddProfile(new CommissionProfile());
                 mc.AddProfile(new CommissionProductRuleProfile());
-
+                mc.AddProfile(new SaleOrderLinePaymentRelProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
