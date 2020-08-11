@@ -21,8 +21,10 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
   title: string;
+  maxAmount: number = 0;
 
   showPrint = false;
+  showError = false;
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
@@ -47,7 +49,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     setTimeout(() => {
       if (this.defaultVal) {
-        console.log(this.defaultVal);
         this.paymentForm.patchValue(this.defaultVal);
         var paymentDate = new Date(this.defaultVal.paymentDate);
         this.paymentForm.get('paymentDateObj').setValue(paymentDate);
@@ -59,8 +60,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
           control.push(g);
         });
         this.paymentForm.markAsPristine();
-
-        console.log(this.paymentForm.value);
       }
   
       this.loadFilteredJournals();
@@ -71,6 +70,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
         switchMap(value => this.accountJournalService.autocomplete(value))
       ).subscribe(result => {
         this.filteredJournals = result;
+        this.maxAmount = this.getValueForm('amount');
         this.journalCbx.loading = false;
       });
     });
@@ -79,7 +79,12 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
       this.filteredJournals = result;
+      this.maxAmount = this.getValueForm('amount');
     })
+  }
+
+  getValueForm(key) {
+    return this.paymentForm.get(key).value;
   }
 
   searchJournals(search?: string) {
@@ -94,7 +99,11 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       return;
     }
 
-    this.create().subscribe((result: any) => {
+    var val = this.getValueFormSave();
+    if (val == null)
+      return;
+
+    this.paymentService.create(val).subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
         this.activeModal.close(true);
       }, (err) => {
@@ -110,7 +119,11 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       return;
     }
 
-    this.create().subscribe((result: any) => {
+    var val = this.getValueFormSave();
+    if (val == null)
+      return;
+
+    this.paymentService.create(val).subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
         this.activeModal.close({
           print: true,
@@ -124,16 +137,23 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     });
   }
 
-  create() {
+  getValueFormSave() {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
+    var sumAmountPrepaid = 0;
     val.saleOrderLinePaymentRels.forEach(function(v){ 
       delete v.amountPayment; 
-      delete v.saleOrderLine
+      delete v.saleOrderLine;
+      sumAmountPrepaid += v.amountPrepaid;
     });
-    console.log(val);
-    return this.paymentService.create(val);
+    if (val.amount != sumAmountPrepaid) {
+      this.showError = true;
+      return null;
+    } else {
+      this.showError = false;
+    }
+    return val;
   }
 
   cancel() {
@@ -144,8 +164,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     return this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
   }
 
-  checkMoneyLine(value, line: FormGroup) {
-    console.log(value);
-    console.log(line.get('saleOrderLine').value);
+  getMaxMoneyLine(line: FormGroup) {
+    return line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value;
   }
 }

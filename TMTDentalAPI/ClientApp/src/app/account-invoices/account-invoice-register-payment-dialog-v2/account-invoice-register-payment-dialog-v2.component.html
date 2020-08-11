@@ -30,7 +30,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" formControlName="amount" [format]="'n0'">
+                                    <kendo-numerictextbox 
+                                        [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
+                                        [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                        formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -62,6 +65,9 @@
                     </table>
                 </div>
                 <div class="o_group">
+                    <div *ngIf="showError" class="text-danger">
+                        Số tiền thanh toán cho các dịch vụ chưa trùng khớp
+                    </div>
                     <table class="table table-sm">
                         <thead>
                             <tr>
@@ -74,15 +80,14 @@
                         <tbody formArrayName="saleOrderLinePaymentRels">
                             <ng-container *ngFor="let line of saleOrderLinePaymentRels.controls; let i=index">
                                 <tr [formGroupName]="i">                                          
-                                    <td>{{ line.get('saleOrderLine').value['name'] }}</td>
-                                    <td class="text-right">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
-                                    <td class="text-right">{{ line.get('amountPayment').value | number }}</td>
+                                    <td class="my-padding">{{ line.get('saleOrderLine').value['name'] }}</td>
+                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
+                                    <td class="text-right my-padding">{{ line.get('amountPayment').value | number }}</td>
                                     <td>
                                         <kendo-numerictextbox 
-                                            [min]="0" [max]="line.get('saleOrderLine').value['priceSubTotal']" 
-                                            [step]="1000" [format]="'n0'"
-                                            formControlName="amountPrepaid" 
-                                            (valueChange)="checkMoneyLine($event, line)">
+                                            [min]="0" [max]="getMaxMoneyLine(line)" 
+                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            formControlName="amountPrepaid">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>
