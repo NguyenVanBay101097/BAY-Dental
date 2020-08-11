@@ -33,5 +33,10 @@ namespace ApplicationCore.Entities
         /// trạng thái của chấm công: intitial, process, done
         /// </summary>
         public string Status { get; set; }
+        /// <summary>
+        /// loại chấm công: nghỉ phép, workfromhome.....v.v
+        /// </summary>
+        public Guid? WorkEntryTypeId { get; set; }
+        public WorkEntryType WorkEntryType { get; set; }
     }
 }

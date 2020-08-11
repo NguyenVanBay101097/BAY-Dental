@@ -186,6 +186,7 @@ namespace Infrastructure.Data
 
         public DbSet<ChamCong> ChamCongs { get; set; }
         public DbSet<SetupChamcong> setupChamcongs { get; set; }
+        public DbSet<WorkEntryType> WorkEntryTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
