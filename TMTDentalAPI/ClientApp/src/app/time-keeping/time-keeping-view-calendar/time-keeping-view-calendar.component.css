@@ -99,7 +99,7 @@ p {
     display: none;
 }
 
-.oe_kanban_timekepping> span > i:hover{
+.oe_kanban_timeSheet> span > i:hover{
     opacity: 0.6;
     border-radius: 50%;
 }
