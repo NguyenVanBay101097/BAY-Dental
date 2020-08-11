@@ -1,13 +1,11 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ProductCategoryService, ProductCategoryBasic, ProductCategoryPaged, ProductCategoryDisplay } from '../product-category.service';
-import { ProductCategory } from '../product-category';
-import { WindowRef } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable } from 'rxjs';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProductCategoryBasic, ProductCategoryDisplay, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
 
 @Component({
   selector: 'app-product-category-dialog',

@@ -53,6 +53,7 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
 import { MyCustomNgbModule } from './my-custom-ngb.module';
 import { BinaryFileInputComponent } from './binary-file-input/binary-file-input.component';
 import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { ProductCategoryDialogComponent } from './product-category-dialog/product-category-dialog.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +99,8 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
     BinaryFileInputComponent,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -139,7 +141,8 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
     BinaryFileInputComponent,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent
   ],
   imports: [
     CommonModule,
@@ -170,7 +173,8 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
     ToaThuocCuDialogSaveComponent,
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent
   ],
 })
 export class SharedModule { }
