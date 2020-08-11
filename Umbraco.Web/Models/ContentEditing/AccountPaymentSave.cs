@@ -30,9 +30,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<SaleOrderLinePaymentRelSave> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRelSave>();
     }
 
-    public class SaleOrderLinePaymentRelSave
-    {
-        public Guid SaleOrderLineId { get; set; }
-        public decimal? AmountPrepaid { get; set; }
-    }
+   
 }
