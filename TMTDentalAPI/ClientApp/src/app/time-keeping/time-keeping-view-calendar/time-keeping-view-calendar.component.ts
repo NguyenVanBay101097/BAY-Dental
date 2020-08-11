@@ -8,6 +8,9 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { DateInputModule } from '@progress/kendo-angular-dateinputs';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { offset } from '@progress/kendo-date-math';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -21,6 +24,10 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   flag = true;
   listTimeSheetByEmpId: { [id: string]: TimeSheetEmployee[] } = {};
   dateList: Date[];
+  searchUpdate = new Subject<string>();
+  search: string;
+
+
   public today: Date = new Date(new Date().toDateString());
   public filterMonth: Date = new Date(this.today);
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -37,10 +44,22 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getDateMonthList();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.loadData();
+      });
   }
 
   loadData() {
     var page = new EmployeeChamCongPaged();
+    page.filter = this.search ? this.search : '';
+    page.limit = 20;
+    page.offset = 0;
+    page.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
+    page.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
     this.timeKeepingService.getEmpChamCong(page).subscribe(
       result => {
         this.listEmployeies = result.items;
@@ -158,10 +177,10 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   buttonFilterMonth(event) {
     if (event && event.dateFrom && event.dateTo) {
-     this.monthStart = event.dateFrom;
-     this.monthEnd = event.dateTo;
-     this.filterMonth = event.dateFrom;
-     this.getDateMonthList();
+      this.monthStart = event.dateFrom;
+      this.monthEnd = event.dateTo;
+      this.filterMonth = event.dateFrom;
+      this.getDateMonthList();
     }
   }
 
@@ -187,7 +206,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     });
   }
 
-  clickTimeSheetCreate(date, employee) {
+  clickTimeSheetCreate(evt,date, employee) {
     // if (new Date().getDate() < date.getDate()) {
     //   this.notificationService.show({
     //     content: 'Chưa đến ngày bạn bạn không thể chấm công',
@@ -198,7 +217,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     //   });
     //   return;
     // }
-
+    evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cài đặt';
     modalRef.componentInstance.employee = employee;

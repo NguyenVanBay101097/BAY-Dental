@@ -3,6 +3,7 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TimeKeepingService, ChamCongBasic, ChamCongSave } from '../time-keeping.service';
 import { EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -22,7 +23,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   constructor(
     private activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private timeKeepingServive: TimeKeepingService
+    private timeKeepingServive: TimeKeepingService,
+    private intl: IntlService
   ) { }
 
   ngOnInit() {
@@ -45,11 +47,11 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         this.chamCong = result;
         if (this.chamCong && this.chamCong.timeIn) {
           this.formGroup.get('timeIn').setValue(true);
-          this.timeIn = this.chamCong.timeIn
+          this.timeIn = new Date(this.chamCong.timeIn);
         }
         if (this.chamCong && this.chamCong.timeOut) {
           this.formGroup.get('timeOut').setValue(true);
-          this.timeOut = this.chamCong.timeOut
+          this.timeOut = new Date(this.chamCong.timeOut);
         }
       }
     )
@@ -57,14 +59,14 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
 
   checkTimeIn(evt) {
     if (evt)
-      this.timeIn = new Date(this.dateTime.getFullYear(),this.dateTime.getMonth(),this.dateTime.getDate(),this.today.getHours(),this.today.getMinutes());
+      this.timeIn = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), this.today.getHours(), this.today.getMinutes());
     else
       this.timeIn = null;
   }
 
   checkTimeOut(evt) {
     if (evt)
-      this.timeOut = new Date(new Date);
+      this.timeOut =new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), this.today.getHours(), this.today.getMinutes());
     else
       this.timeOut = null;
   }
@@ -74,8 +76,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       return false;
 
     var val = new ChamCongSave();
-    val.timeIn = this.timeIn ? this.timeIn : null;
-    val.timeOut = this.timeOut ? this.timeOut : null
+    val.timeIn = this.timeIn ? this.intl.formatDate(this.timeIn, "yyyy-MM-ddThh:mm") : null;
+    val.timeOut = this.timeOut ? this.intl.formatDate(this.timeOut, "yyyy-MM-ddThh:mm") : null
     val.employeeId = this.employee.id;
     if (!val.timeOut && !val.timeIn) {
       return false;
@@ -88,6 +90,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       )
     }
     else {
+      debugger
       this.timeKeepingServive.create(val).subscribe(
         result => {
           this.activeModal.close();

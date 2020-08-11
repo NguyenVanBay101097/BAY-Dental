@@ -16,7 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public int Limit { get; set; }
-
+        public string Filter { get; set; }
         public int Offset { get; set; }
 
         public DateTime? From { get; set; }

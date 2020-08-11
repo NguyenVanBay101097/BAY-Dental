@@ -14,6 +14,7 @@ export class ChamCongSave {
 export class EmployeeChamCongPaged {
   limit: number;
   offset: number;
+  filter:string;
   from: string;
   to: string;
 }

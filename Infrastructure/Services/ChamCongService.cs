@@ -37,8 +37,14 @@ namespace Infrastructure.Services
         }
         public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
         {
+            ISpecification<Employee> spec = new InitialSpecification<Employee>(x => true);
+            if (!string.IsNullOrEmpty(val.Filter))
+            {
+                spec = spec.And(new InitialSpecification<Employee>(x => x.Name.Contains(val.Filter)));
+            }
+
             var empObj = GetService<IEmployeeService>();
-            var query = empObj.SearchQuery().Include(x => x.ChamCongs).
+            var query = empObj.SearchQuery(spec.AsExpression()).Include(x => x.ChamCongs).
                 Select(x => new Employee()
                 {
                     Id = x.Id,
@@ -126,7 +132,7 @@ namespace Infrastructure.Services
 
         public Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

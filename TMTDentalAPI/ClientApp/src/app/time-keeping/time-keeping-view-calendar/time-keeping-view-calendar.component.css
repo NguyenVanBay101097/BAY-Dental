@@ -22,24 +22,16 @@ p {
 }
 
 .oe_kanban_timekepping {
-    min-width: 50px;
-    min-height: 50px;
+    min-width: 59px;
+    min-height: 35px;
     border-radius: 3px;
-    background-color: #f0eeee;
+    max-width: 55px;
     position: relative;
-}
-
-.oe_kanban_timekepping:hover {
-    background-color: burlywood;
-}
-
-.oe_kanban_timekepping> span > i:hover{
-    opacity: 0.6;
-    border-radius: 50%;
 }
 
 .oe_kanban_content {
     cursor: pointer;
+    position: relative;
 }
 
 .o_content {
@@ -54,8 +46,6 @@ p {
     margin: 2px;
 }
 
-
-
 .o_kanban_view .o_kanban_record, .o_kanban_view .o_kanban_quick_create, .cdk-drag-preview .o_kanban_record, .cdk-drag-preview .o_kanban_quick_create, .o_kanban_record.cdk-drag-preview {
     padding: 5px 5px;
     border: 1px solid #dee2e6;
@@ -66,8 +56,14 @@ p {
     text-align: center;
 }
 
+.table {
+    max-width: 100%;
+    display: block;
+    overflow-x: scroll;
+}
+
 .table td, .table th {
-    padding: 6px !important;
+    padding: 2px !important;
 }
 
 .title_month {
@@ -78,9 +74,49 @@ p {
     padding-bottom: 8px;
 }
 
+.table thead th {
+    vertical-align: middle;
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+    min-width: 64px;
+}
+
 .o_content {
     max-width: 100%;
     padding: 10px 15px 15px 15px;
     background-color: white;
 }
 
+.oe_kanban_timeSheet {
+    background-color: #c2c2c2;
+    height: 34px;
+    border-radius: 5px;
+    display: flex;
+}
+
+.oe_kanban_timeSheet_create {
+    position: absolute;
+    display: none;
+}
+
+.oe_kanban_timeSheet_create>i {
+    font-size: 30px;
+}
+
+.oe_kanban_timekepping:hover>.oe_kanban_timeSheet_create {
+    display: block;
+    left: 55px;
+    top: 0px;
+    z-index: 100;
+    padding: 3px;
+    width: 35px;
+    background-color: white;
+    height: 35px;
+}
+
+.oe_kanban_timeSheet>span {
+    text-overflow: ellipsis;
+    white-space: pre;
+    overflow: hidden;
+    padding: 4px;
+}

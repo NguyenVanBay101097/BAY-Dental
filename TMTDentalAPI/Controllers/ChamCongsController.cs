@@ -103,62 +103,69 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ExportExcelFile(employeePaged val)
-        {
-            var stream = new MemoryStream();
-            var data = await _chamCongService.ExportFile(val);
-            byte[] fileContent;
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> ExportExcelFile(PartnerPaged val)
+        //{
+            //var stream = new MemoryStream();
+            //var data = await _chamCongService.GetExcel(val);
+            //byte[] fileContent;
 
-            using (var package = new ExcelPackage(stream))
-            {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+            //var gender_dict = new Dictionary<string, string>()
+            //{
+            //    { "male", "Nam" },
+            //    { "female", "Nữ" },
+            //    { "other", "Khác" }
+            //};
 
-                worksheet.Cells[1, 1].Value = "Tên KH";
-                worksheet.Cells[1, 2].Value = "Mã KH";
-                worksheet.Cells[1, 3].Value = "Ngày tạo";
-                worksheet.Cells[1, 4].Value = "Giới tính";
-                worksheet.Cells[1, 5].Value = "Ngày sinh";
-                worksheet.Cells[1, 6].Value = "SĐT";
-                worksheet.Cells[1, 7].Value = "Địa chỉ";
-                worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
-                worksheet.Cells[1, 9].Value = "Nghề nghiệp";
-                worksheet.Cells[1, 10].Value = "Email";
-                worksheet.Cells[1, 11].Value = "Ghi chú";
+            //using (var package = new ExcelPackage(stream))
+            //{
+            //    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+            //    worksheet.Cells[1, 1].Value = "Tên KH";
+            //    worksheet.Cells[1, 2].Value = "Mã KH";
+            //    worksheet.Cells[1, 3].Value = "Ngày tạo";
+            //    worksheet.Cells[1, 4].Value = "Giới tính";
+            //    worksheet.Cells[1, 5].Value = "Ngày sinh";
+            //    worksheet.Cells[1, 6].Value = "SĐT";
+            //    worksheet.Cells[1, 7].Value = "Địa chỉ";
+            //    worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
+            //    worksheet.Cells[1, 9].Value = "Nghề nghiệp";
+            //    worksheet.Cells[1, 10].Value = "Email";
+            //    worksheet.Cells[1, 11].Value = "Ghi chú";
 
-                var row = 2;
-                foreach (var item in data)
-                {
-                    //worksheet.Cells[row, 1].Value = item.Name;
-                    //worksheet.Cells[row, 2].Value = item.Ref;
-                    //worksheet.Cells[row, 3].Value = item.Date;
-                    //worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
-                    //worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
-                    //worksheet.Cells[row, 5].Value = item.DateOfBirth;
-                    //worksheet.Cells[row, 6].Value = item.Phone;
-                    //worksheet.Cells[row, 7].Value = item.Address;
-                    //worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
-                    //worksheet.Cells[row, 9].Value = item.Job;
-                    //worksheet.Cells[row, 10].Value = item.Email;
-                    //worksheet.Cells[row, 11].Value = item.Note;
+            //    worksheet.Cells["A1:K1"].Style.Font.Bold = true;
 
-                    row++;
-                }
+            //    var row = 2;
+            //    foreach (var item in data)
+            //    {
+            //        worksheet.Cells[row, 1].Value = item.Name;
+            //        worksheet.Cells[row, 2].Value = item.Ref;
+            //        worksheet.Cells[row, 3].Value = item.Date;
+            //        worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
+            //        worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
+            //        worksheet.Cells[row, 5].Value = item.DateOfBirth;
+            //        worksheet.Cells[row, 6].Value = item.Phone;
+            //        worksheet.Cells[row, 7].Value = item.Address;
+            //        worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
+            //        worksheet.Cells[row, 9].Value = item.Job;
+            //        worksheet.Cells[row, 10].Value = item.Email;
+            //        worksheet.Cells[row, 11].Value = item.Note;
 
-                worksheet.Column(4).Style.Numberformat.Format = "@";
-                worksheet.Column(5).Style.Numberformat.Format = "@";
+            //        row++;
+            //    }
 
-                package.Save();
+            //    worksheet.Column(4).Style.Numberformat.Format = "@";
+            //    worksheet.Column(5).Style.Numberformat.Format = "@";
 
-                fileContent = stream.ToArray();
-            }
+            //    package.Save();
 
-            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            stream.Position = 0;
+            //    fileContent = stream.ToArray();
+            //}
 
-            return new FileContentResult(fileContent, mimeType);
-        }
+            //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            //stream.Position = 0;
+
+            //return new FileContentResult(fileContent, mimeType);
+        //}
     }
 }

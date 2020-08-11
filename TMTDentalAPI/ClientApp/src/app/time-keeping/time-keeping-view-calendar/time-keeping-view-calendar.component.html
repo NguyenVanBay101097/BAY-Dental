@@ -4,6 +4,8 @@
             <li class="active">{{title}}</li>
         </ol>
         <div class="o_cp_searchview">
+            <input type="text" class="o_searchview_input form-control btn-sm" placeholder="Tìm kiếm theo tên nhân viên"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -27,7 +29,8 @@
         <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1" ngbDropdownToggle><i
                 class="fas fa-cog"></i></button>
         <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-            <button (click)="setupTimeKeeping()" ngbDropdownItem>Cài đặt</button>
+            <button (click)="setupTimeKeeping()" ngbDropdownItem>Cầu hình chấm công</button>
+            <button (click)="setupWordEntryType()" ngbDropdownItem>Loại đầu vào công việc</button>
         </div>
     </div>
     <div class="float-right pb-2">
@@ -43,13 +46,15 @@
         <thead>
             <tr>
                 <th *ngIf="flag" colspan="32" scope="col">
-                    <button class="btn btn-secondary btn-sm" (click)="previousMonthFilter(filterMonth)">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span class="title_month">Tháng {{filterMonth | date:'MM - yyyy'}}</span>
-                    <button class="btn btn-secondary btn-sm" (click)="nextMonthFilter(filterMonth)">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <div class="float-left">
+                        <button class="btn btn-secondary btn-sm" (click)="previousMonthFilter(filterMonth)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="title_month">Tháng {{filterMonth | date:'MM - yyyy'}}</span>
+                        <button class="btn btn-secondary btn-sm" (click)="nextMonthFilter(filterMonth)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
 
                     <div class="float-right">
                         <span class="mr-4 text-success">
@@ -83,12 +88,12 @@
                 <th scope="col" *ngFor="let date of dateList">
                     <div class="o_kanban_header">
                         <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
-                            <span class="o_column_title">{{date | date: 'EE'}}</span>
+                            <!-- <span class="o_column_title">{{date | date: 'EE'}}</span> -->
                             <span class="o_column_title"> {{date | date: 'dd'}}</span>
                         </div>
                         <div class="o_kanban_header_title text-success"
                             *ngIf="date.toDateString() == today.toDateString()">
-                            <span class="o_column_title">{{date | date: 'EE'}}</span>
+                            <!-- <span class="o_column_title">{{date | date: 'EE'}}</span> -->
                             <span class="o_column_title"> {{date | date: 'dd'}}</span>
                         </div>
                     </div>
@@ -98,22 +103,28 @@
         </thead>
         <tbody>
             <tr *ngFor="let empl of listEmployeies">
-                <th scope="row" style="min-width: 170px;">{{empl.name}}</th>
+                <th scope="row" style="min-width: 200px;">{{empl.name}}</th>
                 <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]"
-                    (click)="clickTimeSheetCreate(date.date,empl)">
+                    (click)="clickTimeSheetCreate($event,date.date,empl)">
                     <div class="oe_kanban_content">
-                        <div class="oe_kanban_timekepping">
-                            <span *ngFor="let cc of date.chamCongs"
-                                (click)="clickTimeSheet($event, cc.id, date.date, empl)">
-                                <i title="Đã chấm giờ vào và giờ ra" *ngIf="cc.status == 'done'"
-                                    class="fas fa-circle text-success"></i>
-                                <i title="Đã chấm giờ vào hoặc giờ ra" *ngIf="cc.status == 'process'"
-                                    class="fas fa-circle text-primary"></i>
-                            </span>
-                            <span *ngIf="date.chamCongs.length == 0 && today >= date.date">
-                                <i title="Chưa chấm công" class="fas fa-circle text-warning"></i>
-                            </span>
+                        <div class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
+                            (click)="clickTimeSheet($event, cc.id, date.date, empl)">
+                            <div class="oe_kanban_timeSheet" *ngIf="cc.status == 'done'">
+                                <span title="Chấm công">Chấm công</span>
+
+                            </div>
+                            <div class="oe_kanban_timeSheet" *ngIf="cc.status == 'process'">
+                                <span>Nghỉ bệnh</span>
+                            </div>
+                            <div class="oe_kanban_timeSheet_create"
+                                (click)="clickTimeSheetCreate($event,date.date,empl)">
+                                <i class="fas fa-plus-square text-primary"></i>
+                            </div>
                         </div>
+                        <div class="oe_kanban_timeSheet" *ngIf="!date.chamCongs">
+                            <div class="oe_kanban_timeSheet"></div>
+                        </div>
+
                     </div>
                 </td>
             </tr>
