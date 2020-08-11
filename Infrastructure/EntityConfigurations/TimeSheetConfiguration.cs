@@ -26,6 +26,9 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+            builder.HasOne(x => x.WorkEntryType)
+                .WithMany(x => x.ChamCongs)
+                .HasForeignKey(x => x.WorkEntryTypeId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
