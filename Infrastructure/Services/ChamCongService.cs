@@ -44,7 +44,7 @@ namespace Infrastructure.Services
             }
 
             var empObj = GetService<IEmployeeService>();
-            var query = empObj.SearchQuery(spec.AsExpression()).Include(x => x.ChamCongs).
+            var query = empObj.SearchQuery().Include(x => x.ChamCongs).Include("ChamCongs.WorkEntryType").
                 Select(x => new Employee()
                 {
                     Id = x.Id,
@@ -61,7 +61,16 @@ namespace Infrastructure.Services
                     (string.IsNullOrEmpty(val.Status) ||
                     (y.Status == val.Status))
 
-                ).ToList()
+                ).Select(y => new ChamCong(){
+                    Id = y.Id,
+                    DateCreated = y.DateCreated,
+                    Status = y.Status,
+                    WorkEntryTypeId = y.WorkEntryTypeId,
+                    TimeIn = y.TimeIn,
+                    TimeOut = y.TimeOut,
+                    WorkEntryType = y.WorkEntryType,
+                    HourWorked = y.HourWorked
+                        }).ToList()
                 });
 
             var items = await query.Skip(val.Offset).Take(val.Limit)
@@ -94,7 +103,7 @@ namespace Infrastructure.Services
                 Tongcong = 0;
                 foreach (var chamcong in emp.ChamCongs)
                 {
-                    if (chamcong.HourWorked >= fromOne)
+                    if (chamcong.HourWorked >= fromOne || (chamcong.WorkEntryType != null && chamcong.WorkEntryType.IsHasTimeKeeping))
                     {
                         Tongcong += 1;
                     }
@@ -116,6 +125,7 @@ namespace Infrastructure.Services
         {
             var chamcong = await SearchQuery(x => x.EmployeeId == id
             && (x.TimeIn.Value.Date.Equals(date.Date) || x.TimeOut.Value.Date.Equals(date.Date))).Include(x => x.Employee)
+                .Include(x=>x.WorkEntryType)
                 .FirstOrDefaultAsync();
             return _mapper.Map<ChamCongDisplay>(chamcong);
         }
