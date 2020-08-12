@@ -65,9 +65,9 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
   stateGet(state) {
     switch (state) {
       case 'sale':
-        return 'Đã xác nhận';
+        return 'Đang điều trị';
       case 'done':
-        return 'Đã khóa';
+        return 'Hoàn thành';
       case 'cancel':
         return 'Đã hủy';
       default:

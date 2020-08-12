@@ -34,7 +34,6 @@ import {
   ProductPricelistPaged,
 } from "src/app/price-list/price-list";
 import { PriceListService } from "src/app/price-list/price-list.service";
-import { PartnerCustomerCuDialogComponent } from "src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component";
 import { PartnerSearchDialogComponent } from "src/app/partners/partner-search-dialog/partner-search-dialog.component";
 import {
   EmployeeBasic,
@@ -45,6 +44,7 @@ import { EmployeeService } from "src/app/employees/employee.service";
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: "app-sale-quotation-create-update",

@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { WebService } from 'src/app/core/services/web.service';
 import { environment } from '../../../environments/environment';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 
 @Component({
   selector: 'app-image-file-upload',
@@ -17,7 +19,7 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   @Input() height: number;
   @Input() crop: boolean;
 
-  constructor(private webService: WebService) { }
+  constructor(private webService: WebService, private modalService: NgbModal) { }
 
   ngOnChanges(changes: SimpleChanges): void {
   }
@@ -43,14 +45,14 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
 
   get imageFileUrl() {
     if (this.width || this.height) {
-      var url = environment.uploadDomain + 'api/Web/Image/' + this.imageId + `/${this.width}x${this.height}`;
+      var url = this.imageId + `?width=${this.width}&height=${this.height}`;
       if (this.crop) {
-        url = url + '?crop=true';
+        url = url + '&mode=crop';
       }
 
       return url;
     }
     
-    return environment.uploadDomain + 'api/Web/Image/' + this.imageId + '/200x';
+    return this.imageId;
   }
 }

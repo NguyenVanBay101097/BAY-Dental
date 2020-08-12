@@ -12,6 +12,7 @@ export class AccountJournalFilter {
     limit: number;
     search: string;
     type: string;
+    companyId: string;
 }
 
 @Injectable({ providedIn: 'root' })

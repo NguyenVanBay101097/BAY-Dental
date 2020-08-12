@@ -32,13 +32,13 @@
                 <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
                     (searchChange)="onSearchDateChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <div class="ml-2">
+                <!-- <div class="ml-2">
                     <div class="custom-control custom-checkbox pt-1">
                         <input type="checkbox" [(ngModel)]="isQuotation" (ngModelChange)="loadDataFromApi()"
                             class="custom-control-input" id="customCheck1">
                         <label class="custom-control-label" for="customCheck1">Phiếu tư vấn</label>
                     </div>
-                </div>
+                </div> -->
             </div>
             <nav aria-label="View switcher" class="btn-group o_cp_switch_buttons" role="toolbar">
                 <button accesskey="l" (click)="setViewType('list')" [class.active]="viewType == 'list'"
@@ -59,6 +59,9 @@
         <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true"
             [loading]="loading" (pageChange)="pageChange($event)">
             <kendo-grid-column field="name" [title]="getTitle()">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.name || 'Chưa xác định'}}
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="productUOMQty" class="text-right" title="Số lượng dịch vụ"
                 footerClass="text-right font-weight-bold">

@@ -55,9 +55,13 @@
                         (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
+                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm"
                         (click)="actionDone()">
-                        Khóa phiếu
+                        Hoàn thành
+                    </button>
+                    <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm"
+                    (click)="actionUnlock()">
+                        Chưa hoàn thành
                     </button>
                     <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']" class="btn btn-secondary btn-sm">
                         Trở lại
@@ -67,12 +71,12 @@
                     <button [disabled]="saleOrder.state !== 'done'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': saleOrder.state === 'done', 'btn-secondary': saleOrder.state !== 'done'}"
                         type="button">
-                        Đã khóa
+                        Hoàn thành
                     </button>
                     <button [disabled]="saleOrder.state !== 'sale'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': saleOrder.state === 'sale', 'btn-secondary': saleOrder.state !== 'sale'}"
                         type="button">
-                        Đã xác nhận
+                        Đang điều trị
                     </button>
                     <button [disabled]="saleOrder.state !== 'draft'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': saleOrder.state === 'draft', 'btn-secondary': saleOrder.state !== 'draft'}"
@@ -329,7 +333,7 @@
                                 </table>
                             </div>
                             <div class="oe_right">
-                                <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog>
+                                <!-- <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog> -->
                                 <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                     class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">

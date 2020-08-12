@@ -12,9 +12,13 @@ namespace Umbraco.Web.Models.ContentEditing
             Limit = 20;
         }
         public int Offset { get; set; }
+
         public int Limit { get; set; }
+
         public string Search { get; set; }
 
         public string Type { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 }

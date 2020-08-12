@@ -2,10 +2,10 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/customers">Khách hàng</a>
+                <a routerLink="/partners/customers">Khách hàng</a>
             </li>
             <li *ngIf="partner">
-                <a [routerLink]="['/customer/' + partner.id]">{{partner.displayName}}</a>
+                <a [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
             </li>
             <li class="active">Hồ sơ khách hàng</li>
         </ol>

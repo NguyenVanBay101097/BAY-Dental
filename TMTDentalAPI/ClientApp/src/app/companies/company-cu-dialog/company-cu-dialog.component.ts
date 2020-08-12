@@ -78,6 +78,11 @@ export class CompanyCuDialogComponent implements OnInit {
 
   }
 
+  onAvatarUploaded(data: any) {
+    var fileUrl = data ? data.fileUrl : null;
+    this.companyForm.get('logo').setValue(fileUrl);
+  }
+
   loadSourceCities() {
     this.http.post('https://aship.skyit.vn/api/ApiShippingCity/GetCities', {
       provider: 'Undefined'

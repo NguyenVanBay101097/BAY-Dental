@@ -8,8 +8,9 @@
     <div class="o_form_view" [formGroup]="userForm" #form="ngForm" autocomplete="off">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <app-field-binary-image-simple formControlName="avatar" [imgSource]="userForm.get('avatar').value">
-                </app-field-binary-image-simple>
+                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="userForm.get('avatar').value"
+                    [width]="200" [height]="200">
+                </app-image-file-upload>
                 <div class="oe_title">
                     <label class="o_form_label">Tên</label>
                     <h1>

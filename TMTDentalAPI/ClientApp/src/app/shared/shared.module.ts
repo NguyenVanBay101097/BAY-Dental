@@ -54,6 +54,8 @@ import { MyCustomNgbModule } from './my-custom-ngb.module';
 import { BinaryFileInputComponent } from './binary-file-input/binary-file-input.component';
 import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { ProductCategoryDialogComponent } from './product-category-dialog/product-category-dialog.component';
+import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.component';
 
 @NgModule({
   declarations: [
@@ -100,7 +102,9 @@ import { ProductCategoryDialogComponent } from './product-category-dialog/produc
     AccountInvoiceRegisterPaymentDialogV2Component,
     BinaryFileInputComponent,
     PartnerSupplierCuDialogComponent,
-    ProductCategoryDialogComponent
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -142,7 +146,9 @@ import { ProductCategoryDialogComponent } from './product-category-dialog/produc
     AccountInvoiceRegisterPaymentDialogV2Component,
     BinaryFileInputComponent,
     PartnerSupplierCuDialogComponent,
-    ProductCategoryDialogComponent
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
   imports: [
     CommonModule,
@@ -174,7 +180,9 @@ import { ProductCategoryDialogComponent } from './product-category-dialog/produc
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
     PartnerSupplierCuDialogComponent,
-    ProductCategoryDialogComponent
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
 })
 export class SharedModule { }

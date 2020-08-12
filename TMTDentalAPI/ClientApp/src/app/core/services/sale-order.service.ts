@@ -103,6 +103,10 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
+    actionUnlock(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionUnlock', ids);
+    }
+
     applyCoupon(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyCoupon', data);
     }
