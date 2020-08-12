@@ -45,7 +45,7 @@ namespace Infrastructure.Services
             var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var saleOrderObj = GetService<IAccountPaymentService>();
             var saleOrderlineObj = GetService<ISaleOrderLineService>();
-            var paymentRels = paymmentRelObj.SearchQuery();
+            var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
 
             if (val.DateFrom.HasValue)
             {
@@ -59,14 +59,14 @@ namespace Infrastructure.Services
                 paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
             }
 
-         
+
 
             var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
 
             var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.CompanyId == companyId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels)
                 .Include("Salesman.Partner")
                 .Include("Salesman.Employee")
-                .Include("Salesman.Employee.Commission").ToListAsync();
+                .Include("Salesman.Employee.Commission").Where(x => x.SalesmanId != null && x.Salesman.Employee.CommissionId != null).ToListAsync();
 
             var res = lines.Select(x => new CommissionReportItem
             {
@@ -87,7 +87,7 @@ namespace Infrastructure.Services
             {
                 UserId = x.Key.UserId,
                 Name = x.Key.UserName,
-                CommissionTotal = x.Sum(s=>s.CommissionTotal)
+                CommissionTotal = x.Sum(s => s.CommissionTotal)
             }).ToList();
 
             return res2;
@@ -100,7 +100,7 @@ namespace Infrastructure.Services
             var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var saleOrderObj = GetService<IAccountPaymentService>();
             var saleOrderlineObj = GetService<ISaleOrderLineService>();
-            var paymentRels = paymmentRelObj.SearchQuery();
+            var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
 
             if (val.DateFrom.HasValue)
             {
@@ -125,14 +125,14 @@ namespace Infrastructure.Services
             {
                 UserId = x.SalesmanId,
                 Name = x.Salesman.Name,
-                Date = x.SaleOrderLinePaymentRels.Max(s=>s.Payment.PaymentDate),
+                Date = x.SaleOrderLinePaymentRels.Max(s => s.Payment.PaymentDate),
                 AmountTotal = x.PriceSubTotal,
                 PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
                 ProductName = x.Name,
                 PercentCommission = AddCommissionSaleOrderLine(x.Salesman.Employee.CommissionId.Value, x.ProductId.Value),
                 CommissionTotal = _ComputeCommission(x)
             }).ToList();
-          
+
 
             return res;
         }
@@ -189,7 +189,7 @@ namespace Infrastructure.Services
         public string UserId { get; set; }
         public string Name { get; set; }
         public decimal? CommissionTotal { get; set; }
-       
+
     }
 
     public class CommissionReportItem
