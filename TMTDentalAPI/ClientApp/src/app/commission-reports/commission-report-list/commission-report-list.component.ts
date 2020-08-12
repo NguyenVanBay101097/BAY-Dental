@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { CommissionReportsService, CommissionReport, ReportFilterCommission } from '../commission-reports.service';
-import { map } from 'rxjs/operators';
+import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { CompanyBasic, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-commission-report-list',
@@ -23,25 +25,44 @@ export class CommissionReportListComponent implements OnInit {
   formGroup: FormGroup;
   dateTo: Date;
   searchUpdate = new Subject<string>();
+  
+  @ViewChild('companyCbx', { static: true }) companyCbx: ComboBoxComponent;
+  filteredCompanies: CompanyBasic[] = [];
+  
   constructor(private commissionReportService: CommissionReportsService,
     private fb: FormBuilder,
-    private intl: IntlService) { }
+    private intl: IntlService,private companyService: CompanyService,) { }
 
   ngOnInit() {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    this.formGroup = this.fb.group({
+      dateFrom: this.monthStart,
+      dateTo: this.monthEnd,
+      company: null
+    });
+
     this.loadDataFromApi();
+
+    this.loadFilteredCompanies();
+
+    this.companyCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.companyCbx.loading = true),
+      switchMap(val => this.searchCompanies(val))
+    ).subscribe(
+      rs => {
+        this.filteredCompanies = rs.items;
+        this.companyCbx.loading = false;
+      });
+      
   }
 
   loadDataFromApi() {   
+    var formValue = this.formGroup.value;
     var val = new ReportFilterCommission();
-    if (this.dateFrom) {
-      val.dateFrom = this.intl.formatDate(this.dateFrom, 'd', 'en-US');
-    }
-    if (this.dateTo) {
-      val.dateTo = this.intl.formatDate(this.dateTo, 'd', 'en-US');
-    }
-   
+    val.dateFrom = formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateTo = formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.companyId = formValue.company ? formValue.company.id : null;
+    
     this.loading = true;
     this.commissionReportService.getReport(val).subscribe(result => {
       this.reportResults = result;       
@@ -49,6 +70,21 @@ export class CommissionReportListComponent implements OnInit {
     }, () => {
       this.loading = false;
     });
+  
+  }
+
+  loadFilteredCompanies() {
+    this.searchCompanies().subscribe(
+      result => {
+        this.filteredCompanies = result.items;
+      }
+    )
+  }
+
+  searchCompanies(search?: string) {
+    var params = new CompanyPaged();
+    params.search = search || '';
+    return this.companyService.getPaged(params);
   }
 
   public pageChange(event: PageChangeEvent): void {

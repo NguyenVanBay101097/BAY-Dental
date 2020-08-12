@@ -1,38 +1,68 @@
+
 <div class="o_cp_controller">
-    <div class="o_control_panel">
+    <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li class="active">
-                Thống kê hoa hồng bác sĩ
-            </li>
+            <li class="active">Thống kê hoa hồng bác sĩ</li>
         </ol>
-        <div class="o_cp_searchview">
-            <!-- <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input"
-                        placeholder="Tìm kiếm theo tên bác sĩ, phụ tá, dịch vụ, công đoạn, khách hàng..." type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                </div>
-            </div> -->
-        </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-            </div>
-            <div class="o_cp_sidebar">
-            </div>
-        </div>
-        <div class="o_cp_right">
-            <div class="btn-group o_search_options">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
-                (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>                       
-            </div>
-        </div>
     </div>
 </div>
 
-<div class="o_content">
-    <div>
-        <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+<div class="bg-white">
+    <div class="o_form_view o_form_nosheet o_form_editable">
+        <div class="o_group" [formGroup]="formGroup">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Ngày bắt đầu
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker class="form-control" formControlName="dateFrom"></kendo-datepicker>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Ngày kết thúc
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker class="form-control" formControlName="dateTo"></kendo-datepicker>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr hasGroups [groups]="'base.group_multi_company'">
+                        <td colspan="1" class="o_td_label">
+                            <label for="o_field_input_10" class="o_form_label o_form_label_help">
+                                Chi nhánh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-combobox [data]="filteredCompanies" [placeholder]="'Tất cả chi nhánh'"
+                                [textField]="'name'" [filterable]="true" #companyCbx formControlName="company"
+                                [valueField]="'id'">
+                            </kendo-combobox>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mb-2">
+            <button type="button" class="btn btn-primary btn-sm" (click)="loadDataFromApi()">Báo cáo</button>
+        </div>
+        <!-- <div class="text-center" *ngIf="loading">
+            <div class="spinner-border text-primary text-center" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+        </div> -->
+        <div>
+            <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)">
             
             <kendo-grid-column field="name" title="Bác sĩ">
@@ -56,5 +86,7 @@
                 <app-commission-report-detail [item]="dataItem" [dateFrom]="dateFrom" [dateTo]="dateTo"></app-commission-report-detail>
             </div>
         </kendo-grid>
+        </div>
     </div>
 </div>
+

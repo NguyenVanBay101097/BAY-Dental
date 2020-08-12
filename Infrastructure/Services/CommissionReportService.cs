@@ -40,7 +40,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<CommissionReport>> GetReport(ReportFilterCommission val)
         {
-            var companyId = CompanyId;
+            var companyId = val.CompanyId.HasValue ? val.CompanyId : CompanyId;
             //SearchQuery
             var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var saleOrderObj = GetService<IAccountPaymentService>();
@@ -52,15 +52,18 @@ namespace Infrastructure.Services
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
                 paymentRels = paymentRels.Where(x => x.Payment.PaymentDate >= dateFrom);
             }
+
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
             }
 
+         
+
             var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
 
-            var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels)
+            var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.CompanyId == companyId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels)
                 .Include("Salesman.Partner")
                 .Include("Salesman.Employee")
                 .Include("Salesman.Employee.Commission").ToListAsync();
@@ -109,6 +112,7 @@ namespace Infrastructure.Services
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
             }
+
 
             var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
 
@@ -209,6 +213,7 @@ namespace Infrastructure.Services
     {
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class ReportFilterCommissionDetail

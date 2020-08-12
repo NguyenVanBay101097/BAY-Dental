@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export class ReportFilterCommission {
   dateFrom: string;
   dateTo: string;
- 
+  companyId: string;
 }
 
 export class ReportFilterCommissionDetail {
