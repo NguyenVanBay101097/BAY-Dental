@@ -42,6 +42,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid SaleOrderLineId { get; set; }
         public SaleOrderLineDisplay SaleOrderLine { get; set; }
+        public bool isDone { get; set; }
         public decimal? AmountPayment { get; set; }
         public decimal? AmountPrepaid { get; set; }
     }

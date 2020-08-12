@@ -49,11 +49,14 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     setTimeout(() => {
       if (this.defaultVal) {
+        console.log(this.defaultVal);
         this.paymentForm.patchValue(this.defaultVal);
         var paymentDate = new Date(this.defaultVal.paymentDate);
         this.paymentForm.get('paymentDateObj').setValue(paymentDate);
+        this.maxAmount = this.getValueForm('amount');
+        this.paymentForm.get('amount').setValue(0);
         
-        const control = this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
+        const control = this.saleOrderLinePaymentRels;
         control.clear();
         this.defaultVal['saleOrderLinePaymentRels'].forEach(line => {
           var g = this.fb.group(line);
@@ -70,7 +73,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
         switchMap(value => this.accountJournalService.autocomplete(value))
       ).subscribe(result => {
         this.filteredJournals = result;
-        this.maxAmount = this.getValueForm('amount');
         this.journalCbx.loading = false;
       });
     });
@@ -79,7 +81,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
       this.filteredJournals = result;
-      this.maxAmount = this.getValueForm('amount');
     })
   }
 
@@ -166,5 +167,51 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
   getMaxMoneyLine(line: FormGroup) {
     return line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value;
+  }
+
+  changeMoneyLine(line: FormGroup) {
+    var sumAmountPrepaid = 0;
+    this.getValueForm('saleOrderLinePaymentRels').forEach(function(v){ 
+      sumAmountPrepaid += v.amountPrepaid;
+    });
+    this.paymentForm.get('amount').setValue(sumAmountPrepaid);
+  }
+
+  payOff() {
+    this.paymentForm.get('amount').setValue(this.maxAmount);
+
+    var lines = this.getValueForm('saleOrderLinePaymentRels');
+    const control = this.saleOrderLinePaymentRels;
+    control.clear();
+
+    lines.forEach(line => {
+      line.amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
+      var g = this.fb.group(line);
+      control.push(g);
+    });
+    this.paymentForm.markAsPristine();
+  }
+
+  enterMoney() {
+    var amount = this.getValueForm('amount');
+
+    var lines = this.getValueForm('saleOrderLinePaymentRels');
+    const control = this.saleOrderLinePaymentRels;
+    control.clear();
+
+    var amountPrepaid = 0;
+    lines.forEach(line => {
+      amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
+      if (amount >= amountPrepaid) {
+        amount -= amountPrepaid;
+        line.amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
+      } else {
+        line.amountPrepaid = amount;
+        amount = 0;
+      }
+      var g = this.fb.group(line);
+      control.push(g);
+    });
+    this.paymentForm.markAsPristine();
   }
 }

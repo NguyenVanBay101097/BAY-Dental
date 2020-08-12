@@ -538,13 +538,11 @@ namespace Infrastructure.Services
             foreach (var line in order.OrderLines)
             {
                 var amountPrepaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
-                if (amountPrepaid == line.PriceSubTotal)
-                    continue;
-
                 var res = new SaleOrderLinePaymentRelDisplay
                 {
                     SaleOrderLineId = line.Id,
                     SaleOrderLine = _mapper.Map<SaleOrderLineDisplay>(line),
+                    isDone = amountPrepaid == line.PriceSubTotal ? true : false,
                     AmountPayment = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value),
                     AmountPrepaid = 0
                 };

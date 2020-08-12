@@ -26,15 +26,11 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Số tiền
+                                        Nội dung
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox 
-                                        [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
-                                        [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                        formControlName="amount">
-                                    </kendo-numerictextbox>
+                                    <input type="text" formControlName="communication" class="form-control" />
                                 </td>
                             </tr>
                         </tbody>
@@ -54,11 +50,25 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Nội dung
+                                        Số tiền
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" formControlName="communication" class="form-control" />
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox 
+                                            [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
+                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            formControlName="amount">
+                                        </kendo-numerictextbox>
+                                        <span class="btn btn-sm btn-light ml-1" style="white-space: nowrap;"
+                                            (click)="enterMoney()">
+                                            <b>Nhập tiền</b>
+                                        </span>
+                                        <span class="btn btn-sm btn-light ml-1" style="white-space: nowrap;"
+                                            (click)="payOff()">
+                                            <b>Trả hết</b>
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -73,8 +83,9 @@
                             <tr>
                                 <th>Dịch vụ</th>
                                 <th class="text-right">Số tiền</th>
-                                <th class="text-right">Đã thanh toán</th>
-                                <th class="text-right">Tiền thanh toán</th>
+                                <th class="text-right">Đã trả</th>
+                                <th class="text-right">Còn thiếu</th>
+                                <th class="text-right">Thanh toán</th>
                             </tr>
                         </thead>
                         <tbody formArrayName="saleOrderLinePaymentRels">
@@ -83,11 +94,14 @@
                                     <td class="my-padding">{{ line.get('saleOrderLine').value['name'] }}</td>
                                     <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
                                     <td class="text-right my-padding">{{ line.get('amountPayment').value | number }}</td>
+                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value | number }}</td>
                                     <td>
                                         <kendo-numerictextbox 
+                                            [disabled]="line.get('isDone').value"
                                             [min]="0" [max]="getMaxMoneyLine(line)" 
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                            formControlName="amountPrepaid">
+                                            formControlName="amountPrepaid"
+                                            (valueChange)="changeMoneyLine(line)">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>
