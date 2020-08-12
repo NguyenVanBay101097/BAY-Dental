@@ -1,19 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
-import { PartnerCategorySimple, PartnerSourceSimple, District, City, AshipRequest, AshipData, Ward } from "../partner-simple";
 import {
   PartnerCategoryService,
   PartnerCategoryPaged,
 } from "src/app/partner-categories/partner-category.service";
-import { PartnerService } from "../partner.service";
-import { WindowRef } from "@progress/kendo-angular-dialog";
 import { NgbActiveModal, NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
 import * as _ from "lodash";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
-import { ActivatedRoute } from "@angular/router";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { UserSimple } from "src/app/users/user-simple";
@@ -21,6 +17,8 @@ import { PartnerSourceService, PartnerSourcePaged } from "src/app/partner-source
 import { UserService, UserPaged } from "src/app/users/user.service";
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { AddressCheckApi } from 'src/app/price-list/price-list';
+import { PartnerSourceSimple, District, City, Ward, PartnerCategorySimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",

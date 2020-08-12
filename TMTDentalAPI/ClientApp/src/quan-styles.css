@@ -51,10 +51,10 @@
     position: relative;
 }
 
-.o_form_view .oe_avatar+.oe_title {
+/* .o_form_view .oe_avatar+.oe_title {
     padding-left: 95px;
     margin-left: 5px;
-}
+} */
 
 .o_form_view .oe_avatar {
     float: right;

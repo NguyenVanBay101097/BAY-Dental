@@ -56,8 +56,8 @@ export class PartnerCustomerProfileInforComponent implements OnInit {
   }
 
   onAvatarUploaded(data: any) {
-    this.customerInfo.avatar = data ? data.id : null;
-    this.partnerService.saveAvatar({ partnerId: this.customerInfo.id, imageId: data ? data.id : null }).subscribe(() => {
+    this.customerInfo.avatar = data ? data.fileUrl : null;
+    this.partnerService.saveAvatar({ partnerId: this.customerInfo.id, imageId: data ? data.fileUrl : null }).subscribe(() => {
     });
   }
 }

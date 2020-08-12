@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { loaiThuChiDefault, LoaiThuChiService } from '../loai-thu-chi.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { LoaiThuChiService, loaiThuChiDefault } from 'src/app/loai-thu-chi/loai-thu-chi.service';
 
 @Component({
   selector: 'app-loai-thu-chi-form',

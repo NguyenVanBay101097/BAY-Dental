@@ -8,5 +8,6 @@ export class MyErrorHandler implements ErrorHandler {
     constructor() { }
 
     handleError(error) {
+        console.log(error);
     }
 }

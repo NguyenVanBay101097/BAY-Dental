@@ -7,7 +7,6 @@ import { Subject, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
-import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';

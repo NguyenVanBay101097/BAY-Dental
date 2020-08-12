@@ -24,7 +24,6 @@ import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.ser
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
-import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { from, of, Observable } from 'rxjs';
@@ -38,6 +37,7 @@ import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dia
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 declare var $: any;
 
@@ -695,13 +695,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Khóa phiếu điều trị';
-      modalRef.componentInstance.body = 'Khi khóa phiếu điều trị sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
-      modalRef.result.then(() => {
-        this.saleOrderService.actionDone([this.id]).subscribe(() => {
-          this.loadRecord();
-        });
+      this.saleOrderService.actionDone([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  actionUnlock() {
+    if (this.id) {
+      this.saleOrderService.actionUnlock([this.id]).subscribe(() => {
+        this.loadRecord();
       });
     }
   }

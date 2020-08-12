@@ -58,6 +58,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
 
         public string Avatar { get; set; }
+
+        public Guid CompanyId { get; set; }
     }
 
     public class ForgotPasswordViewModel

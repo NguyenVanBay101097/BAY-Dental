@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-partner-customer-profile',
