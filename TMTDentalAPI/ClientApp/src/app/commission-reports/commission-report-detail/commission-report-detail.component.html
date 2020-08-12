@@ -1,0 +1,32 @@
+<kendo-grid [data]="details" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" 
+(pageChange)="pageChange($event)">
+<kendo-grid-column field="date" title="Ngày">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.date | date:'dd-MM-yyyy'}}
+    </ng-template>
+</kendo-grid-column>
+<!-- <kendo-grid-column field="name" title="Bác sĩ">
+</kendo-grid-column> -->
+<kendo-grid-column field="productName" title="Dịch vụ">
+</kendo-grid-column>
+<kendo-grid-column field="amountTotal" title="Tổng tiền">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.amountTotal | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="prepaidTotal" title="Đã thanh toán">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.prepaidTotal | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="percentCommission" title="Phần trăm hoa hồng">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.percentCommission | number}} %
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="commissionTotal" title="Hoa hồng">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.commissionTotal | number}}
+    </ng-template>
+</kendo-grid-column>
+</kendo-grid>

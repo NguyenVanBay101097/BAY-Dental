@@ -9,5 +9,7 @@ namespace Infrastructure.Services
     public interface ICommissionReportService
     {
         Task<IEnumerable<CommissionReport>> GetReport(ReportFilterCommission val);
+
+        Task<IEnumerable<CommissionReportItem>> GetReportDetail(ReportFilterCommissionDetail val);
     }
 }

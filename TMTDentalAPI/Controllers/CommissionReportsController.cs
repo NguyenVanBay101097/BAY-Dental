@@ -18,10 +18,17 @@ namespace TMTDentalAPI.Controllers
             _commissionReportService = commissionReportService;
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> GetReport(ReportFilterCommission val)
         {
             var result = await _commissionReportService.GetReport(val);
+            return Ok(result);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetReportDetail(ReportFilterCommissionDetail val)
+        {
+            var result = await _commissionReportService.GetReportDetail(val);
             return Ok(result);
         }
     }

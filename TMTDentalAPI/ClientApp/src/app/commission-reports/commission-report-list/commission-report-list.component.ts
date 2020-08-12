@@ -33,7 +33,7 @@ export class CommissionReportListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadDataFromApi() {
+  loadDataFromApi() {   
     var val = new ReportFilterCommission();
     if (this.dateFrom) {
       val.dateFrom = this.intl.formatDate(this.dateFrom, 'd', 'en-US');
