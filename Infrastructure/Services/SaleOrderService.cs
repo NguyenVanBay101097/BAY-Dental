@@ -346,6 +346,16 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public async Task ActionUnlock(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+
+            foreach (var sale in self)
+                sale.State = "sale";
+
+            await UpdateAsync(self);
+        }
+
         public async Task ApplyCoupon(SaleOrderApplyCoupon val)
         {
             var couponCode = val.CouponCode;

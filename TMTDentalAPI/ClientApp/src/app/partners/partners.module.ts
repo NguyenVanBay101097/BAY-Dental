@@ -11,7 +11,6 @@ import { PartnerCustomerListDetailComponent } from './partner-customer-list-deta
 import { PartnerCustomerInfoComponent } from './partner-customer-info/partner-customer-info.component';
 import { PartnerCustomerInvoicesComponent } from './partner-customer-invoices/partner-customer-invoices.component';
 import { PartnerDetailListComponent } from './partner-detail-list/partner-detail-list.component';
-import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-invoice-lines.component';
 import { PartnerImportComponent } from './partner-import/partner-import.component';
@@ -47,7 +46,6 @@ import { PartnerInfoComponent } from './partner-info/partner-info.component';
     PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent,
     PartnerDetailListComponent,
-    PartnerCustomerCuDialogComponent,
     PartnerSupplierListComponent,
     PartnerInvoiceLinesComponent,
     PartnerImportComponent,
@@ -84,7 +82,6 @@ import { PartnerInfoComponent } from './partner-info/partner-info.component';
   entryComponents: [
     PartnerCreateUpdateComponent,
     PartnerImportComponent,
-    PartnerCustomerCuDialogComponent,
     PartnerSearchDialogComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
   ],

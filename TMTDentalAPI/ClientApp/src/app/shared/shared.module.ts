@@ -53,6 +53,9 @@ import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoic
 import { MyCustomNgbModule } from './my-custom-ngb.module';
 import { BinaryFileInputComponent } from './binary-file-input/binary-file-input.component';
 import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { ProductCategoryDialogComponent } from './product-category-dialog/product-category-dialog.component';
+import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +101,10 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
     BinaryFileInputComponent,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -139,7 +145,10 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
     BinaryFileInputComponent,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
   imports: [
     CommonModule,
@@ -170,7 +179,10 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
     ToaThuocCuDialogSaveComponent,
     DotKhamCreateUpdateDialogComponent,
     AccountInvoiceRegisterPaymentDialogV2Component,
-    PartnerSupplierCuDialogComponent
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
 })
 export class SharedModule { }

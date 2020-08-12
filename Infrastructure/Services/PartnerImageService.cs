@@ -68,9 +68,9 @@ namespace Infrastructure.Services
                     PartnerId = val.PartnerId,
                     DotkhamId = val.DotkhamId,
                     Date = val.Date ?? DateTime.Now,
-                    Name = item.Name,
+                    Name = item.FileName,
                     Note = val.Note,
-                    UploadId = item.Id,
+                    UploadId = item.FileUrl,
                 };
 
                 list.Add(partnerImage);
@@ -87,10 +87,5 @@ namespace Infrastructure.Services
             var uploadObj = GetService<IUploadService>();
             return uploadObj.UploadBinaryAsync(base64, fileName: fileName);
         }
-
-      
-
     }
-
-
 }

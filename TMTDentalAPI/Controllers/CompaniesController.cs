@@ -120,7 +120,7 @@ namespace TMTDentalAPI.Controllers
             company.PartnerId = partner.Id;
          
             await _companyService.CreateAsync(company);
-            await SaveLogo(company, val);
+            //await SaveLogo(company, val);
 
             await _companyService.InsertCompanyData(company);
 
@@ -154,7 +154,7 @@ namespace TMTDentalAPI.Controllers
             company.Partner.WardCode = val.Ward != null ? val.Ward.Code : string.Empty;
             company.Partner.WardName = val.Ward != null ? val.Ward.Name : string.Empty;
 
-            await SaveLogo(company, val);
+            //await SaveLogo(company, val);
             await _unitOfWork.BeginTransactionAsync();
             await _companyService.UpdateAsync(company);
             _unitOfWork.Commit();
@@ -236,7 +236,7 @@ namespace TMTDentalAPI.Controllers
                 var fileName = Path.GetRandomFileName() + "." + ImageHelper.GetImageExtension(val.Logo);
                 var uploadResult = await _uploadService.UploadBinaryAsync(val.Logo, fileName: fileName);
                 if (uploadResult != null)
-                    company.Logo = uploadResult.Id;
+                    company.Logo = uploadResult.FileUrl;
             }
             else if (string.IsNullOrEmpty(val.Logo))
             {

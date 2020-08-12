@@ -5,7 +5,7 @@
             <i class="fa fa-picture-o mr8"></i>
             {{partnerImageSelected.name}}
             <a class="o_download_btn ml8 small" title="Download"
-                [href]="imageDownloadApi + '/' + partnerImageSelected.uploadId">
+                [href]="partnerImageSelected.uploadId" download>
                 <i class="fa fa-fw fa-download"></i>
             </a>
         </span>
@@ -13,7 +13,7 @@
     </div>
     <div class="o_viewer_img_wrapper">
         <div class="o_viewer_zoomer">
-            <img class="o_viewer_img" [src]="imageApi + '/' + partnerImageSelected.uploadId" [ngStyle]="style" />
+            <img class="o_viewer_img" [src]="partnerImageSelected.uploadId" [ngStyle]="style" />
         </div>
     </div>
     <div class="o_viewer_toolbar btn-toolbar">
@@ -34,8 +34,8 @@
             </a>
         </div>
         <div class="btn-group">
-            <a class="o_viewer_toolbar_btn btn o_download_btn" data-toggle="tooltip" data-placement="top"
-                title="Download" [href]="imageDownloadApi + '/' + partnerImageSelected.uploadId">
+            <a class="o_viewer_toolbar_btn btn o_download_btn" download data-toggle="tooltip" data-placement="top"
+                title="Download" [href]="partnerImageSelected.uploadId">
                 <i class="fa fa-fw fa-download"></i>
             </a>
         </div>

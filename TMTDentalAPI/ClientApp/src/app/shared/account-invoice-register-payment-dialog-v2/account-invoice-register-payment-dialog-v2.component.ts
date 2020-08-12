@@ -9,6 +9,7 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AuthService } from 'src/app/auth/auth.service';
 @Component({
   selector: 'app-account-invoice-register-payment-dialog-v2',
   templateUrl: './account-invoice-register-payment-dialog-v2.component.html',
@@ -26,7 +27,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
-    private errorService: AppSharedShowErrorService) { }
+    private errorService: AppSharedShowErrorService, private authService: AuthService) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
@@ -56,7 +57,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       this.journalCbx.filterChange.asObservable().pipe(
         debounceTime(300),
         tap(() => (this.journalCbx.loading = true)),
-        switchMap(value => this.accountJournalService.autocomplete(value))
+        switchMap(value => this.searchJournals(value))
       ).subscribe(result => {
         this.filteredJournals = result;
         this.journalCbx.loading = false;
@@ -74,6 +75,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     var val = new AccountJournalFilter();
     val.type = 'bank,cash';
     val.search = search || '';
+    val.companyId = this.authService.userInfo.companyId;
     return this.accountJournalService.autocomplete(val);
   }
 
