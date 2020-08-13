@@ -59,6 +59,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
       discountType: 'percentage',
       discountFixed: 0,
       priceSubTotal: 1,
+      amountPaid:0,
+      amountResidual:0,
       diagnostic: null,
       toothCategory: null,
       state: 'draft'
@@ -74,7 +76,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
         if (this.line.product) {
           this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
         }
-
+       
         this.saleLineForm.patchValue(this.line);
         this.teethSelected = [...this.line.teeth];
         console.log(this.line);

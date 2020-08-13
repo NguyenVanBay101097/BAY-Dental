@@ -140,6 +140,16 @@ namespace ApplicationCore.Entities
         public decimal? PriceReduce { get; set; }
 
         /// <summary>
+        /// Số tiền đã thanh toán
+        /// </summary>
+        public decimal? AmountPaid { get; set; }
+
+        /// <summary>
+        /// Tiền còn nợ
+        /// </summary>
+        public decimal? AmountResidual { get; set; }
+
+        /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>
         public Guid? PartnerCommissionId { get; set; }

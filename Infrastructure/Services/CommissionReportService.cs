@@ -65,8 +65,7 @@ namespace Infrastructure.Services
 
             var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.CompanyId == companyId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels)
                 .Include("Salesman.Partner")
-                .Include("Salesman.Employee")
-                .Include("Salesman.Employee.Commission").Where(x => x.SalesmanId != null && x.Salesman.Employee.CommissionId != null).ToListAsync();
+                .Where(x => x.PartnerCommission.CommissionId != null).ToListAsync();
 
             var res = lines.Select(x => new CommissionReportItem
             {
@@ -75,7 +74,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.PriceSubTotal,
                 PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
                 ProductName = x.Name,
-                PercentCommission = AddCommissionSaleOrderLine(x.Salesman.Employee.CommissionId.Value, x.ProductId.Value),
+                PercentCommission = AddCommissionSaleOrderLine(x.PartnerCommission.CommissionId.Value, x.ProductId.Value),
                 CommissionTotal = _ComputeCommission(x)
             }).ToList();
 
@@ -118,8 +117,7 @@ namespace Infrastructure.Services
 
             var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.SalesmanId == val.UserId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels).Include("SaleOrderLinePaymentRels.Payment")
                 .Include("Salesman.Partner")
-                .Include("Salesman.Employee")
-                .Include("Salesman.Employee.Commission").ToListAsync();
+                .ToListAsync();
 
             var res = lines.Select(x => new CommissionReportItem
             {
@@ -129,7 +127,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.PriceSubTotal,
                 PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
                 ProductName = x.Name,
-                PercentCommission = AddCommissionSaleOrderLine(x.Salesman.Employee.CommissionId.Value, x.ProductId.Value),
+                PercentCommission = AddCommissionSaleOrderLine(x.PartnerCommission.CommissionId.Value, x.ProductId.Value),
                 CommissionTotal = _ComputeCommission(x)
             }).ToList();
 
@@ -176,7 +174,7 @@ namespace Infrastructure.Services
         public decimal _ComputeCommission(SaleOrderLine val)
         {
             var PrepaidTotal = val.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid);
-            var PercentCommission = AddCommissionSaleOrderLine(val.Salesman.Employee.CommissionId.Value, val.ProductId.Value);
+            var PercentCommission = AddCommissionSaleOrderLine(val.PartnerCommission.CommissionId.Value, val.ProductId.Value);
             var res = (PrepaidTotal.Value * PercentCommission) / 100;
             return res;
         }

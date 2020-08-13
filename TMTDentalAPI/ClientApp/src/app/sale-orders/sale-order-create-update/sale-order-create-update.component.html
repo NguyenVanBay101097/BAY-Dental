@@ -270,12 +270,14 @@
                                     <thead>
                                         <tr>
                                             <th>Dịch vụ</th>
-                                            <th>Răng</th>
-                                            <th>Chuẩn đoán</th>
+                                            <!-- <th>Răng</th>
+                                            <th>Chuẩn đoán</th> -->
                                             <th class="text-right">Số lượng</th>
                                             <th class="text-right">Đơn giá</th>
                                             <th class="text-right">Giảm</th>
                                             <th class="text-right">Thành tiền</th>
+                                            <th class="text-right">Thanh toán</th>
+                                            <th class="text-right">Còn nợ</th>
                                             <th class="text-right"
                                                 *ngIf="['cancel', 'done'].indexOf(saleOrder.state) === -1"></th>
                                         </tr>
@@ -284,8 +286,8 @@
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                             <tr [formGroupName]="i" *ngIf="line.get('state').value !== 'cancel'">                                          
                                                 <td>{{ line.get('name').value }}</td>
-                                                <td>{{lineTeeth(line)}}</td>
-                                                <td>{{line.get('diagnostic').value}}</td>
+                                                <!-- <td>{{lineTeeth(line)}}</td>
+                                                <td>{{line.get('diagnostic').value}}</td> -->
                                                 <td class="text-right">{{ line.get('productUOMQty').value | number }}
                                                 </td>
                                                 <td class="text-right">{{ line.get('priceUnit').value | number }}</td>
@@ -293,6 +295,10 @@
                                                     {{getDiscountNumber(line) | number}}{{getDiscountTypeDisplay(line)}}
                                                 </td>
                                                 <td class="text-right">{{ line.get('priceSubTotal').value | number }}
+                                                </td>
+                                                <td class="text-right">{{ line.get('amountPaid').value | number }}
+                                                </td>
+                                                <td class="text-right">{{ line.get('amountResidual').value | number }}
                                                 </td>
                                                 <td class="text-right">
                                                     <div ngbDropdown *ngIf="['draft', 'sent', 'sale'].indexOf(line.get('state').value) !== -1" placement="bottom-right">

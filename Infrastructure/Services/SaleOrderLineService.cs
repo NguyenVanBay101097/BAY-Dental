@@ -56,6 +56,7 @@ namespace Infrastructure.Services
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+                line.AmountResidual = line.PriceSubTotal - line.AmountPaid;
             }
         }
 
@@ -199,19 +200,18 @@ namespace Infrastructure.Services
         {
             var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
             var res = new SaleOrderLinePartnerCommission();
-            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
+            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x=>x.PartnerCommission)
                 .Include("Salesman.Partner")
-                .Include("Salesman.Employee")
-                .Include("Salesman.Employee.Commission").ToListAsync();
+               .ToListAsync();
             foreach (var line in lines)
             {
-                if (!line.Salesman.EmployeeId.HasValue || !line.Salesman.Employee.CommissionId.HasValue)
+                if (!line.PartnerCommission.CommissionId.HasValue)
                     continue;
 
                 res = new SaleOrderLinePartnerCommission
                 {
                     PartnerId = line.Salesman.PartnerId,
-                    CommissionId = line.Salesman.Employee.CommissionId.HasValue ? line.Salesman.Employee.CommissionId : null,
+                    CommissionId = line.PartnerCommission.CommissionId.HasValue ? line.PartnerCommission.CommissionId : null,
                     SaleOrderLineId = line.Id,
                 };
 

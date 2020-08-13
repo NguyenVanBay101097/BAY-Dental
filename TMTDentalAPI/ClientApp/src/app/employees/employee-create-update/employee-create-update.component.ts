@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,6 +10,8 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { CommissionPaged, CommissionService, Commission } from 'src/app/commissions/commission.service';
 import * as _ from 'lodash';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { UserSimple } from 'src/app/users/user-simple';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -23,6 +25,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     private modalService: NgbModal, private intlService: IntlService, 
     private commissionService: CommissionService) { }
   empId: string;
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
 
   isChange: boolean = false;
   formCreate: FormGroup;
@@ -33,7 +36,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
 
   categoriesList: EmployeeCategoryBasic[] = [];
   categoriesList2: EmployeeCategoryDisplay[] = [];
-
+  userSimpleFilter: UserSimple[] = [];
   listCommissions: Commission[] = [];
 
   ngOnInit() {
@@ -50,7 +53,9 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       isDoctor: this.isDoctor || false,
       isAssistant: this.isAssistant || false, 
       commissionId: null, 
-      commission: null
+      commission: null,
+      userId: null,
+      user: null,
     });
 
     setTimeout(() => {
@@ -91,7 +96,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     //this.assignValue();
     var value = this.formCreate.value;
     value.categoryId = value.category ? value.category.id : null;
-    value.commission = this.getValueForm('isDoctor') ? value.commission : null;
+    value.commission = value.commission ? value.commission : null;
     value.commissionId = value.commission ? value.commission.id : null;
     value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
     this.isChange = true;

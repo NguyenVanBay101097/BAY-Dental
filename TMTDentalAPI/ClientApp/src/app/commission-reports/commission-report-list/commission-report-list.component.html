@@ -74,7 +74,7 @@
                 </ng-template>
             </kendo-grid-column>
             <div *kendoGridDetailTemplate="let dataItem">
-                <app-commission-report-detail [item]="dataItem" [dateFrom]="dateFrom" [dateTo]="dateTo"></app-commission-report-detail>
+                <app-commission-report-detail [item]="dataItem" [dateFrom]="getDateFrom()" [dateTo]="getDateTo()"></app-commission-report-detail>
             </div>
         </kendo-grid>
         </div>

@@ -17,8 +17,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<ApplicationUserDisplay, ApplicationUser>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Company, x => x.Ignore())
-                .ForMember(x => x.Employee, x => x.Ignore());
+                .ForMember(x => x.Company, x => x.Ignore());
 
             CreateMap<ApplicationUser, ApplicationUserDisplay>()
                 .ForMember(x => x.Companies, x => x.MapFrom(s => s.ResCompanyUsersRels.Select(m => m.Company)))

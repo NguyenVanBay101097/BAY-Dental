@@ -62,5 +62,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? CommissionId { get; set; }
         public Commission Commission { get; set; }
+
+        /// <summary>
+        /// kết nối người dùng
+        /// </summary>
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

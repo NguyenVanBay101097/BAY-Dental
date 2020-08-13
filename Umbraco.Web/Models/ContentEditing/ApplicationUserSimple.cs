@@ -42,12 +42,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<ResGroupBasic> Groups { get; set; } = new List<ResGroupBasic>();
 
-        /// <summary>
-        /// bác sĩ
-        /// </summary>
-        public Guid? EmployeeId { get; set; }
-        public EmployeeSimple Employee { get; set; }
-
         public string Avatar { get; set; }
     }
 

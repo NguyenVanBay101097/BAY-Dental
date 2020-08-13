@@ -90,6 +90,7 @@ namespace Infrastructure.Services
                 var saleLine = _mapper.Map<SaleOrderLine>(item);
                 saleLine.Order = order;
                 saleLine.Sequence = sequence++;
+                saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
                 foreach (var toothId in item.ToothIds)
                 {
                     saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel

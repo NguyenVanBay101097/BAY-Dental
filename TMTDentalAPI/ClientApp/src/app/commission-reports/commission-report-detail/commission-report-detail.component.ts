@@ -28,12 +28,8 @@ export class CommissionReportDetailComponent implements OnInit {
 
   loadDataFromApi() {
     var val = new ReportFilterCommissionDetail();
-    if (this.dateFrom) {
-      val.dateFrom = this.intl.formatDate(this.dateFrom, 'd', 'en-US');
-    }
-    if (this.dateTo) {
-      val.dateTo = this.intl.formatDate(this.dateTo, 'd', 'en-US');
-    }
+    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     
     if(this.item.userId){
       val.userId = this.item.userId;

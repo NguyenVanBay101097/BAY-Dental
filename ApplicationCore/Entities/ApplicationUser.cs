@@ -37,11 +37,7 @@ namespace ApplicationCore.Entities
         public Guid? FacebookPageId { get; set; }
         public FacebookPage FacebookPage { get; set; }
 
-        /// <summary>
-        /// kết nối bác sĩ
-        /// </summary>
-        public Guid? EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+
 
 
     }

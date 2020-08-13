@@ -73,6 +73,16 @@ export class CommissionReportListComponent implements OnInit {
   
   }
 
+  getDateFrom(){
+    var formValue = this.formGroup.value;
+    return formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
+  }
+
+  getDateTo(){
+    var formValue = this.formGroup.value;
+    return formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+  }
+
   loadFilteredCompanies() {
     this.searchCompanies().subscribe(
       result => {

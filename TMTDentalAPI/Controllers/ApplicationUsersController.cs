@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(string id)
         {
             _modelAccessService.Check("ResUser", "Read");
-            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.Employee).Include(x => x.ResCompanyUsersRels)
+            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
                 .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.Group")
                 .Include("ResCompanyUsersRels.Company").Include(x => x.Partner).FirstOrDefaultAsync();
             if (user == null)
@@ -106,9 +106,7 @@ namespace TMTDentalAPI.Controllers
 
             var user = _mapper.Map<ApplicationUser>(val);
             user.PartnerId = partner.Id;
-
-            if (val.EmployeeId.HasValue)
-                user.EmployeeId = val.EmployeeId;
+         
 
             foreach (var company in val.Companies)
             {
@@ -163,7 +161,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             _modelAccessService.Check("ResUser", "Write");
-            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner).Include(x => x.Employee)
+            var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels)
                 .Include("ResGroupsUsersRels.Group").FirstOrDefaultAsync();
             if (user == null)
