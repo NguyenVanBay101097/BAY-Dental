@@ -39,9 +39,11 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       workEntryTypeId: [null, Validators.required]
     })
 
+
     if (this.id) {
       this.loadFormApi();
     }
+
     // if (this.today.getDate() > this.dateTime.getDate()) {
     //   this.formGroup.disable();
     // }
@@ -81,12 +83,10 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         this.chamCong = result;
         this.formGroup.get('workEntryTypeId').patchValue(this.chamCong.workEntryTypeId);
         if (this.chamCong && this.chamCong.timeIn) {
-          this.formGroup.get('timeIn').setValue(true);
-          this.timeIn = new Date(this.chamCong.timeIn);
+          this.formGroup.get('timeIn').setValue(new Date(this.chamCong.timeIn));
         }
         if (this.chamCong && this.chamCong.timeOut) {
-          this.formGroup.get('timeOut').setValue(true);
-          this.timeOut = new Date(this.chamCong.timeOut);
+          this.formGroup.get('timeOut').setValue(new Date(this.chamCong.timeOut));
         }
       }
     )
@@ -111,13 +111,11 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       return false;
 
     var val = new ChamCongSave();
-    val.timeIn = this.timeIn ? this.intl.formatDate(this.timeIn, "yyyy-MM-ddThh:mm") : null;
-    val.timeOut = this.timeOut ? this.intl.formatDate(this.timeOut, "yyyy-MM-ddThh:mm") : null
+    val.timeIn = this.formGroup.get('timeIn').value ? this.intl.formatDate(this.formGroup.get('timeIn').value, "yyyy-MM-ddTHH:mm") : null;
+    val.timeOut = this.formGroup.get('timeOut').value ? this.intl.formatDate(this.formGroup.get('timeOut').value, "yyyy-MM-ddTHH:mm") : null;
     val.employeeId = this.employee.id;
+    val.date = this.intl.formatDate(this.dateTime, "yyyy-MM-dd");
     val.workEntryTypeId = this.formGroup.get('workEntryTypeId').value;
-    if (!val.timeOut && !val.timeIn) {
-      return false;
-    }
     if (this.id) {
       this.timeKeepingServive.update(this.id, val).subscribe(
         x => {
@@ -126,7 +124,6 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       )
     }
     else {
-      debugger
       this.timeKeepingServive.create(val).subscribe(
         result => {
           this.activeModal.close();

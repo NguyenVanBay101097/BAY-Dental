@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? TimeOut { get; set; }
 
+        public DateTime? Date { get; set; }
+
         public decimal? HourWorked
         {
             get
@@ -55,14 +57,7 @@ namespace Umbraco.Web.Models.ContentEditing
                 {
                     return "done";
                 }
-                else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
-                {
-                    if (this.Status == "NP")
-                    {
-                        return "NP";
-                    }
-                    return "initial";
-                }
+                
                 return "process";
             }
             set { }
@@ -75,17 +70,23 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
-
         public DateTime? TimeIn { get; set; }
 
         public DateTime? TimeOut { get; set; }
-
+        public DateTime? Date { get; set; }
         public decimal? HourWorked { get; set; }
-
+        public DateTime? DateCreated { get; set; }
         public Guid CompanyId { get; set; }
         public string Status { get; set; }
         public EmployeeBasic employee { get; set; }
         public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryTypeDisplay WorkEntryType { get; set; }
+    }
+
+    public class ChamCongExportExcell
+    {
+        public Guid? EmployeeId { get; set; }
+        public EmployeeDisplay Employee { get; set; }
+        public IEnumerable<DateTime> Dates { get; set; } = new List<DateTime>();
     }
 }

@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NPOI.SS.Formula.Functions;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,7 @@ namespace Infrastructure.Services
         }
         public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
         {
+
             ISpecification<Employee> spec = new InitialSpecification<Employee>(x => true);
             if (!string.IsNullOrEmpty(val.Filter))
             {
@@ -51,9 +53,7 @@ namespace Infrastructure.Services
                     CompanyId = x.CompanyId,
                     Name = x.Name,
                     Ref = x.Ref,
-                    ChamCongs = x.ChamCongs.Where(y =>
-                    (!val.From.HasValue ||
-                    (y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date))
+                    ChamCongs = x.ChamCongs.Where(y => (!val.From.HasValue || (y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date))
                     &&
                     (!val.To.HasValue ||
                     (y.TimeIn.Value.Date <= val.To.Value.Date || y.TimeOut.Value.Date <= val.To.Value.Date))
@@ -67,6 +67,7 @@ namespace Infrastructure.Services
                     DateCreated = y.DateCreated,
                     Status = y.Status,
                     WorkEntryTypeId = y.WorkEntryTypeId,
+                    Date = y.Date,
                     TimeIn = y.TimeIn,
                     TimeOut = y.TimeOut,
                     WorkEntryType = y.WorkEntryType,
@@ -141,9 +142,53 @@ namespace Infrastructure.Services
             return st.OneStandardWorkHour;
         }
 
-        public Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
+        public async Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
         {
+            int dateStart = 0;
+            int dateEnd = 0;
+            var listDateCC = new List<DateChamCong>();
+            var emps = await GetByEmployeePaged(val);
+            var dictEmp = new Dictionary<Guid, List<DateChamCong>>();
+            if (val.From.HasValue)
+                dateStart = val.From.Value.Day;
+            if (val.To.HasValue)
+                dateEnd = val.To.Value.Day;
+
+            for (int i = dateStart; i <= dateEnd; i++)
+            {
+                foreach (var emp in emps.Items)
+                {
+                    if (emp.ChamCongs.Count() > 0)
+                    {
+                        foreach (var cc in emp.ChamCongs)
+                        {
+                            if (cc.DateCreated.HasValue && cc.DateCreated.Value.Day == i)
+                            {
+                                var dateCC = new DateChamCong();
+                                dateCC.Date = cc.DateCreated.Value;
+                                dateCC.ChamCong = cc;
+                                listDateCC.Add(dateCC);
+                            }
+                        }
+                        dictEmp.Add(emp.Id, listDateCC);
+                    }
+                    //else
+                    //{
+                    //    var datec = new DateChamCong();
+                    //    datec.Date = new DateTime(currentYear, currentMonth, i);
+                    //    dictEmp[emp].Add(datec);
+                    //}
+                }
+            }
+
+
             return null;
+        }
+
+        public class DateChamCong
+        {
+            public DateTime Date { get; set; }
+            public ChamCongDisplay ChamCong { get; set; }
         }
     }
 }

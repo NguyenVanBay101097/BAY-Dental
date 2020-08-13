@@ -7,6 +7,7 @@ export class ChamCongSave {
   employeeId: string;
   timeIn: string;
   timeOut: string;
+  date:string;
   hourWorked: number;
   workEntryTypeId: string;
   status: string;
@@ -33,10 +34,12 @@ export class ChamCongBasic {
   timeOut: string;
   status: string;
   hourWorked: number;
+  date:string;
   employee: EmployeeBasic;
   employeeId: string;
   workEntryTypeId: string;
   workEntryType: WorkEntryType;
+  dateCreated: string;
 }
 
 export class TimeSheetEmployee {
@@ -132,6 +135,6 @@ export class TimeKeepingService {
   }
 
   updateWorkEntryType(id, val) {
-    return this.http.put(this.base_api + this.apiUrlWorkingEntryType + '/id', val);
+    return this.http.put(this.base_api + this.apiUrlWorkingEntryType + '/'+id, val);
   }
 }
