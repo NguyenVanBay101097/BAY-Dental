@@ -1,22 +1,21 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EmployeeSimple, EmployeeBasic } from '../employees/employee';
+import { EmployeeSimple, EmployeeBasic, EmployeeDisplay } from '../employees/employee';
 
 export class ChamCongSave {
   employeeId: string;
   timeIn: string;
   timeOut: string;
-  date:string;
+  date: string;
   hourWorked: number;
   workEntryTypeId: string;
   status: string;
 }
 
 export class EmployeeChamCongPaged {
-  limit: number;
-  offset: number;
-  filter: string;
+  status: string;
+  employeeId:string
   from: string;
   to: string;
 }
@@ -25,7 +24,7 @@ export class EmployeeChamCongPaging {
   offset: number;
   limit: number;
   totalItems: number;
-  items: EmployeeBasic[];
+  items: EmployeeDisplay[];
 }
 
 export class ChamCongBasic {
@@ -34,7 +33,7 @@ export class ChamCongBasic {
   timeOut: string;
   status: string;
   hourWorked: number;
-  date:string;
+  date: string;
   employee: EmployeeBasic;
   employeeId: string;
   workEntryTypeId: string;
@@ -93,8 +92,8 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  getEmpChamCong(val): Observable<EmployeeChamCongPaging> {
-    return this.http.get<EmployeeChamCongPaging>(this.base_api + this.apiUrl, { params: val });
+  getAllByEmpId(val): Observable<ChamCongBasic[]> {
+    return this.http.get<ChamCongBasic[]>(this.base_api + this.apiUrl, { params: val });
   }
 
   GetsetupTimeKeeping() {
@@ -135,6 +134,6 @@ export class TimeKeepingService {
   }
 
   updateWorkEntryType(id, val) {
-    return this.http.put(this.base_api + this.apiUrlWorkingEntryType + '/'+id, val);
+    return this.http.put(this.base_api + this.apiUrlWorkingEntryType + '/' + id, val);
   }
 }

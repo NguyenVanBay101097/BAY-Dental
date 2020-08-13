@@ -120,14 +120,14 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     if (this.id) {
       this.timeKeepingServive.update(this.id, val).subscribe(
         x => {
-          this.activeModal.close();
+          this.activeModal.close(this.employee.id);
         }
       )
     }
     else {
       this.timeKeepingServive.create(val).subscribe(
         result => {
-          this.activeModal.close();
+          this.activeModal.close(this.employee.id);
         }
       )
     }

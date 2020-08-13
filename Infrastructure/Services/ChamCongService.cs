@@ -185,27 +185,27 @@ namespace Infrastructure.Services
         //    return null;
         //}
 
-    public async Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val)
+        public async Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val)
         {
             var query = SearchQuery();
             if (val.From.HasValue)
             {
-                query = query.Where(y=> y.Date.Value.Date >= val.From.Value.Date);
+                query = query.Where(y => y.Date.Value.Date >= val.From.Value.Date);
             }
-            
+
             if (val.To.HasValue)
             {
-                query = query.Where(y=> y.Date.Value.Date <= val.To.Value.Date);
+                query = query.Where(y => y.Date.Value.Date <= val.To.Value.Date);
             }
 
             if (!string.IsNullOrEmpty(val.Status))
             {
-                query = query.Where(x=>x.Status.Equals(val.Status));
+                query = query.Where(x => x.Status.Equals(val.Status));
             }
 
             if (val.EmployeeId.HasValue)
             {
-                query = query.Where(x=>x.EmployeeId == val.EmployeeId);
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
 
             var res = await query.Include(x => x.WorkEntryType).ToListAsync();
