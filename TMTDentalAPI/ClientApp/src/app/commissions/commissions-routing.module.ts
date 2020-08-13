@@ -5,11 +5,11 @@ import { CommissionCreateUpdateComponent } from './commission-create-update/comm
 
 const routes: Routes = [
   {
-    path: 'commissions',
+    path: '',
     component: CommissionListComponent
   },
   {
-    path: 'commissions/form',
+    path: 'form',
     component: CommissionCreateUpdateComponent
   }
 ];

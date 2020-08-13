@@ -188,6 +188,21 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
+    path: 'commissions', 
+    loadChildren: () => import('./commissions/commissions.module').then(m => m.CommissionsModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'employees', 
+    loadChildren: () => import('./employees/employees.module').then(m => m.EmployeesModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'commission-report', 
+    loadChildren: () => import('./commission-reports/commission-reports.module').then(m => m.CommissionReportsModule),
+    canActivate: [AuthGuard] 
+  },
+  {
     path: '',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
     canActivate: [AuthGuard] 

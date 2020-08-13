@@ -12,6 +12,8 @@ import { CommissionPaged, CommissionService, Commission } from 'src/app/commissi
 import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { UserSimple } from 'src/app/users/user-simple';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { UserPaged, UserService } from 'src/app/users/user.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -20,12 +22,14 @@ import { UserSimple } from 'src/app/users/user-simple';
 })
 export class EmployeeCreateUpdateComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: EmployeeService,
+  constructor(private fb: FormBuilder, private employeeService: EmployeeService,
     private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, 
     private modalService: NgbModal, private intlService: IntlService, 
-    private commissionService: CommissionService) { }
+    private commissionService: CommissionService, private userService: UserService) { }
+
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('commissionCbx', { static: true }) commissionCbx: ComboBoxComponent;
 
   isChange: boolean = false;
   formCreate: FormGroup;
@@ -36,7 +40,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
 
   categoriesList: EmployeeCategoryBasic[] = [];
   categoriesList2: EmployeeCategoryDisplay[] = [];
-  userSimpleFilter: UserSimple[] = [];
+  filteredUsers: UserSimple[] = [];
   listCommissions: Commission[] = [];
 
   ngOnInit() {
@@ -62,6 +66,25 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       this.loadAutocompleteTypes(null);
       this.loadListCommissions();
       this.getEmployeeInfo();
+      this.loadUsers();
+
+      this.commissionCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.commissionCbx.loading = true)),
+        switchMap(value => this.searchCommissions(value))
+      ).subscribe(result => {
+        this.listCommissions = result.items;
+        this.commissionCbx.loading = false;
+      });
+
+      this.userCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.userCbx.loading = true)),
+        switchMap(value => this.searchUsers(value))
+      ).subscribe(result => {
+        this.filteredUsers = result;
+        this.userCbx.loading = false;
+      });
     });
   }
 
@@ -69,16 +92,34 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     return this.formCreate.get(key).value;
   }
 
+  loadUsers() {
+    this.searchUsers().subscribe(result => {
+      this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
+    });
+  }
+
+
+  searchUsers(filter?: string) {
+    var val = new UserPaged();
+    val.search = filter || '';
+    return this.userService.autocompleteSimple(val);
+  }
+
   loadListCommissions() {
-    var val = new CommissionPaged();
-    this.commissionService.getPaged(val).subscribe(result => {
+    this.searchCommissions().subscribe(result => {
       this.listCommissions = _.unionBy(this.listCommissions, result.items, 'id');
     });
   }
 
+  searchCommissions(q?: string) {
+    var val = new CommissionPaged();
+    val.search = q || '';
+    return this.commissionService.getPaged(val);
+  }
+
   getEmployeeInfo() {
     if (this.empId != null) {
-      this.service.getEmployee(this.empId).subscribe(
+      this.employeeService.getEmployee(this.empId).subscribe(
         rs => {
           this.formCreate.patchValue(rs);
           let birthDay = this.intlService.parseDate(rs.birthDay);
@@ -93,14 +134,17 @@ export class EmployeeCreateUpdateComponent implements OnInit {
 
   //Tạo hoặc cập nhật NV
   createUpdateEmployee() {
-    //this.assignValue();
+    if (!this.formCreate.valid) {
+      return false;
+    }
+
     var value = this.formCreate.value;
     value.categoryId = value.category ? value.category.id : null;
-    value.commission = value.commission ? value.commission : null;
     value.commissionId = value.commission ? value.commission.id : null;
+    value.userId = value.user ? value.user.id : null;
     value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
     this.isChange = true;
-    this.service.createUpdateEmployee(value, this.empId).subscribe(
+    this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
       rs => {
         if (this.empId) {
           this.activeModal.close(true);

@@ -4,7 +4,7 @@ import { CommissionReportListComponent } from './commission-report-list/commissi
 
 const routes: Routes = [
   {
-    path: "commission-report",
+    path: "",
     component: CommissionReportListComponent,
   },
 ];
