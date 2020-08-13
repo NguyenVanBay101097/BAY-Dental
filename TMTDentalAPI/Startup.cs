@@ -253,6 +253,7 @@ namespace TMTDentalAPI
             services.AddScoped<IChamCongService, ChamCongService>();
             services.AddScoped<ISetupChamcongService, SetupChamcongService>();
             services.AddScoped<IWorkEntryTypeService, WorkEntryTypeService>();
+            services.AddScoped<IHrPayrollStructureService, HrPayrollStructureService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
