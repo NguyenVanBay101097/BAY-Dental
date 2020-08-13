@@ -13,10 +13,10 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.Property(x => x.Name).IsRequired();
 
-            builder.HasOne(x => x.Company)
-                   .WithMany()
-                   .HasForeignKey(x => x.CompanyId)
-                   .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.Type)
+                .WithMany()
+                .HasForeignKey(x => x.TypeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

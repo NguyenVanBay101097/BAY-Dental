@@ -7,23 +7,17 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
+    public class ResourceCalendarLeavesConfiguration : IEntityTypeConfiguration<ResourceCalendarLeaves>
     {
-        public void Configure(EntityTypeBuilder<Employee> builder)
+        public void Configure(EntityTypeBuilder<ResourceCalendarLeaves> builder)
         {
-            builder.Property(x => x.Name).IsRequired();
-
-            builder.HasOne(x => x.Category)
-                .WithMany()
-                .HasForeignKey(x => x.CategoryId);
-
-            builder.HasOne(x => x.StructureType)
-              .WithMany()
-              .HasForeignKey(x => x.StructureTypeId);
-
             builder.HasOne(x => x.Company)
+                .WithMany()
+                .HasForeignKey(x => x.CompanyId);
+
+            builder.HasOne(x => x.Calendar)
             .WithMany()
-            .HasForeignKey(x => x.CompanyId);
+            .HasForeignKey(x => x.CalendarId);
 
             builder.HasOne(x => x.CreatedBy)
           .WithMany()

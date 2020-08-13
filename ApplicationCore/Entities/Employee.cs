@@ -57,5 +57,18 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool IsAssistant { get; set; }
         public ICollection<ChamCong> ChamCongs { get; set; } = new List<ChamCong>();
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureType StructureType { get; set; }
+
+        /// <summary>
+        /// Tiền lương theo tháng, nếu StructureType.WageType == monthly
+        /// </summary>
+        public decimal? Wage { get; set; }
+
+        /// <summary>
+        /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
+        /// </summary>
+        public decimal? HourlyWage { get; set; }
     }
 }

@@ -190,6 +190,10 @@ namespace Infrastructure.Data
         public DbSet<HrPayrollStructure> HrPayrollStructures { get; set; }
         public DbSet<HrSalaryRule> HrSalaryRules { get; set; }
         public DbSet<HrSalaryRuleCategory> HrSalaryRuleCategories { get; set; }
+        public DbSet<HrPayrollStructureType> HrPayrollStructureTypes { get; set; }
+        public DbSet<ResourceCalendar> ResourceCalendars { get; set; }
+        public DbSet<ResourceCalendarAttendance> ResourceCalendarAttendances { get; set; }
+        public DbSet<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -339,6 +343,11 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new HrPayrollStructureConfiguration());
             builder.ApplyConfiguration(new HrSalaryRuleConfiguration());
             builder.ApplyConfiguration(new HrSalaryRuleCategoryConfiguration());
+            builder.ApplyConfiguration(new HrPayrollStructureTypeConfiguration());
+            builder.ApplyConfiguration(new ResourceCalendarConfiguration());
+            builder.ApplyConfiguration(new ResourceCalendarAttendanceConfiguration());
+            builder.ApplyConfiguration(new ResourceCalendarLeavesConfiguration());
+            builder.ApplyConfiguration(new WorkEntryTypeConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
