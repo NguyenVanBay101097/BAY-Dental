@@ -93,9 +93,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// kết nối người dùng
         /// </summary>
-        public Guid? UserId { get; set; }
+        public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
-
     }
 
     public class EmployeePaged
