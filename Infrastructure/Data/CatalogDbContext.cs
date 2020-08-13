@@ -187,6 +187,9 @@ namespace Infrastructure.Data
         public DbSet<ChamCong> ChamCongs { get; set; }
         public DbSet<SetupChamcong> setupChamcongs { get; set; }
         public DbSet<WorkEntryType> WorkEntryTypes { get; set; }
+        public DbSet<HrPayrollStructure> HrPayrollStructures { get; set; }
+        public DbSet<HrSalaryRule> HrSalaryRules { get; set; }
+        public DbSet<HrSalaryRuleCategory> HrSalaryRuleCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -333,6 +336,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
             builder.ApplyConfiguration(new ChamCongConfiguration());
+            builder.ApplyConfiguration(new HrPayrollStructureConfiguration());
+            builder.ApplyConfiguration(new HrSalaryRuleConfiguration());
+            builder.ApplyConfiguration(new HrSalaryRuleCategoryConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
