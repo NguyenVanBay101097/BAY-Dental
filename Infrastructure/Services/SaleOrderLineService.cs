@@ -199,19 +199,24 @@ namespace Infrastructure.Services
         public async Task _AddPartnerCommission(IEnumerable<Guid> ids)
         {
             var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
+            var employeeObj = GetService<IEmployeeService>();
             var res = new SaleOrderLinePartnerCommission();
-            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x=>x.PartnerCommission)
+            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
                 .Include("Salesman.Partner")
                .ToListAsync();
             foreach (var line in lines)
             {
-                if (!line.PartnerCommission.CommissionId.HasValue)
+                if (line.PartnerCommissionId != null)
+                    continue;
+
+                var employee = await employeeObj.SearchQuery(x=>x.UserId == line.SalesmanId).FirstOrDefaultAsync();
+                if (employee == null)
                     continue;
 
                 res = new SaleOrderLinePartnerCommission
                 {
                     PartnerId = line.Salesman.PartnerId,
-                    CommissionId = line.PartnerCommission.CommissionId.HasValue ? line.PartnerCommission.CommissionId : null,
+                    CommissionId = employee.CommissionId.HasValue ? employee.CommissionId : null,
                     SaleOrderLineId = line.Id,
                 };
 
@@ -228,9 +233,7 @@ namespace Infrastructure.Services
         {
             var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
-               .Include("Salesman.Partner")
-               .Include("Salesman.Employee")
-               .Include("Salesman.Employee.Commission").ToListAsync();
+               .Include("Salesman.Partner").ToListAsync();
             foreach (var line in lines)
             {
 

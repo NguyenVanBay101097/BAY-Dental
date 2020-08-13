@@ -532,21 +532,32 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleOrderLinePaymentRelDisplay>> LinePaymentRelDefaultGet(Guid saleOrderId)
         {
             var orderObj = GetService<ISaleOrderService>();
+            var orderlineObj = GetService<ISaleOrderLineService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var paymentRels = new List<SaleOrderLinePaymentRelDisplay>();
             var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();          
             foreach (var line in order.OrderLines)
             {
+                var orline = _mapper.Map<SaleOrderLineDisplay>(line);
                 var amountPrepaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
                 var res = new SaleOrderLinePaymentRelDisplay
                 {
-                    SaleOrderLineId = line.Id,
-                    SaleOrderLine = _mapper.Map<SaleOrderLineDisplay>(line),
+                    SaleOrderLineId = orline.Id,
+                    SaleOrderLine = orline,
                     isDone = amountPrepaid == line.PriceSubTotal ? true : false,
                     AmountPayment = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value),
                     AmountPrepaid = 0
                 };
                 paymentRels.Add(res);
+
+                //if (res.AmountPayment != 0)
+                //{
+                //    line.AmountPaid = res.AmountPayment;
+                //    line.AmountResidual = line.PriceSubTotal - res.AmountPayment;
+
+                //    await orderlineObj.UpdateAsync(line);
+                //}
+   
             }
 
             return paymentRels;
@@ -694,7 +705,30 @@ namespace Infrastructure.Services
             foreach (var order_id in val.ServiceCardOrderIds)
                 payment.CardOrderPaymentRels.Add(new ServiceCardOrderPaymentRel { CardOrderId = order_id });
 
-            return await CreateAsync(payment);
+            await CreateAsync(payment);
+
+            await _UpdateSaleOrderLines(val.SaleOrderIds.First());
+
+            return payment;
+        }
+
+        public async Task _UpdateSaleOrderLines(Guid saleOrderId)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orderlineObj = GetService<ISaleOrderLineService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
+            foreach (var line in order.OrderLines)
+            {
+                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+                if (amountPaid != 0)
+                {
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = line.PriceSubTotal - amountPaid;                  
+                }
+            }
+
+            await orderlineObj.UpdateAsync(order.OrderLines);
         }
 
         public IDictionary<string, string> MAP_INVOICE_TYPE_PARTNER_TYPE
