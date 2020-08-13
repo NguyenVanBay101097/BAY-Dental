@@ -65,7 +65,7 @@
                                     <label class="o_form_label ">Giờ vào</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-timepicker formControlName="timeIn"></kendo-timepicker>
+                                    <kendo-timepicker (valueChange)="changeTimeIn($event)" formControlName="timeIn"></kendo-timepicker>
                                 </td>
                             </tr>
                             <tr>
@@ -73,7 +73,8 @@
                                     <label class="o_form_label ">Giờ ra</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-timepicker formControlName="timeOut"></kendo-timepicker>
+                                    <kendo-timepicker (valueChange)="changeTimeOut($event)" formControlName="timeOut">
+                                    </kendo-timepicker>
                                 </td>
                             </tr>
                         </tbody>
