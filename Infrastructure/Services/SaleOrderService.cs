@@ -229,8 +229,10 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
+                .Include("OrderLines.SaleOrderLinePaymentRels")
                 .ToListAsync();
 
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var move_ids = new List<Guid>().AsEnumerable();
             var dotKhamIds = new List<Guid>().AsEnumerable();
@@ -270,6 +272,10 @@ namespace Infrastructure.Services
                         continue;
 
                     line.State = "draft";
+                    await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
+                    var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = line.PriceSubTotal - amountPaid;
                 }
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);

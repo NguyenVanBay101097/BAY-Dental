@@ -26,13 +26,28 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Nội dung
+                                        Số tiền
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" formControlName="communication" class="form-control" />
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox 
+                                            [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
+                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            formControlName="amount">
+                                        </kendo-numerictextbox>
+                                        <button type="button" class="btn btn-light ml-1" style="white-space: nowrap; cursor: pointer;"
+                                            (click)="enterMoney()">
+                                            <b>Nhập tiền</b>
+                                        </button>
+                                        <button type="button" class="btn btn-light ml-1" style="white-space: nowrap; cursor: pointer;"
+                                            (click)="payOff()">
+                                           <b>Trả hết</b>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
+                          
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -50,25 +65,11 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Số tiền
+                                        Nội dung
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-numerictextbox 
-                                            [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
-                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                            formControlName="amount">
-                                        </kendo-numerictextbox>
-                                        <span class="btn btn-sm btn-light ml-1" style="white-space: nowrap;"
-                                            (click)="enterMoney()">
-                                            <b>Nhập tiền</b>
-                                        </span>
-                                        <span class="btn btn-sm btn-light ml-1" style="white-space: nowrap;"
-                                            (click)="payOff()">
-                                            <b>Trả hết</b>
-                                        </span>
-                                    </div>
+                                    <input type="text" formControlName="communication" class="form-control" />
                                 </td>
                             </tr>
                         </tbody>

@@ -140,7 +140,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     });
   }
 
-  getValueFormSave() {
+  getValueFormSave() {   
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');

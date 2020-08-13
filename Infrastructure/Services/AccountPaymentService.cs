@@ -682,8 +682,8 @@ namespace Infrastructure.Services
 
         public async Task<AccountPayment> CreateUI(AccountPaymentSave val)
         {
+            val.SaleOrderLinePaymentRels = val.SaleOrderLinePaymentRels.Where(x => x.AmountPrepaid > 0).ToList();
             var payment = _mapper.Map<AccountPayment>(val);
-
             var journalObj = GetService<IAccountJournalService>();
             var journal = await journalObj.GetByIdAsync(payment.JournalId);
             payment.CompanyId = journal.CompanyId;

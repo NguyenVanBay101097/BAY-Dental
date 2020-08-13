@@ -173,6 +173,8 @@ namespace Infrastructure.Services
             }
         }
 
+
+
         public async Task _UpdateInvoiceQty(IEnumerable<Guid> ids)
         {
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrderLineInvoiceRels)
@@ -209,7 +211,7 @@ namespace Infrastructure.Services
                 if (line.PartnerCommissionId != null)
                     continue;
 
-                var employee = await employeeObj.SearchQuery(x=>x.UserId == line.SalesmanId).FirstOrDefaultAsync();
+                var employee = await employeeObj.SearchQuery(x => x.UserId == line.SalesmanId).FirstOrDefaultAsync();
                 if (employee == null)
                     continue;
 
@@ -378,16 +380,23 @@ namespace Infrastructure.Services
         {
             var orderObj = GetService<ISaleOrderService>();
             var dotkhamstepObj = GetService<IDotKhamStepService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include("DotKhamSteps").Include(x => x.Order)
                 .Include(x => x.Product)
+                .Include(x => x.SaleOrderLinePaymentRels)
                .Include(x => x.SaleOrderLineInvoice2Rels)
                .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
                .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
 
             foreach (var line in lines)
             {
+                await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
+                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+              
                 line.ProductUOMQty = 0;
                 line.State = "cancel";
+                line.AmountPaid = amountPaid;
+                line.AmountResidual = line.PriceSubTotal - amountPaid;
                 if (line.DotKhamSteps.Any())
                 {
                     await dotkhamstepObj.Unlink(line.DotKhamSteps);
