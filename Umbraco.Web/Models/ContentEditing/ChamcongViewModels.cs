@@ -10,19 +10,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class employeePaged
     {
-
-        public employeePaged()
-        {
-            Limit = 20;
-        }
-
-        public int Limit { get; set; }
-        public string Filter { get; set; }
-        public int Offset { get; set; }
-
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
         public string Status { get; set; }
+        public Guid? EmployeeId { get; set; }
+
     }
 
     public class ChamCongSave
@@ -57,7 +49,10 @@ namespace Umbraco.Web.Models.ContentEditing
                 {
                     return "done";
                 }
-                
+                else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
+                {
+                        return "NP";
+                }
                 return "process";
             }
             set { }
@@ -75,10 +70,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? TimeOut { get; set; }
         public DateTime? Date { get; set; }
         public decimal? HourWorked { get; set; }
-        public DateTime? DateCreated { get; set; }
-        public Guid CompanyId { get; set; }
         public string Status { get; set; }
-        public EmployeeBasic employee { get; set; }
         public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryTypeDisplay WorkEntryType { get; set; }
     }
