@@ -54,7 +54,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(ChamCongSave chamCongSave)
         {
             var chamcong = _mapper.Map<ChamCong>(chamCongSave);
-            chamcong.CompanyId = _chamCongService.GetCurrentCompanyId();
+            chamcong.Status = await _chamCongService.GetStatus(chamcong);
+            chamcong.CompanyId = CompanyId;
             await _chamCongService.CreateAsync(chamcong);
             return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
@@ -75,7 +76,8 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             }
             chamcong = _mapper.Map(chamCongSave, chamcong);
-            chamcong.CompanyId = _chamCongService.GetCurrentCompanyId();
+            chamcong.Status = await _chamCongService.GetStatus(chamcong);
+            chamcong.CompanyId = CompanyId;
             await _chamCongService.UpdateAsync(chamcong);
             return Ok();
         }

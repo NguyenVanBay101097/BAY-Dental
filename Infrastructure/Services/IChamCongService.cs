@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         Task CreateListChamcongs(IEnumerable<ChamCong> val);
         //Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val);
         Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val);
-        Guid GetCurrentCompanyId();
+        Task<string> GetStatus(ChamCong val);
         Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date);
         Task<decimal> GetStandardWorkHour();
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);

@@ -43,19 +43,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Status
         {
-            get
-            {
-                if (this.TimeIn.HasValue && this.TimeOut.HasValue)
-                {
-                    return "done";
-                }
-                else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
-                {
-                        return "NP";
-                }
-                return "process";
-            }
-            set { }
+            get;set;
         }
         public Guid WorkEntryTypeId { get; set; }
 

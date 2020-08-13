@@ -119,9 +119,26 @@ namespace Infrastructure.Services
             return lst;
         }
 
-        public Guid GetCurrentCompanyId()
+        public async Task<string> GetStatus(ChamCong val)
         {
-            return CompanyId;
+            if (val.TimeIn.HasValue && val.TimeOut.HasValue)
+            {
+                return "done";
+            }
+            else if (!val.TimeOut.HasValue && !val.TimeIn.HasValue)
+            {
+                var workEntry = await GetService<IWorkEntryTypeService>().GetByIdAsync(val.WorkEntryTypeId);
+                if (workEntry == null)
+                {
+                    throw new Exception("loại chấm công không tìm thấy");
+                }
+                if (workEntry.IsHasTimeKeeping)
+                {
+                    return "NP";
+                }
+                return "Initial";
+            }
+            return "process";
         }
         public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
         {
