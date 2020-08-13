@@ -12,11 +12,10 @@ import { DotKhamListComponent } from './dot-kham-list/dot-kham-list.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SharedModule } from '../shared/shared.module';
 import { DotKhamStepService } from './dot-kham-step.service';
-import { DotKhamCreateUpdateDialogComponent } from './dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [DotKhamCreateUpdateComponent, DotKhamListComponent, DotKhamCreateUpdateDialogComponent],
+  declarations: [DotKhamCreateUpdateComponent, DotKhamListComponent],
   imports: [
     CommonModule,
     DotKhamsRoutingModule,
@@ -35,7 +34,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   entryComponents: [
     DotKhamCreateUpdateComponent,
-    DotKhamCreateUpdateDialogComponent
   ]
 })
 export class DotKhamsModule { }

@@ -4,7 +4,7 @@ import { AccountReportGeneralLedgerCashBankComponent } from './account-report-ge
 
 const routes: Routes = [
   {
-    path: 'report-cash-bank',
+    path: 'cash-bank',
     component: AccountReportGeneralLedgerCashBankComponent
   }
 ];

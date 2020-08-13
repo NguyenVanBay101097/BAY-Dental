@@ -10,13 +10,12 @@ import { map } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
-import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
 import { HttpParams } from '@angular/common/http';
 import { FormGroup } from '@angular/forms';
-import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { FacebookPageService } from '../facebook-page.service';
 import { FacebookConnectService } from '../facebook-connect.service';
 import { FacebookConnectPageService } from '../facebook-connect-page.service';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-facebook',

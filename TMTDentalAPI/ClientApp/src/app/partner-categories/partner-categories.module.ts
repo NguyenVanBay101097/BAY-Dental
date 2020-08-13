@@ -9,7 +9,6 @@ import { PartnerCategoryCuDialogComponent } from './partner-category-cu-dialog/p
 import { PartnerCategoryListComponent } from './partner-category-list/partner-category-list.component';
 import { PartnerCategoryImportComponent } from './partner-category-import/partner-category-import.component';
 import { SharedModule } from '../shared/shared.module';
-import { CustomComponentModule } from '../common/common.module';
 
 
 @NgModule({
@@ -21,7 +20,6 @@ import { CustomComponentModule } from '../common/common.module';
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
-    CustomComponentModule
   ],
   providers: [
     PartnerCategoryService

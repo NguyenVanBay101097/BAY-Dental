@@ -81,6 +81,11 @@ export class UserCuDialogComponent implements OnInit {
     });
   }
 
+  onAvatarUploaded(data: any) {
+    var fileUrl = data ? data.fileUrl : null;
+    this.userForm.get('avatar').setValue(fileUrl);
+  }
+
   loadListEmployees() {
     var val = new EmployeePaged();
     val.isDoctor = true;

@@ -7,13 +7,13 @@ import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/op
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
-import { ProductCategoryDialogComponent } from 'src/app/product-categories/product-category-dialog/product-category-dialog.component';
 import * as _ from 'lodash';
 import { ProductStepDisplay } from '../product-step';
 import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UoMBasic, UomService, UoMPaged } from 'src/app/uoms/uom.service';
+import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 
 @Component({
   selector: 'app-product-product-cu-dialog',

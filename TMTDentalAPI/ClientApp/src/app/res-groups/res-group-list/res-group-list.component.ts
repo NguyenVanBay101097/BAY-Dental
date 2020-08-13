@@ -1,6 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ResGroupService, ResGroupPaged, ResGroupBasic } from '../res-group.service';
@@ -27,7 +26,7 @@ export class ResGroupListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
-  constructor(private resGroupService: ResGroupService, private dialogService: DialogService,
+  constructor(private resGroupService: ResGroupService,
     private router: Router, private modalService: NgbModal, private notificationService: NotificationService) {
   }
 

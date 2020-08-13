@@ -5,7 +5,7 @@ import { PartnerReportLocationChartPieComponent } from './partner-report-locatio
 
 const routes: Routes = [
   {
-    path: 'partner-report-location',
+    path: '',
     component: PartnerReportLocationChartPieComponent
   },
 ];

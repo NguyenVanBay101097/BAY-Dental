@@ -6,12 +6,12 @@ import { PartnerService } from '../partner.service';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-partner-customer-list',

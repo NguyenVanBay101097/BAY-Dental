@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
-import { SaleOrderService, SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService, SaleOrderPaged } from 'src/app/core/services/sale-order.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

@@ -1,30 +1,25 @@
 import { GridModule } from '@progress/kendo-angular-grid';
-import { ButtonsModule } from '@progress/kendo-angular-buttons';
-import { DialogsModule } from '@progress/kendo-angular-dialog';
 import { NgModule } from '@angular/core';
-import { InputsModule } from '@progress/kendo-angular-inputs';
-import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
-import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { NotificationModule } from '@progress/kendo-angular-notification';
-import { LayoutModule } from '@progress/kendo-angular-layout';
-import { ChartsModule } from '@progress/kendo-angular-charts';
-import { SchedulerModule } from '@progress/kendo-angular-scheduler';
-import { TreeViewModule } from '@progress/kendo-angular-treeview';
-import { UploadModule } from '@progress/kendo-angular-upload';
+import { NumericTextBoxModule } from '@progress/kendo-angular-inputs';
+import { DatePickerModule } from '@progress/kendo-angular-dateinputs';
+import { DateTimePickerModule } from '@progress/kendo-angular-dateinputs';
+import { TimePickerModule } from '@progress/kendo-angular-dateinputs';
+import { ComboBoxModule } from '@progress/kendo-angular-dropdowns';
+import { MultiSelectModule } from '@progress/kendo-angular-dropdowns';
+import { ChartModule } from '@progress/kendo-angular-charts';
+
 
 const kendo = [
     GridModule,
-    ButtonsModule,
-    DialogsModule,
-    InputsModule,
-    DropDownsModule,
-    DateInputsModule,
+    NumericTextBoxModule,
+    DatePickerModule,
+    DateTimePickerModule,
+    TimePickerModule,
+    ComboBoxModule,
+    MultiSelectModule,
     NotificationModule,
-    LayoutModule,
-    ChartsModule,
-    TreeViewModule,
-    SchedulerModule,
-    UploadModule,
+    ChartModule
 ];
 
 @NgModule({

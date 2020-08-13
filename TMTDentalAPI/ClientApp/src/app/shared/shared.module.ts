@@ -1,12 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MyOwnCustomMaterialModule } from './my-own-custom-material.module';
-import { HeaderComponent } from './header/header.component';
-import { HeaderMenuComponent } from './header-menu/header-menu.component';
-import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { TopMenuComponent } from './top-menu/top-menu.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
@@ -44,20 +38,27 @@ import { MyAutosizeDirective } from './autosize.directive';
 import { CharCountDirective } from './char-count.directive';
 import { SelectUomProductDialogComponent } from './select-uom-product-dialog/select-uom-product-dialog.component';
 import { RedirectComponentDirective } from './redirect-component.directive';
-import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { ImageFileUploadComponent } from './image-file-upload/image-file-upload.component';
 import { ToaThuocPrintComponent } from './toa-thuoc-print/toa-thuoc-print.component';
 import { ImportSampleDataComponent } from './import-sample-data/import-sample-data.component';
 import { PartnerProfilePrintComponent } from './partner-profile-print/partner-profile-print.component';
 import { AccountPaymentPrintComponent } from './account-payment-print/account-payment-print.component';
 import { CheckAddressButtonComponent } from './check-address-button/check-address-button.component';
+import { AppointmentCreateUpdateComponent } from './appointment-create-update/appointment-create-update.component';
+import { SaleOrderLineDialogComponent } from './sale-order-line-dialog/sale-order-line-dialog.component';
+import { ToaThuocCuDialogSaveComponent } from './toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocSamplePrescriptionComponent } from './toa-thuoc-sample-prescription/toa-thuoc-sample-prescription.component';
+import { DotKhamCreateUpdateDialogComponent } from './dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from './account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { MyCustomNgbModule } from './my-custom-ngb.module';
+import { BinaryFileInputComponent } from './binary-file-input/binary-file-input.component';
+import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { ProductCategoryDialogComponent } from './product-category-dialog/product-category-dialog.component';
+import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.component';
 
 @NgModule({
   declarations: [
-    HeaderComponent,
-    HeaderMenuComponent,
-    HeaderBarComponent,
-    TopMenuComponent,
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,
@@ -80,7 +81,6 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     UserProfileEditComponent,
     SharedSaleOrderGridComponent,
     SharedPartnerGridComponent,
-    RedirectComponentComponent,
     RedirectComponentDirective,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
@@ -93,13 +93,20 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     ImportSampleDataComponent, 
     AccountPaymentPrintComponent,
     CheckAddressButtonComponent,
-    PartnerProfilePrintComponent
+    PartnerProfilePrintComponent,
+    AppointmentCreateUpdateComponent,
+    SaleOrderLineDialogComponent,
+    ToaThuocCuDialogSaveComponent,
+    ToaThuocSamplePrescriptionComponent,
+    DotKhamCreateUpdateDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component,
+    BinaryFileInputComponent,
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
   exports: [
-    HeaderComponent,
-    HeaderMenuComponent,
-    HeaderBarComponent,
-    TopMenuComponent,
     ConfirmDialogComponent,
     LayoutSidebarComponent,
     LayoutHeaderComponent,
@@ -122,7 +129,6 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     SharedPartnerGridComponent,
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
-    RedirectComponentComponent,
     AnchorHostDirective,
     MyAutosizeDirective,
     CharCountDirective,
@@ -132,18 +138,26 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     ToaThuocPrintComponent,
     AccountPaymentPrintComponent,
     CheckAddressButtonComponent,
-    PartnerProfilePrintComponent
+    PartnerProfilePrintComponent,
+    AppointmentCreateUpdateComponent,
+    SaleOrderLineDialogComponent,
+    ToaThuocCuDialogSaveComponent,
+    DotKhamCreateUpdateDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component,
+    BinaryFileInputComponent,
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
-    MyOwnCustomMaterialModule,
     FlexLayoutModule,
     RouterModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
     FormsModule,
-    NgbModule,
+    MyCustomNgbModule,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
         'm': 59
@@ -159,7 +173,16 @@ import { CheckAddressButtonComponent } from './check-address-button/check-addres
     SharedErrorDialogComponent,
     ConfirmDialogV2Component,
     SelectUomProductDialogComponent,
-    ImportSampleDataComponent
+    ImportSampleDataComponent,
+    AppointmentCreateUpdateComponent,
+    SaleOrderLineDialogComponent,
+    ToaThuocCuDialogSaveComponent,
+    DotKhamCreateUpdateDialogComponent,
+    AccountInvoiceRegisterPaymentDialogV2Component,
+    PartnerSupplierCuDialogComponent,
+    ProductCategoryDialogComponent,
+    PartnerCustomerCuDialogComponent,
+    LoaiThuChiFormComponent
   ],
 })
 export class SharedModule { }

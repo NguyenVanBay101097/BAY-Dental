@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AccountInvoiceReportService, AccountInvoiceReportHomeSummaryVM } from 'src/app/account-invoice-reports/account-invoice-report.service';
+import { AccountInvoiceReportHomeSummaryVM } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { HomeService, TopServices } from '../home.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
@@ -21,8 +21,7 @@ export class AppointmentState {
 export class HomeComponent implements OnInit {
   todaySummary: AccountInvoiceReportHomeSummaryVM;
 
-  constructor(private intlService: IntlService, private homeService: HomeService,
-    private reportService: AccountInvoiceReportService, private productService: ProductService) { }
+  constructor(private intlService: IntlService, private homeService: HomeService, private productService: ProductService) { }
 
   invoiceItems = [];
   appointItems = [];

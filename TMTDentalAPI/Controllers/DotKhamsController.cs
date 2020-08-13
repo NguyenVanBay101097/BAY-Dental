@@ -243,10 +243,9 @@ namespace TMTDentalAPI.Controllers
                 {
                     ResModel = "dotkham",
                     ResId = id,
-                    Name = item.Name,
+                    Name = item.FileName,
                     Type = "upload",
-                    UploadId = item.Id,
-                    MineType = item.MineType,
+                    UploadId = item.FileUrl,
                 };
 
                 list.Add(attachment);

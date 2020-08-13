@@ -46,7 +46,7 @@ export class ResGroupPaging {
     items: ResGroupBasic[];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ResGroupService {
     apiUrl = 'api/resgroups';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

@@ -4,7 +4,7 @@ import { ServiceCardTypeListComponent } from './service-card-type-list/service-c
 
 const routes: Routes = [
   {
-    path: 'service-card-types',
+    path: '',
     component: ServiceCardTypeListComponent
   }
 ];

@@ -22,7 +22,8 @@ import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-d
     SharedModule
   ],
   entryComponents: [
-    ServiceCardOrderLineDialogComponent
+    ServiceCardOrderLineDialogComponent,
+    ServiceCardOrderCreateUpdateComponent
   ]
 })
 export class ServiceCardOrdersModule { }

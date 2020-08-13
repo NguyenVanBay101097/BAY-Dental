@@ -328,6 +328,17 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnlock(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionUnlock(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpGet("{id}/GetDotKhamList")]
         public async Task<IActionResult> GetDotKhamList(Guid id)
         {

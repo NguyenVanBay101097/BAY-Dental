@@ -41,7 +41,6 @@ export class AppComponent {
     if (this.authService.isAuthenticated()) {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
-        console.log(result);
         this.permissionService.define(result);
       });
     }

@@ -3,11 +3,10 @@ import { Subject } from 'rxjs';
 import { AppointmentBasic, AppointmentPaged } from './appointment';
 import { AppointmentService } from './appointment.service';
 import { map } from 'rxjs/operators';
-import { SchedulerEvent } from '@progress/kendo-angular-scheduler';
 
 @Injectable()
 export class AppointmentVMService {
-    private eventsSource = new Subject<SchedulerEvent[]>();
+    private eventsSource = new Subject<any[]>();
     events$ = this.eventsSource.asObservable();
     filter = new EventEmitter<any>();
     eventEdit = new EventEmitter<any>();
@@ -57,7 +56,7 @@ export class AppointmentVMService {
         this.appointmentService.searchRead(val)
             .pipe(
                 map(response => {
-                    return response.map(ap => (<SchedulerEvent>{
+                    return response.map(ap => (<any>{
                         id: ap.id,
                         isAllDay: false,
                         start: new Date(ap.date),
