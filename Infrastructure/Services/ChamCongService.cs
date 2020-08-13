@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,56 +37,55 @@ namespace Infrastructure.Services
             }
             await this.CreateAsync(val);
         }
-        public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
-        {
-            ISpecification<Employee> spec = new InitialSpecification<Employee>(x => true);
-            if (!string.IsNullOrEmpty(val.Filter))
-            {
-                spec = spec.And(new InitialSpecification<Employee>(x => x.Name.Contains(val.Filter)));
-            }
+        //public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
+        //{
+        //    ISpecification<Employee> spec = new InitialSpecification<Employee>(x => true);
+        //    if (!string.IsNullOrEmpty(val.Filter))
+        //    {
+        //        spec = spec.And(new InitialSpecification<Employee>(x => x.Name.Contains(val.Filter)));
+        //    }
 
-            var empObj = GetService<IEmployeeService>();
-            var query = empObj.SearchQuery().Include(x => x.ChamCongs).Include("ChamCongs.WorkEntryType").
-                Select(x => new Employee()
-                {
-                    Id = x.Id,
-                    CompanyId = x.CompanyId,
-                    Name = x.Name,
-                    Ref = x.Ref,
-                    ChamCongs = x.ChamCongs.Where(y =>
-                    (!val.From.HasValue ||
-                    (y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date))
-                    &&
-                    (!val.To.HasValue ||
-                    (y.TimeIn.Value.Date <= val.To.Value.Date || y.TimeOut.Value.Date <= val.To.Value.Date))
-                    &&
-                    (string.IsNullOrEmpty(val.Status) ||
-                    (y.Status == val.Status))
+        //    var empObj = GetService<IEmployeeService>();
+        //    var query = empObj.SearchQuery().Include(x => x.ChamCongs).Include("ChamCongs.WorkEntryType").
+        //        Select(x => new Employee()
+        //        {
+        //            Id = x.Id,
+        //            CompanyId = x.CompanyId,
+        //            Name = x.Name,
+        //            Ref = x.Ref,
+        //            ChamCongs = x.ChamCongs.Where(y => (!val.From.HasValue || (y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date))
+        //            &&
+        //            (!val.To.HasValue ||
+        //            (y.TimeIn.Value.Date <= val.To.Value.Date || y.TimeOut.Value.Date <= val.To.Value.Date))
+        //            &&
+        //            (string.IsNullOrEmpty(val.Status) ||
+        //            (y.Status == val.Status))
 
-                ).Select(y => new ChamCong()
-                {
-                    Id = y.Id,
-                    DateCreated = y.DateCreated,
-                    Status = y.Status,
-                    WorkEntryTypeId = y.WorkEntryTypeId,
-                    TimeIn = y.TimeIn,
-                    TimeOut = y.TimeOut,
-                    WorkEntryType = y.WorkEntryType,
-                    HourWorked = y.HourWorked
-                }).ToList()
-                });
+        //        ).Select(y => new ChamCong()
+        //        {
+        //            Id = y.Id,
+        //            DateCreated = y.DateCreated,
+        //            Status = y.Status,
+        //            WorkEntryTypeId = y.WorkEntryTypeId,
+        //            Date = y.Date,
+        //            TimeIn = y.TimeIn,
+        //            TimeOut = y.TimeOut,
+        //            WorkEntryType = y.WorkEntryType,
+        //            HourWorked = y.HourWorked
+        //        }).ToList()
+        //        });
 
-            var items = await query.Skip(val.Offset).Take(val.Limit)
-               .ToListAsync();
+        //    var items = await query.Skip(val.Offset).Take(val.Limit)
+        //       .ToListAsync();
 
-            var totalItems = await query.CountAsync();
-            var resItems = _mapper.Map<IEnumerable<EmployeeDisplay>>(items);
-            resItems = await CountNgayCong(resItems);
-            return new PagedResult2<EmployeeDisplay>(totalItems, val.Offset, val.Limit)
-            {
-                Items = resItems
-            };
-        }
+        //    var totalItems = await query.CountAsync();
+        //    var resItems = _mapper.Map<IEnumerable<EmployeeDisplay>>(items);
+        //    resItems = await CountNgayCong(resItems);
+        //    return new PagedResult2<EmployeeDisplay>(totalItems, val.Offset, val.Limit)
+        //    {
+        //        Items = resItems
+        //    };
+        //}
 
         public async Task<IEnumerable<EmployeeDisplay>> CountNgayCong(IEnumerable<EmployeeDisplay> lst)
         {
@@ -142,22 +142,60 @@ namespace Infrastructure.Services
             return st.OneStandardWorkHour;
         }
 
-        public Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
-        {
-            return null;
-        }
+        //public async Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val)
+        //{
+        //    int dateStart = 0;
+        //    int dateEnd = 0;
+        //    var listDateCC = new List<DateChamCong>();
+        //    var emps = await GetByEmployeePaged(val);
+        //    var dictEmp = new Dictionary<Guid, List<DateChamCong>>();
+        //    if (val.From.HasValue)
+        //        dateStart = val.From.Value.Day;
+        //    if (val.To.HasValue)
+        //        dateEnd = val.To.Value.Day;
+
+        //    for (int i = dateStart; i <= dateEnd; i++)
+        //    {
+        //        foreach (var emp in emps.Items)
+        //        {
+        //            if (emp.ChamCongs.Count() > 0)
+        //            {
+        //                foreach (var cc in emp.ChamCongs)
+        //                {
+        //                    if (cc.DateCreated.HasValue && cc.DateCreated.Value.Day == i)
+        //                    {
+        //                        var dateCC = new DateChamCong();
+        //                        dateCC.Date = cc.DateCreated.Value;
+        //                        dateCC.ChamCong = cc;
+        //                        listDateCC.Add(dateCC);
+        //                    }
+        //                }
+        //                dictEmp.Add(emp.Id, listDateCC);
+        //            }
+        //            //else
+        //            //{
+        //            //    var datec = new DateChamCong();
+        //            //    datec.Date = new DateTime(currentYear, currentMonth, i);
+        //            //    dictEmp[emp].Add(datec);
+        //            //}
+        //        }
+        //    }
+
+
+        //    return null;
+        //}
 
     public async Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val)
         {
             var query = SearchQuery();
             if (val.From.HasValue)
             {
-                query = query.Where(y=> y.TimeIn.Value.Date >= val.From.Value.Date || y.TimeOut.Value.Date >= val.From.Value.Date);
+                query = query.Where(y=> y.Date.Value.Date >= val.From.Value.Date);
             }
             
             if (val.To.HasValue)
             {
-                query = query.Where(y=> y.TimeIn.Value.Date <= val.To.Value.Date || y.TimeOut.Value.Date <= val.To.Value.Date);
+                query = query.Where(y=> y.Date.Value.Date <= val.To.Value.Date);
             }
 
             if (!string.IsNullOrEmpty(val.Status))

@@ -100,68 +100,62 @@ namespace TMTDentalAPI.Controllers
         }
 
         //[HttpPost("[action]")]
-        //public async Task<IActionResult> ExportExcelFile(PartnerPaged val)
+        //public async Task<IActionResult> ExportExcelFile(employeePaged val)
         //{
-            //var stream = new MemoryStream();
-            //var data = await _chamCongService.GetExcel(val);
-            //byte[] fileContent;
+        //    var stream = new MemoryStream();
+        //    var data = await _chamCongService.GetByEmployeePaged(val);
+        //    byte[] fileContent;
+        //    int dateStart = val.From.HasValue ? val.From.Value.Day : 1;
+        //    int dateEnd = val.To.HasValue ? val.To.Value.Day : 1;
+        //    using (var package = new ExcelPackage(stream))
+        //    {
 
-            //var gender_dict = new Dictionary<string, string>()
-            //{
-            //    { "male", "Nam" },
-            //    { "female", "Nữ" },
-            //    { "other", "Khác" }
-            //};
 
-            //using (var package = new ExcelPackage(stream))
-            //{
-            //    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+        //        var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-            //    worksheet.Cells[1, 1].Value = "Tên KH";
-            //    worksheet.Cells[1, 2].Value = "Mã KH";
-            //    worksheet.Cells[1, 3].Value = "Ngày tạo";
-            //    worksheet.Cells[1, 4].Value = "Giới tính";
-            //    worksheet.Cells[1, 5].Value = "Ngày sinh";
-            //    worksheet.Cells[1, 6].Value = "SĐT";
-            //    worksheet.Cells[1, 7].Value = "Địa chỉ";
-            //    worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
-            //    worksheet.Cells[1, 9].Value = "Nghề nghiệp";
-            //    worksheet.Cells[1, 10].Value = "Email";
-            //    worksheet.Cells[1, 11].Value = "Ghi chú";
 
-            //    worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+        //        worksheet.Cells[2, 1].Value = "Tên nhân viên";
+        //        worksheet.Cells[2, 2].Value = "Chức vụ";
 
-            //    var row = 2;
-            //    foreach (var item in data)
-            //    {
-            //        worksheet.Cells[row, 1].Value = item.Name;
-            //        worksheet.Cells[row, 2].Value = item.Ref;
-            //        worksheet.Cells[row, 3].Value = item.Date;
-            //        worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
-            //        worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
-            //        worksheet.Cells[row, 5].Value = item.DateOfBirth;
-            //        worksheet.Cells[row, 6].Value = item.Phone;
-            //        worksheet.Cells[row, 7].Value = item.Address;
-            //        worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
-            //        worksheet.Cells[row, 9].Value = item.Job;
-            //        worksheet.Cells[row, 10].Value = item.Email;
-            //        worksheet.Cells[row, 11].Value = item.Note;
+        //        for (int i = dateStart + 2; i <= dateEnd + 2; i++)
+        //        {
+        //            worksheet.Cells[2, i].Value = i - 2;
+        //        }
 
-            //        row++;
-            //    }
+        //        worksheet.Cells["A1:K1"].Style.Font.Bold = true;
 
-            //    worksheet.Column(4).Style.Numberformat.Format = "@";
-            //    worksheet.Column(5).Style.Numberformat.Format = "@";
+        //        var row = 3;
+        //        foreach (var item in data.Items)
+        //        {
+        //            worksheet.Cells[row, 1].Value = item.Name + $" ({item.Ref})";
+        //            worksheet.Cells[row, 2].Value = item.IsDoctor.Value == true ? "Bác sĩ" : (item.IsAssistant.Value == true ? "Y tá" : "Chưa có chức vụ");
+        //            for (int i = dateStart; i <= dateEnd; i++)
+        //            {
+        //                foreach (var cc in item.ChamCongs)
+        //                {
 
-            //    package.Save();
+        //                    if ((cc.TimeIn.HasValue ? cc.TimeIn.Value.Day : (cc.TimeOut.HasValue ? cc.TimeOut.Value.Day : 0)) == i)
+        //                    {
+        //                        worksheet.Cells[row, i + 2].Value = "vào: " + (cc.TimeIn.HasValue ? cc.TimeIn.Value.ToString("HH:mm") : "chưa chấm") + "\r\n" + " ra: " + (cc.TimeOut.HasValue ? cc.TimeOut.Value.ToString("HH:mm") : "chưa chấm");
+        //                    }
+        //                }
+        //            }
 
-            //    fileContent = stream.ToArray();
-            //}
+        //            row++;
+        //        }
 
-            //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            //stream.Position = 0;
+        //        worksheet.Column(4).Style.Numberformat.Format = "@";
+        //        worksheet.Column(5).Style.Numberformat.Format = "@";
 
-            //return new FileContentResult(fileContent, mimeType);
+        //        package.Save();
+
+        //        fileContent = stream.ToArray();
+        //    }
+
+        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    stream.Position = 0;
+
+        //    return new FileContentResult(fileContent, mimeType);
         //}
     }
 }

@@ -7,15 +7,10 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class SetupChamcongConfiguration : IEntityTypeConfiguration<SetupChamcong>
+    class WorkEntryTypeConfiguration : IEntityTypeConfiguration<WorkEntryType>
     {
-        public void Configure(EntityTypeBuilder<SetupChamcong> builder)
+        public void Configure(EntityTypeBuilder<WorkEntryType> builder)
         {
-            builder.HasOne(x => x.Company)
-            .WithMany()
-            .HasForeignKey(x => x.CompanyId)
-            .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);
@@ -23,7 +18,6 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
-
         }
     }
 }

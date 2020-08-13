@@ -10,16 +10,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class employeePaged
     {
-
-        public employeePaged()
-        {
-            Limit = 20;
-        }
-
-        public int Limit { get; set; }
-        public string Filter { get; set; }
-        public int Offset { get; set; }
-
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
         public string Status { get; set; }
@@ -34,6 +24,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? TimeIn { get; set; }
 
         public DateTime? TimeOut { get; set; }
+
+        public DateTime? Date { get; set; }
 
         public decimal? HourWorked
         {
@@ -59,11 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
                 }
                 else if (!this.TimeOut.HasValue && !this.TimeIn.HasValue)
                 {
-                    if (this.Status == "NP")
-                    {
                         return "NP";
-                    }
-                    return "initial";
                 }
                 return "process";
             }
@@ -77,17 +65,20 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
-
         public DateTime? TimeIn { get; set; }
 
         public DateTime? TimeOut { get; set; }
-
+        public DateTime? Date { get; set; }
         public decimal? HourWorked { get; set; }
-
-        public Guid CompanyId { get; set; }
         public string Status { get; set; }
-        public EmployeeBasic employee { get; set; }
         public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryTypeDisplay WorkEntryType { get; set; }
+    }
+
+    public class ChamCongExportExcell
+    {
+        public Guid? EmployeeId { get; set; }
+        public EmployeeDisplay Employee { get; set; }
+        public IEnumerable<DateTime> Dates { get; set; } = new List<DateTime>();
     }
 }

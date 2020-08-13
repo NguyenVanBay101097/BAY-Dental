@@ -18,6 +18,12 @@ namespace ApplicationCore.Entities
         /// thời gian checkin
         /// </summary>
         public DateTime? TimeIn { get; set; }
+
+        /// <summary>
+        /// Thời gian hiển thị trên kanban
+        /// </summary>
+        public DateTime? Date { get; set; }
+
         /// <summary>
         /// thời gian checkout
         /// </summary>

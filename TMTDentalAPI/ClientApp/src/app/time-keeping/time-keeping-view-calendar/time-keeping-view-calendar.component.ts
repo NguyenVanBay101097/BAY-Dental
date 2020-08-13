@@ -81,7 +81,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       if (!value.chamCongs) {
         value.chamCongs = [];
       }
-      var cc = emp.chamCongs.filter(x => x.timeIn ? new Date(x.timeIn).toDateString() == date.toDateString() : new Date(x.timeOut).toDateString() == date.toDateString())
+      var cc = emp.chamCongs.filter(x => new Date(x.date).toDateString() == date.toDateString())
       if (cc) {
         value.chamCongs = cc;
         value.date = date;
@@ -108,11 +108,11 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       return false;
     var page = new EmployeeChamCongPaged();
     page.from = this.intl.formatDate(this.monthStart, "yyyy-MM-dd");
-    page.to = this.intl.formatDate(this.monthStart, "yyyy-MM-dd");
+    page.to = this.intl.formatDate(this.monthEnd, "yyyy-MM-dd");
     page.limit = 100;
     this.timeKeepingService.exportTimeKeeping(page).subscribe(
       rs => {
-        let filename = "danh_sach_khach_hang";
+        let filename = "Danh sách chấm công";
         let newBlob = new Blob([rs], {
           type:
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

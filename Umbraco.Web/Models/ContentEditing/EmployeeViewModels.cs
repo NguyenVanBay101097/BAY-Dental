@@ -84,7 +84,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Là phụ tá
         /// </summary>
         public bool? IsAssistant { get; set; }
-        public IEnumerable<ChamCongDisplay> ChamCongs { get; set; }
+        public IEnumerable<ChamCongDisplay> ChamCongs { get; set; } = new List<ChamCongDisplay>();
         public double SoNgayCong { get; set; }
 
     }

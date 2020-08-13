@@ -46,7 +46,7 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Work Entry Type</label>
+                                    <label class="o_form_label">Loại</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox class="form-control" [data]="filterdWorks" [textField]="'name'"
@@ -62,33 +62,20 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <input type="checkbox" (ngModelChange)="checkTimeIn($event)" [readonly]="checked"
-                                        formControlName="timeIn">
+                                    <label class="o_form_label ">Giờ vào</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label>
-                                        <span>{{timeIn ? (timeIn | date:'HH:mm ') : null}}</span>
-                                        <span [ngClass]="{'none': timeIn}" class="replace"></span>
-                                        <i class="far fa-clock ml-2 mr-2"></i>
-                                        <label class="o_form_label ">Giờ vào</label>
-
-                                    </label>
+                                    <kendo-timepicker formControlName="timeIn"></kendo-timepicker>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <input type="checkbox" (ngModelChange)="checkTimeOut($event)"
-                                        formControlName="timeOut">
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span>{{timeOut ? (timeOut | date:'HH:mm ') : null}}</span>
-                                    <span [ngClass]="{'none': timeOut}" class="replace"></span>
-                                    <i class="far fa-clock ml-2 mr-2"></i>
                                     <label class="o_form_label ">Giờ ra</label>
                                 </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-timepicker formControlName="timeOut"></kendo-timepicker>
+                                </td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>

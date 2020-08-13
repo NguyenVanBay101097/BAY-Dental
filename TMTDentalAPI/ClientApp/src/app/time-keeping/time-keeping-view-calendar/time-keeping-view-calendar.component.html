@@ -35,7 +35,8 @@
     </div>
     <div class="float-right pb-2">
         <div class="d-inline-flex">
-            <button class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i class="fas fa-file-export"></i></button>
+            <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i
+                    class="fas fa-file-export"></i></button>
         </div>
     </div>
     <div class="float-right pb-2 mr-3">
@@ -104,19 +105,25 @@
         <tbody>
             <tr *ngFor="let empl of listEmployeies">
                 <th scope="row" style="min-width: 200px;">{{empl.name}}</th>
-                <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]"
-                    (click)="clickTimeSheetCreate($event,date.date,empl)">
+                <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
                     <div class="oe_kanban_content">
                         <div class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
                             (click)="clickTimeSheet($event, cc.id, date.date, empl)">
                             <div class="oe_kanban_timeSheet"
                                 [ngStyle]="{'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'}">
                                 <span
-                                    title="{{cc.workEntryType ? cc.workEntryType.name: ''}}">{{cc.workEntryType ? cc.workEntryType.name: ''}}</span>
+                                    title="{{cc.workEntryType ? cc.workEntryType.name: ''}}">{{cc.workEntryType ? cc.workEntryType.name: ''}}
+                                </span>
+                                <span class="time_sheet_type">
+                                    <i *ngIf="cc.status == 'done'" class="text-success fas fa-circle"></i>
+                                    <i *ngIf="cc.status == 'process'" class="text-warning fas fa-circle"></i>
+                                </span>
                             </div>
+                        </div>
+                        <div (click)="clickTimeSheetCreate($event,date.date,empl)" class="oe_kanban_timekepping">
                             <div class="oe_kanban_timeSheet_create"
                                 (click)="clickTimeSheetCreate($event,date.date,empl)">
-                                <i class="fas fa-plus-square text-primary"></i>
+                                <i class="fas fa-plus text-primary"></i>
                             </div>
                         </div>
                         <div class="oe_kanban_timeSheet" *ngIf="!date.chamCongs">
