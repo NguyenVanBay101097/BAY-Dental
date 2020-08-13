@@ -47,7 +47,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(HrPayrollStructureDisplay val)
+        public async Task<IActionResult> Create(HrPayrollStructureSave val)
         {
             var entitys = _mapper.Map<HrPayrollStructure>(val);
 
@@ -55,12 +55,11 @@ namespace TMTDentalAPI.Controllers
             await _HrPayrollStructureService.CreateAsync(entitys);
             _unitOfWork.Commit();
 
-            val.Id = entitys.Id;
-            return Ok(val);
+            return Ok(_mapper.Map<HrPayrollStructureDisplay>(entitys));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, HrPayrollStructureDisplay val)
+        public async Task<IActionResult> Update(Guid id, HrPayrollStructureSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -69,12 +68,13 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             str = _mapper.Map(val, str);
+            SaveRules(val,str);
             
             await _HrPayrollStructureService.UpdateAsync(str);
 
             return NoContent();
         }
-        private void SaveRules(HrPayrollStructureDisplay val, HrPayrollStructure structure)
+        private void SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure)
         {
             var rulesToRemove = new List<HrSalaryRule>();
             foreach (var rule in structure.Rules)

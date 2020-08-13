@@ -23,6 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public Guid CompanyId { get; set; }
         public string SchedulePay { get; set; }
+        public IEnumerable<HrSalaryRuleSave> Rules { get; set; }
     }
     public class HrPayrollStructureDisplay
     {
