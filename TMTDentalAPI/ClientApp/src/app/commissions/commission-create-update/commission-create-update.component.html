@@ -17,7 +17,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" accesskey="S" [disabled]="saved"
+                    <button type="button" accesskey="S"
                         class="btn btn-primary btn-sm" (click)="onSave()">
                         Lưu
                     </button>
@@ -28,8 +28,7 @@
                     <label class="o_form_label oe_edit_only">Tên bảng hoa hồng</label>
                     <h1 class="mb-1">
                         <input class="form-control" formControlName="name" 
-                            name="name" required #nameInput
-                            (keyup)="changeName()">
+                            name="name" required #nameInput>
                     </h1>
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
                         <div *ngIf="f.name.errors.required">Nhập tên bảng hoa hồng</div>
@@ -66,12 +65,12 @@
                         <button type="button" class="btn btn-secondary btn-sm ml-1"
                             placement="bottom"
                             [ngbPopover]="popContent"
-                            popoverTitle="Nhóm dịch vụ"
+                            popoverTitle="Từ nhóm dịch vụ"
                             [autoClose]="false"
                             triggers="manual"
                             #popover="ngbPopover"
                             (click)="popover.toggle()">
-                            Thêm nhanh Dịch vụ từ Nhóm dịch vụ
+                            Thêm nhanh dịch vụ
                         </button>
                     </div>
                     <div>
@@ -81,7 +80,7 @@
                                     <th>Áp dụng cho</th>
                                     <th>Dịch vụ/ Nhóm dịch vụ</th>
                                     <th class="text-right">Hoa hồng</th>
-                                    <th></th>
+                                    <th class="text-right">#</th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="commissionProductRules">
@@ -98,23 +97,11 @@
                                             </div>
                                         </td>
                                         <td class="text-right">
-                                            <div ngbDropdown placement="bottom-right">
-                                                <button class="btn btn-light btn-sm mr-1" title="chức năng" id="dropdownMenuButton" ngbDropdownToggle>
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                                                    <button ngbDropdownItem type="button"
-                                                        (click)="editLine(line)">
-                                                        <span class="k-icon k-i-edit"></span>
-                                                        <span class="pl-2">Sửa</span>
-                                                    </button>
-                                                    <button ngbDropdownItem type="button"
-                                                        (click)="deleteLine(i)">
-                                                        <span class="k-icon k-i-delete"></span>
-                                                        <span class="pl-2">Xóa</span>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <button type="button" 
+                                                class="btn btn-icon btn-sm btn-light" 
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                              </button>
                                         </td>
                                     </tr>
                                 </ng-container>

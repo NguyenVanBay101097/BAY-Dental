@@ -30,7 +30,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
   id: string;
-  saved: boolean = true;
   submitted = false;
 
   constructor(private fb: FormBuilder, 
@@ -122,10 +121,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
     } 
   }
 
-  changeName() {
-    this.saved = false;
-  }
-
   addLine() {
     let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.result.then(result => {
@@ -133,18 +128,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
       let line = result as any;
       this.commissionProductRules.push(this.fb.group(line));
       this.commissionProductRules.markAsDirty();
-      this.saved = false;
-    }, () => {
-    });
-  }
-
-  editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.line = line.value;
-    modalRef.result.then(result => {
-      line.patchValue(result);
-      this.commissionProductRules.markAsDirty();
-      this.saved = false;
     }, () => {
     });
   }
@@ -152,7 +135,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
   deleteLine(i) {
     this.commissionProductRules.removeAt(i);
     this.commissionProductRules.markAsDirty();
-    this.saved = false;
   }
 
   onSave() {
@@ -167,7 +149,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
     if (this.id) {
       this.commissionService.update(this.id, val)
       .subscribe(() => {
-        this.saved = true;
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -244,7 +225,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
           }));
           this.commissionProductRules.markAsDirty();
         });
-        this.saved = false;
       }, error => {
         console.log(error);
       }
