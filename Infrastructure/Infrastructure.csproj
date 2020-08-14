@@ -23,6 +23,8 @@
     <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.Designer.cs" />
     <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.cs" />
     <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.cs" />
+    <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

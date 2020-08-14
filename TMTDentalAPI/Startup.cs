@@ -130,6 +130,10 @@ namespace TMTDentalAPI
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IIRSequenceService, IRSequenceService>();
+
+            services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
+            services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
+
             services.AddScoped<ISaleOrderService, SaleOrderService>();
             services.AddScoped<ISaleOrderLineService, SaleOrderLineService>();
             services.AddScoped<IAccountInvoiceService, AccountInvoiceService>();
@@ -358,6 +362,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ChamCongProfile());
                 mc.AddProfile(new SetupChamcongProfile());
                 mc.AddProfile(new WorkEntryTypeProfile());
+                mc.AddProfile(new ResourceCalendarAttendanceProfile());
+                mc.AddProfile(new ResourceCalendarProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
