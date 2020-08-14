@@ -43,7 +43,6 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     if (this.id) {
       this.loadFormApi();
     }
-
     // if (this.today.getDate() > this.dateTime.getDate()) {
     //   this.formGroup.disable();
     // }
@@ -84,24 +83,26 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         this.formGroup.get('workEntryTypeId').patchValue(this.chamCong.workEntryTypeId);
         if (this.chamCong && this.chamCong.timeIn) {
           this.formGroup.get('timeIn').setValue(new Date(this.chamCong.timeIn));
+          this.timeIn = new Date(this.chamCong.timeIn);
         }
         if (this.chamCong && this.chamCong.timeOut) {
           this.formGroup.get('timeOut').setValue(new Date(this.chamCong.timeOut));
+          this.timeOut = new Date(this.chamCong.timeOut);
         }
       }
     )
   }
 
-  checkTimeIn(evt) {
-    if (evt)
-      this.timeIn = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), this.today.getHours(), this.today.getMinutes());
+  changeTimeIn(time: Date) {
+    if (time)
+      this.timeIn = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), time.getHours(), time.getMinutes());
     else
       this.timeIn = null;
   }
 
-  checkTimeOut(evt) {
-    if (evt)
-      this.timeOut = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), this.today.getHours(), this.today.getMinutes());
+  changeTimeOut(time: Date) {
+    if (time)
+      this.timeOut = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), time.getHours(), time.getMinutes());
     else
       this.timeOut = null;
   }
@@ -111,22 +112,22 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       return false;
 
     var val = new ChamCongSave();
-    val.timeIn = this.formGroup.get('timeIn').value ? this.intl.formatDate(this.formGroup.get('timeIn').value, "yyyy-MM-ddTHH:mm") : null;
-    val.timeOut = this.formGroup.get('timeOut').value ? this.intl.formatDate(this.formGroup.get('timeOut').value, "yyyy-MM-ddTHH:mm") : null;
+    val.timeIn = this.timeIn ? this.intl.formatDate(this.timeIn, "yyyy-MM-ddTHH:mm") : '';
+    val.timeOut = this.timeOut ? this.intl.formatDate(this.timeOut, "yyyy-MM-ddTHH:mm") : '';
     val.employeeId = this.employee.id;
     val.date = this.intl.formatDate(this.dateTime, "yyyy-MM-dd");
     val.workEntryTypeId = this.formGroup.get('workEntryTypeId').value;
     if (this.id) {
       this.timeKeepingServive.update(this.id, val).subscribe(
         x => {
-          this.activeModal.close();
+          this.activeModal.close(this.employee.id);
         }
       )
     }
     else {
       this.timeKeepingServive.create(val).subscribe(
         result => {
-          this.activeModal.close();
+          this.activeModal.close(this.employee.id);
         }
       )
     }

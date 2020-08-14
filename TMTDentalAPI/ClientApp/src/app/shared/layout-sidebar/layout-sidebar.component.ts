@@ -119,8 +119,7 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
         // { name: 'Kịch bản', link: '/tcare-campaigns' },
-        { name: 'Chấm công', link: '/time-keepings' },
-        { name: 'Loại đầu vào công việc', link: '/work-entry-types' }
+        { name: 'Chấm công', link: '/time-keepings' }
       ]
     },
     {

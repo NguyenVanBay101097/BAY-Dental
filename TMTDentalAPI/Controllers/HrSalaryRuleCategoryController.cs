@@ -53,7 +53,7 @@ namespace TMTDentalAPI.Controllers
         //    var entitys = _mapper.Map<HrSalaryRuleCategory>(val);
 
         //    await _HrSalaryRuleCategoryService.CreateAsync(entitys);
-        //    val.Id = entitys.Id;
+        //    val.Id = entitys.Id; 
         //    return Ok(val);
         //}
 

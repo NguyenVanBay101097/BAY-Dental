@@ -7,16 +7,17 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class HrPayrollStructureConfiguration : IEntityTypeConfiguration<HrPayrollStructure>
+    public class ResourceCalendarAttendanceConfiguration : IEntityTypeConfiguration<ResourceCalendarAttendance>
     {
-        public void Configure(EntityTypeBuilder<HrPayrollStructure> builder)
+        public void Configure(EntityTypeBuilder<ResourceCalendarAttendance> builder)
         {
             builder.Property(x => x.Name).IsRequired();
+            builder.Property(x => x.DayOfWeek).IsRequired();
+            builder.Property(x => x.DayPeriod).IsRequired();
 
-            builder.HasOne(x => x.Type)
+            builder.HasOne(x => x.Calendar)
                 .WithMany()
-                .HasForeignKey(x => x.TypeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.CalendarId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

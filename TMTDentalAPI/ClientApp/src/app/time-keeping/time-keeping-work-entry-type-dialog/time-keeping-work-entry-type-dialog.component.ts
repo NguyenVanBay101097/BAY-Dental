@@ -24,6 +24,7 @@ export class TimeKeepingWorkEntryTypeDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: '',
+      isHasTimeKeeping: false
     })
     if (this.id)
       this.loadData();
@@ -50,7 +51,7 @@ export class TimeKeepingWorkEntryTypeDialogComponent implements OnInit {
     if (this.formGroup.invalid)
       return;
     var val = new WorkEntryType();
-    val.name = this.formGroup.get('name').value;
+    val = this.formGroup.value;
     val.color = this.oldColor;
     if (this.id) {
       this.timeKeepingService.updateWorkEntryType(this.id, val).subscribe(

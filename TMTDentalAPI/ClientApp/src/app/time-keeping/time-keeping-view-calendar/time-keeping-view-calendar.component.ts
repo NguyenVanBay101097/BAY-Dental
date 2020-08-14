@@ -1,12 +1,12 @@
 import { Component, OnInit, NgModuleRef } from '@angular/core';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EmployeeSimple, EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { NgbModal, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
-import { EmployeeChamCongPaged, TimeKeepingService, TimeSheetEmployee, TimeKeepingSave } from '../time-keeping.service';
+import { EmployeeChamCongPaged, TimeKeepingService, TimeSheetEmployee, TimeKeepingSave, ChamCongBasic } from '../time-keeping.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { DateInputModule } from '@progress/kendo-angular-dateinputs';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { IntlService, load } from '@progress/kendo-angular-intl';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -22,7 +22,7 @@ import { Router } from '@angular/router';
 export class TimeKeepingViewCalendarComponent implements OnInit {
 
   title: string = "Bảng chấm công";
-  listEmployeies: EmployeeBasic[] = [];
+  listEmployeies: EmployeeSimple[] = [];
   flag = true;
   listTimeSheetByEmpId: { [id: string]: TimeSheetEmployee[] } = {};
   dateList: Date[];
@@ -42,8 +42,13 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     private modalService: NgbModal,
     private timeKeepingService: TimeKeepingService,
     private router: Router,
+    config: NgbPopoverConfig,
     private notificationService: NotificationService
-  ) { }
+  ) {
+    config.placement = 'bottom';
+    config.triggers = 'hover';
+    config.container = "body"
+  }
 
   ngOnInit() {
     this.getDateMonthList();
@@ -52,44 +57,56 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
-        this.loadData();
+        this.loadEmployee(value);
       });
+
+
   }
 
-  loadData() {
-    var page = new EmployeeChamCongPaged();
-    page.filter = this.search ? this.search : '';
-    page.limit = 20;
-    page.offset = 0;
-    page.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
-    page.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
-    this.timeKeepingService.getEmpChamCong(page).subscribe(
+  loadEmployee(search?: string) {
+    var paged = new EmployeePaged();
+    paged.limit = 20;
+    paged.offset = 0;
+    paged.search = search ? search : '';
+    this.employeeService.getEmployeeSimpleList(paged).subscribe(
       result => {
-        this.listEmployeies = result.items;
-        console.log(this.listEmployeies);
-        this.listEmployeies.forEach(emp => {
-          this.loadTimeSheet(emp);
-        })
+        this.listEmployeies = result;
+        if (this.listEmployeies) {
+          this.listEmployeies.forEach(emp => {
+            this.loadData(emp.id)
+          });
+        }
       }
     )
   }
 
-  loadTimeSheet(emp) {
-    this.listTimeSheetByEmpId[emp.id] = [];
+  loadData(empId) {
+    var page = new EmployeeChamCongPaged();
+    page.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
+    page.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
+    page.employeeId = empId;
+    this.timeKeepingService.getAllByEmpId(page).subscribe(
+      result => {
+        this.loadTimeSheet(empId, result);
+      }
+    )
+  }
+
+  loadTimeSheet(empId, vals: ChamCongBasic[]) {
+    this.listTimeSheetByEmpId[empId] = [];
     this.dateList.forEach(date => {
       var value = new TimeSheetEmployee();
       if (!value.chamCongs) {
         value.chamCongs = [];
       }
-      var cc = emp.chamCongs.filter(x => new Date(x.date).toDateString() == date.toDateString())
+      var cc = vals ? vals.filter(x => new Date(x.date).toDateString() == date.toDateString()) : null;
       if (cc) {
         value.chamCongs = cc;
         value.date = date;
       } else {
         value.date = date;
       }
-      this.listTimeSheetByEmpId[emp.id].push(value);
-
+      this.listTimeSheetByEmpId[empId].push(value);
     })
   }
 
@@ -101,15 +118,12 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     });
   }
 
-
-
   exportFileTimeKeeping() {
     if (!this.monthStart && !this.monthEnd)
       return false;
     var page = new EmployeeChamCongPaged();
     page.from = this.intl.formatDate(this.monthStart, "yyyy-MM-dd");
     page.to = this.intl.formatDate(this.monthEnd, "yyyy-MM-dd");
-    page.limit = 100;
     this.timeKeepingService.exportTimeKeeping(page).subscribe(
       rs => {
         let filename = "Danh sách chấm công";
@@ -133,7 +147,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   changeWeekMonth(value) {
     if (value == "weeks") {
-      this.getDateWeekList();
+      // this.getDateWeekList();
       this.flag = false;
     }
     else if (value == "months") {
@@ -159,22 +173,22 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       list.push(date);
     }
     this.dateList = list;
-    this.loadData();
+    this.loadEmployee();
   }
 
-  getDateWeekList() {
-    if (!this.weekStart || !this.weekEnd) {
-      return [];
-    }
-    var list = [];
-    for (var i = 0; i < 6 + 1; i++) {
-      var date = new Date(this.weekStart.toDateString());
-      date.setDate(this.weekStart.getDate() + i);
-      list.push(date);
-    }
-    this.dateList = list;
-    this.loadData();
-  }
+  // getDateWeekList() {
+  //   if (!this.weekStart || !this.weekEnd) {
+  //     return [];
+  //   }
+  //   var list = [];
+  //   for (var i = 0; i < 6 + 1; i++) {
+  //     var date = new Date(this.weekStart.toDateString());
+  //     date.setDate(this.weekStart.getDate() + i);
+  //     list.push(date);
+  //   }
+  //   this.dateList = list;
+  //   this.loadData();
+  // }
 
   buttonFilterMonth(event) {
     if (event && event.dateFrom && event.dateTo) {
@@ -202,8 +216,16 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.componentInstance.id = id;
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
-    modalRef.result.then(() => {
-      this.loadData();
+    modalRef.result.then(result => {
+      if (result)
+        this.loadData(result);
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'right', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
     });
   }
 
@@ -223,8 +245,16 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm 1 chấm công';
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
-    modalRef.result.then(() => {
-      this.loadData();
+    modalRef.result.then(result => {
+      if (result)
+        this.loadData(result)
+      this.notificationService.show({
+        content: 'Tạo mới thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'right', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
     });
   }
 
@@ -253,13 +283,13 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   nextWeekFilter() {
     this.weekStart = new Date(new Date().setDate(this.weekStart.getDate() + 7));
     this.weekEnd = new Date(new Date().setDate(this.weekStart.getDate() + 6));
-    this.getDateWeekList();
+    // this.getDateWeekList();
   }
 
   previousWeekFilter() {
     this.weekStart = new Date(new Date().setDate(this.weekStart.getDate() - 7));
     this.weekEnd = new Date(new Date().setDate(this.weekStart.getDate() + 6));
-    this.getDateWeekList();
+    // this.getDateWeekList();
   }
 
 }

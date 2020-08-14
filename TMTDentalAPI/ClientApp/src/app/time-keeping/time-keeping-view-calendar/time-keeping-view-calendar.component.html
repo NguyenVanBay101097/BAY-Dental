@@ -34,10 +34,10 @@
         </div>
     </div>
     <div class="float-right pb-2">
-        <div class="d-inline-flex">
+        <!-- <div class="d-inline-flex">
             <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i
                     class="fas fa-file-export"></i></button>
-        </div>
+        </div> -->
     </div>
     <div class="float-right pb-2 mr-3">
         <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" (searchChange)="buttonFilterMonth($event)"
@@ -57,7 +57,7 @@
                         </button>
                     </div>
 
-                    <!-- <div class="float-right">
+                    <div class="float-right">
                         <span class="mr-4 text-success">
                             <i class="fas fa-circle mt-2 mr-1 "></i>
                             <span class="pr-3"></span>
@@ -73,7 +73,7 @@
                             <span class="pr-3"></span>
                             Chưa chấm
                         </span>
-                    </div> -->
+                    </div>
                 </th>
                 <!-- <th *ngIf="!flag" colspan="31" scope="col">
                     <button class="btn btn-primary btn-sm" (click)="previousWeekFilter()">
@@ -110,13 +110,19 @@
                         <div class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
                             (click)="clickTimeSheet($event, cc.id, date.date, empl)">
                             <div class="oe_kanban_timeSheet"
+                                ngbPopover="Tên: {{empl.name}} | Loại: {{cc.workEntryType ? cc.workEntryType.name: ''}} | Giờ vào : {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): 'Chưa chấm'}} | Giờ ra : {{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): 'Chưa chấm'}}"
+                                popoverTitle="Chấm công {{empl.name}}"
                                 [ngStyle]="{'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'}">
                                 <span
                                     title="{{cc.workEntryType ? cc.workEntryType.name: ''}}">{{cc.workEntryType ? cc.workEntryType.name: ''}}
                                 </span>
                                 <span class="time_sheet_type">
-                                    <i *ngIf="cc.status == 'done'" class="text-success fas fa-circle"></i>
-                                    <i *ngIf="cc.status == 'process'" class="text-warning fas fa-circle"></i>
+                                    <i title="Hoàn thành chấm công" *ngIf="cc.status == 'done'"
+                                        class="text-success fas fa-circle"></i>
+                                    <i title="Chấm vào/Chấm ra" *ngIf="cc.status == 'process'"
+                                        class="text-primary fas fa-circle"></i>
+                                    <i title="Chưa chấm công" *ngIf="cc.status == 'intitial'"
+                                        class="text-warning fas fa-circle"></i>
                                 </span>
                             </div>
                         </div>
