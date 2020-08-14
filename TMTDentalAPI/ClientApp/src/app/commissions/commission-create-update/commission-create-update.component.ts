@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductSimple } from 'src/app/products/product-simple';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-commission-create-update',
@@ -38,7 +39,8 @@ export class CommissionCreateUpdateComponent implements OnInit {
     private commissionService: CommissionService, 
     private modalService: NgbModal, 
     private productCategoryService: ProductCategoryService,
-    private productService: ProductService) { }
+    private productService: ProductService, 
+    private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -166,6 +168,13 @@ export class CommissionCreateUpdateComponent implements OnInit {
       this.commissionService.update(this.id, val)
       .subscribe(() => {
         this.saved = true;
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
       }, err => {
         console.log(err);
       });
@@ -176,6 +185,13 @@ export class CommissionCreateUpdateComponent implements OnInit {
           queryParams: {
             id: result['id']
           },
+        });
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
         });
       }, err => {
         console.log(err);
@@ -228,6 +244,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
           }));
           this.commissionProductRules.markAsDirty();
         });
+        this.saved = false;
       }, error => {
         console.log(error);
       }

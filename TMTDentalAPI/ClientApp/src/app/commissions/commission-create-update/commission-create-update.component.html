@@ -53,13 +53,12 @@
                             <div class="text-right mt-2">
                                 <button type="button" accesskey="C"
                                     class="btn btn-light btn-sm mr-1" 
-                                    (click)="this.selectedProductCategory=null;p.close()">
+                                    (click)="this.selectedProductCategory=null; popover.close()">
                                     Hủy
                                 </button>
                                 <button type="button" accesskey="A"
-                                    [disabled]="selectedProductCategory==null"
                                     class="btn btn-primary btn-sm" 
-                                    (click)="addProductsFromProductCategory();p.close()">
+                                    (click)="addProductsFromProductCategory(); popover.close()">
                                     Thêm
                                 </button>
                             </div>
@@ -70,8 +69,8 @@
                             popoverTitle="Nhóm dịch vụ"
                             [autoClose]="false"
                             triggers="manual"
-                            #p="ngbPopover"
-                            (click)="p.open()">
+                            #popover="ngbPopover"
+                            (click)="popover.toggle()">
                             Thêm nhanh Dịch vụ từ Nhóm dịch vụ
                         </button>
                     </div>
