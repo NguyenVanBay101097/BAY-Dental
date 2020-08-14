@@ -60,6 +60,11 @@ namespace Infrastructure.Services
             return _userManager.Users.Where(x => x.Id == id);
         }
 
+        public async Task<ApplicationUser> GetByIdAsync(string id)
+        {
+            return await _userManager.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
         //public override ISpecification<ApplicationUser> RuleDomainGet(IRRule rule)
         //{
         //    var companyId = CompanyId;

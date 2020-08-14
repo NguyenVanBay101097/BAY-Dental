@@ -17,8 +17,8 @@ namespace Infrastructure.EntityConfigurations
                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.SaleOrderLine)
-              .WithMany()
-              .HasForeignKey(x => x.SaleOrderLine);
+              .WithMany(x => x.PartnerCommissions)
+              .HasForeignKey(x => x.SaleOrderLineId);
 
             builder.HasOne(x => x.Commission)
               .WithMany()

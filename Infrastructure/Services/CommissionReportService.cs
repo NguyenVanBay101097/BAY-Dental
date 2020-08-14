@@ -40,99 +40,103 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<CommissionReport>> GetReport(ReportFilterCommission val)
         {
-            var companyId = val.CompanyId.HasValue ? val.CompanyId : CompanyId;
-            //SearchQuery
-            var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            var saleOrderObj = GetService<IAccountPaymentService>();
-            var saleOrderlineObj = GetService<ISaleOrderLineService>();
-            var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
+            //var companyId = val.CompanyId.HasValue ? val.CompanyId : CompanyId;
+            ////SearchQuery
+            //var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            //var saleOrderObj = GetService<IAccountPaymentService>();
+            //var saleOrderlineObj = GetService<ISaleOrderLineService>();
+            //var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
 
-            if (val.DateFrom.HasValue)
-            {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                paymentRels = paymentRels.Where(x => x.Payment.PaymentDate >= dateFrom);
-            }
+            //if (val.DateFrom.HasValue)
+            //{
+            //    var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+            //    paymentRels = paymentRels.Where(x => x.Payment.PaymentDate >= dateFrom);
+            //}
 
-            if (val.DateTo.HasValue)
-            {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
-            }
+            //if (val.DateTo.HasValue)
+            //{
+            //    var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+            //    paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
+            //}
 
 
 
-            var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
+            //var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
 
-            var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.CompanyId == companyId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels)
-                .Include("Salesman.Partner")
-                .Where(x => x.PartnerCommission.CommissionId != null).ToListAsync();
+            //var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.CompanyId == companyId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels)
+            //    .Include("Salesman.Partner")
+            //    .Where(x => x.PartnerCommission.CommissionId != null).ToListAsync();
 
-            var res = lines.Select(x => new CommissionReportItem
-            {
-                UserId = x.SalesmanId,
-                Name = x.Salesman.Name,
-                AmountTotal = x.PriceSubTotal,
-                PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
-                ProductName = x.Name,
-                PercentCommission = AddCommissionSaleOrderLine(x.PartnerCommission.CommissionId.Value, x.ProductId.Value),
-                CommissionTotal = _ComputeCommission(x)
-            }).ToList();
+            //var res = lines.Select(x => new CommissionReportItem
+            //{
+            //    UserId = x.SalesmanId,
+            //    Name = x.Salesman.Name,
+            //    AmountTotal = x.PriceSubTotal,
+            //    PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
+            //    ProductName = x.Name,
+            //    PercentCommission = AddCommissionSaleOrderLine(x.PartnerCommission.CommissionId.Value, x.ProductId.Value),
+            //    CommissionTotal = _ComputeCommission(x)
+            //}).ToList();
 
-            var res2 = res.GroupBy(x => new
-            {
-                UserId = x.UserId,
-                UserName = x.Name
-            }).Select(x => new CommissionReport
-            {
-                UserId = x.Key.UserId,
-                Name = x.Key.UserName,
-                CommissionTotal = x.Sum(s => s.CommissionTotal)
-            }).ToList();
+            //var res2 = res.GroupBy(x => new
+            //{
+            //    UserId = x.UserId,
+            //    UserName = x.Name
+            //}).Select(x => new CommissionReport
+            //{
+            //    UserId = x.Key.UserId,
+            //    Name = x.Key.UserName,
+            //    CommissionTotal = x.Sum(s => s.CommissionTotal)
+            //}).ToList();
 
-            return res2;
+            //return res2;
+
+            return null;
         }
 
         public async Task<IEnumerable<CommissionReportItem>> GetReportDetail(ReportFilterCommissionDetail val)
         {
-            var companyId = CompanyId;
-            //SearchQuery
-            var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            var saleOrderObj = GetService<IAccountPaymentService>();
-            var saleOrderlineObj = GetService<ISaleOrderLineService>();
-            var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
+            //var companyId = CompanyId;
+            ////SearchQuery
+            //var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            //var saleOrderObj = GetService<IAccountPaymentService>();
+            //var saleOrderlineObj = GetService<ISaleOrderLineService>();
+            //var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
 
-            if (val.DateFrom.HasValue)
-            {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                paymentRels = paymentRels.Where(x => x.Payment.PaymentDate >= dateFrom);
-            }
-            if (val.DateTo.HasValue)
-            {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
-            }
-
-
-            var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
-
-            var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.SalesmanId == val.UserId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels).Include("SaleOrderLinePaymentRels.Payment")
-                .Include("Salesman.Partner")
-                .ToListAsync();
-
-            var res = lines.Select(x => new CommissionReportItem
-            {
-                UserId = x.SalesmanId,
-                Name = x.Salesman.Name,
-                Date = x.SaleOrderLinePaymentRels.Max(s => s.Payment.PaymentDate),
-                AmountTotal = x.PriceSubTotal,
-                PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
-                ProductName = x.Name,
-                PercentCommission = AddCommissionSaleOrderLine(x.PartnerCommission.CommissionId.Value, x.ProductId.Value),
-                CommissionTotal = _ComputeCommission(x)
-            }).ToList();
+            //if (val.DateFrom.HasValue)
+            //{
+            //    var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+            //    paymentRels = paymentRels.Where(x => x.Payment.PaymentDate >= dateFrom);
+            //}
+            //if (val.DateTo.HasValue)
+            //{
+            //    var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+            //    paymentRels = paymentRels.Where(x => x.Payment.PaymentDate <= dateTo);
+            //}
 
 
-            return res;
+            //var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
+
+            //var lines = await saleOrderlineObj.SearchQuery(x => list.Contains(x.Id) && x.SalesmanId == val.UserId).Include(x => x.Salesman).Include(x => x.PartnerCommission).Include(x => x.SaleOrderLinePaymentRels).Include("SaleOrderLinePaymentRels.Payment")
+            //    .Include("Salesman.Partner")
+            //    .ToListAsync();
+
+            //var res = lines.Select(x => new CommissionReportItem
+            //{
+            //    UserId = x.SalesmanId,
+            //    Name = x.Salesman.Name,
+            //    Date = x.SaleOrderLinePaymentRels.Max(s => s.Payment.PaymentDate),
+            //    AmountTotal = x.PriceSubTotal,
+            //    PrepaidTotal = x.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
+            //    ProductName = x.Name,
+            //    PercentCommission = AddCommissionSaleOrderLine(x.PartnerCommission.CommissionId.Value, x.ProductId.Value),
+            //    CommissionTotal = _ComputeCommission(x)
+            //}).ToList();
+
+
+            //return res;
+
+            return null;
         }
 
 
@@ -173,10 +177,11 @@ namespace Infrastructure.Services
 
         public decimal _ComputeCommission(SaleOrderLine val)
         {
-            var PrepaidTotal = val.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid);
-            var PercentCommission = AddCommissionSaleOrderLine(val.PartnerCommission.CommissionId.Value, val.ProductId.Value);
-            var res = (PrepaidTotal.Value * PercentCommission) / 100;
-            return res;
+            //var PrepaidTotal = val.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid);
+            //var PercentCommission = AddCommissionSaleOrderLine(val.PartnerCommission.CommissionId.Value, val.ProductId.Value);
+            //var res = (PrepaidTotal.Value * PercentCommission) / 100;
+            //return res;
+            return 0M;
         }
 
     }

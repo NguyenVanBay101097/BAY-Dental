@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     public class SaleOrderLinePartnerCommission : BaseEntity
     {
         /// <summary>
-        /// bác sĩ
+        /// Người được hưởng hoa hồng
         /// </summary>
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
@@ -24,6 +24,9 @@ namespace ApplicationCore.Entities
         public Guid? CommissionId { get; set; }
         public Commission Commission { get; set; }
 
-      
+        /// <summary>
+        /// Số tiền tính toán được hưởng hoa hồng, tính toán lại nếu price total của sale order line thay đổi
+        /// </summary>
+        public decimal? Amount { get; set; }
     }
 }
