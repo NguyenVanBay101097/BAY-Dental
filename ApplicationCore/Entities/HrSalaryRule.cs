@@ -10,7 +10,7 @@ namespace ApplicationCore.Entities
 
         public string Code { get; set; }
 
-        public Guid CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
         public HrSalaryRuleCategory Category { get; set; }
 
         public int? Sequence { get; set; }
