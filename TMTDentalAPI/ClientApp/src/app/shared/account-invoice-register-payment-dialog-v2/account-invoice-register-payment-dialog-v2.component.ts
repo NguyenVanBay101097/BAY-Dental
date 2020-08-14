@@ -145,11 +145,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
     var sumAmountPrepaid = 0;
-    val.saleOrderLinePaymentRels.forEach(function(v){ 
-      delete v.amountPayment; 
-      delete v.saleOrderLine;
-      sumAmountPrepaid += v.amountPrepaid;
-    });
     if (val.amount != sumAmountPrepaid) {
       this.showError = true;
       return null;
@@ -192,6 +187,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       control.push(g);
     });
     this.paymentForm.markAsPristine();
+    this.showError = false;
   }
 
   enterMoney() {
@@ -215,5 +211,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
       control.push(g);
     });
     this.paymentForm.markAsPristine();
+    this.showError = false;
   }
 }

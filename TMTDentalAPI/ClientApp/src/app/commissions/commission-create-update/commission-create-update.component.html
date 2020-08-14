@@ -2,10 +2,11 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="'/commissions'">Hoa hồng</a>
+                <a [routerLink]="'/commissions'">Bảng hoa hồng</a>
             </li>
             <li class="active">
-                <span>{{getValueForm('name')}}</span>
+                <span *ngIf="id">{{getValueForm('name')}}</span>
+                <span *ngIf="!id">Mới</span>
             </li>
         </ol>
     </div>
@@ -24,35 +25,78 @@
             </div>
             <div class="o_form_sheet">
                 <div class="oe_title mt-2 mb-3">
+                    <label class="o_form_label oe_edit_only">Tên bảng hoa hồng</label>
                     <h1 class="mb-1">
                         <input class="form-control" formControlName="name" 
                             name="name" required #nameInput
                             (keyup)="changeName()">
                     </h1>
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                        <div *ngIf="f.name.errors.required">Nhập tên bảng hoa hồng</div>
                     </div>
                 </div>
                 <div class="o_notebook">
                     <div class="mb-2">
                         <button type="button" accesskey="A" class="btn btn-secondary btn-sm"
                             (click)="addLine()">Thêm</button>
+                        <ng-template #popContent>
+                            <kendo-combobox 
+                                style="width: auto;"
+                                [data]="filteredProductCategories"
+                                [filterable]="true"
+                                (filterChange)="filterChangeProductCategories($event)"
+                                (selectionChange)="selectionChangeProductCategories($event)"
+                                [textField]="'completeName'"
+                                [valueField]="'id'"
+                                placeholder="Chọn nhóm dịch vụ">
+                            </kendo-combobox>
+                            <div class="text-right mt-2">
+                                <button type="button" accesskey="C"
+                                    class="btn btn-light btn-sm mr-1" 
+                                    (click)="this.selectedProductCategory=null;p.close()">
+                                    Hủy
+                                </button>
+                                <button type="button" accesskey="A"
+                                    [disabled]="selectedProductCategory==null"
+                                    class="btn btn-primary btn-sm" 
+                                    (click)="addProductsFromProductCategory();p.close()">
+                                    Thêm
+                                </button>
+                            </div>
+                        </ng-template>
+                        <button type="button" class="btn btn-secondary btn-sm ml-1"
+                            placement="bottom"
+                            [ngbPopover]="popContent"
+                            popoverTitle="Nhóm dịch vụ"
+                            [autoClose]="false"
+                            triggers="manual"
+                            #p="ngbPopover"
+                            (click)="p.open()">
+                            Thêm nhanh Dịch vụ từ Nhóm dịch vụ
+                        </button>
                     </div>
                     <div>
                         <table class="table table-sm">
                             <thead>
                                 <tr>
-                                    <th>Tên</th>
+                                    <th>Áp dụng cho</th>
+                                    <th>Dịch vụ/ Nhóm dịch vụ</th>
                                     <th class="text-right">Hoa hồng</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="commissionProductRules">
                                 <ng-container *ngFor="let line of commissionProductRules.controls; let i=index">
-                                    <tr [formGroupName]="i">                                          
+                                    <tr [formGroupName]="i">   
+                                        <td>{{ getAppliedOn(line) }}</td>                                       
                                         <td>{{ getValueLineForm(line, 'name') }}</td>
-                                        <td class="text-right">
-                                            {{ getValueLineForm(line, 'percentFixed') || 0 }} %
+                                        <td width="1%">
+                                            <div class="d-flex">                                      
+                                                <kendo-numerictextbox [autoCorrect]="true" [format]="'n0'" 
+                                                    formControlName="percentFixed" [min]="min" [max]="max">
+                                                </kendo-numerictextbox>
+                                                <span class="ml-2">%</span>
+                                            </div>
                                         </td>
                                         <td class="text-right">
                                             <div ngbDropdown placement="bottom-right">
