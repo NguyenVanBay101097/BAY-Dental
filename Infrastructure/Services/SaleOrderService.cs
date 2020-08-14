@@ -268,6 +268,9 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
+                    if (line.SaleOrderLinePaymentRels.Any())
+                        throw new Exception("Có dịch vụ đã thanh toán, cần hủy những thanh toán trước khi hủy phiếu");
+
                     if (line.State == "cancel")
                         continue;
 
@@ -275,7 +278,7 @@ namespace Infrastructure.Services
                     await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
                     var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
                     line.AmountPaid = amountPaid;
-                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                    line.AmountResidual = 0;
                 }
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
@@ -1191,6 +1194,8 @@ namespace Infrastructure.Services
                     var saleLine = _mapper.Map<SaleOrderLine>(line);
                     saleLine.Sequence = sequence++;
                     saleLine.Order = order;
+                    saleLine.AmountPaid = 0;
+                    saleLine.AmountResidual = 0;
                     foreach (var toothId in line.ToothIds)
                     {
                         saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
@@ -1207,7 +1212,7 @@ namespace Infrastructure.Services
                     {
                         _mapper.Map(line, saleLine);
                         saleLine.Sequence = sequence++;
-                        saleLine.Order = order;
+                        saleLine.Order = order;                       
                         saleLine.SaleOrderLineToothRels.Clear();
                         foreach (var toothId in line.ToothIds)
                         {
@@ -1341,7 +1346,8 @@ namespace Infrastructure.Services
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines)                
+                .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLinePaymentRels")
                 .ToListAsync();
 
             foreach (var order in self)
@@ -1370,6 +1376,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetInvoiceQty(order.OrderLines);
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+                saleLineObj._ComputeLinePaymentRels(order.OrderLines);
                await saleLineObj._AddPartnerCommission(order.OrderLines.Select(x=>x.Id).ToList());
             }
 
