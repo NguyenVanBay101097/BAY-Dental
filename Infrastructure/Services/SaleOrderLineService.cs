@@ -55,8 +55,7 @@ namespace Infrastructure.Services
                     Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
-                line.PriceTotal = line.PriceSubTotal + line.PriceTax;
-                line.AmountResidual = line.PriceSubTotal - line.AmountPaid;
+                line.PriceTotal = line.PriceSubTotal + line.PriceTax;              
             }
         }
 
@@ -195,6 +194,16 @@ namespace Infrastructure.Services
                     line.InvoiceStatus = "invoiced";
                 else
                     line.InvoiceStatus = "no";
+            }
+        }
+
+        public void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> lines)
+        {
+            foreach (var line in lines)
+            {
+                var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
+                line.AmountPaid = amountPaid;
+                line.AmountResidual = line.PriceSubTotal - amountPaid;
             }
         }
 
@@ -390,13 +399,13 @@ namespace Infrastructure.Services
 
             foreach (var line in lines)
             {
-                await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
-                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+                if (line.SaleOrderLinePaymentRels.Any())
+                    throw new Exception("Dịch vụ đã thanh toán không thể hủy");
               
                 line.ProductUOMQty = 0;
                 line.State = "cancel";
-                line.AmountPaid = amountPaid;
-                line.AmountResidual = line.PriceSubTotal - amountPaid;
+                line.AmountPaid = 0;
+                line.AmountResidual = 0;
                 if (line.DotKhamSteps.Any())
                 {
                     await dotkhamstepObj.Unlink(line.DotKhamSteps);

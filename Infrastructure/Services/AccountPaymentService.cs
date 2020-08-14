@@ -707,12 +707,13 @@ namespace Infrastructure.Services
 
             await CreateAsync(payment);
 
-            await _UpdateSaleOrderLines(val.SaleOrderIds.First());
+            if(payment.SaleOrderLinePaymentRels.Any())
+            await _ComputeSaleOrderLines(val.SaleOrderIds.First());
 
             return payment;
         }
 
-        public async Task _UpdateSaleOrderLines(Guid saleOrderId)
+        public async Task _ComputeSaleOrderLines(Guid saleOrderId)
         {
             var orderObj = GetService<ISaleOrderService>();
             var orderlineObj = GetService<ISaleOrderLineService>();
@@ -721,11 +722,8 @@ namespace Infrastructure.Services
             foreach (var line in order.OrderLines)
             {
                 var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
-                if (amountPaid != 0)
-                {
-                    line.AmountPaid = amountPaid;
-                    line.AmountResidual = line.PriceSubTotal - amountPaid;                  
-                }
+                line.AmountPaid = amountPaid;
+                line.AmountResidual = line.PriceSubTotal - amountPaid;                  
             }
 
             await orderlineObj.UpdateAsync(order.OrderLines);
@@ -957,15 +955,21 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AccountPayment>> ActionDraft(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).Include(x=>x.SaleOrderPaymentRels).Include(x=>x.SaleOrderLinePaymentRels).ToListAsync();
             var moveObj = GetService<IAccountMoveService>();
             var move_ids = self.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
             var moves = await moveObj.ButtonDraft(move_ids);
 
             await moveObj.Unlink(move_ids);
 
+          
             foreach (var rec in self)
+            {               
+                
+
                 rec.State = "draft";
+            }
+               
             await UpdateAsync(self);
             return self;
         }
@@ -1002,11 +1006,16 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
             foreach (var rec in self)
             {
+               
                 if (rec.MoveLines.Any())
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
             }
 
             await DeleteAsync(self);
+
+            ///update saleorderline
+            foreach(var rec in self)
+            await _ComputeSaleOrderLines(rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).First());
         }
 
         public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)
