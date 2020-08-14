@@ -30,10 +30,24 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" formControlName="amount" [format]="'n0'">
-                                    </kendo-numerictextbox>
+                                    <div class="d-flex">
+                                        <kendo-numerictextbox 
+                                            [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
+                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            formControlName="amount">
+                                        </kendo-numerictextbox>
+                                        <button type="button" class="btn btn-light ml-1" style="white-space: nowrap; cursor: pointer;"
+                                            (click)="enterMoney()">
+                                            <b>Nhập tiền</b>
+                                        </button>
+                                        <button type="button" class="btn btn-light ml-1" style="white-space: nowrap; cursor: pointer;"
+                                            (click)="payOff()">
+                                           <b>Trả hết</b>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
+                          
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -58,6 +72,41 @@
                                     <input type="text" formControlName="communication" class="form-control" />
                                 </td>
                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group">
+                    <div *ngIf="showError" class="text-danger">
+                        Số tiền thanh toán cho các dịch vụ chưa trùng khớp
+                    </div>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Dịch vụ</th>
+                                <th class="text-right">Số tiền</th>
+                                <th class="text-right">Đã trả</th>
+                                <th class="text-right">Còn thiếu</th>
+                                <th class="text-right">Thanh toán</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="saleOrderLinePaymentRels">
+                            <ng-container *ngFor="let line of saleOrderLinePaymentRels.controls; let i=index">
+                                <tr [formGroupName]="i">                                          
+                                    <td class="my-padding">{{ line.get('saleOrderLine').value['name'] }}</td>
+                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
+                                    <td class="text-right my-padding">{{ line.get('amountPayment').value | number }}</td>
+                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value | number }}</td>
+                                    <td>
+                                        <kendo-numerictextbox 
+                                            [disabled]="line.get('isDone').value"
+                                            [min]="0" [max]="getMaxMoneyLine(line)" 
+                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            formControlName="amountPrepaid"
+                                            (valueChange)="changeMoneyLine(line)">
+                                        </kendo-numerictextbox>
+                                    </td>
+                                </tr>
+                            </ng-container>
                         </tbody>
                     </table>
                 </div>
