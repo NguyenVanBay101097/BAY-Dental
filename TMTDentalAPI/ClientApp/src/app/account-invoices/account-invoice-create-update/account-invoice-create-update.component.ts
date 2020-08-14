@@ -24,7 +24,7 @@ import { DotKhamLineService } from 'src/app/dot-khams/dot-kham-line.service';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from '../account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 declare var $: any;
 
 @Component({

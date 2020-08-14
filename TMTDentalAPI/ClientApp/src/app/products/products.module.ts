@@ -8,7 +8,6 @@ import { ProductService } from './product.service';
 import { ProductDialogComponent } from './product-dialog/product-dialog.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ProductImportExcelDialogComponent } from './product-import-excel-dialog/product-import-excel-dialog.component';
-import { CustomComponentModule } from '../common/common.module';
 import { ProductSearchListComponent } from './product-search-list/product-search-list.component';
 import { ProductGridComponent } from './product-grid/product-grid.component';
 import { ProductServiceListComponent } from './product-service-list/product-service-list.component';
@@ -63,7 +62,6 @@ import { SharedModule } from '../shared/shared.module';
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    CustomComponentModule,
     DragDropModule,
     SharedModule,
     NgbModule

@@ -33,6 +33,12 @@ export class UserProfileEditComponent implements OnInit {
 
   }
 
+  onAvatarUploaded(data: any) {
+    var fileUrl = data ? data.fileUrl : null;
+    this.editForm.get('avatar').setValue(fileUrl);
+  }
+
+
   submit() {
     var data = this.editForm.value;
     data.companyId = data.company.id;

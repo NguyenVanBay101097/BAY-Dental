@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { mergeMap, groupBy, reduce } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as _ from 'lodash';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-partner-customer-upload-image',
@@ -30,7 +31,8 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     private partnerService: PartnerService,
     private fb: FormBuilder,
     private intlService: IntlService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private showErrorService: AppSharedShowErrorService
   ) { }
 
   ngOnInit() {
@@ -58,10 +60,11 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
       var filereader = new FileReader();
       filereader.readAsDataURL(file);
     }
-    this.partnerService.uploadPartnerImage(formData).subscribe(
-      () => {
-        this.getImageIds();
-      })
+    this.partnerService.uploadPartnerImage(formData).subscribe(() => {
+      this.getImageIds();
+    }, (err) => {
+      this.showErrorService.show(err);
+    });
 
   }
 
@@ -98,12 +101,12 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
 
   processGroupImages() {
     var self = this;
-    var groups = _.groupBy(this.imagesPreview, function(obj) {
+    var groups = _.groupBy(this.imagesPreview, function (obj) {
       var date = new Date(obj.date);
       return self.intlService.formatDate(date, 'dd/MM/yyyy');
     });
 
-    this.imagesGroup = _.map(groups, function(group, day) {
+    this.imagesGroup = _.map(groups, function (group, day) {
       return {
         date: day,
         images: group

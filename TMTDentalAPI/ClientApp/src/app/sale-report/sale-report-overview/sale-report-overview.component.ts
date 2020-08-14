@@ -63,8 +63,8 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.dateFrom = new Date(this.monthStart);
-    // this.dateTo = new Date(this.monthEnd);
+    this.dateFrom = new Date(this.monthStart);
+    this.dateTo = new Date(this.monthEnd);
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(

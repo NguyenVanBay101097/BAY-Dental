@@ -142,15 +142,15 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/purchase-orders/create'], { queryParams: { type: this.type } });
+    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.type } });
   }
 
   editItem(item: PurchaseOrderBasic) {
-    this.router.navigate(['/purchase-orders/edit/', item.id]);
+    this.router.navigate(['/purchase/orders/edit/', item.id]);
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa: ' + this.getTitle();
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

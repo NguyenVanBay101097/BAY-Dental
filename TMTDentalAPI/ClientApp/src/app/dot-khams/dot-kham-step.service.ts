@@ -46,7 +46,7 @@ export class DotKhamStepCloneInsert {
     cloneInsert: string;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DotKhamStepService {
     apiUrl = 'api/DotKhamSteps';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

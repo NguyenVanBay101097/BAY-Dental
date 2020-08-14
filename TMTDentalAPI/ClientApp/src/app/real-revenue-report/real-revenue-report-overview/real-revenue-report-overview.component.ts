@@ -24,14 +24,17 @@ export class RealRevenueReportOverviewComponent implements OnInit {
   @ViewChild('companyCbx', { static: true }) companyCbx: ComboBoxComponent;
   filteredCompanies: CompanyBasic[] = [];
 
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
   constructor(private intlService: IntlService, private realRevenueReportService: RealRevenueReportService,
     private fb: FormBuilder, private companyService: CompanyService) {
   }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateFrom: null,
-      dateTo: null,
+      dateFrom: this.monthStart,
+      dateTo: this.monthEnd,
       company: null
     });
 

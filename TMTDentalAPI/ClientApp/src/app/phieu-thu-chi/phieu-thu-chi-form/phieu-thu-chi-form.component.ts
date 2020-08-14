@@ -7,10 +7,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AccountJournalService, AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { LoaiThuChiFormComponent } from 'src/app/loai-thu-chi/loai-thu-chi-form/loai-thu-chi-form.component';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { LoaiThuChiFormComponent } from 'src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-phieu-thu-chi-form',
@@ -29,13 +30,13 @@ export class PhieuThuChiFormComponent implements OnInit {
   phieuThuChi: any;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   
-  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
+  constructor(private fb: FormBuilder, 
     private phieuThuChiService: PhieuThuChiService, 
     private loaiThuChiService: LoaiThuChiService, 
     private route: ActivatedRoute, private modalService: NgbModal,
     private accountJournalService: AccountJournalService, 
     private notificationService: NotificationService, 
-    private router: Router, private intlService: IntlService) { }
+    private router: Router, private intlService: IntlService, private authService: AuthService) { }
 
   ngOnInit() {
     this.phieuThuChi = new Object();
@@ -115,6 +116,7 @@ export class PhieuThuChiFormComponent implements OnInit {
   loadFilteredJournals() {
     var val = new AccountJournalFilter();
     val.type = 'bank,cash';
+    val.companyId = this.authService.userInfo.companyId;
     this.accountJournalService.autocomplete(val).subscribe(res => {
       this.filteredJournals = res;
     }, err => {

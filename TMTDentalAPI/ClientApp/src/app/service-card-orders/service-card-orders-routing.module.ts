@@ -5,11 +5,11 @@ import { ServiceCardOrderCreateUpdateComponent } from './service-card-order-crea
 
 const routes: Routes = [
   {
-    path: 'service-card-orders/list',
+    path: '',
     component: ServiceCardOrderListComponent
   },
   {
-    path: 'service-card-orders/form',
+    path: 'form',
     component: ServiceCardOrderCreateUpdateComponent
   }
 ];

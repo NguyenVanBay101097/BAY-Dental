@@ -1,4 +1,4 @@
-import { DiscountDefault } from './../sale-order.service';
+import { DiscountDefault } from '../../core/services/sale-order.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, map, mergeMap } from 'rxjs/operators';
@@ -6,21 +6,17 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { SaleOrderService, AccountPaymentFilter } from '../sale-order.service';
+import { SaleOrderService, AccountPaymentFilter } from '../../core/services/sale-order.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { SaleOrderDisplay } from '../sale-order-display';
 import * as _ from 'lodash';
 import { UserSimple } from 'src/app/users/user-simple';
-import { NgbModal, NgbPopover, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
 import { AccountPaymentBasic, AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
@@ -28,21 +24,20 @@ import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.ser
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
-import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
-import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { from, of, Observable } from 'rxjs';
-import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confirm-dialog-v2.component';
 import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
-import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
-import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
-import { SaleOrderLineService } from '../sale-order-line.service';
+import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
-import { LaboOrderListDialogComponent } from 'src/app/labo-orders/labo-order-list-dialog/labo-order-list-dialog.component';
 import { SaleOrderLineLaboOrdersDialogComponent } from '../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
+import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
+import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 declare var $: any;
 
@@ -86,7 +81,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, public activeModal: NgbActiveModal,) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
   }
 
   ngOnInit() {
@@ -700,13 +695,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Khóa phiếu điều trị';
-      modalRef.componentInstance.body = 'Khi khóa phiếu điều trị sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
-      modalRef.result.then(() => {
-        this.saleOrderService.actionDone([this.id]).subscribe(() => {
-          this.loadRecord();
-        });
+      this.saleOrderService.actionDone([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  actionUnlock() {
+    if (this.id) {
+      this.saleOrderService.actionUnlock([this.id]).subscribe(() => {
+        this.loadRecord();
       });
     }
   }
@@ -888,7 +886,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
-      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));

@@ -4,7 +4,7 @@ import { PartnerSourceListComponent } from "./partner-source-list/partner-source
 
 const routes: Routes = [
   {
-    path: "partner-sources",
+    path: "",
     component: PartnerSourceListComponent,
   },
 ];

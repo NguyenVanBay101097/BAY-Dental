@@ -5,7 +5,6 @@ import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-ang
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debug } from 'util';
 import { ProductMedicineFormComponent } from '../product-medicine-form/product-medicine-form.component';
-import { ProductCategoryDialogComponent } from 'src/app/product-categories/product-category-dialog/product-category-dialog.component';
 import { ProductCategoryDisplay, ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import * as _ from 'lodash';
 import { ProductStepFormComponent } from '../product-step-form/product-step-form.component';

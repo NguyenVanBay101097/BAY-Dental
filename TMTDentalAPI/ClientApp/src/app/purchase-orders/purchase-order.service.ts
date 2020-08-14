@@ -38,6 +38,7 @@ export class PurchaseOrderDisplay {
     datePlanned: string;
     orderLines: PurchaseOrderLineDisplay[];
     type: string;
+    amountResidual: number;
 }
 
 export class PurchaseOrderLineDisplay {

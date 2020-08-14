@@ -42,7 +42,7 @@ export class RevenueReportManagerComponent implements OnInit {
     { text: 'Quý', value: 'date:quarter' },
     { text: 'Năm', value: 'date:year' },
     { text: 'Khách hàng', value: 'partner' },
-    { text: 'Sản phẩm', value: 'product' },
+    { text: 'Dịch vụ', value: 'product' },
     { text: 'Bác sĩ', value: 'salesman' }
   ];
 
