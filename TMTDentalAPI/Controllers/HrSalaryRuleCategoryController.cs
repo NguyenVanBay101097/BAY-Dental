@@ -30,12 +30,12 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] HrSalaryRuleCategoryPaged val)
-        //{
-        //    var res = await _HrSalaryRuleCategoryService.GetPaged(val);
-        //    return Ok(res);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] HrSalaryRuleCategoryPaged val)
+        {
+            var res = await _HrSalaryRuleCategoryService.GetPaged(val);
+            return Ok(res);
+        }
 
         //[HttpGet("{id}")]
         //public async Task<IActionResult> Get(Guid id)
@@ -72,7 +72,7 @@ namespace TMTDentalAPI.Controllers
 
         //    return NoContent();
         //}
-       
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {

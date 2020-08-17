@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id)
         {
-            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).Include("Rules.Category").FirstOrDefaultAsync();
+            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).FirstOrDefaultAsync();
             return res;
         }
 
@@ -36,7 +37,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Name.Contains(val.Filter));
             }
-            query = query.Include(x => x.Rules).Include("Rules.Category");
+            query = query.Include(x => x.Rules).Include("Rules.Company");
 
             var items = await query.ToListAsync();
             var totalItems = await query.CountAsync();
@@ -44,6 +45,45 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<HrPayrollStructureDisplay>>(items)
             };
+        }
+
+        public async Task Remove(Guid Id)
+        {
+            var HrPayrollStructure = await SearchQuery(x => x.Id == Id).Include(x => x.Rules).FirstOrDefaultAsync();
+            if (HrPayrollStructure == null)
+            {
+                throw new Exception("không tìm thấy!");
+            }
+            await GetService<IHrSalaryRuleService>().DeleteAsync(HrPayrollStructure.Rules);
+
+            await DeleteAsync(HrPayrollStructure);
+        }
+
+        public async Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure)
+        {
+            var rulesToRemove = new List<HrSalaryRule>();
+            foreach (var rule in structure.Rules)
+            {
+                if (!val.Rules.Any(x => x.Id == rule.Id))
+                    rulesToRemove.Add(rule);
+            }
+
+            await GetService<IHrSalaryRuleService>().Remove(rulesToRemove.Select(x=>x.Id).ToList());
+            structure.Rules = structure.Rules.AsList().Except(rulesToRemove).ToList();
+
+            foreach (var rule in val.Rules)
+            {
+                if (rule.Id == Guid.Empty || !rule.Id.HasValue)
+                {
+                    var r = _mapper.Map<HrSalaryRule>(rule);
+                    r.CompanyId = CompanyId;
+                    structure.Rules.Add(r);
+                }
+                else
+                {
+                    _mapper.Map(rule, structure.Rules.SingleOrDefault(c => c.Id == rule.Id));
+                }
+            }
         }
     }
 }
