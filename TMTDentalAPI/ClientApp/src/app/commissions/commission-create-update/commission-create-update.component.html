@@ -91,30 +91,17 @@
                                         <td width="1%">
                                             <div class="d-flex">                                      
                                                 <kendo-numerictextbox [autoCorrect]="true" [format]="'n0'" 
-                                                    formControlName="percentFixed" [min]="min" [max]="max"
-                                                    style="max-width: 100px;">
+                                                    formControlName="percentFixed" [min]="min" [max]="max">
                                                 </kendo-numerictextbox>
                                                 <span class="ml-2">%</span>
                                             </div>
                                         </td>
                                         <td class="text-right">
-                                            <div ngbDropdown placement="bottom-right">
-                                                <button class="btn btn-light btn-sm mr-1" title="chức năng" id="dropdownMenuButton" ngbDropdownToggle>
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                                                    <button ngbDropdownItem type="button"
-                                                        (click)="editLine(line)">
-                                                        <span class="k-icon k-i-edit"></span>
-                                                        <span class="pl-2">Sửa</span>
-                                                    </button>
-                                                    <button ngbDropdownItem type="button"
-                                                        (click)="deleteLine(i)">
-                                                        <span class="k-icon k-i-delete"></span>
-                                                        <span class="pl-2">Xóa</span>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <button type="button" 
+                                                class="btn btn-icon btn-sm btn-light" 
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                              </button>
                                         </td>
                                     </tr>
                                 </ng-container>
