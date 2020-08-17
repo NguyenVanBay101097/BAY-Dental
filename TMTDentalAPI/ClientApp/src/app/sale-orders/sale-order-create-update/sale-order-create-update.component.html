@@ -55,15 +55,16 @@
                         (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm"
-                        (click)="actionDone()">
+                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-success btn-sm" (click)="actionDone()">
                         Hoàn thành
                     </button>
-                    <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm"
-                    (click)="actionUnlock()">
+                    <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-success btn-sm" (click)="actionUnlock()">
                         Chưa hoàn thành
                     </button>
-                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']" class="btn btn-secondary btn-sm">
+                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']"
+                        class="btn btn-secondary btn-sm">
                         Trở lại
                     </a>
                 </div>
@@ -116,7 +117,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
+                                    <a *ngIf="partner"
+                                        [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
                                 </td>
                             </tr>
                             <!-- <tr>
@@ -288,7 +290,7 @@
                                     </thead>
                                     <tbody formArrayName="orderLines">
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                            <tr [formGroupName]="i" *ngIf="line.get('state').value !== 'cancel'">                                          
+                                            <tr [formGroupName]="i" *ngIf="line.get('state').value !== 'cancel'">
                                                 <td>{{ line.get('name').value }}</td>
                                                 <!-- <td>{{lineTeeth(line)}}</td>
                                                 <td>{{line.get('diagnostic').value}}</td> -->
@@ -305,27 +307,32 @@
                                                 <td class="text-right">{{ line.get('amountResidual').value | number }}
                                                 </td>
                                                 <td class="text-right">
-                                                    <div ngbDropdown *ngIf="['draft', 'sent', 'sale'].indexOf(line.get('state').value) !== -1" placement="bottom-right">
-                                                        <button class="btn btn-light btn-sm mr-1" title="chức năng" id="dropdownMenuButton" ngbDropdownToggle>
+                                                    <div ngbDropdown
+                                                        *ngIf="['draft', 'sent', 'sale'].indexOf(line.get('state').value) !== -1"
+                                                        placement="bottom-right">
+                                                        <button class="btn btn-light btn-sm mr-1 o-no-caret" title="chức năng"
+                                                            id="dropdownMenuButton" ngbDropdownToggle>
                                                             <i class="fas fa-ellipsis-v"></i>
                                                         </button>
                                                         <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                                                            <button *ngIf="saleOrder.state != 'draft'" ngbDropdownItem type="button"
-                                                            (click)="showLaboList(line.get('id').value)">
-                                                            <i class="fa fa-bars" aria-hidden="true"></i>
-                                                            <span class="pl-2">Quản lý phiếu labo</span>
-                                                        </button>
-                                                            <button ngbDropdownItem type="button" *ngIf="lineEditable(line) && ['draft','cancel'].indexOf(saleOrder.state) === -1"
-                                                                (click)="cancelSaleOrderLine(line.get('id').value)">
+                                                            <button *ngIf="saleOrder.state != 'draft'" ngbDropdownItem
+                                                                type="button"
+                                                                (click)="showLaboList(line.get('id').value)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i>
+                                                                <span class="pl-2">Quản lý phiếu labo</span>
+                                                            </button>
+                                                            <button ngbDropdownItem type="button"
+                                                                *ngIf="lineEditable(line) && ['draft','cancel'].indexOf(saleOrder.state) === -1"
+                                                                (click)="cancelSaleOrderLine(line)">
                                                                 <span class="k-icon k-i-close-circle"></span>
                                                                 <span class="pl-2">Hủy</span>
                                                             </button>
-                                                            <button ngbDropdownItem *ngIf="lineEditable(line)" type="button"
-                                                                (click)="editLine(line)">
+                                                            <button ngbDropdownItem *ngIf="lineEditable(line)"
+                                                                type="button" (click)="editLine(line)">
                                                                 <span class="k-icon k-i-edit"></span>
                                                                 <span class="pl-2">Sửa</span>
                                                             </button>
-                                                            <button ngbDropdownItem type="button"
+                                                            <button ngbDropdownItem type="button" *ngIf="['draft','cancel'].indexOf(saleOrder.state) !== -1"
                                                                 (click)="deleteLine(i)">
                                                                 <span class="k-icon k-i-delete"></span>
                                                                 <span class="pl-2">Xóa</span>
@@ -569,7 +576,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index" >
+                    <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
                         <td>{{ line.productName }}</td>
                         <td class="text-right">{{ line.productUOMQty | number }}</td>
                         <td class="text-right">{{ line.priceUnit | number }}</td>

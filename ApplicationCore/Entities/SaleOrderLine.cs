@@ -157,10 +157,13 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderLinePartnerCommission> PartnerCommissions { get; set; } = new List<SaleOrderLinePartnerCommission>();
 
-
-
         public ICollection<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; } = new List<SaleOrderLineInvoice2Rel>();
 
         public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
+
+        /// <summary>
+        /// Xác định line bị hủy bỏ
+        /// </summary>
+        public bool IsCancelled { get; set; }
     }
 }

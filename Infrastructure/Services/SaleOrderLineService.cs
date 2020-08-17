@@ -196,13 +196,23 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> lines)
+        public void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> self)
         {
-            foreach (var line in lines)
+            var self_ids = self.Select(x => x.Id).ToList();
+            self = SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.SaleOrderLinePaymentRels).ToList();
+            foreach (var line in self)
             {
-                var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
-                line.AmountPaid = amountPaid;
-                line.AmountResidual = line.PriceSubTotal - amountPaid;
+                if (line.State != "draft")
+                {
+                    var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                }
+                else
+                {
+                    line.AmountPaid = 0;
+                    line.AmountResidual = 0;
+                }
             }
         }
 
@@ -382,6 +392,7 @@ namespace Infrastructure.Services
             var dotkhamstepObj = GetService<IDotKhamStepService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include("DotKhamSteps").Include(x => x.Order)
+                .Include(x => x.PartnerCommissions)
                 .Include(x => x.Product)
                 .Include(x => x.SaleOrderLinePaymentRels)
                .Include(x => x.SaleOrderLineInvoice2Rels)
@@ -392,36 +403,44 @@ namespace Infrastructure.Services
             {
                 if (line.SaleOrderLinePaymentRels.Any())
                     throw new Exception("Dịch vụ đã thanh toán không thể hủy");
-              
+
+                //Nếu có đợt khám step nào đã hoàn thành thì ko đc hủy
+                if (line.DotKhamSteps.Any(x => x.IsDone))
+                    throw new Exception("Không thể hủy dịch vụ đang được thực hiện");
+
                 line.ProductUOMQty = 0;
                 line.State = "cancel";
-                line.AmountPaid = 0;
-                line.AmountResidual = 0;
                 if (line.DotKhamSteps.Any())
                 {
                     await dotkhamstepObj.Unlink(line.DotKhamSteps);
                 }
+
+                line.PartnerCommissions.Clear(); //xóa hết commission
+                line.IsCancelled = true;
             }
 
             await UpdateAsync(lines);
 
+            ComputeAmount(lines);
             _GetInvoiceQty(lines);
             _GetToInvoiceQty(lines);
             _ComputeInvoiceStatus(lines);
-
+            _ComputeLinePaymentRels(lines);
             await UpdateAsync(lines);
 
             var orderId = lines.Select(x => x.OrderId).FirstOrDefault();
             var order = await orderObj.GetSaleOrderWithLines(orderId);
 
-            ComputeAmount(order.OrderLines);
-
             //tính lại tổng tiền phiếu điều trị
             orderObj._AmountAll(order);
-
+            orderObj._GetInvoiced(new List<SaleOrder>() { order });
             await orderObj.UpdateAsync(order);
+
             // tính lại công nợ
-            await orderObj.ActionInvoiceCreateV2(orderId);
+            if (order.InvoiceStatus == "to invoice")
+            {
+                await orderObj.ActionInvoiceCreateV2(orderId);
+            }
         }
 
         public async Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id)

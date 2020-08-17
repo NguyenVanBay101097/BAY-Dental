@@ -74,5 +74,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ApplicationUserSimple Salesman { get; set; }
 
         public string SalesmanId { get; set; }
+
+        public bool IsCancelled { get; set; }
     }
 }

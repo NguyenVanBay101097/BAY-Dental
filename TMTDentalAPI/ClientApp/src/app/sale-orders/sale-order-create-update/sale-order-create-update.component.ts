@@ -1027,12 +1027,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   // hủy dịch vụ
-  cancelSaleOrderLine(ids) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
-    modalRef.componentInstance.title = "Hủy: Dịch vụ";
-    modalRef.result.then(() => {
-      if (this.id) {
-        this.saleOrderLineService.cancelOrderLine([ids]).subscribe(() => {
+  cancelSaleOrderLine(line: FormGroup) {
+    var idControl = line.get('id');
+    if (idControl) {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+      modalRef.componentInstance.title = "Hủy Dịch vụ";
+      modalRef.componentInstance.body = `Bạn có chắc chắn muốn hủy dịch vụ ${line.get('name').value}?`;
+
+      modalRef.result.then(() => {
+        this.saleOrderLineService.cancelOrderLine([idControl.value]).subscribe(() => {
           this.notificationService.show({
             content: 'hủy dịch vụ thành công',
             hideAfter: 3000,
@@ -1044,11 +1047,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         }, () => {
           this.loadRecord();
         });
-      }
-    }, (err) => {
-      console.log(err);
+      }, (err) => {
+        console.log(err);
+      });
     }
-    );
   }
 
 

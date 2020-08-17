@@ -1069,6 +1069,8 @@ namespace Infrastructure.Services
         public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         {
             var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var lineObj = GetService<ISaleOrderLineService>();
+            res.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
             return res;
         }
 
@@ -1088,6 +1090,7 @@ namespace Infrastructure.Services
             order = _mapper.Map(val, order);
 
             await SaveOrderLines(val, order);
+            await UpdateAsync(order); //update trước để generate id cho những sale order line
 
             var saleLineObj = GetService<ISaleOrderLineService>();
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
@@ -1095,6 +1098,8 @@ namespace Infrastructure.Services
             saleLineObj._GetInvoiceQty(order.OrderLines);
             saleLineObj._GetToInvoiceQty(order.OrderLines);
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+            await saleLineObj.ComputeCommissions(order.OrderLines);
             await UpdateAsync(order);
 
             _AmountAll(order);
@@ -1161,7 +1166,7 @@ namespace Infrastructure.Services
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var existLines = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.SaleOrderLineToothRels).ToListAsync();
+            var existLines = await saleLineObj.SearchQuery(x => x.OrderId == order.Id && !x.IsCancelled).Include(x => x.SaleOrderLineToothRels).ToListAsync();
             var lineToRemoves = new List<SaleOrderLine>();
             foreach (var existLine in existLines)
             {
