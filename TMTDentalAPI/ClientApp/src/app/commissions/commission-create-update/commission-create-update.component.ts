@@ -132,6 +132,16 @@ export class CommissionCreateUpdateComponent implements OnInit {
     });
   }
 
+  editLine(line: FormGroup) {
+    let modalRef = this.modalService.open(CommissionCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.line = line.value;
+    modalRef.result.then(result => {
+      line.patchValue(result);
+      this.commissionProductRules.markAsDirty();
+    }, () => {
+    });
+  }
+
   deleteLine(i) {
     this.commissionProductRules.removeAt(i);
     this.commissionProductRules.markAsDirty();
