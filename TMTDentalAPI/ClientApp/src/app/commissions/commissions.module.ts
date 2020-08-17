@@ -13,7 +13,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PopupModule } from '@progress/kendo-angular-popup';
 
 @NgModule({
-  declarations: [CommissionListComponent, CommissionCreateUpdateComponent, CommissionCreateUpdateDialogComponent],
+  declarations: [
+    CommissionListComponent, 
+    CommissionCreateUpdateComponent, 
+    CommissionCreateUpdateDialogComponent
+  ],
   imports: [
     CommonModule,
     CommissionsRoutingModule, 

@@ -22,13 +22,22 @@ export class CommissionPaging {
   items: any[];
 }
 
+export class CommissionProductRule {
+  appliedOn: string;
+  categ: ProductCategoryBasic;
+  categId: string;
+  percentFixed: number;
+  product: ProductSimple;
+  productId: string;
+}
+
 export class CommissionProductRuleDisplay {
   appliedOn: string;
-  productId: string;
-  product: ProductSimple;
-  categId: string;
   categ: ProductCategoryBasic;
+  categId: string;
   percentFixed: number;
+  product: ProductSimple;
+  productId: string;
   companyId: string;
 }
 

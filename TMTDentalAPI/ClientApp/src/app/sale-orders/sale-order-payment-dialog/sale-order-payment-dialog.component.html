@@ -36,13 +36,13 @@
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true"
                                             formControlName="amount">
                                         </kendo-numerictextbox>
-                                        <button type="button" class="btn btn-light ml-1" style="white-space: nowrap; cursor: pointer;"
+                                        <button type="button" class="btn btn-primary ml-1" style="white-space: nowrap; cursor: pointer;"
                                             (click)="enterMoney()">
-                                            <b>Nhập tiền</b>
+                                            Nhập tiền
                                         </button>
-                                        <button type="button" class="btn btn-light ml-1" style="white-space: nowrap; cursor: pointer;"
+                                        <button type="button" class="btn btn-primary ml-1" style="white-space: nowrap; cursor: pointer;"
                                             (click)="payOff()">
-                                           <b>Trả hết</b>
+                                            Trả hết
                                         </button>
                                     </div>
                                 </td>
@@ -76,8 +76,11 @@
                     </table>
                 </div>
                 <div class="o_group">
-                    <div *ngIf="showError" class="text-danger">
-                        Số tiền thanh toán cho các dịch vụ chưa trùng khớp
+                    <div *ngIf="showError_1" class="text-danger">
+                        Vui lòng nhấn "Nhập tiền" để phân bổ tiền thanh toán cho từng dịch vụ
+                    </div>
+                    <div *ngIf="showError_2" class="text-danger">
+                        Vui lòng nhập số tiền thanh toán
                     </div>
                     <table class="table table-sm">
                         <thead>
@@ -92,15 +95,16 @@
                         <tbody formArrayName="saleOrderLinePaymentRels">
                             <ng-container *ngFor="let line of saleOrderLinePaymentRels.controls; let i=index">
                                 <tr [formGroupName]="i">                                          
-                                    <td class="my-padding">{{ line.get('saleOrderLine').value['name'] }}</td>
-                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
-                                    <td class="text-right my-padding">{{ line.get('amountPayment').value | number }}</td>
-                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value | number }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ line.get('saleOrderLine').value['name'] }}</td>
+                                    <td class="text-right align-middle">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
+                                    <td class="text-right align-middle">{{ line.get('amountPayment').value | number }}</td>
+                                    <td class="text-right align-middle">{{ line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value | number }}</td>
+                                    <td class="text-right">
                                         <kendo-numerictextbox 
                                             [disabled]="line.get('isDone').value"
                                             [min]="0" [max]="getMaxMoneyLine(line)" 
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            style="max-width: 200px;"
                                             formControlName="amountPrepaid"
                                             (valueChange)="changeMoneyLine(line)">
                                         </kendo-numerictextbox>
