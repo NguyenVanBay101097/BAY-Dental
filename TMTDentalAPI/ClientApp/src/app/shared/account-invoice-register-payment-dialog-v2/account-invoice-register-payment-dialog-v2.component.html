@@ -61,41 +61,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="o_group">
-                    <div *ngIf="showError" class="text-danger">
-                        Vui lòng nhấn "Nhập tiền" để phân bổ tiền thanh toán cho từng dịch vụ
-                    </div>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Dịch vụ</th>
-                                <th class="text-right">Số tiền</th>
-                                <th class="text-right">Đã trả</th>
-                                <th class="text-right">Còn thiếu</th>
-                                <th class="text-right">Thanh toán</th>
-                            </tr>
-                        </thead>
-                        <tbody formArrayName="saleOrderLinePaymentRels">
-                            <ng-container *ngFor="let line of saleOrderLinePaymentRels.controls; let i=index">
-                                <tr [formGroupName]="i">                                          
-                                    <td class="my-padding">{{ line.get('saleOrderLine').value['name'] }}</td>
-                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
-                                    <td class="text-right my-padding">{{ line.get('amountPayment').value | number }}</td>
-                                    <td class="text-right my-padding">{{ line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value | number }}</td>
-                                    <td>
-                                        <kendo-numerictextbox 
-                                            [disabled]="line.get('isDone').value"
-                                            [min]="0" [max]="getMaxMoneyLine(line)" 
-                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                            formControlName="amountPrepaid"
-                                            (valueChange)="changeMoneyLine(line)">
-                                        </kendo-numerictextbox>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </form>

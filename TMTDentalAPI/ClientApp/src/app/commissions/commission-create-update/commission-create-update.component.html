@@ -86,10 +86,10 @@
                             <tbody formArrayName="commissionProductRules">
                                 <ng-container *ngFor="let line of commissionProductRules.controls; let i=index">
                                     <tr [formGroupName]="i">   
-                                        <td>{{ getAppliedOn(line) }}</td>                                       
-                                        <td>{{ getValueLineForm(line, 'name') }}</td>
+                                        <td class="align-middle">{{ getAppliedOn(line) }}</td>                                       
+                                        <td class="align-middle">{{ getValueLineForm(line, 'name') }}</td>
                                         <td width="1%">
-                                            <div class="d-flex">                                      
+                                            <div class="d-flex align-items-center">                                      
                                                 <kendo-numerictextbox [autoCorrect]="true" [format]="'n0'" 
                                                     formControlName="percentFixed" [min]="min" [max]="max"
                                                     style="max-width: 100px;">
@@ -97,7 +97,7 @@
                                                 <span class="ml-2">%</span>
                                             </div>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right align-middle">
                                             <div ngbDropdown placement="bottom-right">
                                                 <button class="btn btn-light btn-sm mr-1" title="chức năng" id="dropdownMenuButton" ngbDropdownToggle>
                                                     <i class="fas fa-ellipsis-v"></i>

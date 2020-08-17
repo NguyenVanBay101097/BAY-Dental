@@ -118,73 +118,10 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
-    var sumAmountPrepaid = 0;
-    if (val.amount != sumAmountPrepaid) {
-      this.showError = true;
-      return null;
-    } else {
-      this.showError = false;
-    }
-    return val;
+    return this.paymentService.create(val);
   }
 
   cancel() {
     this.activeModal.dismiss();
-  }
-
-  get saleOrderLinePaymentRels() {
-    return this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
-  }
-
-  getMaxMoneyLine(line: FormGroup) {
-    return line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value;
-  }
-
-  changeMoneyLine(line: FormGroup) {
-    var sumAmountPrepaid = 0;
-    this.getValueForm('saleOrderLinePaymentRels').forEach(function(v){ 
-      sumAmountPrepaid += v.amountPrepaid;
-    });
-    this.paymentForm.get('amount').setValue(sumAmountPrepaid);
-  }
-
-  payOff() {
-    this.paymentForm.get('amount').setValue(this.maxAmount);
-
-    var lines = this.getValueForm('saleOrderLinePaymentRels');
-    const control = this.saleOrderLinePaymentRels;
-    control.clear();
-
-    lines.forEach(line => {
-      line.amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
-      var g = this.fb.group(line);
-      control.push(g);
-    });
-    this.paymentForm.markAsPristine();
-    this.showError = false;
-  }
-
-  enterMoney() {
-    var amount = this.getValueForm('amount');
-
-    var lines = this.getValueForm('saleOrderLinePaymentRels');
-    const control = this.saleOrderLinePaymentRels;
-    control.clear();
-
-    var amountPrepaid = 0;
-    lines.forEach(line => {
-      amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
-      if (amount >= amountPrepaid) {
-        amount -= amountPrepaid;
-        line.amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
-      } else {
-        line.amountPrepaid = amount;
-        amount = 0;
-      }
-      var g = this.fb.group(line);
-      control.push(g);
-    });
-    this.paymentForm.markAsPristine();
-    this.showError = false;
   }
 }
