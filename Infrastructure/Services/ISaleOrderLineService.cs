@@ -37,7 +37,6 @@ namespace Infrastructure.Services
 
          Task _AddPartnerCommission(IEnumerable<Guid> ids);
 
-        Task _RemovePartnerCommission(IEnumerable<Guid> ids);
         void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> lines);
         Task _RemovePartnerCommissions(IEnumerable<Guid> ids);
 
