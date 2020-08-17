@@ -27,4 +27,17 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? ParentId { get; set; }
     }
+
+    public class HrSalaryRuleCategoryDisplay
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+        public string Code { get; set; }
+
+        public string Note { get; set; }
+
+        public Guid? ParentId { get; set; }
+        public HrSalaryRuleCategory Parent { get; set; }
+    }
 }
