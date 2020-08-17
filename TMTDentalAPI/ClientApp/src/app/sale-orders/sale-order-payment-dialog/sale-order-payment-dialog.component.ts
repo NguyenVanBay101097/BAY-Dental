@@ -26,7 +26,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   maxAmount: number = 0;
 
   showPrint = false;
-  showError = false;
+  showError_1 = false;
+  showError_2 = false;
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
@@ -146,16 +147,20 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
     var sumAmountPrepaid = 0;
-    val.saleOrderLinePaymentRels.forEach(function(v){ 
-      delete v.amountPayment; 
-      delete v.saleOrderLine;
+    this.getValueForm('saleOrderLinePaymentRels').forEach(function(v){ 
       sumAmountPrepaid += v.amountPrepaid;
     });
-    if (val.amount != sumAmountPrepaid) {
-      this.showError = true;
+    if (val.amount == 0) {
+      this.showError_2 = true;
       return null;
     } else {
-      this.showError = false;
+      this.showError_2 = false;
+    }
+    if (val.amount != sumAmountPrepaid) {
+      this.showError_1 = true;
+      return null;
+    } else {
+      this.showError_1 = false;
     }
     return val;
   }
@@ -193,6 +198,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       control.push(g);
     });
     this.paymentForm.markAsPristine();
+    this.showError_1 = false;
   }
 
   enterMoney() {
@@ -216,6 +222,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       control.push(g);
     });
     this.paymentForm.markAsPristine();
+    this.showError_1 = false;
   }
 
 }
