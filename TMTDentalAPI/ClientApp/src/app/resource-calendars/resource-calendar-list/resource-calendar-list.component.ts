@@ -1,31 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { WorkEntryTypePage, TimeKeepingService } from '../time-keeping.service';
-import { TimeKeepingWorkEntryTypeDialogComponent } from '../time-keeping-work-entry-type-dialog/time-keeping-work-entry-type-dialog.component';
+import { ResourceCalendarService, ResourceCalendarPaged } from '../resource-calendar.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ResourceCalendarCrupDialogComponent } from '../resource-calendar-crup-dialog/resource-calendar-crup-dialog.component';
 
 @Component({
-  selector: 'app-time-keeping-work-entry-type',
-  templateUrl: './time-keeping-work-entry-type.component.html',
-  styleUrls: ['./time-keeping-work-entry-type.component.css']
+  selector: 'app-resource-calendar-list',
+  templateUrl: './resource-calendar-list.component.html',
+  styleUrls: ['./resource-calendar-list.component.css']
 })
-export class TimeKeepingWorkEntryTypeComponent implements OnInit {
-
-  title: string = "Cấu hình đầu vào loại công việc";
+export class ResourceCalendarListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  title = 'Đơn vị tính';
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();
   search: string;
-
   constructor(
-    private timeKeepingService:TimeKeepingService,
     private modalService: NgbModal,
+    private resourceCalendarService: ResourceCalendarService
   ) { }
 
   ngOnInit() {
@@ -40,11 +38,11 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new WorkEntryTypePage();
+    var val = new ResourceCalendarPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.filter = this.search || '';
-    this.timeKeepingService.getPagedWorkEntryType(val).pipe(
+    val.search = this.search || '';
+    this.resourceCalendarService.getPage(val).pipe(
       map((response: any) =>
         (<GridDataResult>{
           data: response.items,
@@ -60,7 +58,7 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(TimeKeepingWorkEntryTypeDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ResourceCalendarCrupDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -74,8 +72,8 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(TimeKeepingWorkEntryTypeDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    let modalRef = this.modalService.open(ResourceCalendarCrupDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -88,7 +86,7 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa: ' + this.title;
 
     modalRef.result.then(() => {
-      this.timeKeepingService.deleteWorkEntryType(item.id).subscribe(() => {
+      this.resourceCalendarService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
         console.log(err);

@@ -16,12 +16,12 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ResourceCalendarController : ControllerBase
+    public class ResourceCalendarsController : BaseApiController
     {
         private readonly IResourceCalendarService _resourceCalendarService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public ResourceCalendarController(IResourceCalendarService resourceCalendarService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        public ResourceCalendarsController(IResourceCalendarService resourceCalendarService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _resourceCalendarService = resourceCalendarService;
             _mapper = mapper;

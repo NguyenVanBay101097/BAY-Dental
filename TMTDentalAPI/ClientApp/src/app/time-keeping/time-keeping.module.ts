@@ -18,7 +18,7 @@ import { TimeKeepingWorkEntryTypeDialogComponent } from './time-keeping-work-ent
     TimeKeepingSetupDialogComponent,
     TimeKeepingSettingDialogComponent,
     TimeKeepingWorkEntryTypeComponent,
-    TimeKeepingWorkEntryTypeDialogComponent
+    TimeKeepingWorkEntryTypeDialogComponent,
   ],
   imports: [
     CommonModule,

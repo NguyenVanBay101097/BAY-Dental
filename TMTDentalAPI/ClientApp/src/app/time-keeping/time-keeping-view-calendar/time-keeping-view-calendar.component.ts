@@ -2,17 +2,16 @@ import { Component, OnInit, NgModuleRef } from '@angular/core';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { EmployeeSimple, EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { NgbModal, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
-import { EmployeeChamCongPaged, TimeKeepingService, TimeSheetEmployee, TimeKeepingSave, ChamCongBasic } from '../time-keeping.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { DateInputModule } from '@progress/kendo-angular-dateinputs';
 import { IntlService, load } from '@progress/kendo-angular-intl';
-import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
-import { TimeKeepingWorkEntryTypeComponent } from '../time-keeping-work-entry-type/time-keeping-work-entry-type.component';
 import { Router } from '@angular/router';
+import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic } from '../time-keeping.service';
+import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
+import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -259,7 +258,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   setupWordEntryType() {
-    this.router.navigateByUrl("/work-entry-types");
+    this.router.navigateByUrl("time-keepings/types");
   }
 
   nextMonthFilter(myDate) {

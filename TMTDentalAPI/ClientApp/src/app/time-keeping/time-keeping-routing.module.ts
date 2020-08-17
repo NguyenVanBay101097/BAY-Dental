@@ -4,8 +4,10 @@ import { TimeKeepingViewCalendarComponent } from './time-keeping-view-calendar/t
 import { TimeKeepingWorkEntryTypeComponent } from './time-keeping-work-entry-type/time-keeping-work-entry-type.component';
 
 const routes: Routes = [
-  { path: 'time-keepings', component: TimeKeepingViewCalendarComponent },
-  { path: 'work-entry-types', component: TimeKeepingWorkEntryTypeComponent }
+  
+  { path: '', component: TimeKeepingViewCalendarComponent },
+
+  { path: 'types', component: TimeKeepingWorkEntryTypeComponent }
 ];
 
 @NgModule({

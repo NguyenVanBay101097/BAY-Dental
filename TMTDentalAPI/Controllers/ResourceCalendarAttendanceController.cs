@@ -14,7 +14,7 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ResourceCalendarAttendanceController : ControllerBase
+    public class ResourceCalendarAttendanceController : BaseApiController
     {
         private readonly IResourceCalendarAttendanceService _resourceCalendarAttendanceService;
         private readonly IMapper _mapper;
