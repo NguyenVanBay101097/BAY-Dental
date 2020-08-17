@@ -7,18 +7,16 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class HrSalaryRuleSave
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Name { get; set; }
 
         public string Code { get; set; }
 
-        public Guid CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
 
         public int? Sequence { get; set; }
 
         public bool Active { get; set; }
-
-        public Guid? CompanyId { get; set; }
 
         /// <summary>
         /// The computation method for the rule amount.
@@ -39,7 +37,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
 
-        public Guid StructId { get; set; }
+        //public Guid? StructId { get; set; }
     }
     public class HrSalaryRuleDisplay
     {
@@ -47,8 +45,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string Code { get; set; }
-
-        public Guid CategoryId { get; set; }
 
         public int? Sequence { get; set; }
 

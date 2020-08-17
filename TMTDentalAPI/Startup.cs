@@ -254,6 +254,10 @@ namespace TMTDentalAPI
             services.AddScoped<ISetupChamcongService, SetupChamcongService>();
             services.AddScoped<IWorkEntryTypeService, WorkEntryTypeService>();
             services.AddScoped<IHrPayrollStructureService, HrPayrollStructureService>();
+            services.AddScoped<IHrPayrollStructureTypeService, HrPayrollStructureTypeService>();
+            services.AddScoped<IHrSalaryRuleService, HrSalaryRuleService>();
+            services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
+            services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -358,6 +362,11 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ChamCongProfile());
                 mc.AddProfile(new SetupChamcongProfile());
                 mc.AddProfile(new WorkEntryTypeProfile());
+                mc.AddProfile(new HrPayrollStructureProfile());
+                mc.AddProfile(new HrSalaryRuleProfile());
+                mc.AddProfile(new HrPayrollStructureTypeProfile());
+                mc.AddProfile(new ResourceCalendarProfile());
+                mc.AddProfile(new ResourceCalendarAttendanceProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

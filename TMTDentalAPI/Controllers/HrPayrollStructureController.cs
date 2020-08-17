@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(HrPayrollStructureSave val)
         {
             var entitys = _mapper.Map<HrPayrollStructure>(val);
-
+            await _HrPayrollStructureService.SaveRules(val,entitys);
             await _unitOfWork.BeginTransactionAsync();
             await _HrPayrollStructureService.CreateAsync(entitys);
             _unitOfWork.Commit();
@@ -68,35 +68,17 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             str = _mapper.Map(val, str);
-            SaveRules(val,str);
+           await _HrPayrollStructureService.SaveRules(val,str);
             
             await _HrPayrollStructureService.UpdateAsync(str);
 
             return NoContent();
         }
-        private void SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure)
-        {
-            var rulesToRemove = new List<HrSalaryRule>();
-            foreach (var rule in structure.Rules)
-            {
-                if (!val.Rules.Any(x => x.Id == rule.Id))
-                    rulesToRemove.Add(rule);
-            }
-
-            foreach (var rule in rulesToRemove)
-            {
-                structure.Rules.Remove(rule);
-            }
-        }
+       
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var HrPayrollStructure = await _HrPayrollStructureService.SearchQuery(x => x.Id == id).Include(x=>x.Rules).FirstOrDefaultAsync();
-            if (HrPayrollStructure == null)
-            {
-                return NotFound();
-            }
-            await _HrPayrollStructureService.DeleteAsync(HrPayrollStructure);
+           await _HrPayrollStructureService.Remove(id);
             return NoContent();
         }
     }
