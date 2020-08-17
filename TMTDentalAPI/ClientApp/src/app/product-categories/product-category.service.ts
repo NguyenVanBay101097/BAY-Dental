@@ -52,7 +52,7 @@ export class ProductCategoryPaging {
     items: ProductCategoryBasic[];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProductCategoryService {
     apiUrl = 'api/productcategories';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

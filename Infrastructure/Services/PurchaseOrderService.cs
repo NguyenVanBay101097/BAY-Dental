@@ -74,6 +74,10 @@ namespace Infrastructure.Services
                 State = x.State,
             }).ToListAsync();
 
+            var residual_dict = await _ComputeAmountResidualDict(items.Select(x => x.Id));
+            foreach (var item in items)
+                item.AmountResidual = residual_dict[item.Id];
+
             var totalItems = await query.CountAsync();
             return new PagedResult2<PurchaseOrderBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -81,16 +85,52 @@ namespace Infrastructure.Services
             };
         }
 
+        private async Task<IDictionary<Guid, decimal>> _ComputeAmountResidualDict(IEnumerable<Guid> ids)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var moveObj = GetService<IAccountMoveService>();
+
+            var groups = await amlObj.SearchQuery(x => ids.Contains(x.PurchaseLine.OrderId))
+                .Select(x => new { 
+                    OrderId = x.PurchaseLine.OrderId,
+                    MoveId = x.MoveId
+                }).Distinct().ToListAsync();
+
+            var move_ids = groups.Select(x => x.MoveId).ToList();
+            var moves = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).ToListAsync();
+            var res = ids.ToDictionary(x => x, x => 0M);
+            foreach(var group in groups)
+            {
+                var move = moves.FirstOrDefault(x => x.Id == group.MoveId);
+                if (move != null)
+                    res[group.OrderId] += (move.AmountResidual ?? 0);
+            }
+
+            return res;
+        }
+
         public async Task<PurchaseOrderDisplay> GetPurchaseDisplay(Guid id)
         {
-            var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
+            var purchase = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
                 .Include("OrderLines.ProductUOM")
                 .FirstOrDefaultAsync();
-            var res = _mapper.Map<PurchaseOrderDisplay>(labo);
+            var res = _mapper.Map<PurchaseOrderDisplay>(purchase);
             res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+
+            res.AmountResidual = await _ComputeAmountResidual(purchase);
             return res;
+        }
+
+        private async Task<decimal> _ComputeAmountResidual(PurchaseOrder self)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var moveObj = GetService<IAccountMoveService>();
+            var line_ids = self.OrderLines.Select(x => x.Id);
+            var move_ids = await amlObj.SearchQuery(x => line_ids.Contains(x.PurchaseLineId.Value)).Select(x => x.MoveId).Distinct().ToListAsync();
+            var res = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).SumAsync(x => x.AmountResidual);
+            return res ?? 0;
         }
 
         public async Task<PurchaseOrder> CreateLabo(PurchaseOrderDisplay val)

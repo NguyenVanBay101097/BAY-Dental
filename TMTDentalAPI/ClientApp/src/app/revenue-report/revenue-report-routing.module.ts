@@ -4,7 +4,7 @@ import { RevenueReportManagerComponent } from './revenue-report-manager/revenue-
 
 const routes: Routes = [
   {
-    path: 'revenue-report',
+    path: '',
     component: RevenueReportManagerComponent
   }
 ];

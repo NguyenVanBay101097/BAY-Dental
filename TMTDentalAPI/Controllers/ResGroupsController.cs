@@ -136,6 +136,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateModels()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _resGroupService.UpdateModels();
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
 
         private void SaveAccesses(ResGroupDisplay val, ResGroup group)
         {

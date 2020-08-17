@@ -4,7 +4,7 @@ import { ReportPartnerSourceListComponent } from './report-partner-source-list/r
 
 const routes: Routes = [
   {
-    path: "report-partner-sources",
+    path: "",
     component: ReportPartnerSourceListComponent,
   },
 ];

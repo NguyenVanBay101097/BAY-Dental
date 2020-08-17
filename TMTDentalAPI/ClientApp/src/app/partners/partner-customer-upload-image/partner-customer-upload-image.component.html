@@ -1,0 +1,51 @@
+<div class="px-3 py-3 bg-white">
+    <div class="o_chatter oe_chatter">
+        <div class="o_mail_chatter_attachments">
+            <div class="o_chatter_attachment">
+                <div class="o_border_dashed">
+                    <span class="o_attach_title">Hình ảnh</span>
+                </div>
+                <div class="o_chatter_attachment_form">
+                    <div class="o_hidden_input_file ">
+                        <div class="o_form_binary_form">
+                            <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file"
+                                accept="image/*" (change)="addPartnerImages($event)">
+                            <div class="text-center">
+                                <span class="btn btn-link o_upload_attachments_button" (click)="inputFile.click()">
+                                    <span class="fa fa-plus-square"></span> Chọn file
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_attachments_view_image" *ngFor="let group of imagesGroup">
+                    <div class="o_attachments_date_separator">
+                        <span class="o_attachments_date">{{group.date}}</span>
+                    </div>
+                    <div class="o_attachments_previews">
+                        <!-- Preview hình ảnh -->
+                        <div class="o_attachment" *ngFor="let img of group.images;let i = index">
+                            <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                <div class="o_image_box">
+                                    <div class="o_attachment_image" id="{{img.name}}"
+                                        [style.background-image]="'url('+ img.uploadId + '?width=240&height=240)'">
+                                    </div>
+                                    <div class="o_image_overlay o_attachment_view">
+                                        <span class="fa fa-times o_attachment_delete_cross"
+                                            (click)="deletePartnerImages(i, $event)"
+                                            title="Delete {{img.name}}"></span>
+                                        <span class="o_attachment_title text-white">{{img.name}}</span>
+                                        <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                            href="{{webContentApi}}/{{img.uploadId}}">
+                                            <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

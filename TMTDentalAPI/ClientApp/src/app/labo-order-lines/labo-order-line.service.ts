@@ -42,6 +42,7 @@ export class LaboOrderLineDisplay {
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
     state: string;
+    teethListVirtual: ToothDisplay[];
 }
 
 export class LaboOrderLinePaged {
@@ -67,6 +68,7 @@ export class LaboOrderLinePaging {
 export class LaboOrderLineDefaultGet {
     invoiceId: string;
     dotKhamId: string;
+    saleOrderLineId: string;
 }
 
 export class LaboOrderLineOnChangeProduct {
@@ -77,7 +79,7 @@ export class LaboOrderLineOnChangeProductResult {
     priceUnit: number;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LaboOrderLineService {
     apiUrl = 'api/laboorderlines';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

@@ -6,18 +6,25 @@ import { ServiceCardTypeListComponent } from './service-card-type-list/service-c
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ServiceCardTypeCuDialogComponent } from './service-card-type-cu-dialog/service-card-type-cu-dialog.component';
+import { SharedModule } from '@progress/kendo-angular-dialog';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 @NgModule({
   declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent],
   imports: [
-    CommonModule,
     ServiceCardTypesRoutingModule,
     ReactiveFormsModule,
+    MyCustomKendoModule,      
+    FormsModule,
+    CommonModule,
+    SharedModule,
     MyCustomKendoModule,
-    FormsModule
+    NgbModule
+  
   ],
   entryComponents: [
-    ServiceCardTypeCuDialogComponent
+    ServiceCardTypeCuDialogComponent,
   ]
 })
 export class ServiceCardTypesModule { }

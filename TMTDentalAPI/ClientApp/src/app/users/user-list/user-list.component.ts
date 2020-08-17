@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { UserService, UserPaged, UserBasic } from '../user.service';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { UserCuDialogComponent } from '../user-cu-dialog/user-cu-dialog.component';
@@ -23,8 +22,7 @@ export class UserListComponent implements OnInit {
   skip = 0;
   loading = false;
 
-  constructor(private userService: UserService, private modalService: NgbModal, public intl: IntlService,
-    private dialogService: DialogService) { }
+  constructor(private userService: UserService, private modalService: NgbModal, public intl: IntlService) { }
 
   ngOnInit() {
     this.loadDataFromApi();

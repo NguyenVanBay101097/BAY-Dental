@@ -35,5 +35,10 @@ namespace ApplicationCore.Entities
         public string InternalType { get; set; }
 
         public bool Reconcile { get; set; }
+
+        /// <summary>
+        /// Co khong hien thi trong bao cao ket qua kinh doanh?
+        /// </summary>
+        public bool IsExcludedProfitAndLossReport { get; set; }
     }
 }

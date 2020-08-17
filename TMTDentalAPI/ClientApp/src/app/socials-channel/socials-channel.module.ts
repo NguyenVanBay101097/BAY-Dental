@@ -7,7 +7,6 @@ import { FacebookDialogComponent } from './facebook-dialog/facebook-dialog.compo
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
-import { PartnerCreateUpdateComponent } from '../partners/partner-create-update/partner-create-update.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FacebookDashboardComponent } from './facebook-dashboard/facebook-dashboard.component';
 import { FacebookPageManagementComponent } from './facebook-page-management/facebook-page-management.component';
@@ -91,10 +90,8 @@ import { FacebookPageListComponent } from './facebook-page-list/facebook-page-li
   ],
   entryComponents: [
     FacebookDialogComponent,
-    PartnerCreateUpdateComponent,
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
-    PartnerCreateUpdateComponent,
     FacebookMassMessagingScheduleDialogComponent,
     FacebookMassMessagingCreateUpdateDialogComponent,
     FacebookPageMarketingCustomerDialogComponent,

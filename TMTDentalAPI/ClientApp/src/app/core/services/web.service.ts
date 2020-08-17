@@ -13,4 +13,8 @@ export class WebService {
     impottSampleData(params) {
         return this.http.get(this.baseApi + this.apiUrl + '/ImportSampleData', { params: params })
     }
+
+    removeSampleData() {
+        return this.http.get(this.baseApi + this.apiUrl + '/DeleteSampleData');
+    }
 }

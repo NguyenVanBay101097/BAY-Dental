@@ -43,7 +43,7 @@ export class UserChangeCurrentCompanyVM {
     companies: CompanyBasic[];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UserService {
     apiUrl = 'api/applicationusers';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

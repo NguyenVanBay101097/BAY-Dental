@@ -12,7 +12,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IPartnerService: IBaseService<Partner>
+    public interface IPartnerService : IBaseService<Partner>
     {
         Task<PagedResult2<Partner>> GetPagedResultAsync(int offset = 0, int limit = 20, string search = "", string searchBy = "", bool? customer = null);
         Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val);
@@ -30,6 +30,8 @@ namespace Infrastructure.Services
        DateTime? fromDate = null,
        DateTime? toDate = null);
 
+        Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val);
+        Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val);
         Task<IEnumerable<PartnerReportLocationCity>> ReportLocationCity(ReportLocationCitySearch val);
         Task<IEnumerable<PartnerReportLocationDistrict>> ReportLocationDistrict(PartnerReportLocationCity val);
         Task<IEnumerable<PartnerReportLocationWard>> ReportLocationWard(PartnerReportLocationDistrict val);

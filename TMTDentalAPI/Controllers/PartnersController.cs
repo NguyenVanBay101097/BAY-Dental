@@ -412,6 +412,20 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
+        {
+            var res = await _partnerService.ReportLocationCompanyWard(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
+        {
+            var res = await _partnerService.ReportLocationCompanyDistrict(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> ReportLocationCity(ReportLocationCitySearch val)
         {
             var res = await _partnerService.ReportLocationCity(val);

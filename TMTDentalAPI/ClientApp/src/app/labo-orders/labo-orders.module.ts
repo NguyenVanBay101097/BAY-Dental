@@ -9,21 +9,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { LaboOrderCreateUpdateComponent } from './labo-order-create-update/labo-order-create-update.component';
-import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
-import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderQuickCreateDialogComponent } from './labo-order-quick-create-dialog/labo-order-quick-create-dialog.component';
 import { LaboOrderStatisticsComponent } from './labo-order-statistics/labo-order-statistics.component';
 import { LaboOrderLineService } from './labo-order-line.service';
+import { LaboOrderListDialogComponent } from './labo-order-list-dialog/labo-order-list-dialog.component';
 
 
 @NgModule({
   declarations: [
     LaboOrderListComponent,
     LaboOrderCreateUpdateComponent,
-    LaboOrderCuLineDialogComponent,
-    LaboOrderCuDialogComponent,
     LaboOrderQuickCreateDialogComponent,
-    LaboOrderStatisticsComponent
+    LaboOrderStatisticsComponent,
+    LaboOrderListDialogComponent
   ],
   imports: [
     CommonModule,
@@ -39,9 +37,8 @@ import { LaboOrderLineService } from './labo-order-line.service';
     LaboOrderLineService
   ],
   entryComponents: [
-    LaboOrderCuLineDialogComponent,
-    LaboOrderCuDialogComponent,
-    LaboOrderQuickCreateDialogComponent
+    LaboOrderQuickCreateDialogComponent,
+    LaboOrderListDialogComponent
   ]
 })
 export class LaboOrdersModule { }

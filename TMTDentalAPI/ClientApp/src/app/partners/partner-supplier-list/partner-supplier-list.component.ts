@@ -5,9 +5,9 @@ import { PartnerPaged, PartnerBasic } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
+import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 
 @Component({
   selector: 'app-partner-supplier-list',
@@ -50,6 +50,7 @@ export class PartnerSupplierListComponent implements OnInit {
     val.offset = this.skip;
     val.supplier = true;
     val.search = this.search || '';
+    val.computeCreditDebit = true;
 
     this.loading = true;
     this.partnerService.getPaged(val).pipe(

@@ -101,5 +101,31 @@ namespace Infrastructure.Services
             }
 
         }
+
+        public async Task InsertModelsIfNotExists()
+        {
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var model = await modelDataObj.GetRef<IRModel>("base.model_sample_prescription");
+            if (model == null)
+            {
+                model = new IRModel
+                {
+                    Name = "Đơn thuốc mẫu",
+                    Model = "SamplePrescription",
+                };
+
+                modelObj.Sudo = true;
+                await modelObj.CreateAsync(model);
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Name = "model_sample_prescription",
+                    Module = "base",
+                    Model = "ir.model",
+                    ResId = model.Id.ToString()
+                });
+            }
+        }
     }
 }

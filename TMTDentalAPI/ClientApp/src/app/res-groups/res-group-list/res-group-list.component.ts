@@ -1,12 +1,12 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ResGroupService, ResGroupPaged, ResGroupBasic } from '../res-group.service';
 import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-res-group-list',
@@ -26,8 +26,8 @@ export class ResGroupListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
-  constructor(private resGroupService: ResGroupService, private dialogService: DialogService,
-    private router: Router, private modalService: NgbModal) {
+  constructor(private resGroupService: ResGroupService,
+    private router: Router, private modalService: NgbModal, private notificationService: NotificationService) {
   }
 
   ngOnInit() {
@@ -49,6 +49,18 @@ export class ResGroupListComponent implements OnInit {
     modalRef.result.then(() => {
       this.resGroupService.resetSecurityData().subscribe(() => {
         this.loadDataFromApi();
+      });
+    });
+  }
+
+  updateModels() {
+    this.resGroupService.updateModels().subscribe(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
       });
     });
   }

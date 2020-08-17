@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SaleOrderService } from '../sale-order.service';
+import { SaleOrderService } from '../../core/services/sale-order.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedErrorDialogComponent } from 'src/app/shared/shared-error-dialog/shared-error-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';

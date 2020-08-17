@@ -14,6 +14,7 @@ namespace Infrastructure.Services
         Task<SamplePrescriptionDisplay> GetPrescriptionForDisplay(Guid id);
         Task<SamplePrescription> CreatePrescription(SamplePrescriptionSave val);
         Task UpdatePrescription(Guid id, SamplePrescriptionSave val);
-      
+
+        Task InsertModelsIfNotExists();
     }
 }

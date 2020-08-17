@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,5 +17,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<DotKhamStep> self);
         Task<DotKhamStep> CloneInsert(DotKhamStepCloneInsert val);
         Task<DotKhamStepDisplay> GetDisplay(Guid id);
+        Task<PagedResult2<DotKhamStepReport>> DotKhamStepReport(DotKhamStepPaged val);
     }
 }

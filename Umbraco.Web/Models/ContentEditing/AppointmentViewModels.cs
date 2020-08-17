@@ -117,10 +117,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PartnerId { get; set; }
 
-        //public string SearchByDoctor { get; set; }
-
-        //public string SearchByAppointment { get; set; }
-
         public DateTime? DateTimeFrom { get; set; }
 
         public DateTime? DateTimeTo { get; set; }
@@ -128,6 +124,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid? DotKhamId { get; set; }
+
+        public string UserId { get; set; }
     }
 
     public class AppointmentSearch
@@ -154,6 +152,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public string Search { get; set; }
+
+        public string UserId { get; set; }
     }
 
     public class AppointmentDefaultGet

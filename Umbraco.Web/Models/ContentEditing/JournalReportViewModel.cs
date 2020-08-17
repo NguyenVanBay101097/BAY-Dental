@@ -48,11 +48,73 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class JournalReportDetailPaged
     {
-        public Guid? JournalId { get; set; }        
+        public Guid? JournalId { get; set; }
 
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
 
         public string GroupBy { get; set; }
+    }
+
+    public class JournalCashBankReportSearch
+    {
+        public JournalCashBankReportSearch()
+        {
+            ResultSelection = "cash_bank";
+        }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public string Search { get; set; }
+
+        public string ResultSelection { get; set; }
+     
+    }
+
+    public class ReportJournalData
+    {
+        public string TargetMove { get; set; }
+
+        public int MyProperty { get; set; }
+    }
+
+    public class ReportJournalItem
+    {
+        public AccountJournalBasic Journal { get; set; }
+
+        public decimal Begin { get; set; }
+
+        public decimal SumDebit { get; set; }
+
+        public decimal SumCredit { get; set; }
+
+        public decimal End
+        {
+            get
+            {
+                return Begin + SumDebit - SumCredit;
+            }
+            set { }
+        }
+
+        public IEnumerable<AccountMoveLineBasic> Lines { get; set; } = new List<AccountMoveLineBasic>();
+    }
+
+    public class ReportCashBankJournalSearch
+    {
+        /// <summary>
+        /// cash_bank : tất cả
+        /// bank : tài khoản ngân hàng
+        /// cash : tiền mặt
+        /// </summary>
+        public string ResultSelection { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 }

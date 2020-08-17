@@ -139,5 +139,19 @@ namespace Infrastructure.Services
         {
             await _userManager.UpdateAsync(user);
         }
+
+        //ham dung de lay list id company của 1 user
+        public IEnumerable<Guid> GetListCompanyIdsAllow(string userId)
+        {
+            var user = _userManager.Users.Where(x => x.Id == userId).FirstOrDefault();
+            var companyIds = _dbContext.ResCompanyUsersRels.Where(x => x.UserId == userId).Select(x => x.CompanyId).ToList();
+            var res = companyIds.Union(new List<Guid>() { user.CompanyId });
+            return res;
+        }
+
+        public IEnumerable<Guid> GetListCompanyIdsAllowCurrentUser()
+        {
+            return GetListCompanyIdsAllow(UserId);
+        }
     }
 }

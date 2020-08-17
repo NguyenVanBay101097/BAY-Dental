@@ -12,7 +12,6 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { DotKhamLineService, DotKhamLineDisplay, DotKhamLineBasic } from '../dot-kham-line.service';
 import { DotKhamLineOperationService } from '../dot-kham-line-operation.service';
 import { WindowService, WindowCloseResult, WindowRef, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
@@ -29,7 +28,6 @@ import { ProductStepDisplay } from 'src/app/products/product-step';
 import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { AppointmentCreateUpdateComponent } from 'src/app/appointment/appointment-create-update/appointment-create-update.component';
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { DotKhamStepDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch, DotKhamDisplay } from '../dot-khams';
 import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
@@ -42,6 +40,7 @@ import { environment } from 'src/environments/environment';
 import { Operation } from 'fast-json-patch';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 declare var $: any;
 
 @Component({

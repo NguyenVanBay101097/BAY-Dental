@@ -58,8 +58,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class LaboOrderLineDefaultGet
     {
-        public Guid? InvoiceId { get; set; }
-        public Guid? DotKhamId { get; set; }
+        public Guid? SaleOrderLineId { get; set; }
     }
 
     public class LaboOrderLineOnChangeProduct

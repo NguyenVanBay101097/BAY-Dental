@@ -4,7 +4,7 @@ import { AccountInvoicePaged } from 'src/app/account-invoices/account-invoice.se
 import { PartnerService } from '../partner.service';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderPaged } from 'src/app/core/services/sale-order.service';
 import { LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 
 @Component({

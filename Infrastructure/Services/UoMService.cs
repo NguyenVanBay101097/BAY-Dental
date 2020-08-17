@@ -50,7 +50,6 @@ namespace Infrastructure.Services
                         var categObj = GetService<IUoMCategoryService>();
                         uom.Category = categObj.GetById(uom.CategoryId);
                     }
-
                     uom.MeasureType = uom.Category.MeasureType;
                 }
             }

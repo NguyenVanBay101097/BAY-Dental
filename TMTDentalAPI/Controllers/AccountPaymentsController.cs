@@ -92,7 +92,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> SaleDefaultGet(IEnumerable<Guid> ids)
         {
-            var res = await _paymentService.OrderDefaultGet(ids);
+            var res = await _paymentService.SaleDefaultGet(ids);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PurchaseDefaultGet(IEnumerable<Guid> ids)
+        {
+            var res = await _paymentService.PurchaseDefaultGet(ids);
             return Ok(res);
         }
 

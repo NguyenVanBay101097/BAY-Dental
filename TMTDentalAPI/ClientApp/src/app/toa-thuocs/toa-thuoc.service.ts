@@ -99,7 +99,7 @@ export class ToaThuocPaging {
     items: [];
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ToaThuocService {
     apiUrl = 'api/toathuocs';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

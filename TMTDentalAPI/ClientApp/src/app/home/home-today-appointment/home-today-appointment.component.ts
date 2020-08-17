@@ -33,7 +33,7 @@ export class HomeTodayAppointmentComponent implements OnInit {
       return this.appointmentService.getPaged(val);
     });
 
-    forkJoin(obs).subscribe(result => {
+    forkJoin(obs).subscribe((result: any) => {
       result.forEach(item => {
         if (item.items.length) {
           var state = item.items[0].state;

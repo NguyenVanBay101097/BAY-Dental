@@ -1,17 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PartnerService, SaleOrderLineBasic } from '../partner.service';
-import { SaleOrderService } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { DotKhamBasic, DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
 import { LaboOrderBasic, LaboOrderDisplay, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderLineDialogComponent } from 'src/app/sale-orders/sale-order-line-dialog/sale-order-line-dialog.component';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
-import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderQuickCreateDialogComponent } from 'src/app/labo-orders/labo-order-quick-create-dialog/labo-order-quick-create-dialog.component';
+import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
+import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-detail',
@@ -121,15 +120,15 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   clickLabo(id) {
-    let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Chi tiết phiếu Labo';
-    if (id) {
-      modalRef.componentInstance.id = id;
-    }
-    modalRef.componentInstance.saleOrderId = this.saleOrderId;
-    modalRef.result.then(() => {
-      this.loadLabo();
-    });
+    // let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // modalRef.componentInstance.title = 'Chi tiết phiếu Labo';
+    // if (id) {
+    //   modalRef.componentInstance.id = id;
+    // }
+    // modalRef.componentInstance.saleOrderId = this.saleOrderId;
+    // modalRef.result.then(() => {
+    //   this.loadLabo();
+    // });
   }
 
   deleteLabo(id) {

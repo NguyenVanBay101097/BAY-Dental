@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as signalR from '@aspnet/signalr';
 import { environment } from '../../../environments/environment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { MailMessageFormat } from 'src/app/core/mail-message-format';
@@ -24,35 +23,6 @@ export class HeaderNotificationComponent implements OnInit {
     private modalService: NgbModal) { }
   myDate = new Date();
   ngOnInit() {
-
-    const connection = new signalR.HubConnectionBuilder()
-      .configureLogging(signalR.LogLevel.Information)
-      .withUrl(environment.apiDomain + "notification", {
-        accessTokenFactory: () => this.authService.getAuthorizationToken(),
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
-      })
-      .build();
-
-    connection.start().then(function () {
-      console.log('Connected');
-    }).catch(function (err) {
-      console.error(err.toString());
-    });
-
-    connection.on("broadcastMessage", (message: MailMessageFormat) => {
-      this.messages.unshift(message);
-      this.messageCount = this.messageCount + 1;
-      this.notificationService.show({
-        content: 'Bạn có 1 thông báo mới',
-        hideAfter: 3000,
-        position: { horizontal: 'right', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.soundNotify();
-    });
-
     this.loadMessages();
   }
 
