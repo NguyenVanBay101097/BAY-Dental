@@ -146,15 +146,16 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines)
+        public void _GetInvoiceQty(IEnumerable<SaleOrderLine> self)
         {
-            foreach (var line in lines)
+            var amlObj = GetService<IAccountMoveLineService>();
+            foreach (var line in self)
             {
                 decimal qtyInvoiced = 0;
-                foreach (var rel in line.SaleOrderLineInvoice2Rels)
+                var amls = amlObj.SearchQuery(x => x.SaleLineRels.Any(x => x.OrderLineId == line.Id)).Include(x => x.Move).ToList();
+                foreach (var invoiceLine in amls)
                 {
-                    var move = rel.InvoiceLine.Move;
-                    var invoiceLine = rel.InvoiceLine;
+                    var move = invoiceLine.Move;
                     if (move.State != "cancel")
                     {
                         if (move.Type == "out_invoice")
@@ -171,8 +172,6 @@ namespace Infrastructure.Services
                 line.QtyInvoiced = qtyInvoiced;
             }
         }
-
-
 
         public async Task _UpdateInvoiceQty(IEnumerable<Guid> ids)
         {
@@ -209,50 +208,42 @@ namespace Infrastructure.Services
 
         public async Task _AddPartnerCommission(IEnumerable<Guid> ids)
         {
-            var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
-            var employeeObj = GetService<IEmployeeService>();
-            var res = new SaleOrderLinePartnerCommission();
-            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
-                .Include("Salesman.Partner")
-               .ToListAsync();
-            foreach (var line in lines)
-            {
-                if (line.PartnerCommissionId != null)
-                    continue;
+            //var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
+            //var employeeObj = GetService<IEmployeeService>();
+            //var res = new SaleOrderLinePartnerCommission();
+            //var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
+            //    .Include("Salesman.Partner")
+            //   .ToListAsync();
+            //foreach (var line in lines)
+            //{
+            //    if (line.PartnerCommissionId != null)
+            //        continue;
 
-                var employee = await employeeObj.SearchQuery(x => x.UserId == line.SalesmanId).FirstOrDefaultAsync();
-                if (employee == null)
-                    continue;
+            //    var employee = await employeeObj.SearchQuery(x => x.UserId == line.SalesmanId).FirstOrDefaultAsync();
+            //    if (employee == null)
+            //        continue;
 
-                res = new SaleOrderLinePartnerCommission
-                {
-                    PartnerId = line.Salesman.PartnerId,
-                    CommissionId = employee.CommissionId.HasValue ? employee.CommissionId : null,
-                    SaleOrderLineId = line.Id,
-                };
+            //    res = new SaleOrderLinePartnerCommission
+            //    {
+            //        PartnerId = line.Salesman.PartnerId,
+            //        CommissionId = employee.CommissionId.HasValue ? employee.CommissionId : null,
+            //        SaleOrderLineId = line.Id,
+            //    };
 
-                await partnerCommission.CreateAsync(res);
+            //    await partnerCommission.CreateAsync(res);
 
 
-                line.PartnerCommissionId = res.Id;
-            }
+            //    line.PartnerCommissionId = res.Id;
+            //}
 
-            await UpdateAsync(lines);
+            //await UpdateAsync(lines);
         }
 
-        public async Task _RemovePartnerCommission(IEnumerable<Guid> ids)
+        public async Task _RemovePartnerCommissions(IEnumerable<Guid> ids)
         {
             var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
-            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Salesman).Include(x => x.PartnerCommission)
-               .Include("Salesman.Partner").ToListAsync();
-            foreach (var line in lines)
-            {
-
-                if (line.PartnerCommissionId == null)
-                    continue;
-                await partnerCommission.DeleteAsync(line.PartnerCommission);
-
-            }
+            var lines = await partnerCommission.SearchQuery(x => ids.Contains(x.SaleOrderLineId)).ToListAsync();
+            await partnerCommission.DeleteAsync(lines);
         }
 
         public AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account)
@@ -448,6 +439,51 @@ namespace Infrastructure.Services
             var tooth_ids = await SearchQuery(x => x.Id == id).SelectMany(x => x.SaleOrderLineToothRels).Select(x => x.ToothId).ToListAsync();
             var toothObj = GetService<IToothService>();
             var res = await _mapper.ProjectTo<ToothBasic>(toothObj.SearchQuery(x => tooth_ids.Contains(x.Id), orderBy: x => x.OrderBy(s => s.Name))).ToListAsync();
+            return res;
+        }
+
+        public async Task ComputeCommissions(IEnumerable<SaleOrderLine> self)
+        {
+            var self_ids = self.Select(x => x.Id).ToList();
+            self = await SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.PartnerCommissions)
+                .Include(x => x.Product).ToListAsync();
+
+            foreach(var line in self)
+            {
+                line.PartnerCommissions.Clear();
+
+                var salesmanCommission = await _PrepareSalesmanCommission(line);
+                if (salesmanCommission != null)
+                    line.PartnerCommissions.Add(salesmanCommission);
+            }
+        }
+
+        public async Task<SaleOrderLinePartnerCommission> _PrepareSalesmanCommission(SaleOrderLine self)
+        {
+            if (string.IsNullOrEmpty(self.SalesmanId))
+                return null;
+
+            var employeeObj = GetService<IEmployeeService>();
+            var employee = await employeeObj.SearchQuery(x => x.UserId == self.SalesmanId)
+                .Include(x => x.Commission).FirstOrDefaultAsync();
+            if (employee == null || employee.Commission == null)
+                return null;
+
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetByIdAsync(self.SalesmanId);
+
+            var res = new SaleOrderLinePartnerCommission
+            {
+                SaleOrderLineId = self.Id,
+                SaleOrderLine = self,
+                CommissionId = employee.CommissionId,
+                Commission = employee.Commission,
+                PartnerId = user.PartnerId
+            };
+
+            var lineCommissionObj = GetService<ISaleOrderLinePartnerCommissionService>();
+            await lineCommissionObj.ComputeAmount(new List<SaleOrderLinePartnerCommission>() { res });
+
             return res;
         }
     }

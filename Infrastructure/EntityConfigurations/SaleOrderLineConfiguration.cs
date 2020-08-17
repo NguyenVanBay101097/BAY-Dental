@@ -45,9 +45,9 @@ namespace Infrastructure.EntityConfigurations
               .WithMany(x => x.SaleLines)
               .HasForeignKey(x => x.PromotionId);
 
-            builder.HasOne(x => x.PartnerCommission)
-              .WithMany()
-              .HasForeignKey(x => x.PartnerCommissionId);
+            //builder.HasOne(x => x.PartnerCommission)
+            //  .WithMany()
+            //  .HasForeignKey(x => x.PartnerCommissionId);
 
             builder.HasOne(x => x.Coupon)
                 .WithMany()

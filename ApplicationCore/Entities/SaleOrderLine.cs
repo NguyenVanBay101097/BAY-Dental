@@ -152,8 +152,10 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>
-        public Guid? PartnerCommissionId { get; set; }
-        public SaleOrderLinePartnerCommission PartnerCommission { get; set; }
+        //public Guid? PartnerCommissionId { get; set; }
+        //public SaleOrderLinePartnerCommission PartnerCommission { get; set; }
+
+        public ICollection<SaleOrderLinePartnerCommission> PartnerCommissions { get; set; } = new List<SaleOrderLinePartnerCommission>();
 
 
 

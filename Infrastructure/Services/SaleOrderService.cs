@@ -284,7 +284,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
-                await saleLineObj._RemovePartnerCommission(sale.OrderLines.Select(x=>x.Id).ToList());
+                await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x=>x.Id).ToList());
                 sale.State = "draft";
             }
 
@@ -1092,32 +1092,20 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
             saleLineObj.ComputeAmount(order.OrderLines);
+            saleLineObj._GetInvoiceQty(order.OrderLines);
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             await UpdateAsync(order);
-
-            //var linesIds = order.OrderLines.Select(x => x.Id).ToList();
-            //var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
-            //    .Include(x => x.Order)
-            //    .Include(x => x.Product)
-            //   .Include(x => x.SaleOrderLineInvoice2Rels)
-            //   .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
-            //   .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move")
-            //   .ToListAsync();
-
-            //saleLineObj._GetInvoiceQty(lines);
-            //saleLineObj._GetToInvoiceQty(lines);
-            //saleLineObj._ComputeInvoiceStatus(lines);
-            //await saleLineObj.UpdateAsync(lines);
 
             _AmountAll(order);
-            //_GetInvoiced(new List<SaleOrder>() { order });
+            _GetInvoiced(new List<SaleOrder>() { order });
 
             await UpdateAsync(order);
 
-            //var self = new List<SaleOrder>() { order };
-            //await _GenerateDotKhamSteps(self);
+            var self = new List<SaleOrder>() { order };
+            await _GenerateDotKhamSteps(self);
 
-            // nếu phiếu điều trị ở trạng thái sale thì tính lại công nợ khi update
-            if (order.State == "sale")
+            if (order.InvoiceStatus == "to invoice")
             {
                 await ActionInvoiceCreateV2(order.Id);
             }
@@ -1375,6 +1363,8 @@ namespace Infrastructure.Services
 
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+
+                await saleLineObj.ComputeCommissions(order.OrderLines);
             }
 
             var invoices = await _CreateInvoices(self, final: true);
