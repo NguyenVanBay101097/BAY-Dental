@@ -31,6 +31,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
 
   id: string;
   submitted = false;
+  temp_name: string;
 
   constructor(private fb: FormBuilder, 
     private route: ActivatedRoute, 
@@ -105,6 +106,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
     if (this.id) {
       this.commissionService.get(this.id).subscribe(result => {
         this.formGroup.patchValue(result);
+        this.temp_name = this.getValueForm("name");
 
         const control = this.formGroup.get('commissionProductRules') as FormArray;
         control.clear();
@@ -116,9 +118,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
       }, err => {
         console.log(err);
       });
-    } else {
-      console.log("Tèo");
-    } 
+    }
   }
 
   addLine() {
@@ -166,6 +166,7 @@ export class CommissionCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        this.temp_name = this.getValueForm("name");
       }, err => {
         console.log(err);
       });
@@ -184,10 +185,19 @@ export class CommissionCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        this.temp_name = this.getValueForm("name");
       }, err => {
         console.log(err);
       });
     }
+  }
+
+  createNew() {
+    this.router.navigate(['/commissions/form']);
+    this.formGroup = this.fb.group({
+      name: ['', Validators.required],
+      commissionProductRules: this.fb.array([]),
+    });
   }
 
   loadProductCategories() {

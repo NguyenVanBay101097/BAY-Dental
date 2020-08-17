@@ -5,24 +5,27 @@
                 <a [routerLink]="'/commissions'">Bảng hoa hồng</a>
             </li>
             <li class="active">
-                <span *ngIf="id">{{getValueForm('name')}}</span>
+                <span *ngIf="id">{{ temp_name }}</span>
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="o_content">
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_statusbar">
-                <div class="o_statusbar_buttons">
-                    <button type="button" accesskey="S"
-                        class="btn btn-primary btn-sm" (click)="onSave()">
-                        Lưu
-                    </button>
-                </div>
-            </div>
             <div class="o_form_sheet">
                 <div class="oe_title mt-2 mb-3">
                     <label class="o_form_label oe_edit_only">Tên bảng hoa hồng</label>
@@ -35,6 +38,7 @@
                     </div>
                 </div>
                 <div class="o_notebook">
+                    <h5 class="mb-2">Quy định hoa hồng</h5>
                     <div class="mb-2">
                         <button type="button" accesskey="A" class="btn btn-secondary btn-sm"
                             (click)="addLine()">Thêm</button>
@@ -98,23 +102,14 @@
                                             </div>
                                         </td>
                                         <td class="text-right align-middle">
-                                            <div ngbDropdown placement="bottom-right">
-                                                <button class="btn btn-light btn-sm mr-1" title="chức năng" id="dropdownMenuButton" ngbDropdownToggle>
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                                                    <button ngbDropdownItem type="button"
-                                                        (click)="editLine(line)">
-                                                        <span class="k-icon k-i-edit"></span>
-                                                        <span class="pl-2">Sửa</span>
-                                                    </button>
-                                                    <button ngbDropdownItem type="button"
-                                                        (click)="deleteLine(i)">
-                                                        <span class="k-icon k-i-delete"></span>
-                                                        <span class="pl-2">Xóa</span>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light mr-1" 
+                                                (click)="editLine(line)">
+                                                <span class="k-icon k-i-edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light" 
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 </ng-container>
