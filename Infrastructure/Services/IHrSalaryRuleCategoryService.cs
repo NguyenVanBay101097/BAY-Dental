@@ -11,6 +11,5 @@ namespace Infrastructure.Services
     public interface IHrSalaryRuleCategoryService: IBaseService<HrSalaryRuleCategory>
     {
         Task<PagedResult2<HrSalaryRuleCategoryDisplay>> GetPaged(HrSalaryRuleCategoryPaged val);
-        Task<PagedResult2<HrSalaryRuleCategoryDisplay>> GetHrSalaryRuleCategoryDisplay (HrSalaryRuleCategoryPaged val);
     }
 }
