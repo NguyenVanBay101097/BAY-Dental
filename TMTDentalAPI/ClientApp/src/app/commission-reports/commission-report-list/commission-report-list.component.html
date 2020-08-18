@@ -66,12 +66,12 @@
             
             <kendo-grid-column field="name" title="Bác sĩ">
             </kendo-grid-column>        
-            <kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính">
+            <kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính" class="text-right" >
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.estimateTotal | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế">
+            <kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế" class="text-right">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.commissionTotal | number}}
                 </ng-template>

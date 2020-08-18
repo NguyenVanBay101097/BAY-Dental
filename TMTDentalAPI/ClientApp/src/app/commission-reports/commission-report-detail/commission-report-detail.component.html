@@ -2,29 +2,29 @@
 (pageChange)="pageChange($event)">
 <kendo-grid-column field="date" title="Ngày">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        {{dataItem.date | date:'dd/MM/yyyy'}}
+        {{dataItem.date | date:'short'}}
     </ng-template>
 </kendo-grid-column>
 <!-- <kendo-grid-column field="name" title="Bác sĩ">
 </kendo-grid-column> -->
 <kendo-grid-column field="productName" title="Dịch vụ">
 </kendo-grid-column>
-<kendo-grid-column field="amountTotal" title="Tổng tiền">
+<kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.amountTotal | number}}
     </ng-template>
 </kendo-grid-column>
-<kendo-grid-column field="prepaidTotal" title="Đã thanh toán">
+<kendo-grid-column field="prepaidTotal" title="Đã thanh toán" class="text-right">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.prepaidTotal | number}}
     </ng-template>
 </kendo-grid-column>
-<kendo-grid-column field="percentCommission" title="Phần trăm hoa hồng">
+<kendo-grid-column field="percentCommission" title="Phần trăm hoa hồng" class="text-right">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.percentCommission | number}} %
     </ng-template>
 </kendo-grid-column>
-<kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính" footerClass="text-right font-weight-bold">
+<kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính" class="text-right" footerClass="text-right font-weight-bold">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.estimateTotal | number}}
     </ng-template>
@@ -32,7 +32,7 @@
         {{total["estimateTotal"].sum | number}}
     </ng-template>
 </kendo-grid-column>
-<kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế" footerClass="text-right font-weight-bold">
+<kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế" class="text-right" footerClass="text-right font-weight-bold">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.commissionTotal | number}}
     </ng-template>

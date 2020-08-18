@@ -82,7 +82,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.SaleOrderLine.PriceTotal,
                 PrepaidTotal = x.SaleOrderLine.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
                 PercentCommission = x.Percentage,
-                EstimateTotal = x.Amount.HasValue ? x.Amount.Value : 0,
+                EstimateTotal = x.Amount ?? 0,
                 CommissionTotal = (x.SaleOrderLine.AmountPaid * x.Percentage) / 100
             }).ToList();
 
@@ -144,7 +144,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.SaleOrderLine.PriceTotal,
                 PrepaidTotal = x.SaleOrderLine.AmountPaid,
                 PercentCommission = x.Percentage,
-                EstimateTotal = x.Amount.HasValue ? x.Amount.Value : 0,
+                EstimateTotal = x.Amount ?? 0,
                 CommissionTotal = (x.SaleOrderLine.AmountPaid * x.Percentage) /100, 
             }).OrderByDescending(x => x.Date).ToList();
 
