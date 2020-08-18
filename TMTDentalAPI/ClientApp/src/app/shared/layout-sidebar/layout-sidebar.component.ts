@@ -60,15 +60,16 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
     },
-    // {
-    //   name: 'T-Care',
-    //   icon: 'fab fa-facebook-f',
-    //   children: [
-    //     { name: 'Kết nối facebook page', link: '/facebook-connect' },
-    //     { name: 'Kết nối Zalo', link: '/zalo-config' },
-    //     { name: 'Danh sách kênh', link: '/channels' },
-    //   ],
-    // },
+    {
+      name: 'Chăm sóc tự động',
+      icon: 'fab fa-facebook-f',
+      children: [
+        { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
+        { name: 'Kết nối Zalo', link: '/zalo-config' },
+        { name: 'Danh sách kênh', link: '/socials/channels' },
+        { name: 'Kịch bản', link: '/tcare/scenarios' },
+      ],
+    },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
@@ -84,6 +85,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
+        { name: 'Danh xưng', link: '/partner-titles' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
@@ -99,9 +101,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
-        // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
-        // { name: 'Kịch bản', link: '/tcare-campaigns' },
       ]
     },
     {

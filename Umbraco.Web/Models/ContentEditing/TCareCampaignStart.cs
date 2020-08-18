@@ -7,6 +7,5 @@ namespace Umbraco.Web.Models.ContentEditing
     public class TCareCampaignStart
     {
         public Guid Id { get; set; }
-        public DateTime? SheduleStart { get; set; }
     }
 }

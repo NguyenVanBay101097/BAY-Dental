@@ -8,12 +8,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" *ngIf="config" class="btn btn-sm btn-primary" (click)="onSave()">
-                        <span>Lưu</span>
-                    </button>
-                    <button type="button" *ngIf="!config" class="btn btn-primary btn-sm" (click)="connectZalo()">Kết
-                        nối</button>
-                    <button type="button" *ngIf="config" class="btn btn-danger btn-sm" (click)="deleteConfig()">Xóa kết
+                    <button type="button" class="btn btn-primary btn-sm" (click)="connectZalo()">Kết
                         nối</button>
                 </div>
             </div>
@@ -27,39 +22,16 @@
 
 
 <div class="o_content">
-    <div class="o_form_view" *ngIf="config" [formGroup]="formGroup">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-                <div class="o_field_image o_field_widget oe_avatar">
-                    <img class="img img-fluid" [src]="config.avatar">
-                </div>
-                <div class="oe_title">
-                    <h1>
-                        <span>{{config.name}}</span>
-                    </h1>
-                </div>
-                <div class="row mt16 o_settings_container">
-                    <div class="col-12 col-lg-6 o_setting_box">
-                        <div class="o_setting_left_pane">
-                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                <input type="checkbox" id="o_field_input_867" formControlName="autoSendBirthdayMessage"
-                                    class="custom-control-input">
-                                <label for="o_field_input_867" class="custom-control-label">​</label>
-                            </div>
-                        </div>
-                        <div class="o_setting_right_pane">
-                            <label class="o_form_label" for="o_field_input_867">Tự động gửi tin nhắn chúc mừng sinh
-                                nhật</label>
-                            <div class="content-group" [class.d-none]="autoSendBirthdayMessage == false">
-                                <div>
-                                    <label class="o_form_label o_light_label">Nội dung</label>
-                                    <textarea class="form-control" formControlName="birthdayMessageContent"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="avatar" title="Hình" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <img *ngIf="dataItem.avatar" [src]="dataItem.avatar" width="50" height="50" />
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="pageName" title="Tên official account">
+            </kendo-grid-column>
+        </kendo-grid>
     </div>
 </div>

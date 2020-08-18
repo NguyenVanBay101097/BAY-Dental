@@ -10,5 +10,7 @@ namespace Infrastructure.Services
     public interface IFacebookConnectService: IBaseService<FacebookConnect>
     {
         Task<FacebookConnect> SaveFromUI(FacebookConnectSaveFromUI val);
+        Task<FacebookUserData> GetUserAccounts(string access_token, string user_id);
+       
     }
 }

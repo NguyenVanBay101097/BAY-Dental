@@ -3631,6 +3631,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Supplier")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WardCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -3652,6 +3655,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ReferralUserId");
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("TitleId");
 
                     b.HasIndex("WriteById");
 
@@ -3856,6 +3861,37 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("PartnerSources");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.PartnerTitle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("PartnerTitles");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PhieuThuChi", b =>
@@ -6442,6 +6478,9 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -6467,12 +6506,17 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("TCareScenarioId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("TCareScenarioId");
 
                     b.HasIndex("WriteById");
 
@@ -6552,6 +6596,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("Delivery")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Error")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("Exception")
                         .HasColumnType("datetime2");
 
@@ -6561,14 +6608,14 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("MessageId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("Opened")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PSID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("Read")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");
@@ -6688,6 +6735,36 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("TCareRules");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareScenario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareScenarios");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ToaThuoc", b =>
@@ -8596,6 +8673,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("SourceId");
 
+                    b.HasOne("ApplicationCore.Entities.PartnerTitle", "Title")
+                        .WithMany()
+                        .HasForeignKey("TitleId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -8683,6 +8764,17 @@ namespace Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.PartnerTitle", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
@@ -9918,6 +10010,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.TCareScenario", "TCareScenario")
+                        .WithMany("Campaigns")
+                        .HasForeignKey("TCareScenarioId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -9996,6 +10092,17 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareScenario", b =>
+                {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");

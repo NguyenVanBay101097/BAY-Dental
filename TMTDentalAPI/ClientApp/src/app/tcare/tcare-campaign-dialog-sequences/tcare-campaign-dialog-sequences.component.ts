@@ -23,6 +23,11 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   filterdChannelSocials: ChannelSocial[] = [];
   submited = false;
   title: string;
+  showPluginTextarea: boolean = false;
+  selectArea_start: number;
+  selectArea_end: number;
+  audience_filter: any;
+  showAudienceFilter: boolean = false;
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -31,7 +36,6 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.model);
     this.formGroup = this.fb.group({
       channelSocialId: ['', Validators.required],
       content: ['', Validators.required],
@@ -39,7 +43,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       intervalNumber: [0],
       intervalType: ['minutes'],
       sheduleDate: null,
-      channelType: ['priority', Validators.required]
+      channelType: ['fixed', Validators.required]
     });
 
     this.channelSocialCbx.filterChange.asObservable().pipe(
@@ -94,5 +98,38 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : 0;
     value.sheduleDate = value.sheduleDate ? this.intlService.formatDate(value.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '';
     this.activeModal.close(value);
+  }
+
+  selectArea(event) {
+    this.selectArea_start = event.target.selectionStart;
+    this.selectArea_end = event.target.selectionEnd;
+  }
+  getLimitText() {
+    var limit = 640;
+    var text = this.formGroup.get('content').value;
+    if (text) {
+      return limit - text.length;
+    } else {
+      return limit;
+    }
+  }
+  addContentPluginTextarea(value) {  
+    if (this.formGroup.value.content) {
+      this.formGroup.patchValue({
+        content: this.formGroup.value.content.slice(0, this.selectArea_start) + value + this.formGroup.value.content.slice(this.selectArea_end)
+      });
+      this.selectArea_start = this.selectArea_start + value.length;
+      this.selectArea_end = this.selectArea_start;
+    } else {
+      this.formGroup.patchValue({
+        content: value
+      });
+    }
+  }
+  showEmoji() {
+    this.showPluginTextarea = true;
+  }
+  hideEmoji() {
+    this.showPluginTextarea = false;
   }
 }

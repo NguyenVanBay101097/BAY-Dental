@@ -7,6 +7,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { FacebookPageService } from "../facebook-page.service";
 import { FacebookPagePaged } from "../facebook-page-paged";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: "app-facebook-page-list",
@@ -28,7 +29,8 @@ export class FacebookPageListComponent implements OnInit {
   constructor(
     private facebookPageService: FacebookPageService,
     private modalService: NgbModal,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit() {
@@ -76,10 +78,10 @@ export class FacebookPageListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  createItem() {}
+  createItem() { }
 
   editItem(item: any) {
-    this.router.navigate(["/channel/" + item.id]);
+    this.router.navigate(["/socials/channel/" + item.id]);
   }
 
   deleteItem(item: any) {
@@ -93,6 +95,20 @@ export class FacebookPageListComponent implements OnInit {
       this.facebookPageService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       });
+    });
+  }
+
+  refreshItem(item: any){
+    this.facebookPageService.refreshPage(item).subscribe(() => {
+      this.loadDataFromApi();
+      this.notificationService.show({
+        content: "Làm mới kênh thành công!",
+        hideAfter: 3000,
+        position: { horizontal: "center", vertical: "top" },
+        animation: { type: "fade", duration: 400 },
+        type: { style: "success", icon: true },
+      });
+     
     });
   }
 

@@ -56,6 +56,7 @@ import { PartnerSupplierCuDialogComponent } from './partner-supplier-cu-dialog/p
 import { ProductCategoryDialogComponent } from './product-category-dialog/product-category-dialog.component';
 import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.component';
+import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +105,8 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent
+    LoaiThuChiFormComponent,
+    PartnerTitleCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -148,7 +150,8 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent
+    LoaiThuChiFormComponent,
+    PartnerTitleCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -182,7 +185,8 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent
+    LoaiThuChiFormComponent,
+    PartnerTitleCuDialogComponent
   ],
 })
 export class SharedModule { }

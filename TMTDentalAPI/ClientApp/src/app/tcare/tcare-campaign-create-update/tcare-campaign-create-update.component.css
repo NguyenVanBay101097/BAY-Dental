@@ -22,3 +22,144 @@
         stroke-dashoffset: -16;
     }
 }
+
+.noti-time {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.content_script {
+    padding-left: 15px;
+    position: relative;
+}
+
+.campaign {
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    padding: 0;
+}
+
+.campaign .campaign_title {
+    padding: 7.7px;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+.campaign .campaign_content {
+    padding: 15px;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.graph_title {
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+.graph_content {
+    padding-left: 0;
+    position: relative;
+}
+
+.graph_content .graph_container {
+    overflow: hidden;
+    min-height: 555px;
+    height: 555px;
+    cursor: default;
+}
+
+.graph_icon_sidebar {
+    padding-right: 0;
+    border-radius: 3px;
+}
+
+.shadow-sm {
+    overflow: hidden;
+    min-height: 555px;
+    height: 555px;
+    padding: 10px;
+}
+
+.campaign_add {
+    padding: 15px;
+    background-color: tomato;
+}
+
+.o_statusbar_input_title {
+    width: 100%;
+    height: 32px;
+    margin-left: 3px;
+    border: none;
+    padding: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.o_form_statusbar {
+    width: 100%;
+    height: 40px;
+    padding-left: 0;
+}
+
+.o_statusbar_shedule_start_date {
+    max-width: 100px;
+}
+
+.o_statusbar_status_lable_right {
+    padding-left: 5px;
+    margin-right: 15px;
+    padding-top: 7px;
+}
+
+.o_statusbar_status_lable_left {
+    padding-right: 5px;
+    padding-top: 7px;
+}
+
+.o_statusbar_buttons {
+    display: inline-flex;
+    width: 50%;
+}
+
+.o_statusbar_status {
+    width: 50%;
+}
+
+.noti_time {
+    padding: 10px;
+    color: white;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    background: #007bff;
+    position: absolute;
+    top: 18px;
+    border-radius: 10px;
+    right: 40px;
+}
+
+.noti_time:before {
+    content: "";
+    position: absolute;
+    right: 50%;
+    top: -18px;
+    width: 0;
+    height: 0;
+    border-top: 18px solid transparent;
+    border-right: 26px solid #007bff;
+    border-bottom: 0px solid transparent;
+}
+
+.action_save {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+
+.modal-xl{
+    min-height: 500px !important;
+}

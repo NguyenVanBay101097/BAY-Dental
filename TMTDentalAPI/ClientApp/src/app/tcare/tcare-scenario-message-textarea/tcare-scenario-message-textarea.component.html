@@ -1,0 +1,20 @@
+<div class="plugin-textarea text-dark">
+    <!-- <span class="px-1" data-toggle="dropdown">
+        <i class="fas fa-laugh"></i>
+    </span> -->
+    <!-- <emoji-mart class="dropdown-menu p-0 border-0" (emojiSelect)="selectEmoji($event)"></emoji-mart> -->
+    <span class="px-1">
+        <i class="fas fa-user" [ngbPopover]="popContent" popoverClass="popover-ms" #popOver="ngbPopover" triggers="manual"  [autoClose]="'outside'" placement="bottom" (click)="toggleWithGreeting(popOver)"></i>
+        <ng-template #popContent>
+            <div class="something">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0 py-1" *ngFor="let ad of tabs; let i = index" (click)="clickTab(ad.value)">
+                        <div>{{ad.name}}</div>                  
+                    </li>     
+                </ul>
+            </div>
+           
+        </ng-template>
+    </span>
+    <span class="px-1">{{num_CharLeft}}</span>
+</div>
