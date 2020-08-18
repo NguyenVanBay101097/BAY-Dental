@@ -307,35 +307,33 @@ namespace Infrastructure.Services
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
-                try
-                {
-                    conn.Open();
+                conn.Open();
 
-                    var partner_ids = new List<Guid>().AsEnumerable();
-                    var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
-                    if (campaign == null)
-                        return;
+                var partner_ids = new List<Guid>().AsEnumerable();
+                var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+                if (campaign == null)
+                    return;
 
-                    XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                    MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                    MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+                XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
 
-                    var sequence = resultingMessage.Root.Sequence;
-                    var rule = resultingMessage.Root.Rule;
-                    if (sequence == null || rule == null)
-                        return;
+                var sequence = resultingMessage.Root.Sequence;
+                var rule = resultingMessage.Root.Rule;
+                if (sequence == null || rule == null)
+                    return;
 
-                    if (string.IsNullOrEmpty(sequence.Content))
-                        return;
+                if (string.IsNullOrEmpty(sequence.Content))
+                    return;
 
-                    var channelSocial = conn.Query<FacebookPage>("" +
-                         "SELECT * " +
-                         "FROM FacebookPages " +
-                         "where Id = @id" +
-                         "", new { id = sequence.ChannelSocialId }).FirstOrDefault();
+                var channelSocial = conn.Query<FacebookPage>("" +
+                     "SELECT * " +
+                     "FROM FacebookPages " +
+                     "where Id = @id" +
+                     "", new { id = sequence.ChannelSocialId }).FirstOrDefault();
 
-                    if (channelSocial == null)
-                        return;
+                if (channelSocial == null)
+                    return;
 
                 //khách hàng
                 var partner = conn.Query<Partner>("" +
@@ -352,7 +350,7 @@ namespace Infrastructure.Services
                 //Xử lý gửi tin              
                 if (sequence.ChannelType == "priority")
                 {
-                   
+
                     var profiles = GetUserProfilesPriority(partner_id.Value, conn);
                     if (!profiles.Any())
                         return;
@@ -389,7 +387,7 @@ namespace Infrastructure.Services
                     }
                     else if (channelSocials.Type == "zalo")
                     {
-                       
+
 
                         var sent = DateTime.Now;
                         var zaloClient = new ZaloClient(channelSocials.PageAccesstoken);
@@ -403,7 +401,7 @@ namespace Infrastructure.Services
 
 
                 }
-                else if(sequence.ChannelType == "fixed")
+                else if (sequence.ChannelType == "fixed")
                 {
                     var profiles = GetUserProfilesFixed(Guid.Parse(sequence.ChannelSocialId), partner_id.Value, conn);
                     if (!profiles.Any())
@@ -460,7 +458,7 @@ namespace Infrastructure.Services
             return profiles;
         }
 
-        private static IEnumerable<FacebookUserProfile> GetUserProfilesPriority( Guid partId,
+        private static IEnumerable<FacebookUserProfile> GetUserProfilesPriority(Guid partId,
            SqlConnection conn = null)
         {
             var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
@@ -471,7 +469,7 @@ namespace Infrastructure.Services
         }
 
 
-      
+
 
 
 
@@ -481,33 +479,33 @@ namespace Infrastructure.Services
         //    //var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
         //    //date = date.AddSeconds(-1);
 
-            ////khách hàng
-            //var partner = conn.Query<Partner>("" +
-            //             "SELECT * " +
-            //             "FROM Partners " +
-            //             "where Id = @id" +
-            //             "", new { id = profile.PartnerId }).FirstOrDefault();
+        //    ////khách hàng
+        //    //var partner = conn.Query<Partner>("" +
+        //    //             "SELECT * " +
+        //    //             "FROM Partners " +
+        //    //             "where Id = @id" +
+        //    //             "", new { id = profile.PartnerId }).FirstOrDefault();
 
-            //if (partner == null)
-            //    return;
+        //    //if (partner == null)
+        //    //    return;
 
-            /////chi nhánh
-            //var company = conn.Query<Company>("" +
-            //            "SELECT * " +
-            //            "FROM Companies " +
-            //            "where Id = @id" +
-            //            "", new { id = partner.CompanyId }).FirstOrDefault();
+        //    /////chi nhánh
+        //    //var company = conn.Query<Company>("" +
+        //    //            "SELECT * " +
+        //    //            "FROM Companies " +
+        //    //            "where Id = @id" +
+        //    //            "", new { id = partner.CompanyId }).FirstOrDefault();
 
-            //if (company == null)
-            //    return;
+        //    //if (company == null)
+        //    //    return;
 
-            //var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name), profile.PSID, access_token);
-            //var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
-            //if (sendResult == null)
-            //    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" , ChannelSocialId = channelSocialId });
-            //else
-            //    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook", ChannelSocialId = channelSocialId });
-        }
+        //    //var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name), profile.PSID, access_token);
+        //    //var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
+        //    //if (sendResult == null)
+        //    //    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" , ChannelSocialId = channelSocialId });
+        //    //else
+        //    //    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook", ChannelSocialId = channelSocialId });
+        //}
 
         public async Task SendMessageAndTraceZalo(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId, Guid channelSocialId)
         {
@@ -535,7 +533,7 @@ namespace Infrastructure.Services
                 return;
 
             var zaloClient = new ZaloClient(access_token);
-            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name)).Root.ToObject<RootZalo>().data;
+            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name)).Root.ToObject<SendMessageZaloResponse>().data;
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
             else
@@ -582,14 +580,17 @@ namespace Infrastructure.Services
 
 
 
-    public class RootZalo
+    public class SendMessageZaloResponse
     {
-        public RootMessageZalo data { get; set; }
+        public string message { get; set; }
+        public int error { get; set; }
+        public SendMessageZaloData data { get; set; }
     }
 
-    public class RootMessageZalo
+    public class SendMessageZaloData
     {
         public string message_id { get; set; }
+        public string user_id { get; set; }
     }
 
     public class RulePartnerIds

@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             _connectionStrings = connectionStrings?.Value;
         }
 
-        public async Task ProcessRead(string db, DateTime watermark, string sender_id, string recipient_id)
+        public async Task ProcessRead(string db, DateTime watermark, string psid, string page_id)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
@@ -35,7 +35,7 @@ namespace Infrastructure.Services
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
-                var traces = await conn.QueryAsync<dynamic>("select trace.Id, trace.TCareCampaignId, trace.PartnerId from TCareMessingTraces trace left join FacebookPages p on trace.ChannelSocialId = p.Id where trace.MessageId is not null and trace.Opened is null and trace.Sent <= @date and trace.PSID = @psid and p.PageId = @pageId", new { psid = sender_id, pageId = recipient_id, date = watermark });
+                var traces = await conn.QueryAsync<dynamic>("select trace.Id, trace.TCareCampaignId, trace.PartnerId from TCareMessingTraces trace left join FacebookPages p on trace.ChannelSocialId = p.Id where trace.MessageId is not null and trace.Opened is null and trace.Sent <= @date and trace.PSID = @psid and p.PageId = @pageId", new { psid = psid, pageId = page_id, date = watermark });
                 var prams = traces.Select(x => new { opened = watermark, id = x.Id }).ToArray();
                 await conn.ExecuteAsync("update TCareMessingTraces set Opened=@opened where @Id=id;", prams);
 
@@ -71,12 +71,11 @@ namespace Infrastructure.Services
                                 await conn.ExecuteAsync("insert into PartnerPartnerCategoryRel(CategoryId,PartnerId) values (@CategoryId,@PartnerId);", tags_to_add.ToArray());
                         }
                     }
-
                 }
             }
         }
 
-        public async Task ProcessDelivery(string db, DateTime watermark, string psid, string page_id )
+        public async Task ProcessDelivery(string db, DateTime watermark, string psid, string page_id)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
@@ -84,7 +83,7 @@ namespace Infrastructure.Services
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
-                var traces = await conn.QueryAsync<dynamic>("select trace.Id, trace.TCareCampaignId, trace.PartnerId from TCareMessingTraces trace left join FacebookPages p on trace.ChannelSocialId = p.Id where trace.MessageId is not null and trace.Delivery is null and trace.Sent <= @date and trace.PSID = @psid and p.PageId = @pageId", new { psid = sender_id, pageId = recipient_id, date = watermark });
+                var traces = await conn.QueryAsync<dynamic>("select trace.Id, trace.TCareCampaignId, trace.PartnerId from TCareMessingTraces trace left join FacebookPages p on trace.ChannelSocialId = p.Id where trace.MessageId is not null and trace.Delivery is null and trace.Sent <= @date and trace.PSID = @psid and p.PageId = @pageId", new { psid = psid, pageId = page_id, date = watermark });
                 var prams = traces.Select(x => new { delivery = watermark, id = x.Id }).ToArray();
                 await conn.ExecuteAsync("update TCareMessingTraces set Delivery=@delivery where @Id=id;", prams);
 
@@ -133,10 +132,10 @@ namespace Infrastructure.Services
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
-                var now = DateTime.Now;              
+                var now = DateTime.Now;
                 var page = conn.Query<FacebookPage>("select * from FacebookPages where PageId = @PageId ", new { PageId = page_id }).FirstOrDefault();
                 var profile = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PSID = @PSID AND FbPageId = @FbPageId", new { PSID = psid, FbPageId = page.Id }).FirstOrDefault();
-                if(page.Type == "facebook")
+                if (page.Type == "facebook")
                 {
                     if (profile == null)
                     {
@@ -160,11 +159,11 @@ namespace Infrastructure.Services
                         var res = zaloClient.getProfileOfFollower(psid).ToObject<GetProfileOfFollowerResponse>();
                         await conn.ExecuteAsync("insert into FacebookUserProfiles(Id,DateCreated,LastUpdated,Name,Gender,PSID,FbPageId,Avatar) values (@Id,@DateCreated,@LastUpdated,@Name,@Gender,@PSID,@FbPageId,@Avatar);", new { Id = GuidComb.GenerateComb(), DateCreated = now, LastUpdated = now, Name = res.data.display_name, Gender = res.data.user_gender, PSID = res.data.user_id.ToString(), FbPageId = page.Id, Avatar = res.data.avatar });
                     }
-                    
-                }
-                
 
-               
+                }
+
+
+
             }
         }
     }

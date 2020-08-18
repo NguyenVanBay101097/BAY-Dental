@@ -11,6 +11,7 @@ import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-dialog',
