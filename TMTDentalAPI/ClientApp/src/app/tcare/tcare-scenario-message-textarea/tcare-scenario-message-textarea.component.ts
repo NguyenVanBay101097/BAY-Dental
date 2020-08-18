@@ -13,9 +13,9 @@ export class TcareScenarioMessageTextareaComponent implements OnInit {
   @Output() content_send = new EventEmitter<string>();
 
   tabs = [
-    { name: 'Tên khách hàng' , value: '{{ten_khach_hang}}' },
-    {  name: 'Giới tính' , value: '{{gioi_tinh}}' },
-    { name: 'Tên chi nhánh' , value: '{{ten_chi_nhanh}}' },
+    { name: 'Tên khách hàng', value: '{{ten_khach_hang}}' },
+    {name: 'Họ và tên khách hàng', value: '{{fullname_khach_hang}}'},
+    { name: 'Tên trang', value: '{{ten_page}}' },
     
   ];
 

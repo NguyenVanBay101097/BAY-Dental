@@ -25,6 +25,11 @@
     <div>
         <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)">
+            <kendo-grid-column field="avatar" title="Hình" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <img *ngIf="dataItem.avatar" [src]="dataItem.avatar" width="50" height="50" />
+                </ng-template>
+            </kendo-grid-column>
             <kendo-grid-column field="pageName" title="Tên official account">
             </kendo-grid-column>
         </kendo-grid>

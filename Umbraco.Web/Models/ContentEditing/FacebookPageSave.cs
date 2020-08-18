@@ -14,5 +14,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string PageName { get; set; }
         public string PageAccesstoken { get; set; }
+        public string Type { get; set; }
     }
 }

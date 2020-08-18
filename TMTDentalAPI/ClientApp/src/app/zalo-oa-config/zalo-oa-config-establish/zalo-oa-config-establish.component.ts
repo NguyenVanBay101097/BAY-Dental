@@ -65,6 +65,7 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
   connectZalo() {
     var url =
       "https://oauth.zaloapp.com/v3/oa/permission?app_id=210286079830365439&redirect_uri=https://fba.tpos.vn/zalo/login-callback";
+     
     this.popupWindow(url, url, window, 650, 500);
     window.addEventListener("message", (event) => {
       var data = JSON.parse(event.data);

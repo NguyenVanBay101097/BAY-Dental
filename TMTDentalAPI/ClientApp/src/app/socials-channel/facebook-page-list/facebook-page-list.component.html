@@ -46,8 +46,10 @@
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
+                <button [class.d-none]="dataItem.type == 'zalo'" class="btn btn-primary btn-sm" title="Làm mới" (click)="refreshItem(dataItem)">
+                        <span class="fas fa-sync-alt"></span></button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

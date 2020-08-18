@@ -45,6 +45,9 @@ namespace Umbraco.Web.Models.Webhooks
 
         [JsonProperty("delivery")]
         public FacebookWebHookEntryMessagingDelivery Delivery { get; set; }
+
+        [JsonProperty("message")]
+        public FacebookWebHookEntryMessagingMessage Message { get; set; }
     }
 
     public class FacebookWebHookEntryMessagingSender
@@ -69,6 +72,30 @@ namespace Umbraco.Web.Models.Webhooks
         [JsonConverter(typeof(UnixTimestampConverter))]
         public DateTime Watermark { get; set; }
     }
+
+    public class FacebookWebHookEntryMessagingMessage
+    {
+        [JsonProperty("mid")]
+        public string Source { get; set; }
+
+        [JsonProperty("text")]
+        public string Type { get; set; }
+
+        [JsonProperty("quick_reply")]
+        public MessageQuickReply QuickReply { get; set; }
+
+        //[JsonProperty("referer_uri")]
+        //public string RefererUri { get; set; }
+    }
+
+    public class MessageQuickReply
+    {
+        [JsonProperty("payload")]
+        public string Payload { get; set; }
+    }
+
+
+
 
     public class UnixTimestampConverter : DateTimeConverterBase
     {

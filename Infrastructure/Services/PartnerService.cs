@@ -423,6 +423,17 @@ namespace Infrastructure.Services
             return partners;
         }
 
+        public async Task<IEnumerable<PartnerSimpleContact>> SearchPartnersConnectSocial(PartnerPaged val)
+        {
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimpleContact
+            {
+                Id = x.Id,
+                Phone = x.Phone,
+                Name = x.Name
+            }).ToListAsync();
+            return partners;
+        }
+
         public IQueryable<Partner> GetQueryPaged(PartnerPaged val)
         {
             var query = SearchQuery();
