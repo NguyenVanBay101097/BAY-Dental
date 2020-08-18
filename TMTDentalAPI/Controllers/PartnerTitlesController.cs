@@ -62,10 +62,11 @@ namespace TMTDentalAPI.Controllers
 
             var result = _mapper.Map<PartnerTitle>(val);
             await _unitOfWork.BeginTransactionAsync();
-            await _partnerTitleService.CreateAsync(result);
+            var title = await _partnerTitleService.CreateAsync(result);
             _unitOfWork.Commit();
 
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, val);
+            var basic = _mapper.Map<PartnerTitleBasic>(title);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]

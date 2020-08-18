@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerTitleService } from '../partner-title.service';
+import { PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
 
 @Component({
   selector: 'app-partner-title-cu-dialog',

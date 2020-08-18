@@ -5,8 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerTitleService, PartnerTitlePaged, PartnerTitle } from '../partner-title.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PartnerTitleCuDialogComponent } from 'src/app/shared/partner-title-cu-dialog/partner-title-cu-dialog.component';
 
 @Component({
   selector: 'app-partner-title-list',
@@ -65,7 +65,7 @@ export class PartnerTitleListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm danh xưng';
     modalRef.result.then(() => {
        this.loadDataFromApi();
@@ -75,7 +75,7 @@ export class PartnerTitleListComponent implements OnInit {
   }
 
   editItem(item: PartnerTitle) {
-    const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa danh xưng';
     modalRef.componentInstance.itemId = item.id;
     modalRef.result.then(() => {

@@ -20,6 +20,7 @@ import { AddressCheckApi } from 'src/app/price-list/price-list';
 import { PartnerSourceSimple, District, City, Ward, PartnerCategorySimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
+import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -290,6 +291,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   get getStreet() {
     return this.formGroup.get('street');
+  }
+
+  quickCreateTitle() {
+    let modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm danh xưng';
+    modalRef.result.then(result => {
+      this.filteredTitles.push(result as PartnerTitle);
+      this.formGroup.patchValue({ title: result });
+    }, () => {
+    });
   }
 
 

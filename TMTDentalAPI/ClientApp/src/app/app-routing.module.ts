@@ -188,6 +188,10 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
+    path: 'partner-titles', 
+    loadChildren: () => import('./partner-titles/partner-titles.module').then(m => m.PartnerTitlesModule)
+  },
+  {
     path: '',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
     canActivate: [AuthGuard] 
