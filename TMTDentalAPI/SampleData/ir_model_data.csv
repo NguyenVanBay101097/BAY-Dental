@@ -57,7 +57,7 @@ service_card.model_service_card_sale_order_service_card_card_rel,SaleOrderServic
 base.model_sample_prescription,SamplePrescription,Đơn thuốc mẫu,0
 account.model_phieu_thu_chi,PhieuThuChi,Phiếu thu chi,0
 account.model_loai_thu_chi,LoaiThuChi,Loại thu chi,0
-
+sale.model_commission,Commission,Bảng hoa hồng,0
 
 
 
