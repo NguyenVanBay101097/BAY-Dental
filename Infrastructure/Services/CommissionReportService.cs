@@ -111,7 +111,7 @@ namespace Infrastructure.Services
             var paymmentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var saleOrderObj = GetService<IAccountPaymentService>();
             var saleOrderlinePartnerObj = GetService<ISaleOrderLinePartnerCommissionService>();
-            var paymentRels = paymmentRelObj.SearchQuery(x => x.AmountPrepaid != 0);
+            var paymentRels = paymmentRelObj.SearchQuery();
 
             if (val.DateFrom.HasValue)
             {
