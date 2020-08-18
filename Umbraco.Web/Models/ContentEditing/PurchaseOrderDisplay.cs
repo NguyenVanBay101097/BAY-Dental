@@ -34,5 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal AmountTotal { get; set; }
 
         public IEnumerable<PurchaseOrderLineDisplay> OrderLines { get; set; } = new List<PurchaseOrderLineDisplay>();
+
+        public decimal AmountResidual { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public LaboOrderLineDisplay()
         {
             State = "draft";
+            ProductQty = 1;
         }
 
         public Guid Id { get; set; }
@@ -46,10 +47,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ToothCategoryId { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
 
-        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
 
         public string State { get; set; }
 
         public string Note { get; set; }
+
+        public Guid? SaleOrderLineId { get; set; }
     }
 }

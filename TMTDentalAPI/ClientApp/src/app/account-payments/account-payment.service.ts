@@ -40,7 +40,7 @@ export class AccountPaymentDisplay {
     communication: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AccountPaymentService {
     apiUrl = 'api/AccountPayments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -67,6 +67,10 @@ export class AccountPaymentService {
 
     saleDefaultGet(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SaleDefaultGet', ids);
+    }
+
+    purchaseDefaultGet(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/PurchaseDefaultGet', ids);
     }
 
     serviceCardOrderDefaultGet(ids: any) {

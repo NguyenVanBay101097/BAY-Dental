@@ -23,7 +23,6 @@ import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incom
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    ProductsModule,
     SharedModule
   ],
   providers: [

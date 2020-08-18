@@ -153,36 +153,15 @@ namespace Infrastructure.Services
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
-            //var partnerList = new List<PartnerBasic>();
-            //var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
-            //foreach (var i in items)
-            //{
-            //    var p = new PartnerBasic();
-            //    var list = new List<string>();
-            //    p = _mapper.Map<PartnerBasic>(i);
-            //    if (!string.IsNullOrEmpty(i.Street))
-            //        list.Add(i.Street);
-            //    if (!string.IsNullOrEmpty(i.WardName))
-            //        list.Add(i.WardName);
-            //    if (!string.IsNullOrEmpty(i.DistrictName))
-            //        list.Add(i.DistrictName);
-            //    if (!string.IsNullOrEmpty(i.CityName))
-            //        list.Add(i.CityName);
-            //    if (list.Count > 0)
-            //    {
-            //        p.Address = String.Join(", ", list);
-            //    }
-            //    partnerList.Add(p);
-
-            //    if (i.Customer)
-            //    {
-            //        p.Debt = creditDebitDict[p.Id].Credit;
-            //    }
-            //    else if (i.Supplier)
-            //    {
-            //        p.Debt = creditDebitDict[p.Id].Debit;
-            //    }
-            //}
+            if (val.ComputeCreditDebit)
+            {
+                var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
+                foreach (var item in items)
+                {
+                    item.Credit = creditDebitDict[item.Id].Credit;
+                    item.Debit = creditDebitDict[item.Id].Debit;
+                }
+            }
 
             return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
             {

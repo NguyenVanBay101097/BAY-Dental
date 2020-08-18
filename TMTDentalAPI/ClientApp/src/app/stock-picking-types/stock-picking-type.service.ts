@@ -21,7 +21,7 @@ export class StockPickingTypePaging {
     items: StockPickingTypeBasic[];
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class StockPickingTypeService {
     apiUrl = 'api/stockpickingtypes';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

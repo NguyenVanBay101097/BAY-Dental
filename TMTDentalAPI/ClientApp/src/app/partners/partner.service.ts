@@ -100,7 +100,7 @@ export class PartnerImageViewModel {
     partnerImages: PartnerImageBasic[];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
     apiAccountInvoiceUrl = 'api/accountinvoices';

@@ -2,6 +2,7 @@
 "access_res_user_group_user","res_user group_user","base.model_res_user","group_user",1,0,0,0
 "access_res_partner_group_user","res_partner group_user","base.model_res_partner","group_user",1,1,1,1
 "access_partner_category_group_user","partner_category group_user","base.model_res_partner_category","group_user",1,1,1,1
+"access_partner_image_group_user","partner_image group_user","base.model_res_partner_image","group_user",1,1,1,1
 "access_product_group_user","product group_user","product.model_product_product","group_user",1,1,1,1
 "access_product_category_group_user","product_category group_user","product.model_product_category","group_user",1,1,1,1
 "access_res_group_group_user","res_group group_user","base.model_res_group","group_user",1,0,0,0
@@ -30,6 +31,7 @@
 "access_res_user_group_manager","res_user group_manager","base.model_res_user","group_manager",1,0,0,0
 "access_res_partner_group_manager","res_partner group_manager","base.model_res_partner","group_manager",1,0,0,0
 "access_partner_category_group_manager","partner_category group_manager","base.model_res_partner_category","group_manager",1,0,0,0
+"access_partner_image_group_manager","partner_image group_manager","base.model_res_partner_image","group_manager",1,0,0,0
 "access_product_group_manager","product group_manager","product.model_product_product","group_manager",1,0,0,0
 "access_product_category_group_manager","product_category group_manager","product.model_product_category","group_manager",1,0,0,0
 "access_res_group_group_manager","res_group group_manager","base.model_res_group","group_manager",1,0,0,0
@@ -58,6 +60,7 @@
 "access_res_user_group_admin","res_user group_admin","base.model_res_user","group_admin",1,1,1,1
 "access_res_partner_group_admin","res_partner group_admin","base.model_res_partner","group_admin",1,0,0,0
 "access_partner_category_group_admin","partner_category group_admin","base.model_res_partner_category","group_admin",1,0,0,0
+"access_partner_image_group_admin","partner_image group_admin","base.model_res_partner_image","group_admin",1,0,0,0
 "access_product_group_admin","product group_admin","product.model_product_product","group_admin",1,0,0,0
 "access_product_category_group_admin","product_category group_admin","product.model_product_category","group_admin",1,0,0,0
 "access_res_group_group_admin","res_group group_admin","base.model_res_group","group_admin",1,1,1,1

@@ -14,9 +14,9 @@
             </div>
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
+            <div class="o_cp_buttons d-flex">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownAppointmentState"
+                    <button class="btn btn-primary dropdown-toggle btn-sm mr-1" type="button" id="dropdownAppointmentState"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Theo {{getTitle()}}
                     </button>
@@ -29,6 +29,13 @@
                 </div>
             </div>
             <div class="o_cp_sidebar">
+                <div hasGroups [groups]="'base.group_multi_company'">
+                    <kendo-combobox [data]="listCompanies" [placeholder]="'Tất cả chi nhánh'" [filterable]="true"
+                    (filterChange)="fillChangeCompany($event); this.searchUpdateCompanies.next($event);" #comboboxCbx 
+                    (valueChange)="changeCompany($event)" class="cbbox-sm"
+                    [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                    </kendo-combobox>
+                </div>
             </div>
         </div>
         <div class="o_cp_right">

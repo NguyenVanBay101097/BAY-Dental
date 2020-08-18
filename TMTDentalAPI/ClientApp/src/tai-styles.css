@@ -1379,3 +1379,9 @@ span.char-count {
     max-width: 400px!important;  
     width: 400px;
 }
+
+.kendo-combobox-sm.k-combobox {
+    font-size: 13px;
+    line-height: 13px;
+    min-width: 200px;
+}

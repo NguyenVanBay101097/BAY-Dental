@@ -4,7 +4,7 @@ import { LoaiThuChiListComponent } from './loai-thu-chi-list/loai-thu-chi-list.c
 
 const routes: Routes = [
   {
-    path: 'loai-thu-chi',
+    path: '',
     component: LoaiThuChiListComponent
   }
 ];

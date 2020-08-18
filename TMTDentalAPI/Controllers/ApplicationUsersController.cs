@@ -477,17 +477,7 @@ namespace TMTDentalAPI.Controllers
 
         private async Task SaveAvatar(Partner partner, ApplicationUserDisplay val)
         {
-            if (!string.IsNullOrEmpty(val.Avatar) && ImageHelper.IsBase64String(val.Avatar))
-            {
-                var fileName = Path.GetRandomFileName() + "." + ImageHelper.GetImageExtension(val.Avatar);
-                var uploadResult = await _uploadService.UploadBinaryAsync(val.Avatar, fileName: fileName);
-                if (uploadResult != null)
-                    partner.Avatar = uploadResult.Id;
-            }
-            else if (string.IsNullOrEmpty(val.Avatar))
-            {
-                partner.Avatar = null;
-            }
+            partner.Avatar = val.Avatar;
         }
     }
 }

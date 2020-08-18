@@ -4,7 +4,7 @@ import { ProductCategoryListComponent } from './product-category-list/product-ca
 
 const routes: Routes = [
   {
-    path: 'product-categories/:type',
+    path: ':type',
     component: ProductCategoryListComponent,
   },
 ];

@@ -182,7 +182,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
       var value = this.formGroup.value;
       this.programService.create(value).subscribe(result => {
-        this.router.navigate(['/promotion-programs/form'], { queryParams: { id: result.id } });
+        this.router.navigate(['programs/promotion-programs/form'], { queryParams: { id: result.id } });
         let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.programId = result.id;
         modalRef.result.then(() => {
@@ -217,7 +217,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/promotion-programs/form']);
+    this.router.navigate(['programs/promotion-programs/form']);
   }
 
   onSave() {
@@ -243,7 +243,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       });
     } else {
       this.programService.create(value).subscribe(result => {
-        this.router.navigate(['/promotion-programs/form'], { queryParams: { id: result.id } });
+        this.router.navigate(['programs/promotion-programs/form'], { queryParams: { id: result.id } });
       });
     }
   }

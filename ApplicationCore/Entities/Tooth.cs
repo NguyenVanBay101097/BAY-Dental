@@ -23,5 +23,7 @@ namespace ApplicationCore.Entities
         /// Vị trí răng: trái hay phải
         /// </summary>
         public string Position { get; set; }
+
+        public ICollection<SaleOrderLineToothRel> SaleLineToothRels { get; set; } = new List<SaleOrderLineToothRel>();
     }
 }

@@ -3,7 +3,6 @@ import { DotKhamPaged } from 'src/app/dot-khams/dot-khams';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { AppointmentBasic, AppointmentSearchByDate, AppointmentPaged } from 'src/app/appointment/appointment';
 import { PagedResult2 } from 'src/app/employee-categories/emp-category';
-import { AppointmentCreateUpdateComponent } from 'src/app/appointment/appointment-create-update/appointment-create-update.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { forkJoin } from 'rxjs';
 import { distinctUntilChanged, debounceTime, map } from 'rxjs/operators';
@@ -18,6 +17,7 @@ import * as _ from 'lodash';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { PartnerService } from '../partner.service';
 import { PartnerDisplay } from '../partner-simple';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
 @Component({
   selector: 'app-partner-customer-appointment',
@@ -53,13 +53,11 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     val.partnerId = this.id;
 
     this.appointmentService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
+      map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log(res);
-
       this.gridData = res;
       this.loading = false;
     }, err => {

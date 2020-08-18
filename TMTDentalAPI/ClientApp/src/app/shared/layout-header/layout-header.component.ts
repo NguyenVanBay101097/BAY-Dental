@@ -75,7 +75,7 @@ export class LayoutHeaderComponent implements OnInit {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['login']);
+    this.router.navigate(['/auth/login']);
   }
 
   removeSampleData() {
@@ -100,10 +100,11 @@ export class LayoutHeaderComponent implements OnInit {
   }
 
   getAvatarImgSource(obj: string) {
-    if (obj)
-      return environment.uploadDomain + 'api/Web/Image/' + obj;
-    else
+    if (obj) {
+      return obj;
+    } else {
       return '/assets/images/user_avatar.png';
+    }
   }
 
   editProfile(item) {

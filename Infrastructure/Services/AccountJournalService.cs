@@ -18,7 +18,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
 
-        public AccountJournalService(IAsyncRepository<AccountJournal> repository, IHttpContextAccessor httpContextAccessor, 
+        public AccountJournalService(IAsyncRepository<AccountJournal> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         : base(repository, httpContextAccessor)
         {
@@ -32,7 +32,7 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<AccountJournal>> CreateAsync(IEnumerable<AccountJournal> self)
         {
-            foreach(var journal in self)
+            foreach (var journal in self)
             {
                 var seq = await _CreateSequence(journal);
                 journal.SequenceId = seq.Id;
@@ -69,12 +69,12 @@ namespace Infrastructure.Services
                         throw new Exception("Không thể phát sinh code");
                 }
                 var name = "";
-                if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue && string.IsNullOrEmpty(val.Name) && val.Type=="bank")
+                if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue && string.IsNullOrEmpty(val.Name) && val.Type == "bank")
                     name = await GetBankAccountNameAsync(val.AccountNumber, val.BankId);
                 else
                     name = val.Name;
                 if (!journal.DefaultDebitAccountId.HasValue || !journal.DefaultCreditAccountId.HasValue)
-                {                    
+                {
                     var account = await PrepareAccountLiquidityAsync(val.Type, name);
                     var entityAccount = await accountObj.CreateAsync(account);
                     journal.DefaultCreditAccountId = entityAccount.Id;
@@ -83,7 +83,7 @@ namespace Infrastructure.Services
 
                 journal.Name = name;
                 journal.Type = val.Type;
-                journal.CompanyId = CompanyId;   
+                journal.CompanyId = CompanyId;
                 //tạo sequence
                 var seq = await _CreateSequence(journal);
                 journal.SequenceId = seq.Id;
@@ -116,7 +116,7 @@ namespace Infrastructure.Services
             //if (val.Type != journal.Type)
             //{
             //    journal.Code = await GenerateNextCodeBankCashAsync(val.Type);
-                
+
 
             //    if (val.Type == "cash")
             //    {
@@ -149,7 +149,7 @@ namespace Infrastructure.Services
             //        var accountPrepared = await PrepareAccountLiquidityAsync(val.Type, name);
             //        account.Code = accountPrepared.Code;
             //    }
-                    
+
 
             //    await accountObj.UpdateAsync(account);
             //}                        
@@ -161,7 +161,7 @@ namespace Infrastructure.Services
         {
             var bankObj = GetService<IResBankService>();
             var bank = await bankObj.SearchQuery(x => x.Id.Equals(bankId)).FirstOrDefaultAsync();
-            return string.Format("{0} - {1}", bank.Name, accountNumber); 
+            return string.Format("{0} - {1}", bank.Name, accountNumber);
         }
 
         private async Task<ResPartnerBank> SetPartnerBankAsync(string accountNumber, Guid? bankId)
@@ -213,7 +213,7 @@ namespace Infrastructure.Services
                 CompanyId = CompanyId,
                 InternalType = accountType.Type
             };
-            
+
 
             return account;
 
@@ -226,15 +226,15 @@ namespace Infrastructure.Services
 
             var count = 1;
             string codeTemplate = $"{prefix}{count}";
-                while (matchedCodes.Count > 0)
+            while (matchedCodes.Count > 0)
+            {
+                codeTemplate = $"{prefix}{count}";
+                if (!matchedCodes.Any(x => x.Code.Equals(codeTemplate)))
                 {
-                    codeTemplate = $"{prefix}{count}";
-                    if (!matchedCodes.Any(x => x.Code.Equals(codeTemplate)))
-                    {
-                        break;
-                    }
-                    count++;
+                    break;
                 }
+                count++;
+            }
             return codeTemplate;
         }
 
@@ -251,7 +251,7 @@ namespace Infrastructure.Services
                 NumberNext = 1,
                 CompanyId = journal.CompanyId,
             };
-            
+
             return await seqObj.CreateAsync(seq);
         }
 
@@ -273,16 +273,27 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AccountJournalSimple>> GetAutocomplete(AccountJournalFilter val)
         {
-            var types = val.Type.Split(',');
-            var query = SearchQuery(domain: x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search)) && x.Active, orderBy: x => x.OrderBy(s => s.Code));
-            if (types.Any())
-                query = query.Where(x => types.Contains(x.Type));
+            ISpecification<AccountJournal> spec = new InitialSpecification<AccountJournal>(x => x.Active);
 
-            var items = await query.Skip(0).Take(20)
-                .Select(x => new AccountJournalSimple() {
-                    Id = x.Id,
-                    Name = x.Name
-                }).ToListAsync();
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<AccountJournal>(x => x.Name.Contains(val.Search)));
+
+            if (val.CompanyId.HasValue)
+                spec = spec.And(new InitialSpecification<AccountJournal>(x => x.CompanyId == val.CompanyId));
+
+            if (!string.IsNullOrEmpty(val.Type))
+            {
+                var types = val.Type.Split(",");
+                spec = spec.And(new InitialSpecification<AccountJournal>(x => types.Contains(x.Type)));
+            }
+
+            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Code));
+            var items = await query.Skip(0).Take(20).Select(x => new AccountJournalSimple()
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToListAsync();
+
             return items;
         }
 
@@ -297,7 +308,7 @@ namespace Infrastructure.Services
 
             var res = await query
                 .Include(x => x.BankAccount)
-                .ThenInclude(x=>x.Bank)
+                .ThenInclude(x => x.Bank)
                 .OrderBy(x => x.Code)
                 .ToListAsync();
             var items = _mapper.Map<List<AccountJournalBasic>>(res);

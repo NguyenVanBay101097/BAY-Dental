@@ -1,90 +1,3 @@
-// import { Component, OnInit, ViewChild, Renderer2 } from '@angular/core';
-// import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
-// import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-// import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
-// import { PageChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
-// import { SaleOrderPaged, SaleOrderService } from 'src/app/sale-orders/sale-order.service';
-// import { IntlService } from '@progress/kendo-angular-intl';
-// import { Router, ActivatedRoute } from '@angular/router';
-// import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-// import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-// import { NotificationService } from '@progress/kendo-angular-notification';
-// import { PartnerService } from '../partner.service';
-// import { PartnerDisplay } from '../partner-simple';
-// import { RedirectComponentComponent } from 'src/app/shared/redirect-component/redirect-component.component';
-// import { SharedService } from 'src/app/shared/shared.service';
-// import { PartnerCustomerTreatmentPaymentDetailComponent } from '../partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
-
-// @Component({
-//   selector: 'app-partner-customer-treatment-payment',
-//   templateUrl: './partner-customer-treatment-payment.component.html',
-//   styleUrls: ['./partner-customer-treatment-payment.component.css']
-// })
-// export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
-
-
-//   // @ViewChild(PartnerCustomerTreatmentPaymentDetailComponent, { static: true }) cmp: PartnerCustomerTreatmentPaymentDetailComponent;
-//   limit = 20;
-//   id: string;
-//   skip = 0;
-//   customerInfo: PartnerDisplay;
-//   listSaleOrder: SaleOrderBasic[] = []
-//   selectedIds: string[] = [];
-//   show = false;
-//   constructor(private saleOrderService: SaleOrderService,
-//     private router: Router,
-//     private partnerService: PartnerService,
-//     private modalService: NgbModal,
-//     private paymentService: AccountPaymentService,
-//     private notificationService: NotificationService,
-//     private activeRoute: ActivatedRoute,
-//     private renderer2: Renderer2,
-//     private sharedService: SharedService
-//   ) { }
-
-//   ngOnInit() {
-//     this.id = this.activeRoute.snapshot['_routerState']._root.children[0].value.params.id
-//     this.loadDataFromApi();
-//     this.loadCustomerInfo();
-//   }
-
-//   loadDataFromApi() {
-//     var val = new SaleOrderPaged();
-//     val.limit = this.limit;
-//     val.offset = this.skip;
-//     val.partnerId = this.id;
-//     this.saleOrderService.getPaged(val).subscribe(res => {
-//       this.listSaleOrder = res.items;
-//       console.log(res);
-//     })
-//   }
-
-//   loadCustomerInfo() {
-//     this.partnerService.getPartner(this.id).subscribe(result => {
-//       this.customerInfo = new PartnerDisplay();
-//       this.customerInfo = result;
-//       console.log(this.customerInfo);
-//     })
-//   }
-
-//   createItem() {
-//     this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: this.customerInfo.id } });
-//   }
-
-//   deleteItem(item) {
-//     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-//     modalRef.componentInstance.title = 'Xóa phiếu điều trị';
-//     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
-//     modalRef.result.then(() => {
-//       this.saleOrderService.unlink([item.id]).subscribe(() => {
-//         this.loadDataFromApi();
-//       });
-//     });
-//   }
-
-
-
-// }
 
 
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
@@ -93,15 +6,14 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserSimple } from 'src/app/users/user-simple';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { SaleOrderService, SaleOrderPaged } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService, SaleOrderPaged } from 'src/app/core/services/sale-order.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment',
@@ -134,7 +46,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
   partnerId: string;
 
-  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router, private dialogService: DialogService,
+  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router,
     private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService,
     private route: ActivatedRoute) { }
 
@@ -153,9 +65,9 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
   stateGet(state) {
     switch (state) {
       case 'sale':
-        return 'Đã xác nhận';
+        return 'Đang điều trị';
       case 'done':
-        return 'Đã khóa';
+        return 'Hoàn thành';
       case 'cancel':
         return 'Đã hủy';
       default:
@@ -208,6 +120,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.partnerId = this.partnerId;
+    val.isQuotation = false;
 
     this.saleOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

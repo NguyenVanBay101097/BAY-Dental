@@ -2965,6 +2965,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("QtyInvoiced")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("SaleOrderLineId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int?>("Sequence")
                         .HasColumnType("int");
 
@@ -2996,6 +2999,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("SaleOrderLineId");
 
                     b.HasIndex("ToothCategoryId");
 
@@ -8384,6 +8389,11 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
+
+                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
+                        .WithMany()
+                        .HasForeignKey("SaleOrderLineId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
                         .WithMany()

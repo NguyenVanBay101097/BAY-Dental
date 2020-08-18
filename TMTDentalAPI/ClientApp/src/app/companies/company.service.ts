@@ -38,7 +38,7 @@ export class CompanyPaging {
 }
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CompanyService {
     apiUrl = 'api/companies';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

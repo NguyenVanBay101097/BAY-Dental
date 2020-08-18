@@ -30,7 +30,7 @@ namespace Infrastructure.Services
         Task ApplyCoupon(SaleOrderApplyCoupon val);
         Task ApplyPromotion(Guid id);
 
-        Task ActionConvertToOrder(Guid id);
+        Task<SaleOrder> ActionConvertToOrder(Guid id);
         Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id);
         bool _IsGlobalDiscountAlreadyApplied(SaleOrder self);
         bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program);
@@ -53,5 +53,7 @@ namespace Infrastructure.Services
         Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
         Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
+
+        Task ActionUnlock(IEnumerable<Guid> ids);
     }
 }

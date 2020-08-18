@@ -18,7 +18,7 @@ namespace Infrastructure.EntityConfigurations
               .HasForeignKey(x => x.SaleLineId);
 
             builder.HasOne(x => x.Tooth)
-             .WithMany()
+             .WithMany(x => x.SaleLineToothRels)
              .HasForeignKey(x => x.ToothId);
         }
     }

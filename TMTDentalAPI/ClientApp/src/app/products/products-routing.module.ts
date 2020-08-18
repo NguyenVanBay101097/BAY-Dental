@@ -8,27 +8,15 @@ import { ProductProductListComponent } from './product-product-list/product-prod
 
 const routes: Routes = [
   {
-    path: 'products',
-    component: ProductListComponent
-  },
-  {
-    path: 'products/:type',
-    component: ProductListComponent
-  },
-  {
-    path: 'product-services',
+    path: 'services',
     component: ProductServiceListComponent
   },
   {
-    path: 'product-medicines',
+    path: 'medicines',
     component: ProductMedicineListComponent
   },
   {
-    path: 'product-labos',
-    component: ProductLaboListComponent
-  },
-  {
-    path: 'product-products',
+    path: 'products',
     component: ProductProductListComponent
   }
 ];

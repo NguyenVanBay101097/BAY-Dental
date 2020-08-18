@@ -67,5 +67,9 @@ namespace ApplicationCore.Entities
         public decimal QtyInvoiced { get; set; }
 
         public string State { get; set; }
+
+        public Guid? SaleOrderLineId { get; set; }
+        
+        public SaleOrderLine SaleOrderLine { get; set; }
     }
 }

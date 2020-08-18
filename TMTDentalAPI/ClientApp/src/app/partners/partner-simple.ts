@@ -78,6 +78,7 @@ export class PartnerPaged {
     supplier: boolean;
     search: string;
     categoryId: string;
+    computeCreditDebit: boolean;
 }
 
 export class PagedResult2<T>{

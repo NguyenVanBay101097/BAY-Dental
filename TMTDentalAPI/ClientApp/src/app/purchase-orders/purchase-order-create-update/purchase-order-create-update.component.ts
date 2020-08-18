@@ -18,6 +18,8 @@ import { PermissionService } from 'src/app/shared/permission.service';
 import { UoMDisplay } from 'src/app/uoms/uom.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 declare var $: any;
 
 @Component({
@@ -58,10 +60,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private router: Router,
     private permissionService: PermissionService,
     private authService: AuthService,
-    private modalService: NgbModal
-  ) {
-
-  }
+    private modalService: NgbModal,
+    private paymentService: AccountPaymentService
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -147,6 +148,28 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
   }
 
+  actionRegisterPayment() {
+    if (this.id) {
+      this.paymentService.purchaseDefaultGet([this.id]).subscribe(rs2 => {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.result.then(() => {
+          this.notificationService.show({
+            content: 'Thanh toán thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+
+          this.loadRecord();
+        }, () => {
+        });
+      })
+    }
+  }
+
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.supplier = true;
@@ -218,9 +241,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var data = Object.assign(this.purchaseOrder, val);
     this.purchaseOrderService.create(data).subscribe(result => {
       this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+        this.router.navigate(['/purchase/orders/edit/' + result.id]);
       }, () => {
-        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+        this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     });
   }
@@ -243,7 +266,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/purchase-orders/create'], { queryParams: { type: this.purchaseOrder.type } });
+    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
   }
 
   focusProductSearchInput() {
@@ -374,7 +397,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.purchaseOrderService.create(data).subscribe(result => {
-        this.router.navigate(['/purchase-orders/edit/' + result.id]);
+        this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     }
   }

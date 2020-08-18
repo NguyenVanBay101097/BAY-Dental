@@ -1,20 +1,23 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { AppointmentService } from '../appointment.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { AppointmentSearchByDate, AppointmentBasic } from '../appointment';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PagedResult2 } from 'src/app/core/paged-result-2';
 import * as _ from 'lodash';
 import { NgbModal, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { DotkhamEntitySearchBy, DotKhamPaged } from 'src/app/dot-khams/dot-khams';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Router } from '@angular/router';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from 'src/app/users/user.service';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -26,46 +29,99 @@ export class AppointmentKanbanComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   state: string;
+  userId: string;
   search: string;
+  searchUpdate = new Subject<string>();
+
   showDropdown = false;
   dateList: Date[];
-  today = new Date();
+
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  listUsers: UserSimple[] = [];
+
+
+
+  public today: Date = new Date(new Date().toDateString());
+  public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
+
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
-  constructor(private appointmentVMService: AppointmentVMService, private appointmentService: AppointmentService,
+  constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, private router: Router) {
-    this.appointmentVMService.dateRange$.subscribe(result => {
-      this.dateFrom = new Date(result.dateFrom.toDateString());
-      this.dateTo = new Date(result.dateTo.toDateString());
-      this.dateList = this.getDateList();
-      this.loadData();
-    });
-
-    this.appointmentVMService.state$.subscribe(state => {
-      this.state = state;
-      this.loadData();
-    });
-
-    this.appointmentVMService.apCreate$.subscribe(id => {
-      this.addAppointmentById(id);
-    });
-
-    this.appointmentVMService.refresh$.subscribe(() => {
-      this.loadData();
-    });
-
-    this.appointmentVMService.search$.pipe(
-      debounceTime(400),
-      distinctUntilChanged()
-    ).subscribe(search => {
-      this.search = search;
-      this.loadData();
-    });
-  }
+    private notificationService: NotificationService, private router: Router, private userService: UserService) {  }
 
   ngOnInit() {
+    this.dateFrom = this.today;
+    this.dateTo = this.next3days;
+    this.dateList = this.getDateList();
+    this.loadData();
 
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadData();
+      });
+
+    this.loadListUsers();
+
+    this.userCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.userCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+    ).subscribe(
+      rs => {
+        this.listUsers = rs;
+        this.userCbx.loading = false;
+      }
+    )
   }
+
+  searchUsers(search) {
+    var userPaged = new UserPaged();
+    if (search) {
+      userPaged.search = search.toLowerCase();
+    }
+    return this.userService.autocompleteSimple(userPaged);
+  }
+
+  valueChangeUser(user) {
+    this.userId = user ? user.id : null;
+    this.loadData();
+  }
+
+  loadListUsers() {
+    var paged = new UserPaged();
+    this.userService.autocompleteSimple(paged).subscribe(
+      rs => {
+        this.listUsers = rs;
+      });
+  }
+
+
+  onDateSearchChange(filter) {
+    this.dateFrom = filter.dateFrom;
+    this.dateTo = filter.dateTo;
+    this.dateList = this.getDateList();
+    this.loadData();
+  }
+
+
+  onStateSearchChange(state) {
+    this.state = state;
+    this.loadData();
+  }
+
+  createAppointment() {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(result => {
+      this.loadData();
+    }, () => { });
+  }
+
+  refreshData() {
+    this.loadData();
+  }
+
 
   loadData() {
     this.resetData();
@@ -78,6 +134,9 @@ export class AppointmentKanbanComponent implements OnInit {
       if (this.search) {
         val.search = this.search;
       }
+
+      val.userId = this.userId;
+      
       val.date = this.intlService.formatDate(date, 'yyyy-MM-dd');
       return this.appointmentService.searchReadByDate(val);
     });

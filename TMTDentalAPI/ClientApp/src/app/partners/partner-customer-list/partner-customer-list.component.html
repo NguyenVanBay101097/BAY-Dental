@@ -36,7 +36,7 @@
         <kendo-grid-column field="name" title="Họ tên" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/customer/' + dataItem.id]">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
                         <span *ngIf="dataItem.ref">[{{dataItem.ref}}] </span>
                         {{dataItem.name}}
                     </a>
@@ -58,8 +58,8 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
-                    <span class="fas fa-print"></span></button>
+                <!-- <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
+                    <span class="fas fa-print"></span></button> -->
                 <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <i class="far fa-edit"></i></button>
                 <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">

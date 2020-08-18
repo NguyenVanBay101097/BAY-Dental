@@ -29,7 +29,7 @@ export class PartnerCategoryPaging {
     items: PartnerCategoryBasic[];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PartnerCategoryService {
     apiUrl = 'api/partnercategories';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

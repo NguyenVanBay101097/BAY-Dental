@@ -80,9 +80,7 @@ namespace Infrastructure.Services
 
     public class UploadResult
     {
-        public string Name { get; set; }
-        public string Id { get; set; }
-        public long FileSize { get; set; }
-        public string MineType { get; set; }
+        public string FileName { get; set; }
+        public string FileUrl { get; set; }
     }
 }

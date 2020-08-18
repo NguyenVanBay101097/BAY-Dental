@@ -46,14 +46,13 @@ namespace Infrastructure.Services
             var modelDataObj = GetService<IIRModelDataService>();
             var amlObj = GetService<IAccountMoveLineService>();
             var account_type_revenue = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
-            var companyId = CompanyId;
 
             if (val.DateFrom.HasValue)
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
             if (val.DateTo.HasValue)
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
 
-            var query = amlObj._QueryGet(dateTo: val.DateTo, dateFrom: val.DateFrom, state: "posted", companyId: companyId);
+            var query = amlObj._QueryGet(dateTo: val.DateTo, dateFrom: val.DateFrom, state: "posted", companyId: val.CompanyId);
             query = query.Where(x => x.Account.UserTypeId == account_type_revenue.Id);
             if (!string.IsNullOrEmpty(val.Search))
             {
@@ -194,6 +193,7 @@ namespace Infrastructure.Services
                     }).ToListAsync();
 
             }
+
             return result;
         }
     }
