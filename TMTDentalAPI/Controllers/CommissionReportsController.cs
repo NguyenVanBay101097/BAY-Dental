@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {

@@ -20,6 +20,12 @@ export class CommissionReportDetailComponent implements OnInit {
   @Input() public dateTo: Date;
 
   public total: any;
+
+  public aggregates: any[] = [
+    { field: 'estimateTotal', aggregate: 'sum' },
+    { field: 'commissionTotal', aggregate: 'sum' },
+  ];
+
   constructor(private commissionReportService: CommissionReportsService , private intl: IntlService) { }
 
   ngOnInit() {
@@ -39,7 +45,7 @@ export class CommissionReportDetailComponent implements OnInit {
 
     this.commissionReportService.getReportDetail(val).subscribe(res => {
       this.details = res;
-      this.total = aggregateBy(this.details);
+      this.total = aggregateBy(this.details , this.aggregates);
       this.loadItems();
       this.loading = false;
     }, err => {

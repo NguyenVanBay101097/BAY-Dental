@@ -37,16 +37,15 @@
             </table>
             <table class="o_group o_inner_group o_group_col_6">
                 <tbody>
-                    <tr hasGroups [groups]="'base.group_multi_company'">
+                    <tr>
                         <td colspan="1" class="o_td_label">
                             <label for="o_field_input_10" class="o_form_label o_form_label_help">
-                                Chi nhánh
+                                Bác sĩ
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <kendo-combobox [data]="filteredCompanies" [placeholder]="'Tất cả chi nhánh'"
-                                [textField]="'name'" [filterable]="true" #companyCbx formControlName="company"
-                                [valueField]="'id'">
+                            <kendo-combobox [filterable]="true" [data]="filteredUsers" [textField]="'name'" #userCbx
+                                formControlName="user" [valueField]="'id'">
                             </kendo-combobox>
                         </td>
                     </tr>
@@ -67,8 +66,12 @@
             
             <kendo-grid-column field="name" title="Bác sĩ">
             </kendo-grid-column>        
-           
-            <kendo-grid-column field="commissionTotal" title="Hoa hồng">
+            <kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.estimateTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.commissionTotal | number}}
                 </ng-template>

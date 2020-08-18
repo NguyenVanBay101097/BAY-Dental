@@ -26,6 +26,7 @@ namespace Infrastructure.Services
             {
                 var orderLine = line.SaleOrderLine;
                 line.Amount = await _GetCommissionAmount(line.Commission, orderLine.PriceTotal, orderLine.Product);
+                line.Percentage = await _GetCommissionPercentage(line.Commission, orderLine.Product);
             }
         }
 
@@ -40,6 +41,19 @@ namespace Infrastructure.Services
                 return 0M;
 
             return (subtotal ?? 0) * ((rule.PercentFixed ?? 0) / 100);
+        }
+
+        public async Task<decimal> _GetCommissionPercentage(Commission commission, Product product)
+        {
+            var productRuleObj = GetService<ICommissionProductRuleService>();
+            var rule = await productRuleObj.SearchQuery(x => x.CommissionId == commission.Id &&
+                (!x.ProductId.HasValue || x.ProductId == product.Id) &&
+                (!x.CategId.HasValue || x.CategId == product.CategId), orderBy: x => x.OrderBy(s => s.AppliedOn)).FirstOrDefaultAsync();
+
+            if (rule == null)
+                return 0M;
+
+            return rule.PercentFixed ?? 0;
         }
     }
 }

@@ -24,9 +24,20 @@
         {{dataItem.percentCommission | number}} %
     </ng-template>
 </kendo-grid-column>
-<kendo-grid-column field="commissionTotal" title="Hoa hồng">
+<kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính" footerClass="text-right font-weight-bold">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.estimateTotal | number}}
+    </ng-template>
+    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['estimateTotal']">
+        {{total["estimateTotal"].sum | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế" footerClass="text-right font-weight-bold">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.commissionTotal | number}}
+    </ng-template>
+    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['commissionTotal']">
+        {{total["commissionTotal"].sum | number}}
     </ng-template>
 </kendo-grid-column>
 </kendo-grid>

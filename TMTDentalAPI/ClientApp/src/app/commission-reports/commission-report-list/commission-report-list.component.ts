@@ -1,3 +1,5 @@
+import { UserPaged, UserService } from './../../users/user.service';
+import { UserSimple } from './../../users/user-simple';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -6,6 +8,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { CommissionReportsService, CommissionReport, ReportFilterCommission } from '../commission-reports.service';
 import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 import { CompanyBasic, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 
 @Component({
@@ -26,33 +29,33 @@ export class CommissionReportListComponent implements OnInit {
   dateTo: Date;
   searchUpdate = new Subject<string>();
   
-  @ViewChild('companyCbx', { static: true }) companyCbx: ComboBoxComponent;
-  filteredCompanies: CompanyBasic[] = [];
+  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  filteredUsers: UserSimple[] = [];
   
   constructor(private commissionReportService: CommissionReportsService,
     private fb: FormBuilder,
-    private intl: IntlService,private companyService: CompanyService,) { }
+    private intl: IntlService,private userService: UserService,) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       dateFrom: this.monthStart,
       dateTo: this.monthEnd,
-      company: null
+      company: null,
+      user:null
     });
 
     this.loadDataFromApi();
 
-    this.loadFilteredCompanies();
+    this.loadUsers();
 
-    this.companyCbx.filterChange.asObservable().pipe(
+    this.userCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.companyCbx.loading = true),
-      switchMap(val => this.searchCompanies(val))
-    ).subscribe(
-      rs => {
-        this.filteredCompanies = rs.items;
-        this.companyCbx.loading = false;
-      });
+      tap(() => (this.userCbx.loading = true)),
+      switchMap(value => this.searchUsers(value))
+    ).subscribe(result => {
+      this.filteredUsers = result;
+      this.userCbx.loading = false;
+    });
       
   }
 
@@ -62,6 +65,7 @@ export class CommissionReportListComponent implements OnInit {
     val.dateFrom = formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.companyId = formValue.company ? formValue.company.id : null;
+    val.userId = formValue.user ? formValue.user.id : null;
     
     this.loading = true;
     this.commissionReportService.getReport(val).subscribe(result => {
@@ -83,18 +87,16 @@ export class CommissionReportListComponent implements OnInit {
     return formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
   }
 
-  loadFilteredCompanies() {
-    this.searchCompanies().subscribe(
-      result => {
-        this.filteredCompanies = result.items;
-      }
-    )
+  loadUsers() {
+    this.searchUsers().subscribe(result => {
+      this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
+    });
   }
 
-  searchCompanies(search?: string) {
-    var params = new CompanyPaged();
-    params.search = search || '';
-    return this.companyService.getPaged(params);
+  searchUsers(filter?: string) {
+    var val = new UserPaged();
+    val.search = filter || '';
+    return this.userService.autocompleteSimple(val);
   }
 
   public pageChange(event: PageChangeEvent): void {

@@ -8,6 +8,6 @@ namespace Infrastructure.Services
 {
     public interface ISaleOrderLinePartnerCommissionService : IBaseService<SaleOrderLinePartnerCommission>
     {
-        Task ComputeAmount(IEnumerable<SaleOrderLinePartnerCommission> self);
+        Task ComputeAmount(IEnumerable<SaleOrderLinePartnerCommission> self);       
     }
 }

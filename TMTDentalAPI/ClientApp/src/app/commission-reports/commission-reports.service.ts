@@ -7,6 +7,7 @@ export class ReportFilterCommission {
   dateFrom: string;
   dateTo: string;
   companyId: string;
+  userId : string;
 }
 
 export class ReportFilterCommissionDetail {
@@ -19,7 +20,7 @@ export class CommissionReport {
   userId : string;
   name : string;
   // amountTotal : number;
-  // prepaidTotal : number; 
+  estimateTotal : number; 
   commissionTotal : number;
 }
 
@@ -31,6 +32,7 @@ export class CommissionReportDetail {
   amountTotal : number;
   prepaidTotal : number;
   percentCommission : number;
+  estimateTotal : number;
   commissionTotal : number;
 }
 

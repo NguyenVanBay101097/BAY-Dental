@@ -25,6 +25,11 @@ namespace ApplicationCore.Entities
         public Commission Commission { get; set; }
 
         /// <summary>
+        /// phần trăm hoa hồng
+        /// </summary>
+        public decimal? Percentage { get; set; }
+
+        /// <summary>
         /// Số tiền tính toán được hưởng hoa hồng, tính toán lại nếu price total của sale order line thay đổi
         /// </summary>
         public decimal? Amount { get; set; }
