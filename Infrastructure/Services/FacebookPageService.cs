@@ -463,7 +463,7 @@ namespace Infrastructure.Services
             var pagedRequestUrl = $"{self.PageId}/conversations?fields=participants";
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", self.PageAccesstoken);
-            pagedRequest.AddPageLimit(1);
+            pagedRequest.AddPageLimit(25);
 
             var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsDataItem>();
             if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())

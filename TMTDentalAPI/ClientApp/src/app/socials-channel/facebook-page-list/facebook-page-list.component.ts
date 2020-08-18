@@ -29,7 +29,7 @@ export class FacebookPageListComponent implements OnInit {
     private facebookPageService: FacebookPageService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -76,10 +76,10 @@ export class FacebookPageListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  createItem() {}
+  createItem() { }
 
   editItem(item: any) {
-    this.router.navigate(["/channel/" + item.id]);
+    this.router.navigate(["/socials/channel/" + item.id]);
   }
 
   deleteItem(item: any) {

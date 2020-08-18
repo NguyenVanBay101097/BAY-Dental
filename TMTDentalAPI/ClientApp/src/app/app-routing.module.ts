@@ -188,6 +188,26 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
+    path: 'tcare', 
+    loadChildren: () => import('./tcare/tcare.module').then(m => m.TcareModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'tcare', 
+    loadChildren: () => import('./tcare/tcare.module').then(m => m.TcareModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'socials', 
+    loadChildren: () => import('./socials-channel/socials-channel.module').then(m => m.SocialsChannelModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'zalo-config', 
+    loadChildren: () => import('./zalo-oa-config/zalo-oa-config.module').then(m => m.ZaloOaConfigModule),
+    canActivate: [AuthGuard] 
+  },
+  {
     path: '',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
     canActivate: [AuthGuard] 
