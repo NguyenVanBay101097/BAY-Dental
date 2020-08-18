@@ -74,8 +74,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     });
 
     var scheduleStart = new Date(this.campaign.sheduleStart);
-    this.formCampaign.patchValue({scheduleStart});
+    this.formCampaign.patchValue({ scheduleStart });
     this.load();
+
+    console.log(this.campaign);
   }
 
   ngOnInit() {
@@ -85,7 +87,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     });
 
     var scheduleStart = new Date(this.campaign.sheduleStart);
-    this.formCampaign.patchValue({scheduleStart});
+    this.formCampaign.patchValue({ scheduleStart });
     this.load();
   }
 
@@ -117,12 +119,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         new mxDivResizer(sidebar_goals);
       }
 
-      
-        //create obj
-        var sequence = that.doc.createElement("sequence");
-        var rule = that.doc.createElement("rule");
-      
-      
+
+      //create obj
+      var sequence = that.doc.createElement("sequence");
+      var rule = that.doc.createElement("rule");
+
+
 
       that.editor.graph.setCellsMovable(true);
       that.editor.graph.setAutoSizeCells(true);
@@ -138,17 +140,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
       // Does not allow dangling edges
       that.editor.graph.setAllowDanglingEdges(false);
-     
+
       // Sets the graph container and configures the editor
       that.editor.setGraphContainer(container);
-       
+
       var iconTolerance = 20;
       var splash = document.getElementById("splash");
       if (splash != null) {
         try {
           mxEvent.release(splash);
           mxEffects.fadeOut(splash, 100, true);
-          
+
         } catch (e) {
           // mxUtils is not available (library not loaded)
           splash.parentNode.removeChild(splash);
@@ -230,7 +232,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
       //double click Action
       that.editor.graph.dblClick = function (evt, cell) {
-        if (this.isEnabled() && !mxEvent.isConsumed(evt) &&  !that.campaign.active) {
+        if (this.isEnabled() && !mxEvent.isConsumed(evt) && !that.campaign.active) {
           if (cell.value.nodeName.toLowerCase() == 'sequence') {
             that.popupSequence(that.editor.graph, cell);
           }
@@ -337,7 +339,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   }
 
   load() {
-    
+
     // this.formCampaign.get('name').patchValue(this.campaign.name);
     // this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
     if (this.campaign.graphXml) {
@@ -355,7 +357,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         document.getElementById("graphContainer"),
         document.getElementById("sidebarContainer_sequences"),
         document.getElementById("sidebarContainer_goals"),
-        value 
+        value
       );
     }
     this.one = false;
@@ -836,7 +838,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
     this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
       () => {
-        this.actionNext.emit({sheduleStart: value.sheduleStart});
+        this.actionNext.emit({ sheduleStart: value.sheduleStart });
         console.log(this.campaign);
         // this.notificationService.show({
         //   content: 'Cài thời gian chạy chiến dịch thành công !',

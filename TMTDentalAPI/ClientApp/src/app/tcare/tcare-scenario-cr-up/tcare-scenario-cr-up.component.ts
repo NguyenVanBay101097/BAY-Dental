@@ -99,7 +99,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       value.push(this.campaign.id);
       this.tcareService.actionStopCampaign(value).subscribe(
         () => {
-          this.loadData();
+          campaign.active = false;
           this.notificationService.show({
             content: "Dừng kịch bản thành công!.",
             hideAfter: 3000,
@@ -107,8 +107,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
-        }, ()=>{
-          this.loadData();
+        }, () => {
         }
       )
     } else {
@@ -118,7 +117,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
       }
       this.tcareService.actionStartCampaign(val).subscribe(
         () => {
-          this.loadData();
+          campaign.active = true;
           this.notificationService.show({
             content: "Chạy kịch bản thành công!.",
             hideAfter: 3000,
@@ -126,9 +125,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
-        }, () => {        
-         this.loadData();
-
+        }, () => {
         }
       )
     }
@@ -149,7 +146,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
         this.campaign = result
         this.scenario.campaigns.push(this.campaign);
       }
-
     }, () => {
     });
 
