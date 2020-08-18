@@ -13,6 +13,8 @@ namespace ApplicationCore.Entities
 
         public DateTime? Exception { get; set; }
 
+        public DateTime? Read { get; set; }
+
         public DateTime? Opened { get; set; }
 
         public DateTime? Delivery { get; set; }
