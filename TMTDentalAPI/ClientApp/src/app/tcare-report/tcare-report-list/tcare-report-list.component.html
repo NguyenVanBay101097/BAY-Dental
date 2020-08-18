@@ -1,0 +1,69 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                <span>Thông kê kịch bản</span>
+            </li>
+        </ol>
+        <!-- <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên, SĐT..." type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div> -->
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_cp_left">
+
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div>
+                <kendo-combobox [data]="filteredCategs" [placeholder]="'Kịch bản'" [filterable]="true" (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
+            </div>
+            <div class="pl-2">
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian" (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+        <!-- <kendo-grid-column title="STT">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{rowIndex | number}}
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="name" title="Tên kịch bản">
+        </kendo-grid-column>
+        <kendo-grid-column field="items" title="số chiến dịch">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.items | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="messageTotal" class="text-right" title="đã gửi">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.messageTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="deliveryTotal" class="text-right" title="đã nhận">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.deliveryTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="readTotal" class="text-right" title="đã đọc">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.readTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-tcare-report-detail [item]="dataItem"></app-tcare-report-detail>
+        </div>
+    </kendo-grid>
+</div>

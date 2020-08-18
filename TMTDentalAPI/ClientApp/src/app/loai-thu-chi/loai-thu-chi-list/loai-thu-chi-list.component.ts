@@ -48,6 +48,7 @@ export class LoaiThuChiListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.type = this.type;
+    console.log(val);
 
     this.loaiThuChiService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { TcareRoutingModule } from './tcare-routing.module';
 import { TcareCampaignCreateUpdateComponent } from './tcare-campaign-create-update/tcare-campaign-create-update.component';
 import { TcareService } from './tcare.service';
@@ -23,6 +22,16 @@ import { MyAutofocusDirective } from './tcare-campaign-dialog-rule/audience-filt
 import { ClickOutsideDirective } from './tcare-campaign-dialog-rule/audience-filter/click-outside.directive';
 import { TcareCampaignStartDialogComponent } from './tcare-campaign-start-dialog/tcare-campaign-start-dialog.component';
 import { SharedModule } from '../shared/shared.module';
+import { TcareScenarioListComponent } from './tcare-scenario-list/tcare-scenario-list.component';
+import { TcareScenarioCrUpComponent } from './tcare-scenario-cr-up/tcare-scenario-cr-up.component';
+import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare-scenario-cr-dialog.component';
+import { AudienceFilterLastExaminationComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-last-examination/audience-filter-last-examination.component';
+import { AudienceFilterAppointmentDayComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-appointment-day/audience-filter-appointment-day.component';
+import { FacebookPluginTextareaComponent } from '../socials-channel/facebook-plugin-textarea/facebook-plugin-textarea.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
+import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +50,14 @@ import { SharedModule } from '../shared/shared.module';
     AudienceFilterPartnerCategoryComponent,
     MyAutofocusDirective,
     ClickOutsideDirective,
-    TcareCampaignStartDialogComponent
+    TcareCampaignStartDialogComponent,
+    TcareScenarioListComponent,
+    TcareScenarioCrUpComponent,
+    TcareScenarioCrDialogComponent,
+    AudienceFilterLastExaminationComponent,
+    AudienceFilterAppointmentDayComponent,
+    TcareScenarioMessageTextareaComponent
+    
   ],
   imports: [
     CommonModule,
@@ -51,8 +67,11 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
-    SharedModule
+    SharedModule, 
+    PickerModule,
+    EmojiModule
   ],
+
   providers: [TcareService],
   entryComponents: [
     TcareCampaignDialogRuleComponent,
@@ -64,7 +83,11 @@ import { SharedModule } from '../shared/shared.module';
     AudienceFilterPartnerCategoryComponent,
     AudienceFilterServiceComponent,
     AudienceFilterServiceCategoryComponent,
-    TcareCampaignStartDialogComponent
+    AudienceFilterLastExaminationComponent,
+    AudienceFilterAppointmentDayComponent,
+    TcareCampaignStartDialogComponent,
+    TcareScenarioCrDialogComponent
+    
   ]
 })
 export class TcareModule { }

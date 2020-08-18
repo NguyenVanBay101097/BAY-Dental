@@ -176,5 +176,8 @@ namespace ApplicationCore.Entities
         /// Ngay lap ho so khach hang
         /// </summary>
         public DateTime? Date { get; set; }
+
+        public Guid? TitleId { get; set; }
+        public PartnerTitle Title { get; set; }
     }
 }

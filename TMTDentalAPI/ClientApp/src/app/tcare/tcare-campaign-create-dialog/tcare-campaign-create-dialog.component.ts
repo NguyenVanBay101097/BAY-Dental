@@ -11,8 +11,9 @@ import { Router } from '@angular/router';
 })
 export class TcareCampaignCreateDialogComponent implements OnInit {
 
-  title:string;
-  formGroup: FormGroup
+  title: string;
+  formGroup: FormGroup;
+  scenarioId: string;
 
   constructor(
     private fb: FormBuilder,
@@ -32,10 +33,10 @@ export class TcareCampaignCreateDialogComponent implements OnInit {
       return false;
     }
     var value = this.formGroup.value;
+    value.tCareScenarioId = this.scenarioId;
     this.tcareService.nameCreate(value).subscribe(
       result => {
-        this.router.navigateByUrl(`tcare-campaign/${result.id}`);
-        this.activeModal.close();
+        this.activeModal.close(result);
       }
     )
   }

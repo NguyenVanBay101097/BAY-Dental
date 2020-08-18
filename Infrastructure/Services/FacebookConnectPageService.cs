@@ -52,13 +52,12 @@ namespace Infrastructure.Services
                     UserAccesstoken = page.Connect.FbUserAccessToken,
                     UserId = page.Connect.FbUserId,
                     UserName = page.Connect.FbUserName,
-                    Avatar = page.Picture,
+                    Avatar = $"https://graph.facebook.com/{page.PageId}/picture?type=large",
                     Type = "facebook",
                 });
 
                 await SubcribeAppFacebookPage(fbPage);
-                AddFacebookPageToTenant(fbPage);
-                //GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
+                GetConnectWebhooksForPage(fbPage.PageId, fbPage.PageAccesstoken);
             }
         }
 
@@ -68,7 +67,7 @@ namespace Infrastructure.Services
 
             var content = new ConnectWebhooks
             {
-                Host = host,
+                Host = $"{host}.{_appSettings.Domain}",
                 FacebookId = pageId,
                 FacebookToken = pageAccesstoken,
                 FacebookName = null,
@@ -76,7 +75,7 @@ namespace Infrastructure.Services
                 FacebookCover = null,
                 FacebookLink = null,
                 FacebookType = 2,
-                CallbackUrl = $"{_appSettings.Schema}://{host}.{_appSettings.Domain}/api/FacebookWebHook",
+                CallbackUrl = $"http://{host}.{_appSettings.Domain}/api/FacebookWebHook",
                 IsCallbackWithRaw = true
             };
 

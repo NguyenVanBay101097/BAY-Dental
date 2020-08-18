@@ -34,7 +34,7 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<PartnerSource>(x => x.Name.Contains(val.Search)));
             //if (!string.IsNullOrEmpty(val.Type))
             //    spec = spec.And(new InitialSpecification<PartnerSource>(x => x.Type == val.Type));
-
+            
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<PartnerSourceBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();

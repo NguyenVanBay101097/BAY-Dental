@@ -1,6 +1,7 @@
 import { EmployeeSimple } from '../employees/employee';
 import { HistorySimple } from '../history/history';
 import { ApplicationUserSimple } from '../appointment/appointment';
+import { PartnerTitle } from '../partner-titles/partner-title.service';
 
 export class PartnerSimple {
     id: string;
@@ -54,6 +55,8 @@ export class PartnerDisplay extends PartnerBasic {
     wardName: string;
     zaloId: string;
     date: string;
+    titleId: string;
+    title: PartnerTitle;
 }
 
 export class PartnerCategorySimple {

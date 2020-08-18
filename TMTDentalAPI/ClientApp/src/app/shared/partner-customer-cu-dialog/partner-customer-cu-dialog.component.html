@@ -82,6 +82,21 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Danh xưng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-combobox formControlName="title" [filterable]="true" [placeholder]="'ví dụ ông, bà, anh, chị...'"
+                                            [data]="filteredTitles" [valueField]="'id'" #titleCbx [textField]="'name'">
+                                        </kendo-combobox>
+                                        <a class="btn btn-sm btn-light" (click)="quickCreateTitle()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Email</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -132,16 +147,17 @@
                                             Địa chỉ
                                         </label>
                                         <div class="pl-3">
-                                            <app-check-address-button (clickAddress)="handleAddress($event)"></app-check-address-button>
+                                            <app-check-address-button (clickAddress)="handleAddress($event)">
+                                            </app-check-address-button>
                                         </div>
                                     </div>
-                                    
+
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="o_address_format mb-2">
                                         <div class="mb-2">
                                             <input class="form-control" placeholder="Số nhà, đường..." type="text"
-                                                formControlName="street" />                                               
+                                                formControlName="street" />
                                         </div>
                                         <div class="mb-2">
                                             <kendo-combobox [data]="dataResultCities" [textField]="'name'"
@@ -170,28 +186,30 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                  <label class="o_form_label">Nguồn</label>
+                                    <label class="o_form_label">Nguồn</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                  <div>
-                                    <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources"
-                                       [valueField]="'id'" #sourceCbx [textField]="'name'">
-                                    </kendo-combobox>                                 
-                                  </div>
-                                </td>             
-                              </tr>  
-                              <tr [class.d-none]="!sourceValue || sourceValue.type !== 'referral'">
-                                  <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Người giới thiệu</label>
-                                  </td>
-                                  <td colspan="1" style="width: 100%;">
                                     <div>
-                                      <kendo-combobox formControlName="referralUser" [filterable]="true" [data]="filteredReferralUsers"
-                                        [valueField]="'id'" #userCbx [textField]="'name'">
-                                      </kendo-combobox> 
+                                        <kendo-combobox formControlName="source" [filterable]="true"
+                                            [data]="filteredSources" [valueField]="'id'" #sourceCbx
+                                            [textField]="'name'">
+                                        </kendo-combobox>
                                     </div>
-                                  </td>             
-                              </tr>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="!sourceValue || sourceValue.type !== 'referral'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người giới thiệu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-combobox formControlName="referralUser" [filterable]="true"
+                                            [data]="filteredReferralUsers" [valueField]="'id'" #userCbx
+                                            [textField]="'name'">
+                                        </kendo-combobox>
+                                    </div>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
                                         chú</label></td>

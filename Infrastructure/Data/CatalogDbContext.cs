@@ -183,6 +183,10 @@ namespace Infrastructure.Data
 
         public DbSet<LoaiThuChi> LoaiThuChis { get; set; }
         public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
+        public DbSet<TCareScenario> TCareScenarios { get; set; }
+
+
+        public DbSet<PartnerTitle> PartnerTitles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -194,6 +198,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PartnerSourceConfiguration());
             builder.ApplyConfiguration(new PartnerCategoryConfiguration());
             builder.ApplyConfiguration(new PartnerPartnerCategoryRelConfiguration());
+            builder.ApplyConfiguration(new PartnerTitleConfiguration());
             builder.ApplyConfiguration(new UoMConfiguration());
             builder.ApplyConfiguration(new UoMCategoryConfiguration());
             builder.ApplyConfiguration(new SaleOrderConfiguration());
@@ -329,6 +334,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
+            builder.ApplyConfiguration(new TCareScenarioConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
@@ -372,10 +378,9 @@ namespace Infrastructure.Data
             if (_tenant != null)
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-                builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
 
-                if (_tenant.Hostname == "localhost")
-                    builder["Database"] = $"TMTDentalCatalogDb";
+                if (_tenant.Hostname != "localhost")
+                    builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
 
                 optionsBuilder.UseSqlServer(builder.ConnectionString);
             }

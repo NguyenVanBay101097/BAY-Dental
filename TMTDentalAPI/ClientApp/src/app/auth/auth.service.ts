@@ -18,6 +18,7 @@ export class UserInfo {
 })
 export class AuthService {
     private currentUserSubject: BehaviorSubject<UserViewModel>;
+
     public currentUser: Observable<UserViewModel>;
 
     constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_API') private baseApi: string) {
@@ -26,6 +27,7 @@ export class AuthService {
             localStorage.removeItem('user_info');
         }
         this.currentUserSubject = new BehaviorSubject<UserViewModel>(null);
+
         this.currentUser = this.currentUserSubject.asObservable();
     }
     isLoggedIn = false;
