@@ -109,6 +109,7 @@ namespace Infrastructure.Services
                 .Include(x => x.PartnerHistoryRels)
                 .Include(x => x.Source)
                 .Include(x => x.ReferralUser)
+                .Include(x => x.Title)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")
                 .FirstOrDefaultAsync();

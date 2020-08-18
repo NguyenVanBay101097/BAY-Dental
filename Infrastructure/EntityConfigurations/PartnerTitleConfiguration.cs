@@ -7,15 +7,11 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class PartnerCategoryConfiguration : IEntityTypeConfiguration<PartnerCategory>
+    public class PartnerTitleConfiguration : IEntityTypeConfiguration<PartnerTitle>
     {
-        public void Configure(EntityTypeBuilder<PartnerCategory> builder)
+        public void Configure(EntityTypeBuilder<PartnerTitle> builder)
         {
             builder.Property(x => x.Name).IsRequired();
-
-            builder.HasOne(x => x.Parent)
-            .WithMany()
-            .HasForeignKey(x => x.ParentId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

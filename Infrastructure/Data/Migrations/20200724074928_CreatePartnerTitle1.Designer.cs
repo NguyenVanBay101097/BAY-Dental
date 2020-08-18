@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200724074928_CreatePartnerTitle1")]
+    partial class CreatePartnerTitle1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2965,9 +2967,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("QtyInvoiced")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int?>("Sequence")
                         .HasColumnType("int");
 
@@ -2999,8 +2998,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleOrderLineId");
 
                     b.HasIndex("ToothCategoryId");
 
@@ -6478,9 +6475,6 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -6506,17 +6500,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("TCareScenarioId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("TCareScenarioId");
 
                     b.HasIndex("WriteById");
 
@@ -6596,9 +6585,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("Delivery")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Error")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("Exception")
                         .HasColumnType("datetime2");
 
@@ -6608,14 +6594,14 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("MessageId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Opened")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("PSID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Read")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");
@@ -6735,36 +6721,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("TCareRules");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.TCareScenario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("TCareScenarios");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ToaThuoc", b =>
@@ -8431,11 +8387,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany()
-                        .HasForeignKey("SaleOrderLineId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
                         .WithMany()
                         .HasForeignKey("ToothCategoryId");
@@ -10010,10 +9961,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.TCareScenario", "TCareScenario")
-                        .WithMany("Campaigns")
-                        .HasForeignKey("TCareScenarioId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -10092,17 +10039,6 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.TCareScenario", b =>
-                {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
