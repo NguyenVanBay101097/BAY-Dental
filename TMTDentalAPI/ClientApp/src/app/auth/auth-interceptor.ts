@@ -5,15 +5,21 @@ import {
 
 import { AuthService } from './auth.service';
 import { map, catchError } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-    constructor(private auth: AuthService) { }
+    constructor(private authService: AuthService, private router: Router) { }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler) {
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // Get the auth token from the service.
-        const authToken = this.auth.getAuthorizationToken();
+        const authToken = this.authService.getAuthorizationToken();
+        
+        if (!authToken) {
+            return next.handle(req);
+        }
 
         /*
         * The verbose way:

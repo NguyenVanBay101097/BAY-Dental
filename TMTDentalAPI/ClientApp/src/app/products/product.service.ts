@@ -88,13 +88,13 @@ export class ProductLaboDisplay {
   purchasePrice: number;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProductService {
   apiUrl = "api/products";
   constructor(
     private http: HttpClient,
     @Inject("BASE_API") private baseApi: string
-  ) {}
+  ) { }
 
   getGridData(pageIndex: number, pageSize: number): Observable<GridDataResult> {
     let params = new HttpParams()

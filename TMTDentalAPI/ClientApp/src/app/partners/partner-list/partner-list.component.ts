@@ -10,11 +10,11 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { saveAs } from '@progress/kendo-drawing/pdf';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 
 
 @Component({

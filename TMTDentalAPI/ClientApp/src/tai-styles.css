@@ -1201,6 +1201,22 @@ td.oe_form_group_cell_label label {
     align-items: center;
 }
 
+.o_attachments_date_separator {
+    margin-top: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 1px solid #ced4da;
+}
+
+.o_attachments_date_separator .o_attachments_date {
+    position: relative;
+    top: 10px;
+    margin: 0 auto;
+    padding: 0 10px;
+    font-weight: bold;
+    background: white;
+}
+
 span.char-count {
     position: absolute;
     right: 10px;
@@ -1320,4 +1336,10 @@ span.char-count {
 .popover-xl {
     max-width: 400px!important;  
     width: 400px;
+}
+
+.kendo-combobox-sm.k-combobox {
+    font-size: 13px;
+    line-height: 13px;
+    min-width: 200px;
 }

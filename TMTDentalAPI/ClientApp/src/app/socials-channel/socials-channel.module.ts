@@ -7,7 +7,6 @@ import { FacebookDialogComponent } from './facebook-dialog/facebook-dialog.compo
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
-import { PartnerCreateUpdateComponent } from '../partners/partner-create-update/partner-create-update.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FacebookDashboardComponent } from './facebook-dashboard/facebook-dashboard.component';
 import { FacebookPageManagementComponent } from './facebook-page-management/facebook-page-management.component';
@@ -41,6 +40,7 @@ import { FacebookAudienceFilterComponent } from './facebook-audience-filter/face
 import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-select-tag.component';
 import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
 import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
+import { FacebookModule } from 'ngx-facebook';
 
 @NgModule({
   declarations: [
@@ -85,16 +85,14 @@ import { FacebookPageListComponent } from './facebook-page-list/facebook-page-li
     AutosizeModule,
     SharedModule,
     PickerModule,
-    EmojiModule
+    EmojiModule,
   ],
   exports: [
   ],
   entryComponents: [
     FacebookDialogComponent,
-    PartnerCreateUpdateComponent,
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
-    PartnerCreateUpdateComponent,
     FacebookMassMessagingScheduleDialogComponent,
     FacebookMassMessagingCreateUpdateDialogComponent,
     FacebookPageMarketingCustomerDialogComponent,

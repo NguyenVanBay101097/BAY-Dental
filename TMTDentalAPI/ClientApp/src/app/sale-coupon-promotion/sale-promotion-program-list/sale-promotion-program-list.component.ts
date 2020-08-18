@@ -73,11 +73,11 @@ export class SalePromotionProgramListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/promotion-programs/form']);
+    this.router.navigate(['programs/promotion-programs/form']);
   }
 
   editItem(item: SaleCouponProgramBasic) {
-    this.router.navigate(['/promotion-programs/form'], { queryParams: { id: item.id } });
+    this.router.navigate(['programs/promotion-programs/form'], { queryParams: { id: item.id } });
   }
 
   deleteItem(item) {

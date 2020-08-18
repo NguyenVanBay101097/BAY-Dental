@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { IrAttachmentBasic } from '../shared';
+import { PartnerImageViewModel, PartnerImageBasic } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-image-viewer',
@@ -11,8 +12,8 @@ import { IrAttachmentBasic } from '../shared';
 })
 export class ImageViewerComponent implements OnInit {
 
-  attachments: IrAttachmentBasic[] = [];
-  attachmentSelected: IrAttachmentBasic;
+  partnerImages: PartnerImageViewModel[] = [];
+  partnerImageSelected: PartnerImageBasic;
 
   imageApi: string;
   imageDownloadApi: string;
@@ -31,25 +32,29 @@ export class ImageViewerComponent implements OnInit {
   }
 
   showPrevious() {
-    var index = _.findIndex(this.attachments, o => o.id == this.attachmentSelected.id);
-    if (index > 0) {
-      this.attachmentSelected = this.attachments[index - 1];
-    } else {
-      this.attachmentSelected = this.attachments[this.attachments.length - 1];
+    var model = this.partnerImages.find(x => x.date == this.partnerImageSelected.date);
+    if (model) {
+      var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
+      if (index > 0) {
+        this.partnerImageSelected = model.partnerImages[index - 1];
+      } else {
+        this.partnerImageSelected = model.partnerImages[model.partnerImages.length - 1];
+      }
     }
-
     return false;
   }
 
   showNext() {
     this.resetAll();
-    var index = _.findIndex(this.attachments, o => o.id == this.attachmentSelected.id);
-    if (index < this.attachments.length - 1) {
-      this.attachmentSelected = this.attachments[index + 1];
-    } else {
-      this.attachmentSelected = this.attachments[0];
+    var model = this.partnerImages.find(x => x.date == this.partnerImageSelected.date);
+    if (model) {
+      var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
+      if (index < model.partnerImages.length - 1) {
+        this.partnerImageSelected = model.partnerImages[index + 1];
+      } else {
+        this.partnerImageSelected = model.partnerImages[0];
+      }
     }
-
     return false;
   }
 

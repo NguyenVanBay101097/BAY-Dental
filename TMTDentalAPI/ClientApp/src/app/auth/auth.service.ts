@@ -138,7 +138,12 @@ export class AuthService {
     }
 
     isAuthenticated() {
-        return localStorage.getItem('access_token') != null;
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            return false;
+        }
+
+        return !this.jwtHelper.isTokenExpired(token);
     }
 
     getUserInfo(id): Observable<UserInfo> {

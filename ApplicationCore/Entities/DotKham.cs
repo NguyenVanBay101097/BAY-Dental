@@ -74,5 +74,7 @@ namespace ApplicationCore.Entities
         public ICollection<DotKhamLine> Lines { get; set; } = new List<DotKhamLine>();
 
         public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
+
+        public ICollection<PartnerImage> DotKhamImages { get; set; } = new List<PartnerImage>();
     }
 }

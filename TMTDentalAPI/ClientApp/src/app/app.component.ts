@@ -41,7 +41,6 @@ export class AppComponent {
     if (this.authService.isAuthenticated()) {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
-        console.log(result);
         this.permissionService.define(result);
       });
     }
@@ -131,6 +130,7 @@ export class AppComponent {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        window.location.reload();
       }
     }, err => {
       console.log(err);

@@ -46,14 +46,13 @@ namespace Infrastructure.Services
             var modelDataObj = GetService<IIRModelDataService>();
             var amlObj = GetService<IAccountMoveLineService>();
             var account_type_revenue = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
-            var companyId = CompanyId;
 
             if (val.DateFrom.HasValue)
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
             if (val.DateTo.HasValue)
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
 
-            var query = amlObj._QueryGet(dateTo: val.DateTo, dateFrom: val.DateFrom, state: "posted", companyId: companyId);
+            var query = amlObj._QueryGet(dateTo: val.DateTo, dateFrom: val.DateFrom, state: "posted", companyId: val.CompanyId);
             query = query.Where(x => x.Account.UserTypeId == account_type_revenue.Id);
             if (!string.IsNullOrEmpty(val.Search))
             {
@@ -179,6 +178,20 @@ namespace Infrastructure.Services
 
                 foreach (var item in result.Details)
                     item.Name = new DateTime(item.Year, 1, 1).ToString("yyyy");
+            }
+            if (val.GroupBy == "salesman")
+            {
+                result.Details = await query.GroupBy(x => new { 
+                    x.SalesmanId, x.Salesman.Name 
+                })
+                    .Select(x => new RevenueReportResultDetail
+                    {
+                        Name = x.Key.Name,
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                        Balance = x.Sum(s => s.Credit - s.Debit)
+                    }).ToListAsync();
+
             }
 
             return result;

@@ -4,7 +4,7 @@ import { HistoriesListComponent } from './histories-list/histories-list.componen
 
 const routes: Routes = [
   {
-    path: 'histories', component: HistoriesListComponent
+    path: '', component: HistoriesListComponent
   }
 ];
 

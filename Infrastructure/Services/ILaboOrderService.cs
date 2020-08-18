@@ -11,6 +11,8 @@ namespace Infrastructure.Services
     public interface ILaboOrderService: IBaseService<LaboOrder>
     {
         Task<PagedResult2<LaboOrderBasic>> GetPagedResultAsync(LaboOrderPaged val);
+        Task<PagedResult2<LaboOrderBasic>> GetFromSaleOrder_OrderLine(LaboOrderPaged val);
+
         Task<LaboOrderDisplay> GetLaboDisplay(Guid id);
         Task<LaboOrder> CreateLabo(LaboOrderDisplay val);
         Task UpdateLabo(Guid id, LaboOrderDisplay val);

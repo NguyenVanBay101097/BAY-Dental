@@ -7,7 +7,7 @@ import { UomCategoryListComponent } from './uom-category-list/uom-category-list.
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { UomCategoryService } from './uom-category.service';
+import { SharedModule } from '@progress/kendo-angular-dialog';
 
 @NgModule({
   declarations: [UomCategoryCrUpComponent, UomCategoryListComponent],
@@ -17,7 +17,8 @@ import { UomCategoryService } from './uom-category.service';
     NgbModalModule,
     FormsModule,
     ReactiveFormsModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
+    SharedModule
   ],
   entryComponents: [UomCategoryCrUpComponent],
 })

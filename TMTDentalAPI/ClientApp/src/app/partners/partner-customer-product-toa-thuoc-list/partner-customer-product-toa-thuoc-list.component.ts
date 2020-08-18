@@ -4,11 +4,10 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Product } from 'src/app/products/product';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
-import { ToaThuocCuDialogSaveComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 
 @Component({
   selector: 'app-partner-customer-product-toa-thuoc-list',
@@ -88,7 +87,6 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa: Đơn Thuốc';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.partnerId = this.id;
-
     modalRef.result.then((result) => {
       this.loadData();
       if (result.print) {
@@ -102,7 +100,6 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: Đơn Thuốc';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa đơn thuốc này?';
-
     modalRef.result.then(() => {
       this.toaThuocService.delete(item.id).subscribe(() => {
         this.loadData();

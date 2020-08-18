@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li><a routerLink="/outgoing-pickings">Phiếu xuất kho</a></li>
+            <li><a routerLink="/stock/outgoing-pickings">Phiếu xuất kho</a></li>
             <li class="active">{{pickingName === '/' ? 'Mới' : pickingName}}</li>
         </ol>
         <div class="o_cp_left">
@@ -9,7 +9,7 @@
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" accesskey="s"
                         (click)="onSaveOrUpdate()">Lưu</button>
-                    <a [routerLink]="['/outgoing-pickings/create']" accesskey="c" *ngIf="id"
+                    <a [routerLink]="['/stock/outgoing-pickings/create']" accesskey="c" *ngIf="id"
                         class="btn btn-secondary btn-sm">Thêm
                         mới</a>
                 </div>

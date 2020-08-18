@@ -1,7 +1,6 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryDisplay } from '../product-category.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ProductCategoryDialogComponent } from '../product-category-dialog/product-category-dialog.component';
 import { ProductCategory } from '../product-category';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -9,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductCategoryImportExcelDialogComponent } from '../product-category-import-excel-dialog/product-category-import-excel-dialog.component';
+import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 
 @Component({
   selector: 'app-product-category-list',

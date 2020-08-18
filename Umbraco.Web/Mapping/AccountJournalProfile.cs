@@ -14,6 +14,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<AccountJournal, AccountJournalSimple>();
             CreateMap<AccountJournal, AccountJournalBasic>();
 
+            CreateMap<AccountJournalSimple, AccountJournal>();
             CreateMap<AccountJournal, AccountJournalSave>()
                 .ForMember(x=>x.AccountNumber,x=>x.MapFrom(y=>y.BankAccount.AccountNumber))
                 .ForMember(x=>x.BankId,x=>x.MapFrom(y=>y.BankAccount.Bank.Id));

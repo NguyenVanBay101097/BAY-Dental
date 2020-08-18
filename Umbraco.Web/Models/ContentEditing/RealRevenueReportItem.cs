@@ -6,13 +6,13 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class RealRevenueReportResult
     {
-        public decimal? Debit { get; set; }
-        public decimal? Credit { get; set; }
-        public decimal? Balance { get; set; }
+        public decimal Begin { get; set; }
 
-        public decimal? TotalAmountResidual { get; set; }
+        public decimal Debit { get; set; }
 
-        public IEnumerable<RealRevenueReportItem> Items { get; set; } = new List<RealRevenueReportItem>();
+        public decimal Credit { get; set; }
+
+        public decimal End { get; set; }
     }
 
     public class RealRevenueReportItem

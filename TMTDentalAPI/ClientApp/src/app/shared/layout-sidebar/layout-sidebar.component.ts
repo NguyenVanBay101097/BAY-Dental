@@ -14,45 +14,40 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
     },
-    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/customers' },
+    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
-    // {
-    //   name: 'Điều trị',
-    //   icon: 'fas fa-medkit',
-    //   children: [
-    //     { name: 'Phiếu điều trị', link: '/sale-orders' },
-    //     { name: 'Phiếu tư vấn', link: '/sale-quotations' },
-    //     // { name: 'Đợt khám', link: '/dot-khams' },
-    //   ]
-    // },
-    // {
-    //   name: 'Phiếu labo',
-    //   icon: 'fas fa-tooth',
-    //   link: '/labo-orders',
-    //   children: []
-    // },
     {
       name: 'Thống kê labo',
       icon: 'fas fa-tooth',
       children: [],
-      link: '/labo-statistics'
+      link: '/labo-orders/statistics'
     },
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
       children: [
-        { name: 'Mua hàng', link: '/purchase-orders', params: { type: 'order' } },
-        { name: 'Trả hàng', link: '/purchase-orders', params: { type: 'refund' } },
+        { name: 'Mua hàng', link: '/purchase/orders', params: { type: 'order' } },
+        { name: 'Trả hàng', link: '/purchase/orders', params: { type: 'refund' } },
       ]
     },
     {
       name: 'Kho',
       icon: 'fas fa-th',
       children: [
-        { name: 'Phiếu xuất kho', link: '/outgoing-pickings' },
-        { name: 'Phiếu nhập kho', link: '/incoming-pickings' },
+        { name: 'Phiếu xuất kho', link: '/stock/outgoing-pickings' },
+        { name: 'Phiếu nhập kho', link: '/stock/incoming-pickings' },
+      ],
+    },
+    {
+      name: 'Thu chi',
+      icon: 'fas fa-dollar-sign',
+      children: [
+        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
       ],
     },
     {
@@ -60,20 +55,19 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',
       children: [
-        { name: 'Đơn bán thẻ', link: '/service-card-orders/list' },
+        { name: 'Đơn bán thẻ', link: '/service-card-orders' },
         { name: 'Loại thẻ', link: '/service-card-types' },
         { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
     },
     {
-      name: 'T-Care',
+      name: 'Chăm sóc tự động',
       icon: 'fab fa-facebook-f',
       children: [
-        { name: 'Kết nối facebook page', link: '/facebook-connect' },
+        { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
         { name: 'Kết nối Zalo', link: '/zalo-config' },
-        { name: 'Danh sách kênh', link: '/channels' },
-        { name: 'Kịch bản', link: '/tcare-scenarios' },
-        { name: 'Thống kê kịch bản', link: '/tcare-reports'}
+        { name: 'Danh sách kênh', link: '/socials/channels' },
+        { name: 'Kịch bản', link: '/tcare/scenarios' },
       ],
     },
     {
@@ -82,12 +76,12 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Nhãn khách hàng', link: '/partner-categories' },
         { name: "Nguồn khách hàng", link: "/partner-sources" },
-        { name: 'Nhà cung cấp', link: '/suppliers' },
-        { name: 'Dịch vụ', link: '/product-services' },
+        { name: 'Nhà cung cấp', link: '/partners/suppliers' },
+        { name: 'Dịch vụ', link: '/products/services' },
         { name: 'Nhóm dịch vụ', link: '/product-categories/service' },
-        { name: 'Vật tư', link: '/product-products' },
+        { name: 'Vật tư', link: '/products/products' },
         { name: 'Nhóm vật tư', link: '/product-categories/product' },
-        { name: 'Thuốc', link: '/product-medicines' },
+        { name: 'Thuốc', link: '/products/medicines' },
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
@@ -95,10 +89,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
         { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
-        { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Loại thu', link: '/account-accounts', params: { result_selection: 'thu' } },
-        { name: 'Loại chi', link: '/account-accounts', params: { result_selection: 'chi' } },
+        { name: 'Chương trình coupon', link: '/programs/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Chương trình khuyến mãi', link: '/programs/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
       ]
     },
     {
@@ -108,7 +100,6 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
-        // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
       ]
     },
@@ -116,17 +107,18 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
       children: [
-        { name: 'Công nợ khách hàng', link: '/account-common-partner-reports', params: { result_selection: 'customer' } },
-        { name: 'Công nợ nhà cung cấp', link: '/account-common-partner-reports', params: { result_selection: 'supplier' } },
-        { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
-        // { name: 'Thống kê hóa đơn', link: '/account-invoice-reports' },
+        { name: 'Kết quả kinh doanh', link: '/financial-report' },
+        { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank' },
         { name: 'Thống kê doanh thu', link: '/revenue-report' },
+        { name: 'Công nợ khách hàng', link: '/report-account-common/partner', params: { result_selection: 'customer' } },
+        { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' } },
+        { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
         { name: 'Thống kê điều trị', link: '/sale-report' },
-        { name: 'Khách hàng theo khu vực', link: '/partner-report-location' },
+        { name: 'Thống kê công việc', link: '/dot-kham-report' },
+        { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location' },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },
-        { name: 'Báo cáo thu chi', link: '/journal-reports' },
-        { name: 'Thống kê khách hàng cũ mới', link: '/sale-report-partner' },
+        { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner' },
       ]
     },
   ];

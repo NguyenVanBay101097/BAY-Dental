@@ -223,7 +223,8 @@ namespace Infrastructure.Services
                 Discount = self.Discount,
                 PriceUnit = self.PriceUnit,
                 DiscountType = self.DiscountType,
-                DiscountFixed = self.DiscountFixed
+                DiscountFixed = self.DiscountFixed, 
+                SalesmanId = self.SalesmanId
             };
 
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLine = self });
@@ -363,6 +364,24 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(order);
             // tính lại công nợ
             await orderObj.ActionInvoiceCreateV2(orderId);
+        }
+
+        public async Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id)
+        {
+            var laboOrderLineObj = GetService<ILaboOrderLineService>();
+            var order_ids = await laboOrderLineObj.SearchQuery(x => x.SaleOrderLineId == id).Select(x => x.OrderId).Distinct().ToListAsync();
+
+            var laboOrderObj = GetService<ILaboOrderService>();
+            var res = await _mapper.ProjectTo<LaboOrderBasic>(laboOrderObj.SearchQuery(x => order_ids.Contains(x.Id), orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
+            return res;
+        }
+
+        public async Task<IEnumerable<ToothBasic>> GetTeeth(Guid id)
+        {
+            var tooth_ids = await SearchQuery(x => x.Id == id).SelectMany(x => x.SaleOrderLineToothRels).Select(x => x.ToothId).ToListAsync();
+            var toothObj = GetService<IToothService>();
+            var res = await _mapper.ProjectTo<ToothBasic>(toothObj.SearchQuery(x => tooth_ids.Contains(x.Id), orderBy: x => x.OrderBy(s => s.Name))).ToListAsync();
+            return res;
         }
     }
 }

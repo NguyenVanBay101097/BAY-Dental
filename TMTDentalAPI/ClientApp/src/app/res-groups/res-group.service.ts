@@ -46,7 +46,7 @@ export class ResGroupPaging {
     items: ResGroupBasic[];
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ResGroupService {
     apiUrl = 'api/resgroups';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -79,4 +79,7 @@ export class ResGroupService {
         return this.http.post(this.baseApi + this.apiUrl + '/ResetSecurityData', {});
     }
 
+    updateModels() {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateModels', {});
+    }
 }

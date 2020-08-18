@@ -75,6 +75,11 @@ export class UserCuDialogComponent implements OnInit {
     });
   }
 
+  onAvatarUploaded(data: any) {
+    var fileUrl = data ? data.fileUrl : null;
+    this.userForm.get('avatar').setValue(fileUrl);
+  }
+
   loadListCompanies() {
     var val = new CompanyPaged();
     this.companyService.getPaged(val).subscribe(result => {

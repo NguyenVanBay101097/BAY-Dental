@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild, Input, Renderer2 } from '@angular/core';
-import { RedirectComponentComponent } from 'src/app/shared/redirect-component/redirect-component.component';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { SharedService } from 'src/app/shared/shared.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { SaleOrderService } from 'src/app/sale-orders/sale-order.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 
 
 @Component({
@@ -14,7 +13,6 @@ import { SaleOrderService } from 'src/app/sale-orders/sale-order.service';
 })
 export class PartnerCustomerTreatmentPaymentChildComponent implements OnInit {
 
-  @ViewChild(RedirectComponentComponent, { static: false }) redirecComponent: RedirectComponentComponent;
   @Input() saleOrder: SaleOrderBasic;
   @Input() partner: any;
   show = false;
@@ -38,7 +36,6 @@ export class PartnerCustomerTreatmentPaymentChildComponent implements OnInit {
     document.getElementById(id + '_show').classList.remove('show')
     this.renderer2.setStyle(element, 'height', 'auto');
     this.show = true;
-    this.redirecComponent.loadComponent(this.sharedService.getComponentSearchUser(), id, this.partner);
   }
 
   hideTreatment(id) {
@@ -49,7 +46,6 @@ export class PartnerCustomerTreatmentPaymentChildComponent implements OnInit {
     var element = document.getElementById(id);
     this.renderer2.setStyle(element, 'height', '75px');
     this.show = false;
-    this.redirecComponent.destroyComponent();
   }
 
   deleteItem(item) {

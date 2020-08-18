@@ -1,4 +1,4 @@
-import { DiscountDefault } from './../sale-order.service';
+import { DiscountDefault } from '../../core/services/sale-order.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, map, mergeMap } from 'rxjs/operators';
@@ -6,21 +6,17 @@ import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { SaleOrderService, AccountPaymentFilter } from '../sale-order.service';
+import { SaleOrderService, AccountPaymentFilter } from '../../core/services/sale-order.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { SaleOrderDisplay } from '../sale-order-display';
 import * as _ from 'lodash';
 import { UserSimple } from 'src/app/users/user-simple';
-import { NgbModal, NgbPopover, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderLineDialogComponent } from '../sale-order-line-dialog/sale-order-line-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/account-invoices/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { AccountRegisterPaymentDisplay, AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
 import { AccountPaymentBasic, AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
@@ -28,19 +24,20 @@ import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.ser
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
-import { PartnerCreateUpdateComponent } from 'src/app/partners/partner-create-update/partner-create-update.component';
-import { PartnerCustomerCuDialogComponent } from 'src/app/partners/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { from, of, Observable } from 'rxjs';
-import { ConfirmDialogV2Component } from 'src/app/shared/confirm-dialog-v2/confirm-dialog-v2.component';
 import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
-import { DotKhamCreateUpdateDialogComponent } from 'src/app/dot-khams/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
-import { LaboOrderCuDialogComponent } from 'src/app/labo-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
-import { SaleOrderLineService } from '../sale-order-line.service';
+import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+import { SaleOrderLineLaboOrdersDialogComponent } from '../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
+import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
+import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 declare var $: any;
 
@@ -59,12 +56,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
-  discountDefault:DiscountDefault;
-  
+  discountDefault: DiscountDefault;
+
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
-  @ViewChild(AccountPaymentPrintComponent, {static: true}) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+  @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -84,7 +81,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService,public activeModal: NgbActiveModal, ) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
   }
 
   ngOnInit() {
@@ -103,7 +100,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
-    this.loadLaboOrderList();
+    // this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
   }
@@ -225,7 +222,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       var val = new LaboOrderPaged();
       val.saleOrderId = this.id;
-      return this.laboOrderService.getPaged(val).subscribe(result => {
+      return this.laboOrderService.GetFromSaleOrder_OrderLine(val).subscribe(result => {
         this.laboOrders = result.items;
       });
     }
@@ -376,7 +373,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
- 
+
 
   getCouponLines() {
     var lines = this.orderLines.value;
@@ -487,12 +484,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  onApplyDiscount(val: any){
+  onApplyDiscount(val: any) {
     if (this.id) {
       this.discountDefault = val;
       this.discountDefault.saleOrderId = this.id;
       this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
-        this.loadRecord();      
+        this.loadRecord();
       }, (error) => {
         this.errorService.show(error);
       });
@@ -511,7 +508,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         val.saleOrderId = result.id;
         this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
-          this.loadRecord();        
+          this.loadRecord();
         }, (error) => {
           this.errorService.show(error);
         });
@@ -698,13 +695,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Khóa phiếu điều trị';
-      modalRef.componentInstance.body = 'Khi khóa phiếu điều trị sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?';
-      modalRef.result.then(() => {
-        this.saleOrderService.actionDone([this.id]).subscribe(() => {
-          this.loadRecord();
-        });
+      this.saleOrderService.actionDone([this.id]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  actionUnlock() {
+    if (this.id) {
+      this.saleOrderService.actionUnlock([this.id]).subscribe(() => {
+        this.loadRecord();
       });
     }
   }
@@ -850,14 +850,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionCancel() {
     if (this.id) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.title = 'Hủy phiếu điều trị';
-        modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
-        modalRef.result.then(() => {
-          this.saleOrderService.actionCancel([this.id]).subscribe(() => {
-            this.loadRecord();
-          });
-        }, () => {
+      modalRef.componentInstance.title = 'Hủy phiếu điều trị';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
+      modalRef.result.then(() => {
+        this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+          this.loadRecord();
         });
+      }, () => {
+      });
     }
   }
 
@@ -886,7 +886,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
-      debugger;
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
@@ -895,9 +894,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
 
-      if (this.formGroup.get('state').value == "sale"){
-        var val = this.getFormDataSave();    
-        this.saleOrderService.update(this.id,val).subscribe(() => {
+      if (this.formGroup.get('state').value == "sale") {
+        var val = this.getFormDataSave();
+        this.saleOrderService.update(this.id, val).subscribe(() => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -940,9 +939,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.orderLines.markAsDirty();
 
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-      if (this.formGroup.get('state').value == "sale"){
-        var val = this.getFormDataSave();    
-        this.saleOrderService.update(this.id,val).subscribe(() => {
+      if (this.formGroup.get('state').value == "sale") {
+        var val = this.getFormDataSave();
+        this.saleOrderService.update(this.id, val).subscribe(() => {
           this.notificationService.show({
             content: 'Sửa thành công',
             hideAfter: 3000,
@@ -1029,9 +1028,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   // hủy dịch vụ
   cancelSaleOrderLine(ids) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Hủy: Dịch vụ";
-    modalRef.result.then(() => {    
+    modalRef.result.then(() => {
       if (this.id) {
         this.saleOrderLineService.cancelOrderLine([ids]).subscribe(() => {
           this.notificationService.show({
@@ -1044,13 +1043,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.loadRecord();
         }, () => {
           this.loadRecord();
-        });      
-        }},(err) => {
-           console.log(err);
-          }
-        );
+        });
       }
-   
+    }, (err) => {
+      console.log(err);
+    }
+    );
+  }
+
 
   loadPayments() {
     if (this.id) {
@@ -1083,6 +1083,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật đợt khám';
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.partnerId = this.partner.id;
     if (this.partnerSend)
       modalRef.componentInstance.partner = this.partnerSend;
     modalRef.result.then(() => {
@@ -1099,7 +1100,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.dotKhamService.delete(dotKham.id).subscribe(() => {
         this.loadDotKhamList();
       });
-    }, () => {});
+    }, () => { });
   }
 
   deletePayment(payment) {
@@ -1108,6 +1109,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+
         this.loadRecord();
         this.loadPayments();
       });
@@ -1130,4 +1139,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  showLaboList(id?: string) {
+    const modalRef = this.modalService.open(
+      SaleOrderLineLaboOrdersDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
+    );
+
+    modalRef.componentInstance.title = 'Danh sách phiếu labo';
+    modalRef.componentInstance.saleOrderLineId = id;
+    modalRef.result.then((val) => {
+    }, er => { });
+  }
 }

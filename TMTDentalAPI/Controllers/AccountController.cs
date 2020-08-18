@@ -92,7 +92,8 @@ namespace TMTDentalAPI.Controllers
                             Phone = user.PhoneNumber,
                             Email = user.Email,
                             Name = user.Name,
-                            Avatar = user.Partner.Avatar
+                            Avatar = user.Partner.Avatar,
+                            CompanyId = user.CompanyId
                         }
                     };
                 }

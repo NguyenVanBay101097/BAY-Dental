@@ -79,10 +79,39 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<PagedResult2<LaboOrderBasic>> GetFromSaleOrder_OrderLine(LaboOrderPaged val)
+        {
+            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            var listSaleOrderLineIds = new List<Guid>();
+            if (val.SaleOrderId.HasValue)
+            { 
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderId == val.SaleOrderId));
+                listSaleOrderLineIds = GetService<ISaleOrderLineService>().SearchQuery(x=>x.OrderId == val.SaleOrderId.Value).Select(x=>x.Id).ToList();
+            }
+            if (val.SaleOrderLineId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.OrderLines.Any(y=> y.SaleOrderLineId == val.SaleOrderLineId)));
+            }
+            if (listSaleOrderLineIds.Count() > 0)
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.OrderLines.Any(y => listSaleOrderLineIds.Contains(y.SaleOrderLineId.Value))));
+            }
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
         public async Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val)
         {
             ISpecification<LaboOrderLine> spec = new InitialSpecification<LaboOrderLine>(x => true);
-           
+
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.PartnerId == val.PartnerId));
 
@@ -111,7 +140,20 @@ namespace Infrastructure.Services
 
             var query = lineObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await _mapper.ProjectTo<LaboOrderStatisticsBasic>(query).ToListAsync();
+            var items = await query.Select(x => new LaboOrderStatisticsBasic { 
+                PartnerDisplayName = x.Partner.DisplayName,
+                ProductName = x.Product.Name,
+                OrderName = x.Order.Name,
+                ProductQty = x.ProductQty,
+                PriceTotal = x.PriceTotal,
+                OrderDateOrder = x.Order.DateOrder,
+                OrderDatePlanned = x.Order.DatePlanned,
+                WarrantyCode = x.WarrantyCode,
+                WarrantyPeriod = x.WarrantyPeriod,
+                State = x.State,
+                SaleOrderName = x.SaleOrderLine.Order.Name,
+                SaleOrderId = x.SaleOrderLine.Order.Id
+            }).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<LaboOrderStatisticsBasic>(totalItems, val.Offset, val.Limit)
@@ -285,7 +327,7 @@ namespace Infrastructure.Services
                 foreach (var line in order.OrderLines)
                     line.State = "purchase";
             }
-           
+
             var invoices = await _CreateInvoices(self);
             var moveObj = GetService<IAccountMoveService>();
             await moveObj.ActionPost(invoices);
@@ -367,14 +409,14 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x=>x.OrderLines).ToListAsync();
             var states = new string[] { "draft", "cancel" };
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
                     throw new Exception("Chỉ có thể xóa phiếu labo ở trạng thái nháp hoặc hủy bỏ.");
             }
-
+            await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
             await DeleteAsync(self);
         }
 
@@ -479,7 +521,7 @@ namespace Infrastructure.Services
         private async Task _UpdateProperties(IEnumerable<LaboOrder> self)
         {
             var saleObj = GetService<ISaleOrderService>();
-            foreach(var labo in self)
+            foreach (var labo in self)
             {
                 if (string.IsNullOrEmpty(labo.Name))
                 {

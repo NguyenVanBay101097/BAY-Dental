@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SaleOrderService } from '../sale-order.service';
+import { SaleOrderService } from '../../core/services/sale-order.service';
 
 @Component({
   selector: 'app-sale-order-invoice-list',

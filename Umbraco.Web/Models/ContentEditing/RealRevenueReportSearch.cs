@@ -6,6 +6,10 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class RealRevenueReportSearch
     {
-        public string Search { get; set; }
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 }

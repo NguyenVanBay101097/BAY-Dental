@@ -64,8 +64,8 @@ export class TcareScenarioListComponent implements OnInit {
   createItem() {
     let modalRef = this.modalService.open(TcareScenarioCrDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
-    modalRef.result.then(() => {
-      this.loadDataFromApi();
+    modalRef.result.then((result: any) => {
+      this.router.navigateByUrl(`tcare/scenario/${result.id}`);
     }, () => {
     });
   }
@@ -76,7 +76,7 @@ export class TcareScenarioListComponent implements OnInit {
   }
 
   editItem(item) {
-    this.router.navigateByUrl(`tcare-scenario/${item.id}`);
+    this.router.navigateByUrl(`tcare/scenario/${item.id}`);
   }
 
   deleteItem(item) {

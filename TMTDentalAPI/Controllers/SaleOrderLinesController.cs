@@ -57,10 +57,19 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
-        //[HttpPost]
-        //public async Task<IActionResult> Create(SaleOrderLineSave val)
-        //{
-        //    var res = await
-        //}
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetLaboOrders(Guid id)
+        {
+            var res = await _saleLineService.GetLaboOrderBasics(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetTeeth(Guid id)
+        {
+            var res = await _saleLineService.GetTeeth(id);
+            return Ok(res);
+        }
     }
 }

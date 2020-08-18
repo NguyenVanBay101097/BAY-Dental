@@ -161,5 +161,12 @@ namespace TMTDentalAPI.Controllers
             var display = await _dotKhamStepService.GetDisplay(step.Id);
             return Ok(display);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DotKhamStepReport([FromQuery] DotKhamStepPaged val)
+        {
+            var res = await _dotKhamStepService.DotKhamStepReport(val);
+            return Ok(res);
+        }
     }
 }

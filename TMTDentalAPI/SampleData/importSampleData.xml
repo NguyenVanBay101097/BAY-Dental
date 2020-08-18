@@ -296,7 +296,7 @@
     </record>
     <!-- Resource: End History-->
 
-    <!-- Resource: Start History-->
+    <!-- Resource: Start Customer Resource-->
     <record id="res_partner_source_1" model="res.partner.source">
       <field name="name">Quảng cáo trên tờ rơi, áp phích</field>
     </record>
@@ -310,7 +310,7 @@
       <field name="name">Bác sĩ giới thiệu, cố vấn</field>
       <field name="type">referral</field>
     </record>
-    <!-- Resource: End History-->
+    <!-- Resource: End Customer Resource-->
   </data>
 </sampleData>
 

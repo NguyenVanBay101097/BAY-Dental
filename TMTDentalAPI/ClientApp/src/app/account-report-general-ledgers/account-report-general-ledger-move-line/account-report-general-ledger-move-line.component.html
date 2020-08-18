@@ -1,0 +1,33 @@
+<kendo-grid [data]="items" [height]="300">
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date : 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="partnerName" title="Đối tác">
+    </kendo-grid-column>
+    <kendo-grid-column field="ref" title="Tham chiếu">
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Diễn giải">
+    </kendo-grid-column>
+    <kendo-grid-column field="initialBalance" title="Đầu kỳ" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.initialBalance | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="debit" title="Thu" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.debit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="credit" title="Chi" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.credit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="balance" title="Cuối kỳ" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.balance | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

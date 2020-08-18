@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public AccountMoveLineProfile()
         {
             CreateMap<AccountMoveLine, AccountMoveLineReport>();
+            CreateMap<AccountMoveLine, AccountMoveLineBasic>();
         }
     }
 }

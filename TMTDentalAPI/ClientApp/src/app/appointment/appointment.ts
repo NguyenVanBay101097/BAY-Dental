@@ -78,6 +78,7 @@ export class AppointmentSearchByDate {
     state: string;
     offset: number;
     limit: number;
+    userId: string;
 }
 
 

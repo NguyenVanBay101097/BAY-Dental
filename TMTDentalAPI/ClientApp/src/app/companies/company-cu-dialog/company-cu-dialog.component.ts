@@ -1,6 +1,5 @@
 
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProductCategoryService, ProductCategoryFilter, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
@@ -77,6 +76,11 @@ export class CompanyCuDialogComponent implements OnInit {
       this.loadSourceCities();
     });
 
+  }
+
+  onAvatarUploaded(data: any) {
+    var fileUrl = data ? data.fileUrl : null;
+    this.companyForm.get('logo').setValue(fileUrl);
   }
 
   loadSourceCities() {

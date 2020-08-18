@@ -57,8 +57,8 @@ export class AppointmentService {
     }
   }
 
-  getPaged(val: any): Observable<AppointmentPaging> {
-    return this.http.get<AppointmentPaging>(this.baseApi + "api/Appointments", { params: val });
+  getPaged(val: any) {
+    return this.http.get(this.baseApi + "api/Appointments", { params: new HttpParams({ fromObject: val })});
   }
 
   create(val: any) {
