@@ -1,25 +1,32 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ResGroupsRoutingModule } from './res-groups-routing.module';
-import { ResGroupListComponent } from './res-group-list/res-group-list.component';
-import { ResGroupService } from './res-group.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from '../shared/shared.module';
 import { ResGroupCreateUpdateComponent } from './res-group-create-update/res-group-create-update.component';
 import { ResGroupAccessCuDialogComponent } from './res-group-access-cu-dialog/res-group-access-cu-dialog.component';
+import { ResGroupListComponent } from './res-group-list/res-group-list.component';
+import { ResGroupsRoutingModule } from './res-groups-routing.module';
+import { ResGroupService } from './res-group.service';
+import { IRModelService } from '../ir-models/ir-model.service';
 
 @NgModule({
   declarations: [ResGroupListComponent, ResGroupCreateUpdateComponent, ResGroupAccessCuDialogComponent],
   imports: [
     CommonModule,
     ResGroupsRoutingModule,
-    MyCustomKendoModule,
     ReactiveFormsModule,
-    FormsModule
+    MyCustomKendoModule,
+    FormsModule,
+    SharedModule,
+    NgbModule,
   ],
   providers: [
-    ResGroupService
+    ResGroupService,
+    IRModelService
   ],
   entryComponents: [ResGroupAccessCuDialogComponent]
 })
