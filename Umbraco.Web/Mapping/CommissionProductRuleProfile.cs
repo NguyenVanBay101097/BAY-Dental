@@ -17,7 +17,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<CommissionProductRuleDisplay, CommissionProductRule>()
                  .ForMember(x => x.Id, x => x.Ignore())
                  .ForMember(x => x.Product, x => x.Ignore())
-                  .ForMember(x => x.Categ, x => x.Ignore());
+                 .ForMember(x => x.Categ, x => x.Ignore())
+                 .ForMember(x => x.ProductId, x => x.Condition(s => s.AppliedOn == "0_product_variant"))
+                 .ForMember(x => x.CategId, x => x.Condition(s => s.AppliedOn == "2_product_category"));
         }
     }
 }

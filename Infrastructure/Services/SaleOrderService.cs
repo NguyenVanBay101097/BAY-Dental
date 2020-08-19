@@ -1382,7 +1382,6 @@ namespace Infrastructure.Services
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-               await saleLineObj._AddPartnerCommission(order.OrderLines.Select(x=>x.Id).ToList());
             }
 
             _GetInvoiced(self);

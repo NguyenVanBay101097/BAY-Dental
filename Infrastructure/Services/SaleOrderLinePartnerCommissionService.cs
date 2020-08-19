@@ -37,14 +37,17 @@ namespace Infrastructure.Services
                 (!x.CategId.HasValue || x.CategId == orderLine.Product.CategId), orderBy: x => x.OrderBy(s => s.AppliedOn)).FirstOrDefaultAsync();
 
             if (rule == null)
-                return null;
-
-            val.Percentage = rule.PercentFixed ?? 0;
-            val.Amount = orderLine.PriceTotal  * ((rule.PercentFixed ?? 0) / 100);
+            {
+                val.Percentage = 0;
+                val.Amount = 0;
+            }
+            else
+            {
+                val.Percentage = rule.PercentFixed ?? 0;
+                val.Amount = orderLine.PriceTotal * ((rule.PercentFixed ?? 0) / 100);
+            }
             
             return val;
         }
-
-      
     }
 }
