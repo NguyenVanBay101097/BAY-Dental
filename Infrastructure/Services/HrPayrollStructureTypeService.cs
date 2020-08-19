@@ -32,9 +32,9 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<HrPayrollStructureTypeDisplay>> GetPaged(HrPayrollStructureTypePaged val)
         {
             var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.Filter))
+            if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.Name.Contains(val.Filter));
+                query = query.Where(x => x.Name.Contains(val.Search));
             }
             query = query.Include(x => x.DefaultStruct);
 

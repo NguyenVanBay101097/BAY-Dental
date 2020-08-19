@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     public interface IResourceCalendarService : IBaseService<ResourceCalendar>
     {
         Task<PagedResult2<ResourceCalendarBasic>> GetPaged(ResourceCalendarPaged paged);
+        Task<ResourceCalendar> GetDisplayAsync(Guid id);
     }
 }

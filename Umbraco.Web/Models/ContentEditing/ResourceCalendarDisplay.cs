@@ -14,7 +14,7 @@ namespace Umbraco.Web.Models
         /// Lấy mặc định company id của user đang đăng nhập
         /// </summary>
         public Guid? CompanyId { get; set; }
-        public IEnumerable<ResourceCalendarAttendanceBasic> ResourceCalendarAttendances { get; set; } = new List<ResourceCalendarAttendanceBasic>();
+        public IEnumerable<ResourceCalendarAttendanceDisplay> ResourceCalendarAttendances { get; set; } = new List<ResourceCalendarAttendanceDisplay>();
         /// <summary>
         /// Số giờ trung bình trên 1 ngày
         /// </summary>

@@ -15,10 +15,6 @@ namespace Infrastructure.EntityConfigurations
             builder.Property(x => x.DayOfWeek).IsRequired();
             builder.Property(x => x.DayPeriod).IsRequired();
 
-            builder.HasOne(x => x.Calendar)
-                .WithMany()
-                .HasForeignKey(x => x.CalendarId);
-
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

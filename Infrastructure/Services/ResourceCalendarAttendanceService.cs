@@ -22,6 +22,28 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task SetSequence(IList<ResourceCalendarAttendance> vals)
+        {
+            for (int i = 0; i < vals.Count(); i++)
+            {
+                vals[i].Sequence = i;
+            }
+            await UpdateAsync(vals);
+        }
+
+        public async Task<IEnumerable<ResourceCalendarAttendanceDisplay>> GetListResourceCalendadrAtt(ResourceCalendarAttendancePaged val)
+        {
+            ISpecification<ResourceCalendarAttendance> spec = new InitialSpecification<ResourceCalendarAttendance>(x => true);
+            if (val.ResourceCalendarId.HasValue)
+                spec = spec.And(new InitialSpecification<ResourceCalendarAttendance>(x => x.CalendarId == val.ResourceCalendarId));
+            else
+            {
+                spec = spec.And(new InitialSpecification<ResourceCalendarAttendance>(x => x.CalendarId == null));
+            }
+            var list = await SearchQuery(spec.AsExpression()).Skip(val.Offset).Take(val.Limit).OrderBy(x => x.Sequence).ToListAsync();
+            return _mapper.Map<IEnumerable<ResourceCalendarAttendanceDisplay>>(list);
+        }
+
         public async Task<PagedResult2<ResourceCalendarAttendanceBasic>> GetPaged(ResourceCalendarAttendancePaged paged)
         {
             ISpecification<ResourceCalendarAttendance> spec = new InitialSpecification<ResourceCalendarAttendance>(x => true);

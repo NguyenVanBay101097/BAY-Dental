@@ -35,6 +35,7 @@ export class ResourceCalendarDisplay {
 export class ResourceCalendarAttendancePaged {
   limit: number;
   offset: number;
+  resourceCalendarId: string;
   search: string;
 }
 
@@ -57,10 +58,12 @@ export class ResourceCalendarAttendanceSave {
 export class ResourceCalendarAttendanceDisplay {
   id: string;
   name: string;
-  dayOfWeeks: string;
+  dayOfWeek: string;
   hourFrom: number;
   hourTo: number;
   dayPeriod: string;
+  calendarId: string;
+  sequence: number;
 }
 
 export class ResourceCalendarAttendanceBasic {
@@ -78,7 +81,7 @@ export class ResourceCalendarService {
     @Inject("BASE_API") private base_api: string
   ) { }
   apiUrl = "api/ResourceCalendars";
-  apiUrlAttendance = "api/ResourceCalendars";
+  apiUrlAttendance = "api/ResourceCalendarAttendances";
 
   create(val): Observable<ResourceCalendarBasic> {
     return this.http.post<ResourceCalendarBasic>(this.base_api + this.apiUrl, val);
@@ -118,5 +121,13 @@ export class ResourceCalendarService {
 
   getAtt(id): Observable<ResourceCalendarAttendanceDisplay> {
     return this.http.get<ResourceCalendarAttendanceDisplay>(this.base_api + this.apiUrlAttendance + '/' + id);
+  }
+
+  GetListResourceCalendadrAtt(val): Observable<ResourceCalendarAttendanceDisplay[]> {
+    return this.http.get<ResourceCalendarAttendanceDisplay[]>(this.base_api + this.apiUrlAttendance + '/GetListResourceCalendadrAtt', { params: val });
+  }
+
+  setSequence(vals) {
+    return this.http.post(this.base_api + this.apiUrlAttendance + '/SetSequence', vals);
   }
 }

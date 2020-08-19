@@ -23,6 +23,12 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task<ResourceCalendar> GetDisplayAsync(Guid id)
+        {
+            var res = await SearchQuery(x => x.Id == id).Include("ResourceCalendarAttendances").FirstOrDefaultAsync();
+            return res;
+        }
+
         public async Task<PagedResult2<ResourceCalendarBasic>> GetPaged(ResourceCalendarPaged paged)
         {
             ISpecification<ResourceCalendar> spec = new InitialSpecification<ResourceCalendar>(x => true);

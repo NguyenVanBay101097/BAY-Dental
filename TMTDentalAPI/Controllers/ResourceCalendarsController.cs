@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Mapping;
 using Umbraco.Web.Models;
 using Umbraco.Web.Models.ContentEditing;
@@ -21,15 +22,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IResourceCalendarService _resourceCalendarService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public ResourceCalendarsController(IResourceCalendarService resourceCalendarService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        private readonly IResourceCalendarAttendanceService _resourceCalendarAttendanceService;
+        public ResourceCalendarsController(IResourceCalendarAttendanceService resourceCalendarAttendanceService, IResourceCalendarService resourceCalendarService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _resourceCalendarService = resourceCalendarService;
+            _resourceCalendarAttendanceService = resourceCalendarAttendanceService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]ResourceCalendarPaged val)
+        public async Task<IActionResult> Get([FromQuery] ResourceCalendarPaged val)
         {
             if (val == null && !ModelState.IsValid)
                 return BadRequest();
@@ -41,7 +44,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var model = await _resourceCalendarService.GetByIdAsync(id);
+            var model = await _resourceCalendarService.GetDisplayAsync(id);
             if (model == null)
                 return BadRequest();
 
@@ -63,11 +66,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Create(Guid id, ResourceCalendarSave val)
+        public async Task<IActionResult> Update(Guid id, ResourceCalendarSave val)
         {
-            var model = await _resourceCalendarService.GetByIdAsync(id);
+            var model = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
             if (val == null || model == null)
                 return BadRequest();
+            if (model.ResourceCalendarAttendances != null)
+            {
+                await _resourceCalendarAttendanceService.DeleteAsync(model.ResourceCalendarAttendances.AsEnumerable());
+            }
 
             model = _mapper.Map(val, model);
             await _unitOfWork.BeginTransactionAsync();

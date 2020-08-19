@@ -15,7 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int Limit { get; set; }
         public int Offset { get; set; }
-        public string Filter { get; set; }
+        public string Search { get; set; }
     }
     
     public class HrPayrollStructureTypeSave

@@ -1,0 +1,95 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tên loại mẫu lương</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="exampleFormControlSelect1" class="o_form_label">Loại tiền lương</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-group">
+                                        <select formControlName="wageType" class="form-control"
+                                            id="exampleFormControlSelect1">
+                                            <option value="monthly">Lương tháng cố định</option>
+                                            <option value="hourly">Lương theo giờ</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Định kỳ trả lương mặc định</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-group">
+                                        <select formControlName="defaultSchedulePay" class="form-control"
+                                            id="exampleFormControlSelect1">
+                                            <option value="monthly">Hàng tháng</option>
+                                            <option value="quarterly">Hàng Quý</option>
+                                            <option value="semi-annually">Nữa năm</option>
+                                            <option value="annually">Hàng năm</option>
+                                            <option value="weekly">Hàng tuần</option>
+                                            <option value="bi-weekly">Hai tuần 1 lần</option>
+                                            <option value="bi-monthly">Hai tháng 1 lần</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Lịch làm việc</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="form-control" [data]="filterResourceCalendars"
+                                        [textField]="'name'" [filterable]="true" #calendarCbx
+                                        formControlName="defaultResourceCalendarId" [valueField]="'id'"
+                                        [valuePrimitive]="true">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Loại chấm công</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="form-control" [data]="filterResourceWorkEntryTypes"
+                                        [textField]="'name'" [filterable]="true" #workEntryTypeCbx
+                                        formControlName="defaultWorkEntryTypeId" [valueField]="'id'"
+                                        [valuePrimitive]="true">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

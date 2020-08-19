@@ -3,28 +3,27 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ResourceCalendarService, ResourceCalendarPaged } from '../resource-calendar.service';
+import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from '../hr-payroll-structure-type.service';
+import { HrPayrollStructureTypeCreateComponent } from '../hr-payroll-structure-type-create/hr-payroll-structure-type-create.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-resource-calendar-list',
-  templateUrl: './resource-calendar-list.component.html',
-  styleUrls: ['./resource-calendar-list.component.css']
+  selector: 'app-hr-payroll-structure-type-list',
+  templateUrl: './hr-payroll-structure-type-list.component.html',
+  styleUrls: ['./hr-payroll-structure-type-list.component.css']
 })
-export class ResourceCalendarListComponent implements OnInit {
+export class HrPayrollStructureTypeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = 'Lịch làm việc';
+  title = 'Loại cấu trúc lương';
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();
   search: string;
   constructor(
     private modalService: NgbModal,
-    private resourceCalendarService: ResourceCalendarService,
-    private router: Router
+    private hrPayrollStructureTypeService: HrPayrollStructureTypeService,
   ) { }
 
   ngOnInit() {
@@ -39,11 +38,11 @@ export class ResourceCalendarListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new ResourceCalendarPaged();
+    var val = new HrPayrollStructureTypePaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.search = this.search || '';
-    this.resourceCalendarService.getPage(val).pipe(
+    val.search = this.search ? this.search : '';
+    this.hrPayrollStructureTypeService.getPaged(val).pipe(
       map((response: any) =>
         (<GridDataResult>{
           data: response.items,
@@ -59,7 +58,12 @@ export class ResourceCalendarListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigateByUrl("resource-calendars/form");
+    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -68,7 +72,13 @@ export class ResourceCalendarListComponent implements OnInit {
   }
 
   editItem(item) {
-    this.router.navigateByUrl("resource-calendars/form?id=" + item.id)
+    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: ' + this.title;
+    modalRef.componentInstance.id = item.id;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
   deleteItem(item) {
@@ -76,7 +86,7 @@ export class ResourceCalendarListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa: ' + this.title;
 
     modalRef.result.then(() => {
-      this.resourceCalendarService.delete(item.id).subscribe(() => {
+      this.hrPayrollStructureTypeService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
         console.log(err);

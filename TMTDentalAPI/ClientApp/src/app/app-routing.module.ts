@@ -3,7 +3,11 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-
+  {
+    path: 'hr',
+    loadChildren: () => import('./hrs/hrs.module').then(m => m.HrsModule),
+    canActivate: [AuthGuard]
+  },
   {
     path: 'resource-calendars',
     loadChildren: () => import('./resource-calendars/resource-calendars.module').then(m => m.ResourceCalendarsModule),

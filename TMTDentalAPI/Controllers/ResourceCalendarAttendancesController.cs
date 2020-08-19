@@ -8,18 +8,19 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ResourceCalendarAttendanceController : BaseApiController
+    public class ResourceCalendarAttendancesController : BaseApiController
     {
         private readonly IResourceCalendarAttendanceService _resourceCalendarAttendanceService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public ResourceCalendarAttendanceController(IResourceCalendarAttendanceService resourceCalendarAttendanceService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        public ResourceCalendarAttendancesController(IResourceCalendarAttendanceService resourceCalendarAttendanceService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _resourceCalendarAttendanceService = resourceCalendarAttendanceService;
             _mapper = mapper;
@@ -34,6 +35,26 @@ namespace TMTDentalAPI.Controllers
 
             var res = await _resourceCalendarAttendanceService.GetPaged(val);
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetListResourceCalendadrAtt([FromQuery] ResourceCalendarAttendancePaged val)
+        {
+            if (val == null && !ModelState.IsValid)
+                return BadRequest();
+            var res = await _resourceCalendarAttendanceService.GetListResourceCalendadrAtt(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SetSequence(IList<ResourceCalendarAttendance> vals)
+        {
+            if (vals == null && !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _resourceCalendarAttendanceService.SetSequence(vals);
+            _unitOfWork.Commit();
+            return NoContent();
         }
 
         [HttpGet("{id}")]
@@ -61,13 +82,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Create(Guid id, ResourceCalendarSave val)
+        public async Task<IActionResult> Update(Guid id, ResourceCalendarAttendanceSave val)
         {
             var model = await _resourceCalendarAttendanceService.GetByIdAsync(id);
             if (val == null || model == null)
                 return BadRequest();
 
-            model = _mapper.Map(val, model);
+            _mapper.Map(val, model);
             await _unitOfWork.BeginTransactionAsync();
             await _resourceCalendarAttendanceService.UpdateAsync(model);
             _unitOfWork.Commit();

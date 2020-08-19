@@ -34,6 +34,11 @@ namespace ApplicationCore.Entities
         public DateTime? DateTo { get; set; }
 
         /// <summary>
+        /// Sap xep
+        /// </summary>
+        public int Sequence { get; set; }
+
+        /// <summary>
         /// Work from
         /// </summary>
         public double HourFrom { get; set; }
@@ -43,7 +48,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public double HourTo { get; set; }
 
-        public Guid CalendarId { get; set; }
+        public Guid? CalendarId { get; set; }
         public ResourceCalendar Calendar { get; set; }
 
         /// <summary>

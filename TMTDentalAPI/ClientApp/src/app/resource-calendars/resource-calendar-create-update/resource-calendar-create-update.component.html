@@ -1,0 +1,133 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/resource-calendars">Lịch làm việc</a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{resourceCalendar.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="onNew()" accesskey="c" *ngIf="id">
+                        Thêm mới
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <input [ngClass]="{'border-0': id}" type="text" class="form-control" style="font-size: 2rem;"
+                        formControlName="name">
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Số giờ trung bình trên 1 ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox class="form-control" formControlName="hoursPerDay"
+                                        [autoCorrect]="autoCorrect">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <ngb-tabset>
+                        <ngb-tab title="giờ làm việc">
+                            <ng-template ngbTabContent>
+                                <button class="btn btn-secondary btn-sm my-2" (click)="addAtt()">Thêm giờ làm
+                                    việc</button>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Tên</th>
+                                            <th scope="col">Thứ</th>
+                                            <th scope="col">Buổi</th>
+                                            <th scope="col">Vào</th>
+                                            <th scope="col">Ra</th>
+                                            <th scope="col">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <!-- <tbody cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                                        <tr class="example-box" *ngFor="let item of listRessourceCalendarAttendance"
+                                            cdkDragLockAxis="y" cdkDrag>
+                                            <td>{{item.name}}</td>
+                                            <td *ngIf="item.dayOfWeek=='0'">Thứ 2</td>
+                                            <td *ngIf="item.dayOfWeek=='1'">Thứ 3</td>
+                                            <td *ngIf="item.dayOfWeek=='2'">Thứ 4</td>
+                                            <td *ngIf="item.dayOfWeek=='3'">Thứ 5</td>
+                                            <td *ngIf="item.dayOfWeek=='4'">Thứ 6</td>
+                                            <td *ngIf="item.dayOfWeek=='5'">Thứ 7</td>
+                                            <td *ngIf="item.dayOfWeek=='6'">Chủ nhật</td>
+                                            <td *ngIf="item.dayPeriod=='morning'">Sáng</td>
+                                            <td *ngIf="item.dayPeriod=='afternoon'">Chiều</td>
+                                            <td>{{minTommss(item.hourFrom)}}</td>
+                                            <td>{{minTommss(item.hourTo)}}</td>
+                                            <td>
+                                                <button (click)="removeAtt(item)" class="btn btn-danger btn-sm"><i
+                                                        class="far fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr style="justify-content: center; cursor: pointer; 
+                                        background-color: #f9f9f9;" class="example-box">
+                                            <td colspan="6" (click)="AddAtt()">Thêm giờ làm việc</td>
+                                        </tr>
+                                    </tbody> -->
+                                    <tbody>
+                                        <tr *ngFor="let item of listRessourceCalendarAttendance">
+                                            <td>{{item.name}}</td>
+                                            <td *ngIf="item.dayOfWeek=='0'">Thứ 2</td>
+                                            <td *ngIf="item.dayOfWeek=='1'">Thứ 3</td>
+                                            <td *ngIf="item.dayOfWeek=='2'">Thứ 4</td>
+                                            <td *ngIf="item.dayOfWeek=='3'">Thứ 5</td>
+                                            <td *ngIf="item.dayOfWeek=='4'">Thứ 6</td>
+                                            <td *ngIf="item.dayOfWeek=='5'">Thứ 7</td>
+                                            <td *ngIf="item.dayOfWeek=='6'">Chủ nhật</td>
+                                            <td *ngIf="item.dayPeriod=='morning'">Sáng</td>
+                                            <td *ngIf="item.dayPeriod=='afternoon'">Chiều</td>
+                                            <td>{{minTommss(item.hourFrom)}}</td>
+                                            <td>{{minTommss(item.hourTo)}}</td>
+                                            <td>
+                                                <button (click)="editAtt(item)" class="btn btn-info mr-2 btn-sm">
+                                                    <i class="far fa-edit"></i>
+                                                </button>
+                                                <button (click)="removeAtt(item)" class="btn btn-danger btn-sm"><i
+                                                        class="far fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </ng-template>
+                        </ngb-tab>
+                        <!-- <ngb-tab title="Thời gian nghỉ">
+                            <ng-template ngbTabContent>Food truck fixie locavore, accusamus mcsweeney's marfa nulla
+                                <table class="table table-sm">
+
+                                </table>
+                            </ng-template>
+                        </ngb-tab> -->
+                    </ngb-tabset>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

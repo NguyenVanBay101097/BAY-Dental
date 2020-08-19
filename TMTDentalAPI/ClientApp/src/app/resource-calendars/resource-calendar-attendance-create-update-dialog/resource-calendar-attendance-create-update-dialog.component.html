@@ -1,0 +1,91 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tên</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input placeholder="Nhập tên giờ làm việc" class="form-control"
+                                        formControlName="name" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="exampleFormControlSelect1" class="o_form_label">Thứ</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-group">
+                                        <select formControlName="dayOfWeek" class="form-control"
+                                            id="exampleFormControlSelect1">
+                                            <option value="0">Thứ 2</option>
+                                            <option value="1">Thứ 3</option>
+                                            <option value="2">Thứ 4</option>
+                                            <option value="3">Thứ 5</option>
+                                            <option value="4">Thứ 6</option>
+                                            <option value="5">Thứ 7</option>
+                                            <option value="6">Chủ nhật</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="exampleFormControlSelect1" class="o_form_label">Buổi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-group">
+                                        <select formControlName="dayPeriod" class="form-control"
+                                            id="exampleFormControlSelect1">
+                                            <option value="morning">Sáng</option>
+                                            <option value="afternoon">Chiều</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Giờ vào</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-timepicker class="form-control" formControlName="hourFrom">
+                                    </kendo-timepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Giờ ra</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-timepicker class="form-control" formControlName="hourTo">
+                                        
+                                    </kendo-timepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

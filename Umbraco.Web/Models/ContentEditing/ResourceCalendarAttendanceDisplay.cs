@@ -16,5 +16,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CalendarId { get; set; }
         public ResourceCalendarBasic Calendar { get; set; }
         public string DayPeriod { get; set; }
+        public int Sequence { get; set; }
     }
 }

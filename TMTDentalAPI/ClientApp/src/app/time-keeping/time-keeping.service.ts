@@ -15,7 +15,7 @@ export class ChamCongSave {
 
 export class EmployeeChamCongPaged {
   status: string;
-  employeeId:string
+  employeeId: string
   from: string;
   to: string;
 }
@@ -56,6 +56,11 @@ export class WorkEntryType {
   name: string;
   isHasTimeKeeping: boolean;
   color: string;
+}
+
+export class WorkEntryTypeBasic {
+  id: string;
+  name: string;
 }
 
 export class WorkEntryTypePage {

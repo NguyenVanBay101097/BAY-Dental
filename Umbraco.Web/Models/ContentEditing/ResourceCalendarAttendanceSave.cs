@@ -44,5 +44,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ('morning', 'Morning'), ('afternoon', 'Afternoon')
         /// </summary>
         public string DayPeriod { get; set; }
+
+        public int Sequence { get; set; }
     }
 }
