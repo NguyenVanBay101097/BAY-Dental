@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-PayrollStructure.service';
+import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/internal/operators/map';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

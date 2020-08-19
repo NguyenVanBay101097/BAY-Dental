@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { HrSalaryRuleDisplay, HrPayrollStructurePaged, HrPayrollStructureService } from '../hr-PayrollStructure.service';
+import { HrSalaryRuleDisplay, HrPayrollStructurePaged, HrPayrollStructureService } from '../hr-payroll-structure.service';
 import { PageChangeEvent, GridDataResult } from '@progress/kendo-angular-grid';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HrSalaryRuleCrudDialogComponent } from '../hr-salary-rule-crud-dialog/hr-salary-rule-crud-dialog.component';
