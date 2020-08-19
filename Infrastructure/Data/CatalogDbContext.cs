@@ -178,7 +178,7 @@ namespace Infrastructure.Data
         public DbSet<CommissionProductRule> CommissionProductRules { get; set; }
         public DbSet<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; }
         public DbSet<SaleOrderLinePartnerCommission> SaleOrderLinePartnerCommissions { get; set; }
-
+        public DbSet<CommissionSettlement> CommissionSettlements { get; set; }
 
 
         //nguyen thang
@@ -337,7 +337,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new CommissionConfiguration());
             builder.ApplyConfiguration(new CommissionProductRuleConfiguration());
             builder.ApplyConfiguration(new SaleOrderLinePaymentRelConfiguration());
-            builder.ApplyConfiguration(new SaleOrderLinePaymentRelConfiguration());
+            builder.ApplyConfiguration(new CommissionSettlementConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
