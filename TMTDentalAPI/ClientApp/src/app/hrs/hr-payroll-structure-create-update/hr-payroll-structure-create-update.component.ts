@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HrPayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay } from '../hr-PayrollStructure.service';
+import { HrPayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay } from '../hr-payroll-structure.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { HrSalaryRuleListComponent } from '../hr-salary-rule-list/hr-salary-rule-list.component';
