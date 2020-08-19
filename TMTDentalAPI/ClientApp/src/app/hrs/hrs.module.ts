@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { HrsRoutingModule } from './hrs-routing.module';
-import { PayrollStructureListComponent } from './PayrollStructures/payroll-structure-list/payroll-structure-list.component';
-import { PayrollStructureCreateUpdateComponent } from './PayrollStructures/payroll-structure-create-update/payroll-structure-create-update.component';
-import { PayrollStructureService } from './PayrollStructures/PayrollStructure.service';
+import { HrPayrollStructureListComponent } from './hr-payroll-structure-list/hr-payroll-structure-list.component';
+import { HrPayrollStructureCreateUpdateComponent } from './hr-payroll-structure-create-update/hr-payroll-structure-create-update.component';
+import { HrPayrollStructureService } from './hr-PayrollStructure.service';
 import { SharedModule, ColumnResizingService } from '@progress/kendo-angular-grid';
-import { SalaryRuleListComponent } from './PayrollStructures/salary-rule-list/salary-rule-list.component';
+import { HrSalaryRuleListComponent } from './hr-salary-rule-list/hr-salary-rule-list.component';
 import { LayoutModule } from '@progress/kendo-angular-layout';
-import { SalaryRuleCrudDialogComponent } from './PayrollStructures/salary-rule-crud-dialog/salary-rule-crud-dialog.component';
+import { HrSalaryRuleCrudDialogComponent } from './hr-salary-rule-crud-dialog/hr-salary-rule-crud-dialog.component';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { HrPayrollStructureTypeListComponent } from './hr-payroll-structure-type-list/hr-payroll-structure-type-list.component';
 import { HrPayrollStructureTypeCreateComponent } from './hr-payroll-structure-type-create/hr-payroll-structure-type-create.component';
@@ -17,7 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 
 @NgModule({
-  declarations: [HrPayrollStructureTypeListComponent, HrPayrollStructureTypeCreateComponent, PayrollStructureListComponent, PayrollStructureCreateUpdateComponent, SalaryRuleListComponent, SalaryRuleCrudDialogComponent],
+  declarations: [HrPayrollStructureTypeListComponent, HrPayrollStructureTypeCreateComponent, HrPayrollStructureListComponent, HrPayrollStructureCreateUpdateComponent, HrSalaryRuleListComponent, HrSalaryRuleCrudDialogComponent],
   imports: [
     CommonModule,
     HrsRoutingModule,
@@ -30,11 +30,11 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
     NgbModule
   ],
   providers: [
-    PayrollStructureService,
+    HrPayrollStructureService,
     ColumnResizingService
   ],
   entryComponents: [
-    SalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent
+    HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent
   ]
 })
 export class HrsModule { }

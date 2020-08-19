@@ -1,23 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { PayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay } from '../PayrollStructure.service';
+import { HrPayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay } from '../hr-PayrollStructure.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { SalaryRuleListComponent } from '../salary-rule-list/salary-rule-list.component';
+import { HrSalaryRuleListComponent } from '../hr-salary-rule-list/hr-salary-rule-list.component';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { tap } from 'rxjs/internal/operators/tap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 
 @Component({
   selector: 'app-payroll-structure-create-update',
-  templateUrl: './payroll-structure-create-update.component.html',
-  styleUrls: ['./payroll-structure-create-update.component.css']
+  templateUrl: './hr-payroll-structure-create-update.component.html',
+  styleUrls: ['./hr-payroll-structure-create-update.component.css']
 })
-export class PayrollStructureCreateUpdateComponent implements OnInit {
+export class HrPayrollStructureCreateUpdateComponent implements OnInit {
 
   @ViewChild('typeCbx', { static: true }) typeCbx: ComboBoxComponent;
-  @ViewChild(SalaryRuleListComponent, { static: false }) rulesComp: SalaryRuleListComponent;
+  @ViewChild(HrSalaryRuleListComponent, { static: false }) rulesComp: HrSalaryRuleListComponent;
 
   payrollForm: FormGroup;
   id: string;
@@ -26,7 +26,7 @@ export class PayrollStructureCreateUpdateComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder, private router: Router,
-    private payrollService: PayrollStructureService,
+    private payrollService: HrPayrollStructureService,
     private notificationService: NotificationService,
     private activeroute: ActivatedRoute) { }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { PayrollStructureService, HrPayrollStructurePaged } from '../PayrollStructure.service';
+import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-PayrollStructure.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/internal/operators/map';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,10 +8,10 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 
 @Component({
   selector: 'app-payroll-structure-list',
-  templateUrl: './payroll-structure-list.component.html',
-  styleUrls: ['./payroll-structure-list.component.css']
+  templateUrl: './hr-payroll-structure-list.component.html',
+  styleUrls: ['./hr-payroll-structure-list.component.css']
 })
-export class PayrollStructureListComponent implements OnInit {
+export class HrPayrollStructureListComponent implements OnInit {
 
   gridData: GridDataResult = {
     data: [],
@@ -23,7 +23,7 @@ export class PayrollStructureListComponent implements OnInit {
   collectionSize = 0;
 
   constructor(
-    private payrollStructureService: PayrollStructureService,
+    private HrPayrollStructureService: HrPayrollStructureService,
     private modalService: NgbModal,
     private router: Router) { }
 
@@ -37,7 +37,7 @@ export class PayrollStructureListComponent implements OnInit {
     val.limit = this.pageSize;
     val.offset = (this.page - 1) * this.pageSize;
 
-    this.payrollStructureService.getPaged(val).pipe(
+    this.HrPayrollStructureService.getPaged(val).pipe(
       map((res: any) => ({
         data: res.items,
         total: res.totalItems,
@@ -70,7 +70,7 @@ export class PayrollStructureListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa mẫu lương';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
-      this.payrollStructureService.delete(dataitem.id).subscribe(res => {
+      this.HrPayrollStructureService.delete(dataitem.id).subscribe(res => {
         this.loadDataFromApi();
       });
     });

@@ -68,7 +68,7 @@ export class HrSalaryRuleDisplay {
 }
 
 @Injectable()
-export class PayrollStructureService {
+export class HrPayrollStructureService {
     apiUrl = 'api/HrPayrollStructures';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 

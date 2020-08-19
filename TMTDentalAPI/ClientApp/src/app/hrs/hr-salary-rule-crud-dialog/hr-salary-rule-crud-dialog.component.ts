@@ -6,10 +6,10 @@ import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-salary-rule-crud-dialog',
-  templateUrl: './salary-rule-crud-dialog.component.html',
-  styleUrls: ['./salary-rule-crud-dialog.component.css']
+  templateUrl: './hr-salary-rule-crud-dialog.component.html',
+  styleUrls: ['./hr-salary-rule-crud-dialog.component.css']
 })
-export class SalaryRuleCrudDialogComponent implements OnInit {
+export class HrSalaryRuleCrudDialogComponent implements OnInit {
 
   RuleForm: FormGroup;
   rule: any;
@@ -19,14 +19,11 @@ export class SalaryRuleCrudDialogComponent implements OnInit {
     { text: 'Công thức', value: 'code' },
   ];
   listamountCodeCompute: Array<{ text: string, value: string }> = [
-    { text: 'lương cơ bản', value: 'LCB' },
-    { text: 'lương cơ bản + phụ cấp', value: 'LC' },
-    { text: 'phụ cấp', value: 'PC' },
+    { text: 'Lương chính', value: 'LC' },
     { text: 'Hoa hồng', value: 'HH' }
   ];
   listamountPercentageBase: Array<{ text: string, value: string }> = [
-    { text: 'lương cơ bản', value: 'LCB' },
-    { text: 'lương cơ bản + phụ cấp', value: 'LC' },
+    { text: 'Lương chính', value: 'LC' },
     { text: 'Hoa hồng', value: 'HH' }
   ];
 

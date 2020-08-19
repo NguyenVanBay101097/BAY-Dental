@@ -1,17 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { HrSalaryRuleDisplay, HrPayrollStructurePaged, PayrollStructureService } from '../PayrollStructure.service';
+import { HrSalaryRuleDisplay, HrPayrollStructurePaged, HrPayrollStructureService } from '../hr-PayrollStructure.service';
 import { PageChangeEvent, GridDataResult } from '@progress/kendo-angular-grid';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SalaryRuleCrudDialogComponent } from '../salary-rule-crud-dialog/salary-rule-crud-dialog.component';
+import { HrSalaryRuleCrudDialogComponent } from '../hr-salary-rule-crud-dialog/hr-salary-rule-crud-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-salary-rule-list',
-  templateUrl: './salary-rule-list.component.html',
-  styleUrls: ['./salary-rule-list.component.css']
+  templateUrl: './hr-salary-rule-list.component.html',
+  styleUrls: ['./hr-salary-rule-list.component.css']
 })
-export class SalaryRuleListComponent implements OnInit {
+export class HrSalaryRuleListComponent implements OnInit {
 
   id: string;
   AllData: any = [];
@@ -27,7 +27,7 @@ export class SalaryRuleListComponent implements OnInit {
   constructor(
     private activeroute: ActivatedRoute,
     private modalService: NgbModal,
-    private payrollService: PayrollStructureService
+    private payrollService: HrPayrollStructureService
   ) { }
 
   ngOnInit() {
@@ -78,7 +78,7 @@ export class SalaryRuleListComponent implements OnInit {
   }
 
   ShowAddSalaryRulePopup() {
-    const modalRef = this.modalService.open(SalaryRuleCrudDialogComponent,
+    const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
       { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thuộc Tính Lương';
     modalRef.result.then((val) => {
@@ -91,7 +91,7 @@ export class SalaryRuleListComponent implements OnInit {
   }
 
   editItem(item) {
-    const modalRef = this.modalService.open(SalaryRuleCrudDialogComponent,
+    const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
       { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thuộc Tính Lương';
     modalRef.componentInstance.rule = item;
