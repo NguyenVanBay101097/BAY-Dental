@@ -17,6 +17,7 @@ namespace Infrastructure.Services
         Task<string> GetStatus(ChamCong val);
         Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date);
         Task<decimal> GetStandardWorkHour();
+        Task CountChamCong(CountChamCong val);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
     }
 }

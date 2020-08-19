@@ -228,5 +228,35 @@ namespace Infrastructure.Services
             var res = await query.Include(x => x.WorkEntryType).ToListAsync();
             return _mapper.Map<IEnumerable<ChamCongDisplay>>(res);
         }
+
+        public async Task CountChamCong(CountChamCong val)
+        {
+            var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
+            var empObj = GetService<IEmployeeService>();
+            var query = SearchQuery(x => x.EmployeeId == val.EmployeeId);
+            if (val.To.HasValue)
+                query = query.Where(x => x.Date <= val.To);
+            if (val.From.HasValue)
+                query = query.Where(x => x.Date >= val.From);
+
+            var emp = await empObj.SearchQuery(x => x.Id == val.EmployeeId).FirstOrDefaultAsync();
+            var structureType = await structureTypeObj.SearchQuery(x => x.Id == emp.StructureTypeId)
+                .Include("DefaultResourceCalendar")
+                .Include("DefaultResourceCalendar.ResourceCalendarAttendances").FirstOrDefaultAsync();
+
+            var listChamCongs = await query.ToListAsync();
+            var listResourceCalendarAtts = structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList();
+
+            foreach (var cc in listChamCongs)
+            {
+                foreach (var att in listResourceCalendarAtts)
+                {
+                    if (cc.Date.Value.DayOfWeek.ToString() == att.DayOfWeek)
+                    {   
+
+                    }
+                }
+            }
+        }
     }
 }
