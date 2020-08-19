@@ -22,38 +22,29 @@ namespace Infrastructure.Services
 
         public async Task ComputeAmount(IEnumerable<SaleOrderLinePartnerCommission> self) 
         {
-            foreach(var line in self)
-            {
-                var orderLine = line.SaleOrderLine;
-                line.Amount = await _GetCommissionAmount(line.Commission, orderLine.PriceTotal, orderLine.Product);
-                line.Percentage = await _GetCommissionPercentage(line.Commission, orderLine.Product);
-            }
+            foreach(var line in self)              
+                 await _GetCommissionAmount(line);
+               
         }
 
-        public async Task<decimal> _GetCommissionAmount(Commission commission, decimal? subtotal, Product product)
+        public async Task<SaleOrderLinePartnerCommission> _GetCommissionAmount(SaleOrderLinePartnerCommission val)
         {
             var productRuleObj = GetService<ICommissionProductRuleService>();
+            var orderLine = val.SaleOrderLine;
+            var commission = val.Commission;
             var rule = await productRuleObj.SearchQuery(x => x.CommissionId == commission.Id &&
-                (!x.ProductId.HasValue || x.ProductId == product.Id) &&
-                (!x.CategId.HasValue || x.CategId == product.CategId), orderBy: x => x.OrderBy(s => s.AppliedOn)).FirstOrDefaultAsync();
+                (!x.ProductId.HasValue || x.ProductId == orderLine.Product.Id) &&
+                (!x.CategId.HasValue || x.CategId == orderLine.Product.CategId), orderBy: x => x.OrderBy(s => s.AppliedOn)).FirstOrDefaultAsync();
 
             if (rule == null)
-                return 0M;
+                return null;
 
-            return (subtotal ?? 0) * ((rule.PercentFixed ?? 0) / 100);
+            val.Percentage = rule.PercentFixed ?? 0;
+            val.Amount = orderLine.PriceTotal  * ((rule.PercentFixed ?? 0) / 100);
+            
+            return val;
         }
 
-        public async Task<decimal> _GetCommissionPercentage(Commission commission, Product product)
-        {
-            var productRuleObj = GetService<ICommissionProductRuleService>();
-            var rule = await productRuleObj.SearchQuery(x => x.CommissionId == commission.Id &&
-                (!x.ProductId.HasValue || x.ProductId == product.Id) &&
-                (!x.CategId.HasValue || x.CategId == product.CategId), orderBy: x => x.OrderBy(s => s.AppliedOn)).FirstOrDefaultAsync();
-
-            if (rule == null)
-                return 0M;
-
-            return rule.PercentFixed ?? 0;
-        }
+      
     }
 }
