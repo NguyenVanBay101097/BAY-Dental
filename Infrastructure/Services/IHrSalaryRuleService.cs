@@ -11,5 +11,7 @@ namespace Infrastructure.Services
     public interface IHrSalaryRuleService : IBaseService<HrSalaryRule>
     {
         Task Remove(IEnumerable<Guid> Ids);
+        Task<PagedResult2<HrSalaryRuleDisplay>> GetPaged(HrSalaryRulePaged val);
+        Task<HrSalaryRule> GetHrSalaryRuleDisplay(Guid Id);
     }
 }

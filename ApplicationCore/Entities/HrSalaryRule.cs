@@ -39,6 +39,16 @@ namespace ApplicationCore.Entities
 
         public string Note { get; set; }
 
+        /// <summary>
+        /// chứa mã code cho công thức
+        /// </summary>
+        public string AmountCodeCompute { get; set; }
+        
+        /// <summary>
+        /// chứa mã code cho % bases
+        /// </summary>
+        public string AmountPercentageBase { get; set; }
+
         public Guid StructId { get; set; }
         public HrPayrollStructure Struct { get; set; }
     }
