@@ -16,10 +16,10 @@ const routes: Routes = [
   {
     path: 'payroll-structures/edit/:id',
     component: PayrollStructureCreateUpdateComponent
-  }
-];
-const routes: Routes = [
-  { path: 'payroll-structure-types', component: HrPayrollStructureTypeListComponent },
+  },
+  {
+    path: 'payroll-structure-types', component: HrPayrollStructureTypeListComponent
+  },
 ];
 
 @NgModule({
