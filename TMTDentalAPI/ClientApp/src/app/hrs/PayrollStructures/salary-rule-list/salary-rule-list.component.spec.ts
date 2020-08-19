@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HrSalaryRuleComponent } from './hr-salary-rule.component';
+import { SalaryRuleListComponent } from './salary-rule-list.component';
 
-describe('HrSalaryRuleComponent', () => {
-  let component: HrSalaryRuleComponent;
-  let fixture: ComponentFixture<HrSalaryRuleComponent>;
+describe('SalaryRuleListComponent', () => {
+  let component: SalaryRuleListComponent;
+  let fixture: ComponentFixture<SalaryRuleListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HrSalaryRuleComponent ]
+      declarations: [ SalaryRuleListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HrSalaryRuleComponent);
+    fixture = TestBed.createComponent(SalaryRuleListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             }
             query = query.Include(x => x.DefaultStruct);
 
-            var items = await query.ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<HrPayrollStructureTypeDisplay>(totalItems, val.Offset, val.Limit)
             {

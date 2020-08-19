@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id)
         {
-            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).FirstOrDefaultAsync();
+            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).Include(x=>x.Type).FirstOrDefaultAsync();
             return res;
         }
 
@@ -37,9 +37,9 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Name.Contains(val.Filter));
             }
-            query = query.Include(x => x.Rules).Include("Rules.Company");
+            query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
 
-            var items = await query.ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<HrPayrollStructureDisplay>(totalItems, val.Offset, val.Limit)
             {

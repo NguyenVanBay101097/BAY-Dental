@@ -5,6 +5,19 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+    public class HrSalaryRulePaged
+    {
+
+        public HrSalaryRulePaged()
+        {
+            Limit = 20;
+        }
+
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public string Filter { get; set; }
+        public Guid? StructId { get; set; }
+    }
     public class HrSalaryRuleSave
     {
         public Guid? Id { get; set; }
@@ -18,24 +31,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool Active { get; set; }
 
-        /// <summary>
-        /// The computation method for the rule amount.
-        /// </summary>
         public string AmountSelect { get; set; }
-
-        /// <summary>
-        /// Fixed Amount
-        /// </summary>
         public decimal? AmountFix { get; set; }
-
-        /// <summary>
-        /// Percentage (%)
-        /// </summary>
         public decimal? AmountPercentage { get; set; }
 
         public bool AppearsOnPayslip { get; set; }
 
         public string Note { get; set; }
+        public string AmountCodeCompute { get; set; }
+        public string AmountPercentageBase { get; set; }
 
         //public Guid? StructId { get; set; }
     }
@@ -52,24 +56,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
 
-        /// <summary>
-        /// The computation method for the rule amount.
-        /// </summary>
         public string AmountSelect { get; set; }
-
-        /// <summary>
-        /// Fixed Amount
-        /// </summary>
         public decimal? AmountFix { get; set; }
-
-        /// <summary>
-        /// Percentage (%)
-        /// </summary>
         public decimal? AmountPercentage { get; set; }
 
         public bool AppearsOnPayslip { get; set; }
 
         public string Note { get; set; }
+        public string AmountCodeCompute { get; set; }
+
+        public string AmountPercentageBase { get; set; }
 
         public Guid StructId { get; set; }
     }

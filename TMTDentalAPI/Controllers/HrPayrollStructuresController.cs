@@ -16,12 +16,12 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HrPayrollStructureController : BaseApiController
+    public class HrPayrollStructuresController : BaseApiController
     {
         private readonly IHrPayrollStructureService _HrPayrollStructureService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public HrPayrollStructureController (IHrPayrollStructureService HrPayrollStructureService,
+        public HrPayrollStructuresController (IHrPayrollStructureService HrPayrollStructureService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _HrPayrollStructureService = HrPayrollStructureService;

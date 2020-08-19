@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -39,7 +40,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
         public bool RegularPay { get; set; }
         public Guid TypeId { get; set; }
+        public HrPayrollStructureType Type { get; set; }
         public bool UseWorkedDayLines { get; set; }
         public List<HrSalaryRuleDisplay> Rules { get; set; }
+        public int? TotalRules
+        {
+            get { if (Rules != null) return Rules.Count; else return 0; }
+        }
     }
 }
