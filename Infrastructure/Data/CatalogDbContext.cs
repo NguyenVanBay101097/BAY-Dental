@@ -194,6 +194,9 @@ namespace Infrastructure.Data
         public DbSet<ResourceCalendar> ResourceCalendars { get; set; }
         public DbSet<ResourceCalendarAttendance> ResourceCalendarAttendances { get; set; }
         public DbSet<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
+        public DbSet<HrPayslip> HrPayslips { get; set; }
+        public DbSet<HrPayslipLine> HrPayslipLines { get; set; }
+        public DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -348,6 +351,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ResourceCalendarAttendanceConfiguration());
             builder.ApplyConfiguration(new ResourceCalendarLeavesConfiguration());
             builder.ApplyConfiguration(new WorkEntryTypeConfiguration());
+            builder.ApplyConfiguration(new HrPayslipConfiguration());
+            builder.ApplyConfiguration(new HrPayslipLineConfiguration());
+            builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
