@@ -15,6 +15,7 @@ export class HrPayslipPaged {
     offset: number;
     limit: number;
     search: string;
+    payslipId: string;
 }
 
 export class HrPayslipSave {
@@ -25,7 +26,7 @@ export class HrPayslipSave {
     dateFrom: string;
     dateTo: string;
     state: string;
-    lines: HrPayslipLineDisplay[];
+    // lines: HrPayslipLineDisplay[];
 }
 
 export class HrPayslipDisplay {
@@ -81,11 +82,15 @@ export class HrPayslipService {
         return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
     }
 
-    ComputeLinePost(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ComputeSp', val);
+    ComputeLinePost(val: HrPayslipSave) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ComputePayslip', val);
     }
 
     ComputeLinePut( id: string, val: any) {
-        return this.http.put(this.baseApi + this.apiUrl + '/ComputeSp/' + id, val);
+        return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslip/' + id, val);
+    }
+
+    GetLisPayslipLine(payslipId: string) {
+        return this.http.get<HrSalaryRulePaging>(this.baseApi + 'api/HrSalaryRules', { params: { payslipId }});
     }
 }

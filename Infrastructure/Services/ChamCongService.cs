@@ -228,5 +228,67 @@ namespace Infrastructure.Services
             var res = await query.Include(x => x.WorkEntryType).ToListAsync();
             return _mapper.Map<IEnumerable<ChamCongDisplay>>(res);
         }
+
+        public async Task<CongEmplyee> CountCong(Guid? empId, DateTime? from, DateTime? to)
+        {
+            var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
+            var empObj = GetService<IEmployeeService>();
+            var query = SearchQuery(x => x.EmployeeId == empId);
+            var congEmp = new CongEmplyee();
+            if (to.HasValue)
+                query = query.Where(x => x.Date <= to);
+            if (from.HasValue)
+                query = query.Where(x => x.Date >= from);
+
+            var emp = await empObj.SearchQuery(x => x.Id == empId).FirstOrDefaultAsync();
+            var structureType = await structureTypeObj.SearchQuery(x => x.Id == emp.StructureTypeId)
+                .Include("DefaultResourceCalendar")
+                .Include("DefaultResourceCalendar.ResourceCalendarAttendances").FirstOrDefaultAsync();
+
+            var listChamCongs = await query.ToListAsync();
+            var listResourceCalendarAtts = structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList();
+
+            foreach (var att in listResourceCalendarAtts)
+            {
+                congEmp.CongChuan1Thang = congEmp.CongChuan1Thang + CountDays(((DayOfWeek)Enum.Parse(typeof(DayOfWeek), att.DayOfWeek)), from.Value, to.Value);
+            }
+
+            foreach (var cc in listChamCongs)
+            {
+                foreach (var att in listResourceCalendarAtts)
+                {
+                    
+
+                    if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.DayOfWeek))
+                    {
+                        var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
+                        var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
+
+                        if (ccTimeIn <= att.HourFrom && ccTimeOut >= att.HourTo)
+                            congEmp.SoCong++;
+                        else if (ccTimeIn > att.HourFrom && ccTimeOut < att.HourTo)
+                            if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
+                                congEmp.SoCong++;
+                    }
+                }
+            }
+
+            return congEmp;
+        }
+
+        public int CountDays(DayOfWeek day, DateTime start, DateTime end)
+        {
+            TimeSpan ts = end - start;                       // Total duration
+            int count = (int)Math.Floor(ts.TotalDays / 7);   // Number of whole weeks
+            int remainder = (int)(ts.TotalDays % 7);         // Number of remaining days
+            int sinceLastDay = (int)(end.DayOfWeek - day);   // Number of days since last [day]
+            if (sinceLastDay < 0) sinceLastDay += 7;         // Adjust for negative days since last [day]
+
+            // If the days in excess of an even week are greater than or equal to the number days since the last [day], then count this one, too.
+            if (remainder >= sinceLastDay) count++;
+
+            return count;
+        }
+
     }
 }

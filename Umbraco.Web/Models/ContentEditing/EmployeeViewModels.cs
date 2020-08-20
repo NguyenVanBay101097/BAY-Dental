@@ -87,6 +87,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAssistant { get; set; }
         public IEnumerable<ChamCongDisplay> ChamCongs { get; set; } = new List<ChamCongDisplay>();
         public double SoNgayCong { get; set; }
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureTypeDisplay StructureType { get; set; }
+      
 
         public HrPayrollStructureBase Struct { get; set; }
         public decimal? Wage { get; set; }

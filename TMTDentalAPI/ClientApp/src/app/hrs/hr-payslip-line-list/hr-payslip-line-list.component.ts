@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HrPayrollStructureService } from '../hr-payroll-structure.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { HrPayslipService } from '../hr-payslip.service';
 
 @Component({
   selector: 'app-hr-payslip-line-list',
@@ -25,7 +26,7 @@ export class HrPayslipLineListComponent implements OnInit {
   constructor(
     private activeroute: ActivatedRoute,
     private modalService: NgbModal,
-    private payrollService: HrPayrollStructureService
+    private hrPayslipService: HrPayslipService
   ) { }
 
   ngOnInit() {
@@ -37,7 +38,7 @@ export class HrPayslipLineListComponent implements OnInit {
 
   loadDataFromApi() {
     if (this.id) {
-      this.payrollService.GetListRuleByStructId(this.id).subscribe(res => {
+      this.hrPayslipService.get(this.id).subscribe(res => {
         this.AllData = res.items;
         this.listRule = {
           data: this.AllData.slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize),

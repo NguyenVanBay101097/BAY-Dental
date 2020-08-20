@@ -23,6 +23,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   listEmployees: any[];
   id: any;
   lines: any;
+  IsShowLines = false;
 
   constructor(
     private fb: FormBuilder, private router: Router,
@@ -116,7 +117,21 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ComputeSalary() {
-    this.hrPayslipService.
+    const val = this.payslipForm.value;
+    val.employeeId = val.employee.id;
+    val.structId = val.struct.id;
+    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
+    val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
+    val.state = 'process';
+    if (!this.id) {
+      this.hrPayslipService.ComputeLinePost(val).subscribe(res => {
+        this.IsShowLines = true;
+      });
+    } else {
+      this.hrPayslipService.ComputeLinePut(this.id, val).subscribe(res => {
+        this.IsShowLines = true;
+      });
+    }
   }
 
 }
