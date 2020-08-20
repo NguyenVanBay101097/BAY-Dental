@@ -9,6 +9,9 @@ namespace ApplicationCore.Entities
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
         /// <summary>
         /// số tiền thanh toán
         /// </summary>
