@@ -97,6 +97,15 @@ namespace Infrastructure.Services
                 rec.State = "posted";
                 await UpdateAsync(rec);
 
+                if (rec.SaleOrderLinePaymentRels.Any())
+                {
+                    var sale_order_id = rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).First();
+
+                    await _ComputeSaleOrderLines(sale_order_id);
+
+                    await settlementObj.CreateSettlements(rec);
+                }
+
                 if (rec.PaymentType == "inbound" || rec.PaymentType == "outbound")
                 {
                     if (rec.AccountMovePaymentRels.Any())
@@ -117,15 +126,7 @@ namespace Infrastructure.Services
 
                         var invoices = moves.Concat(sale_moves);
                         await _AutoReconcile(rec, invoices);
-                    }
-                    else if (rec.SaleOrderLinePaymentRels.Any())
-                    {
-                        var sale_order_id = rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).First();
-
-                        await _ComputeSaleOrderLines(sale_order_id);
-
-                        await settlementObj.CreateSettlements(rec);
-                    }
+                    }                    
                     else if (rec.CardOrderPaymentRels.Any())
                     {
                         //tìm tất cả các moves của các sale orders
