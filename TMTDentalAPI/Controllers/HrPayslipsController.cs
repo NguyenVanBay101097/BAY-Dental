@@ -74,6 +74,45 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ComputePayslip(HrPayslipSave val)
+        {
+            var entity = _mapper.Map<HrPayslip>(val);
+            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.DateFrom, val.DateTo)).ToList();
+            foreach (var line in lines)
+            {
+                entity.Lines.Add(line);
+            }
+            entity.CompanyId = CompanyId;
+            await _unitOfWork.BeginTransactionAsync();
+            await _HrPayslipService.CreateAsync(entity);
+            _unitOfWork.Commit();
+
+            return Ok(_mapper.Map<HrPayslipDisplay>(entity));
+        }
+
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> ComputePayslip(Guid id, HrPayslipSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var str = await _HrPayslipService.GetHrPayslipDisplay(id);
+            if (str == null)
+                return NotFound();
+
+            str = _mapper.Map(val, str);
+            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.DateFrom, val.DateTo)).ToList();
+            foreach (var line in lines)
+            {
+                str.Lines.Add(line);
+            }
+            str.CompanyId = CompanyId;
+
+            await _HrPayslipService.UpdateAsync(str);
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
