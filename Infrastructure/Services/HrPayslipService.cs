@@ -99,7 +99,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Lines).FirstOrDefaultAsync();
             return res;
         }
 
