@@ -685,7 +685,9 @@ namespace Infrastructure.Services
             val.SaleOrderLinePaymentRels = val.SaleOrderLinePaymentRels.Where(x => x.AmountPrepaid > 0).ToList();
             var payment = _mapper.Map<AccountPayment>(val);
             var journalObj = GetService<IAccountJournalService>();
+            var settlementObj = GetService<ICommissionSettlementService>();
             var journal = await journalObj.GetByIdAsync(payment.JournalId);
+           
             payment.CompanyId = journal.CompanyId;
             if (val.SaleOrderLinePaymentRels.Any())
             {
@@ -707,8 +709,13 @@ namespace Infrastructure.Services
 
             await CreateAsync(payment);
 
-            if(payment.SaleOrderLinePaymentRels.Any())
-            await _ComputeSaleOrderLines(val.SaleOrderIds.First());
+            if (payment.SaleOrderLinePaymentRels.Any())
+            {
+                await _ComputeSaleOrderLines(val.SaleOrderIds.First());
+
+                await settlementObj.CreateSettlements(payment);
+            }
+           
 
             return payment;
         }
@@ -1003,13 +1010,14 @@ namespace Infrastructure.Services
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
+            var settlementObj = GetService<ICommissionSettlementService>();
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
             foreach (var rec in self)
-            {
                
                 if (rec.MoveLines.Any())
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
-            }
+
+            await settlementObj.Unlink(ids);
 
             await DeleteAsync(self);
 
