@@ -27,27 +27,33 @@ namespace Infrastructure.Services
                
         }
 
-        public async Task<SaleOrderLinePartnerCommission> _GetCommissionAmount(SaleOrderLinePartnerCommission val)
+        public async Task<SaleOrderLinePartnerCommission> _GetCommissionAmount(SaleOrderLinePartnerCommission self)
         {
             var productRuleObj = GetService<ICommissionProductRuleService>();
-            var orderLine = val.SaleOrderLine;
-            var commission = val.Commission;
-            var rule = await productRuleObj.SearchQuery(x => x.CommissionId == commission.Id &&
-                (!x.ProductId.HasValue || x.ProductId == orderLine.Product.Id) &&
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var orderLine = await saleLineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Product).FirstOrDefaultAsync();
+            var rule = await productRuleObj.SearchQuery(x => x.CommissionId == self.CommissionId &&
+                (!x.ProductId.HasValue || x.ProductId == orderLine.ProductId) &&
                 (!x.CategId.HasValue || x.CategId == orderLine.Product.CategId), orderBy: x => x.OrderBy(s => s.AppliedOn)).FirstOrDefaultAsync();
 
             if (rule == null)
             {
-                val.Percentage = 0;
-                val.Amount = 0;
+                self.Percentage = 0;
+                self.Amount = 0;
             }
             else
             {
-                val.Percentage = rule.PercentFixed ?? 0;
-                val.Amount = orderLine.PriceTotal * ((rule.PercentFixed ?? 0) / 100);
+                self.Percentage = rule.PercentFixed ?? 0;
+                self.Amount = orderLine.PriceTotal * ((rule.PercentFixed ?? 0) / 100);
             }
             
-            return val;
+            return self;
+        }
+
+        public override async Task<IEnumerable<SaleOrderLinePartnerCommission>> CreateAsync(IEnumerable<SaleOrderLinePartnerCommission> entities)
+        {
+            await ComputeAmount(entities);
+            return await base.CreateAsync(entities);
         }
     }
 }

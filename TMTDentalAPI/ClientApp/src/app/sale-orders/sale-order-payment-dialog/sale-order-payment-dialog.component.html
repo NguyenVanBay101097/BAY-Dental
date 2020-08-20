@@ -1,7 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close"
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -18,8 +18,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                        [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -30,24 +30,25 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-numerictextbox 
-                                            [min]="0" [max]="maxAmount == 0 ? null : maxAmount" 
-                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                            formControlName="amount">
-                                        </kendo-numerictextbox>
-                                        <button type="button" class="btn btn-primary ml-1" style="white-space: nowrap; cursor: pointer;"
-                                            (click)="enterMoney()">
-                                            Nhập tiền
-                                        </button>
-                                        <button type="button" class="btn btn-primary ml-1" style="white-space: nowrap; cursor: pointer;"
-                                            (click)="payOff()">
-                                            Trả hết
-                                        </button>
+                                    <div>
+                                        <div class="mb-2">
+                                            <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
+                                                [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                                formControlName="amount">
+                                            </kendo-numerictextbox>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-primary btn-sm ml-1" (click)="enterMoney()">
+                                                Nhập tiền
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm ml-1" (click)="payOff()">
+                                                Trả hết
+                                            </button>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                          
+
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -94,19 +95,16 @@
                         </thead>
                         <tbody formArrayName="saleOrderLinePaymentRels">
                             <ng-container *ngFor="let line of saleOrderLinePaymentRels.controls; let i=index">
-                                <tr [formGroupName]="i">                                          
-                                    <td class="align-middle">{{ line.get('saleOrderLine').value['name'] }}</td>
-                                    <td class="text-right align-middle">{{ line.get('saleOrderLine').value['priceSubTotal'] | number }}</td>
-                                    <td class="text-right align-middle">{{ line.get('amountPayment').value | number }}</td>
-                                    <td class="text-right align-middle">{{ line.get('saleOrderLine').value['priceSubTotal'] - line.get('amountPayment').value | number }}</td>
+                                <tr [formGroupName]="i">
+                                    <td class="align-middle">{{ line.get('name').value }}</td>
+                                    <td class="text-right align-middle">{{ line.get('priceTotal').value | number }}</td>
+                                    <td class="text-right align-middle">{{ line.get('amountPaid').value | number }}</td>
+                                    <td class="text-right align-middle">{{ line.get('amountResidual').value | number }}
+                                    </td>
                                     <td class="text-right">
-                                        <kendo-numerictextbox 
-                                            [disabled]="line.get('isDone').value"
-                                            [min]="0" [max]="getMaxMoneyLine(line)" 
-                                            [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                            style="max-width: 200px;"
-                                            formControlName="amountPrepaid"
-                                            (valueChange)="changeMoneyLine(line)">
+                                        <kendo-numerictextbox [min]="0" [max]="line.get('amountResidual').value"
+                                            [step]="1000" [format]="'n0'" [autoCorrect]="true" style="max-width: 200px;"
+                                            formControlName="amountPrepaid" (valueChange)="changeMoneyLine(line)">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>

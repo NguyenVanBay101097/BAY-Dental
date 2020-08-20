@@ -35,11 +35,11 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<ToothBasic>> GetTeeth(Guid id);
 
-         Task _AddPartnerCommission(IEnumerable<Guid> ids);
-
         void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> lines);
         Task _RemovePartnerCommissions(IEnumerable<Guid> ids);
 
-        Task ComputeCommissions(IEnumerable<SaleOrderLine> self);
+        Task RecomputeCommissions(IEnumerable<SaleOrderLine> self);
+
+        Task<IEnumerable<SaleOrderLine>> _ComputePaidResidual(IEnumerable<Guid> ids);
     }
 }

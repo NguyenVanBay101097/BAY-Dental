@@ -81,7 +81,7 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
         }
 
-        public async Task<Employee> CreateAsync(Employee entity)
+        public override async Task<Employee> CreateAsync(Employee entity)
         {
             var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
             if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
@@ -96,6 +96,11 @@ namespace Infrastructure.Services
             }
 
             return await base.CreateAsync(entity);
+        }
+
+        public async Task<Employee> GetByUserIdAsync(string userId)
+        {
+            return await SearchQuery(x => x.UserId == userId).FirstOrDefaultAsync();
         }
 
         //private async Task InsertDoctorSequence()

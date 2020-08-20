@@ -18,7 +18,7 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 })
 export class SaleOrderPaymentDialogComponent implements OnInit {
   paymentForm: FormGroup;
-  defaultVal: AccountRegisterPaymentDisplay;
+  defaultVal: any;
   filteredJournals: AccountJournalSimple[];
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
@@ -52,7 +52,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     setTimeout(() => {
       if (this.defaultVal) {
-        console.log(this.defaultVal);
         this.paymentForm.patchValue(this.defaultVal);
         var paymentDate = new Date(this.defaultVal.paymentDate);
         this.paymentForm.get('paymentDateObj').setValue(paymentDate);
@@ -61,7 +60,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         
         const control = this.saleOrderLinePaymentRels;
         control.clear();
-        this.defaultVal['saleOrderLinePaymentRels'].forEach(line => {
+        this.defaultVal.saleOrderLinePaymentRels.forEach(line => {
+          line.amountPrepaid = 0;
           var g = this.fb.group(line);
           control.push(g);
         });
@@ -146,22 +146,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
-    var sumAmountPrepaid = 0;
-    this.getValueForm('saleOrderLinePaymentRels').forEach(function(v){ 
-      sumAmountPrepaid += v.amountPrepaid;
-    });
-    if (val.amount == 0) {
-      this.showError_2 = true;
-      return null;
-    } else {
-      this.showError_2 = false;
-    }
-    if (val.amount != sumAmountPrepaid) {
-      this.showError_1 = true;
-      return null;
-    } else {
-      this.showError_1 = false;
-    }
     return val;
   }
 
@@ -186,43 +170,31 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   payOff() {
-    this.paymentForm.get('amount').setValue(this.maxAmount);
+    var lines = this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
 
-    var lines = this.getValueForm('saleOrderLinePaymentRels');
-    const control = this.saleOrderLinePaymentRels;
-    control.clear();
+    var total = 0;
+    lines.controls.forEach(control => {
+      var residual = control.get('amountResidual').value || 0;
+      control.get('amountPrepaid').setValue(residual);
 
-    lines.forEach(line => {
-      line.amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
-      var g = this.fb.group(line);
-      control.push(g);
+      total += residual;
     });
-    this.paymentForm.markAsPristine();
-    this.showError_1 = false;
+
+    this.paymentForm.get('amount').setValue(total);
   }
 
   enterMoney() {
-    var amount = this.getValueForm('amount');
+    var amount = this.paymentForm.get('amount').value || 0;
 
-    var lines = this.getValueForm('saleOrderLinePaymentRels');
-    const control = this.saleOrderLinePaymentRels;
-    control.clear();
+    var lines = this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
 
-    var amountPrepaid = 0;
-    lines.forEach(line => {
-      amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
-      if (amount >= amountPrepaid) {
-        amount -= amountPrepaid;
-        line.amountPrepaid = line.saleOrderLine.priceSubTotal - line.amountPayment;
-      } else {
-        line.amountPrepaid = amount;
-        amount = 0;
-      }
-      var g = this.fb.group(line);
-      control.push(g);
+    lines.controls.forEach(control => {
+      var amountResidual = control.get('amountResidual').value || 0;
+      var amountPaid = Math.min(amount, amountResidual);
+      control.get('amountPrepaid').setValue(amountPaid);
+
+      amount -= amountPaid;
     });
-    this.paymentForm.markAsPristine();
-    this.showError_1 = false;
   }
 
 }

@@ -1099,7 +1099,7 @@ namespace Infrastructure.Services
             saleLineObj._GetToInvoiceQty(order.OrderLines);
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-            await saleLineObj.ComputeCommissions(order.OrderLines);
+            await saleLineObj.RecomputeCommissions(order.OrderLines);
             await UpdateAsync(order);
 
             _AmountAll(order);
@@ -1369,7 +1369,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
 
-                await saleLineObj.ComputeCommissions(order.OrderLines);
+                await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
             var invoices = await _CreateInvoices(self, final: true);
