@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public HrPayrollStructureProfile()
         {
             CreateMap<HrPayrollStructure, HrPayrollStructureDisplay>();
+            CreateMap<HrPayrollStructure, HrPayrollStructureBase>();
             CreateMap<HrPayrollStructureDisplay, HrPayrollStructure>().ForMember(x => x.Id, x => x.Ignore());
             CreateMap<HrPayrollStructureSave, HrPayrollStructure>()
                 .ForMember(x => x.Rules, x => x.Ignore())

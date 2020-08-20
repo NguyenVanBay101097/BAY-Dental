@@ -45,5 +45,11 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<HrPayslipLineDisplay>>(items)
             };
         }
+
+        public async Task Remove(IEnumerable<Guid> Ids)
+        {
+            var list = await SearchQuery(x => Ids.Contains(x.Id)).ToListAsync();
+            await DeleteAsync(list);
+        }
     }
 }

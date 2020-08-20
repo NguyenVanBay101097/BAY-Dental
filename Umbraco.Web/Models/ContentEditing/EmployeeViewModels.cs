@@ -38,6 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
         public Guid? CategoryId { get; set; }
         public EmployeeCategoryBasic Category { get; set; }
+        public decimal? Wage { get; set; }
     }
 
     public class EmployeeDisplay
@@ -86,6 +87,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAssistant { get; set; }
         public IEnumerable<ChamCongDisplay> ChamCongs { get; set; } = new List<ChamCongDisplay>();
         public double SoNgayCong { get; set; }
+
+        public HrPayrollStructureBase Struct { get; set; }
+        public decimal? Wage { get; set; }
+        public decimal? HourlyWage { get; set; }
 
     }
 

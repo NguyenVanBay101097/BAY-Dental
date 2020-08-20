@@ -6,6 +6,12 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+    public class HrPayrollStructureBase
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class HrPayrollStructurePaged
     {
 

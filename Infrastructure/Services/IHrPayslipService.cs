@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<HrPayslipDisplay>> GetPaged(HrPayslipPaged val);
         Task<HrPayslip> GetHrPayslipDisplay(Guid Id);
+        //Task SaveLines(HrPayslipSave val, HrPayslip slip);
     }
 }

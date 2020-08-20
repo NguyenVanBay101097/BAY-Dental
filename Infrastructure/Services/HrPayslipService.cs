@@ -25,7 +25,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Employee).FirstOrDefaultAsync();
             return res;
         }
 
@@ -45,5 +45,30 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<HrPayslipDisplay>>(items)
             };
         }
+        //public async Task SaveLines(HrPayslipSave val, HrPayslip slip)
+        //{
+        //    var linesToRemove = new List<HrPayslipLine>();
+        //    foreach (var line in slip.Lines)
+        //    {
+        //        if (!val.Lines.Any(x => x.Id == line.Id))
+        //            linesToRemove.Add(line);
+        //    }
+
+        //    await GetService<IHrPayslipLineService>().Remove(linesToRemove.Select(x => x.Id).ToList());
+        //    slip.Lines = slip.Lines.Except(linesToRemove).ToList();
+
+        //    foreach (var line in val.Lines)
+        //    {
+        //        if (line.Id == Guid.Empty || !line.Id.HasValue)
+        //        {
+        //            var r = _mapper.Map<HrPayslipLine>(line);
+        //            slip.Lines.Add(r);
+        //        }
+        //        else
+        //        {
+        //            _mapper.Map(line, slip.Lines.SingleOrDefault(c => c.Id == line.Id));
+        //        }
+        //    }
+        //}
     }
 }
