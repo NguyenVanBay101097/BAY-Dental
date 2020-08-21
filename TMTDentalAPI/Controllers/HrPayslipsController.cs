@@ -129,5 +129,25 @@ namespace TMTDentalAPI.Controllers
             await _HrPayslipService.DeleteAsync(HrPayslip);
             return NoContent();
         }
+
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> CancelCompute(Guid id)
+        {
+            var slip = await _HrPayslipService.GetHrPayslipDisplay(id);
+            await _hrPayslipLineService.DeleteAsync(slip.Lines);
+            slip.Lines.Clear();
+            slip.State = "draft";
+            await _HrPayslipService.UpdateAsync(slip);
+            return NoContent();
+        }
+
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> ConfirmCompute(Guid id)
+        {
+            var slip = await _HrPayslipService.GetHrPayslipDisplay(id);
+            slip.State = "done";
+            await _HrPayslipService.UpdateAsync(slip);
+            return NoContent();
+        }
     }
 }

@@ -99,7 +99,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Lines).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Employee).Include(x=>x.Lines).FirstOrDefaultAsync();
             return res;
         }
 
@@ -110,7 +110,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Name.Contains(val.Search));
             }
-            query = query.Include(x => x.Struct);
+            query = query.Include(x => x.Struct).Include(x=>x.Employee).OrderByDescending(x=>x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();

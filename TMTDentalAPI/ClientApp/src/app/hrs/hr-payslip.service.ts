@@ -11,6 +11,13 @@ export class HrPayslipPaging {
     items: HrPayslipDisplay[];
 }
 
+export class HrPayslipLinePaging {
+    offset: number;
+    limit: number;
+    totalItems: number;
+    items: HrPayslipLineDisplay[];
+}
+
 export class HrPayslipPaged {
     offset: number;
     limit: number;
@@ -90,7 +97,15 @@ export class HrPayslipService {
         return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslip/' + id, val);
     }
 
-    GetLisPayslipLine(payslipId: string) {
-        return this.http.get<HrSalaryRulePaging>(this.baseApi + 'api/HrSalaryRules', { params: { payslipId }});
+    getPayslipLinePaged(val: any): Observable<HrPayslipLinePaging> {
+        return this.http.get<HrPayslipLinePaging>(this.baseApi + 'api/HrPayslipLines', { params: val });
     }
+
+    CancelCompute(id: string) {
+     return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
+    }
+
+    ConfirmCompute(id: string) {
+        return this.http.put(this.baseApi + this.apiUrl + '/ConfirmCompute/' + id, null);
+       }
 }

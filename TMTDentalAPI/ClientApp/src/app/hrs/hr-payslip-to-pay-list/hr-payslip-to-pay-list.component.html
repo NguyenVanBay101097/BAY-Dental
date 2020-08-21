@@ -34,7 +34,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="employee" title="Tên nhân viên">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.name }}
+                {{dataItem.employee.name }}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="dateFrom" title="từ ngày">
@@ -48,6 +48,9 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="state" title="trạng thái">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.state == 'draft' ? 'nháp' : (dataItem.state == 'process' ? 'đang xử lý' : 'hoàn thành')  }}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

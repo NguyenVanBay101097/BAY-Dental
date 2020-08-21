@@ -22,7 +22,6 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   employee: any;
   listEmployees: any[];
   id: any;
-  lines: any;
   IsShowLines = false;
 
   constructor(
@@ -59,17 +58,17 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   get struct() { return this.payslipForm.get('struct'); }
   get dateFrom() { return this.payslipForm.get('dateFrom'); }
   get dateTo() { return this.payslipForm.get('dateTo'); }
+  get name() { return this.payslipForm.get('name'); }
 
   LoadRecord() {
     this.hrPayslipService.get(this.id).subscribe((res: any) => {
-      this.dateFrom.setValue(this.intlService.parseDate(res.dateFrom));
-      this.dateTo.setValue(this.intlService.parseDate(res.dateTo));
+      res.dateFrom = new Date(res.dateFrom);
+      res.dateTo = new Date(res.dateTo);
       this.payslipRecord = Object.assign({}, res);
       this.employee = res.employee;
       this.employee.struct = res.struct;
-      this.struct.setValue(res.struct);
       this.payslipForm.patchValue(res);
-
+      if (res.state === 'done') { this.Form.disable(); }
     });
   }
 
@@ -110,13 +109,33 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     val.structId = val.struct.id;
     val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
     val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
-    this.hrPayslipService.create(val).subscribe(res => {
-      this.router.navigate(['/hr/payslip-to-pay/edit/' + res.id]);
-    });
+    if (!this.id) {
+      this.hrPayslipService.create(val).subscribe(res => {
+        this.router.navigate(['/hr/payslip-to-pay/edit/' + res.id]);
+      });
+    } else {
+      this.hrPayslipService.update(this.id, val).subscribe(res => {
+        this.notificationService.show({
+          content: ' thành công!',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      });
+    }
 
   }
 
   ComputeSalary() {
+    for (const i in this.payslipForm.controls) {
+      this.payslipForm.controls[i].markAsDirty();
+      this.payslipForm.controls[i].updateValueAndValidity();
+    }
+
+    if (!this.payslipForm.valid && this.payslipForm.enabled) {
+      return false;
+    }
     const val = this.payslipForm.value;
     val.employeeId = val.employee.id;
     val.structId = val.struct.id;
@@ -124,14 +143,41 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
     val.state = 'process';
     if (!this.id) {
-      this.hrPayslipService.ComputeLinePost(val).subscribe(res => {
-        this.IsShowLines = true;
+      this.hrPayslipService.ComputeLinePost(val).subscribe((res: any) => {
+        this.router.navigate(['/hr/payslip-to-pay/edit/' + res.id]);
       });
     } else {
-      this.hrPayslipService.ComputeLinePut(this.id, val).subscribe(res => {
-        this.IsShowLines = true;
+      this.hrPayslipService.ComputeLinePut(this.id, val).subscribe((res: any) => {
+        this.router.navigate(['/hr/payslip-to-pay/edit/' + this.id]);
       });
     }
   }
 
+  ConfirmSalary() {
+    this.hrPayslipService.ConfirmCompute(this.id).subscribe(res => {
+      this.notificationService.show({
+        content: ' thành công!',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+
+      this.state.setValue('done');
+    });
+  }
+
+  CancelCompute() {
+    this.hrPayslipService.CancelCompute(this.id).subscribe(res => {
+      this.notificationService.show({
+        content: ' thành công!',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+
+      this.state.setValue('draft');
+    });
+  }
 }

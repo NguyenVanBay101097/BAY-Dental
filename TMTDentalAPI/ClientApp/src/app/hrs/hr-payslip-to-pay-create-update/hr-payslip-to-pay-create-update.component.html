@@ -7,7 +7,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
+                    <button *ngIf="this.state.value != 'done'" type="button" class="btn btn-primary btn-sm" accesskey="s"
                         (click)="onSaveOrUpdate()">Lưu</button>
                     <a [routerLink]="['/hr/payslip-to-pay/create']" accesskey="c" *ngIf="id"
                         class="btn btn-secondary btn-sm">Thêm
@@ -26,33 +26,33 @@
     <div class="o_form_view" [formGroup]="payslipForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
-                <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="this.lines?.value" accesskey="1" class="btn btn-primary btn-sm"
+                <div *ngIf="this.state.value != 'done'" class="o_statusbar_buttons">
+                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1" class="btn btn-primary btn-sm"
                         (click)="ConfirmSalary()">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="!this.lines?.value" accesskey="1" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="this.state.value == 'draft'" accesskey="1" class="btn btn-primary btn-sm"
                         (click)="ComputeSalary()">
                         Tính lương
                     </button>
-                    <button type="button" *ngIf="this.lines?.value" accesskey="1" class="btn btn-danger btn-sm"
-                        (click)="Cancel()">
-                        hủy
+                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1" class="btn btn-danger btn-sm"
+                        (click)="CancelCompute()">
+                        hủy tính lương
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': payslipRecord && payslipRecord.state === 'done', 'btn-secondary':  !payslipRecord || payslipRecord.state !== 'done'}"
+                        [ngClass]="{'btn-primary': this.state.value === 'done', 'btn-secondary':  this.state.value !== 'done'}"
                         type="button">
                         Hoàn thành
                     </button>
                     <button class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary':  payslipRecord && payslipRecord.state === 'process', 'btn-secondary':  !payslipRecord || payslipRecord.state !== 'process'}"
+                        [ngClass]="{'btn-primary':  this.state.value === 'process', 'btn-secondary':  this.state.value  !== 'process'}"
                         type="button">
                         đang xử lý
                     </button>
                     <button class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary':  !payslipRecord || payslipRecord.state === 'draft', 'btn-secondary':  payslipRecord && payslipRecord.state !== 'draft'}"
+                        [ngClass]="{'btn-primary':  this.state.value === 'draft', 'btn-secondary':  this.state.value !== 'draft'}"
                         type="button">
                         Nháp
                     </button>
@@ -112,7 +112,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <label>{{this.employee? (this.employee.wage? (this.employee.wage | currency: "VND"): 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
-                                    &nbsp; <a *ngIf="employee && !employee.struct" href="#">thiết lập</a>
+                                    &nbsp; <a *ngIf="employee && !employee.wage" href="#">thiết lập</a>
                                 </td>
                             </tr>
                             <tr>
@@ -122,14 +122,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label>{{this.employee? (this.employee.struct? this.employee.struct.name: 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
-                                    &nbsp; <a *ngIf="employee && !employee.struct" href="#">thiết lập</a>
+                                    <label>{{this.employee? (this.struct.value? this.struct.value.name: 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
+                                    &nbsp; <a *ngIf="employee && !this.struct.value" href="#">thiết lập</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div *ngIf="this.IsShowLines == true " class="tab-contanner">
+                <div *ngIf="this.state.value != 'draft' " class="tab-contanner">
                     <app-hr-payslip-line-list></app-hr-payslip-line-list>
                 </div>
             </div>
