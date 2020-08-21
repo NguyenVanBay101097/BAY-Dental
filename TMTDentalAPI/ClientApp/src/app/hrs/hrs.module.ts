@@ -48,7 +48,7 @@ import { HrPayslipLineListComponent } from './hr-payslip-line-list/hr-payslip-li
     HrPayslipService
   ],
   entryComponents: [
-    HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent
+    HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
   ]
 })
 export class HrsModule { }

@@ -3,13 +3,17 @@ import { HrPayslipDisplay, HrPayslipService } from '../hr-payslip.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { EmployeeDisplay, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeDisplay, EmployeePaged, EmployeeBasic } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { HrPayslipLineListComponent } from '../hr-payslip-line-list/hr-payslip-line-list.component';
 import { ToaThuocLinesSaveCuFormComponent } from 'src/app/toa-thuocs/toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
+import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
+import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-create-update',
@@ -26,13 +30,16 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   listEmployees: any[];
   id: any;
   IsShowLines = false;
+  listStructs: any[];
 
   constructor(
     private fb: FormBuilder, private router: Router,
     private hrPayslipService: HrPayslipService,
     private employeeService: EmployeeService,
+    private hrPayrollStructureService: HrPayrollStructureService,
     private intlService: IntlService,
     private notificationService: NotificationService,
+    private modalService: NgbModal,
     private activeroute: ActivatedRoute
   ) { }
 
@@ -41,7 +48,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       structId: [null, [Validators.required]],
       struct: null,
       employeeId: [null, [Validators.required]],
-      employee: [null, [Validators.required]],
+      employee: null,
       dateFrom: [null, [Validators.required]],
       dateTo: [null, [Validators.required]],
       name: [null, [Validators.required]],
@@ -78,8 +85,8 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
 
   GetEmployeePaged() {
     const val = new EmployeePaged();
-    this.employeeService.getEmployeeSimpleList(val).subscribe(res => {
-      this.listEmployees = res;
+    this.employeeService.getEmployeePaged(val).subscribe(res => {
+      this.listEmployees = res.items;
     });
 
   }
@@ -87,20 +94,52 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   EmployeeFilter(value) {
     const val = new EmployeePaged();
     val.search = value;
-    return this.employeeService.getEmployeeSimpleList(val).subscribe((result: any) => {
+    return this.employeeService.getEmployeePaged(val).subscribe((result: any) => {
       this.listEmployees = result;
     });
   }
 
   EmployeeChange(e) {
-    this.employeeService.getEmployee(e.id).subscribe((res: any) => {
-      this.employee = res;
-      this.struct.setValue(res.struct);
-      this.structId.setValue(res.struct ? res.struct.id : null);
-      this.employeeId.setValue(res.id);
+    // if (!e) {
+    //   this.listStructs = null;
+    //   this.struct.setValue(null);
+    //   this.structId.setValue(null);
+    // } else {
+    //   this.employeeId.setValue(e.id);
+    //   this.employee = e;
+    //   this.name.setValue('Lương tháng ' + (this.dateFrom.value ? (this.dateFrom.value.getMonth() + 1) : '') + ' của ' + e.name);
+    //   if (e.structureTypeId) {
+    //     this.LoadStructList(e.structureTypeId, null);
+    //   } else {
+    //     this.listStructs = null;
+    //     this.struct.setValue(null);
+    //     this.structId.setValue(null);
+    //   }
+    // }
+    console.log('a');
+    console.log(e);
+  }
 
-      this.name.setValue('Lương tháng ' + (this.dateFrom.value ? (this.dateFrom.value.getMonth() + 1) : '') + ' của ' + res.name);
+  LoadStructList(typeId, filter) {
+    const val = new HrPayrollStructurePaged();
+    val.structureTypeId = typeId;
+    val.limit = 20;
+    val.offset = 0;
+    if (filter != null) {
+      val.filter = filter;
+    }
+    this.hrPayrollStructureService.getPaged(val).subscribe(res => {
+      this.listStructs = res.items;
     });
+  }
+
+  handleFilterStruct(value) {
+    this.LoadStructList(this.employee.structureTypeId, value);
+  }
+
+  SelectStructChange(value) {
+    this.structId.setValue(value.id);
+    console.log(value);
   }
 
   ChangeDateFrom(e) {
@@ -108,7 +147,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   onSaveOrUpdate() {
-    this.ValidateForm();
+    if (!this.ValidateForm()) { return false; }
     const val = this.payslipForm.value;
     val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
     val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
@@ -144,7 +183,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ComputeSalary() {
-    this.ValidateForm();
+    if (!this.ValidateForm()) { return false; }
 
     if (!this.id) {
       const val = this.payslipForm.value;
@@ -176,7 +215,8 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ComputeSalaryAgain() {
-    this.ValidateForm();
+    if (!this.ValidateForm()) { return false; }
+
     const val = this.payslipForm.value;
     val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
     val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
@@ -219,5 +259,26 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     if (!this.payslipForm.valid && this.payslipForm.enabled) {
       return false;
     }
+
+    if (this.dateFrom.value > this.dateTo.value) {
+      this.notificationService.show({
+        content: ' thời gian bắt đầu phải bé hơn thời gian kết thúc!',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
+    return true;
+  }
+
+  editEmployee() {
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa nhân viên';
+    modalRef.componentInstance.empId = this.employee.id;
+    modalRef.result.then(() => {
+      // this.getEmployeesList();
+    });
   }
 }

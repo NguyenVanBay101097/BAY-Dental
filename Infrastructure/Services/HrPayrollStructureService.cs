@@ -43,6 +43,11 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Name.Contains(val.Filter));
             }
+            if (val.structureTypeId.HasValue)
+            {
+
+                query = query.Where(x => x.TypeId == val.structureTypeId);
+            }
             query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();

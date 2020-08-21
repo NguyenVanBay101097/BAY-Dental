@@ -7,8 +7,8 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button *ngIf="this.state.value != 'done'" type="button" class="btn btn-primary btn-sm" accesskey="s"
-                        (click)="onSaveOrUpdate()">Lưu</button>
+                    <button *ngIf="this.state.value != 'done'" type="button" class="btn btn-primary btn-sm"
+                        accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
                     <a [routerLink]="['/hr/payslip-to-pay/create']" accesskey="c" *ngIf="id"
                         class="btn btn-secondary btn-sm">Thêm
                         mới</a>
@@ -27,20 +27,20 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div *ngIf="this.state.value != 'done'" class="o_statusbar_buttons">
-                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1" class="btn btn-primary btn-sm"
-                        (click)="ConfirmSalary()">
+                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"
+                        class="btn btn-primary btn-sm" (click)="ConfirmSalary()">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'draft'" accesskey="1" class="btn btn-primary btn-sm"
-                        (click)="ComputeSalary()">
+                    <button type="button" *ngIf="this.state.value == 'draft'" accesskey="1"
+                        class="btn btn-primary btn-sm" (click)="ComputeSalary()">
                         Tính lương
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'process'" accesskey="1" class="btn btn-primary btn-sm"
-                    (click)="ComputeSalaryAgain()">
-                    Tính Lại lương
-                </button>
-                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1" class="btn btn-danger btn-sm"
-                        (click)="CancelCompute()">
+                    <button type="button" *ngIf="this.state.value == 'process'" accesskey="1"
+                        class="btn btn-primary btn-sm" (click)="ComputeSalaryAgain()">
+                        Tính Lại lương
+                    </button>
+                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"
+                        class="btn btn-danger btn-sm" (click)="CancelCompute()">
                         hủy tính lương
                     </button>
                 </div>
@@ -74,7 +74,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox class="w-100" [data]="listEmployees" [textField]="'name'"
-                                        [filterable]="true" (selectionChange)="EmployeeChange($event)"
+                                        [filterable]="true"
                                         (filterChange)="EmployeeFilter($event)" formControlName="employee"
                                         [valueField]="'id'">
                                     </kendo-combobox>
@@ -88,7 +88,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <label>từ:</label>
-                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName="dateFrom"></kendo-datepicker>
+                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName="dateFrom">
+                                    </kendo-datepicker>
                                     <label>đến:</label>
                                     <kendo-datepicker formControlName='dateTo'></kendo-datepicker>
                                 </td>
@@ -105,20 +106,9 @@
                             </tr>
                         </tbody>
                     </table>
-                    
+
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Lương hợp đồng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <label [ngClass]="{'text-danger' : !this.employee || !this.employee.wage}" >{{this.employee? (this.employee.wage? (this.employee.wage | currency: "VND"): 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
-                                    &nbsp; <a *ngIf="employee && !employee.wage" href="#">thiết lập</a>
-                                </td>
-                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -126,8 +116,19 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label [ngClass]="{'text-danger' : !this.employee || !this.struct.value}">{{this.employee? (this.struct.value? this.struct.value.name: 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
-                                    &nbsp; <a *ngIf="employee && !this.struct.value" href="#">thiết lập</a>
+                                    <kendo-combobox #typeCbx 
+                                    (filterChange)="handleFilterStruct($event)" (selectionChange)="SelectStructChange($event)"
+                                     formControlName="struct" [data]="listStructs" [filterable]="true" textField="name"
+                                        valueField="id">
+                                    </kendo-combobox>
+                                    <div *ngIf="!listStructs" class="text-warning">
+                                        <div>
+                                            <label
+                                            class="text-danger">{{this.employeeId?.value? (this.struct.value? this.struct.value.name: 'chưa thiết lập loại mẫu lương') : ''}}</label>
+                                        &nbsp; <a (click)="editEmployee()"
+                                            *ngIf="this.employeeId?.value && !this.struct.value" href="#">thiết lập</a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
