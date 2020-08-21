@@ -146,7 +146,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
-    if (this.lineState != "draft") {
+    if (this.lineState == "done") {
       return false;
     }
 

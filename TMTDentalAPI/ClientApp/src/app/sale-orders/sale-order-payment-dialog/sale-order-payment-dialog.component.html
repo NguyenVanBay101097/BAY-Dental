@@ -102,7 +102,7 @@
                                     <td class="text-right align-middle">{{ line.get('amountResidual').value | number }}
                                     </td>
                                     <td class="text-right">
-                                        <kendo-numerictextbox [min]="0" [max]="line.get('amountResidual').value"
+                                        <kendo-numerictextbox
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true" style="max-width: 200px;"
                                             formControlName="amountPrepaid" (valueChange)="changeMoneyLine(line)">
                                         </kendo-numerictextbox>
