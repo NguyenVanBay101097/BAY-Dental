@@ -91,45 +91,6 @@ namespace Infrastructure.Services
             await DeleteAsync(res);
         }
 
-        public async Task<IEnumerable<CommissionSettlementReportOutput>> ReportSettlements(CommissionSettlementReport val)
-        {
-            var query = SearchQuery();
-
-            if (val.DateFrom.HasValue)
-            {
-                val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.DateCreated >= val.DateFrom);
-            }
-                
-            if (val.DateTo.HasValue)
-            {
-                val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated >= val.DateTo);
-            }
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
-
-            if (val.EmployeeId.HasValue)
-                query = query.Where(x => x.EmployeeId == val.EmployeeId);
-
-            var result = await query
-                    .GroupBy(x => new
-                    {
-                        EmployeeId = x.EmployeeId,
-                        EmployeeName = x.Employee.Name
-                    })
-                    .Select(x => new CommissionSettlementReportOutput
-                    {
-                        EmployeeName = x.Key.EmployeeName,
-                        BaseAmount = x.Sum(s => s.BaseAmount),
-                        Percentage = x.Average(s => s.Percentage),
-                        Amount = x.Sum(s => s.Amount),
-                    }).ToListAsync();
-
-            return result;
-        }
-
         public async Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val)
         {
             var query = SearchQuery();
@@ -143,7 +104,7 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated >= val.DateTo);
+                query = query.Where(x => x.DateCreated <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -160,6 +121,7 @@ namespace Infrastructure.Services
                 })
                 .Select(x => new CommissionSettlementReportOutput
                 {
+                    EmployeeId = x.Key.EmployeeId,
                     EmployeeName = x.Key.EmployeeName,
                     BaseAmount = x.Sum(s => s.BaseAmount),
                     Percentage = x.Average(s => s.Percentage),
@@ -169,7 +131,7 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<IEnumerable<CommissionSettlementReportItemOutput>> GetReportDetail(CommissionSettlementReportItem val)
+        public async Task<IEnumerable<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val)
         {
             var query = SearchQuery();
 
@@ -182,7 +144,7 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated >= val.DateTo);
+                query = query.Where(x => x.DateCreated <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -192,7 +154,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
             var result = await query
-                .Select(x => new CommissionSettlementReportItemOutput
+                .Select(x => new CommissionSettlementReportDetailOutput
                 {
                     Date = x.LastUpdated,
                     ProductName = x.SaleOrderLine.Name,

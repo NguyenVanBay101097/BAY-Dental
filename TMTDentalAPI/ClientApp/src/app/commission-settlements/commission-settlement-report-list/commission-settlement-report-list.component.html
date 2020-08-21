@@ -1,0 +1,99 @@
+
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Thống kê hoanh thu hoa hồng</li>
+        </ol>
+    </div>
+</div>
+
+<div class="bg-white">
+    <div class="o_form_view o_form_nosheet o_form_editable">
+        <div class="o_group" [formGroup]="formGroup">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Ngày bắt đầu
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker class="form-control" formControlName="dateFrom"></kendo-datepicker>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Ngày kết thúc
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker class="form-control" formControlName="dateTo"></kendo-datepicker>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label for="o_field_input_10" class="o_form_label o_form_label_help">
+                                Nhân viên
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-combobox [filterable]="true" [data]="filteredEmployees" [textField]="'name'" #employeeCbx
+                                formControlName="employee" [valueField]="'id'">
+                            </kendo-combobox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label for="o_field_input_10" class="o_form_label o_form_label_help">
+                                Chi nhánh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <kendo-combobox [filterable]="true" [data]="filteredCompanies" [textField]="'name'" #companyCbx
+                                formControlName="company" [valueField]="'id'">
+                            </kendo-combobox>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mb-2">
+            <button type="button" class="btn btn-primary btn-sm" (click)="loadDataFromApi()">Báo cáo</button>
+        </div>
+        <div>
+            <kendo-grid [data]="reportResults" 
+                [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)">
+                
+                <kendo-grid-column field="employeeName" title="Nhân viên">
+                </kendo-grid-column>        
+                <kendo-grid-column field="baseAmount" title="Tổng thanh toán" class="text-right" >
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.baseAmount | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="percentage" title="Phần trăm hoa hồng trung bình" class="text-right">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.percentage | number}} %
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="amount" title="Tổng hoa hồng" class="text-right">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.amount | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <app-commission-settlement-report-detail [employeeId]="dataItem.employeeId" [filter]="getFilter()"></app-commission-settlement-report-detail>
+                </div>
+            </kendo-grid>
+        </div>
+    </div>
+</div>
+

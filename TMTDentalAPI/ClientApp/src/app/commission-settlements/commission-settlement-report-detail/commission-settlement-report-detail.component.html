@@ -1,0 +1,25 @@
+<kendo-grid [data]="reportDetailResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date:'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="productName" title="Dịch vụ">
+    </kendo-grid-column>
+    <kendo-grid-column field="baseAmount" title="Thanh toán" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.baseAmount | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="percentage" title="Phần trăm" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.percentage | number}} %
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="amount" title="Hoa hồng" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

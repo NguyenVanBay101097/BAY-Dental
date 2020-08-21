@@ -18,6 +18,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CommissionSettlementReportOutput
     {
         public string EmployeeName { get; set; }
+        public Guid? EmployeeId { get; set; }
         /// <summary>
         /// số tiền thanh toán
         /// </summary>
@@ -34,15 +35,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Amount { get; set; }
     }
 
-    public class CommissionSettlementReportItem
-    {
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
-        public Guid? EmployeeId { get; set; }
-        public Guid? CompanyId { get; set; }
-    }
-
-    public class CommissionSettlementReportItemOutput
+    public class CommissionSettlementReportDetailOutput
     {
         public DateTime? Date { get; set; }
         /// <summary>
