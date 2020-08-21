@@ -33,6 +33,8 @@ namespace Infrastructure.Services
             var emp = await empObj.SearchQuery(x => x.Id == EmployeeId.Value).FirstOrDefaultAsync();
             var structure = await structureObj.SearchQuery(x => x.TypeId == emp.StructureTypeId).Include(x => x.Rules).FirstOrDefaultAsync();
             var rules = structure.Rules.ToList();
+            var CongEmp = await chamCongObj.CountCong(emp.Id, DateFrom, DateTo);
+            var amoutADay = emp.Wage / CongEmp.CongChuan1Thang;
             for (int i = 0; i < rules.Count(); i++)
             {
                 var rule = rules[i];
@@ -43,27 +45,22 @@ namespace Infrastructure.Services
                 line.Sequence = i;
                 switch (rule.AmountSelect)
                 {
-
                     case "code":
-
                         switch (rule.AmountCodeCompute)
                         {
                             //Tinh luong chinh cua Emp = so ngay cong * luong co ban
                             case "LC":
-                                var CongEmp = await chamCongObj.CountCong(emp.Id, DateFrom, DateTo);
-                                var amoutADay = emp.Wage / CongEmp.CongChuan1Thang;
                                 line.Amount = amoutADay * CongEmp.SoCong;
                                 line.Total = line.Amount;
                                 break;
                             //Hoa hong get tu service hoa hong
                             case "HH":
-
+                                    
                                 break;
 
                             default:
                                 break;
                         }
-
                         break;
 
                     case "fixamount":
@@ -77,7 +74,8 @@ namespace Infrastructure.Services
                         {
                             //% dua vao luong chinh
                             case "LC":
-
+                                line.Amount = (amoutADay * CongEmp.SoCong) * (rule.AmountPercentage / 100);
+                                line.Total = (amoutADay * CongEmp.SoCong) * (rule.AmountPercentage / 100);
                                 break;
                             //% dua vao hoa hong
                             case "HH":
@@ -99,7 +97,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Lines).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x => x.Lines).FirstOrDefaultAsync();
             return res;
         }
 
