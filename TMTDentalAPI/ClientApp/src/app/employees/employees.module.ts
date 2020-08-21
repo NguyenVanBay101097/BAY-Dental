@@ -9,6 +9,8 @@ import { EmployeeCreateUpdateComponent } from './employee-create-update/employee
 import { EmployeeService } from './employee.service';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
 import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employee-advance-search.component';
+import { EmpCategoryService } from '../employee-categories/emp-category.service';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent, EmployeeAdvanceSearchComponent],
@@ -17,11 +19,12 @@ import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employ
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
+    NgbModule,
     EmployeesRoutingModule
   ],
   entryComponents: [EmployeeCreateUpdateComponent],
   providers: [
-    EmployeeService
+    EmployeeService,
   ]
 })
 export class EmployeesModule { }

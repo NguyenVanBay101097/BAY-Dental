@@ -246,7 +246,7 @@ namespace Infrastructure.Services
                 .Include("DefaultResourceCalendar")
                 .Include("DefaultResourceCalendar.ResourceCalendarAttendances").FirstOrDefaultAsync();
 
-            var listChamCongs = await query.ToListAsync();
+            var listChamCongs = await query.Include(x => x.WorkEntryType).ToListAsync();
             if (structureType != null)
                 listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
 
@@ -257,7 +257,7 @@ namespace Infrastructure.Services
 
             foreach (var cc in listChamCongs)
             {
-                if (!cc.WorkEntryType.IsHasTimeKeeping)
+                if (cc.WorkEntryType == null || !cc.WorkEntryType.IsHasTimeKeeping)
                     continue;
                 foreach (var att in listResourceCalendarAtts)
                 {

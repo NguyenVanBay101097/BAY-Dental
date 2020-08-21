@@ -16,8 +16,13 @@ import { IntlService } from '@progress/kendo-angular-intl';
 })
 export class EmployeeCreateUpdateComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: EmployeeService,
-    private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, private modalService: NgbModal, private intlService: IntlService) { }
+  constructor(
+    private fb: FormBuilder,
+    private service: EmployeeService,
+    private empCategService: EmpCategoryService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private intlService: IntlService) { }
   empId: string;
 
   isChange: boolean = false;
