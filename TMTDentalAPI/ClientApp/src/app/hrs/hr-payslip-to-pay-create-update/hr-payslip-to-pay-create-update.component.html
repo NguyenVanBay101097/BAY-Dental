@@ -35,6 +35,10 @@
                         (click)="ComputeSalary()">
                         Tính lương
                     </button>
+                    <button type="button" *ngIf="this.state.value == 'process'" accesskey="1" class="btn btn-primary btn-sm"
+                    (click)="ComputeSalaryAgain()">
+                    Tính Lại lương
+                </button>
                     <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1" class="btn btn-danger btn-sm"
                         (click)="CancelCompute()">
                         hủy tính lương
@@ -79,12 +83,12 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        thời gian
+                                        Thời gian
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <label>từ:</label>
-                                    <kendo-datepicker formControlName="dateFrom"></kendo-datepicker>
+                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName="dateFrom"></kendo-datepicker>
                                     <label>đến:</label>
                                     <kendo-datepicker formControlName='dateTo'></kendo-datepicker>
                                 </td>
@@ -92,7 +96,7 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        tên
+                                        Tên
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -111,7 +115,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label>{{this.employee? (this.employee.wage? (this.employee.wage | currency: "VND"): 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
+                                    <label [ngClass]="{'text-danger' : !this.employee || !this.employee.wage}" >{{this.employee? (this.employee.wage? (this.employee.wage | currency: "VND"): 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
                                     &nbsp; <a *ngIf="employee && !employee.wage" href="#">thiết lập</a>
                                 </td>
                             </tr>
@@ -122,7 +126,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label>{{this.employee? (this.struct.value? this.struct.value.name: 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
+                                    <label [ngClass]="{'text-danger' : !this.employee || !this.struct.value}">{{this.employee? (this.struct.value? this.struct.value.name: 'chưa thiết lập') : 'chưa chọn nhân viên'}}</label>
                                     &nbsp; <a *ngIf="employee && !this.struct.value" href="#">thiết lập</a>
                                 </td>
                             </tr>

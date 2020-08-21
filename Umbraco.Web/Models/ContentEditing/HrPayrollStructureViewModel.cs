@@ -46,7 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
         public bool RegularPay { get; set; }
         public Guid TypeId { get; set; }
-        public HrPayrollStructureType Type { get; set; }
+        public HrPayrollStructureTypeDisplay Type { get; set; }
         public bool UseWorkedDayLines { get; set; }
         public List<HrSalaryRuleDisplay> Rules { get; set; }
         public int? TotalRules

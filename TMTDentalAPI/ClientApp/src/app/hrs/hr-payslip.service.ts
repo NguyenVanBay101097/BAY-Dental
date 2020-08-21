@@ -93,8 +93,8 @@ export class HrPayslipService {
         return this.http.post(this.baseApi + this.apiUrl + '/ComputePayslip', val);
     }
 
-    ComputeLinePut( id: string, val: any) {
-        return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslip/' + id, val);
+    ComputeLinePut( id: string) {
+        return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslipLineUpdate/' + id, null);
     }
 
     getPayslipLinePaged(val: any): Observable<HrPayslipLinePaging> {

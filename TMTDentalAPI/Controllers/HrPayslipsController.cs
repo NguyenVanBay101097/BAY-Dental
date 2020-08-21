@@ -105,12 +105,11 @@ namespace TMTDentalAPI.Controllers
                 await _hrPayslipLineService.DeleteAsync(str.Lines);
             var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, str.DateFrom, str.DateTo)).ToList();
             if (lines != null)
-                foreach (var line in lines)
-                {
-                    line.SlipId = id;
-                }
-            await _hrPayslipLineService.CreateAsync(lines);
-
+            {
+                str.Lines = lines;
+            }
+            str.State = "process";
+            await _HrPayslipService.UpdateAsync(str);
             return NoContent();
         }
 

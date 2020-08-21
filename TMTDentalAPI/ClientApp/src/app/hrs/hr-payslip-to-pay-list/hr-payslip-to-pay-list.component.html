@@ -37,17 +37,17 @@
                 {{dataItem.employee.name }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="dateFrom" title="từ ngày">
+        <kendo-grid-column field="dateFrom" title="Từ ngày">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.dateFrom | date:"shortDate" }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="dateTo" title="đến ngày">
+        <kendo-grid-column field="dateTo" title="Đến ngày">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.dateTo | date:"shortDate"}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="trạng thái">
+        <kendo-grid-column field="state" title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.state == 'draft' ? 'nháp' : (dataItem.state == 'process' ? 'đang xử lý' : 'hoàn thành')  }}
             </ng-template>
