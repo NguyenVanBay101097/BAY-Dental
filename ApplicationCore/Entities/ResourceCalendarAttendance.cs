@@ -48,7 +48,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public double HourTo { get; set; }
 
-        public Guid? CalendarId { get; set; }
+        public Guid CalendarId { get; set; }
         public ResourceCalendar Calendar { get; set; }
 
         /// <summary>
@@ -56,5 +56,7 @@ namespace ApplicationCore.Entities
         /// ('morning', 'Morning'), ('afternoon', 'Afternoon')
         /// </summary>
         public string DayPeriod { get; set; }
+
+        
     }
 }

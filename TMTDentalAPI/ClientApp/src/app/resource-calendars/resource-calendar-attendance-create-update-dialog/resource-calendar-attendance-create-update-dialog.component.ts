@@ -91,7 +91,7 @@ export class ResourceCalendarAttendanceCreateUpdateDialogComponent implements On
     var dd = this.intl.formatDate(this.formGroup.get('hourFrom').value, "HH:mm")
     val.hourFrom = this.TimeToNumber(dd);
     val.calendarId = this.calendarId ? this.calendarId : (this.resourceCalendarAtt.calendarId ? this.resourceCalendarAtt.calendarId : null);
-    val.sequence = this.resourceCalendarAtt.sequence;
+    //val.sequence = this.resourceCalendarAtt.sequence;
     if (this.id) {
       this.resourceCalendarService.updateAtt(this.id, val).subscribe(
         () => {

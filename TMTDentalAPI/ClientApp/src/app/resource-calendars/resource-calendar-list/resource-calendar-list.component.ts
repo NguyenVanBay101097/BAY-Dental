@@ -21,6 +21,8 @@ export class ResourceCalendarListComponent implements OnInit {
   opened = false;
   searchUpdate = new Subject<string>();
   search: string;
+
+
   constructor(
     private modalService: NgbModal,
     private resourceCalendarService: ResourceCalendarService,
@@ -73,16 +75,20 @@ export class ResourceCalendarListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: ' + this.title;
-
-    modalRef.result.then(() => {
-      this.resourceCalendarService.delete(item.id).subscribe(() => {
-        this.loadDataFromApi();
-      }, err => {
-        console.log(err);
-      });
-    }, () => {
-    });
+    modalRef.componentInstance.title = "Xóa: " + this.title;
+    modalRef.result.then(
+      () => {
+        this.resourceCalendarService.delete(item.id).subscribe(
+          () => {
+            this.loadDataFromApi();
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      },
+      () => { }
+    );
   }
 
 }
