@@ -234,6 +234,7 @@ namespace Infrastructure.Services
             var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
             var empObj = GetService<IEmployeeService>();
             var query = SearchQuery(x => x.EmployeeId == empId);
+            var listResourceCalendarAtts = new List<ResourceCalendarAttendance>();
             var congEmp = new CongEmplyee();
             if (to.HasValue)
                 query = query.Where(x => x.Date <= to);
@@ -246,7 +247,8 @@ namespace Infrastructure.Services
                 .Include("DefaultResourceCalendar.ResourceCalendarAttendances").FirstOrDefaultAsync();
 
             var listChamCongs = await query.ToListAsync();
-            var listResourceCalendarAtts = structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList();
+            if (structureType != null)
+                listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
 
             foreach (var att in listResourceCalendarAtts)
             {
@@ -255,9 +257,10 @@ namespace Infrastructure.Services
 
             foreach (var cc in listChamCongs)
             {
+                if (!cc.WorkEntryType.IsHasTimeKeeping)
+                    continue;
                 foreach (var att in listResourceCalendarAtts)
                 {
-                    
 
                     if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.DayOfWeek))
                     {
@@ -266,10 +269,25 @@ namespace Infrastructure.Services
 
                         if (ccTimeIn <= att.HourFrom && ccTimeOut >= att.HourTo)
                             congEmp.SoCong++;
-                        else if (ccTimeIn > att.HourFrom && ccTimeOut < att.HourTo)
-                            if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
-                                congEmp.SoCong++;
-                    } 
+                        else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
+                            congEmp.SoCong++;
+                        else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value / 2)
+                            congEmp.SoCong = congEmp.SoCong + 1 / 2;
+                    }
+                    //else
+                    //{
+                    //    if ((int)cc.Date.Value.DayOfWeek == 0 || (int)cc.Date.Value.DayOfWeek == 6)
+                    //    //{
+                    //    //    var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
+                    //    //    var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
+
+                    //    //    if (ccTimeIn <= att.HourFrom && ccTimeOut >= att.HourTo)
+                    //    //        congEmp.SoCong++;
+                    //    //    else if (ccTimeIn > att.HourFrom && ccTimeOut < att.HourTo)
+                    //    //        if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
+                    //    //            congEmp.SoCong++;
+                    //    //}
+                    //}
                 }
             }
 
