@@ -269,7 +269,7 @@ namespace Infrastructure.Services
                         else if (ccTimeIn > att.HourFrom && ccTimeOut < att.HourTo)
                             if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
                                 congEmp.SoCong++;
-                    }
+                    } 
                 }
             }
 

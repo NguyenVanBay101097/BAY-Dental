@@ -94,26 +94,22 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> ComputePayslip(Guid id, HrPayslipSave val)
+        public async Task<IActionResult> ComputePayslipLineUpdate(Guid id)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var str = await _HrPayslipService.GetHrPayslipDisplay(id);
             if (str == null)
                 return NotFound();
-
-            str = _mapper.Map(val, str);
             if (str.Lines.Count() > 0)
-              await _hrPayslipLineService.DeleteAsync(str.Lines);
-
-            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.DateFrom, val.DateTo)).ToList();
-            foreach (var line in lines)
-            {
-                str.Lines.Add(line);
-            }
-            str.CompanyId = CompanyId;
-
-            await _HrPayslipService.UpdateAsync(str);
+                await _hrPayslipLineService.DeleteAsync(str.Lines);
+            var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, str.DateFrom, str.DateTo)).ToList();
+            if (lines != null)
+                foreach (var line in lines)
+                {
+                    line.SlipId = id;
+                }
+            await _hrPayslipLineService.CreateAsync(lines);
 
             return NoContent();
         }
