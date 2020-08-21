@@ -57,12 +57,14 @@ namespace TMTDentalAPI.Controllers
         {
             if (val == null)
                 return BadRequest();
-            var model = _mapper.Map<ResourceCalendar>(val);
+ 
             await _unitOfWork.BeginTransactionAsync();
-            model = await _resourceCalendarService.CreateAsync(model);
+            var res = await _resourceCalendarService.CreateResourceCalendar(val);
             _unitOfWork.Commit();
-            var res = _mapper.Map<ResourceCalendarBasic>(model);
-            return Ok(res);
+
+            var basic = _mapper.Map<ResourceCalendarBasic>(res);
+
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
@@ -71,25 +73,23 @@ namespace TMTDentalAPI.Controllers
             var model = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
             if (val == null || model == null)
                 return BadRequest();
-            if (model.ResourceCalendarAttendances != null)
-            {
-                await _resourceCalendarAttendanceService.DeleteAsync(model.ResourceCalendarAttendances.AsEnumerable());
-            }
-
-            model = _mapper.Map(val, model);
+          
             await _unitOfWork.BeginTransactionAsync();
-            await _resourceCalendarService.UpdateAsync(model);
+            await _resourceCalendarService.UpdateResourceCalendar(id,val);
             _unitOfWork.Commit();
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var resourceCalendar = await _resourceCalendarService.GetByIdAsync(id);
+            var resourceCalendar = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).ToListAsync();
             if (resourceCalendar == null)
                 return BadRequest();
+
             await _resourceCalendarService.DeleteAsync(resourceCalendar);
+
             return NoContent();
         }
 

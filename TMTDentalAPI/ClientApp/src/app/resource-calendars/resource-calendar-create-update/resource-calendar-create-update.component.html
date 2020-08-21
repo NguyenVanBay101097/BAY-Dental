@@ -5,7 +5,7 @@
                 <a routerLink="/resource-calendars">Lịch làm việc</a>
             </li>
             <li class="active">
-                <span *ngIf="id">{{resourceCalendar.name}}</span>
+                <span *ngIf="id">{{temp_name}}</span>
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
@@ -14,7 +14,7 @@
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                         Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="onNew()" accesskey="c" *ngIf="id">
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c" *ngIf="id">
                         Thêm mới
                     </button>
                 </div>
@@ -23,16 +23,22 @@
     </div>
 </div>
 
-<div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+<div class="o_content">  
+    <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-                <div class="oe_title">
-                    <input [ngClass]="{'border-0': id}" type="text" class="form-control" style="font-size: 2rem;"
-                        formControlName="name">
-                </div>
-                <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
+            <div class="o_form_sheet"> 
+                <div class="oe_title mt-2 mb-3">
+                    <label class="o_form_label oe_edit_only">Tên </label>
+                    <h1 class="mb-1">
+                        <input class="form-control" formControlName="name" 
+                            name="name" required #nameInput>
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                      </div>
+                </div>            
+                <div class="o_group mb-0">                               
+                    <table class="o_group o_inner_group o_group_col_4">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -42,18 +48,22 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-numerictextbox class="form-control" formControlName="hoursPerDay"
-                                        [autoCorrect]="autoCorrect">
+                                        [autoCorrect]="true" required>
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="o_notebook">
                     <ngb-tabset>
                         <ngb-tab title="giờ làm việc">
-                            <ng-template ngbTabContent>
-                                <button class="btn btn-secondary btn-sm my-2" (click)="addAtt()">Thêm giờ làm
-                                    việc</button>
-                                <table class="table">
+                            <ng-template ngbTabContent>                              
+                                <div class="d-flex">
+                                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm giờ làm
+                                    việc</button>                    
+                                </div>
+                                <table class="table mt-2">
                                     <thead>
                                         <tr>
                                             <th scope="col">Tên</th>
@@ -64,56 +74,52 @@
                                             <th scope="col">Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <!-- <tbody cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-                                        <tr class="example-box" *ngFor="let item of listRessourceCalendarAttendance"
-                                            cdkDragLockAxis="y" cdkDrag>
-                                            <td>{{item.name}}</td>
-                                            <td *ngIf="item.dayOfWeek=='0'">Thứ 2</td>
-                                            <td *ngIf="item.dayOfWeek=='1'">Thứ 3</td>
-                                            <td *ngIf="item.dayOfWeek=='2'">Thứ 4</td>
-                                            <td *ngIf="item.dayOfWeek=='3'">Thứ 5</td>
-                                            <td *ngIf="item.dayOfWeek=='4'">Thứ 6</td>
-                                            <td *ngIf="item.dayOfWeek=='5'">Thứ 7</td>
-                                            <td *ngIf="item.dayOfWeek=='6'">Chủ nhật</td>
-                                            <td *ngIf="item.dayPeriod=='morning'">Sáng</td>
-                                            <td *ngIf="item.dayPeriod=='afternoon'">Chiều</td>
-                                            <td>{{minTommss(item.hourFrom)}}</td>
-                                            <td>{{minTommss(item.hourTo)}}</td>
-                                            <td>
-                                                <button (click)="removeAtt(item)" class="btn btn-danger btn-sm"><i
-                                                        class="far fa-trash-alt"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr style="justify-content: center; cursor: pointer; 
-                                        background-color: #f9f9f9;" class="example-box">
-                                            <td colspan="6" (click)="AddAtt()">Thêm giờ làm việc</td>
-                                        </tr>
-                                    </tbody> -->
-                                    <tbody>
-                                        <tr *ngFor="let item of listRessourceCalendarAttendance">
-                                            <td>{{item.name}}</td>
-                                            <td *ngIf="item.dayOfWeek=='0'">Thứ 2</td>
-                                            <td *ngIf="item.dayOfWeek=='1'">Thứ 3</td>
-                                            <td *ngIf="item.dayOfWeek=='2'">Thứ 4</td>
-                                            <td *ngIf="item.dayOfWeek=='3'">Thứ 5</td>
-                                            <td *ngIf="item.dayOfWeek=='4'">Thứ 6</td>
-                                            <td *ngIf="item.dayOfWeek=='5'">Thứ 7</td>
-                                            <td *ngIf="item.dayOfWeek=='6'">Chủ nhật</td>
-                                            <td *ngIf="item.dayPeriod=='morning'">Sáng</td>
-                                            <td *ngIf="item.dayPeriod=='afternoon'">Chiều</td>
-                                            <td>{{minTommss(item.hourFrom)}}</td>
-                                            <td>{{minTommss(item.hourTo)}}</td>
-                                            <td>
-                                                <button (click)="editAtt(item)" class="btn btn-info mr-2 btn-sm">
-                                                    <i class="far fa-edit"></i>
-                                                </button>
-                                                <button (click)="removeAtt(item)" class="btn btn-danger btn-sm"><i
-                                                        class="far fa-trash-alt"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody formArrayName="resourceCalendarAttendances" >
+                                        <ng-container *ngFor="let item of resourceCalendarAttendances.controls; let i = index;">
+                                            <tr [formGroupName]="i">
+                                                <td>
+                                                    <input class="form-control" formControlName="name" 
+                                                    name="name" >                                                 
+                                                </td>
+                                                <td>                                           
+                                                    <select class="form-control" formControlName="dayOfWeek" required>
+                                                        <option value="">Chọn thứ</option>
+                                                        <option value="0">Thứ 2</option>
+                                                        <option value="1">Thứ 3</option>
+                                                        <option value="2">Thứ 4</option>
+                                                        <option value="3">Thứ 5</option>
+                                                        <option value="4">Thứ 6</option>
+                                                        <option value="5">Thứ 7</option>
+                                                        <option value="6">Chủ nhật</option>
+                                                    </select>                                                          
+                                                  
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" formControlName="dayPeriod" required>
+                                                        <option value="">Chọn buổi</option>
+                                                        <option value="morning">Sáng</option>
+                                                        <option value="afternoon">Chiều</option>                                                              
+                                                    </select>     
+                                                </td>
+                                                <td>
+                                                    <kendo-timepicker formControlName="hourFrom"  required >
+                                                    </kendo-timepicker>
+                                                   
+                                                </td>
+                                                <td>
+                                                    <kendo-timepicker formControlName="hourTo" required > 
+                                                    </kendo-timepicker>
+                                                                    
+                                                </td>
+                                              
+                                                <td>
+                                                    <button type="button" title="Hủy" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>                                  
                                 </table>
 
                             </ng-template>
@@ -126,8 +132,10 @@
                             </ng-template>
                         </ngb-tab> -->
                     </ngb-tabset>
+                    <div class="clearfix"></div>
                 </div>
+
             </div>
         </div>
-    </form>
+    </div>
 </div>

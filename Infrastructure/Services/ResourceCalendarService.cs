@@ -25,7 +25,7 @@ namespace Infrastructure.Services
 
         public async Task<ResourceCalendar> GetDisplayAsync(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id).Include("ResourceCalendarAttendances").FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == id).Include(x=>x.ResourceCalendarAttendances).FirstOrDefaultAsync();
             return res;
         }
 
@@ -42,6 +42,62 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<ResourceCalendarBasic>>(items)
             };
+        }
+
+        public async Task<ResourceCalendar> CreateResourceCalendar(ResourceCalendarSave val)
+        {
+            var resourceCalendar = _mapper.Map<ResourceCalendar>(val);
+            resourceCalendar.CompanyId = CompanyId;
+
+            SaveAttendances(val, resourceCalendar);
+
+            return await CreateAsync(resourceCalendar);
+        }
+
+        public async Task UpdateResourceCalendar(Guid id, ResourceCalendarSave val)
+        {
+            var resourceCalendar = await SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            if (resourceCalendar == null)
+                throw new Exception("Lịch làm việc không tồn tại");
+
+            resourceCalendar = _mapper.Map(val, resourceCalendar);
+            SaveAttendances(val, resourceCalendar);
+
+            await UpdateAsync(resourceCalendar);
+        }
+
+
+        private void SaveAttendances(ResourceCalendarSave val, ResourceCalendar resourceCalendar)
+        {
+            //remove line
+            var lineToRemoves = new List<ResourceCalendarAttendance>();
+            foreach (var existLine in resourceCalendar.ResourceCalendarAttendances)
+            {
+                if (!val.ResourceCalendarAttendances.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                resourceCalendar.ResourceCalendarAttendances.Remove(line);
+            }
+
+            int sequence = 0;
+            foreach (var line in val.ResourceCalendarAttendances)
+                line.Sequence = sequence++;
+
+            foreach (var line in val.ResourceCalendarAttendances)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    resourceCalendar.ResourceCalendarAttendances.Add(_mapper.Map<ResourceCalendarAttendance>(line));
+                }
+                else
+                {
+                    _mapper.Map(line, resourceCalendar.ResourceCalendarAttendances.SingleOrDefault(c => c.Id == line.Id));
+                }
+            }
+
         }
     }
 }

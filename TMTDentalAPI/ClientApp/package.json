@@ -61,6 +61,7 @@
     "mxgraph": "^4.1.1",
     "ngx-autosize": "^1.7.5",
     "ngx-facebook": "^2.4.0",
+    "ngx-mask": "^8.2.0",
     "ngx-moment": "^3.5.0",
     "popper.js": "^1.15.0",
     "rxjs": "~6.4.0",

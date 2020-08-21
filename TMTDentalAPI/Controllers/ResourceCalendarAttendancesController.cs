@@ -37,14 +37,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetListResourceCalendadrAtt([FromQuery] ResourceCalendarAttendancePaged val)
-        {
-            if (val == null && !ModelState.IsValid)
-                return BadRequest();
-            var res = await _resourceCalendarAttendanceService.GetListResourceCalendadrAtt(val);
-            return Ok(res);
-        }
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetListResourceCalendadrAtt([FromQuery] ResourceCalendarAttendancePaged val)
+        //{
+        //    if (val == null && !ModelState.IsValid)
+        //        return BadRequest();
+        //    var res = await _resourceCalendarAttendanceService.GetListResourceCalendadrAtt(val);
+        //    return Ok(res);
+        //}
 
         [HttpPost("[action]")]
         public async Task<IActionResult> SetSequence(IList<ResourceCalendarAttendance> vals)

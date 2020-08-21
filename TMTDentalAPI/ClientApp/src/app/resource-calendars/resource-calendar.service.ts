@@ -63,7 +63,6 @@ export class ResourceCalendarAttendanceDisplay {
   hourTo: number;
   dayPeriod: string;
   calendarId: string;
-  sequence: number;
 }
 
 export class ResourceCalendarAttendanceBasic {
@@ -123,9 +122,9 @@ export class ResourceCalendarService {
     return this.http.get<ResourceCalendarAttendanceDisplay>(this.base_api + this.apiUrlAttendance + '/' + id);
   }
 
-  GetListResourceCalendadrAtt(val): Observable<ResourceCalendarAttendanceDisplay[]> {
-    return this.http.get<ResourceCalendarAttendanceDisplay[]>(this.base_api + this.apiUrlAttendance + '/GetListResourceCalendadrAtt', { params: val });
-  }
+  // GetListResourceCalendadrAtt(val): Observable<ResourceCalendarAttendanceDisplay[]> {
+  //   return this.http.get<ResourceCalendarAttendanceDisplay[]>(this.base_api + this.apiUrlAttendance + '/GetListResourceCalendadrAtt', { params: val });
+  // }
 
   setSequence(vals) {
     return this.http.post(this.base_api + this.apiUrlAttendance + '/SetSequence', vals);

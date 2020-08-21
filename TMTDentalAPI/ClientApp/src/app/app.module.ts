@@ -22,9 +22,12 @@ import 'moment/locale/vi';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
 
+
+
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
+
 
 registerLocaleData(localeVi, "vi");
 

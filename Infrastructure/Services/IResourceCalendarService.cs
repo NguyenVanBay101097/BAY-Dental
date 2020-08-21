@@ -13,5 +13,8 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<ResourceCalendarBasic>> GetPaged(ResourceCalendarPaged paged);
         Task<ResourceCalendar> GetDisplayAsync(Guid id);
+        Task<ResourceCalendar> CreateResourceCalendar(ResourceCalendarSave val);
+
+        Task UpdateResourceCalendar(Guid id, ResourceCalendarSave val);
     }
 }

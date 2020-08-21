@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             DayPeriod = "morning";
         }
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         /// <summary>
