@@ -13,6 +13,8 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from 'src/app/core/services/sale-order-line.service';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 
 @Component({
   selector: 'app-sale-order-line-dialog',
@@ -21,11 +23,11 @@ import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from 'src/app/core
 })
 export class SaleOrderLineDialogComponent implements OnInit {
   saleLineForm: FormGroup;
-  filteredUsers: UserSimple[] = [];
+  filteredEmployees: EmployeeBasic[] = [];
   filteredProducts: ProductSimple[];
   line: any;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
-  @ViewChild('salesmanCbx', { static: true }) salesmanCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   title: string;
   filteredToothCategories: ToothCategoryBasic[] = [];
 
@@ -43,7 +45,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService, private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -53,7 +55,6 @@ export class SaleOrderLineDialogComponent implements OnInit {
       productId: null,
       priceUnit: 0,
       productUOMQty: 1,
-      salesman: null,
       discount: 0,
       discountType: 'percentage',
       discountFixed: 0,
@@ -62,7 +63,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
       amountResidual:0,
       diagnostic: null,
       toothCategory: null,
-      state: 'draft'
+      state: 'draft',
+      employee: null
     });
 
     setTimeout(() => {
@@ -70,15 +72,17 @@ export class SaleOrderLineDialogComponent implements OnInit {
     }, 200);
 
     if (this.line) {
-      console.log(this.line);
       setTimeout(() => {
         if (this.line.product) {
           this.filteredProducts = _.unionBy(this.filteredProducts, [this.line.product], 'id');
         }
+
+        if (this.line.employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [this.line.employee], 'id');
+        }
        
         this.saleLineForm.patchValue(this.line);
         this.teethSelected = [...this.line.teeth];
-        console.log(this.line);
 
         if (this.line.toothCategory) {
           this.loadTeethMap(this.line.toothCategory);
@@ -86,15 +90,6 @@ export class SaleOrderLineDialogComponent implements OnInit {
 
       });
     } else {
-      var userInfo = this.authService.userInfo;
-      if (userInfo) {
-        var user = new UserSimple();
-        user.id = userInfo.id;
-        user.name = userInfo.name;
-        this.saleLineForm.get('salesman').setValue(user);
-        this.filteredUsers = _.unionBy(this.filteredUsers, [user], 'id');
-      }
-
       setTimeout(() => {
         this.loadDefaultToothCategory().subscribe(result => {
           this.saleLineForm.get('toothCategory').patchValue(result);
@@ -112,19 +107,19 @@ export class SaleOrderLineDialogComponent implements OnInit {
       this.productCbx.loading = false;
     });
 
-    this.salesmanCbx.filterChange.asObservable().pipe(
+    this.employeeCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => (this.salesmanCbx.loading = true)),
-      switchMap(value => this.searchUsers(value))
+      tap(() => (this.employeeCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
     ).subscribe(result => {
-      this.filteredUsers = result;
-      this.salesmanCbx.loading = false;
+      this.filteredEmployees = result.items;
+      this.employeeCbx.loading = false;
     });
 
     setTimeout(() => {
       this.loadFilteredProducts();
       this.loadToothCategories();
-      this.loadUsers();
+      this.loadEmployees();
     });
   }
 
@@ -163,17 +158,18 @@ export class SaleOrderLineDialogComponent implements OnInit {
     }
   }
 
-  loadUsers() {
-    this.searchUsers().subscribe(result => {
-      this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
+  loadEmployees() {
+    this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
     });
   }
 
 
-  searchUsers(filter?: string) {
-    var val = new UserPaged();
-    val.search = filter;
-    return this.userService.autocompleteSimple(val);
+  searchEmployees(filter?: string) {
+    var val = new EmployeePaged();
+    val.search = filter || '';
+    val.isDoctor = true;
+    return this.employeeService.getEmployeePaged(val);
   }
 
   getSelectedIndex(tooth: ToothDisplay) {
@@ -297,10 +293,9 @@ export class SaleOrderLineDialogComponent implements OnInit {
     var val = this.saleLineForm.value;
     val.productId = val.product ? val.product.id : null;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
-    val.salesmanId = val.salesman ? val.salesman.id : null;
+    val.employeeId = val.employee ? val.employee.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    console.log(val);
     this.activeModal.close(val);
   }
 

@@ -42,8 +42,8 @@
                                     <label class="o_form_label">Bác sĩ</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="user" [filterable]="true" [data]="userSimpleFilter"
-                                        #userCbx [valueField]="'id'" [textField]="'name'">
+                                    <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
+                                        #doctorCbx [valueField]="'id'" [textField]="'name'">
                                     </kendo-combobox>
                                 </td>
                             </tr>

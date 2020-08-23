@@ -165,5 +165,11 @@ namespace ApplicationCore.Entities
         /// Xác định line bị hủy bỏ
         /// </summary>
         public bool IsCancelled { get; set; }
+
+        /// <summary>
+        /// Bac si/phu ta
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
     }
 }

@@ -43,6 +43,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
-        public string SalesmanId { get; set; }
+        public Guid? EmployeeId { get; set; }
     }
 }

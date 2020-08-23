@@ -422,8 +422,8 @@
                                         <td (click)="actionEditDotKham(dk)" style="cursor: pointer; color: #007bff;">
                                             {{dk.name}}</td>
                                         <td>{{ dk.date | date : 'short' }}</td>
-                                        <td>{{ dk.user ? dk.user.name : '' }}</td>
-                                        <td>{{dk.assistantUser ? dk.assistantUser.name : ''}}</td>
+                                        <td>{{ dk.doctor ? dk.doctor.name : '' }}</td>
+                                        <td>{{dk.assistant ? dk.assistant.name : ''}}</td>
                                         <td>
                                             <a title="Xóa" (click)="deleteDotKham(dk)">
                                                 <span class="far fa-trash-alt"></span></a>

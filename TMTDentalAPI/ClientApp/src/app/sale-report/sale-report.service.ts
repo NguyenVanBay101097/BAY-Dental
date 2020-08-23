@@ -24,6 +24,7 @@ export class SaleReportSearch {
     search: string;
     isQuotation: boolean;
     state: string;
+    companyId: string;
 }
 
 export class SaleReportPartnerSearch {

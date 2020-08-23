@@ -478,11 +478,11 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderLinePartnerCommission> _PrepareSalesmanCommission(SaleOrderLine self)
         {
-            if (string.IsNullOrEmpty(self.SalesmanId))
+            if (!self.EmployeeId.HasValue)
                 return null;
 
             var employeeObj = GetService<IEmployeeService>();
-            var employee = await employeeObj.SearchQuery(x => x.UserId == self.SalesmanId).FirstOrDefaultAsync();
+            var employee = await employeeObj.SearchQuery(x => x.Id == self.EmployeeId).FirstOrDefaultAsync();
 
             if (employee == null || !employee.CommissionId.HasValue)
                 return null;

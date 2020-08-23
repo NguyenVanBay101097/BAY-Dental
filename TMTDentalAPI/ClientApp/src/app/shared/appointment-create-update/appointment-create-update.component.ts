@@ -6,7 +6,7 @@ import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service'
 import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeePaged, EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
@@ -27,9 +27,10 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 
 export class AppointmentCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   customerSimpleFilter: PartnerSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
+  filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
   defaultVal: any;
   formGroup: FormGroup;
@@ -42,7 +43,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private userService: UserService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private errorService: AppSharedShowErrorService) { }
+    private errorService: AppSharedShowErrorService,
+    private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -52,10 +54,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       dateObj: [null, Validators.required],
       note: null,
       companyId: null,
+      doctor: null,
       state: 'confirmed',
     })
-
-
 
     setTimeout(() => {
       if (this.appointId) {
@@ -64,10 +65,24 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.defaultGet();
       }
 
-      this.getUserList();
+      this.loadEmployees();
       this.getCustomerList();
       this.filterChangeCombobox();
     });
+  }
+
+  loadEmployees() {
+    this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
+    });
+  }
+
+
+  searchEmployees(filter?: string) {
+    var val = new EmployeePaged();
+    val.search = filter || '';
+    val.isDoctor = true;
+    return this.employeeService.getEmployeePaged(val);
   }
 
   onSave() {
@@ -77,7 +92,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
     var appoint = this.formGroup.value;
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
-    appoint.userId = appoint.user ? appoint.user.id : null;
+    appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
 
     if (this.appointId) {
@@ -157,14 +172,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
     )
 
-    this.userCbx.filterChange.asObservable().pipe(
+    this.doctorCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.userCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+      tap(() => this.doctorCbx.loading = true),
+      switchMap(val => this.searchEmployees(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.userSimpleFilter = rs;
-        this.userCbx.loading = false;
+        this.filteredEmployees = rs.items;
+        this.doctorCbx.loading = false;
       }
     )
   }
@@ -207,8 +222,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
           }
 
-          if (rs.user) {
-            this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [rs.user], 'id');
+          if (rs.doctor) {
+            this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
           }
         },
         er => {

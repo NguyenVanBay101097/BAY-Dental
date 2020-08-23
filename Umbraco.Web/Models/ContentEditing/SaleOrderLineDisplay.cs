@@ -71,10 +71,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool IsRewardLine { get; set; }
 
-        public ApplicationUserSimple Salesman { get; set; }
-
-        public string SalesmanId { get; set; }
-
         public bool IsCancelled { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public EmployeeBasic Employee { get; set; }
     }
 }
