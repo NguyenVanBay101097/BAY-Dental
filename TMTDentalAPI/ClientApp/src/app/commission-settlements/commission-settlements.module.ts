@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
 import { CommissionSettlementsService } from './commission-settlements.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent],
@@ -16,7 +17,7 @@ import { CommissionSettlementsService } from './commission-settlements.service';
     CommissionSettlementsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgModule,
+    NgbModule,
     MyCustomKendoModule,
     SharedModule
   ],

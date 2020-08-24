@@ -2,7 +2,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li class="active">Thống kê hoanh thu hoa hồng</li>
+            <li class="active">Thống kê hoa hồng</li>
         </ol>
     </div>
 </div>
@@ -79,7 +79,7 @@
                         {{dataItem.baseAmount | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="percentage" title="Phần trăm hoa hồng trung bình" class="text-right">
+                <kendo-grid-column field="percentage" title="% hoa hồng trung bình" class="text-right">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.percentage | number}} %
                     </ng-template>

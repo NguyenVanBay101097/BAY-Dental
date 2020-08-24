@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommissionSettlementReportsService, CommissionSettlementReport, CommissionSettlementReportOutput } from '../commission-settlement-reports.service';
+import { CommissionSettlementsService, CommissionSettlementReport, CommissionSettlementReportOutput } from '../commission-settlements.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -35,7 +35,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
   filteredCompanies: CompanySimple[] = [];
   
   constructor(
-    private commissionSettlementReportsService: CommissionSettlementReportsService,
+    private commissionSettlementReportsService: CommissionSettlementsService,
     private fb: FormBuilder,
     private intl: IntlService,
     private employeeService: EmployeeService,
