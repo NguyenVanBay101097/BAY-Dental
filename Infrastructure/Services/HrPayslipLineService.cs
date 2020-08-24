@@ -36,7 +36,10 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Name.Contains(val.Search));
             }
-            query = query.Include(x => x.Slip);
+            if (val.payslipId.HasValue)
+            {
+                query = query.Where( x =>x.SlipId == val.payslipId);
+            }
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
@@ -44,6 +47,12 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<HrPayslipLineDisplay>>(items)
             };
+        }
+
+        public async Task Remove(IEnumerable<Guid> Ids)
+        {
+            var list = await SearchQuery(x => Ids.Contains(x.Id)).ToListAsync();
+            await DeleteAsync(list);
         }
     }
 }

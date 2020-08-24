@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,10 +17,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Search { get; set; }
+        public Guid? payslipId { get; set; }
     }
 
     public class HrPayslipLineSave
     {
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public decimal? Quantity { get; set; }

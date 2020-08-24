@@ -24,6 +24,12 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId)
+        {
+            var res = await SearchQuery(x => x.TypeId == typeId).FirstOrDefaultAsync();
+            return _mapper.Map<HrPayrollStructureBase>(res) ;
+        }
+
         public async Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id)
         {
             var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).Include(x=>x.Type).FirstOrDefaultAsync();
@@ -36,6 +42,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Filter))
             {
                 query = query.Where(x => x.Name.Contains(val.Filter));
+            }
+            if (val.structureTypeId.HasValue)
+            {
+
+                query = query.Where(x => x.TypeId == val.structureTypeId);
             }
             query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
 

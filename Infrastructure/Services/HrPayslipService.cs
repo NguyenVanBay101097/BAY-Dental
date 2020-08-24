@@ -97,7 +97,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x => x.Lines).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Employee).Include(x=>x.Lines).FirstOrDefaultAsync();
             return res;
         }
 
@@ -106,9 +106,18 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.Name.Contains(val.Search));
+                query = query.Where(x => x.Employee.Name.Contains(val.Search));
             }
-            query = query.Include(x => x.Struct);
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                query = query.Where(x => x.State.Contains(val.State));
+            }
+            if (val.DateFrom.HasValue && val.DateTo.HasValue)
+            {
+                query = query.Where(x => x.DateFrom >= val.DateFrom && x.DateTo <= val.DateTo);
+            }
+            query = query.Include(x => x.Struct).Include(x=>x.Employee).OrderByDescending(x=>x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();

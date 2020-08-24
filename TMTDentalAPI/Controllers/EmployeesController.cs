@@ -35,12 +35,12 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var category = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.Category).FirstOrDefaultAsync();
-            if (category == null)
+            var emp = await _employeeService.GetById(id);
+            if (emp == null)
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<EmployeeDisplay>(category));
+            return Ok(emp);
         }
 
         [HttpPost]

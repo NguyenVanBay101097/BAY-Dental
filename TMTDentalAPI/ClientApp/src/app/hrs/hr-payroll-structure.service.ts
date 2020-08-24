@@ -22,6 +22,7 @@ export class HrPayrollStructurePaged {
     limit: number;
     filter: string;
     id: string;
+    structureTypeId: string;
 }
 
 export class HrPayrollStructureSave {

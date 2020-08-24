@@ -9,8 +9,9 @@ import { EmployeeCreateUpdateComponent } from './employee-create-update/employee
 import { EmployeeService } from './employee.service';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
 import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employee-advance-search.component';
-import { EmpCategoryService } from '../employee-categories/emp-category.service';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DialogService, DialogContainerService } from '@progress/kendo-angular-dialog';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent, EmployeeAdvanceSearchComponent],
@@ -19,12 +20,13 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    NgbModule,
-    EmployeesRoutingModule
+    EmployeesRoutingModule, NgbModalModule
   ],
   entryComponents: [EmployeeCreateUpdateComponent],
   providers: [
     EmployeeService,
+    DialogService,
+    DialogContainerService
   ]
 })
 export class EmployeesModule { }

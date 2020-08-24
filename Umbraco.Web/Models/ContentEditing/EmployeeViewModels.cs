@@ -38,6 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
         public Guid? CategoryId { get; set; }
         public EmployeeCategoryBasic Category { get; set; }
+        public decimal? Wage { get; set; }
+        public Guid? StructureTypeId { get; set; }
     }
 
     public class EmployeeDisplay
@@ -88,7 +90,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public double SoNgayCong { get; set; }
         public Guid? StructureTypeId { get; set; }
         public HrPayrollStructureTypeDisplay StructureType { get; set; }
+      
+
+        public HrPayrollStructureBase Struct { get; set; }
         public decimal? Wage { get; set; }
+        public decimal? HourlyWage { get; set; }
 
     }
 

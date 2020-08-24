@@ -1,0 +1,149 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li><a routerLink="/hr/payslip-to-pay">Phiếu lương</a></li>
+            <li class="active">{{payslipRecord !=null?payslipRecord.name :'Mới'}}</li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button *ngIf="this.state.value != 'done'" type="button" class="btn btn-primary btn-sm"
+                        accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
+                    <a [routerLink]="['/hr/payslip-to-pay/create']" accesskey="c" *ngIf="id"
+                        class="btn btn-secondary btn-sm">Thêm
+                        mới</a>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_form_view" [formGroup]="payslipForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div *ngIf="this.state.value != 'done'" class="o_statusbar_buttons">
+                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"
+                        class="btn btn-primary btn-sm" (click)="ConfirmSalary()">
+                        Xác nhận
+                    </button>
+                    <button type="button" *ngIf="this.state.value == 'draft'" accesskey="1"
+                        class="btn btn-primary btn-sm" (click)="ComputeSalary()">
+                        Tính lương
+                    </button>
+                    <button type="button" *ngIf="this.state.value == 'process'" accesskey="1"
+                        class="btn btn-primary btn-sm" (click)="ComputeSalaryAgain()">
+                        Tính Lại lương
+                    </button>
+                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"
+                        class="btn btn-danger btn-sm" (click)="CancelCompute()">
+                        hủy tính lương
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': this.state.value === 'done', 'btn-secondary':  this.state.value !== 'done'}"
+                        type="button">
+                        Hoàn thành
+                    </button>
+                    <button class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary':  this.state.value === 'process', 'btn-secondary':  this.state.value  !== 'process'}"
+                        type="button">
+                        đang xử lý
+                    </button>
+                    <button class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary':  this.state.value === 'draft', 'btn-secondary':  this.state.value !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhân viên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true"
+                                        #empCbx (selectionChange)="EmployeeChange($event)" formControlName="employee"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Từ ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName="dateFrom">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đến ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName='dateTo'></kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mẫu lương
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="listStructs" [textField]="'name'" [filterable]="true"
+                                        formControlName="struct" #typeCbx (selectionChange)="SelectStructChange($event)"
+                                        (filterChange)="handleFilterStruct($event)" [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="!listStructs && this.employeeId?.value" class="text-warning">
+                                        <div>
+                                            <label
+                                                class="text-danger">{{this.employeeId?.value? (this.struct.value? this.struct.value.name: 'chưa thiết lập loại mẫu lương') : ''}}</label>
+                                            &nbsp; <a class="text-primary" (click)="editEmployee()"
+                                                *ngIf="this.employeeId?.value && !this.struct.value">thiết
+                                                lập</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control bg-white" formControlName="name" required>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="this.state.value != 'draft' " class="tab-contanner">
+                    <app-hr-payslip-line-list></app-hr-payslip-line-list>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

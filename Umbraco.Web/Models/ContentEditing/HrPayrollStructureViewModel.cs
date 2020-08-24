@@ -6,6 +6,12 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+    public class HrPayrollStructureBase
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class HrPayrollStructurePaged
     {
 
@@ -17,6 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Filter { get; set; }
+        public Guid? structureTypeId { get; set; }
     }
 
     public class HrPayrollStructureSave
@@ -40,7 +47,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
         public bool RegularPay { get; set; }
         public Guid TypeId { get; set; }
-        public HrPayrollStructureType Type { get; set; }
+        public HrPayrollStructureTypeDisplay Type { get; set; }
         public bool UseWorkedDayLines { get; set; }
         public List<HrSalaryRuleDisplay> Rules { get; set; }
         public int? TotalRules
