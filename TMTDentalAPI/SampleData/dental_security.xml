@@ -243,6 +243,18 @@
       <field name="model_id" ref="sale.model_commission"/>
       <field name="global" eval="True"/>
     </record>
+
+    <record model="ir.rule" id="sale.commission_settlement_comp_rule">
+      <field name="name">Commission Settlement multi-company</field>
+      <field name="model_id" ref="sale.model_commission_settlement"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="hr.employee_comp_rule">
+      <field name="name">Employee multi-company</field>
+      <field name="model_id" ref="hr.model_employee"/>
+      <field name="global" eval="True"/>
+    </record>
   </data>
 </odoo>
 

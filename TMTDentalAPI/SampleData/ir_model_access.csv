@@ -28,7 +28,9 @@
 "access_sample_prescription_group_user","sample_prescription group_user","base.model_sample_prescription","group_user",1,1,1,1
 "access_phieu_thu_chi_group_user","phieu_thu_chi group_user","account.model_phieu_thu_chi","group_user",1,1,1,1
 "access_loai_thu_chi_group_user","loai_thu_chi group_user","account.model_loai_thu_chi","group_user",1,1,1,1
-"access_comission_group_user","commission group_user","sale.model_commission","group_user",1,0,0,0
+"access_commission_group_user","commission group_user","sale.model_commission","group_user",1,0,0,0
+"access_employee_group_user","employee group_user","hr.model_employee","group_user",1,1,1,1
+"access_res_partner_source_group_user","res_partner_source group_user","base.model_res_partner_source","group_user",1,1,1,1
 "access_res_user_group_manager","res_user group_manager","base.model_res_user","group_manager",1,0,0,0
 "access_res_partner_group_manager","res_partner group_manager","base.model_res_partner","group_manager",1,0,0,0
 "access_partner_category_group_manager","partner_category group_manager","base.model_res_partner_category","group_manager",1,0,0,0
@@ -58,7 +60,9 @@
 "access_sample_prescription_group_manager","sample_prescription group_manager","base.model_sample_prescription","group_manager",1,1,1,1
 "access_phieu_thu_chi_group_manager","phieu_thu_chi group_manager","account.model_phieu_thu_chi","group_manager",1,0,0,0
 "access_loai_thu_chi_group_manager","loai_thu_chi group_manager","account.model_loai_thu_chi","group_manager",1,0,0,0
-"access_comission_group_manager","commission group_manager","sale.model_commission","group_manager",1,0,0,0
+"access_commission_group_manager","commission group_manager","sale.model_commission","group_manager",1,0,0,0
+"access_employee_group_manager","employee group_manager","hr.model_employee","group_manager",1,0,0,0
+"access_res_partner_source_group_manager","res_partner_source group_manager","base.model_res_partner_source","group_manager",1,0,0,0
 "access_res_user_group_admin","res_user group_admin","base.model_res_user","group_admin",1,1,1,1
 "access_res_partner_group_admin","res_partner group_admin","base.model_res_partner","group_admin",1,0,0,0
 "access_partner_category_group_admin","partner_category group_admin","base.model_res_partner_category","group_admin",1,0,0,0
@@ -88,4 +92,6 @@
 "access_sample_prescription_group_admin","sample_prescription group_admin","base.model_sample_prescription","group_admin",1,0,0,0
 "access_phieu_thu_chi_group_admin","phieu_thu_chi group_admin","account.model_phieu_thu_chi","group_admin",1,0,0,0
 "access_loai_thu_chi_group_admin","loai_thu_chi group_admin","account.model_loai_thu_chi","group_admin",1,0,0,0
-"access_comission_group_admin","commission group_admin","sale.model_commission","group_admin",1,1,1,1
+"access_commission_group_admin","commission group_admin","sale.model_commission","group_admin",1,1,1,1
+"access_employee_group_admin","employee group_admin","hr.model_employee","group_admin",1,0,0,0
+"access_res_partner_source_group_admin","res_partner_source group_admin","base.model_res_partner_source","group_admin",1,0,0,0

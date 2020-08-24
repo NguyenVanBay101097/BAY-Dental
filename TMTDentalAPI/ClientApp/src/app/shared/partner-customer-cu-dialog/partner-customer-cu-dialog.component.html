@@ -180,18 +180,6 @@
                                   </div>
                                 </td>             
                               </tr>  
-                              <tr [class.d-none]="!sourceValue || sourceValue.type !== 'referral'">
-                                  <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Người giới thiệu</label>
-                                  </td>
-                                  <td colspan="1" style="width: 100%;">
-                                    <div>
-                                      <kendo-combobox formControlName="referralUser" [filterable]="true" [data]="filteredReferralUsers"
-                                        [valueField]="'id'" #userCbx [textField]="'name'">
-                                      </kendo-combobox> 
-                                    </div>
-                                  </td>             
-                              </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
                                         chú</label></td>

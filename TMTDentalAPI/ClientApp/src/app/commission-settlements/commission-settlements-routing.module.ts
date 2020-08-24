@@ -4,7 +4,7 @@ import { CommissionSettlementReportListComponent } from './commission-settlement
 
 const routes: Routes = [
   {
-    path: "",
+    path: "report",
     component: CommissionSettlementReportListComponent,
   },
 ];

@@ -7,6 +7,8 @@ export class CommissionSettlementReport {
   dateTo: string;
   employeeId: string;
   companyId: string;
+  limit: number;
+  offset: number;
 }
 
 export class CommissionSettlementReportOutput {
@@ -29,14 +31,14 @@ export class CommissionSettlementReportDetailOutput {
   providedIn: 'root'
 })
 export class CommissionSettlementsService {
-  apiUrl = "api/CommissionSettlementReports";
+  apiUrl = "api/CommissionSettlements";
   constructor(private http: HttpClient, @Inject("BASE_API") private baseApi: string) { }
 
   getReport(val: CommissionSettlementReport): Observable<CommissionSettlementReportOutput[]> {
     return this.http.post<CommissionSettlementReportOutput[]>(this.baseApi + this.apiUrl + "/GetReport" , val);
   }
 
-  getReportDetail(val: CommissionSettlementReport): Observable<CommissionSettlementReportDetailOutput[]> {
-    return this.http.post<CommissionSettlementReportDetailOutput[]>(this.baseApi + this.apiUrl + "/GetReportDetail", val);
+  getReportDetail(val: CommissionSettlementReport) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetReportDetail", val);
   }
 }

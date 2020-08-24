@@ -63,7 +63,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     });
 
     setTimeout(() => {
-      this.loadAutocompleteTypes(null);
+      // this.loadAutocompleteTypes(null);
       this.loadListCommissions();
       this.getEmployeeInfo();
       this.loadUsers();

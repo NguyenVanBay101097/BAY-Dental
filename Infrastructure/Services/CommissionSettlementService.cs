@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -91,6 +93,19 @@ namespace Infrastructure.Services
             await DeleteAsync(res);
         }
 
+        public override ISpecification<CommissionSettlement> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "sale.commission_settlement_comp_rule":
+                    return new InitialSpecification<CommissionSettlement>(x => !x.Employee.CompanyId.HasValue || companyIds.Contains(x.Employee.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
+
         public async Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val)
         {
             var query = SearchQuery();
@@ -131,7 +146,7 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<IEnumerable<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val)
+        public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val)
         {
             var query = SearchQuery();
 
@@ -153,17 +168,21 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
-            var result = await query
-                .Select(x => new CommissionSettlementReportDetailOutput
-                {
-                    Date = x.LastUpdated,
-                    ProductName = x.SaleOrderLine.Name,
-                    BaseAmount = x.BaseAmount,
-                    Percentage = x.Percentage,
+            var items = await query.OrderBy(x => x.Payment.PaymentDate).Skip(val.Offset).Take(val.Limit)
+                .Select(x => new CommissionSettlementReportDetailOutput { 
                     Amount = x.Amount,
+                    BaseAmount = x.BaseAmount,
+                    Date = x.Payment.PaymentDate,
+                    Percentage = x.Percentage,
+                    ProductName = x.SaleOrderLine.Name
                 }).ToListAsync();
 
-            return result;
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
     }
 }

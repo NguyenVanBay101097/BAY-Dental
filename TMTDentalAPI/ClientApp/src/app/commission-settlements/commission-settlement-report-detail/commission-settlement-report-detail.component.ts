@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { CommissionSettlementReport, CommissionSettlementReportDetailOutput, CommissionSettlementsService } from '../commission-settlements.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-commission-settlement-report-detail',
@@ -11,12 +12,12 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
   loading = false;
   gridData: GridDataResult;
   skip = 0;
-  limit = 10;
+  limit = 5;
   reportDetailResults: CommissionSettlementReportDetailOutput[];
 
   @Input() public employeeId: string;
   @Input() public filter: CommissionSettlementReport;
-  
+
   constructor(
     private commissionSettlementsService: CommissionSettlementsService,
   ) { }
@@ -29,13 +30,20 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
   loadDataFromApi() {
     this.loading = true;
 
-    this.commissionSettlementsService.getReportDetail(this.filter).subscribe(res => {
+    this.filter.offset = this.skip;
+    this.filter.limit = this.limit;
+    this.commissionSettlementsService.getReportDetail(this.filter).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res: any) => {
       this.reportDetailResults = res;
       this.loading = false;
     }, err => {
       console.log(err);
       this.loading = false;
-    })
+    });
   }
 
   pageChange(event: PageChangeEvent): void {

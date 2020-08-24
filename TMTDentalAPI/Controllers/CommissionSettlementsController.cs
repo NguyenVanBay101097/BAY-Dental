@@ -11,10 +11,10 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommissionSettlementReportsController : BaseApiController
+    public class CommissionSettlementsController : BaseApiController
     {
         private readonly ICommissionSettlementService _commissionSettlementService;
-        public CommissionSettlementReportsController(ICommissionSettlementService commissionSettlementService)
+        public CommissionSettlementsController(ICommissionSettlementService commissionSettlementService)
         {
             _commissionSettlementService = commissionSettlementService;
         }

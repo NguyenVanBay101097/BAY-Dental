@@ -2,7 +2,7 @@
     (pageChange)="pageChange($event)">
     <kendo-grid-column field="date" title="Ngày">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.date | date:'short'}}
+            {{dataItem.date | date:'shortDate'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="productName" title="Dịch vụ">
