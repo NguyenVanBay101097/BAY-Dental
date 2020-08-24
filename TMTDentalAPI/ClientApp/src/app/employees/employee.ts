@@ -1,5 +1,6 @@
 import { EmployeeCategoryBasic } from '../employee-categories/emp-category';
 import { ChamCongBasic } from '../time-keeping/time-keeping.service';
+import { HrPayrollStructureTypeSimple } from '../hrs/hr-payroll-structure-type.service';
 
 export class EmployeePaged {
     offset: number;
@@ -27,6 +28,10 @@ export class EmployeeDisplay extends EmployeeBasic {
     birthDay: string;
     isDoctor: boolean;
     isAssistant: boolean;
+    structureTypeId: string;
+    structureType: HrPayrollStructureTypeSimple;
+    wage: number;
+    hourlyWage: number;
 }
 
 export class PagedResult2<T>{

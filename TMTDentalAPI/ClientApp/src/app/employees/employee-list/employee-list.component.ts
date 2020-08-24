@@ -9,6 +9,7 @@ import { DialogRef, DialogCloseResult, WindowService, DialogService, WindowRef, 
 import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-employee-list',
@@ -20,9 +21,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 })
 export class EmployeeListComponent implements OnInit {
 
-  constructor(
-    private service: EmployeeService,
-    private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, private service: EmployeeService,
+    private activeroute: ActivatedRoute, private modalService: NgbModal) { }
 
   loading = false;
   gridView: GridDataResult;

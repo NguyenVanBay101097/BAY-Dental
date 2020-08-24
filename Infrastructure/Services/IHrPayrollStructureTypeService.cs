@@ -12,5 +12,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<HrPayrollStructureTypeDisplay>> GetPaged(HrPayrollStructureTypePaged val);
         Task<HrPayrollStructureType> GetHrPayrollStructureTypeDisplay(Guid Id);
+
+        Task<IEnumerable<HrPayrollStructureTypeSimple>> GetAutocompleteAsync(HrPayrollStructureTypePaged val);
     }
 }

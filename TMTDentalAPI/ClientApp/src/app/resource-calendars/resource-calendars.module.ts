@@ -10,7 +10,6 @@ import { ResourceCalendarCreateUpdateComponent } from './resource-calendar-creat
 import { SharedModule } from '../shared/shared.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResourceCalendarAttendanceCreateUpdateDialogComponent } from './resource-calendar-attendance-create-update-dialog/resource-calendar-attendance-create-update-dialog.component';
-import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [

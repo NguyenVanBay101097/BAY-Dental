@@ -85,5 +85,12 @@ namespace TMTDentalAPI.Controllers
             await _HrPayrollStructureTypeService.DeleteAsync(HrPayrollStructureType);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Autocomplete(HrPayrollStructureTypePaged val)
+        {
+            var res = await _HrPayrollStructureTypeService.GetAutocompleteAsync(val);
+            return Ok(res);
+        }
     }
 }

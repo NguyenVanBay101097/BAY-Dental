@@ -17,11 +17,13 @@ namespace TMTDentalAPI.Controllers
     public class EmployeesController : BaseApiController
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IHrPayrollStructureTypeService _structureTypeService;
         private readonly IMapper _mapper;
 
-        public EmployeesController(IEmployeeService employeeService, IMapper mapper)
+        public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService , IMapper mapper)
         {
             _employeeService = employeeService;
+            _structureTypeService = structureTypeService;
             _mapper = mapper;
         }
 
@@ -35,8 +37,8 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var emp = await _employeeService.GetById(id);
-            if (emp == null)
+            var category = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.Category).Include(x=>x.StructureType).FirstOrDefaultAsync();
+            if (category == null)
             {
                 return NotFound();
             }
@@ -51,6 +53,8 @@ namespace TMTDentalAPI.Controllers
 
             var employee = _mapper.Map<Employee>(val);
             employee.CompanyId = CompanyId;
+          
+
             await _employeeService.CreateAsync(employee);
 
             val.Id = employee.Id;
@@ -62,11 +66,19 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var employee = await _employeeService.GetByIdAsync(id);
+            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x=>x.Category)
+                .Include(x=>x.ChamCongs)
+                .Include(x=>x.Company)
+                .Include(x=>x.StructureType)
+                .Include("StructureType.DefaultResourceCalendar")
+                .Include("StructureType.DefaultStruct")
+                .FirstOrDefaultAsync();
+
             if (employee == null)
                 return NotFound();
 
             employee = _mapper.Map(val, employee);
+
             await _employeeService.UpdateAsync(employee);
 
             return NoContent();
