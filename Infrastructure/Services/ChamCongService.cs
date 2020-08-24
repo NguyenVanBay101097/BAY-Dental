@@ -229,6 +229,70 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<ChamCongDisplay>>(res);
         }
 
+        public int SoCongChuan(List<IGrouping<string, ResourceCalendarAttendance>> list, DateTime start, DateTime end)
+        {
+            int congChuan = 0;
+            foreach (var att in list)
+            {
+                congChuan = congChuan + CountDays(((DayOfWeek)Enum.Parse(typeof(DayOfWeek), att.Key)), start, end);
+            }
+            return congChuan;
+        }
+
+        public decimal SoCongNhanVienTheoThang(HrPayrollStructureType structureType, List<ChamCong> listChamCongs, List<IGrouping<string, ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        {
+            var soCong = 0;
+            foreach (var cc in listChamCongs)
+            {
+                if (cc.WorkEntryType == null || !cc.WorkEntryType.IsHasTimeKeeping)
+                    continue;
+                foreach (var att in re_listResourceCalendarAtts)
+                {
+                    var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
+                    var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
+
+                    if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.Key))
+                    {
+                        if (att.Count() > 1)
+                        {
+                            var buoiSang = att.Where(x => x.DayPeriod == "morning").FirstOrDefault();
+                            var buoiChieu = att.Where(x => x.DayPeriod == "afternoon").FirstOrDefault();
+                            if (ccTimeIn <= buoiSang.HourFrom && ccTimeOut >= buoiChieu.HourTo)
+                                soCong++;
+                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
+                                soCong++;
+                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value / 2)
+                                soCong = soCong + 1 / 2;
+                        }
+                        else
+                        {
+                            var buoi = att.FirstOrDefault();
+                            if (ccTimeIn <= buoi.HourFrom && ccTimeOut >= buoi.HourTo)
+                                soCong++;
+                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
+                                soCong++;
+                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value / 2)
+                                soCong = soCong + 1 / 2;
+                        }
+                    }
+                }
+            }
+            return soCong;
+        }
+
+        public decimal SoGioLamNhanVien( List<ChamCong> list)
+        {
+            decimal soGio = 0;
+
+            for (int i = 0; i < list.Count(); i++)
+            {
+                var cc = list[i];
+                soGio = Decimal.Parse(((cc.TimeOut.Value - cc.TimeIn.Value).TotalHours).ToString());
+            }
+
+            return soGio;
+        }
+
         public async Task<CongEmplyee> CountCong(Guid? empId, DateTime? from, DateTime? to)
         {
             var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
@@ -250,45 +314,19 @@ namespace Infrastructure.Services
             if (structureType != null)
                 listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
 
-            foreach (var att in listResourceCalendarAtts)
+            var re_listResourceCalendarAtts = listResourceCalendarAtts.GroupBy(x => x.DayOfWeek).ToList();
+
+            switch (structureType.WageType)
             {
-                congEmp.CongChuan1Thang = congEmp.CongChuan1Thang + CountDays(((DayOfWeek)Enum.Parse(typeof(DayOfWeek), att.DayOfWeek)), from.Value, to.Value);
-            }
-
-            foreach (var cc in listChamCongs)
-            {
-                if (cc.WorkEntryType == null || !cc.WorkEntryType.IsHasTimeKeeping)
-                    continue;
-                foreach (var att in listResourceCalendarAtts)
-                {
-
-                    if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.DayOfWeek))
-                    {
-                        var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
-                        var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
-
-                        if (ccTimeIn <= att.HourFrom && ccTimeOut >= att.HourTo)
-                            congEmp.SoCong++;
-                        else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
-                            congEmp.SoCong++;
-                        else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value / 2)
-                            congEmp.SoCong = congEmp.SoCong + 1 / 2;
-                    }
-                    //else
-                    //{
-                    //    if ((int)cc.Date.Value.DayOfWeek == 0 || (int)cc.Date.Value.DayOfWeek == 6)
-                    //    //{
-                    //    //    var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
-                    //    //    var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
-
-                    //    //    if (ccTimeIn <= att.HourFrom && ccTimeOut >= att.HourTo)
-                    //    //        congEmp.SoCong++;
-                    //    //    else if (ccTimeIn > att.HourFrom && ccTimeOut < att.HourTo)
-                    //    //        if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
-                    //    //            congEmp.SoCong++;
-                    //    //}
-                    //}
-                }
+                case "monthly":
+                    congEmp.CongChuan1Thang = SoCongChuan(re_listResourceCalendarAtts, from.Value, to.Value);
+                    congEmp.SoCong = SoCongNhanVienTheoThang(structureType, listChamCongs, re_listResourceCalendarAtts);
+                    break;
+                case "hourly":
+                    congEmp.SoGioLam = SoGioLamNhanVien(listChamCongs);
+                    break;
+                default:
+                    break;
             }
 
             return congEmp;
@@ -296,13 +334,11 @@ namespace Infrastructure.Services
 
         public int CountDays(DayOfWeek day, DateTime start, DateTime end)
         {
-            TimeSpan ts = end - start;                       // Total duration
-            int count = (int)Math.Floor(ts.TotalDays / 7);   // Number of whole weeks
-            int remainder = (int)(ts.TotalDays % 7);         // Number of remaining days
-            int sinceLastDay = (int)(end.DayOfWeek - day);   // Number of days since last [day]
-            if (sinceLastDay < 0) sinceLastDay += 7;         // Adjust for negative days since last [day]
-
-            // If the days in excess of an even week are greater than or equal to the number days since the last [day], then count this one, too.
+            TimeSpan ts = end - start;
+            int count = (int)Math.Floor(ts.TotalDays / 7);
+            int remainder = (int)(ts.TotalDays % 7);
+            int sinceLastDay = (int)(end.DayOfWeek - day);
+            if (sinceLastDay < 0) sinceLastDay += 7;
             if (remainder >= sinceLastDay) count++;
 
             return count;

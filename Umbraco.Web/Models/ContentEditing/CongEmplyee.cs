@@ -12,6 +12,8 @@ namespace Umbraco.Web.Models.ContentEditing
             CongChuan1Thang = 0;
         }
         public decimal? SoCong { get; set; }
-        public int CongChuan1Thang { get; set; }
+        public int? CongChuan1Thang { get; set; }
+        public decimal? SoGioLam { get; set; }
+
     }
 }
