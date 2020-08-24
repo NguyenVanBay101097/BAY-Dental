@@ -55,7 +55,7 @@ namespace Infrastructure.Services
                     Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
-                line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+                line.PriceTotal = line.PriceSubTotal + line.PriceTax;              
             }
         }
 
@@ -108,6 +108,8 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 var order = line.Order;
+                if (order == null)
+                    continue;
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
                 line.State = order.State;
@@ -146,15 +148,16 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines)
+        public void _GetInvoiceQty(IEnumerable<SaleOrderLine> self)
         {
-            foreach (var line in lines)
+            var amlObj = GetService<IAccountMoveLineService>();
+            foreach (var line in self)
             {
                 decimal qtyInvoiced = 0;
-                foreach (var rel in line.SaleOrderLineInvoice2Rels)
+                var amls = amlObj.SearchQuery(x => x.SaleLineRels.Any(x => x.OrderLineId == line.Id)).Include(x => x.Move).ToList();
+                foreach (var invoiceLine in amls)
                 {
-                    var move = rel.InvoiceLine.Move;
-                    var invoiceLine = rel.InvoiceLine;
+                    var move = invoiceLine.Move;
                     if (move.State != "cancel")
                     {
                         if (move.Type == "out_invoice")
@@ -195,6 +198,58 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<IEnumerable<SaleOrderLine>> _ComputePaidResidual(IEnumerable<Guid> ids)
+        {
+            //tính toán lại số tiền đã thanh toán và còn nợ khi list SaleOrderLinePaymentRels thay đổi
+            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrderLinePaymentRels)
+                .Include("SaleOrderLinePaymentRels.Payment").ToList();
+
+            foreach (var line in self)
+            {
+                var amountPaid = 0M;
+                foreach(var rel in line.SaleOrderLinePaymentRels)
+                {
+                    var payment = rel.Payment;
+                    if (payment.State == "draft")
+                        continue;
+                    amountPaid += (rel.AmountPrepaid ?? 0);
+                }
+
+                line.AmountPaid = amountPaid;
+                line.AmountResidual = line.PriceSubTotal - amountPaid;
+            }
+
+            await UpdateAsync(self);
+            return self;
+        }
+
+        public void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> self)
+        {
+            var self_ids = self.Select(x => x.Id).ToList();
+            self = SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.SaleOrderLinePaymentRels).ToList();
+            foreach (var line in self)
+            {
+                if (line.State != "draft")
+                {
+                    var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                }
+                else
+                {
+                    line.AmountPaid = 0;
+                    line.AmountResidual = 0;
+                }
+            }
+        }
+
+        public async Task _RemovePartnerCommissions(IEnumerable<Guid> ids)
+        {
+            var partnerCommission = GetService<ISaleOrderLinePartnerCommissionService>();
+            var lines = await partnerCommission.SearchQuery(x => ids.Contains(x.SaleOrderLineId)).ToListAsync();
+            await partnerCommission.DeleteAsync(lines);
+        }
+
         public AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account)
         {
             var res = new AccountInvoiceLine
@@ -223,7 +278,7 @@ namespace Infrastructure.Services
                 Discount = self.Discount,
                 PriceUnit = self.PriceUnit,
                 DiscountType = self.DiscountType,
-                DiscountFixed = self.DiscountFixed, 
+                DiscountFixed = self.DiscountFixed,
                 SalesmanId = self.SalesmanId
             };
 
@@ -302,7 +357,7 @@ namespace Infrastructure.Services
                 var related_program = await programObj.SearchQuery(x => x.DiscountLineProductId == line.ProductId).ToListAsync();
                 if (related_program.Any())
                 {
-                    foreach(var program in related_program)
+                    foreach (var program in related_program)
                     {
                         var promo_programs = await _dbContext.SaleOrderNoCodePromoPrograms.Where(x => x.ProgramId == program.Id).ToListAsync();
                         _dbContext.SaleOrderNoCodePromoPrograms.RemoveRange(promo_programs);
@@ -329,41 +384,57 @@ namespace Infrastructure.Services
         {
             var orderObj = GetService<ISaleOrderService>();
             var dotkhamstepObj = GetService<IDotKhamStepService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include("DotKhamSteps").Include(x => x.Order)
+                .Include(x => x.PartnerCommissions)
                 .Include(x => x.Product)
+                .Include(x => x.SaleOrderLinePaymentRels)
                .Include(x => x.SaleOrderLineInvoice2Rels)
                .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
                .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
 
             foreach (var line in lines)
             {
+                if (line.SaleOrderLinePaymentRels.Any())
+                    throw new Exception("Dịch vụ đã thanh toán không thể hủy");
+
+                //Nếu có đợt khám step nào đã hoàn thành thì ko đc hủy
+                if (line.DotKhamSteps.Any(x => x.IsDone))
+                    throw new Exception("Không thể hủy dịch vụ đang được thực hiện");
+
                 line.ProductUOMQty = 0;
                 line.State = "cancel";
                 if (line.DotKhamSteps.Any())
                 {
                     await dotkhamstepObj.Unlink(line.DotKhamSteps);
                 }
+
+                line.PartnerCommissions.Clear(); //xóa hết commission
+                line.IsCancelled = true;
             }
 
             await UpdateAsync(lines);
 
+            ComputeAmount(lines);
             _GetInvoiceQty(lines);
             _GetToInvoiceQty(lines);
             _ComputeInvoiceStatus(lines);
-
+            _ComputeLinePaymentRels(lines);
             await UpdateAsync(lines);
 
             var orderId = lines.Select(x => x.OrderId).FirstOrDefault();
             var order = await orderObj.GetSaleOrderWithLines(orderId);
-            
-            ComputeAmount(order.OrderLines);
 
             //tính lại tổng tiền phiếu điều trị
-             orderObj._AmountAll(order);
-
+            orderObj._AmountAll(order);
+            orderObj._GetInvoiced(new List<SaleOrder>() { order });
             await orderObj.UpdateAsync(order);
+
             // tính lại công nợ
-            await orderObj.ActionInvoiceCreateV2(orderId);
+            if (order.InvoiceStatus == "to invoice")
+            {
+                await orderObj.ActionInvoiceCreateV2(orderId);
+            }
         }
 
         public async Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id)
@@ -381,6 +452,48 @@ namespace Infrastructure.Services
             var tooth_ids = await SearchQuery(x => x.Id == id).SelectMany(x => x.SaleOrderLineToothRels).Select(x => x.ToothId).ToListAsync();
             var toothObj = GetService<IToothService>();
             var res = await _mapper.ProjectTo<ToothBasic>(toothObj.SearchQuery(x => tooth_ids.Contains(x.Id), orderBy: x => x.OrderBy(s => s.Name))).ToListAsync();
+            return res;
+        }
+
+        public async Task RecomputeCommissions(IEnumerable<SaleOrderLine> self)
+        {
+            //recompute thêm những dòng xác định người đc hưởng hoa hồng và bảng tính hoa hồng
+            var self_ids = self.Select(x => x.Id).ToList();
+            self = await SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.PartnerCommissions).ToListAsync();
+
+            var commissionLineObj = GetService<ISaleOrderLinePartnerCommissionService>();
+            var commission_lines = new List<SaleOrderLinePartnerCommission>();
+            foreach(var line in self)
+            {
+                await commissionLineObj.DeleteAsync(line.PartnerCommissions);
+
+                //add salesman commission
+                var salesmanCommission = await _PrepareSalesmanCommission(line);
+                if (salesmanCommission != null)
+                    commission_lines.Add(salesmanCommission);
+            }
+
+            await commissionLineObj.CreateAsync(commission_lines);
+        }
+
+        public async Task<SaleOrderLinePartnerCommission> _PrepareSalesmanCommission(SaleOrderLine self)
+        {
+            if (!self.EmployeeId.HasValue)
+                return null;
+
+            var employeeObj = GetService<IEmployeeService>();
+            var employee = await employeeObj.SearchQuery(x => x.Id == self.EmployeeId).FirstOrDefaultAsync();
+
+            if (employee == null || !employee.CommissionId.HasValue)
+                return null;
+
+            var res = new SaleOrderLinePartnerCommission
+            {
+                SaleOrderLineId = self.Id,
+                CommissionId = employee.CommissionId,
+                EmployeeId = employee.Id
+            };
+
             return res;
         }
     }

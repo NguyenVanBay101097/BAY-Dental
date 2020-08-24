@@ -59,10 +59,21 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? QtyInvoiced { get; set; }
 
+        /// <summary>
+        /// Số tiền đã thanh toán
+        /// </summary>
+        public decimal? AmountPaid { get; set; }
+
+        /// <summary>
+        /// Tiền còn nợ
+        /// </summary>
+        public decimal? AmountResidual { get; set; }
+
         public bool IsRewardLine { get; set; }
 
-        public ApplicationUserSimple Salesman { get; set; }
+        public bool IsCancelled { get; set; }
 
-        public string SalesmanId { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public EmployeeBasic Employee { get; set; }
     }
 }

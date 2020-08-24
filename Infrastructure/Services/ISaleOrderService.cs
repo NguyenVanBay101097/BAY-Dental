@@ -55,5 +55,7 @@ namespace Infrastructure.Services
         Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
 
         Task ActionUnlock(IEnumerable<Guid> ids);
+
+        void _GetInvoiced(IEnumerable<SaleOrder> orders);
     }
 }

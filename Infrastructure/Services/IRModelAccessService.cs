@@ -56,7 +56,10 @@ namespace Infrastructure.Services
             "IRModelField",
             "IRProperty",
             "UoMCategory",
-            "AccountFinancialReport"
+            "AccountFinancialReport",
+            "SaleOrderLinePartnerCommission",
+            "CommissionSettlement",
+            "CommissionProductRule"
         };
         private IMyCache _cache;
         public IRModelAccessService(IAsyncRepository<IRModelAccess> repository, IHttpContextAccessor httpContextAccessor,

@@ -1,0 +1,43 @@
+<kendo-grid [data]="details" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" 
+(pageChange)="pageChange($event)">
+<kendo-grid-column field="date" title="Ngày">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.date | date:'short'}}
+    </ng-template>
+</kendo-grid-column>
+<!-- <kendo-grid-column field="name" title="Bác sĩ">
+</kendo-grid-column> -->
+<kendo-grid-column field="productName" title="Dịch vụ">
+</kendo-grid-column>
+<kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.amountTotal | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="prepaidTotal" title="Đã thanh toán" class="text-right">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.prepaidTotal | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="percentCommission" title="Phần trăm hoa hồng" class="text-right">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.percentCommission | number}} %
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="estimateTotal" title="Hoa hồng dự tính" class="text-right" footerClass="text-right font-weight-bold">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.estimateTotal | number}}
+    </ng-template>
+    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['estimateTotal']">
+        {{total["estimateTotal"].sum | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column field="commissionTotal" title="Hoa hồng thực tế" class="text-right" footerClass="text-right font-weight-bold">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.commissionTotal | number}}
+    </ng-template>
+    <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['commissionTotal']">
+        {{total["commissionTotal"].sum | number}}
+    </ng-template>
+</kendo-grid-column>
+</kendo-grid>

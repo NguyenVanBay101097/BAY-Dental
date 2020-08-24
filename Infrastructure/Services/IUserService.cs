@@ -19,5 +19,6 @@ namespace Infrastructure.Services
         void TestJobFunc(string s, string tenant_id);
         Task UpdateAsync(ApplicationUser user);
         IEnumerable<Guid> GetListCompanyIdsAllowCurrentUser();
+        Task<ApplicationUser> GetByIdAsync(string id);
     }
 }

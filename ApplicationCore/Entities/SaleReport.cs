@@ -29,5 +29,8 @@ namespace ApplicationCore.Entities
         public int Nbr { get; set; }
         public string State { get; set; }
         public bool? IsQuotation { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
     }
 }

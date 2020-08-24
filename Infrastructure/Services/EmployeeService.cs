@@ -49,6 +49,20 @@ namespace Infrastructure.Services
             return query;
         }
 
+        public override ISpecification<Employee> RuleDomainGet(IRRule rule)
+        {
+            //ra đc list company id ma nguoi dung dc phép
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.employee_comp_rule":
+                    return new InitialSpecification<Employee>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
+
         public async Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val)
         {
             var query = GetQueryPaged(val);
@@ -81,9 +95,8 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
         }
 
-        public async Task<Employee> CreateAsync(Employee entity)
+        public override async Task<Employee> CreateAsync(Employee entity)
         {
-            var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
             if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
             {
                 var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
@@ -96,6 +109,11 @@ namespace Infrastructure.Services
             }
 
             return await base.CreateAsync(entity);
+        }
+
+        public async Task<Employee> GetByUserIdAsync(string userId)
+        {
+            return await SearchQuery(x => x.UserId == userId).FirstOrDefaultAsync();
         }
 
         //private async Task InsertDoctorSequence()
@@ -132,39 +150,6 @@ namespace Infrastructure.Services
                 Prefix = "NV",
                 Padding = 5,
             });
-        }
-
-        public override async Task UpdateAsync(Employee entity)
-        {
-            var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
-            //if (category.Type == "doctor")
-            //{
-            //    entity.IsDoctor = true;
-            //    entity.IsAssistant = false;
-            //}
-            //else if (category.Type == "assistant")
-            //{
-            //    entity.IsAssistant = true;
-            //    entity.IsDoctor = false;
-            //}
-            //else
-            //{
-            //    entity.IsAssistant = false;
-            //    entity.IsDoctor = false;
-            //}
-            await base.UpdateAsync(entity);
-        }
-
-        public override ISpecification<Employee> RuleDomainGet(IRRule rule)
-        {
-            var companyId = CompanyId;
-            switch (rule.Code)
-            {
-                case "base.employee_comp_rule":
-                    return new InitialSpecification<Employee>(x => x.CompanyId == companyId);
-                default:
-                    return null;
-            }
         }
     }
 }

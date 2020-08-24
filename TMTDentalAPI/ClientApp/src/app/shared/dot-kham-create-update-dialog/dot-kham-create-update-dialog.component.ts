@@ -134,8 +134,8 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       date: null,
       note: null,
       companyId: null,
-      user: [null, Validators.required],
-      assistantUser: null,
+      doctor: [null, Validators.required],
+      assistant: null,
       state: null,
       saleOrderId: null,
       step: null,
@@ -145,12 +145,9 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
       filter: "dotkham"
     });
 
-
-    // this.getDoctorList();
-    // this.getAssistantList();
-
     setTimeout(() => {
-      this.getUserList();
+      this.getDoctorList();
+      this.getAssistantList();
 
       if (this.id) {
         this.id = this.id;
@@ -193,9 +190,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     }
     if (result.assistant) {
       this.assistantSimpleFilter = _.unionBy(this.assistantSimpleFilter, [result.assistant], 'id');
-    }
-    if (result.user) {
-      this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [result.user], 'id');
     }
   }
 
@@ -541,8 +535,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     val.partnerId = val.partner ? val.partner.id : null;
     val.doctorId = val.doctor ? val.doctor.id : null;
     val.assistantId = val.assistant ? val.assistant.id : null;
-    val.userId = val.user ? val.user.id : null;
-    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
 
     this.dotKhamService.create(val).subscribe(result => {
       this.activeModal.close(result);
@@ -665,47 +657,25 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   }
 
   filterChangeCombobox() {
-    // this.doctorCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => this.doctorCbx.loading = true),
-    //   switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
-    // ).subscribe(
-    //   rs => {
-    //     this.doctorSimpleFilter = rs;
-    //     this.doctorCbx.loading = false;
-    //   }
-    // )
-
-    // this.assistantCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => this.assistantCbx.loading = true),
-    //   switchMap(val => this.searchAssitants(val.toString().toLowerCase()))
-    // ).subscribe(
-    //   rs => {
-    //     this.assistantSimpleFilter = rs;
-    //     this.assistantCbx.loading = false;
-    //   }
-    // )
-
-    this.userCbx.filterChange.asObservable().pipe(
+    this.doctorCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.userCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+      tap(() => this.doctorCbx.loading = true),
+      switchMap(val => this.searchDoctors(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.userSimpleFilter = rs;
-        this.userCbx.loading = false;
+        this.doctorSimpleFilter = rs;
+        this.doctorCbx.loading = false;
       }
     )
 
-    this.assistantUserCbx.filterChange.asObservable().pipe(
+    this.assistantCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.assistantUserCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+      tap(() => this.assistantCbx.loading = true),
+      switchMap(val => this.searchAssitants(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.assistantUserSimpleFilter = rs;
-        this.assistantUserCbx.loading = false;
+        this.assistantSimpleFilter = rs;
+        this.assistantCbx.loading = false;
       }
     )
   }
@@ -723,7 +693,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   searchAssitants(search) {
     var empPaged = new EmployeePaged();
-    empPaged.isAssistant = true;
+    empPaged.isDoctor = true;
     empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     if (search != null) {
@@ -762,7 +732,7 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
 
   getAssistantList() {
     var empPn = new EmployeePaged;
-    empPn.isAssistant = true;
+    empPn.isDoctor = true;
     empPn.limit = this.limit;
     empPn.offset = this.skip;
     this.employeeService.getEmployeeSimpleList(empPn).subscribe(

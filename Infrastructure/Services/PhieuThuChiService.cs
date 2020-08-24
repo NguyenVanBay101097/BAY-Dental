@@ -306,7 +306,7 @@ namespace Infrastructure.Services
                 await modelDataObj.CreateAsync(new IRModelData
                 {
                     Name = "model_phieu_thu_chi",
-                    Module = "account",
+                    Module = "sale",
                     Model = "ir.model",
                     ResId = model.Id.ToString()
                 });

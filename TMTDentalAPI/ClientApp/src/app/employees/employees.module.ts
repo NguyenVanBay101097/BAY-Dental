@@ -9,6 +9,7 @@ import { EmployeeCreateUpdateComponent } from './employee-create-update/employee
 import { EmployeeService } from './employee.service';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
 import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employee-advance-search.component';
+import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 
 @NgModule({
   declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent, EmployeeAdvanceSearchComponent],
@@ -17,7 +18,8 @@ import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employ
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    EmployeesRoutingModule
+    EmployeesRoutingModule,
+    MyCustomNgbModule
   ],
   entryComponents: [EmployeeCreateUpdateComponent],
   providers: [

@@ -51,10 +51,10 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
       dateObj: [null, Validators.required],
       note: null,
       companyId: null,
-      user: [null, Validators.required],
+      doctor: [null, Validators.required],
       saleOrderId: null,
       partnerId: null,
-      assistantUser: null
+      assistant: null
     });
 
     // setTimeout(() => {
@@ -63,26 +63,26 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
 
 
     setTimeout(() => {
-      // this.getDoctorList();
-      // this.getAssistantList();
-      this.getUserList();
+      this.getDoctorList();
+      this.getAssistantList();
+      // this.getUserList();
 
-      this.userCbx.filterChange.asObservable().pipe(
+      this.doctorCbx.filterChange.asObservable().pipe(
         debounceTime(300),
-        tap(() => (this.userCbx.loading = true)),
-        switchMap(value => this.searchUsers(value))
+        tap(() => (this.doctorCbx.loading = true)),
+        switchMap(value => this.searchEmployees(value))
       ).subscribe(result => {
-        this.filteredUsers = result;
-        this.userCbx.loading = false;
+        this.filteredDoctors = result;
+        this.doctorCbx.loading = false;
       });
 
-      this.assistantUserCbx.filterChange.asObservable().pipe(
+      this.assistantCbx.filterChange.asObservable().pipe(
         debounceTime(300),
-        tap(() => (this.assistantUserCbx.loading = true)),
-        switchMap(value => this.searchUsers(value))
+        tap(() => (this.assistantCbx.loading = true)),
+        switchMap(value => this.searchEmployees(value))
       ).subscribe(result => {
-        this.assistantUserSimpleFilter = result;
-        this.assistantUserCbx.loading = false;
+        this.filteredAssistants = result;
+        this.assistantCbx.loading = false;
       });
       if (this.id)
         this.loadData();
@@ -156,24 +156,10 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     });
   }
 
-  searchEmployees(filter: string, position: string) {
-    var val = new EmployeePaged();
-    val.search = filter.toLowerCase();
-    val.position = position
-    return this.employeeService.getEmployeeSimpleList(val);
-  }
-
-  searchDoctors(q?: string) {
+  searchEmployees(q?: string) {
     var val = new EmployeePaged();
     val.search = q;
     val.isDoctor = true;
-    return this.employeeService.getEmployeeSimpleList(val);
-  }
-
-  searchAssistants(q?: string) {
-    var val = new EmployeePaged();
-    val.search = q;
-    val.isAssistant = true;
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
@@ -190,8 +176,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
 
     var val = this.dotKhamForm.value;
     val.doctorId = val.doctor ? val.doctor.id : null;
-    val.userId = val.user ? val.user.id : null;
-    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
+    val.assistantId = val.assistant ? val.assistant.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     this.dotKhamService.create(val).subscribe(result => {
       this.dotKhamService.actionConfirm(result.id).subscribe(() => {
@@ -212,8 +197,8 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
     }
 
     var val = this.dotKhamForm.value;
-    val.userId = val.user ? val.user.id : null;
-    val.assistantUserId = val.assistantUser ? val.assistantUser.id : null;
+    val.doctorId = val.doctor ? val.doctor.id : null;
+    val.assistantId = val.assistant ? val.assistant.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     if (this.id) {
       this.dotKhamService.update(this.id, val).subscribe(
@@ -243,14 +228,14 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   }
 
   getDoctorList() {
-    this.searchDoctors().subscribe(
+    this.searchEmployees().subscribe(
       rs => {
         this.filteredDoctors = _.unionBy(this.filteredDoctors, rs, 'id');
       });
   }
 
   getAssistantList() {
-    this.searchAssistants().subscribe(
+    this.searchEmployees().subscribe(
       rs => {
         this.filteredAssistants = _.unionBy(this.filteredAssistants, rs, 'id');
       });

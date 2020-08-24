@@ -13,6 +13,7 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
          .WithMany()
          .HasForeignKey(x => x.FacebookPageId)
          .OnDelete(DeleteBehavior.SetNull);
+      
 
         builder.HasOne(x => x.Partner)
             .WithMany()

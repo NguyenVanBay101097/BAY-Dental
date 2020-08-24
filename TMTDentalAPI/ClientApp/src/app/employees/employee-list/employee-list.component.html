@@ -20,20 +20,6 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="btn-group o_search_options">
-                <div>
-                    <div class="custom-control custom-checkbox  custom-control-inline">
-                        <input class="custom-control-input" type="checkbox" id="inlineCheckbox1" [(ngModel)]="isDoctor"
-                            (change)="getEmployeesList()">
-                        <label class="custom-control-label" for="inlineCheckbox1">Bác sĩ</label>
-                    </div>
-                    <div class="custom-control custom-checkbox  custom-control-inline">
-                        <input class="custom-control-input" type="checkbox" id="inlineCheckbox2"
-                            [(ngModel)]="isAssistant" (change)="getEmployeesList()">
-                        <label class="custom-control-label" for="inlineCheckbox2">Phụ tá</label>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -46,7 +32,7 @@
         <kendo-grid-column field="phone" title="Số điện thoại"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button kendoButton (click)="editEmployee(dataItem)" class="btn btn-success btn-sm"><i title="Sửa"
+                <button kendoButton (click)="editEmployee(dataItem)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
                         class="far fa-edit"></i></button>
                 <button kendoButton (click)="deleteEmployee(dataItem.id)" class="btn btn-danger btn-sm"><i title="Xóa"
                         class="far fa-trash-alt"></i></button>

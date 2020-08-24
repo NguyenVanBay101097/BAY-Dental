@@ -21,6 +21,12 @@
                 </div>
             </div>
             <div class="o_cp_sidebar">
+                <div hasGroups [groups]="'base.group_multi_company'">
+                    <kendo-combobox [data]="listCompanies" style="font-size: 0.8rem;width: 200px;" [placeholder]="'Tất cả chi nhánh'" [filterable]="true"
+                        #comboboxCbx (valueChange)="changeCompany($event)" class="cbbox-sm" [textField]="'name'"
+                        [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                    </kendo-combobox>
+                </div>
             </div>
         </div>
         <div class="o_cp_right">

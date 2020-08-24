@@ -1,0 +1,103 @@
+<header class="modal-header">
+    <h5 class="modal-title">Thêm quy định hoa hồng<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup" (submit)="onSave()" #form="ngForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet min-w-auto">
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Áp dụng cho
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="global" value="3_global" formControlName="appliedOn">
+                                        <label class="form-check-label" for="global">
+                                            Tất cả dịch vụ
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="product_category" value="2_product_category" formControlName="appliedOn">
+                                        <label class="form-check-label" for="product_category">
+                                            Nhóm dịch vụ
+                                        </label>
+                                      </div>
+                                      <div class="form-check disabled">
+                                        <input class="form-check-input" type="radio" id="product_variant" value="0_product_variant" formControlName="appliedOn">
+                                        <label class="form-check-label" for="product_variant">
+                                            Dịch vụ
+                                        </label>
+                                      </div>
+                                </td>
+                            </tr>
+                 
+                            <tr [class.d-none]="getValueForm('appliedOn') != '2_product_category'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        <span>Nhóm dịch vụ</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredProductCategories"
+                                        [filterable]="true" formControlName="categ"
+                                        #categCbx
+                                        [textField]="'completeName'"
+                                        [valueField]="'id'"
+                                        placeholder="Chọn nhóm dịch vụ"
+                                        [loading]="categCbxLoading">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="getValueForm('appliedOn') != '0_product_variant'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        <span>Dịch vụ</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredProducts"
+                                        [filterable]="true" formControlName="product"
+                                        #productCbx
+                                        [textField]="'name'"
+                                        [valueField]="'id'"
+                                        placeholder="Chọn dịch vụ"
+                                        [loading]="productCbxLoading">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>                         
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hoa hồng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">                                      
+                                        <kendo-numerictextbox [autoCorrect]="true" [format]="'n0'" formControlName="percentFixed" [min]="min" [max]="max">
+                                        </kendo-numerictextbox>
+                                        <span class="ml-2">%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Thêm</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
