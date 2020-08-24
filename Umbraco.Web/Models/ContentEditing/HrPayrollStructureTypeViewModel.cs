@@ -37,4 +37,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string WageType { get; set; }
     }
+
+    public class HrPayrollStructureTypeSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string WageType { get; set; }
+    }
 }

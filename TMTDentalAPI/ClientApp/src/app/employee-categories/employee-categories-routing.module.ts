@@ -5,7 +5,7 @@ import { EmpCategoriesListComponent } from './emp-categories-list/emp-categories
 
 const routes: Routes = [
   {
-    path: 'employee-categories', component: EmpCategoriesListComponent
+    path: '', component: EmpCategoriesListComponent
   }
 ];
 

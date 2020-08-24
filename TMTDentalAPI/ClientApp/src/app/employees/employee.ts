@@ -27,6 +27,8 @@ export class EmployeeDisplay extends EmployeeBasic {
     birthDay: string;
     isDoctor: boolean;
     isAssistant: boolean;
+    structureTypeId: string;
+    //structureType: HrPayrollStructureTypes;
 }
 
 export class PagedResult2<T>{

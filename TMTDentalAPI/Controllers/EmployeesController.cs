@@ -51,6 +51,19 @@ namespace TMTDentalAPI.Controllers
 
             var employee = _mapper.Map<Employee>(val);
             employee.CompanyId = CompanyId;
+
+            if (val.StructureTypeId.HasValue)
+            {
+                employee.StructureTypeId = val.StructureTypeId;
+                employee.StructureType = _mapper.Map<HrPayrollStructureType>(val.StructureType);
+
+                if (val.StructureType.WageType == "monthly")
+                    employee.Wage = val.Wage;
+                else
+                    employee.HourlyWage = val.HourlyWage;
+
+            }
+
             await _employeeService.CreateAsync(employee);
 
             val.Id = employee.Id;
@@ -67,6 +80,19 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             employee = _mapper.Map(val, employee);
+
+            if (val.StructureTypeId.HasValue)
+            {
+                employee.StructureTypeId = val.StructureTypeId;
+                employee.StructureType = _mapper.Map<HrPayrollStructureType>(val.StructureType);
+
+                if (val.StructureType.WageType == "monthly")
+                    employee.Wage = val.Wage;
+                else
+                    employee.HourlyWage = val.HourlyWage;
+
+            }
+
             await _employeeService.UpdateAsync(employee);
 
             return NoContent();

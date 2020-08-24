@@ -87,6 +87,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ChamCongDisplay> ChamCongs { get; set; } = new List<ChamCongDisplay>();
         public double SoNgayCong { get; set; }
 
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureTypeSimple StructureType { get; set; }
+
+        /// <summary>
+        /// Tiền lương theo tháng, nếu StructureType.WageType == monthly
+        /// </summary>
+        public decimal? Wage { get; set; }
+
+        /// <summary>
+        /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
+        /// </summary>
+        public decimal? HourlyWage { get; set; }
+
     }
 
     public class EmployeePaged

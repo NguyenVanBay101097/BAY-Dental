@@ -1,27 +1,40 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { EmployeesRoutingModule } from './employees-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
+import { SharedModule } from '../shared/shared.module';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EmployeeCreateUpdateComponent } from './employee-create-update/employee-create-update.component';
 import { EmployeeService } from './employee.service';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
 import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employee-advance-search.component';
+import { EmployeeListComponent } from './employee-list/employee-list.component';
+import { EmpCategoryService } from '../employee-categories/emp-category.service';
+import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
+
 
 @NgModule({
   declarations: [EmployeeListComponent, EmployeeCreateUpdateComponent, EmployeeInfoComponent, EmployeeAdvanceSearchComponent],
   imports: [
     CommonModule,
-    MyCustomKendoModule,
-    ReactiveFormsModule,
+    EmployeesRoutingModule,
+    NgbModule,
+    SharedModule,
     FormsModule,
-    EmployeesRoutingModule
+    ReactiveFormsModule,
+    MyCustomKendoModule,
+    DragDropModule,
+    MyCustomNgbModule
   ],
+   providers: [
+    EmployeeService,
+    EmpCategoryService
+  ],
+  schemas: [NO_ERRORS_SCHEMA],
   entryComponents: [EmployeeCreateUpdateComponent],
-  providers: [
-    EmployeeService
-  ]
+ 
 })
 export class EmployeesModule { }
