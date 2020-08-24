@@ -13,8 +13,6 @@ import { ToaThuocLinesSaveCuFormComponent } from 'src/app/toa-thuocs/toa-thuoc-l
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
-import { IfStmt } from '@angular/compiler';
-import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-create-update',

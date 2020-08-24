@@ -140,6 +140,7 @@ namespace Infrastructure.Services
             }
             return "process";
         }
+
         public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
         {
             var chamcong = await SearchQuery(x => x.EmployeeId == id
@@ -239,7 +240,7 @@ namespace Infrastructure.Services
             return congChuan;
         }
 
-        public decimal SoCongNhanVienTheoThang(HrPayrollStructureType structureType, List<ChamCong> listChamCongs, List<IGrouping<string, ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        public decimal SoCongNhanVienTheoThang(List<ChamCong> listChamCongs, List<IGrouping<string, ResourceCalendarAttendance>> re_listResourceCalendarAtts)
         {
             var soCong = 0;
             foreach (var cc in listChamCongs)
@@ -255,24 +256,30 @@ namespace Infrastructure.Services
                     {
                         if (att.Count() > 1)
                         {
+                            double soGioSang = 0;
+                            double soGioChieu = 0;
                             var buoiSang = att.Where(x => x.DayPeriod == "morning").FirstOrDefault();
                             var buoiChieu = att.Where(x => x.DayPeriod == "afternoon").FirstOrDefault();
-                            if (ccTimeIn <= buoiSang.HourFrom && ccTimeOut >= buoiChieu.HourTo)
+                            if (ccTimeIn <= buoiSang.HourFrom)
+                            {
+                                soGioSang = buoiSang.HourTo - buoiSang.HourFrom;
+                            }
+                            if (ccTimeOut >= buoiChieu.HourTo)
+                            {
+                                soGioChieu = buoiChieu.HourTo - buoiChieu.HourFrom;
+                            }
+                            var gioNghi = Decimal.Parse((buoiChieu.HourFrom - buoiSang.HourTo).ToString());
+                            decimal tongGio = Decimal.Parse((soGioSang + soGioChieu).ToString());
+                            var gioTb1Ngay = buoiChieu != null && buoiChieu.Calendar != null ? buoiChieu.Calendar.HoursPerDay : (buoiSang != null && buoiSang.Calendar != null ? buoiSang.Calendar.HoursPerDay : 0);
+                            if (tongGio >= (gioTb1Ngay + gioNghi))
+                            {
                                 soCong++;
-                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
-                                soCong++;
-                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value / 2)
-                                soCong = soCong + 1 / 2;
+                            }
                         }
-                        else
+                        else if (att != null)
                         {
                             var buoi = att.FirstOrDefault();
-                            if (ccTimeIn <= buoi.HourFrom && ccTimeOut >= buoi.HourTo)
-                                soCong++;
-                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value)
-                                soCong++;
-                            else if (Decimal.Parse((ccTimeOut - ccTimeIn).ToString()) >= structureType.DefaultResourceCalendar.HoursPerDay.Value / 2)
-                                soCong = soCong + 1 / 2;
+
                         }
                     }
                 }
@@ -280,7 +287,7 @@ namespace Infrastructure.Services
             return soCong;
         }
 
-        public decimal SoGioLamNhanVien( List<ChamCong> list)
+        public decimal SoGioLamNhanVien(List<ChamCong> list)
         {
             decimal soGio = 0;
 
@@ -320,7 +327,7 @@ namespace Infrastructure.Services
             {
                 case "monthly":
                     congEmp.CongChuan1Thang = SoCongChuan(re_listResourceCalendarAtts, from.Value, to.Value);
-                    congEmp.SoCong = SoCongNhanVienTheoThang(structureType, listChamCongs, re_listResourceCalendarAtts);
+                    congEmp.SoCong = SoCongNhanVienTheoThang(listChamCongs, re_listResourceCalendarAtts);
                     break;
                 case "hourly":
                     congEmp.SoGioLam = SoGioLamNhanVien(listChamCongs);

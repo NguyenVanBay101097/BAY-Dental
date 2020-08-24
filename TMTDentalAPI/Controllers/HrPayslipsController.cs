@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ComputePayslip(HrPayslipSave val)
         {
             var entity = _mapper.Map<HrPayslip>(val);
-            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.DateFrom, val.DateTo)).ToList();
+            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.StructId, val.DateFrom, val.DateTo)).ToList();
             foreach (var line in lines)
             {
                 entity.Lines.Add(line);
@@ -103,7 +103,7 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             if (str.Lines.Count() > 0)
                 await _hrPayslipLineService.DeleteAsync(str.Lines);
-            var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, str.DateFrom, str.DateTo)).ToList();
+            var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, str.StructId, str.DateFrom, str.DateTo)).ToList();
             if (lines != null)
             {
                 str.Lines = lines;
