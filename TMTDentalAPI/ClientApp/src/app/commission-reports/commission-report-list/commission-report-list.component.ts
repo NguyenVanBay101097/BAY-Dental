@@ -69,7 +69,8 @@ export class CommissionReportListComponent implements OnInit {
     
     this.loading = true;
     this.commissionReportService.getReport(val).subscribe(result => {
-      this.reportResults = result;       
+      this.reportResults = result;      
+      console.log(result); 
       this.loading = false;
     }, () => {
       this.loading = false;

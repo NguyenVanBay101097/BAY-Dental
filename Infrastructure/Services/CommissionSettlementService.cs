@@ -1,13 +1,14 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -90,5 +91,79 @@ namespace Infrastructure.Services
             await DeleteAsync(res);
         }
 
+        public async Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val)
+        {
+            var query = SearchQuery();
+
+            if (val.DateFrom.HasValue)
+            {
+                val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.DateCreated >= val.DateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateCreated <= val.DateTo);
+            }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
+
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+
+            var result = await query
+                .GroupBy(x => new
+                {
+                    EmployeeId = x.EmployeeId,
+                    EmployeeName = x.Employee.Name
+                })
+                .Select(x => new CommissionSettlementReportOutput
+                {
+                    EmployeeId = x.Key.EmployeeId,
+                    EmployeeName = x.Key.EmployeeName,
+                    BaseAmount = x.Sum(s => s.BaseAmount),
+                    Percentage = x.Average(s => s.Percentage),
+                    Amount = x.Sum(s => s.Amount),
+                }).ToListAsync();
+
+            return result;
+        }
+
+        public async Task<IEnumerable<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val)
+        {
+            var query = SearchQuery();
+
+            if (val.DateFrom.HasValue)
+            {
+                val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.DateCreated >= val.DateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateCreated <= val.DateTo);
+            }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
+
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+
+            var result = await query
+                .Select(x => new CommissionSettlementReportDetailOutput
+                {
+                    Date = x.LastUpdated,
+                    ProductName = x.SaleOrderLine.Name,
+                    BaseAmount = x.BaseAmount,
+                    Percentage = x.Percentage,
+                    Amount = x.Amount,
+                }).ToListAsync();
+
+            return result;
+        }
     }
 }

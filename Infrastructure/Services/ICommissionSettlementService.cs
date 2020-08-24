@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -10,5 +11,7 @@ namespace Infrastructure.Services
     {
         Task CreateSettlements(AccountPayment val);
         Task Unlink(IEnumerable<Guid> paymentIds);
+        Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val);
+        Task<IEnumerable<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val);
     }
 }

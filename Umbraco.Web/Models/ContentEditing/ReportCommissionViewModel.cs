@@ -62,6 +62,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ReportFilterCommissionDetail
     {
         public DateTime? DateFrom { get; set; }
+
         public DateTime? DateTo { get; set; }
 
         public string UserId { get; set; }
