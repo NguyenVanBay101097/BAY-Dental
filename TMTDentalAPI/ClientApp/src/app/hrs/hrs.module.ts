@@ -19,6 +19,7 @@ import { HrPayslipService } from './hr-payslip.service';
 import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-update/hr-payslip-to-pay-create-update.component';
 import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip-to-pay-list.component';
 import { HrPayslipLineListComponent } from './hr-payslip-line-list/hr-payslip-line-list.component';
+import { EmployeeCreateUpdateComponent } from '../employees/employee-create-update/employee-create-update.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,9 @@ import { HrPayslipLineListComponent } from './hr-payslip-line-list/hr-payslip-li
     HrSalaryRuleCrudDialogComponent,
     HrPayslipToPayCreateUpdateComponent,
     HrPayslipToPayListComponent,
-    HrPayslipLineListComponent],
+    HrPayslipLineListComponent,
+    EmployeeCreateUpdateComponent,
+  ],
   imports: [
     CommonModule,
     HrsRoutingModule,
@@ -49,6 +52,7 @@ import { HrPayslipLineListComponent } from './hr-payslip-line-list/hr-payslip-li
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
+    EmployeeCreateUpdateComponent
   ]
 })
 export class HrsModule { }

@@ -73,9 +73,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox class="w-100" [data]="listEmployees" [textField]="'name'"
-                                        [filterable]="true"
-                                        (filterChange)="EmployeeFilter($event)" formControlName="employee"
+                                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true"
+                                        #empCbx (selectionChange)="EmployeeChange($event)" formControlName="employee"
                                         [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
@@ -83,25 +82,22 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Thời gian
+                                        Từ ngày
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label>từ:</label>
                                     <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName="dateFrom">
                                     </kendo-datepicker>
-                                    <label>đến:</label>
-                                    <kendo-datepicker formControlName='dateTo'></kendo-datepicker>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Tên
+                                        Đến ngày
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" required>
+                                    <kendo-datepicker formControlName='dateTo'></kendo-datepicker>
                                 </td>
                             </tr>
                         </tbody>
@@ -116,19 +112,29 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox #typeCbx 
-                                    (filterChange)="handleFilterStruct($event)" (selectionChange)="SelectStructChange($event)"
-                                     formControlName="struct" [data]="listStructs" [filterable]="true" textField="name"
-                                        valueField="id">
+                                    <kendo-combobox [data]="listStructs" [textField]="'name'" [filterable]="true"
+                                        formControlName="struct" #typeCbx (selectionChange)="SelectStructChange($event)"
+                                        (filterChange)="handleFilterStruct($event)" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="!listStructs" class="text-warning">
+                                    <div *ngIf="!listStructs && this.employeeId?.value" class="text-warning">
                                         <div>
                                             <label
-                                            class="text-danger">{{this.employeeId?.value? (this.struct.value? this.struct.value.name: 'chưa thiết lập loại mẫu lương') : ''}}</label>
-                                        &nbsp; <a (click)="editEmployee()"
-                                            *ngIf="this.employeeId?.value && !this.struct.value" href="#">thiết lập</a>
+                                                class="text-danger">{{this.employeeId?.value? (this.struct.value? this.struct.value.name: 'chưa thiết lập loại mẫu lương') : ''}}</label>
+                                            &nbsp; <a class="text-primary" (click)="editEmployee()"
+                                                *ngIf="this.employeeId?.value && !this.struct.value">thiết
+                                                lập</a>
                                         </div>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control bg-white" formControlName="name" required>
                                 </td>
                             </tr>
                         </tbody>

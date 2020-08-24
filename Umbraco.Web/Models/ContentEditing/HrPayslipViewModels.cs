@@ -16,6 +16,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Search { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public string State { get; set; }
     }
 
     public class HrPayslipSave

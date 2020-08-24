@@ -14,6 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { IfStmt } from '@angular/compiler';
+import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-create-update',
@@ -22,8 +23,10 @@ import { IfStmt } from '@angular/compiler';
 })
 export class HrPayslipToPayCreateUpdateComponent implements OnInit {
 
+  @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
   @ViewChild(HrPayslipLineListComponent, { static: false }) hrPayslipLineListComponent: HrPayslipLineListComponent;
 
+  date = new Date();
   payslipRecord: HrPayslipDisplay;
   payslipForm: FormGroup;
   employee: any;
@@ -46,14 +49,23 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   ngOnInit() {
     this.payslipForm = this.fb.group({
       structId: [null, [Validators.required]],
-      struct: null,
+      struct: [null, [Validators.required]],
       employeeId: [null, [Validators.required]],
-      employee: null,
-      dateFrom: [null, [Validators.required]],
-      dateTo: [null, [Validators.required]],
-      name: [null, [Validators.required]],
+      employee: [null, [Validators.required]],
+      dateFrom: [new Date(this.date.getFullYear(), this.date.getMonth(), 1), [Validators.required]],
+      dateTo: [ new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0), [Validators.required]],
+      name: ['lương tháng ' + (this.date.getMonth() + 1), [Validators.required]],
       state: 'draft',
       number: null,
+    });
+
+    this.empCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.empCbx.loading = true)),
+      switchMap(value => this.SearchEmployee(value))
+    ).subscribe(result => {
+      this.listEmployees = result.items;
+      this.empCbx.loading = false;
     });
 
     this.GetEmployeePaged();
@@ -62,6 +74,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       this.LoadRecord();
     }
   }
+
   get Form() { return this.payslipForm; }
   get state() { return this.payslipForm.get('state'); }
   get structId() { return this.payslipForm.get('structId'); }
@@ -79,16 +92,21 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       this.employee = res.employee;
       this.employee.struct = res.struct;
       this.payslipForm.patchValue(res);
+      this.LoadStructList(this.employee.structureTypeId, null);
       if (res.state === 'done') { this.Form.disable(); }
     });
   }
 
-  GetEmployeePaged() {
+  SearchEmployee(search?: string) {
     const val = new EmployeePaged();
-    this.employeeService.getEmployeePaged(val).subscribe(res => {
+    val.search = search ? search : '';
+    return this.employeeService.getEmployeePaged(val);
+  }
+
+  GetEmployeePaged() {
+    this.SearchEmployee().subscribe(res => {
       this.listEmployees = res.items;
     });
-
   }
 
   EmployeeFilter(value) {
@@ -100,24 +118,23 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   EmployeeChange(e) {
-    // if (!e) {
-    //   this.listStructs = null;
-    //   this.struct.setValue(null);
-    //   this.structId.setValue(null);
-    // } else {
-    //   this.employeeId.setValue(e.id);
-    //   this.employee = e;
-    //   this.name.setValue('Lương tháng ' + (this.dateFrom.value ? (this.dateFrom.value.getMonth() + 1) : '') + ' của ' + e.name);
-    //   if (e.structureTypeId) {
-    //     this.LoadStructList(e.structureTypeId, null);
-    //   } else {
-    //     this.listStructs = null;
-    //     this.struct.setValue(null);
-    //     this.structId.setValue(null);
-    //   }
-    // }
-    console.log('a');
-    console.log(e);
+    if (!e) {
+      this.listStructs = null;
+      this.employeeId.setValue(null);
+      this.struct.setValue(null);
+      this.structId.setValue(null);
+    } else {
+      this.employeeId.setValue(e.id);
+      this.employee = e;
+      this.name.setValue('Lương tháng ' + (this.dateFrom.value ? (this.dateFrom.value.getMonth() + 1) : '') + ' của ' + e.name);
+      if (e.structureTypeId) {
+        this.LoadStructList(e.structureTypeId, null);
+      } else {
+        this.listStructs = null;
+        this.struct.setValue(null);
+        this.structId.setValue(null);
+      }
+    }
   }
 
   LoadStructList(typeId, filter) {
@@ -137,9 +154,11 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     this.LoadStructList(this.employee.structureTypeId, value);
   }
 
-  SelectStructChange(value) {
-    this.structId.setValue(value.id);
-    console.log(value);
+  SelectStructChange(e) {
+    if (e) {
+      this.structId.setValue(e.id);
+      this.struct.setValue(e);
+    }
   }
 
   ChangeDateFrom(e) {
@@ -166,7 +185,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
               animation: { type: 'fade', duration: 400 },
               type: { style: 'success', icon: true }
             });
-            this.hrPayslipLineListComponent.loadDataFromApi();
+            this.hrPayslipLineListComponent.loadLineDataFromApi();
           });
         } else {
           this.notificationService.show({
@@ -230,7 +249,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-        this.hrPayslipLineListComponent.loadDataFromApi();
+        this.hrPayslipLineListComponent.loadLineDataFromApi();
       });
     });
   }
@@ -277,8 +296,10 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa nhân viên';
     modalRef.componentInstance.empId = this.employee.id;
-    modalRef.result.then(() => {
-      // this.getEmployeesList();
+    modalRef.result.then((res) => {
+      if (res) {
+        this.LoadStructList(this.employee.id, null);
+      }
     });
   }
 }

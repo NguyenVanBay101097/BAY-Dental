@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/internal/operators/map';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-list',
@@ -20,10 +21,20 @@ export class HrPayslipToPayListComponent implements OnInit {
   skip = 0;
   loading = false;
   collectionSize = 0;
+  StateFilters = [
+    { text: 'tất cả', value: '' },
+    { text: 'bản nháp', value: 'draft' },
+    { text: 'đang xử lý', value: 'process' },
+    { text: 'hoàn thành', value: 'done' }
+  ];
+  stateSelected: string;
+  dateFrom: Date;
+  dateTo: Date;
+  search: string;
 
   constructor(
     private hrPayslipService: HrPayslipService,
-    private modalService: NgbModal,
+    private modalService: NgbModal, private intlService: IntlService,
     private router: Router) { }
 
   ngOnInit() {
@@ -35,6 +46,16 @@ export class HrPayslipToPayListComponent implements OnInit {
     const val = new HrPayslipPaged();
     val.limit = this.limit;
     val.offset = this.skip;
+    if (this.search) {
+      val.search = this.search;
+    }
+    if (this.stateSelected) {
+      val.state = this.stateSelected;
+    }
+    if (this.dateFrom && this.dateTo) {
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'g', 'en-US');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'g', 'en-US');
+    }
 
     this.hrPayslipService.getPaged(val).pipe(
       map((res: any) => ({
@@ -73,6 +94,32 @@ export class HrPayslipToPayListComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
+  }
+
+  onSelect(state) {
+    this.stateSelected = state;
+    this.loadDataFromApi();
+  }
+
+  OnDateFilterChange() {
+    console.log(new Date( this.dateFrom));
+    console.log(this.dateTo);
+    if (this.dateFrom && this.dateTo) {
+      this.loadDataFromApi();
+    }
+  }
+
+  GetStateFilter() {
+    switch (this.stateSelected) {
+      case 'draft':
+        return 'bản nháp';
+      case 'process':
+        return 'đang xử lý';
+      case 'done':
+        return 'hoàn thành';
+      default:
+        return 'Tất cả trạng thái';
+    }
   }
 
 }

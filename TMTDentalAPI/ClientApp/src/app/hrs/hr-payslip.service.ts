@@ -23,6 +23,9 @@ export class HrPayslipPaged {
     limit: number;
     search: string;
     payslipId: string;
+    state: string;
+    dateFrom: any;
+    dateTo: any;
 }
 
 export class HrPayslipSave {
