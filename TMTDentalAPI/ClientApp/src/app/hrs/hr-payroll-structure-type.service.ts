@@ -9,6 +9,12 @@ export class HrPayrollStructureTypeBasic {
   name: string;
 }
 
+export class HrPayrollStructureTypeSimple {
+  id: string;
+  name: string;
+  wageType: string;
+}
+
 export class HrPayrollStructureTypePaged {
   limit: number;
   offset: number;
@@ -70,5 +76,9 @@ export class HrPayrollStructureTypeService {
 
   delete(id) {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  autocomplete(val: HrPayrollStructureTypePaged): Observable<HrPayrollStructureTypeSimple[]> {
+    return this.http.post<HrPayrollStructureTypeSimple[]>(this.base_api + this.apiUrl + "/Autocomplete", val);
   }
 }

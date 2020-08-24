@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,20 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<HrPayrollStructureTypeDisplay>>(items)
             };
+        }
+
+        public async Task<IEnumerable<HrPayrollStructureTypeSimple>> GetAutocompleteAsync(HrPayrollStructureTypePaged val)
+        {
+            ISpecification<HrPayrollStructureType> spec = new InitialSpecification<HrPayrollStructureType>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<HrPayrollStructureType>(x => x.Name.Contains(val.Search)));
+            //if (!string.IsNullOrEmpty(val.Type))
+            //    spec = spec.And(new InitialSpecification<PartnerSource>(x => x.Type == val.Type));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var items = await _mapper.ProjectTo<HrPayrollStructureTypeSimple>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+
+            return items;
         }
     }
 }
