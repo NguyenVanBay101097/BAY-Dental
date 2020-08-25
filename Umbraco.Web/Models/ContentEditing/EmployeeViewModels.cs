@@ -38,6 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
         public Guid? CategoryId { get; set; }
         public EmployeeCategoryBasic Category { get; set; }
+        public decimal? Wage { get; set; }
+        public Guid? StructureTypeId { get; set; }
     }
 
     public class EmployeeDisplay
@@ -86,19 +88,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAssistant { get; set; }
         public IEnumerable<ChamCongDisplay> ChamCongs { get; set; } = new List<ChamCongDisplay>();
         public double SoNgayCong { get; set; }
-
         public Guid? StructureTypeId { get; set; }
-        public HrPayrollStructureTypeSimple StructureType { get; set; }
+        public HrPayrollStructureTypeDisplay StructureType { get; set; }
 
-        /// <summary>
-        /// Tiền lương theo tháng, nếu StructureType.WageType == monthly
-        /// </summary>
+
+        public HrPayrollStructureBase Struct { get; set; }
         public decimal? Wage { get; set; }
-
-        /// <summary>
-        /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
-        /// </summary>
         public decimal? HourlyWage { get; set; }
+
 
     }
 

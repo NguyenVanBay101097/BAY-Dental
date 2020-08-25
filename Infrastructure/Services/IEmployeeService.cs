@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val);
         Task<IEnumerable<EmployeeSimple>> GetAutocompleteAsync(EmployeePaged val);
+        Task<EmployeeDisplay> GetById(Guid Id);
     }
 }

@@ -140,6 +140,7 @@ namespace Infrastructure.Services
             }
             return "process";
         }
+
         public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
         {
             var chamcong = await SearchQuery(x => x.EmployeeId == id
@@ -228,5 +229,187 @@ namespace Infrastructure.Services
             var res = await query.Include(x => x.WorkEntryType).ToListAsync();
             return _mapper.Map<IEnumerable<ChamCongDisplay>>(res);
         }
+
+        public int SoCongChuan(List<IGrouping<string, ResourceCalendarAttendance>> list, DateTime start, DateTime end)
+        {
+            int congChuan = 0;
+            foreach (var att in list)
+            {
+                congChuan = congChuan + CountDays((DayOfWeek)Enum.Parse(typeof(DayOfWeek), att.Key), start, end);
+            }
+            for (int i = 0; i < congChuan; i++)
+            {
+
+            }
+            return congChuan;
+        }
+
+        public CongEmplyee SoCongNhanVienTheoThang(List<ChamCong> listChamCongs, Dictionary<DateTime, List<ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        {
+            var congEmp = new CongEmplyee();
+            foreach (var cc in listChamCongs)
+            {
+                if (cc.WorkEntryType == null || !cc.WorkEntryType.IsHasTimeKeeping)
+                    continue;
+                else
+                {
+                    congEmp.SoCong = congEmp.SoCong + TinhTien(cc, re_listResourceCalendarAtts).SoCong;
+                    congEmp.SoGioLam = congEmp.SoGioLam + TinhTien(cc, re_listResourceCalendarAtts).SoGioLam;
+                }
+
+            }
+            return congEmp;
+        }
+
+        public Dictionary<DateTime, List<ResourceCalendarAttendance>> SoNgayLam(DateTime? from, DateTime? to, List<ResourceCalendarAttendance> listAtts)
+        {
+            var listDic = new Dictionary<DateTime, List<ResourceCalendarAttendance>>();
+
+            for (DateTime i = from.Value; i <= to.Value; i = i.AddDays(1.0))
+            {
+                var items = new List<ResourceCalendarAttendance>();
+                foreach (var att in listAtts)
+                {
+                    if ((int)i.DayOfWeek == Int32.Parse(att.DayOfWeek))
+                    {
+                        items.Add(att);
+                    }
+                }
+                if (items.Count() > 0)
+                    listDic.Add(i, items);
+            }
+
+
+
+            return listDic;
+        }
+
+        public CongEmplyee TinhTien(ChamCong cc, Dictionary<DateTime, List<ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        {
+            var congEmp = new CongEmplyee();
+            foreach (var att in re_listResourceCalendarAtts)
+            {
+                var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
+                var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
+
+                if (cc.Date.Value == att.Key)
+                {
+                    double soGio = 0;
+                    var buoi = att.Value.FirstOrDefault();
+                    var sogioTb1Ngay = buoi != null && buoi.Calendar != null ? buoi.Calendar.HoursPerDay : 0;
+                    if (att.Value.Count() > 1)
+                    {
+                        foreach (var item in att.Value.ToList())
+                        {
+                            if (ccTimeIn <= item.HourFrom && ccTimeOut >= item.HourTo) //dungg gio hoac di som ve muon 
+                                soGio = soGio + (item.HourTo - item.HourFrom);
+                            else if (ccTimeIn > item.HourFrom) //di lam luon
+                                soGio = soGio + (item.HourTo - ccTimeIn);
+                            else if (ccTimeOut < item.HourTo) //ve som
+                                soGio = soGio + (ccTimeOut - item.HourFrom);
+                        }
+                        var total = Decimal.Parse(soGio.ToString()) / sogioTb1Ngay.Value;
+                        if (total >= (75 / 100) && total <= 1)
+                            congEmp.SoCong++;
+                        else
+                        {
+                            congEmp.SoCong = congEmp.SoCong + 1 / 2;
+                        }
+                        congEmp.SoGioLam = congEmp.SoGioLam + Decimal.Parse(soGio.ToString());
+
+                    }
+                    else if (att.Value != null && att.Value.Count() == 1)
+                    {
+                        if (ccTimeIn <= buoi.HourFrom && ccTimeOut >= buoi.HourTo)
+                            soGio = soGio + (buoi.HourTo - buoi.HourFrom);
+                        else if (ccTimeIn > buoi.HourFrom)
+                            soGio = soGio + (buoi.HourTo - ccTimeIn);
+                        else if (ccTimeOut < buoi.HourTo)
+                            soGio = soGio + (ccTimeOut - buoi.HourFrom);
+
+                        var total = Decimal.Parse(soGio.ToString()) / sogioTb1Ngay.Value;
+                        if (total >= (75 / 100))
+                            congEmp.SoCong++;
+                        else
+                        {
+                            congEmp.SoCong = congEmp.SoCong + 1 / 2;
+                        }
+                        congEmp.SoGioLam = congEmp.SoGioLam + Decimal.Parse(soGio.ToString());
+                    }
+                }
+            }
+            return congEmp;
+        }
+
+        public CongEmplyee SoGioLamNhanVien(List<ChamCong> list, List<IGrouping<string, ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        {
+            var congEmp = new CongEmplyee();
+
+            for (int i = 0; i < list.Count(); i++)
+            {
+                var cc = list[i];
+                foreach (var att in re_listResourceCalendarAtts)
+                {
+                    if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.Key))
+                    {
+                        congEmp.SoGioLam = Decimal.Parse(((cc.TimeOut.Value - cc.TimeIn.Value).TotalHours).ToString());
+                        congEmp.SoCong++;
+                    }
+                }
+            }
+            return congEmp;
+        }
+
+        public async Task<CongEmplyee> CountCong(Guid? empId, DateTime? from, DateTime? to)
+        {
+            var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
+            var empObj = GetService<IEmployeeService>();
+            var query = SearchQuery(x => x.EmployeeId == empId);
+            var listResourceCalendarAtts = new List<ResourceCalendarAttendance>();
+            var congEmp = new CongEmplyee();
+            if (to.HasValue)
+                query = query.Where(x => x.Date <= to.Value);
+            if (from.HasValue)
+                query = query.Where(x => x.Date >= from.Value);
+            var emp = await empObj.SearchQuery(x => x.Id == empId).FirstOrDefaultAsync();
+            var structureType = await structureTypeObj.SearchQuery(x => x.Id == emp.StructureTypeId)
+                .Include("DefaultResourceCalendar")
+                .Include("DefaultResourceCalendar.ResourceCalendarAttendances").FirstOrDefaultAsync();
+
+            var listChamCongs = await query.Include(x => x.WorkEntryType).ToListAsync();
+            if (structureType != null)
+                listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
+
+            var SoNgayLamTrongThang = SoNgayLam(from, to, listResourceCalendarAtts);
+            var re_listResourceCalendarAtts = listResourceCalendarAtts.GroupBy(x => x.DayOfWeek).ToList();
+
+            switch (structureType.WageType)
+            {
+                case "monthly":
+                    congEmp = SoCongNhanVienTheoThang(listChamCongs, SoNgayLamTrongThang);
+                    congEmp.CongChuan1Thang = SoNgayLamTrongThang.Count();
+                    break;
+                case "hourly":
+                    congEmp = SoGioLamNhanVien(listChamCongs, re_listResourceCalendarAtts);
+                    break;
+                default:
+                    break;
+            }
+
+            return congEmp;
+        }
+
+        public int CountDays(DayOfWeek day, DateTime start, DateTime end)
+        {
+            TimeSpan ts = end - start;
+            int count = (int)Math.Floor(ts.TotalDays / 7);
+            int remainder = (int)(ts.TotalDays % 7);
+            int sinceLastDay = (int)(end.DayOfWeek - day);
+            if (sinceLastDay < 0) sinceLastDay += 7;
+            if (remainder >= sinceLastDay) count++;
+
+            return count;
+        }
+
     }
 }

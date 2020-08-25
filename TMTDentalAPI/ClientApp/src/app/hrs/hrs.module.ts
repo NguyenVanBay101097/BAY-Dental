@@ -15,9 +15,25 @@ import { HrPayrollStructureTypeCreateComponent } from './hr-payroll-structure-ty
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
+import { HrPayslipService } from './hr-payslip.service';
+import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-update/hr-payslip-to-pay-create-update.component';
+import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip-to-pay-list.component';
+import { HrPayslipLineListComponent } from './hr-payslip-line-list/hr-payslip-line-list.component';
+import { EmployeeCreateUpdateComponent } from '../employees/employee-create-update/employee-create-update.component';
 
 @NgModule({
-  declarations: [HrPayrollStructureTypeListComponent, HrPayrollStructureTypeCreateComponent, HrPayrollStructureListComponent, HrPayrollStructureCreateUpdateComponent, HrSalaryRuleListComponent, HrSalaryRuleCrudDialogComponent],
+  declarations: [
+    HrPayrollStructureTypeListComponent,
+    HrPayrollStructureTypeCreateComponent,
+    HrPayrollStructureListComponent,
+    HrPayrollStructureCreateUpdateComponent,
+    HrSalaryRuleListComponent,
+    HrSalaryRuleCrudDialogComponent,
+    HrPayslipToPayCreateUpdateComponent,
+    HrPayslipToPayListComponent,
+    HrPayslipLineListComponent,
+    EmployeeCreateUpdateComponent,
+  ],
   imports: [
     CommonModule,
     HrsRoutingModule,
@@ -31,10 +47,12 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
   ],
   providers: [
     HrPayrollStructureService,
-    ColumnResizingService
+    ColumnResizingService,
+    HrPayslipService
   ],
   entryComponents: [
-    HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent
+    HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
+    EmployeeCreateUpdateComponent
   ]
 })
 export class HrsModule { }

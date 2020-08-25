@@ -23,14 +23,18 @@ namespace TMTDentalAPI.Controllers
     public class ChamCongsController : BaseApiController
     {
         private readonly IChamCongService _chamCongService;
+        private readonly IHrPayslipService _hrPayslipService;
+        private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public ChamCongsController(IChamCongService chamCongService,
+        public ChamCongsController(IHrPayslipService hrPayslipService, IEmployeeService employeeService, IChamCongService chamCongService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _chamCongService = chamCongService;
             _mapper = mapper;
+            _hrPayslipService = hrPayslipService;
             _unitOfWork = unitOfWork;
+            _employeeService = employeeService;
         }
 
         [HttpGet]
@@ -43,6 +47,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
+            
             var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).Include(x => x.Employee).FirstOrDefaultAsync();
             if (chamcong == null)
                 return NotFound();

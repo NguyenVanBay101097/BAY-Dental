@@ -166,5 +166,18 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        public async Task<EmployeeDisplay> GetById(Guid Id)
+        {
+            var emp = await SearchQuery(x => x.Id == Id).Include(x => x.Category).Include("StructureType.DefaultStruct").FirstOrDefaultAsync();
+            var res = _mapper.Map<EmployeeDisplay>(emp);
+
+            if (emp.StructureTypeId.HasValue && emp.StructureType.DefaultStructId == null)
+            {
+                var structObj = GetService<IHrPayrollStructureService>();
+                res.Struct = await structObj.GetFirstOrDefault(emp.StructureTypeId.Value);
+            }
+            return _mapper.Map<EmployeeDisplay>(res);
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task Remove(Guid Id);
 
         Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure);
+        Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId);
     }
 }
