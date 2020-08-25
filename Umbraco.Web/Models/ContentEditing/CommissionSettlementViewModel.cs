@@ -42,6 +42,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// tiền hoa hồng bác sĩ
         /// </summary>
         public decimal? Amount { get; set; }
+
+        //lưu lại điều kiện lọc
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutput

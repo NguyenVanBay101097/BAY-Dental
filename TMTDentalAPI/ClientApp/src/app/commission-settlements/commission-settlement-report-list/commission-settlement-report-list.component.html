@@ -90,7 +90,7 @@
                     </ng-template>
                 </kendo-grid-column>
                 <div *kendoGridDetailTemplate="let dataItem">
-                    <app-commission-settlement-report-detail [employeeId]="dataItem.employeeId" [filter]="getFilter()"></app-commission-settlement-report-detail>
+                    <app-commission-settlement-report-detail [item]="dataItem"></app-commission-settlement-report-detail>
                 </div>
             </kendo-grid>
         </div>
