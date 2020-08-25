@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             SoCong = 0;
             CongChuan1Thang = 0;
+            SoGioLam = 0;
         }
         public decimal? SoCong { get; set; }
         public int? CongChuan1Thang { get; set; }

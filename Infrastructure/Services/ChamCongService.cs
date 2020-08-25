@@ -235,69 +235,129 @@ namespace Infrastructure.Services
             int congChuan = 0;
             foreach (var att in list)
             {
-                congChuan = congChuan + CountDays(((DayOfWeek)Enum.Parse(typeof(DayOfWeek), att.Key)), start, end);
+                congChuan = congChuan + CountDays((DayOfWeek)Enum.Parse(typeof(DayOfWeek), att.Key), start, end);
+            }
+            for (int i = 0; i < congChuan; i++)
+            {
+
             }
             return congChuan;
         }
 
-        public decimal SoCongNhanVienTheoThang(List<ChamCong> listChamCongs, List<IGrouping<string, ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        public CongEmplyee SoCongNhanVienTheoThang(List<ChamCong> listChamCongs, Dictionary<DateTime, List<ResourceCalendarAttendance>> re_listResourceCalendarAtts)
         {
-            var soCong = 0;
+            var congEmp = new CongEmplyee();
             foreach (var cc in listChamCongs)
             {
                 if (cc.WorkEntryType == null || !cc.WorkEntryType.IsHasTimeKeeping)
                     continue;
-                foreach (var att in re_listResourceCalendarAtts)
+                else
                 {
-                    var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
-                    var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
+                    congEmp.SoCong = congEmp.SoCong + TinhTien(cc, re_listResourceCalendarAtts).SoCong;
+                    congEmp.SoGioLam = congEmp.SoGioLam + TinhTien(cc, re_listResourceCalendarAtts).SoGioLam;
+                }
 
-                    if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.Key))
+            }
+            return congEmp;
+        }
+
+        public Dictionary<DateTime, List<ResourceCalendarAttendance>> SoNgayLam(DateTime? from, DateTime? to, List<ResourceCalendarAttendance> listAtts)
+        {
+            var listDic = new Dictionary<DateTime, List<ResourceCalendarAttendance>>();
+
+            for (DateTime i = from.Value; i <= to.Value; i = i.AddDays(1.0))
+            {
+                var items = new List<ResourceCalendarAttendance>();
+                foreach (var att in listAtts)
+                {
+                    if ((int)i.DayOfWeek == Int32.Parse(att.DayOfWeek))
                     {
-                        if (att.Count() > 1)
-                        {
-                            double soGioSang = 0;
-                            double soGioChieu = 0;
-                            var buoiSang = att.Where(x => x.DayPeriod == "morning").FirstOrDefault();
-                            var buoiChieu = att.Where(x => x.DayPeriod == "afternoon").FirstOrDefault();
-                            if (ccTimeIn <= buoiSang.HourFrom)
-                            {
-                                soGioSang = buoiSang.HourTo - buoiSang.HourFrom;
-                            }
-                            if (ccTimeOut >= buoiChieu.HourTo)
-                            {
-                                soGioChieu = buoiChieu.HourTo - buoiChieu.HourFrom;
-                            }
-                            var gioNghi = Decimal.Parse((buoiChieu.HourFrom - buoiSang.HourTo).ToString());
-                            decimal tongGio = Decimal.Parse((soGioSang + soGioChieu).ToString());
-                            var gioTb1Ngay = buoiChieu != null && buoiChieu.Calendar != null ? buoiChieu.Calendar.HoursPerDay : (buoiSang != null && buoiSang.Calendar != null ? buoiSang.Calendar.HoursPerDay : 0);
-                            if (tongGio >= (gioTb1Ngay + gioNghi))
-                            {
-                                soCong++;
-                            }
-                        }
-                        else if (att != null)
-                        {
-                            var buoi = att.FirstOrDefault();
+                        items.Add(att);
+                    }
+                }
+                if (items.Count() > 0)
+                    listDic.Add(i, items);
+            }
 
+
+
+            return listDic;
+        }
+
+        public CongEmplyee TinhTien(ChamCong cc, Dictionary<DateTime, List<ResourceCalendarAttendance>> re_listResourceCalendarAtts)
+        {
+            var congEmp = new CongEmplyee();
+            foreach (var att in re_listResourceCalendarAtts)
+            {
+                var ccTimeIn = cc.TimeIn.Value.TimeOfDay.TotalHours;
+                var ccTimeOut = cc.TimeOut.Value.TimeOfDay.TotalHours;
+
+                if (cc.Date.Value == att.Key)
+                {
+                    double soGio = 0;
+                    var buoi = att.Value.FirstOrDefault();
+                    var sogioTb1Ngay = buoi != null && buoi.Calendar != null ? buoi.Calendar.HoursPerDay : 0;
+                    if (att.Value.Count() > 1)
+                    {
+                        foreach (var item in att.Value.ToList())
+                        {
+                            if (ccTimeIn <= item.HourFrom && ccTimeOut >= item.HourTo) //dungg gio hoac di som ve muon 
+                                soGio = soGio + (item.HourTo - item.HourFrom);
+                            else if (ccTimeIn > item.HourFrom) //di lam luon
+                                soGio = soGio + (item.HourTo - ccTimeIn);
+                            else if (ccTimeOut < item.HourTo) //ve som
+                                soGio = soGio + (ccTimeOut - item.HourFrom);
                         }
+                        var total = Decimal.Parse(soGio.ToString()) / sogioTb1Ngay.Value;
+                        if (total >= (75 / 100) && total <= 1)
+                            congEmp.SoCong++;
+                        else
+                        {
+                            congEmp.SoCong = congEmp.SoCong + 1 / 2;
+                        }
+                        congEmp.SoGioLam = congEmp.SoGioLam + Decimal.Parse(soGio.ToString());
+
+                    }
+                    else if (att.Value != null && att.Value.Count() == 1)
+                    {
+                        if (ccTimeIn <= buoi.HourFrom && ccTimeOut >= buoi.HourTo)
+                            soGio = soGio + (buoi.HourTo - buoi.HourFrom);
+                        else if (ccTimeIn > buoi.HourFrom)
+                            soGio = soGio + (buoi.HourTo - ccTimeIn);
+                        else if (ccTimeOut < buoi.HourTo)
+                            soGio = soGio + (ccTimeOut - buoi.HourFrom);
+
+                        var total = Decimal.Parse(soGio.ToString()) / sogioTb1Ngay.Value;
+                        if (total >= (75 / 100))
+                            congEmp.SoCong++;
+                        else
+                        {
+                            congEmp.SoCong = congEmp.SoCong + 1 / 2;
+                        }
+                        congEmp.SoGioLam = congEmp.SoGioLam + Decimal.Parse(soGio.ToString());
                     }
                 }
             }
-            return soCong;
+            return congEmp;
         }
 
-        public decimal SoGioLamNhanVien(List<ChamCong> list)
+        public CongEmplyee SoGioLamNhanVien(List<ChamCong> list, List<IGrouping<string, ResourceCalendarAttendance>> re_listResourceCalendarAtts)
         {
-            decimal soGio = 0;
+            var congEmp = new CongEmplyee();
 
             for (int i = 0; i < list.Count(); i++)
             {
                 var cc = list[i];
-                soGio = Decimal.Parse(((cc.TimeOut.Value - cc.TimeIn.Value).TotalHours).ToString());
+                foreach (var att in re_listResourceCalendarAtts)
+                {
+                    if ((int)cc.Date.Value.DayOfWeek == Int32.Parse(att.Key))
+                    {
+                        congEmp.SoGioLam = Decimal.Parse(((cc.TimeOut.Value - cc.TimeIn.Value).TotalHours).ToString());
+                        congEmp.SoCong++;
+                    }
+                }
             }
-
-            return soGio;
+            return congEmp;
         }
 
         public async Task<CongEmplyee> CountCong(Guid? empId, DateTime? from, DateTime? to)
@@ -308,10 +368,9 @@ namespace Infrastructure.Services
             var listResourceCalendarAtts = new List<ResourceCalendarAttendance>();
             var congEmp = new CongEmplyee();
             if (to.HasValue)
-                query = query.Where(x => x.Date <= to);
+                query = query.Where(x => x.Date <= to.Value);
             if (from.HasValue)
-                query = query.Where(x => x.Date >= from);
-
+                query = query.Where(x => x.Date >= from.Value);
             var emp = await empObj.SearchQuery(x => x.Id == empId).FirstOrDefaultAsync();
             var structureType = await structureTypeObj.SearchQuery(x => x.Id == emp.StructureTypeId)
                 .Include("DefaultResourceCalendar")
@@ -321,16 +380,17 @@ namespace Infrastructure.Services
             if (structureType != null)
                 listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
 
+            var SoNgayLamTrongThang = SoNgayLam(from, to, listResourceCalendarAtts);
             var re_listResourceCalendarAtts = listResourceCalendarAtts.GroupBy(x => x.DayOfWeek).ToList();
 
             switch (structureType.WageType)
             {
                 case "monthly":
-                    congEmp.CongChuan1Thang = SoCongChuan(re_listResourceCalendarAtts, from.Value, to.Value);
-                    congEmp.SoCong = SoCongNhanVienTheoThang(listChamCongs, re_listResourceCalendarAtts);
+                    congEmp = SoCongNhanVienTheoThang(listChamCongs, SoNgayLamTrongThang);
+                    congEmp.CongChuan1Thang = SoNgayLamTrongThang.Count();
                     break;
                 case "hourly":
-                    congEmp.SoGioLam = SoGioLamNhanVien(listChamCongs);
+                    congEmp = SoGioLamNhanVien(listChamCongs, re_listResourceCalendarAtts);
                     break;
                 default:
                     break;

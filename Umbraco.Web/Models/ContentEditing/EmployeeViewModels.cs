@@ -90,24 +90,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public double SoNgayCong { get; set; }
         public Guid? StructureTypeId { get; set; }
         public HrPayrollStructureTypeDisplay StructureType { get; set; }
-      
+
 
         public HrPayrollStructureBase Struct { get; set; }
         public decimal? Wage { get; set; }
         public decimal? HourlyWage { get; set; }
 
-        public Guid? StructureTypeId { get; set; }
-        public HrPayrollStructureTypeSimple StructureType { get; set; }
-
-        /// <summary>
-        /// Tiền lương theo tháng, nếu StructureType.WageType == monthly
-        /// </summary>
-        public decimal? Wage { get; set; }
-
-        /// <summary>
-        /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
-        /// </summary>
-        public decimal? HourlyWage { get; set; }
 
     }
 
