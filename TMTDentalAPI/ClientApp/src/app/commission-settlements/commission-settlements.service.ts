@@ -17,6 +17,9 @@ export class CommissionSettlementReportOutput {
   baseAmount: number;
   percentage: number;
   amount: number;
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
 }
 
 export class CommissionSettlementReportDetailOutput {

@@ -90,7 +90,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.dateFrom = formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.companyId = formValue.company ? formValue.company.id : null;
-    val.employeeId = formValue.user ? formValue.user.id : null;
+    val.employeeId = formValue.employee ? formValue.employee.id : null;
     
     this.loading = true;
     this.commissionSettlementReportsService.getReport(val).subscribe(result => {
@@ -132,12 +132,13 @@ export class CommissionSettlementReportListComponent implements OnInit {
   }
 
   getFilter() {
+    debugger;
     var formValue = this.formGroup.value;
     var val = new CommissionSettlementReport();
     val.dateFrom = formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.companyId = formValue.company ? formValue.company.id : null;
-    val.employeeId = formValue.user ? formValue.user.id : null;
+    val.employeeId = formValue.employee ? formValue.employee.id : null;
     return val;
   }
 }

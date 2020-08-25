@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { CommissionSettlementReport, CommissionSettlementReportDetailOutput, CommissionSettlementsService } from '../commission-settlements.service';
+import { CommissionSettlementReport, CommissionSettlementReportDetailOutput, CommissionSettlementsService, CommissionSettlementReportOutput } from '../commission-settlements.service';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -15,24 +15,27 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
   limit = 5;
   reportDetailResults: CommissionSettlementReportDetailOutput[];
 
-  @Input() public employeeId: string;
-  @Input() public filter: CommissionSettlementReport;
+  @Input() public item: CommissionSettlementReportOutput;
 
   constructor(
     private commissionSettlementsService: CommissionSettlementsService,
   ) { }
 
   ngOnInit() {
-    this.filter.employeeId = this.employeeId;
     this.loadDataFromApi();
   }
 
   loadDataFromApi() {
     this.loading = true;
+    var filter = new CommissionSettlementReport();
+    filter.offset = this.skip;
+    filter.limit = this.limit;
+    filter.employeeId = this.item.employeeId;
+    filter.companyId = this.item.companyId;
+    filter.dateFrom = this.item.dateFrom;
+    filter.dateTo = this.item.dateTo;
 
-    this.filter.offset = this.skip;
-    this.filter.limit = this.limit;
-    this.commissionSettlementsService.getReportDetail(this.filter).pipe(
+    this.commissionSettlementsService.getReportDetail(filter).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems

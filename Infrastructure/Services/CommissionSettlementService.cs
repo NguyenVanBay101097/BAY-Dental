@@ -141,6 +141,9 @@ namespace Infrastructure.Services
                     BaseAmount = x.Sum(s => s.BaseAmount),
                     Percentage = x.Average(s => s.Percentage),
                     Amount = x.Sum(s => s.Amount),
+                    CompanyId = val.CompanyId,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo
                 }).ToListAsync();
 
             return result;
