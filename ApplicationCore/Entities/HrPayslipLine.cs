@@ -28,5 +28,7 @@ namespace ApplicationCore.Entities
         public HrSalaryRuleCategory Category { get; set; }
 
         public int? Sequence { get; set; }
+
+        
     }
 }

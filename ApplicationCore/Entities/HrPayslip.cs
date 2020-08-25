@@ -52,6 +52,12 @@ namespace ApplicationCore.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
+        /// <summary>
+        /// state : 'done'
+        /// </summary>
+        public Guid? AccountMoveId { get; set; }
+        public AccountMove AccountMove { get; set; }
+
         public ICollection<HrPayslipLine> Lines { get; set; } = new List<HrPayslipLine>();
 
         public ICollection<HrPayslipWorkedDays> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDays>();
