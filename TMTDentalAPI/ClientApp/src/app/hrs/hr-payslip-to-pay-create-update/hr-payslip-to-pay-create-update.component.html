@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li><a routerLink="/hr/payslip-to-pay">Phiếu lương</a></li>
+            <li><a routerLink="/hr/payslip-to-pays">Phiếu lương</a></li>
             <li class="active">{{payslipRecord !=null?payslipRecord.name :'Mới'}}</li>
         </ol>
         <div class="o_cp_left">
@@ -9,7 +9,7 @@
                 <div class="o_form_buttons_view">
                     <button *ngIf="this.state.value != 'done'" type="button" class="btn btn-primary btn-sm"
                         accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
-                    <a [routerLink]="['/hr/payslip-to-pay/create']" accesskey="c" *ngIf="id"
+                    <a [routerLink]="['/hr/payslip-to-pays/create']" accesskey="c" *ngIf="id"
                         class="btn btn-secondary btn-sm">Thêm
                         mới</a>
                 </div>
@@ -73,7 +73,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true" (valueChange)="EmployeeValueChange($event)"
                                         #empCbx (selectionChange)="EmployeeChange($event)" formControlName="employee"
                                         [valueField]="'id'">
                                     </kendo-combobox>
@@ -97,7 +97,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName='dateTo'></kendo-datepicker>
+                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName='dateTo'></kendo-datepicker>
                                 </td>
                             </tr>
                         </tbody>
@@ -140,8 +140,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div *ngIf="this.state.value != 'draft' " class="tab-contanner">
-                    <app-hr-payslip-line-list></app-hr-payslip-line-list>
+                <div class="tab-contanner">
+                    <app-hr-payslip-line-list [payslipForm]= "this.payslipForm"></app-hr-payslip-line-list>
                 </div>
             </div>
         </div>

@@ -1,5 +1,34 @@
 <kendo-tabstrip (tabSelect)="onTabSelect($event)">
-    <kendo-tabstrip-tab [selected]="true" [title]="'Các mục lương'">
+  <kendo-tabstrip-tab [selected]="true" [title]="'thông tin ngày công'">
+    <ng-template kendoTabContent>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Kiểu</th>
+            <th scope="col">Mô tả</th>
+            <th scope="col">Số ngày công</th>
+            <th scope="col">Số giờ công</th>
+            <th scope="col">Tổng tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of listWorkDays.data">
+            <td>{{ item.type}}</td>
+            <td>{{ item.description}}</td>
+            <td>{{ item.numberOfDay}}</td>
+            <td>{{ item.numberOfHour}}</td>
+            <td>{{ item.total |  currency: "VND" }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="collectionSizeWD" [(page)]="pageWD" [pageSize]="pageSizeWD"
+          (pageChange)="pageChangeWD($event)">
+        </ngb-pagination>
+      </div>
+    </ng-template>
+  </kendo-tabstrip-tab>
+    <kendo-tabstrip-tab [title]="'Các mục lương'">
       <ng-template kendoTabContent>
         <!-- <button class="mb-2 btn btn-primary" kendoButton (click)="ShowAddSalaryRulePopup()">Thêm</button> -->
         <table class="table table-striped table-hover">
@@ -27,33 +56,5 @@
         </div>
       </ng-template>
     </kendo-tabstrip-tab>
-    <kendo-tabstrip-tab [title]="'thông tin ngày công'">
-      <ng-template kendoTabContent>
-        <table class="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Kiểu</th>
-              <th scope="col">Mô tả</th>
-              <th scope="col">Số ngày công</th>
-              <th scope="col">Số giờ công</th>
-              <th scope="col">Tổng tiền</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of listWorkDays.data">
-              <td>{{ item.type}}</td>
-              <td>{{ item.description}}</td>
-              <td>{{ item.numberOfDay}}</td>
-              <td>{{ item.numberOfHour}}</td>
-              <td>{{ item.total |  currency: "VND" }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="d-flex justify-content-between p-2">
-          <ngb-pagination [collectionSize]="collectionSizeWD" [(page)]="pageWD" [pageSize]="pageSizeWD"
-            (pageChange)="pageChangeWD($event)">
-          </ngb-pagination>
-        </div>
-      </ng-template>
-    </kendo-tabstrip-tab>
+   
   </kendo-tabstrip>

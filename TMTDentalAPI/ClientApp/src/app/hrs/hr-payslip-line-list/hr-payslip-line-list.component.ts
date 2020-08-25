@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HrPayrollStructureService } from '../hr-payroll-structure.service';
@@ -11,6 +11,8 @@ import { HrPayslipService, HrPayslipPaged } from '../hr-payslip.service';
   styleUrls: ['./hr-payslip-line-list.component.css']
 })
 export class HrPayslipLineListComponent implements OnInit {
+
+  @Input() payslipForm: any;
 
   id: string;
   AllData: any = [];
@@ -40,15 +42,13 @@ export class HrPayslipLineListComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.activeroute.snapshot.paramMap.get('id');
-    if (this.id) {
-      this.loadLineDataFromApi();
-    }
+    // this.loadWordDayFromApi();
   }
 
   onTabSelect(e) {
-    if (e.index === 0) {
+    if (e.index === 1) {
       this.loadLineDataFromApi();
-    } else if (e.index === 1) {
+    } else if (e.index === 0) {
       this.loadWordDayFromApi();
     }
   }
@@ -83,19 +83,34 @@ export class HrPayslipLineListComponent implements OnInit {
     this.loadLineDataFromApi();
   }
 
+  get employee() { return this.payslipForm.get('employee').value; }
+  get dateFrom() { return this.payslipForm.get('dateFrom').value; }
+  get dateTo() { return this.payslipForm.get('dateTo').value; }
+
   loadWordDayFromApi() {
-    this.listWorkDays.data =
-      [
-        {
-          type: 'Đi làm', description: 'số ngày đi làm', numberOfHour: 3,
-          numberOfDay: '20', total: 5000000
-        },
-        {
-          type: 'nghỉ làm', description: 'số ngày nghỉ làm', numberOfHour: 43,
-          numberOfDay: '2', total: 400000
-        },
-      ];
-    this.collectionSizeWD = 4;
+    if (this.employee && this.employee.structureTypeId) {
+
+      this.listWorkDays.data =
+        [
+          {
+            type: 'Đi làm', description: 'số ngày đi làm', numberOfHour: 3,
+            numberOfDay: '20', total: 5000000
+          },
+          {
+            type: 'nghỉ làm', description: 'số ngày nghỉ làm', numberOfHour: 43,
+            numberOfDay: '2', total: 400000
+          },
+        ];
+      this.collectionSizeWD = 4;
+      console.log(this.employee);
+      console.log(this.payslipForm);
+      // this.hrPayslipService.GetWorkedDayInfo()
+    } else {
+      this.listWorkDays = {
+        data: [],
+        total: 0
+      };
+    }
   }
 
   pageChangeWD(event: PageChangeEvent): void {
