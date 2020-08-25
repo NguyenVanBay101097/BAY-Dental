@@ -9,7 +9,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// User account
     /// </summary>
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public ApplicationUser()
         {
@@ -36,5 +36,9 @@ namespace ApplicationCore.Entities
 
         public Guid? FacebookPageId { get; set; }
         public FacebookPage FacebookPage { get; set; }
+
+
+
+
     }
 }

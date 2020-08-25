@@ -23,5 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public bool? IsQuotation { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 }

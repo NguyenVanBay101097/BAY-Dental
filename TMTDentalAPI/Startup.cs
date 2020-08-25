@@ -250,6 +250,12 @@ namespace TMTDentalAPI
             services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
             services.AddScoped<IReportJournalService, ReportJournalService>();
             services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
+            services.AddScoped<ICommissionService, CommissionService>();
+            services.AddScoped<ICommissionProductRuleService, CommissionProductRuleService>();
+            services.AddScoped<ISaleOrderLinePartnerCommissionService, SaleOrderLinePartnerCommissionService>();
+            services.AddScoped<ISaleOrderLinePaymentRelService, SaleOrderLinePaymentRelService>();
+            services.AddScoped<ICommissionReportService, CommissionReportService>();
+            services.AddScoped<ICommissionSettlementService, CommissionSettlementService>();
             services.AddScoped<IPartnerTitleService, PartnerTitleService>();
             services.AddScoped<ITCareScenarioService, TCareScenarioService>();
             services.AddScoped<IFacebookWebhookJobService, FacebookWebhookJobService>();
@@ -356,6 +362,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LoaiThuChiProfile());
                 mc.AddProfile(new PhieuThuChiProfile());
                 mc.AddProfile(new AccountFinancialReportProfile());
+                mc.AddProfile(new CommissionProfile());
+                mc.AddProfile(new CommissionProductRuleProfile());
+                mc.AddProfile(new SaleOrderLinePaymentRelProfile());
                 mc.AddProfile(new TCareScenarioProfile());
             };
 

@@ -19,6 +19,7 @@ import { SaleOrderApplyDiscountDefaultDialogComponent } from './sale-order-apply
 import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
+import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sale-order-payment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo
     SaleOrderApplyDiscountDefaultDialogComponent,
     SaleOrderLineLaboOrdersDialogComponent,
     LaboOrderCuLineDialogComponent,
-    LaboOrderCuDialogComponent
+    LaboOrderCuDialogComponent,
+    SaleOrderPaymentDialogComponent
   ],
   imports: [
     CommonModule,
@@ -56,7 +58,8 @@ import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo
     SaleOrderCuDialogComponent,
     SaleOrderLineLaboOrdersDialogComponent,
     LaboOrderCuLineDialogComponent,
-    LaboOrderCuDialogComponent
+    LaboOrderCuDialogComponent,
+    SaleOrderPaymentDialogComponent,
   ]
 })
 export class SaleOrdersModule { }

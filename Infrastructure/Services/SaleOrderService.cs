@@ -90,6 +90,7 @@ namespace Infrastructure.Services
                 var saleLine = _mapper.Map<SaleOrderLine>(item);
                 saleLine.Order = order;
                 saleLine.Sequence = sequence++;
+                saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
                 foreach (var toothId in item.ToothIds)
                 {
                     saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
@@ -228,8 +229,10 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
+                .Include("OrderLines.SaleOrderLinePaymentRels")
                 .ToListAsync();
 
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var move_ids = new List<Guid>().AsEnumerable();
             var dotKhamIds = new List<Guid>().AsEnumerable();
@@ -265,16 +268,23 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
+                    if (line.SaleOrderLinePaymentRels.Any())
+                        throw new Exception("Có dịch vụ đã thanh toán, cần hủy những thanh toán trước khi hủy phiếu");
+
                     if (line.State == "cancel")
                         continue;
 
                     line.State = "draft";
+                    await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
+                    var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = 0;
                 }
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
-
+                await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x=>x.Id).ToList());
                 sale.State = "draft";
             }
 
@@ -1059,6 +1069,8 @@ namespace Infrastructure.Services
         public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         {
             var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var lineObj = GetService<ISaleOrderLineService>();
+            res.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
             return res;
         }
 
@@ -1078,36 +1090,27 @@ namespace Infrastructure.Services
             order = _mapper.Map(val, order);
 
             await SaveOrderLines(val, order);
+            await UpdateAsync(order); //update trước để generate id cho những sale order line
 
             var saleLineObj = GetService<ISaleOrderLineService>();
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
             saleLineObj.ComputeAmount(order.OrderLines);
+            saleLineObj._GetInvoiceQty(order.OrderLines);
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+            await saleLineObj.RecomputeCommissions(order.OrderLines);
             await UpdateAsync(order);
-
-            //var linesIds = order.OrderLines.Select(x => x.Id).ToList();
-            //var lines = await saleLineObj.SearchQuery(x => linesIds.Contains(x.Id))
-            //    .Include(x => x.Order)
-            //    .Include(x => x.Product)
-            //   .Include(x => x.SaleOrderLineInvoice2Rels)
-            //   .Include("SaleOrderLineInvoice2Rels.InvoiceLine")
-            //   .Include("SaleOrderLineInvoice2Rels.InvoiceLine.Move")
-            //   .ToListAsync();
-
-            //saleLineObj._GetInvoiceQty(lines);
-            //saleLineObj._GetToInvoiceQty(lines);
-            //saleLineObj._ComputeInvoiceStatus(lines);
-            //await saleLineObj.UpdateAsync(lines);
 
             _AmountAll(order);
-            //_GetInvoiced(new List<SaleOrder>() { order });
+            _GetInvoiced(new List<SaleOrder>() { order });
 
             await UpdateAsync(order);
 
-            //var self = new List<SaleOrder>() { order };
-            //await _GenerateDotKhamSteps(self);
+            var self = new List<SaleOrder>() { order };
+            await _GenerateDotKhamSteps(self);
 
-            // nếu phiếu điều trị ở trạng thái sale thì tính lại công nợ khi update
-            if (order.State == "sale")
+            if (order.InvoiceStatus == "to invoice")
             {
                 await ActionInvoiceCreateV2(order.Id);
             }
@@ -1163,7 +1166,7 @@ namespace Infrastructure.Services
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var existLines = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.SaleOrderLineToothRels).ToListAsync();
+            var existLines = await saleLineObj.SearchQuery(x => x.OrderId == order.Id && !x.IsCancelled).Include(x => x.SaleOrderLineToothRels).ToListAsync();
             var lineToRemoves = new List<SaleOrderLine>();
             foreach (var existLine in existLines)
             {
@@ -1196,6 +1199,8 @@ namespace Infrastructure.Services
                     var saleLine = _mapper.Map<SaleOrderLine>(line);
                     saleLine.Sequence = sequence++;
                     saleLine.Order = order;
+                    saleLine.AmountPaid = 0;
+                    saleLine.AmountResidual = 0;
                     foreach (var toothId in line.ToothIds)
                     {
                         saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
@@ -1212,7 +1217,7 @@ namespace Infrastructure.Services
                     {
                         _mapper.Map(line, saleLine);
                         saleLine.Sequence = sequence++;
-                        saleLine.Order = order;
+                        saleLine.Order = order;                       
                         saleLine.SaleOrderLineToothRels.Clear();
                         foreach (var toothId in line.ToothIds)
                         {
@@ -1347,6 +1352,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
+                .Include("OrderLines.SaleOrderLinePaymentRels")
                 .ToListAsync();
 
             foreach (var order in self)
@@ -1362,6 +1368,8 @@ namespace Infrastructure.Services
 
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+
+                await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
             var invoices = await _CreateInvoices(self, final: true);
@@ -1373,6 +1381,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetInvoiceQty(order.OrderLines);
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+                saleLineObj._ComputeLinePaymentRels(order.OrderLines);
             }
 
             _GetInvoiced(self);

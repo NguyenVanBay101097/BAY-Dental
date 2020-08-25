@@ -188,13 +188,28 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'partner-titles', 
-    loadChildren: () => import('./partner-titles/partner-titles.module').then(m => m.PartnerTitlesModule)
+    path: 'commissions', 
+    loadChildren: () => import('./commissions/commissions.module').then(m => m.CommissionsModule),
+    canActivate: [AuthGuard] 
   },
   {
-    path: 'tcare', 
-    loadChildren: () => import('./tcare/tcare.module').then(m => m.TcareModule),
+    path: 'employees', 
+    loadChildren: () => import('./employees/employees.module').then(m => m.EmployeesModule),
     canActivate: [AuthGuard] 
+  },
+  {
+    path: 'commission-report', 
+    loadChildren: () => import('./commission-reports/commission-reports.module').then(m => m.CommissionReportsModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'commission-settlements', 
+    loadChildren: () => import('./commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'partner-titles', 
+    loadChildren: () => import('./partner-titles/partner-titles.module').then(m => m.PartnerTitlesModule)
   },
   {
     path: 'tcare', 

@@ -43,7 +43,7 @@ export class RevenueReportManagerComponent implements OnInit {
     { text: 'Năm', value: 'date:year' },
     { text: 'Khách hàng', value: 'partner' },
     { text: 'Dịch vụ', value: 'product' },
-    { text: 'Bác sĩ', value: 'salesman' }
+    // { text: 'Bác sĩ', value: 'salesman' }
   ];
 
   public total: any;

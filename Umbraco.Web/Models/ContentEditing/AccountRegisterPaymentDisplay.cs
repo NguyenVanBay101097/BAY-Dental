@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -33,5 +34,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> SaleOrderIds { get; set; } = new List<Guid>();
 
         public IEnumerable<Guid> ServiceCardOrderIds { get; set; } = new List<Guid>();
+
+        public IEnumerable<SaleOrderLinePaymentRelDisplay> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRelDisplay>();
+    }
+
+    public class SaleOrderLinePaymentRelDisplay
+    {
+        public Guid SaleOrderLineId { get; set; }
+
+        public string Name { get; set; }
+
+        public decimal PriceTotal { get; set; }
+
+        public decimal? AmountPaid { get; set; }
+
+        public decimal? AmountResidual { get; set; }
     }
 }
