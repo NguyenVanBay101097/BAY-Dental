@@ -175,6 +175,16 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ChangeDateFrom(e) {
+    if (this.dateFrom.value > this.dateTo.value) {
+      this.notificationService.show({
+        content: ' thời gian bắt đầu phải bé hơn thời gian kết thúc!',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
     this.name.setValue('Lương tháng ' + (e.getMonth() + 1) + (this.employee.value ? ' của ' + this.employee.value.name : ''));
     this.hrPayslipLineListComponent.loadWordDayFromApi();
   }

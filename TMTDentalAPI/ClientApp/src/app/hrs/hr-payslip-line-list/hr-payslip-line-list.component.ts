@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HrPayrollStructureService } from '../hr-payroll-structure.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { HrPayslipService, HrPayslipPaged } from '../hr-payslip.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-hr-payslip-line-list',
@@ -37,7 +38,8 @@ export class HrPayslipLineListComponent implements OnInit {
   constructor(
     private activeroute: ActivatedRoute,
     private modalService: NgbModal,
-    private hrPayslipService: HrPayslipService
+    private hrPayslipService: HrPayslipService,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
@@ -104,7 +106,18 @@ export class HrPayslipLineListComponent implements OnInit {
       this.collectionSizeWD = 4;
       console.log(this.employee);
       console.log(this.payslipForm);
-      // this.hrPayslipService.GetWorkedDayInfo()
+      const val = this.payslipForm.value;
+      val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
+      val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
+      val.structureTypeId = this.employee.structureTypeId;
+      this.hrPayslipService.GetWorkedDayInfo(val).subscribe((res: any) => {
+        this.listWorkDays = {
+          data: res.items,
+          total: res.totalItems
+        };
+        this.collectionSizeWD = res.totalItems;
+      });
+
     } else {
       this.listWorkDays = {
         data: [],
