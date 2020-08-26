@@ -14,7 +14,7 @@ export class WorkEntryTypeCreateUpdateDialogComponent implements OnInit {
   @Input() public id: string;
   title: string;
   oldColor: string;
-  workEntryType: WorkEntryType = new WorkEntryType();
+  
 
   constructor(
     private fb: FormBuilder,
@@ -42,10 +42,8 @@ export class WorkEntryTypeCreateUpdateDialogComponent implements OnInit {
 
   loadData() {
     this.workEntryTypeService.get(this.id).subscribe(
-      result => {
-        this.workEntryType = result;
-        this.formGroup.patchValue(this.workEntryType);
-        this.oldColor = this.workEntryType.color;
+      result => {       
+        this.formGroup.patchValue(result);
       }
     )
   }
