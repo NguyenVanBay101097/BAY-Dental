@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class HrPayslipWorkedDays: BaseEntity
+    public class HrPayslipWorkedDays : BaseEntity
     {
         public string Name { get; set; }
 
@@ -16,7 +16,7 @@ namespace ApplicationCore.Entities
         public string Code { get; set; }
 
         public decimal? NumberOfDays { get; set; }
-
+        public decimal? Amount { get; set; }
         public decimal? NumberOfHours { get; set; }
     }
 }

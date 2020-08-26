@@ -25,7 +25,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? Sequence { get; set; }
         public string Code { get; set; }
         public decimal? NumberOfDays { get; set; }
+        public decimal? Amount { get; set; }
         public decimal? NumberOfHours { get; set; }
+        public Guid WorkEntryTypeId { get; set; }
     }
     public class HrPayslipWorkedDayDisplay
     {
