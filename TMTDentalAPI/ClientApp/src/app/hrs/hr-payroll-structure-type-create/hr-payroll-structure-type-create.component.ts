@@ -7,8 +7,9 @@ import { HrPayrollStructureTypeService, HrPayrollStructureTypeDisplay, HrPayroll
 import { ResourceCalendarService, ResourceCalendarPaged, ResourceCalendarBasic } from 'src/app/resource-calendars/resource-calendar.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { TimeKeepingService, WorkEntryTypeBasic } from 'src/app/time-keeping/time-keeping.service';
+import { TimeKeepingService } from 'src/app/time-keeping/time-keeping.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { WorkEntryTypeBasic, WorkEntryTypeService } from 'src/app/work-entry-types/work-entry-type.service';
 
 @Component({
   selector: 'app-hr-payroll-structure-type-create',
@@ -31,7 +32,8 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
     private hrPayrollStructureTypeService: HrPayrollStructureTypeService,
     private resourceCalendarService: ResourceCalendarService,
     private timeKeepingService: TimeKeepingService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private workEntryTypeService : WorkEntryTypeService
   ) { }
 
   ngOnInit() {
@@ -109,7 +111,7 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.search = q ? q : '';
-    return this.timeKeepingService.getPagedWorkEntryType(val);
+    return this.workEntryTypeService.getPaged(val);
   }
 
   onSave() {

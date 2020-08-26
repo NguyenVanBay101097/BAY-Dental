@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { TimeKeepingService, ChamCongBasic, ChamCongSave, WorkEntryType, WorkEntryTypePage } from '../time-keeping.service';
+import { TimeKeepingService, ChamCongBasic, ChamCongSave } from '../time-keeping.service';
 import { EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
+import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/work-entry-types/work-entry-type.service';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -22,6 +23,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   timeIn: any;
   today: Date = new Date();
   timeOut: any;
+  title: string;
   employee: EmployeeBasic;
   filterdWorks: WorkEntryType[] = [];
   chamCong: ChamCongBasic = new ChamCongBasic();
@@ -29,7 +31,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     private activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private timeKeepingServive: TimeKeepingService,
-    private intl: IntlService
+    private intl: IntlService,
+    private workEntryTypeService : WorkEntryTypeService
   ) { }
 
   ngOnInit() {
@@ -73,7 +76,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     page.limit = 20;
     page.offset = 0;
     page.filter = search ? search : '';
-    return this.timeKeepingServive.getPagedWorkEntryType(page);
+    return this.workEntryTypeService.getPaged(page);
   }
 
   loadFormApi() {
