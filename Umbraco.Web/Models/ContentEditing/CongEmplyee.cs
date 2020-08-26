@@ -14,4 +14,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? SoCong { get; set; }
         public int CongChuan1Thang { get; set; }
     }
+
+    public class ChamCongTinhCong
+    {
+        public double SoNgayCong { get; set; }
+        public double SoGioCong { get; set; }
+    }
 }

@@ -113,6 +113,6 @@ export class HrPayslipService {
     }
 
     GetWorkedDayInfo(val: any) {
-        return this.http.get(this.baseApi + this.apiUrl, val);
+        return this.http.post(this.baseApi + this.apiUrl + '/OnChangeEmployee', val);
     }
 }

@@ -144,5 +144,12 @@ namespace TMTDentalAPI.Controllers
             await _HrPayslipService.UpdateAsync(slip);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> OnChangeEmployee(HrPayslipOnChangeEmployee val)
+        {
+            var res = await _HrPayslipService.OnChangeEmployee(val.EmployeeId, val.DateFrom, val.DateTo);
+            return Ok(res);
+        }
     }
 }

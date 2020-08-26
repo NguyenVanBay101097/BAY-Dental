@@ -19,5 +19,7 @@ namespace Infrastructure.Services
         Task<decimal> GetStandardWorkHour();
         Task<CongEmplyee> CountCong(Guid? empId, DateTime? to, DateTime? from);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
+
+        ChamCongTinhCong TinhSoCongGioCong(ChamCong cc, IEnumerable<AttendanceInterval> attendanceIntervals, decimal hoursPerday);
     }
 }

@@ -36,6 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Code { get; set; }
         public decimal? NumberOfDays { get; set; }
         public decimal? NumberOfHours { get; set; }
+        public Guid WorkEntryTypeId { get; set; }
 
     }
 }

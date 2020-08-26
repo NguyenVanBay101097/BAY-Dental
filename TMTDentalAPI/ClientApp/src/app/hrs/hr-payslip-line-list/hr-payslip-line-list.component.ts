@@ -26,14 +26,7 @@ export class HrPayslipLineListComponent implements OnInit {
   loading = false;
   collectionSize = this.AllData.length;
   // for table workday
-  listWorkDays: GridDataResult = {
-    data: [],
-    total: 0
-  };
-  pageSizeWD = 20;
-  pageWD = 1;
-  collectionSizeWD = this.AllData.length;
-
+  listWorkDays: any[];
 
   constructor(
     private activeroute: ActivatedRoute,
@@ -91,47 +84,17 @@ export class HrPayslipLineListComponent implements OnInit {
 
   loadWordDayFromApi() {
     if (this.employee && this.employee.structureTypeId) {
-
-      this.listWorkDays.data =
-        [
-          {
-            type: 'Đi làm', description: 'số ngày đi làm', numberOfHour: 3,
-            numberOfDay: '20', total: 5000000
-          },
-          {
-            type: 'nghỉ làm', description: 'số ngày nghỉ làm', numberOfHour: 43,
-            numberOfDay: '2', total: 400000
-          },
-        ];
-      this.collectionSizeWD = 4;
-      console.log(this.employee);
-      console.log(this.payslipForm);
-      const val = this.payslipForm.value;
-      val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
-      val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
-      val.structureTypeId = this.employee.structureTypeId;
+      const val = Object();
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'g', 'en-US');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'g', 'en-US');
+      val.employeeId = this.employee.id;
       this.hrPayslipService.GetWorkedDayInfo(val).subscribe((res: any) => {
-        this.listWorkDays = {
-          data: res.items,
-          total: res.totalItems
-        };
-        this.collectionSizeWD = res.totalItems;
+        this.listWorkDays = res.workedDayLines;
       });
 
     } else {
-      this.listWorkDays = {
-        data: [],
-        total: 0
-      };
+      this.listWorkDays = [];
     }
-  }
-
-  pageChangeWD(event: PageChangeEvent): void {
-    // this.listLines = {
-    //   data: this.AllData.slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize),
-    //   total: this.AllData.length
-    // };
-    this.loadWordDayFromApi();
   }
 
 }

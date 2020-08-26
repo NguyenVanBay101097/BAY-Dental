@@ -49,4 +49,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<HrPayslipLineDisplay> Lines { get; set; }
         public IEnumerable<HrPayslipWorkedDays> WorkedDaysLines { get; set; }
     }
+
+    public class HrPayslipOnChangeEmployee
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? EmployeeId { get; set; }
+    }
 }

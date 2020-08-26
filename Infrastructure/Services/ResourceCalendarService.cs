@@ -43,5 +43,54 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<ResourceCalendarBasic>>(items)
             };
         }
+
+        public async Task<IEnumerable<AttendanceInterval>> _AttendanceIntervals(Guid id, DateTime start_dt, DateTime end_dt)
+        {
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            var result = new List<AttendanceInterval>();
+            foreach (var attendance in self.ResourceCalendarAttendances)
+            {
+                var start = start_dt.Date;
+                var until = end_dt.Date;
+                var weekday = Convert.ToInt32(attendance.DayOfWeek);
+
+                foreach (var day in GetListDate(start, until, weekday))
+                {
+                    var dt0 = day.AddHours(attendance.HourFrom);
+                    var dt1 = day.AddHours(attendance.HourTo);
+                    result.Add(new AttendanceInterval
+                    {
+                        Start = dt0,
+                        Stop = dt1,
+                        Attendance = attendance
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<DateTime> GetListDate(DateTime start_dt, DateTime end_dt, int weekday)
+        {
+            var res = new List<DateTime>();
+            var date = start_dt;
+            while (date <= end_dt)
+            {
+                if ((int)date.DayOfWeek == weekday)
+                    res.Add(date);
+                date = date.AddDays(1);
+            }
+
+            return res;
+        }
+    }
+
+    public class AttendanceInterval
+    {
+        public DateTime Start { get; set; }
+
+        public DateTime Stop { get; set; }
+
+        public ResourceCalendarAttendance Attendance { get; set; }
     }
 }
