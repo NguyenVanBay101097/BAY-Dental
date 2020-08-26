@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,17 +25,14 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<HrPayslipLine>> ComputePayslipLine(Guid? EmployeeId, DateTime? DateFrom, DateTime? DateTo)
+        public async Task<IEnumerable<HrPayslipLine>> ComputePayslipLine(Guid? EmployeeId, IEnumerable<HrPayslipWorkedDaySave> hrPayslipWorkedDaySaves)
         {
             var res = new List<HrPayslipLine>();
-            var chamCongObj = GetService<IChamCongService>();
             var empObj = GetService<IEmployeeService>();
             var structureObj = GetService<IHrPayrollStructureService>();
             var emp = await empObj.SearchQuery(x => x.Id == EmployeeId.Value).FirstOrDefaultAsync();
             var structure = await structureObj.SearchQuery(x => x.TypeId == emp.StructureTypeId).Include(x => x.Rules).FirstOrDefaultAsync();
             var rules = structure != null && structure.Rules != null ? structure.Rules.ToList() : new List<HrSalaryRule>();
-            var congEmp = await chamCongObj.CountCong(emp.Id, DateFrom, DateTo);
-            var amoutADay = emp.Wage / (congEmp != null ? congEmp.CongChuan1Thang : 1);
             for (int i = 0; i < rules.Count(); i++)
             {
                 var rule = rules[i];
@@ -50,8 +48,14 @@ namespace Infrastructure.Services
                         {
                             //Tinh luong chinh cua Emp = so ngay cong * luong co ban
                             case "LC":
-                                line.Amount = amoutADay * (congEmp != null ? congEmp.SoCong : 0);
-                                line.Total = line.Amount;
+                                if (hrPayslipWorkedDaySaves != null && hrPayslipWorkedDaySaves.Count() > 0)
+                                {
+                                    foreach (var item in hrPayslipWorkedDaySaves)
+                                    {
+                                        line.Amount += item.Amount;
+                                    }
+                                    line.Total = line.Amount;
+                                }
                                 break;
                             //Hoa hong get tu service hoa hong
                             case "HH":
@@ -74,8 +78,16 @@ namespace Infrastructure.Services
                         {
                             //% dua vao luong chinh
                             case "LC":
-                                line.Amount = (amoutADay * (congEmp != null ? congEmp.SoCong : 0)) * (rule.AmountPercentage / 100);
-                                line.Total = (amoutADay * (congEmp != null ? congEmp.SoCong : 0)) * (rule.AmountPercentage / 100);
+                                if (hrPayslipWorkedDaySaves != null && hrPayslipWorkedDaySaves.Count() > 0)
+                                {
+                                    decimal amount = 0;
+                                    foreach (var item in hrPayslipWorkedDaySaves)
+                                    {
+                                        amount += item.Amount.Value;
+                                    }
+                                    line.Amount = amount * rule.AmountPercentage / 100;
+                                    line.Total = line.Amount;
+                                }
                                 break;
                             //% dua vao hoa hong
                             case "HH":
@@ -97,7 +109,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x=>x.Employee).Include(x=>x.Lines).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x => x.Employee).Include(x => x.Lines).FirstOrDefaultAsync();
             return res;
         }
 
@@ -117,7 +129,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.DateFrom >= val.DateFrom && x.DateTo <= val.DateTo);
             }
-            query = query.Include(x => x.Struct).Include(x=>x.Employee).OrderByDescending(x=>x.DateCreated);
+            query = query.Include(x => x.Struct).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();

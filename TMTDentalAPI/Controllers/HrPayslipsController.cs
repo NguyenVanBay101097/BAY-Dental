@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ComputePayslip(HrPayslipSave val)
         {
             var entity = _mapper.Map<HrPayslip>(val);
-            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.DateFrom, val.DateTo)).ToList();
+            var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.ListHrPayslipWorkedDaySave)).ToList();
             foreach (var line in lines)
             {
                 entity.Lines.Add(line);
@@ -98,12 +98,25 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+            var workSaves = new List<HrPayslipWorkedDaySave>();
             var str = await _HrPayslipService.GetHrPayslipDisplay(id);
             if (str == null)
                 return NotFound();
             if (str.Lines.Count() > 0)
                 await _hrPayslipLineService.DeleteAsync(str.Lines);
-            var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, str.DateFrom, str.DateTo)).ToList();
+            if (str.WorkedDaysLines != null && str.WorkedDaysLines.Count > 0)
+            {
+                workSaves = str.WorkedDaysLines.Select(x => new HrPayslipWorkedDaySave
+                {
+                    Amount = x.Amount,
+                    Code = x.Code,
+                    Name = x.Name,
+                    NumberOfDays = x.NumberOfDays,
+                    NumberOfHours = x.NumberOfHours,
+                    Sequence = x.Sequence
+                }).ToList();
+            }
+            var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, workSaves)).ToList();
             if (lines != null)
             {
                 str.Lines = lines;
