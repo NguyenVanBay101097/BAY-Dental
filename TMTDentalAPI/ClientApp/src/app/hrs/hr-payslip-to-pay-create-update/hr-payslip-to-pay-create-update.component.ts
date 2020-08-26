@@ -195,31 +195,18 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
     if (!this.id) {
       this.hrPayslipService.create(val).subscribe(res => {
-        this.router.navigate(['/hr/payslip-to-pays/edit/' + res.id]);
+        this.router.navigate(['/hr/payslips/edit/' + res.id]);
       });
     } else {
       this.hrPayslipService.update(this.id, val).subscribe(res => {
         this.DisableFormControl();
-        if (this.state.value === 'process') {
-          this.hrPayslipService.ComputeLinePut(this.id).subscribe(res2 => {
-            this.notificationService.show({
-              content: ' thành công!',
-              hideAfter: 3000,
-              position: { horizontal: 'center', vertical: 'top' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'success', icon: true }
-            });
-            this.hrPayslipLineListComponent.loadLineDataFromApi();
-          });
-        } else {
-          this.notificationService.show({
-            content: ' thành công!',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-        }
+        this.notificationService.show({
+          content: ' thành công!',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
       });
     }
 
@@ -234,51 +221,31 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
       val.state = 'process';
       this.hrPayslipService.create(val).subscribe(res => {
-        this.hrPayslipService.ComputeLinePost(val).subscribe((res2: any) => {
-          this.router.navigate(['/hr/payslip-to-pays/edit/' + res.id]);
+        this.hrPayslipService.ComputeLinePost([res.id]).subscribe((res2: any) => {
+          this.router.navigate(['/hr/payslips/edit/' + res.id]);
         });
       });
     } else {
-      this.hrPayslipService.ComputeLinePut(this.id).subscribe((res: any) => {
+      this.hrPayslipService.ComputeLinePost([this.id]).subscribe((res: any) => {
         this.state.setValue('process');
         this.DisableFormControl();
+        this.hrPayslipLineListComponent.loadLineDataFromApi();
       });
     }
   }
 
-  // ConfirmSalary() {
-  //   this.hrPayslipService.ConfirmCompute([this.id]).subscribe(res => {
-  //     this.notificationService.show({
-  //       content: ' thành công!',
-  //       hideAfter: 3000,
-  //       position: { horizontal: 'center', vertical: 'top' },
-  //       animation: { type: 'fade', duration: 400 },
-  //       type: { style: 'success', icon: true }
-  //     });
-
-  //     this.state.setValue('done');
-  //     this.DisableFormControl();
-  //   });
-  // }
-
-  ComputeSalaryAgain() {
-    if (!this.ValidateForm()) { return false; }
-
-    const val = this.payslipForm.value;
-    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
-    val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
-
-    this.hrPayslipService.update(this.id, val).subscribe(res => {
-      this.hrPayslipService.ComputeLinePut(this.id).subscribe(res2 => {
-        this.notificationService.show({
-          content: ' thành công!',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.hrPayslipLineListComponent.loadLineDataFromApi();
+  ConfirmSalary() {
+    this.hrPayslipService.ConfirmCompute([this.id]).subscribe(res => {
+      this.notificationService.show({
+        content: ' thành công!',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
       });
+
+      this.state.setValue('done');
+      this.DisableFormControl();
     });
   }
 
@@ -294,6 +261,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
 
       this.state.setValue('draft');
       this.DisableFormControl();
+      this.hrPayslipLineListComponent.loadLineDataFromApi();
     });
   }
 

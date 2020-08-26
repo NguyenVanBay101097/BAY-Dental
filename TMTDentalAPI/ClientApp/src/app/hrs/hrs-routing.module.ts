@@ -23,13 +23,13 @@ const routes: Routes = [
     path: 'payroll-structure-types', component: HrPayrollStructureTypeListComponent
   },
   {
-    path: 'payslip-to-pays', component: HrPayslipToPayListComponent
+    path: 'payslips', component: HrPayslipToPayListComponent
   },
   {
-    path: 'payslip-to-pays/create', component: HrPayslipToPayCreateUpdateComponent
+    path: 'payslips/create', component: HrPayslipToPayCreateUpdateComponent
   },
   {
-    path: 'payslip-to-pays/edit/:id', component: HrPayslipToPayCreateUpdateComponent
+    path: 'payslips/edit/:id', component: HrPayslipToPayCreateUpdateComponent
   },
 ];
 

@@ -79,55 +79,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> ComputePayslip(HrPayslipSave val)
-        //{
-        //    var entity = _mapper.Map<HrPayslip>(val);
-        //    var lines = (await _HrPayslipService.ComputePayslipLine(val.EmployeeId, val.ListHrPayslipWorkedDaySave)).ToList();
-        //    foreach (var line in lines)
-        //    {
-        //        entity.Lines.Add(line);
-        //    }
-        //    entity.CompanyId = CompanyId;
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    await _HrPayslipService.CreateAsync(entity);
-        //    _unitOfWork.Commit();
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ComputePayslip(List<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _HrPayslipService.ComputePayslipLine(ids);
+            _unitOfWork.Commit();
 
-        //    return Ok(_mapper.Map<HrPayslipDisplay>(entity));
-        //}
-
-        //[HttpPut("[action]/{id}")]
-        //public async Task<IActionResult> ComputePayslipLineUpdate(Guid id)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest();
-        //    var workSaves = new List<HrPayslipWorkedDaySave>();
-        //    var str = await _HrPayslipService.GetHrPayslipDisplay(id);
-        //    if (str == null)
-        //        return NotFound();
-        //    if (str.Lines.Count() > 0)
-        //        await _hrPayslipLineService.DeleteAsync(str.Lines);
-        //    if (str.WorkedDaysLines != null && str.WorkedDaysLines.Count > 0)
-        //    {
-        //        workSaves = str.WorkedDaysLines.Select(x => new HrPayslipWorkedDaySave
-        //        {
-        //            Amount = x.Amount,
-        //            Code = x.Code,
-        //            Name = x.Name,
-        //            NumberOfDays = x.NumberOfDays,
-        //            NumberOfHours = x.NumberOfHours,
-        //            Sequence = x.Sequence
-        //        }).ToList();
-        //    }
-        //    var lines = (await _HrPayslipService.ComputePayslipLine(str.EmployeeId, workSaves)).ToList();
-        //    if (lines != null)
-        //    {
-        //        str.Lines = lines;
-        //    }
-        //    str.State = "process";
-        //    await _HrPayslipService.UpdateAsync(str);
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)

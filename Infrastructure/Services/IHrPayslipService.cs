@@ -13,6 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<HrPayslipDisplay>> GetPaged(HrPayslipPaged val);
         Task<HrPayslip> GetHrPayslipDisplay(Guid Id);
         Task<HrPayslipOnChangeEmployeeResult> OnChangeEmployee(Guid? employeeId, DateTime? dateFrom, DateTime? dateTo);
+        Task ComputePayslipLine(List<Guid> ids);
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip);
 

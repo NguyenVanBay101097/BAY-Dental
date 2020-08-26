@@ -60,7 +60,9 @@
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.state == 'draft' ? 'nháp' : (dataItem.state == 'process' ? 'đang xử lý' : 'hoàn thành')  }}
+                <span *ngIf="dataItem.state == 'draft'">Nháp</span>
+                <span *ngIf="dataItem.state == 'process'">Đang xử lý</span>
+                <span *ngIf="dataItem.state == 'done'">Hoàn thành</span>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id" width="100">
