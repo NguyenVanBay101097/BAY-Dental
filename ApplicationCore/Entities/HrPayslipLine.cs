@@ -4,8 +4,12 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class HrPayslipLine: BaseEntity
+    public class HrPayslipLine : BaseEntity
     {
+        public HrPayslipLine()
+        {
+            Amount = 0;
+        }
         public string Name { get; set; }
 
         public string Code { get; set; }
@@ -29,6 +33,6 @@ namespace ApplicationCore.Entities
 
         public int? Sequence { get; set; }
 
-        
+
     }
 }
