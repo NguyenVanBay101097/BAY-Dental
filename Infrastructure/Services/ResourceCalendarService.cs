@@ -106,21 +106,6 @@ namespace Infrastructure.Services
             res.SoNgayCong = soNgayCong;
             return res;
         }
-    }
-
-    public class AttendanceInterval
-    {
-        public DateTime Start { get; set; }
-
-        public DateTime Stop { get; set; }
-
-        public ResourceCalendarAttendance Attendance { get; set; }
-    }
-
-    public class ResourceCalendarNgayGioCongChuan
-    {
-        public double SoNgayCong { get; set; }
-        public double SoGioCong { get; set; }
 
         public async Task<ResourceCalendar> CreateResourceCalendar(ResourceCalendarSave val)
         {
@@ -143,7 +128,6 @@ namespace Infrastructure.Services
 
             await UpdateAsync(resourceCalendar);
         }
-
 
         private void SaveAttendances(ResourceCalendarSave val, ResourceCalendar resourceCalendar)
         {
@@ -177,5 +161,20 @@ namespace Infrastructure.Services
             }
 
         }
+    }
+
+    public class AttendanceInterval
+    {
+        public DateTime Start { get; set; }
+
+        public DateTime Stop { get; set; }
+
+        public ResourceCalendarAttendance Attendance { get; set; }
+    }
+
+    public class ResourceCalendarNgayGioCongChuan
+    {
+        public double SoNgayCong { get; set; }
+        public double SoGioCong { get; set; }
     }
 }

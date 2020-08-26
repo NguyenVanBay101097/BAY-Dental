@@ -25,87 +25,87 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<HrPayslipLine>> ComputePayslipLine(Guid? EmployeeId, IEnumerable<HrPayslipWorkedDaySave> hrPayslipWorkedDaySaves)
-        {
-            var res = new List<HrPayslipLine>();
-            var empObj = GetService<IEmployeeService>();
-            var structureObj = GetService<IHrPayrollStructureService>();
-            var emp = await empObj.SearchQuery(x => x.Id == EmployeeId.Value).FirstOrDefaultAsync();
-            var structure = await structureObj.SearchQuery(x => x.Id == structureId.Value).Include(x => x.Rules).FirstOrDefaultAsync();
-            var rules = structure != null && structure.Rules != null ? structure.Rules.ToList() : new List<HrSalaryRule>();
-            for (int i = 0; i < rules.Count(); i++)
-            {
-                var rule = rules[i];
-                var line = new HrPayslipLine();
-                line.SalaryRuleId = rule.Id;
-                line.Name = rule.Name;
-                line.Code = rule.Code;
-                line.Sequence = i;
-                switch (rule.AmountSelect)
-                {
-                    case "code":
-                        switch (rule.AmountCodeCompute)
-                        {
-                            //Tinh luong chinh cua Emp = so ngay cong * luong co ban
-                            case "LC":
-                                if (hrPayslipWorkedDaySaves != null && hrPayslipWorkedDaySaves.Count() > 0)
-                                {
-                                    foreach (var item in hrPayslipWorkedDaySaves)
-                                    {
-                                        line.Amount += item.Amount;
-                                    }
-                                    line.Total = line.Amount;
-                                }
-                                break;
-                            //Hoa hong get tu service hoa hong
-                            case "HH":
+        //public async Task<IEnumerable<HrPayslipLine>> ComputePayslipLine(Guid? EmployeeId, IEnumerable<HrPayslipWorkedDaySave> hrPayslipWorkedDaySaves)
+        //{
+        //    var res = new List<HrPayslipLine>();
+        //    var empObj = GetService<IEmployeeService>();
+        //    var structureObj = GetService<IHrPayrollStructureService>();
+        //    var emp = await empObj.SearchQuery(x => x.Id == EmployeeId.Value).FirstOrDefaultAsync();
+        //    var structure = await structureObj.SearchQuery(x => x.Id == structureId.Value).Include(x => x.Rules).FirstOrDefaultAsync();
+        //    var rules = structure != null && structure.Rules != null ? structure.Rules.ToList() : new List<HrSalaryRule>();
+        //    for (int i = 0; i < rules.Count(); i++)
+        //    {
+        //        var rule = rules[i];
+        //        var line = new HrPayslipLine();
+        //        line.SalaryRuleId = rule.Id;
+        //        line.Name = rule.Name;
+        //        line.Code = rule.Code;
+        //        line.Sequence = i;
+        //        switch (rule.AmountSelect)
+        //        {
+        //            case "code":
+        //                switch (rule.AmountCodeCompute)
+        //                {
+        //                    //Tinh luong chinh cua Emp = so ngay cong * luong co ban
+        //                    case "LC":
+        //                        if (hrPayslipWorkedDaySaves != null && hrPayslipWorkedDaySaves.Count() > 0)
+        //                        {
+        //                            foreach (var item in hrPayslipWorkedDaySaves)
+        //                            {
+        //                                line.Amount += item.Amount;
+        //                            }
+        //                            line.Total = line.Amount;
+        //                        }
+        //                        break;
+        //                    //Hoa hong get tu service hoa hong
+        //                    case "HH":
 
-                                break;
+        //                        break;
 
-                            default:
-                                break;
-                        }
-                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //                break;
 
-                    case "fixamount":
-                        line.Amount = rule.AmountFix;
-                        line.Total = rule.AmountFix;
-                        break;
+        //            case "fixamount":
+        //                line.Amount = rule.AmountFix;
+        //                line.Total = rule.AmountFix;
+        //                break;
 
-                    case "percent":
+        //            case "percent":
 
-                        switch (rule.AmountPercentageBase)
-                        {
-                            //% dua vao luong chinh
-                            case "LC":
-                                if (hrPayslipWorkedDaySaves != null && hrPayslipWorkedDaySaves.Count() > 0)
-                                {
-                                    decimal amount = 0;
-                                    foreach (var item in hrPayslipWorkedDaySaves)
-                                    {
-                                        amount += item.Amount.Value;
-                                    }
-                                    line.Amount = amount * rule.AmountPercentage / 100;
-                                    line.Total = line.Amount;
-                                }
-                                break;
-                            //% dua vao hoa hong
-                            case "HH":
+        //                switch (rule.AmountPercentageBase)
+        //                {
+        //                    //% dua vao luong chinh
+        //                    case "LC":
+        //                        if (hrPayslipWorkedDaySaves != null && hrPayslipWorkedDaySaves.Count() > 0)
+        //                        {
+        //                            decimal amount = 0;
+        //                            foreach (var item in hrPayslipWorkedDaySaves)
+        //                            {
+        //                                amount += item.Amount.Value;
+        //                            }
+        //                            line.Amount = amount * rule.AmountPercentage / 100;
+        //                            line.Total = line.Amount;
+        //                        }
+        //                        break;
+        //                    //% dua vao hoa hong
+        //                    case "HH":
 
-                                break;
+        //                        break;
 
-                            default:
-                                break;
-                        }
-                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //                break;
 
-                    default:
-                        break;
-                }
-                res.Add(line);
-            }
-            return res;
-        }
+        //            default:
+        //                break;
+        //        }
+        //        res.Add(line);
+        //    }
+        //    return res;
+        //}
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
@@ -219,16 +219,6 @@ namespace Infrastructure.Services
         {
 
         }
-    }
-
-    public class HrPayslipOnChangeEmployeeResult
-    {
-        public List<HrPayslipWorkedDayDisplay> WorkedDayLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
-
-        public string Name { get; set; }
-    }
-        }
-
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
@@ -244,9 +234,9 @@ namespace Infrastructure.Services
                 if (payslip.State != "process")
                     throw new Exception("Chỉ những phiếu lương chờ xác nhận được vào sổ.");
 
-                var move = await _PreparePayslipMovesAsync(payslip);                
+                var move = await _PreparePayslipMovesAsync(payslip);
                 amlObj.PrepareLines(move.Lines);
-                await moveObj.CreateMoves(new List<AccountMove> { move});
+                await moveObj.CreateMoves(new List<AccountMove> { move });
                 await moveObj.ActionPost(new List<AccountMove> { move });
                 payslip.State = "done";
                 payslip.AccountMoveId = move.Id;
@@ -274,7 +264,7 @@ namespace Infrastructure.Services
             var lines = new List<AccountMoveLine>();
             foreach (var line in payslip.Lines)
             {
-                var balance = line.Amount.Value;             
+                var balance = line.Amount.Value;
                 var items = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
@@ -304,7 +294,6 @@ namespace Infrastructure.Services
             return move;
         }
 
-
         public async Task<AccountJournal> InsertAccountJournalIfNotExists()
         {
             var irModelDataObj = GetService<IIRModelDataService>();
@@ -330,7 +319,7 @@ namespace Infrastructure.Services
                 UserTypeId = expensesType.Id,
                 CompanyId = CompanyId,
             };
-          
+
             await accountObj.CreateAsync(new List<AccountAccount>() { acc334, acc642 });
 
             var salaryJournal = new AccountJournal
@@ -348,7 +337,13 @@ namespace Infrastructure.Services
 
             return salaryJournal;
         }
+    }
 
+    public class HrPayslipOnChangeEmployeeResult
+    {
+        public List<HrPayslipWorkedDayDisplay> WorkedDayLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
+
+        public string Name { get; set; }
     }
 }
 
