@@ -4,8 +4,12 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class HrSalaryRule: BaseEntity
+    public class HrSalaryRule : BaseEntity
     {
+        public HrSalaryRule()
+        {
+            AmountFix = 0;
+        }
         public string Name { get; set; }
 
         public string Code { get; set; }
@@ -43,7 +47,7 @@ namespace ApplicationCore.Entities
         /// chứa mã code cho công thức
         /// </summary>
         public string AmountCodeCompute { get; set; }
-        
+
         /// <summary>
         /// chứa mã code cho % bases
         /// </summary>

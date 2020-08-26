@@ -29,11 +29,13 @@ namespace Infrastructure.Services
         {
             var listPayslip = new List<HrPayslip>();
 
-            foreach (var id in ids)
+            var paylist = SearchQuery(x => ids.Contains(x.Id)).ToList();
+
+            foreach (var payslip in paylist)
             {
                 var empObj = GetService<IEmployeeService>();
                 var structureObj = GetService<IHrPayrollStructureService>();
-                var payslip = await SearchQuery(x => x.Id == id).Include(x => x.WorkedDaysLines).Include(x => x.Lines).FirstOrDefaultAsync();
+
                 payslip.Lines.Clear();
                 var workedDayLines = payslip != null && payslip.WorkedDaysLines != null ? payslip.WorkedDaysLines.ToList() : new List<HrPayslipWorkedDays>();
                 var emp = await empObj.SearchQuery(x => x.Id == payslip.EmployeeId).FirstOrDefaultAsync();
@@ -46,7 +48,7 @@ namespace Infrastructure.Services
                     line.SalaryRuleId = rule.Id;
                     line.Name = rule.Name;
                     line.Code = rule.Code;
-                    line.Sequence = i;
+                    line.Sequence = rule.Sequence;
                     switch (rule.AmountSelect)
                     {
                         case "code":
@@ -109,9 +111,7 @@ namespace Infrastructure.Services
                     listPayslip.Add(payslip);
                 }
             }
-
             await UpdateAsync(listPayslip);
-
         }
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
