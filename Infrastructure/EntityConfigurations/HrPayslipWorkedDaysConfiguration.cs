@@ -17,6 +17,11 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany(x => x.WorkedDaysLines)
                 .HasForeignKey(x => x.PayslipId);
 
+            builder.HasOne(x => x.WorkEntryType)
+                .WithMany()
+                .HasForeignKey(x => x.WorkEntryTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);

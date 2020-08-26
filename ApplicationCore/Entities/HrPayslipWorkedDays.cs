@@ -18,5 +18,9 @@ namespace ApplicationCore.Entities
         public decimal? NumberOfDays { get; set; }
 
         public decimal? NumberOfHours { get; set; }
+
+        public Guid WorkEntryTypeId { get; set; }
+        public WorkEntryType WorkEntryType { get; set; }
+        public decimal? Amount { get; set; }
     }
 }

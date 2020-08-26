@@ -196,7 +196,7 @@ namespace Infrastructure.Services
 
     public class HrPayslipOnChangeEmployeeResult
     {
-        public List<HrPayslipWorkedDayDisplay> WorkedDayLines { get; set; }
+        public List<HrPayslipWorkedDayDisplay> WorkedDayLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
 
         public string Name { get; set; }
     }

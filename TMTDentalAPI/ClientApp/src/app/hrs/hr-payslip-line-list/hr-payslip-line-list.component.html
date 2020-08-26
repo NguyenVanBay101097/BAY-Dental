@@ -13,11 +13,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of listWorkDays">
-            <td>{{ item.type}}</td>
-            <td>{{ item.description}}</td>
-            <td>{{ item.numberOfDay}}</td>
-            <td>{{ item.numberOfHour}}</td>
-            <td>{{ item.total |  currency: "VND" }}</td>
+            <td>{{ item.name}}</td>
+            <td>{{ item.name}}</td>
+            <td>{{ item.numberOfDays}}</td>
+            <td>{{ item.numberOfHours}}</td>
+            <td>{{ 10000 |  currency: "VND" }}</td>
           </tr>
         </tbody>
       </table>
