@@ -54,6 +54,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       name: ['lương tháng ' + (this.date.getMonth() + 1), [Validators.required]],
       state: 'draft',
       number: null,
+      listHrPayslipWorkedDaySave: null
     });
 
     this.empCbx.filterChange.asObservable().pipe(
@@ -145,7 +146,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   EmployeeValueChange(e) {
-    this.hrPayslipLineListComponent.loadWordDayFromApi();
+    this.hrPayslipLineListComponent.OnEmployeeChange();
   }
 
   LoadStructList(typeId, filter) {
@@ -162,7 +163,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   handleFilterStruct(value) {
-    this.LoadStructList(this.employee.value.id, value);
+    this.LoadStructList(this.employee.value.structureTypeId, value);
   }
 
   SelectStructChange(e) {
@@ -184,7 +185,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       return false;
     }
     this.name.setValue('Lương tháng ' + (e.getMonth() + 1) + (this.employee.value ? ' của ' + this.employee.value.name : ''));
-    this.hrPayslipLineListComponent.loadWordDayFromApi();
+    this.hrPayslipLineListComponent.OnEmployeeChange();
   }
 
   onSaveOrUpdate() {
@@ -232,8 +233,10 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
       val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
       val.state = 'process';
-      this.hrPayslipService.ComputeLinePost(val).subscribe((res: any) => {
-        this.router.navigate(['/hr/payslip-to-pays/edit/' + res.id]);
+      this.hrPayslipService.create(val).subscribe(res => {
+        this.hrPayslipService.ComputeLinePost(val).subscribe((res2: any) => {
+          this.router.navigate(['/hr/payslip-to-pays/edit/' + res.id]);
+        });
       });
     } else {
       this.hrPayslipService.ComputeLinePut(this.id).subscribe((res: any) => {
@@ -243,20 +246,20 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     }
   }
 
-  ConfirmSalary() {
-    this.hrPayslipService.ConfirmCompute([this.id]).subscribe(res => {
-      this.notificationService.show({
-        content: ' thành công!',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
+  // ConfirmSalary() {
+  //   this.hrPayslipService.ConfirmCompute([this.id]).subscribe(res => {
+  //     this.notificationService.show({
+  //       content: ' thành công!',
+  //       hideAfter: 3000,
+  //       position: { horizontal: 'center', vertical: 'top' },
+  //       animation: { type: 'fade', duration: 400 },
+  //       type: { style: 'success', icon: true }
+  //     });
 
-      this.state.setValue('done');
-      this.DisableFormControl();
-    });
-  }
+  //     this.state.setValue('done');
+  //     this.DisableFormControl();
+  //   });
+  // }
 
   ComputeSalaryAgain() {
     if (!this.ValidateForm()) { return false; }

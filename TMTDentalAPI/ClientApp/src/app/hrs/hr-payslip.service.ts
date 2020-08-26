@@ -67,6 +67,18 @@ export class HrPayslipLineDisplay {
     sequence: number;
 }
 
+export class HrPayslipWorkedDaySave {
+    id: string;
+    name: string;
+    payslipId: string;
+    sequence?: number;
+    code: string;
+    numberOfDays: number;
+    numberOfHours: number;
+    workEntryTypeId: string;
+    amount: number;
+}
+
 @Injectable()
 export class HrPayslipService {
     apiUrl = 'api/HrPayslips';
@@ -96,7 +108,7 @@ export class HrPayslipService {
         return this.http.post(this.baseApi + this.apiUrl + '/ComputePayslip', val);
     }
 
-    ComputeLinePut( id: string) {
+    ComputeLinePut(id: string) {
         return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslipLineUpdate/' + id, null);
     }
 
@@ -112,7 +124,11 @@ export class HrPayslipService {
         return this.http.put(this.baseApi + this.apiUrl + '/ConfirmCompute/' + id, null);
     }
 
-    GetWorkedDayInfo(val: any) {
+    GetWorkedDayInfoByEmployee(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/OnChangeEmployee', val);
+    }
+
+    GetWorkedDayInfoByPayslipId(val: any) {
+        return this.http.get(this.baseApi + 'api/HrPayslipWorkedDays', { params: val });
     }
 }

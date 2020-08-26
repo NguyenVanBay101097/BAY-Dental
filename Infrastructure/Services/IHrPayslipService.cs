@@ -14,5 +14,7 @@ namespace Infrastructure.Services
         Task<HrPayslip> GetHrPayslipDisplay(Guid Id);
         Task<HrPayslipOnChangeEmployeeResult> OnChangeEmployee(Guid? employeeId, DateTime? dateFrom, DateTime? dateTo);
         Task ActionConfirm(IEnumerable<Guid> ids);
+        Task SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip);
+
     }
 }

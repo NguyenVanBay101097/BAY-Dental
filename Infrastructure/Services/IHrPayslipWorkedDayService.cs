@@ -10,7 +10,8 @@ namespace Infrastructure.Services
 {
     public interface IHrPayslipWorkedDayService : IBaseService<HrPayslipWorkedDays>
     {
-        Task<PagedResult2<HrPayslipWorkedDayDisplay>> GetPaged(HrPayslipWorkedDayPaged val);
+        Task<IEnumerable<HrPayslipWorkedDayDisplay>> GetPaged(HrPayslipWorkedDayPaged val);
         Task<HrPayslipWorkedDays> GetHrPayslipWorkedDayDisplay(Guid Id);
+        Task Remove(IEnumerable<Guid> Ids);
     }
 }
