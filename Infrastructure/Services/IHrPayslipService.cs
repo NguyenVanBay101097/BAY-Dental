@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<HrPayslipDisplay>> GetPaged(HrPayslipPaged val);
         Task<HrPayslip> GetHrPayslipDisplay(Guid Id);
         Task<IEnumerable<HrPayslipLine>> ComputePayslipLine(Guid? EmployeeId, Guid? structureId, DateTime? DateFrom, DateTime? DateTo);
+        Task ActionConfirm(IEnumerable<Guid> ids);
     }
 }

@@ -218,7 +218,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ConfirmSalary() {
-    this.hrPayslipService.ConfirmCompute(this.id).subscribe(res => {
+    this.hrPayslipService.ConfirmCompute([this.id]).subscribe(res => {
       this.notificationService.show({
         content: ' thành công!',
         hideAfter: 3000,

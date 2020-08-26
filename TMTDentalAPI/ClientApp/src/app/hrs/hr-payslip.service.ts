@@ -108,7 +108,7 @@ export class HrPayslipService {
      return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
     }
 
-    ConfirmCompute(id: string) {
-        return this.http.put(this.baseApi + this.apiUrl + '/ConfirmCompute/' + id, null);
+    ConfirmCompute(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ConfirmCompute/' , ids);
        }
 }

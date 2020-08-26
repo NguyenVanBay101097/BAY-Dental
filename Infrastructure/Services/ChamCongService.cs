@@ -249,13 +249,10 @@ namespace Infrastructure.Services
             var congEmp = new CongEmplyee();
             foreach (var cc in listChamCongs)
             {
-                if (cc.WorkEntryType == null || !cc.WorkEntryType.IsHasTimeKeeping)
-                    continue;
-                else
-                {
-                    congEmp.SoCong = congEmp.SoCong + TinhTien(cc, re_listResourceCalendarAtts).SoCong;
-                    congEmp.SoGioLam = congEmp.SoGioLam + TinhTien(cc, re_listResourceCalendarAtts).SoGioLam;
-                }
+
+                congEmp.SoCong = congEmp.SoCong + TinhTien(cc, re_listResourceCalendarAtts).SoCong;
+                congEmp.SoGioLam = congEmp.SoGioLam + TinhTien(cc, re_listResourceCalendarAtts).SoGioLam;
+
 
             }
             return congEmp;

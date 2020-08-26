@@ -116,12 +116,13 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var HrPayslip = await _HrPayslipService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (HrPayslip == null)
-            {
+            var hrPayslip = await _HrPayslipService.GetByIdAsync(id);
+            if (hrPayslip.State == "done")
+                throw new Exception("Phiếu lương đã ghi sổ không thể xóa");
+            if (hrPayslip == null)
                 return NotFound();
-            }
-            await _HrPayslipService.DeleteAsync(HrPayslip);
+
+            await _HrPayslipService.DeleteAsync(hrPayslip);
             return NoContent();
         }
 
@@ -136,12 +137,10 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> ConfirmCompute(Guid id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ConfirmCompute(IEnumerable<Guid> ids)
         {
-            var slip = await _HrPayslipService.GetHrPayslipDisplay(id);
-            slip.State = "done";
-            await _HrPayslipService.UpdateAsync(slip);
+           await _HrPayslipService.ActionConfirm(ids);
             return NoContent();
         }
     }
