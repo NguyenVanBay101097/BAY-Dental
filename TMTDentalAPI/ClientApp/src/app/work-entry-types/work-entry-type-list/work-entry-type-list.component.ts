@@ -1,19 +1,19 @@
+
 import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
+import { WorkEntryTypeService, WorkEntryTypePage } from '../work-entry-type.service';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { WorkEntryTypePage, TimeKeepingService } from '../time-keeping.service';
-import { TimeKeepingWorkEntryTypeDialogComponent } from '../time-keeping-work-entry-type-dialog/time-keeping-work-entry-type-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { WorkEntryTypeCreateUpdateDialogComponent } from '../work-entry-type-create-update-dialog/work-entry-type-create-update-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-time-keeping-work-entry-type',
-  templateUrl: './time-keeping-work-entry-type.component.html',
-  styleUrls: ['./time-keeping-work-entry-type.component.css']
+  selector: 'app-work-entry-type-list',
+  templateUrl: './work-entry-type-list.component.html',
+  styleUrls: ['./work-entry-type-list.component.css']
 })
-export class TimeKeepingWorkEntryTypeComponent implements OnInit {
-
+export class WorkEntryTypeListComponent implements OnInit {
   title: string = "Cấu hình đầu vào loại công việc";
   gridData: GridDataResult;
   limit = 20;
@@ -24,10 +24,10 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
   search: string;
 
   constructor(
-    private timeKeepingService:TimeKeepingService,
+    private workEntryTypeService:WorkEntryTypeService,
     private modalService: NgbModal,
   ) { }
-
+  
   ngOnInit() {
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -44,7 +44,7 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.filter = this.search || '';
-    this.timeKeepingService.getPagedWorkEntryType(val).pipe(
+    this.workEntryTypeService.getPaged(val).pipe(
       map((response: any) =>
         (<GridDataResult>{
           data: response.items,
@@ -60,7 +60,7 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(TimeKeepingWorkEntryTypeDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(WorkEntryTypeCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -74,8 +74,8 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(TimeKeepingWorkEntryTypeDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    let modalRef = this.modalService.open(WorkEntryTypeCreateUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -88,7 +88,7 @@ export class TimeKeepingWorkEntryTypeComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa: ' + this.title;
 
     modalRef.result.then(() => {
-      this.timeKeepingService.deleteWorkEntryType(item.id).subscribe(() => {
+      this.workEntryTypeService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
         console.log(err);

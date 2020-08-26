@@ -1,40 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { WorkEntryTypeSave } from './../work-entry-type.service';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { WorkEntryType, WorkEntryTypeService } from '../work-entry-type.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TimeKeepingService, WorkEntryType } from '../time-keeping.service';
 
 @Component({
-  selector: 'app-time-keeping-work-entry-type-dialog',
-  templateUrl: './time-keeping-work-entry-type-dialog.component.html',
-  styleUrls: ['./time-keeping-work-entry-type-dialog.component.css']
+  selector: 'app-work-entry-type-create-update-dialog',
+  templateUrl: './work-entry-type-create-update-dialog.component.html',
+  styleUrls: ['./work-entry-type-create-update-dialog.component.css']
 })
-export class TimeKeepingWorkEntryTypeDialogComponent implements OnInit {
+export class WorkEntryTypeCreateUpdateDialogComponent implements OnInit {
   formGroup: FormGroup;
-  id: string;
+  @Input() public id: string;
+  title: string;
   oldColor: string;
   workEntryType: WorkEntryType = new WorkEntryType();
+
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
-    private timeKeepingService: TimeKeepingService
+    public activeModal: NgbActiveModal,
+    private workEntryTypeService: WorkEntryTypeService
   ) { }
 
   public itemColors: string[] = ['#DB003B', '#DB022B', '#EB4F0D', '#FA8F0E', '#F45375', '#D23C88', '#BA0A80', '#911C7E', '#FEC121', '#CDCF00', '#06A2A8', '#52BDD3']
 
   ngOnInit() {
+
     this.formGroup = this.fb.group({
       name: '',
-      isHasTimeKeeping: false
+      isHasTimeKeeping: false,
+      code: null,
+      sequence: null
     })
-    if (this.id)
-      this.loadData();
 
-    console.log(this.itemColors);
-
+   if (this.id) {
+      setTimeout(() => {
+       this.loadData();
+        });
+    }
   }
 
   loadData() {
-    this.timeKeepingService.getWorkEntryType(this.id).subscribe(
+    this.workEntryTypeService.get(this.id).subscribe(
       result => {
         this.workEntryType = result;
         this.formGroup.patchValue(this.workEntryType);
@@ -50,22 +57,25 @@ export class TimeKeepingWorkEntryTypeDialogComponent implements OnInit {
   onSave() {
     if (this.formGroup.invalid)
       return;
-    var val = new WorkEntryType();
+    var val = new WorkEntryTypeSave();
     val = this.formGroup.value;
     val.color = this.oldColor;
     if (this.id) {
-      this.timeKeepingService.updateWorkEntryType(this.id, val).subscribe(
+      this.workEntryTypeService.update(this.id, val).subscribe(
         () => {
           this.activeModal.close(true);
         }
       )
     } else {
-      this.timeKeepingService.createWorkEntryType(val).subscribe(
+      this.workEntryTypeService.create(val).subscribe(
         () => {
           this.activeModal.close(true);
         }
       )
     }
   }
+
+ 
+
 
 }
