@@ -408,5 +408,44 @@ namespace Infrastructure.Services
             return count;
         }
 
+        public ChamCongTinhCong TinhSoCongGioCong(ChamCong cc, IEnumerable<AttendanceInterval> attendanceIntervals, decimal hoursPerDay)
+        {
+            var dict = new Dictionary<DateTime, IList<AttendanceInterval>>();
+            foreach (var item in attendanceIntervals)
+            {
+                if (!dict.ContainsKey(item.Start.Date))
+                    dict.Add(item.Start.Date, new List<AttendanceInterval>());
+                dict[item.Start.Date].Add(item);
+            }
+
+            var intervals = dict.ContainsKey(cc.TimeIn.Value.Date) ? dict[cc.TimeIn.Value.Date] : new List<AttendanceInterval>();
+            double gioCong = 0;
+            foreach (var interval in intervals)
+            {
+                //nếu chấm công giờ vào và giờ ra hoàn toàn nằm ngoài chặn dưới và chặn trên thì bỏ qua
+                if (cc.TimeOut <= interval.Start || cc.TimeIn >= interval.Stop)
+                    continue;
+
+                //nếu chấm công vào mà nhỏ hơn chặn dưới thì lấy chặn dưới, còn lớn hơn thì lấy chấm công vào
+                //dùng dt0 để lưu lại
+                var dt0 = cc.TimeIn < interval.Start ? interval.Start : cc.TimeIn;
+                //nếu chấm công ra mà lớn hơn chặn trên thì lấy chặn trên, ngược lại thì lấy chấm công ra
+                //dùng dt1 để lưu lại
+                var dt1 = cc.TimeOut > interval.Stop ? interval.Stop : cc.TimeOut;
+                //giờ làm việc = (dt1 - dt0) quy sang giờ
+                //sogio += giờ làm việc
+                var actualHours = (dt1 - dt0).Value.TotalSeconds / 3600;
+                gioCong += actualHours;
+            }
+
+            var soNgayCong = Math.Round(gioCong / (double)hoursPerDay, 2);
+
+            return new ChamCongTinhCong
+            {
+                SoGioCong = gioCong,
+                SoNgayCong = soNgayCong
+            };
+        }
+
     }
 }

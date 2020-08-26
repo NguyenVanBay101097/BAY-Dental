@@ -105,10 +105,14 @@ export class HrPayslipService {
     }
 
     CancelCompute(id: string) {
-     return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
+        return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
     }
 
-    ConfirmCompute(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ConfirmCompute/' , ids);
-       }
+    ConfirmCompute(id: string) {
+        return this.http.put(this.baseApi + this.apiUrl + '/ConfirmCompute/' + id, null);
+    }
+
+    GetWorkedDayInfo(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/OnChangeEmployee', val);
+    }
 }

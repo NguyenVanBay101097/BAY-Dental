@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HrPayrollStructureService } from '../hr-payroll-structure.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { HrPayslipService, HrPayslipPaged } from '../hr-payslip.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-hr-payslip-line-list',
@@ -11,6 +12,8 @@ import { HrPayslipService, HrPayslipPaged } from '../hr-payslip.service';
   styleUrls: ['./hr-payslip-line-list.component.css']
 })
 export class HrPayslipLineListComponent implements OnInit {
+
+  @Input() payslipForm: any;
 
   id: string;
   AllData: any = [];
@@ -23,32 +26,24 @@ export class HrPayslipLineListComponent implements OnInit {
   loading = false;
   collectionSize = this.AllData.length;
   // for table workday
-  listWorkDays: GridDataResult = {
-    data: [],
-    total: 0
-  };
-  pageSizeWD = 20;
-  pageWD = 1;
-  collectionSizeWD = this.AllData.length;
-
+  listWorkDays: any[];
 
   constructor(
     private activeroute: ActivatedRoute,
     private modalService: NgbModal,
-    private hrPayslipService: HrPayslipService
+    private hrPayslipService: HrPayslipService,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
     this.id = this.activeroute.snapshot.paramMap.get('id');
-    if (this.id) {
-      this.loadLineDataFromApi();
-    }
+    // this.loadWordDayFromApi();
   }
 
   onTabSelect(e) {
-    if (e.index === 0) {
+    if (e.index === 1) {
       this.loadLineDataFromApi();
-    } else if (e.index === 1) {
+    } else if (e.index === 0) {
       this.loadWordDayFromApi();
     }
   }
@@ -83,27 +78,23 @@ export class HrPayslipLineListComponent implements OnInit {
     this.loadLineDataFromApi();
   }
 
-  loadWordDayFromApi() {
-    this.listWorkDays.data =
-      [
-        {
-          type: 'Đi làm', description: 'số ngày đi làm', numberOfHour: 3,
-          numberOfDay: '20', total: 5000000
-        },
-        {
-          type: 'nghỉ làm', description: 'số ngày nghỉ làm', numberOfHour: 43,
-          numberOfDay: '2', total: 400000
-        },
-      ];
-    this.collectionSizeWD = 4;
-  }
+  get employee() { return this.payslipForm.get('employee').value; }
+  get dateFrom() { return this.payslipForm.get('dateFrom').value; }
+  get dateTo() { return this.payslipForm.get('dateTo').value; }
 
-  pageChangeWD(event: PageChangeEvent): void {
-    // this.listLines = {
-    //   data: this.AllData.slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize),
-    //   total: this.AllData.length
-    // };
-    this.loadWordDayFromApi();
+  loadWordDayFromApi() {
+    if (this.employee && this.employee.structureTypeId) {
+      const val = Object();
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'g', 'en-US');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'g', 'en-US');
+      val.employeeId = this.employee.id;
+      this.hrPayslipService.GetWorkedDayInfo(val).subscribe((res: any) => {
+        this.listWorkDays = res.workedDayLines;
+      });
+
+    } else {
+      this.listWorkDays = [];
+    }
   }
 
 }
