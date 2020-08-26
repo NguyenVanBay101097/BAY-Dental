@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.FormulaParsing.Excel.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +84,28 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task<ResourceCalendarNgayGioCongChuan> TinhSoCongChuan(Guid id, DateTime start_dt, DateTime end_dt, IEnumerable<AttendanceInterval> intervals = null)
+        {
+            //tra ve so ngay cong chuan va so gio cong chuan
+            var res = new ResourceCalendarNgayGioCongChuan();
+            //tao ra attendance
+            intervals = intervals ?? await _AttendanceIntervals(id, start_dt, end_dt);
+
+            //loop sum so gio
+            double soGioCong = 0;
+            foreach (var interval in intervals)
+            {
+                soGioCong += (interval.Stop - interval.Start).TotalSeconds/ 3600;
+            }
+            //tra ve so ngay cong = so gio / hourPerdays va so gio sum
+            var calendar = await GetByIdAsync(id);
+            double soNgayCong = soGioCong / (double)calendar.HoursPerDay.Value;
+            
+            res.SoGioCong = soGioCong;
+            res.SoNgayCong = soNgayCong;
+            return res;
+        }
     }
 
     public class AttendanceInterval
@@ -92,5 +115,11 @@ namespace Infrastructure.Services
         public DateTime Stop { get; set; }
 
         public ResourceCalendarAttendance Attendance { get; set; }
+    }
+
+    public class ResourceCalendarNgayGioCongChuan
+    {
+        public double SoNgayCong { get; set; }
+        public double SoGioCong { get; set; }
     }
 }

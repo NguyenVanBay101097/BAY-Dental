@@ -166,6 +166,10 @@ namespace Infrastructure.Services
                 work_entry_type_dict[chamCong.WorkEntryTypeId.Value].SoGioCong += tinhCongResult.SoGioCong;
                 work_entry_type_dict[chamCong.WorkEntryTypeId.Value].SoNgayCong += tinhCongResult.SoNgayCong;
             }
+            // input cho tính tiền từng workedday line
+            var socongchuan = await calendarObj.TinhSoCongChuan(calendarId.Value, dateFrom.Value, dateTo.Value, attendanceIntervals);
+            var structureType = employee.StructureType;
+            var soTien1Cong = (employee.Wage.HasValue ? employee.Wage: 0) / (decimal)socongchuan.SoNgayCong;
 
             //tạo ra output
             var work_entry_type_ids = work_entry_type_dict.Keys.ToArray();
@@ -176,12 +180,23 @@ namespace Infrastructure.Services
             foreach (var item in work_entry_type_dict)
             {
                 var work_entry_type = work_entry_type_dict_2[item.Key];
+                decimal amount = 0;
+                if (structureType.WageType == "monthly")
+                {
+                    amount = (decimal)item.Value.SoNgayCong * soTien1Cong.Value;
+                }
+                else if (structureType.WageType == "hourly")
+                {
+                    amount = (decimal)item.Value.SoGioCong * employee.HourlyWage.Value;
+                }
+
                 result.WorkedDayLines.Add(new HrPayslipWorkedDayDisplay
                 {
                     NumberOfDays = (decimal)item.Value.SoNgayCong,
                     NumberOfHours = (decimal)item.Value.SoGioCong,
                     WorkEntryTypeId = item.Key,
-                    Name = work_entry_type.Name
+                    Name = work_entry_type.Name,
+                    Amount = amount
                 });
             }
 
