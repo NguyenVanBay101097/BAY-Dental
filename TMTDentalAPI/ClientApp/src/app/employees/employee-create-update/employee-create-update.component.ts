@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EmployeeDisplay } from '../employee';
 import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
 import { EmpCategoryService } from 'src/app/employee-categories/emp-category.service';
 import { EmployeeCategoryPaged, EmployeeCategoryBasic, EmployeeCategoryDisplay } from 'src/app/employee-categories/emp-category';
@@ -23,8 +22,13 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   @ViewChild("structureTypeCbx", { static: true }) structureTypeCbx: ComboBoxComponent;
 
 
-  constructor(private fb: FormBuilder, private service: EmployeeService, private structureTypeService : HrPayrollStructureTypeService,
-    private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, private modalService: NgbModal, private intlService: IntlService) { }
+  constructor(private fb: FormBuilder,
+    private service: EmployeeService,
+    private structureTypeService: HrPayrollStructureTypeService,
+    private empCategService: EmpCategoryService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private intlService: IntlService) { }
   empId: string;
 
   isChange: boolean = false;
@@ -51,9 +55,9 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       category: [null],
       isDoctor: this.isDoctor || false,
       isAssistant: this.isAssistant || false,
-      structureTypeId : null,
-      structureType : null,
-      wage : null,
+      structureTypeId: null,
+      structureType: null,
+      wage: null,
       hourlyWage: null,
     });
 
@@ -62,20 +66,20 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     setTimeout(() => {
       this.loadAutocompleteTypes(null);
       this.getEmployeeInfo();
-    
+
     });
 
     this.structureTypeCbx.filterChange
-        .asObservable()
-        .pipe(
-          debounceTime(300),
-          tap(() => (this.structureTypeCbx.loading = true)),
-          switchMap((value) => this.searchstructureTypes(value))
-        )
-        .subscribe((result) => {
-          this.filteredstructureTypes = result;
-          this.structureTypeCbx.loading = false;       
-    });
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.structureTypeCbx.loading = true)),
+        switchMap((value) => this.searchstructureTypes(value))
+      )
+      .subscribe((result) => {
+        this.filteredstructureTypes = result;
+        this.structureTypeCbx.loading = false;
+      });
 
   }
 

@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li><a routerLink="/hr/payslip-to-pays">Phiếu lương</a></li>
+            <li><a routerLink="/hr/payslips">Phiếu lương</a></li>
             <li class="active">{{payslipRecord !=null?payslipRecord.name :'Mới'}}</li>
         </ol>
         <div class="o_cp_left">
@@ -9,7 +9,7 @@
                 <div class="o_form_buttons_view">
                     <button *ngIf="this.state.value != 'done'" type="button" class="btn btn-primary btn-sm"
                         accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
-                    <a [routerLink]="['/hr/payslip-to-pays/create']" accesskey="c" *ngIf="id"
+                    <a [routerLink]="['/hr/payslips/create']" accesskey="c" *ngIf="id"
                         class="btn btn-secondary btn-sm">Thêm
                         mới</a>
                 </div>
@@ -36,7 +36,7 @@
                         Tính lương
                     </button>
                     <button type="button" *ngIf="this.state.value == 'process'" accesskey="1"
-                        class="btn btn-primary btn-sm" (click)="ComputeSalaryAgain()">
+                        class="btn btn-primary btn-sm" (click)="onSaveOrUpdate()">
                         Tính Lại lương
                     </button>
                     <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"

@@ -52,6 +52,8 @@ namespace TMTDentalAPI.Controllers
         {
             var entitys = _mapper.Map<HrPayslip>(val);
             entitys.CompanyId = CompanyId;
+            await _HrPayslipService.SaveWorkedDayLines(val,entitys);
+
             await _unitOfWork.BeginTransactionAsync();
             await _HrPayslipService.CreateAsync(entitys);
             _unitOfWork.Commit();
@@ -71,6 +73,7 @@ namespace TMTDentalAPI.Controllers
             str = _mapper.Map(val, str);
             str.CompanyId = CompanyId;
 
+            await _HrPayslipService.SaveWorkedDayLines(val, str);
             await _HrPayslipService.UpdateAsync(str);
 
             return NoContent();

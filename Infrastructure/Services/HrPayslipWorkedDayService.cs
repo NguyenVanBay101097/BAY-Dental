@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-  
+
     public class HrPayslipWorkedDayService : BaseService<HrPayslipWorkedDays>, IHrPayslipWorkedDayService
     {
 
@@ -30,21 +31,30 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<PagedResult2<HrPayslipWorkedDayDisplay>> GetPaged(HrPayslipWorkedDayPaged val)
+        public async Task<IEnumerable<HrPayslipWorkedDayDisplay>> GetPaged(HrPayslipWorkedDayPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Name.Contains(val.Search));
             }
+
+            if (val.PayslipId.HasValue)
+            {
+                query = query.Where(x => x.PayslipId == val.PayslipId);
+            }
             query = query.Include(x => x.Payslip);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await query.ToListAsync();
             var totalItems = await query.CountAsync();
-            return new PagedResult2<HrPayslipWorkedDayDisplay>(totalItems, val.Offset, val.Limit)
-            {
-                Items = _mapper.Map<IEnumerable<HrPayslipWorkedDayDisplay>>(items)
-            };
+
+            return _mapper.Map<IEnumerable<HrPayslipWorkedDayDisplay>>(items);
+        }
+
+        public async Task Remove(IEnumerable<Guid> Ids)
+        {
+            var list = await SearchQuery(x => Ids.Contains(x.Id)).ToListAsync();
+            await DeleteAsync(list);
         }
     }
 }

@@ -44,7 +44,7 @@ export class HrPayslipLineListComponent implements OnInit {
     if (e.index === 1) {
       this.loadLineDataFromApi();
     } else if (e.index === 0) {
-      this.loadWordDayFromApi();
+      this.OnEmployeeChange();
     }
   }
 
@@ -81,15 +81,31 @@ export class HrPayslipLineListComponent implements OnInit {
   get employee() { return this.payslipForm.get('employee').value; }
   get dateFrom() { return this.payslipForm.get('dateFrom').value; }
   get dateTo() { return this.payslipForm.get('dateTo').value; }
+  get workedDaysControl() { return this.payslipForm.get('listHrPayslipWorkedDaySave'); }
 
-  loadWordDayFromApi() {
+  OnEmployeeChange() {
     if (this.employee && this.employee.structureTypeId) {
       const val = Object();
       val.dateFrom = this.intlService.formatDate(this.dateFrom, 'g', 'en-US');
       val.dateTo = this.intlService.formatDate(this.dateTo, 'g', 'en-US');
       val.employeeId = this.employee.id;
-      this.hrPayslipService.GetWorkedDayInfo(val).subscribe((res: any) => {
+      this.hrPayslipService.GetWorkedDayInfoByEmployee(val).subscribe((res: any) => {
         this.listWorkDays = res.workedDayLines;
+        this.workedDaysControl.setValue(res.workedDayLines);
+      });
+
+    } else {
+      this.listWorkDays = [];
+    }
+  }
+
+  loadWordDayFromApi() {
+    if (this.employee && this.employee.structureTypeId) {
+      const val = new HrPayslipPaged();
+      val.payslipId = this.id;
+      this.hrPayslipService.GetWorkedDayInfoByPayslipId(val).subscribe((res: any) => {
+        this.listWorkDays = res;
+        this.workedDaysControl.setValue(res);
       });
 
     } else {

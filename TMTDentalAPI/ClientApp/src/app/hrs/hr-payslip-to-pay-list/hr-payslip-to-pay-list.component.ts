@@ -78,11 +78,11 @@ export class HrPayslipToPayListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/hr/payslip-to-pays/create']);
+    this.router.navigate(['/hr/payslips/create']);
   }
 
   editItem(dataitem) {
-    this.router.navigate(['/hr/payslip-to-pays/edit/' + dataitem.id]);
+    this.router.navigate(['/hr/payslips/edit/' + dataitem.id]);
   }
 
   deleteItem(dataitem) {

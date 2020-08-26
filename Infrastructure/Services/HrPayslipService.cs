@@ -116,7 +116,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslip> GetHrPayslipDisplay(Guid Id)
         {
-            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x => x.Employee).Include(x => x.Lines).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.Struct).Include(x => x.Employee).Include(x => x.Lines).Include(x=>x.WorkedDaysLines).FirstOrDefaultAsync();
             return res;
         }
 
@@ -343,6 +343,32 @@ namespace Infrastructure.Services
             await accountJournalObj.CreateAsync(salaryJournal);
 
             return salaryJournal;
+        }
+
+        public async Task SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip)
+        {
+            var ToRemove = new List<HrPayslipWorkedDays>();
+            foreach (var wd in payslip.WorkedDaysLines)
+            {
+                if (!val.ListHrPayslipWorkedDaySave.Any(x => x.Id == wd.Id))
+                    ToRemove.Add(wd);
+            }
+
+            await GetService<IHrPayslipWorkedDayService>().Remove(ToRemove.Select(x => x.Id).ToList());
+            payslip.WorkedDaysLines = payslip.WorkedDaysLines.Except(ToRemove).ToList();
+
+            foreach (var wd in val.ListHrPayslipWorkedDaySave)
+            {
+                if (wd.Id == Guid.Empty || !wd.Id.HasValue)
+                {
+                    var r = _mapper.Map<HrPayslipWorkedDays>(wd);
+                    payslip.WorkedDaysLines.Add(r);
+                }
+                else
+                {
+                    _mapper.Map(wd, payslip.WorkedDaysLines.SingleOrDefault(c => c.Id == wd.Id));
+                }
+            }
         }
     }
 
