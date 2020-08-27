@@ -61,5 +61,8 @@ namespace ApplicationCore.Entities
         public ICollection<HrPayslipLine> Lines { get; set; } = new List<HrPayslipLine>();
 
         public ICollection<HrPayslipWorkedDays> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDays>();
+
+        public Guid? PayslipRunId { get; set; }
+        public HrPayslipRun PayslipRun { get; set; }
     }
 }
