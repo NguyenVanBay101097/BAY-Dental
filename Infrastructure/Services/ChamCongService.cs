@@ -9,6 +9,7 @@ using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,148 +40,6 @@ namespace Infrastructure.Services
             }
             await this.CreateAsync(val);
         }
-
-        public async Task ImportExcel(IFormFile file, Ex_ImportExcelDirect dir)
-        {
-            //if (file == null) throw new Exception("File is null");
-            //var list = new List<ImportFileExcellChamCongModel>();
-
-            //using (var stream = new MemoryStream())
-            //{
-            //    file.CopyTo(stream);
-            //    var fileData = stream.ToArray();
-            //    using (ExcelPackage package = new ExcelPackage(stream))
-            //    {
-            //        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-            //        list = await HandleExcelRowsByCustomerOrSupplierAsync(worksheet, dir);
-            //    }
-            //}
-
-            //if (dir.IsCreateNew)
-            //{
-            //    var chamCongs = list.Select(x => new ChamCong { 
-            //    x.
-            //    });
-            //    await CreateAsync(_mapper.Map<ChamCong>)
-
-            //}
-        }
-
-        //public async Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, Ex_ImportExcelDirect dir)
-        //{
-        //    var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-        //    var list = new List<PartnerImportExcel>();
-        //    if (dir.IsCustomer)
-        //    {
-        //        var adList = new List<string>();
-        //        for (var i = 2; i <= worksheet.Dimension.Rows; i++)
-        //        {
-        //            var add = Convert.ToString(worksheet.Cells[i, 6].Value);
-        //            if (!string.IsNullOrEmpty(add))
-        //                adList.Add(add.ToLower());
-        //        }
-        //        var dict = await CheckAddressAsync(strs: adList.Distinct().ToList());
-        //        var genderDict = new Dictionary<string, string>()
-        //        {
-        //            { "nam","male" },
-        //            { "nữ","female" }
-        //        };
-
-        //        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
-        //        {
-        //            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-        //            if (string.IsNullOrWhiteSpace(name))
-        //                throw new Exception("Tên Khách hàng là bắt buộc");
-
-        //            var custRef = Convert.ToString(worksheet.Cells[row, 2].Value);
-        //            if (!dir.IsCreateNew)
-        //            {
-
-        //                if (string.IsNullOrWhiteSpace(custRef))
-        //                    throw new Exception("Mã Khách hàng là bắt buộc");
-        //            }
-        //            else
-        //            {
-
-        //            }
-
-
-        //            var gender = Convert.ToString(worksheet.Cells[row, 3].Value).ToLower();
-        //            var dob = Convert.ToString(worksheet.Cells[row, 4].Value);
-        //            var ar = new string[3];
-        //            var address = Convert.ToString(worksheet.Cells[row, 6].Value);
-        //            if (dob.IndexOf("-") > -1)
-        //                ar = dob.Split("-");
-        //            else if (dob.IndexOf(".") > -1)
-        //                ar = dob.Split(".");
-        //            else if (dob.IndexOf("/") > -1)
-        //                ar = dob.Split("/");
-
-        //            var item = new PartnerImportExcel
-        //            {
-        //                Name = name,
-        //                NameNoSign = StringUtils.RemoveSignVietnameseV2(name),
-        //                Ref = !string.IsNullOrEmpty(custRef) ? custRef : await sequenceService.NextByCode("customer"),
-        //                Gender = genderDict.ContainsKey(gender) ? genderDict[gender] : "Other",
-        //                Phone = Convert.ToString(worksheet.Cells[row, 5].Value),
-        //                MedicalHistory = Convert.ToString(worksheet.Cells[row, 7].Value),
-        //                JobTitle = Convert.ToString(worksheet.Cells[row, 8].Value),
-        //                Email = Convert.ToString(worksheet.Cells[row, 9].Value),
-        //                BirthDay = !string.IsNullOrWhiteSpace(ar[0]) ? ar[0] : null,
-        //                BirthMonth = !string.IsNullOrWhiteSpace(ar[1]) ? ar[1] : null,
-        //                BirthYear = !string.IsNullOrWhiteSpace(ar[2]) ? ar[2] : null,
-        //                Comment = Convert.ToString(worksheet.Cells[row, 10].Value),
-        //                Customer = true,
-        //                Supplier = false
-        //            };
-        //            if (dict.ContainsKey(address.ToLower()))
-        //            {
-        //                item.Street = dict[address.ToLower()].ShortAddress;
-        //                item.CityName = dict[address.ToLower()].CityName.Replace("TP", "Thành phố");
-        //                item.CityCode = dict[address.ToLower()].CityCode;
-        //                item.DistrictName = dict[address.ToLower()].DistrictName;
-        //                item.DistrictCode = dict[address.ToLower()].DistrictCode;
-        //                item.WardName = dict[address.ToLower()].WardName;
-        //                item.WardCode = dict[address.ToLower()].WardCode;
-        //            }
-        //            list.Add(item);
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
-        //        {
-        //            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-        //            if (string.IsNullOrWhiteSpace(name))
-        //                throw new Exception("Tên NCC là bắt buộc");
-
-        //            var suppRef = Convert.ToString(worksheet.Cells[row, 2].Value);
-        //            if (!dir.IsCreateNew)
-        //                if (string.IsNullOrWhiteSpace(suppRef)) throw new Exception("Mã NCC là bắt buộc");
-
-        //            var item = new PartnerImportExcel
-        //            {
-        //                Name = name,
-        //                NameNoSign = StringUtils.RemoveSignVietnameseV2(name),
-        //                Ref = !string.IsNullOrEmpty(suppRef) ? suppRef : await sequenceService.NextByCode("supplier"),
-        //                Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
-        //                Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
-        //                Street = Convert.ToString(worksheet.Cells[row, 5].Value),
-        //                Email = Convert.ToString(worksheet.Cells[row, 6].Value),
-        //                Comment = Convert.ToString(worksheet.Cells[row, 7].Value),
-        //                Customer = false,
-        //                Supplier = true
-        //            };
-
-        //            list.Add(item);
-
-        //        }
-        //    }
-
-        //    return list;
-        //}
-
         //public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
         //{
         //    ISpecification<Employee> spec = new InitialSpecification<Employee>(x => true);
@@ -591,5 +450,145 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ImportFileExcellChamCongModel>();
+            var listCC = new List<ChamCong>();
+            var empObj = GetService<IEmployeeService>();
+            var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        string maNv = "";
+                        string curDateString = "";
+                        string code = "";
+                        string de_time = Convert.ToString(worksheet.Cells[row, 3].Value);
+                        var errs = new List<string>();
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 1].Value)))
+                            maNv = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Mã nhân viên null");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 2].Value)))
+                            curDateString = Convert.ToString(worksheet.Cells[row, 2].Value);
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Ngày chấm công null");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 5].Value)))
+                            code = Convert.ToString(worksheet.Cells[row, 5].Value);
+                        else
+                        {
+                            errors.Add($"Dòng {row}: loại chấm công null");
+                            continue;
+                        }
+
+                        var time = $"{DateTime.Parse(curDateString).ToShortDateString()} { DateTime.Parse(de_time).ToShortTimeString()}";
+                        try
+                        {
+                            data.Add(new ImportFileExcellChamCongModel
+                            {
+                                MaNV = maNv,
+                                Date = DateTime.Parse(curDateString),
+                                Time = DateTime.Parse(time),
+                                Type = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                CodeWorkEntryType = code,
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            errors.Add($"Dòng {row}: {e.Message}");
+                            continue;
+                        }
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (errors.Any())
+                return new ChamCongImportResponse { Success = false, Errors = errors };
+
+            if (data.Count > 0)
+            {
+                var res = data.GroupBy(x => x.MaNV).ToList();
+                for (int i = 0; i < res.Count(); i++)
+                {
+                    var item = res[i];
+                    var emp = await empObj.SearchQuery(x => x.Ref.Contains(item.Key)).FirstOrDefaultAsync();
+                    var count = 1;
+                    var chamcong = new ChamCong();
+                    string OldType = "";
+                    var workEntryType = new WorkEntryType();
+                    foreach (var cc in item.ToList())
+                    {
+                        //if (cc.Type == OldType)
+                        //{
+                        //    chamcong = new ChamCong();
+                        //    workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
+                        //    chamcong.CompanyId = CompanyId;
+                        //    chamcong.EmployeeId = emp.Id;
+                        //    if (cc.Type == "check-in")
+                        //    {
+                        //        chamcong.TimeIn = cc.Time;
+                        //    }
+                        //    if (cc.Type == "check-out")
+                        //    {
+                        //        chamcong.TimeOut = cc.Time;
+                        //    }
+                        //    chamcong.Date = cc.Date;
+                        //    chamcong.WorkEntryTypeId = workEntryType.Id;
+                        //    OldType = cc.Type;
+                        //    listCC.Add(chamcong);
+                        //}
+                        workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
+                        chamcong.CompanyId = CompanyId;
+                        chamcong.EmployeeId = emp.Id;
+                        if (cc.Type == "check-in")
+                        {
+                            chamcong.TimeIn = cc.Time;
+                        }
+                        if (cc.Type == "check-out")
+                        {
+                            chamcong.TimeOut = cc.Time;
+                        }
+                        chamcong.Date = cc.Date;
+                        chamcong.WorkEntryTypeId = workEntryType.Id;
+                        if (count % 2 == 0)
+                        {
+                            listCC.Add(chamcong);
+                            continue;
+                        }
+                        count++;
+                    }
+                }
+            }
+            try
+            {
+                await CreateAsync(listCC);
+            }
+            catch (Exception e)
+            {
+                return new ChamCongImportResponse { Success = false, Errors = new List<string>() { e.Message } };
+            }
+
+            return new ChamCongImportResponse { Success = true };
+        }
     }
 }

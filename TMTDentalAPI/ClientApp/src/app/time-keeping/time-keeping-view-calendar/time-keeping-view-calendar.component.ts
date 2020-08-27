@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic } from '../time-keeping.service';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
+import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -292,10 +293,10 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   importFileExcell() {
-    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(TimeKeepingImportFileComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
 
     modalRef.result.then(res => {
-
+      this.loadEmployee();
     })
   }
 

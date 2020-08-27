@@ -9,12 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { TimeKeepingSettingDialogComponent } from './time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
+import { TimeKeepingImportFileComponent } from './time-keeping-import-file/time-keeping-import-file.component';
 
 @NgModule({
   declarations: [
     TimeKeepingViewCalendarComponent,
     TimeKeepingSetupDialogComponent,
-    TimeKeepingSettingDialogComponent
+    TimeKeepingSettingDialogComponent,
+    TimeKeepingImportFileComponent
   ],
   imports: [
     CommonModule,
@@ -27,7 +29,8 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
   ],
   entryComponents: [
     TimeKeepingSetupDialogComponent,
-    TimeKeepingSettingDialogComponent
+    TimeKeepingSettingDialogComponent,
+    TimeKeepingImportFileComponent,
   ]
 })
 export class TimeKeepingModule { }

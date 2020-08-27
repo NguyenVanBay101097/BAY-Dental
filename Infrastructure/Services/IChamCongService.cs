@@ -19,8 +19,7 @@ namespace Infrastructure.Services
         Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date);
         Task<decimal> GetStandardWorkHour();
         ChamCongTinhCong TinhSoCongGioCong(ChamCong cc, IEnumerable<AttendanceInterval> attendanceIntervals, decimal hoursPerDay);
-
-        Task ImportExcel(IFormFile file, Ex_ImportExcelDirect dir);
+        Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
 
 

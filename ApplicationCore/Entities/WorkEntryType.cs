@@ -16,6 +16,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// tkp : Chấm công
+        /// </summary>
         public string Code { get; set; }
 
         public int? Sequence { get; set; }

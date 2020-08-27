@@ -1537,7 +1537,6 @@ namespace Infrastructure.Services
                     var custRef = Convert.ToString(worksheet.Cells[row, 2].Value);
                     if (!dir.IsCreateNew)
                     {
-
                         if (string.IsNullOrWhiteSpace(custRef))
                             throw new Exception("Mã Khách hàng là bắt buộc");
                     }

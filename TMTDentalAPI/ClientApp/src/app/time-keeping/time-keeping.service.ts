@@ -88,7 +88,7 @@ export class TimeKeepingService {
   }
 
   actionImport(val) {
-    return this.http.post(this.base_api + this.apiUrl + '/ActionImport', val);
+    return this.http.post(this.base_api + this.apiUrl + '/ExcelImportCreate', val);
   }
 
   CreateSetupChamcong(val) {
