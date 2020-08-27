@@ -87,6 +87,10 @@ export class TimeKeepingService {
       { responseType: "blob" });
   }
 
+  actionImport(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionImport', val);
+  }
+
   CreateSetupChamcong(val) {
     return this.http.post(this.base_api + 'api/SetupChamcongs', val);
   }

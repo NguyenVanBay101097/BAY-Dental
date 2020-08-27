@@ -83,5 +83,13 @@ namespace TMTDentalAPI.Controllers
             await _HrPayslipLineService.DeleteAsync(HrPayslipLine);
             return NoContent();
         }
+
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAllBySlipId(Guid PayslipId)
+        {
+            var res = await _HrPayslipLineService.GetAll(PayslipId);
+            return Ok(res);
+        }
     }
 }

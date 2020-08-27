@@ -13,6 +13,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<HrPayslipLineDisplay>> GetPaged(HrPayslipLinePaged val);
         Task<HrPayslipLine> GetHrPayslipLineDisplay(Guid Id);
 
-        Task Remove(IEnumerable<Guid> Ids);
+        Task Remove(IEnumerable<Guid> Ids); 
+        Task<HrPayslipDisplaySimple> GetAll(Guid payslipId);
+
     }
 }

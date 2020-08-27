@@ -68,5 +68,7 @@ namespace ApplicationCore.Entities
 
         public Guid? PayslipRunId { get; set; }
         public HrPayslipRun PayslipRun { get; set; }
+
+        public decimal? TotalAmount { get; set; }
     }
 }

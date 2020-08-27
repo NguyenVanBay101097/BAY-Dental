@@ -13,7 +13,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class HrSalaryRuleListComponent implements OnInit {
 
-  id: string;
+  @Input() id: any;
+
   AllData: any = [];
   listRule: GridDataResult = {
     data: [],
@@ -31,7 +32,6 @@ export class HrSalaryRuleListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.activeroute.snapshot.paramMap.get('id');
     if (this.id) {
       this.loadDataFromApi();
     }
@@ -80,7 +80,7 @@ export class HrSalaryRuleListComponent implements OnInit {
   ShowAddSalaryRulePopup() {
     const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
       { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thuộc Tính Lương';
+    modalRef.componentInstance.title = 'Quy tắc lương';
     modalRef.result.then((val) => {
       this.AllDataAdd(val);
       this.listRule = {
@@ -93,7 +93,7 @@ export class HrSalaryRuleListComponent implements OnInit {
   editItem(item) {
     const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
       { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thuộc Tính Lương';
+    modalRef.componentInstance.title = 'Quy tắc lương';
     modalRef.componentInstance.rule = item;
     modalRef.result.then((val) => {
       this.UpdateAllData(val);

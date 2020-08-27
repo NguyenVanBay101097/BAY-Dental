@@ -102,7 +102,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       this.employee.disable();
       this.struct.disable();
     }
-    if (this.state.value === 'draft') {this.Form.enable(); }
+    if (this.state.value === 'draft') { this.Form.enable(); }
   }
 
   SearchEmployee(search?: string) {
@@ -212,6 +212,18 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
 
   }
 
+  ComputeSalaryAgain() {
+    if (!this.ValidateForm()) { return false; }
+    const val = this.payslipForm.value;
+    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
+    val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
+    if (this.id) {
+      this.hrPayslipService.update(this.id, val).subscribe(res => {
+        this.ComputeSalary();
+      });
+    }
+  }
+
   ComputeSalary() {
     if (!this.ValidateForm()) { return false; }
 
@@ -235,7 +247,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ConfirmSalary() {
-    this.hrPayslipService.ConfirmCompute(this.id).subscribe(res => {
+    this.hrPayslipService.ConfirmCompute([this.id]).subscribe(res => {
       this.notificationService.show({
         content: ' thành công!',
         hideAfter: 3000,
@@ -285,7 +297,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
         type: { style: 'error', icon: true }
       });
       return false;
-    }
+     }
     return true;
   }
 
@@ -296,6 +308,9 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     modalRef.result.then((res) => {
       this.employeeService.getEmployee(this.employee.value.id).subscribe((emp: any) => {
         this.employee.setValue(emp);
+        this.EmployeeChange(emp);
+        this.hrPayslipLineListComponent.OnEmployeeChange();
+
       });
     });
   }

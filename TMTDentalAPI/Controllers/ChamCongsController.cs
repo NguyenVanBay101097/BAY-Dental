@@ -7,6 +7,7 @@ using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,14 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             var res = _mapper.Map<ChamCongDisplay>(chamcong);
             return Ok(res);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
+        {
+            await _chamCongService.ImportExcel(file, dir);
+            return Ok();
         }
 
         [HttpPost]
