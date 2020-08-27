@@ -14,7 +14,5 @@ namespace Infrastructure.Services
         Task<HrPayslipLine> GetHrPayslipLineDisplay(Guid Id);
 
         Task Remove(IEnumerable<Guid> Ids); 
-        Task<HrPayslipDisplaySimple> GetAll(Guid payslipId);
-
     }
 }
