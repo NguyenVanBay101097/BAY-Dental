@@ -319,32 +319,6 @@ namespace Infrastructure.Services
             return salaryJournal;
         }
 
-        public async Task SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip)
-        {
-            var ToRemove = new List<HrPayslipWorkedDays>();
-            foreach (var wd in payslip.WorkedDaysLines)
-            {
-                if (!val.WorkedDaysLines.Any(x => x.Id == wd.Id))
-                    ToRemove.Add(wd);
-            }
-
-            await GetService<IHrPayslipWorkedDayService>().Remove(ToRemove.Select(x => x.Id).ToList());
-            payslip.WorkedDaysLines = payslip.WorkedDaysLines.Except(ToRemove).ToList();
-
-            foreach (var wd in val.WorkedDaysLines)
-            {
-                if (wd.Id == Guid.Empty || !wd.Id.HasValue)
-                {
-                    var r = _mapper.Map<HrPayslipWorkedDays>(wd);
-                    payslip.WorkedDaysLines.Add(r);
-                }
-                else
-                {
-                    _mapper.Map(wd, payslip.WorkedDaysLines.SingleOrDefault(c => c.Id == wd.Id));
-                }
-            }
-        }
-
         public HrPayslipDefaultGetResult DefaultGet(HrPayslipDefaultGet val)
         {
             var now = DateTime.Now;

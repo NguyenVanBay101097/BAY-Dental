@@ -43,6 +43,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? NumberOfHours { get; set; }
 
         public decimal? Amount { get; set; }
+
+        public Guid WorkEntryTypeId { get; set; }
     }
 
     public class HrPayslipWorkedDayBasic

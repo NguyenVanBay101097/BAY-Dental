@@ -15,7 +15,6 @@ namespace Infrastructure.Services
         Task<HrPayslipOnChangeEmployeeResult> OnChangeEmployee(Guid? employeeId, DateTime? dateFrom, DateTime? dateTo);
         Task ComputeSheet(IEnumerable<Guid> ids);
         Task ActionDone(IEnumerable<Guid> ids);
-        Task SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip);
         HrPayslipDefaultGetResult DefaultGet(HrPayslipDefaultGet val);
         Task Unlink(IEnumerable<Guid> ids);
         Task<IEnumerable<HrPayslipWorkedDayBasic>> GetWorkedDaysLines(Guid id);
