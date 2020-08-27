@@ -21,27 +21,40 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class HrPayslipWorkedDaySave
     {
-        public Guid? Id { get; set; }
-        public string Name { get; set; }
-        public Guid PayslipId { get; set; }
-        public int? Sequence { get; set; }
-        public string Code { get; set; }
+        public Guid Id { get; set; }
+
         public decimal? NumberOfDays { get; set; }
+
         public decimal? NumberOfHours { get; set; }
+
         public Guid WorkEntryTypeId { get; set; }
+
         public decimal? Amount { get; set; }
     }
+
     public class HrPayslipWorkedDayDisplay
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public Guid PayslipId { get; set; }
-        public int? Sequence { get; set; }
-        public string Code { get; set; }
-        public decimal? NumberOfDays { get; set; }
-        public decimal? NumberOfHours { get; set; }
-        public Guid WorkEntryTypeId { get; set; }
-        public decimal? Amount { get; set; }
 
+        public string Name { get; set; }
+
+        public decimal? NumberOfDays { get; set; }
+
+        public decimal? NumberOfHours { get; set; }
+
+        public decimal? Amount { get; set; }
+    }
+
+    public class HrPayslipWorkedDayBasic
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public decimal? NumberOfDays { get; set; }
+
+        public decimal? NumberOfHours { get; set; }
+
+        public decimal? Amount { get; set; }
     }
 }

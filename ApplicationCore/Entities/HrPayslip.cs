@@ -43,6 +43,10 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Status
+        /// ('draft', 'Draft')
+        /// ('verify', 'Waiting')
+        /// ('done', 'Done')
+        /// ('cancel', 'Rejected')
         /// </summary>
         public string State { get; set; }
 
