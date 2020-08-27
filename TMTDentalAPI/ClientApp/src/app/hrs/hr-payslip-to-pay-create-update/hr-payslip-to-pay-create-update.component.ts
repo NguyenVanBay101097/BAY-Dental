@@ -285,7 +285,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
         type: { style: 'error', icon: true }
       });
       return false;
-    }
+     }
     return true;
   }
 

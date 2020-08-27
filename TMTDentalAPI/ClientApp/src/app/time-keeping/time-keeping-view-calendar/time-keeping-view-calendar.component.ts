@@ -291,4 +291,12 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     // this.getDateWeekList();
   }
 
+  importFileExcell() {
+    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+
+    modalRef.result.then(res => {
+
+    })
+  }
+
 }

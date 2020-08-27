@@ -1,0 +1,59 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <table class="o_group o_inner_group">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Chọn file
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <app-binary-file-input (valueChange)="onFileChange($event)">
+                        </app-binary-file-input>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Kiểm tra địa chỉ
+                            <i class="fas fa-question-circle text-primary" placement="bottom"
+                                triggers="mouseenter:mouseleave"
+                                ngbPopover="Kiểm tra địa chỉ có thể không chính xác nếu địa chỉ nhập vào không rõ ràng. Mặc định sẽ lưu vào tên đường."
+                                popoverTitle="Kiểm tra địa chỉ"></i>
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="checkAddress" value="" id="addressCheck">
+                            <label class="form-check-label" for="addressCheck">
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-danger" *ngFor="let error of errors">
+            <span>{{error}}</span> <br />
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="import()" [disabled]="!formGroup.valid">
+        Import</button>
+    <a *ngIf="type == 'customer'" href="assets/files/Mau_File_KH.xlsx" class="btn btn-info btn-sm">
+        Tải file mẫu
+    </a>
+    <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC.xlsx" class="btn btn-info btn-sm">
+        Tải file mẫu
+    </a>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="activeModal.dismiss()">
+        Đóng</button>
+</footer>

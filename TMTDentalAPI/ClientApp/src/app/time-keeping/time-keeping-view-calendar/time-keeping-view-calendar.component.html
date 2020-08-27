@@ -34,11 +34,18 @@
         </div>
     </div>
     <div class="float-right pb-2">
-        <!-- <div class="d-inline-flex">
+        <div class="d-inline-flex">
+            <button (click)="importFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">
+                Import<i class="fas fa-file-import ml-1"></i>
+            </button>
+        </div>
+    </div>
+    <!-- <div class="float-right pb-2">
+        <div class="d-inline-flex">
             <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i
                     class="fas fa-file-export"></i></button>
-        </div> -->
-    </div>
+        </div>
+    </div> -->
     <div class="float-right pb-2 mr-3">
         <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" (searchChange)="buttonFilterMonth($event)"
             [title]="'Thời gian'" [dateTo]="monthEnd"></app-tai-date-range-filter-dropdown>

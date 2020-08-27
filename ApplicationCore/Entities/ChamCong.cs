@@ -20,6 +20,11 @@ namespace ApplicationCore.Entities
         public DateTime? TimeIn { get; set; }
 
         /// <summary>
+        /// Id của máy chấm công
+        /// </summary>
+        public string IdMayChamCong { get; set; }
+
+        /// <summary>
         /// Thời gian hiển thị trên kanban
         /// </summary>
         public DateTime? Date { get; set; }

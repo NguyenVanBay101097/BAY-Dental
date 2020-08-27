@@ -11,6 +11,7 @@ import { TimeKeepingSettingDialogComponent } from './time-keeping-setting-dialog
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { TimeKeepingWorkEntryTypeComponent } from './time-keeping-work-entry-type/time-keeping-work-entry-type.component';
 import { TimeKeepingWorkEntryTypeDialogComponent } from './time-keeping-work-entry-type-dialog/time-keeping-work-entry-type-dialog.component';
+import { TimeKeepingImportFileComponent } from './time-keeping-import-file/time-keeping-import-file.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { TimeKeepingWorkEntryTypeDialogComponent } from './time-keeping-work-ent
     TimeKeepingSettingDialogComponent,
     TimeKeepingWorkEntryTypeComponent,
     TimeKeepingWorkEntryTypeDialogComponent,
+    TimeKeepingImportFileComponent,
   ],
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { TimeKeepingWorkEntryTypeDialogComponent } from './time-keeping-work-ent
   entryComponents: [
     TimeKeepingSetupDialogComponent,
     TimeKeepingSettingDialogComponent,
-    TimeKeepingWorkEntryTypeDialogComponent
+    TimeKeepingWorkEntryTypeDialogComponent,
+    TimeKeepingImportFileComponent
   ]
 })
 export class TimeKeepingModule { }
