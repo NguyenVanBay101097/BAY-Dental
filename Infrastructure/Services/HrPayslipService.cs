@@ -82,6 +82,7 @@ namespace Infrastructure.Services
                 payslip.State = "verify";
             }
 
+            _ComputeAmount(payslips);
             await UpdateAsync(payslips);
         }
 
@@ -358,6 +359,19 @@ namespace Infrastructure.Services
             var query = lineObj.SearchQuery(x => x.SlipId == id, orderBy: x => x.OrderBy(s => s.Sequence));
             var res = await _mapper.ProjectTo<HrPayslipLineBasic>(query).ToListAsync();
             return res;
+        }
+
+        public async Task _ComputeAmount(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
+            _ComputeAmount(self);
+            await UpdateAsync(self);
+        }
+
+        public void _ComputeAmount(IEnumerable<HrPayslip> self)
+        {
+            foreach (var payslip in self)
+                payslip.TotalAmount = payslip.Lines.Sum(x => x.Amount);
         }
     }
 
