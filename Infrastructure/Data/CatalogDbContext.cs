@@ -197,6 +197,7 @@ namespace Infrastructure.Data
         public DbSet<HrPayslip> HrPayslips { get; set; }
         public DbSet<HrPayslipLine> HrPayslipLines { get; set; }
         public DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
+        public DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -354,6 +355,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new HrPayslipConfiguration());
             builder.ApplyConfiguration(new HrPayslipLineConfiguration());
             builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
+            builder.ApplyConfiguration(new HrPayslipRunConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

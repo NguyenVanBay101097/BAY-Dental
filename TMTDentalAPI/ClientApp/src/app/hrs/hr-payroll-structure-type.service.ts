@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ResourceCalendarBasic } from '../resource-calendars/resource-calendar.service';
-import { WorkEntryType, WorkEntryTypeBasic } from '../time-keeping/time-keeping.service';
 import { Observable } from 'rxjs';
 
 export class HrPayrollStructureTypeBasic {

@@ -25,15 +25,29 @@ namespace Umbraco.Web.Models.ContentEditing
     public class WorkEntryTypeSave
     {
         public string Name { get; set; }
+
         public bool IsHasTimeKeeping { get; set; } = false;
+
         public string Color { get; set; }
+
+        public string Code { get; set; }
+
+        public int? Sequence { get; set; }
+
     }
 
     public class WorkEntryTypeDisplay
     {
         public Guid Id { get; set; }
+
         public string Name { get; set; }
+
         public bool IsHasTimeKeeping { get; set; } = false;
+
         public string Color { get; set; }
+
+        public string Code { get; set; }
+
+        public int? Sequence { get; set; }
     }
 }

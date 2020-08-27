@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EmployeeSimple, EmployeeBasic, EmployeeDisplay } from '../employees/employee';
+import { WorkEntryType } from '../work-entry-types/work-entry-type.service';
 
 export class ChamCongSave {
   employeeId: string;
@@ -51,35 +52,7 @@ export class TimeKeepingSave {
 
 }
 
-export class WorkEntryType {
-  id: string;
-  name: string;
-  isHasTimeKeeping: boolean;
-  color: string;
-}
 
-export class WorkEntryTypeBasic {
-  id: string;
-  name: string;
-}
-
-export class WorkEntryTypePage {
-  limit: number;
-  offset: number;
-  filter: string;
-}
-
-export class WorkEntryTypePaging {
-  offset: number;
-  limit: number;
-  totalItems: number;
-  items: WorkEntryType[];
-}
-
-export class WorkEntryTypeSave {
-  name: string;
-  color: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -126,25 +99,5 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
   }
 
-  getPagedWorkEntryType(val): Observable<WorkEntryTypePaging> {
-    return this.http.get<WorkEntryTypePaging>(this.base_api + this.apiUrlWorkingEntryType, { params: val });
-  }
-
-  deleteWorkEntryType(id) {
-    return this.http.delete(this.base_api + this.apiUrlWorkingEntryType + '/' + id);
-  }
-
-  getWorkEntryType(id): Observable<WorkEntryType> {
-    return this.http.get<WorkEntryType>(this.base_api + this.apiUrlWorkingEntryType + '/' + id);
-  }
-
-  createWorkEntryType(val) {
-    return this.http.post(this.base_api + this.apiUrlWorkingEntryType, val);
-  }
-
-  updateWorkEntryType(id, val) {
-    return this.http.put(this.base_api + this.apiUrlWorkingEntryType + '/' + id, val);
-  }
-
-
+  
 }

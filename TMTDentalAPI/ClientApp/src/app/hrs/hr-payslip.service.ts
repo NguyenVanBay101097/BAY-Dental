@@ -121,7 +121,7 @@ export class HrPayslipService {
     }
 
     ConfirmCompute(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ConfirmCompute/', ids        );
+        return this.http.post(this.baseApi + this.apiUrl + '/ConfirmCompute/', ids);
     }
 
     GetWorkedDayInfoByEmployee(val: any) {
