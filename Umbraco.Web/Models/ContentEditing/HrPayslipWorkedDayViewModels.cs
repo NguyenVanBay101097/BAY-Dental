@@ -16,10 +16,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Search { get; set; }
+        public Guid? PayslipId { get; set; }
     }
 
     public class HrPayslipWorkedDaySave
     {
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public Guid PayslipId { get; set; }
         public int? Sequence { get; set; }
