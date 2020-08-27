@@ -8,6 +8,8 @@ import { HrSalaryRuleListComponent } from '../hr-salary-rule-list/hr-salary-rule
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { tap } from 'rxjs/internal/operators/tap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HrPayrollStructureTypeCreateComponent } from '../hr-payroll-structure-type-create/hr-payroll-structure-type-create.component';
 
 @Component({
   selector: 'app-payroll-structure-create-update',
@@ -28,6 +30,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
     private fb: FormBuilder, private router: Router,
     private payrollService: HrPayrollStructureService,
     private notificationService: NotificationService,
+    private modalService : NgbModal,
     private activeroute: ActivatedRoute) { }
 
   ngOnInit() {
@@ -128,7 +131,13 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
     }
   }
 
-  ShowStructTypeModal() {
-
+  ShowStructTypeCreateModal() {
+      let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thêm: Loại cấu trúc lương';
+      modalRef.result.then(() => {
+        this.LoadListType();
+      }, () => {
+      });
+  
   }
 }

@@ -23,6 +23,19 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task<HrPayslipDisplaySimple> GetAll(Guid payslipId)
+        {
+            var query = SearchQuery().Where(x => x.SlipId == payslipId);
+
+            var items = await query.ToListAsync();
+            var payslip = await GetService<IHrPayslipService>().GetByIdAsync(payslipId);
+            return new HrPayslipDisplaySimple()
+            {
+                Lines = _mapper.Map<IEnumerable<HrPayslipLineDisplay>>(items),
+                TotalAmount = payslip.TotalAmount.Value
+            };
+        }
+
         public async Task<HrPayslipLine> GetHrPayslipLineDisplay(Guid Id)
         {
             var res = await SearchQuery(x => x.Id == Id).Include(x => x.Slip).FirstOrDefaultAsync();

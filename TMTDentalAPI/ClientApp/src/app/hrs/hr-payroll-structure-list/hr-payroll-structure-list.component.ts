@@ -21,6 +21,7 @@ export class HrPayrollStructureListComponent implements OnInit {
   page = 1;
   loading = false;
   collectionSize = 0;
+  search: string;
 
   constructor(
     private HrPayrollStructureService: HrPayrollStructureService,
@@ -36,6 +37,7 @@ export class HrPayrollStructureListComponent implements OnInit {
     const val = new HrPayrollStructurePaged();
     val.limit = this.pageSize;
     val.offset = (this.page - 1) * this.pageSize;
+    if (this.search) { val.filter = this.search; }
 
     this.HrPayrollStructureService.getPaged(val).pipe(
       map((res: any) => ({

@@ -109,6 +109,7 @@ namespace TMTDentalAPI.Controllers
             await _hrPayslipLineService.DeleteAsync(slip.Lines);
             slip.Lines.Clear();
             slip.State = "draft";
+            slip.TotalAmount = 0;
             await _HrPayslipService.UpdateAsync(slip);
             return NoContent();
         }

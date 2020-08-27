@@ -781,8 +781,14 @@ html .o_web_client {
   width: auto!important;
 }
 
-
-
+.o_input {
+  border: 1px solid #ccc;
+  border-top-style: none;
+  border-right-style: none;
+  border-left-style: none;
+  width: 100%;
+ outline: none;
+}
 
 
 

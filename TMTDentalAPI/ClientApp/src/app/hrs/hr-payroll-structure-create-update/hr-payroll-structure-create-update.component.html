@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
-            <li><a routerLink="/hr/payroll-structures">Mẫu Lương</a></li>
+            <li><a routerLink="/hr/payroll-structures">Cấu trúc lương</a></li>
             <li class="active">{{payrollRecord !=null?payrollRecord.name :'Mới'}}</li>
         </ol>
         <div class="o_cp_left">
@@ -26,23 +26,19 @@
     <div class="o_form_view" [formGroup]="payrollForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
+                    </h1>
+                </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Tên mẫu lương
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Kiểu mẫu lương
+                                        Loại
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -50,20 +46,10 @@
                                         <kendo-combobox class="w-100" [data]="listType" [textField]="'name'"
                                             [filterable]="true" #typeCbx formControlName="type" [valueField]="'id'">
                                         </kendo-combobox>
-                                        <a class="btn btn-sm btn-light" (click)="ShowStructTypeModal()">
+                                        <a class="btn btn-sm btn-light" (click)="ShowStructTypeCreateModal()">
                                             <span class="k-icon k-i-plus"></span>
                                         </a>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Use worked day lines
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="checkbox" formControlName="useWorkedDayLines">
                                 </td>
                             </tr>
                         </tbody>
@@ -73,17 +59,13 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea class="form-control" formControlName="note"></textarea>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Regular Pay
+                                        Trả thường xuyên
+                                        <a class="text-primary">
+                                            <i placement="bottom"
+                                            ngbPopover="Chọn nếu đây là mẫu lương được sử dụng để trả thường xuyên"
+                                            triggers="mouseenter:mouseleave" popoverTitle="Trả thường xuyên"
+                                            class="fa fa-question-circle" aria-hidden="true"></i>
+                                        </a>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -94,7 +76,7 @@
                     </table>
                 </div>
                 <div class="tab-contanner">
-                    <app-salary-rule-list></app-salary-rule-list>
+                    <app-salary-rule-list [id]="this.id"></app-salary-rule-list>
                 </div>
             </div>
         </div>
