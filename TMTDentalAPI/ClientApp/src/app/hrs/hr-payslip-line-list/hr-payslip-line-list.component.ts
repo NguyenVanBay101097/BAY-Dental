@@ -14,19 +14,17 @@ import { IntlService } from '@progress/kendo-angular-intl';
 export class HrPayslipLineListComponent implements OnInit {
 
   @Input() payslipForm: any;
+  @Input() id: any;
 
-  id: string;
   AllData: any = [];
-  listLines: GridDataResult = {
-    data: [],
-    total: 0
-  };
+  listLines = [];
   pageSize = 20;
   page = 1;
   loading = false;
   collectionSize = this.AllData.length;
   // for table workday
   listWorkDays: any[];
+  tongtien = 0;
 
   constructor(
     private activeroute: ActivatedRoute,
@@ -36,16 +34,15 @@ export class HrPayslipLineListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.activeroute.snapshot.paramMap.get('id');
     // this.loadWordDayFromApi();
+    this.loadLineDataFromApi();
+    if (this.id) {
+      this.loadWordDayFromApi();
+    }
   }
 
   onTabSelect(e) {
-    if (e.index === 1) {
-      this.loadLineDataFromApi();
-    } else if (e.index === 0) {
-      this.OnEmployeeChange();
-    }
+
   }
 
   loadLineDataFromApi() {
@@ -55,17 +52,15 @@ export class HrPayslipLineListComponent implements OnInit {
       val.offset = (this.page - 1) * this.pageSize;
       val.payslipId = this.id;
 
-      this.hrPayslipService.getPayslipLinePaged(val).subscribe(res => {
+      this.hrPayslipService.getPayslipLines(val).subscribe((res: any) => {
         // this.AllData = res.items;
         // this.listLines = {
         //   data: this.AllData.slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize),
         //   total: res.totalItems
         // };
-        this.listLines = {
-          data: res.items,
-          total: res.totalItems
-        };
-        this.collectionSize = res.totalItems;
+
+        this.listLines = res.lines;
+        this.tongtien = res.totalAmount;
       });
     }
   }

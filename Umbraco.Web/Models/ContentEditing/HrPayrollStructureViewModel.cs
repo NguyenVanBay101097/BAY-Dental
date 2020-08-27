@@ -38,6 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<HrSalaryRuleSave> Rules { get; set; }
 
     }
+
     public class HrPayrollStructureDisplay
     {
         public Guid Id { get; set; }
@@ -54,5 +55,11 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get { if (Rules != null) return Rules.Count; else return 0; }
         }
+    }
+
+    public class HrPayrollStructureBasic
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

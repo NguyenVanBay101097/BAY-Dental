@@ -43,6 +43,10 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Status
+        /// ('draft', 'Draft')
+        /// ('verify', 'Waiting')
+        /// ('done', 'Done')
+        /// ('cancel', 'Rejected')
         /// </summary>
         public string State { get; set; }
 
@@ -64,5 +68,7 @@ namespace ApplicationCore.Entities
 
         public Guid? PayslipRunId { get; set; }
         public HrPayslipRun PayslipRun { get; set; }
+
+        public decimal? TotalAmount { get; set; }
     }
 }
