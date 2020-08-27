@@ -41,9 +41,9 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên phiếu lương">
+        <kendo-grid-column field="name" title="Tên">
         </kendo-grid-column>
-        <kendo-grid-column field="employee" title="Tên nhân viên">
+        <kendo-grid-column field="employee" title="Nhân viên">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.employee.name }}
             </ng-template>

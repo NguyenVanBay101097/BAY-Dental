@@ -30,6 +30,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
         public string State { get; set; }
+        public decimal TotalAmount { get; set; } = 0;
         public IEnumerable<HrPayslipWorkedDaySave> ListHrPayslipWorkedDaySave { get; set; } = new List<HrPayslipWorkedDaySave>();
 
         //public IEnumerable<HrPayslipLineSave> Lines { get; set; }
@@ -48,6 +49,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateTo { get; set; }
         public string State { get; set; }
         public Guid CompanyId { get; set; }
+        public decimal TotalAmount { get; set; } = 0;
+
         public IEnumerable<HrPayslipLineDisplay> Lines { get; set; }
         public IEnumerable<HrPayslipWorkedDayDisplay> WorkedDaysLines { get; set; }
     }
@@ -57,5 +60,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? EmployeeId { get; set; }
+    }
+
+    public class HrPayslipDisplaySimple
+    {
+        public IEnumerable<HrPayslipLineDisplay> Lines { get; set; } = new List<HrPayslipLineDisplay>();
+        public decimal TotalAmount { get; set; } = 0;
     }
 }

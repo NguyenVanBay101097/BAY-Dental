@@ -39,6 +39,7 @@ namespace Infrastructure.Services
                 var emp = await empObj.SearchQuery(x => x.Id == payslip.EmployeeId).FirstOrDefaultAsync();
                 var structure = await structureObj.SearchQuery(x => x.Id == payslip.StructId).Include(x => x.Rules).FirstOrDefaultAsync();
                 var rules = structure != null && structure.Rules != null ? structure.Rules.ToList() : new List<HrSalaryRule>();
+
                 for (int i = 0; i < rules.Count(); i++)
                 {
                     var rule = rules[i];
@@ -106,6 +107,7 @@ namespace Infrastructure.Services
                             break;
                     }
                     payslip.Lines.Add(line);
+                    payslip.TotalAmount = payslip.TotalAmount.Value + line.Total;
                     listPayslip.Add(payslip);
                 }
             }

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { identifierModuleUrl } from '@angular/compiler';
 import { HrPayrollStructureDisplay } from './hr-payroll-structure.service';
+import { validator } from 'fast-json-patch';
 
 export class HrPayslipPaging {
     offset: number;
@@ -130,5 +131,9 @@ export class HrPayslipService {
 
     GetWorkedDayInfoByPayslipId(val: any) {
         return this.http.get(this.baseApi + 'api/HrPayslipWorkedDays', { params: val });
+    }
+
+    getPayslipLines(val) {
+        return this.http.get(this.baseApi + 'api/HrPayslipLines/GetAllBySlipId', {params : val});
     }
 }
