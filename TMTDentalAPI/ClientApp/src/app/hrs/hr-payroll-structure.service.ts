@@ -98,6 +98,6 @@ export class HrPayrollStructureService {
     }
 
     GetListRuleByStructId(StructId: string) {
-        return this.http.get<HrSalaryRulePaging>(this.baseApi + 'api/HrSalaryRules', { params: { StructId }});
+        return this.http.get<HrSalaryRulePaging>(this.baseApi + this.apiUrl + '/' + StructId + '/Rules');
     }
 }

@@ -75,10 +75,11 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Vị trí</label>
+                                    <label class="o_form_label">Thứ tự</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="number" min="0" class="form-control" formControlName="sequence">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="sequence">
+                                    </kendo-numerictextbox>
                                 </td>
                             </tr>
                         </tbody>

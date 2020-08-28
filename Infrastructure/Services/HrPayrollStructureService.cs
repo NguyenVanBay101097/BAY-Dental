@@ -50,12 +50,18 @@ namespace Infrastructure.Services
             }
             query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x=>x.DateCreated).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<HrPayrollStructureDisplay>(totalItems, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<HrPayrollStructureDisplay>>(items)
             };
+        }
+
+        public async Task<IEnumerable< HrSalaryRuleDisplay>> GetRules(Guid structureId)
+        {
+            var res = await GetService<IHrSalaryRuleService>().SearchQuery(x => x.StructId == structureId).ToListAsync();
+            return _mapper.Map<IEnumerable<HrSalaryRuleDisplay>>(res);
         }
 
         public async Task Remove(Guid Id)

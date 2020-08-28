@@ -135,7 +135,7 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
       )
     } else {
       this.hrPayrollStructureTypeService.create(val).subscribe(
-        () => {
+        (res) => {
           this.notificationService.show({
             content: "Thêm mới thành công",
             hideAfter: 3000,
@@ -143,7 +143,7 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
-          this.activeModal.close(true);
+          this.activeModal.close(res);
         }
       )
     }

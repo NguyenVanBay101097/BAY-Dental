@@ -114,5 +114,13 @@ namespace TMTDentalAPI.Controllers
             await _payrollStructureService.Remove(id);
             return NoContent();
         }
+
+        [HttpGet("{id}/Rules")]
+        public async Task<IActionResult> GetRules(Guid id)
+        {
+           var res= await _payrollStructureService.GetRules(id);
+            return Ok(res);
+        }
+
     }
 }
