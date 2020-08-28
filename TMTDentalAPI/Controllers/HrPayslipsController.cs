@@ -159,8 +159,23 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}/Lines")]
         public async Task<IActionResult> GetLines(Guid id)
         {
-            var res = await _payslipService.GetWorkedDaysLines(id);
+            var res = await _payslipService.GetLines(id);
             return Ok(res);
+        }
+
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> CancelCompute(Guid id)
+        {
+            var slip = await _payslipService.SearchQuery(x=>x.Id == id).Include(x=>x.Lines).FirstOrDefaultAsync();
+            if (slip == null)
+            {
+                return NotFound();
+            }
+            slip.Lines.Clear();
+            slip.State = "draft";
+            slip.TotalAmount = 0;
+            await _payslipService.UpdateAsync(slip);
+            return NoContent();
         }
     }
 }

@@ -43,12 +43,12 @@ Tính toán lương
       <tbody>
         <tr *ngFor="let item of listLines">
           <td>{{ item.name}}</td>
-          <td>{{ item.total? (item.total | currency: "VND") : (0 |  currency: "VND")}}</td>
+          <td>{{ item.amount? (item.amount | currency: "VND") : (0 |  currency: "VND")}}</td>
         </tr>
       </tbody>
     </table>
    
-    <div *ngIf="tongtien && tongtien > 0" class="o_group o_inner_group o_group_col_6">
+    <div *ngIf="tongtien" class="o_group o_inner_group o_group_col_6">
       <table class="o_group o_inner_group oe_subtotal_footer oe_right">
         <tbody>
           <tr>

@@ -22,7 +22,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Id của máy chấm công
         /// </summary>
-        public string IdMayChamCong { get; set; }
+        //public string IdMayChamCong { get; set; }
 
         /// <summary>
         /// Thời gian hiển thị trên kanban

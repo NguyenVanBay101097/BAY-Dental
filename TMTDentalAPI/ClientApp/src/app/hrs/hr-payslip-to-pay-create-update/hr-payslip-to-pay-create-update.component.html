@@ -27,7 +27,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div *ngIf="this.state.value != 'done'" class="o_statusbar_buttons">
-                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"
+                    <button type="button" *ngIf="this.state.value == 'verify'" accesskey="1"
                         class="btn btn-primary btn-sm" (click)="ConfirmSalary()">
                         Xác nhận
                     </button>
@@ -35,7 +35,7 @@
                         class="btn btn-primary btn-sm" (click)="ComputeSalary()">
                         Tính lương
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'process'" accesskey="1"
+                    <button type="button" *ngIf="this.state.value == 'verify'" accesskey="1"
                         class="btn btn-primary btn-sm" (click)="ComputeSalaryAgain()">
                         Tính Lại lương
                     </button>
@@ -51,7 +51,7 @@
                         Hoàn thành
                     </button>
                     <button class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary':  this.state.value === 'process', 'btn-secondary':  this.state.value  !== 'process'}"
+                        [ngClass]="{'btn-primary':  this.state.value === 'verify', 'btn-secondary':  this.state.value  !== 'verify'}"
                         type="button">
                         Chờ xác nhận
                     </button>
