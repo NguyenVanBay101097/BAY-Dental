@@ -175,7 +175,6 @@ namespace Infrastructure.Services
             var work_entry_types = await workEntryTypeObj.SearchQuery(x => work_entry_type_ids.Contains(x.Id)).ToListAsync();
             var work_entry_type_dict_2 = work_entry_types.ToDictionary(x => x.Id, x => x);
 
-            var result = new HrPayslipOnChangeEmployeeResult();
             foreach (var item in work_entry_type_dict)
             {
                 var work_entry_type = work_entry_type_dict_2[item.Key];
@@ -189,7 +188,7 @@ namespace Infrastructure.Services
                     amount = (decimal)item.Value.SoGioCong * employee.HourlyWage.Value;
                 }
 
-                result.WorkedDayLines.Add(new HrPayslipWorkedDayDisplay
+                res.WorkedDayLines.Add(new HrPayslipWorkedDayDisplay
                 {
                     NumberOfDays = (decimal)item.Value.SoNgayCong,
                     NumberOfHours = (decimal)item.Value.SoGioCong,
@@ -199,7 +198,7 @@ namespace Infrastructure.Services
                 });
             }
 
-            return result;
+            return res;
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)

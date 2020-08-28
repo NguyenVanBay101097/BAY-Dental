@@ -1,15 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HrPayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay } from '../hr-payroll-structure.service';
+import { HrPayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay, HrSalaryRuleDisplay } from '../hr-payroll-structure.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { HrSalaryRuleListComponent } from '../hr-salary-rule-list/hr-salary-rule-list.component';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { tap } from 'rxjs/internal/operators/tap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HrPayrollStructureTypeCreateComponent } from '../hr-payroll-structure-type-create/hr-payroll-structure-type-create.component';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { HrSalaryRuleCrudDialogComponent } from '../hr-salary-rule-crud-dialog/hr-salary-rule-crud-dialog.component';
 
 @Component({
   selector: 'app-payroll-structure-create-update',
@@ -19,18 +21,19 @@ import { HrPayrollStructureTypeCreateComponent } from '../hr-payroll-structure-t
 export class HrPayrollStructureCreateUpdateComponent implements OnInit {
 
   @ViewChild('typeCbx', { static: true }) typeCbx: ComboBoxComponent;
-  @ViewChild(HrSalaryRuleListComponent, { static: false }) rulesComp: HrSalaryRuleListComponent;
 
   payrollForm: FormGroup;
   id: string;
   listType: any[];
   payrollRecord: HrPayrollStructureDisplay;
 
+  AllData: any = [];
+
   constructor(
     private fb: FormBuilder, private router: Router,
     private payrollService: HrPayrollStructureService,
     private notificationService: NotificationService,
-    private modalService : NgbModal,
+    private modalService: NgbModal,
     private activeroute: ActivatedRoute) { }
 
   ngOnInit() {
@@ -61,6 +64,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
       this.payrollForm.patchValue(res);
       this.payrollRecord = Object.assign({}, res);
       // this.payrollForm.disable();
+      this.loadSalaryRuleFromApi();
     });
   }
 
@@ -98,7 +102,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
       return false;
     }
     const val = this.payrollForm.value;
-    val.rules = this.rulesComp.AllData;
+    val.rules = this.AllData;
     val.typeId = val.type.id;
     if (this.id) {
       this.payrollService.update(this.id, val).subscribe(
@@ -132,12 +136,61 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
   }
 
   ShowStructTypeCreateModal() {
-      let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Thêm: Loại cấu trúc lương';
-      modalRef.result.then(() => {
-        this.LoadListType();
-      }, () => {
+    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Loại cấu trúc lương';
+    modalRef.result.then((entity) => {
+      this.payrollForm.get('type').setValue(entity);
+      this.LoadListType();
+    });
+  }
+
+  loadSalaryRuleFromApi() {
+    if (this.id) {
+      this.payrollService.GetListRuleByStructId(this.id).subscribe(res => {
+        this.AllData = res;
       });
-  
+    }
+  }
+
+  AllDataAdd(e) {
+    const newRow: HrSalaryRuleDisplay = e;
+    this.AllData.push(newRow);
+  }
+
+  removeHandler(e) {
+    this.AllData = this.AllData.filter(item => item !== e);
+  }
+
+  ShowAddSalaryRulePopup() {
+    const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
+      { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm quy tắc lương';
+    modalRef.result.then((val) => {
+      this.AllDataAdd(val);
+    }, er => { });
+  }
+
+  editItem(item) {
+    const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
+      { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa quy tắc lương';
+    modalRef.componentInstance.rule = item;
+    modalRef.result.then((val) => {
+      this.UpdateAllData(val);
+    }, er => { });
+  }
+
+  UpdateAllData(item) {
+    if (item.id) {
+      const index = this.AllData.findIndex(x => x.id === item.id);
+      if (index !== -1) {
+        this.AllData[index] = item;
+      }
+    } else {
+      const index = this.AllData.findIndex(x => x.code === item.code);
+      if (index !== -1) {
+        this.AllData[index] = item;
+      }
+    }
   }
 }

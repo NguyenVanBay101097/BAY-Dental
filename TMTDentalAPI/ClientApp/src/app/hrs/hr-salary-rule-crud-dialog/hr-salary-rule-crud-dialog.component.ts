@@ -14,7 +14,7 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
   RuleForm: FormGroup;
   rule: any;
   listAmountSelect = [
-    { text: 'Phần trăm (%)', value: 'percent' },
+    // { text: 'Phần trăm (%)', value: 'percentage' },
     { text: 'Tiền cố định', value: 'fix' },
     { text: 'Công thức', value: 'code' },
   ];
@@ -33,10 +33,10 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
     this.RuleForm = this.fb.group({
       name: [null, [Validators.required]],
       code: null,
-      sequence: null,
+      sequence: 0,
       active: true,
-      amountSelect: 'fixamount',
-      amountFix: [null],
+      amountSelect: 'fix',
+      amountFix: 0,
       amountPercentage: null,
       appearsOnPayslip: true,
       note: null,
@@ -73,28 +73,13 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
     this.amountPercentageBaseControl.setValidators(null);
     this.amountCodeComputeControl.setValidators(null);
 
-    if (value === 'fixamount') {
-      {
-        this.amountfixControl.setValidators([Validators.required]);
-
-        this.amountPercentageControl.setValue(null);
-        this.amountPercentageBaseControl.setValue(null);
-        this.amountCodeComputeControl.setValue(null);
-      }
-    } else if (value === 'percent') {
-      {
-        this.amountPercentageControl.setValidators([Validators.required]);
-        this.amountPercentageBaseControl.setValidators([Validators.required]);
-
-        this.amountfixControl.setValue(null);
-        this.amountCodeComputeControl.setValue(null);
-      }
+    if (value === 'fix') {
+      this.amountfixControl.setValidators([Validators.required]);
+    } else if (value === 'percentage') {
+      this.amountPercentageControl.setValidators([Validators.required]);
+      this.amountPercentageBaseControl.setValidators([Validators.required]);
     } else if (value === 'code') {
       this.amountCodeComputeControl.setValidators([Validators.required]);
-
-      this.amountPercentageControl.setValue(null);
-      this.amountPercentageBaseControl.setValue(null);
-      this.amountfixControl.setValue(null);
     }
 
     this.amountfixControl.updateValueAndValidity();
@@ -105,7 +90,9 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
 
   onSave() {
     if (this.form.valid) {
-      this.activeModal.close(this.RuleForm.value);
+      const entity = this.RuleForm.value;
+      if (!entity.id) { delete entity.id; }
+      this.activeModal.close(entity);
     }
   }
 }

@@ -21,7 +21,7 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Struct)
                 .WithMany(x => x.Rules)
                 .HasForeignKey(x => x.StructId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Company)
                    .WithMany()
