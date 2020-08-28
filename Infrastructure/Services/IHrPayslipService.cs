@@ -19,5 +19,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         Task<IEnumerable<HrPayslipWorkedDayBasic>> GetWorkedDaysLines(Guid id);
         Task<IEnumerable<HrPayslipLineBasic>> GetLines(Guid id);
+        Task ActionCancel(IEnumerable<Guid> ids);
     }
 }

@@ -163,18 +163,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> CancelCompute(Guid id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
-            var slip = await _payslipService.SearchQuery(x=>x.Id == id).Include(x=>x.Lines).FirstOrDefaultAsync();
-            if (slip == null)
-            {
-                return NotFound();
-            }
-            slip.Lines.Clear();
-            slip.State = "draft";
-            slip.TotalAmount = 0;
-            await _payslipService.UpdateAsync(slip);
+            await _unitOfWork.BeginTransactionAsync();
+            await _payslipService.ActionCancel(ids);
+            _unitOfWork.Commit();
             return NoContent();
         }
     }

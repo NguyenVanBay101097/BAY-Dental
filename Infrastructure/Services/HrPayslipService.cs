@@ -373,6 +373,22 @@ namespace Infrastructure.Services
             foreach (var payslip in self)
                 payslip.TotalAmount = payslip.Lines.Sum(x => x.Amount);
         }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.AccountMove).ToListAsync();
+            var moveObj = GetService<IAccountMoveService>();
+            var move_ids = self.Where(x => x.AccountMove != null && x.AccountMove.State == "posted").Select(x => x.AccountMove.Id);
+            await moveObj.ButtonCancel(move_ids);
+            await moveObj.Unlink(move_ids);
+
+            if (self.Any(x => x.State == "done"))
+                throw new Exception("Không thể hủy phiếu lương đã hoàn thành");
+
+            foreach (var payslip in self)
+                payslip.State = "draft";
+            await UpdateAsync(self);
+        }
     }
 
     public class HrPayslipOnChangeEmployeeResult
