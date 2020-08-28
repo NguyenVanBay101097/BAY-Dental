@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li><a routerLink="/hr/payslips">Phiếu lương</a></li>
-            <li class="active">{{payslipRecord !=null?payslipRecord.name :'Mới'}}</li>
+            <li class="active">{{payslip.name || 'Mới'}}</li>
         </ol>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -26,22 +26,17 @@
     <div class="o_form_view" [formGroup]="payslipForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
-                <div *ngIf="this.state.value != 'done'" class="o_statusbar_buttons">
+                <div class="o_statusbar_buttons">
                     <button type="button" *ngIf="this.state.value == 'verify'" accesskey="1"
                         class="btn btn-primary btn-sm" (click)="ConfirmSalary()">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'draft'" accesskey="1"
+                    <button type="button" *ngIf="this.state.value == 'draft' || this.state.value == 'verify'" accesskey="1"
                         class="btn btn-primary btn-sm" (click)="ComputeSalary()">
-                        Tính lương
+                        Tính toán lương
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'verify'" accesskey="1"
-                        class="btn btn-primary btn-sm" (click)="ComputeSalaryAgain()">
-                        Tính Lại lương
-                    </button>
-                    <button type="button" *ngIf="this.state.value != 'draft'" accesskey="1"
-                        class="btn btn-danger btn-sm" (click)="CancelCompute()">
-                        hủy tính lương
+                    <button type="button" *ngIf="this.state.value == 'done'" accesskey="1" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        Hủy phiếu
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -73,10 +68,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true" (valueChange)="EmployeeValueChange()"
-                                        #empCbx (selectionChange)="EmployeeChange($event)" formControlName="employee"
+                                    <kendo-combobox [class.d-none]="this.state.value === 'done'" [data]="listEmployees" [textField]="'name'" [filterable]="true"
+                                        (valueChange)="EmployeeValueChange()" #empCbx formControlName="employee"
                                         [valueField]="'id'">
                                     </kendo-combobox>
+                                    <span [class.d-none]="this.state.value !== 'done'">{{this.employee.value ? this.employee.value.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -86,8 +82,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName="dateFrom">
+                                    <kendo-datepicker [class.d-none]="this.state.value === 'done'" (valueChange)="EmployeeValueChange()" formControlName="dateFrom">
                                     </kendo-datepicker>
+                                    <span [class.d-none]="this.state.value !== 'done'">{{this.dateFrom.value | date:'shortDate'}}</span>
+
                                 </td>
                             </tr>
                             <tr>
@@ -97,7 +95,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker (valueChange)="ChangeDateFrom($event)" formControlName='dateTo'></kendo-datepicker>
+                                    <kendo-datepicker  [class.d-none]="this.state.value === 'done'"  (valueChange)="EmployeeValueChange()" formControlName='dateTo'>
+                                    </kendo-datepicker>
+                                    <span [class.d-none]="this.state.value !== 'done'">{{this.dateTo.value | date:'shortDate'}}</span>
+
                                 </td>
                             </tr>
                         </tbody>
@@ -105,6 +106,16 @@
 
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr *ngIf="this.structureType.value">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Loại mẫu lương
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{this.structureType.value.name}}</span>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -112,11 +123,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="listStructs" [textField]="'name'" [filterable]="true"
-                                        formControlName="struct" #typeCbx (selectionChange)="SelectStructChange($event)"
-                                        (filterChange)="handleFilterStruct($event)" [valueField]="'id'">
+                                    <kendo-combobox [class.d-none]="this.state.value === 'done'" [data]="listStructs" [textField]="'name'" [filterable]="true"
+                                        formControlName="struct" #structCbx [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="!listStructs && this.employeeId?.value" class="text-warning">
+                                    <span [class.d-none]="this.state.value !== 'done'">{{this.struct.value? this.struct.value.name : ''}}</span>
+
+                                    <!-- <div *ngIf="!listStructs && this.employeeId?.value" class="text-warning">
                                         <div>
                                             <label
                                                 class="text-danger">{{this.employeeId?.value? (this.struct.value? this.struct.value.name: 'chưa thiết lập loại mẫu lương') : ''}}</label>
@@ -124,7 +136,7 @@
                                                 *ngIf="this.employeeId?.value && !this.struct.value">thiết
                                                 lập</a>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </td>
                             </tr>
                             <tr>
@@ -134,82 +146,96 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control bg-white" formControlName="name" required>
+                                    <input type="text" [class.d-none]="this.state.value === 'done'" class="form-control" formControlName="name" required>
+                                    <span [class.d-none]="this.state.value !== 'done'">{{this.name.value ? this.name.value : '' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input [class.d-none]="this.state.value === 'done'" type="text" class="form-control" formControlName="number">
+                                    <span [class.d-none]="this.state.value !== 'done'">{{this.number.value? this.number.value : ''}}</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="tab-contanner">
+                <div class="o_notebook">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
-                      Thông tin ngày công
-                          </a>
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                aria-controls="home" aria-selected="true">
+                                Thông tin ngày công
+                            </a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
-                      Tính toán lương
-                          </a>
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                                aria-controls="profile" aria-selected="false">
+                                Tính toán lương
+                            </a>
                         </li>
-                      </ul>
-                      
-                      <div class="tab-content" id="myTabContent">
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                          <table class="table table-sm table-hover">
-                            <thead>
-                              <tr>
-                                <th scope="col">Loại</th>
-                                <th scope="col">Số ngày công</th>
-                                <th scope="col">Số giờ công</th>
-                                <th scope="col">Tổng tiền</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let item of listWorkDays">
-                                <td>{{ item.name}}</td>
-                                <td>{{ item.numberOfDays}}</td>
-                                <td>{{ item.numberOfHours}}</td>
-                                <td>{{ item.amount |  number}}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                          <table class="table table-sm table-striped table-hover">
-                            <thead>
-                              <tr>
-                                <th scope="col">Tên</th>
-                                <th scope="col">Tổng tiền</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let item of listLines">
-                                <td>{{ item.name}}</td>
-                                <td>{{ item.amount | number}}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                         
-                          <div *ngIf="payslip" class="o_group o_inner_group o_group_col_6">
-                            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
-                              <tbody>
-                                <tr>
-                                  <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
-                                    <label class="o_form_label oe_subtotal_footer_separator">
-                                      Tổng tiền:
-                                    </label>
-                                  </td>
-                                  <td colspan="1" style="width: 50%;">
-                                    <span
-                                      class="oe_subtotal_footer_separator o_field_widget">{{payslip.totalAmount |  number}}</span>
-                                  </td>
-                                </tr>
-                              </tbody>
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Loại</th>
+                                        <th scope="col">Số ngày công</th>
+                                        <th scope="col">Số giờ công</th>
+                                        <th scope="col">Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of WorkedDay.value">
+                                        <td>{{ item.name}}</td>
+                                        <td>{{ item.numberOfDays}}</td>
+                                        <td>{{ item.numberOfHours}}</td>
+                                        <td>{{ item.amount |  number}}</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <table class="table table-sm table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Tên</th>
+                                        <th scope="col">Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of listLines">
+                                        <td>{{ item.name}}</td>
+                                        <td>{{ item.amount | number}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="o_group o_inner_group o_group_col_6">
+                                <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label pb-0" style="width: 50%;">
+                                                <label class="o_form_label oe_subtotal_footer_separator">
+                                                    Tổng tiền:
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 50%;">
+                                                <span
+                                                    class="oe_subtotal_footer_separator o_field_widget">{{payslip.totalAmount |  number}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                      </div>
+                    </div>
                 </div>
             </div>
         </div>

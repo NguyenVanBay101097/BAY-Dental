@@ -74,7 +74,7 @@ export class HrPayrollStructureService {
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<HrPayrollStructurePaging> {
-        return this.http.get<HrPayrollStructurePaging>(this.baseApi + this.apiUrl, { params: val });
+        return this.http.get<HrPayrollStructurePaging>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     get(id): Observable<HrPayrollStructureDisplay> {

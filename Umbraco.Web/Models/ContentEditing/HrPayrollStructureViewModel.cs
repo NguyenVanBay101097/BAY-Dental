@@ -19,11 +19,10 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Limit = 20;
         }
-
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Filter { get; set; }
-        public Guid? structureTypeId { get; set; }
+        public Guid? StructureTypeId { get; set; }
     }
 
     public class HrPayrollStructureSave

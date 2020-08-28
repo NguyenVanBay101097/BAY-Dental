@@ -114,6 +114,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateTo <= dateTo);
             }
 
+            if (val.EmployeeId.HasValue)
+            {
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+            }
+
             query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await _mapper.ProjectTo<HrPayslipBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
@@ -140,9 +145,16 @@ namespace Infrastructure.Services
             var employee = await empObj.SearchQuery(x => x.Id == employeeId).Include(x => x.StructureType)
                 .FirstOrDefaultAsync();
 
+            if (employee.StructureType == null)
+                return res;
+
+            var structureType = employee.StructureType;
+            res.StructureType = _mapper.Map<HrPayrollStructureTypeSimple>(structureType);
+            res.StructureTypeId = structureType.Id;
+
             res.Name = $"Phiếu lương tháng {dateFrom.Value.ToString("M yyyy", new CultureInfo("vi-VN")).ToLower()} {employee.Name}";
 
-            var calendarId = employee.StructureType.DefaultResourceCalendarId;
+            var calendarId = structureType.DefaultResourceCalendarId;
 
             //list chu kỳ làm việc
             var attendanceIntervals = await calendarObj._AttendanceIntervals(calendarId.Value, dateFrom.Value, dateTo.Value);
@@ -167,7 +179,6 @@ namespace Infrastructure.Services
             }
             // input cho tính tiền từng workedday line
             var socongchuan = await calendarObj.TinhSoCongChuan(calendarId.Value, dateFrom.Value, dateTo.Value, attendanceIntervals);
-            var structureType = employee.StructureType;
             var soTien1Cong = (employee.Wage.HasValue ? employee.Wage : 0) / (decimal)socongchuan.SoNgayCong;
 
             //tạo ra output
@@ -381,8 +392,8 @@ namespace Infrastructure.Services
             await moveObj.ButtonCancel(move_ids);
             await moveObj.Unlink(move_ids);
 
-            if (self.Any(x => x.State == "done"))
-                throw new Exception("Không thể hủy phiếu lương đã hoàn thành");
+            //if (self.Any(x => x.State == "done"))
+            //    throw new Exception("Không thể hủy phiếu lương đã hoàn thành");
 
             foreach (var payslip in self)
                 payslip.State = "draft";
@@ -395,6 +406,9 @@ namespace Infrastructure.Services
         public List<HrPayslipWorkedDayDisplay> WorkedDayLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
 
         public string Name { get; set; }
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureTypeSimple StructureType { get; set; }
     }
 
     public class HrPayslipDefaultGetResult

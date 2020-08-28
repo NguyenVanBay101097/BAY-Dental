@@ -5,7 +5,6 @@ import { HrsRoutingModule } from './hrs-routing.module';
 import { HrPayrollStructureListComponent } from './hr-payroll-structure-list/hr-payroll-structure-list.component';
 import { HrPayrollStructureCreateUpdateComponent } from './hr-payroll-structure-create-update/hr-payroll-structure-create-update.component';
 import { HrPayrollStructureService } from './hr-payroll-structure.service';
-import { SharedModule, ColumnResizingService } from '@progress/kendo-angular-grid';
 import { LayoutModule } from '@progress/kendo-angular-layout';
 import { HrSalaryRuleCrudDialogComponent } from './hr-salary-rule-crud-dialog/hr-salary-rule-crud-dialog.component';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
@@ -18,6 +17,9 @@ import { HrPayslipService } from './hr-payslip.service';
 import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-update/hr-payslip-to-pay-create-update.component';
 import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip-to-pay-list.component';
 import { EmployeeCreateUpdateComponent } from '../employees/employee-create-update/employee-create-update.component';
+import { SharedModule } from '../shared/shared.module';
+import { EmployeeService } from '../employees/employee.service';
+import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-payslip-date-filter.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,7 @@ import { EmployeeCreateUpdateComponent } from '../employees/employee-create-upda
     HrSalaryRuleCrudDialogComponent,
     HrPayslipToPayCreateUpdateComponent,
     HrPayslipToPayListComponent,
-    EmployeeCreateUpdateComponent,
+    HrPayslipDateFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -36,19 +38,17 @@ import { EmployeeCreateUpdateComponent } from '../employees/employee-create-upda
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule,
     LayoutModule,
     DropDownsModule,
-    NgbModule
+    NgbModule,
+    SharedModule
   ],
   providers: [
     HrPayrollStructureService,
-    ColumnResizingService,
     HrPayslipService
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    EmployeeCreateUpdateComponent
   ]
 })
 export class HrsModule { }
