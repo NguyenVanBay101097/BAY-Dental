@@ -61,6 +61,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
+
+        public decimal TotalAmount { get; set; } = 0;
     }
 
     public class HrPayslipOnChangeEmployee
@@ -90,5 +92,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateTo { get; set; }
 
         public string PayslipRunName { get; set; }
+        public string Name { get; set; }
     }
 }

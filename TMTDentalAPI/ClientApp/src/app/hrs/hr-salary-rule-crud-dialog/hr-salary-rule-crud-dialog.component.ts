@@ -15,16 +15,16 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
   rule: any;
   listAmountSelect = [
     { text: 'Phần trăm (%)', value: 'percent' },
-    { text: 'Tiền cố định', value: 'fixamount' },
+    { text: 'Tiền cố định', value: 'fix' },
     { text: 'Công thức', value: 'code' },
   ];
   listamountCodeCompute: Array<{ text: string, value: string }> = [
-    { text: 'Lương chính', value: 'LC' },
-    { text: 'Hoa hồng', value: 'HH' }
+    { text: 'Lương chính', value: 'luong_chinh' },
+    { text: 'Hoa hồng', value: 'hoa_hong' }
   ];
   listamountPercentageBase: Array<{ text: string, value: string }> = [
-    { text: 'Lương chính', value: 'LC' },
-    { text: 'Hoa hồng', value: 'HH' }
+    { text: 'Lương chính', value: 'luong_chinh' },
+    { text: 'Hoa hồng', value: 'hoa_hong' }
   ];
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private activeroute: ActivatedRoute) { }

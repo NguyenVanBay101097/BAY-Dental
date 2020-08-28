@@ -213,7 +213,7 @@ namespace Infrastructure.Services
 
             foreach (var payslip in hrPayslips)
             {
-                if (payslip.State != "process")
+                if (payslip.State != "verify")
                     throw new Exception("Chỉ những phiếu lương chờ xác nhận được vào sổ.");
 
                 var move = await _PreparePayslipMovesAsync(payslip);
