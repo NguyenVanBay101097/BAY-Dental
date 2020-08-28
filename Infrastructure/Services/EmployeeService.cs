@@ -39,6 +39,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => positionList.Contains(x.Category.Type));
             }
 
+            if (val.Ids != null)
+                query = query.Where(x => val.Ids.Contains(x.Id));
+
             if (val.IsDoctor.HasValue)
                 query = query.Where(x => x.IsDoctor == val.IsDoctor);
 

@@ -20,6 +20,11 @@ import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-
 import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip-to-pay-list.component';
 import { HrPayslipLineListComponent } from './hr-payslip-line-list/hr-payslip-line-list.component';
 import { EmployeeCreateUpdateComponent } from '../employees/employee-create-update/employee-create-update.component';
+import { HrPaysliprunService } from './hr-paysliprun.service';
+import { HrPayslipRunListComponent } from './hr-payslip-run-list/hr-payslip-run-list.component';
+import { HrPayslipRunFormComponent } from './hr-payslip-run-form/hr-payslip-run-form.component';
+import { HrPayslipRunConfirmDialogComponent } from './hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
+import { SelectEmployeeDialogComponent } from '../shared/select-employee-dialog/select-employee-dialog.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +38,10 @@ import { EmployeeCreateUpdateComponent } from '../employees/employee-create-upda
     HrPayslipToPayListComponent,
     HrPayslipLineListComponent,
     EmployeeCreateUpdateComponent,
+    HrPayslipRunListComponent,
+    HrPayslipRunFormComponent,
+    HrPayslipRunConfirmDialogComponent,
+    SelectEmployeeDialogComponent
   ],
   imports: [
     CommonModule,
@@ -48,11 +57,12 @@ import { EmployeeCreateUpdateComponent } from '../employees/employee-create-upda
   providers: [
     HrPayrollStructureService,
     ColumnResizingService,
-    HrPayslipService
+    HrPayslipService,
+    HrPaysliprunService
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    EmployeeCreateUpdateComponent
+    EmployeeCreateUpdateComponent,HrPayslipRunConfirmDialogComponent,SelectEmployeeDialogComponent
   ]
 })
 export class HrsModule { }

@@ -9,6 +9,11 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class HrPayslipRun: BaseEntity
     {
+        public HrPayslipRun()
+        {
+            State = "draft";
+        }
+
         public string Name { get; set; }
 
         public string State { get; set; }

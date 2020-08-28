@@ -120,7 +120,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<PagedResult2<HrPayslipDisplay>> GetPaged(HrPayslipPaged val)
+        public async Task<PagedResult2<HrPayslipDisplay>> GetPaged(HrPayslipPaged val)  
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))

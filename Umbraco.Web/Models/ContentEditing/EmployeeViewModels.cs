@@ -114,5 +114,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAssistant { get; set; }
         //public bool? IsOther { get; set; }
         public string Position { get; set; }
+
+        public IEnumerable<Guid> Ids { get; set; }
     }
 }

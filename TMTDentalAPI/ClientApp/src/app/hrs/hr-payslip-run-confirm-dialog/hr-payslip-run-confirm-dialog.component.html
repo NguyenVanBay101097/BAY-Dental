@@ -1,0 +1,76 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="myForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">             
+                <div class="o_group mb-0"> 
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                       Mẫu lương
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-combobox [data]="filterStructures" [textField]="'name'" [filterable]="true"
+                                            #structureCbx formControlName="structureId" [valueField]="'id'">
+                                        </kendo-combobox>                                     
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>                
+                </div>
+                <div>
+                    <div class="d-flex">
+                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="openEmployees()">Thêm nhân viên</button>                    
+                    </div>
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>Mã NV</th>
+                                <th>Tên</th>
+                                <th>Số điện thoại</th>                              
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="lines" >
+                            <ng-container *ngFor="let item of lines.controls; let i = index;">
+                                <tr [formGroupName]="i">                                                                     
+                                    <td>
+                                        <input type="text" formControlName="ref" >
+                                    </td>
+                                    <td>
+                                        <input type="text" formControlName="name" >
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form_control" formControlName="phone" >
+                                    </td>
+                                    <td>
+                                        <button type="button" title="Hủy" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                        <app-select-employee-dialog (addEmployee)="addEmployee($event)"></app-select-employee-dialog>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary"  accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
