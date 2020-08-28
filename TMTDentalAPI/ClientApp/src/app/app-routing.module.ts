@@ -4,7 +4,7 @@ import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'workentrytypes',
+    path: 'work-entry-types',
     loadChildren: () => import('./work-entry-types/work-entry-types.module').then(m => m.WorkEntryTypesModule),
     canActivate: [AuthGuard]
   },

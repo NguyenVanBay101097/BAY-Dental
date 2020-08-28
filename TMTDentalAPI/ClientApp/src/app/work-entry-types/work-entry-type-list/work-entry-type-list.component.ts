@@ -14,7 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./work-entry-type-list.component.css']
 })
 export class WorkEntryTypeListComponent implements OnInit {
-  title: string = "Cấu hình đầu vào loại công việc";
+  title: string = "Loại chấm công";
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
@@ -24,10 +24,10 @@ export class WorkEntryTypeListComponent implements OnInit {
   search: string;
 
   constructor(
-    private workEntryTypeService:WorkEntryTypeService,
+    private workEntryTypeService: WorkEntryTypeService,
     private modalService: NgbModal,
   ) { }
-  
+
   ngOnInit() {
     this.searchUpdate.pipe(
       debounceTime(400),

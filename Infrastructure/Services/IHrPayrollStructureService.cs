@@ -13,8 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<HrPayrollStructureDisplay>> GetPaged(HrPayrollStructurePaged val);
         Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id);
         Task Remove(Guid Id);
-
-        Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure);
         Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId);
     }
 }

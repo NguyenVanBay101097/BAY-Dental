@@ -69,32 +69,5 @@ namespace Infrastructure.Services
 
             await DeleteAsync(HrPayrollStructure);
         }
-
-        public async Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure)
-        {
-            var rulesToRemove = new List<HrSalaryRule>();
-            foreach (var rule in structure.Rules)
-            {
-                if (!val.Rules.Any(x => x.Id == rule.Id))
-                    rulesToRemove.Add(rule);
-            }
-
-            await GetService<IHrSalaryRuleService>().Remove(rulesToRemove.Select(x=>x.Id).ToList());
-            structure.Rules = structure.Rules.AsList().Except(rulesToRemove).ToList();
-
-            foreach (var rule in val.Rules)
-            {
-                if (rule.Id == Guid.Empty || !rule.Id.HasValue)
-                {
-                    var r = _mapper.Map<HrSalaryRule>(rule);
-                    r.CompanyId = CompanyId;
-                    structure.Rules.Add(r);
-                }
-                else
-                {
-                    _mapper.Map(rule, structure.Rules.SingleOrDefault(c => c.Id == rule.Id));
-                }
-            }
-        }
     }
 }
