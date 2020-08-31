@@ -15,7 +15,6 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   styleUrls: ['./select-employee-dialog.component.css']
 })
 export class SelectEmployeeDialogComponent implements OnInit {
-  @Output() employees : EventEmitter<any> = new EventEmitter<any>();
   @Output() selectionChange = new EventEmitter<SelectionEvent>();
   title: string;
   loading = false;
@@ -30,7 +29,7 @@ export class SelectEmployeeDialogComponent implements OnInit {
   isDoctor: boolean;
   isAssistant: boolean;
   isOther: boolean;
-  private rowsSelected: any[] = [];
+  private rowsSelected: any;
   
 
   btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
@@ -88,13 +87,12 @@ export class SelectEmployeeDialogComponent implements OnInit {
     this.getEmployeesList();
   }
 
-  selectedKeysChange(rows: any[]) {
-    this.rowsSelected.push(rows);
+  selectedKeysChange(rows : any) {    
+    this.rowsSelected = rows;
   }
 
   onselectedEmployees(){
-    this.employees.emit(this.rowsSelected); 
-    this.activeModal.dismiss();  
+    this.activeModal.close(this.rowsSelected);  
   } 
 
   onAdvanceSearchChange(filter) {

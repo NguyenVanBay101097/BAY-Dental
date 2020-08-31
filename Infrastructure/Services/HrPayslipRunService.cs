@@ -63,7 +63,7 @@ namespace Infrastructure.Services
             if (paySlipRun == null)
                 throw new Exception("PayslipRun not found");
 
-            paySlipRun = _mapper.Map(val, paySlipRun);           
+            paySlipRun = _mapper.Map(val, paySlipRun);
 
             await UpdateAsync(paySlipRun);
         }
@@ -71,14 +71,66 @@ namespace Infrastructure.Services
         public async Task ActionConfirm(PaySlipRunConfirmViewModel val)
         {
 
+            var paysliprun = await SearchQuery(x => x.Id == val.PayslipRunId.Value).Include(x => x.Slips).FirstOrDefaultAsync();
+            if (paysliprun == null)
+                throw new Exception("PayslipRun Not Found");
+
+            if (val.Employees.Any())
+            {
+                foreach (var emp in val.Employees)
+                {
+                    var payslipObj = GetService<IHrPayslipService>();
+                    var changemp = await payslipObj.OnChangeEmployee(emp.Id, paysliprun.DateStart, paysliprun.DateEnd);
+                    var workedDayLines = _mapper.Map<List<HrPayslipWorkedDaySave>>(changemp.WorkedDayLines);
+                    var res = new HrPayslipSave()
+                    {
+                        StructId = val.StructureId.Value,
+                        DateFrom = paysliprun.DateStart,
+                        DateTo = paysliprun.DateEnd,
+                        EmployeeId = emp.Id,
+                        Name = changemp.Name,
+                        ListHrPayslipWorkedDaySave = workedDayLines,
+                        payslipRunId = paysliprun.Id,
+                    };
+                }
+
+            }
+            paysliprun.State = "confirm";
+
+            await UpdateAsync(paysliprun);
+
+        }
+
+        public async Task CreatePayslip()
+        {
+
+        }
+
+
+        public async Task ActionDone(IEnumerable<Guid> ids)
+        {
+            var payslipObj = GetService<IHrPayslipService>();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Slips).ToListAsync();
+            if (payslipruns == null)
+                throw new Exception("PayslipRuns Not Found");
+
+            foreach (var run in payslipruns)
+            {
+                await payslipObj.ActionConfirm(run.Slips.Select(x => x.Id));
+                run.State = "done";
+            }
+
+
+
+            await UpdateAsync(payslipruns);
         }
     }
 
     public class PaySlipRunConfirmViewModel
     {
-        public Guid PayslipRunId { get; set; }
-        
-        public Guid structureId { get; set; }
+        public Guid? PayslipRunId { get; set; }
+
+        public Guid? StructureId { get; set; }
 
         public IEnumerable<Employee> Employees { get; set; } = new List<Employee>();
     }

@@ -1,18 +1,19 @@
 import { EmployeeBasic } from './../../employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { HrPaysliprunService } from '../hr-paysliprun.service';
+import { HrPaysliprunService, PaySlipRunConfirmViewModel } from '../hr-paysliprun.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { HrPayrollStructureService, HrPayrollStructureDisplay, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { SelectEmployeeDialogComponent } from 'src/app/shared/select-employee-dialog/select-employee-dialog.component';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { Subject } from 'rxjs';
 import { GridDataResult } from '@progress/kendo-angular-grid';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-hr-payslip-run-confirm-dialog',
@@ -22,7 +23,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 export class HrPayslipRunConfirmDialogComponent implements OnInit {
   myForm: FormGroup;
   lineForm: FormGroup;
-  id: string;
+  @Input() public id: string;
   submitted = false;
   filterStructures: HrPayrollStructureDisplay[];
   skip = 0;
@@ -42,12 +43,13 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
     private hrPayrollStructureService : HrPayrollStructureService,
     private employeeService : EmployeeService,
     public activeModal: NgbActiveModal,
+    private activeroute: ActivatedRoute,
     private modalService: NgbModal,
     private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      structureId: [null , Validators.required],
+      structure: [null , Validators.required],
       lines: null,
     });
     this.loadFilteredStructures();
@@ -67,7 +69,8 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
     let modalRef = this.modalService.open(SelectEmployeeDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Chọn nhân viên";
     modalRef.result.then(
-      () => {     
+      rs => {             
+        this.addEmployee(rs);
       },
       () => { }
     );
@@ -78,7 +81,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
         var val = new EmployeePaged();
         val.ids = idss;
         this.employeeService.getSearchRead(val).subscribe(
-          res=> {
+          res=> {            
             this.liness = res.items;
           }
         );      
@@ -86,7 +89,9 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   }
 
   get lines() {
-    return this.myForm.get('lines') as FormArray;
+    var val = this.myForm.value;
+    val.lines =  this.liness
+    return val.lines;
   }
 
   loadFilteredStructures(){
@@ -96,6 +101,21 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
       }
     )
   }
+
+  actionConfirm(){
+    debugger
+    var val = new PaySlipRunConfirmViewModel();
+    var myform = this.myForm.value;
+    val.payslipRunId = this.id;
+    val.structureId = myform.structure ? myform.structure.id : null;
+    val.employees = myform.lines ? myform.lines : null;
+    this.hrPaysliprunService.actionConfirm(val).subscribe(
+      () => { 
+        this.activeModal.close(); 
+      });
+    }
+  
+
 
   searchFilteredStructures(filter?: string) {
     var val = new HrPayrollStructurePaged();

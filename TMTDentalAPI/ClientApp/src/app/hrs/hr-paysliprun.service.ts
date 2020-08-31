@@ -1,3 +1,4 @@
+import { EmployeeBasic } from './../employees/employee';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -40,6 +41,12 @@ export class HrPayslipRunSave {
   dateEnd: string;
 }
 
+export class PaySlipRunConfirmViewModel{
+  payslipRunId: string;
+  structureId: string;
+  employees: EmployeeBasic[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -62,6 +69,10 @@ export class HrPaysliprunService {
 
   create(val: HrPayslipRunSave ) {
     return this.http.post(this.base_api + this.apiUrl, val);
+  }
+
+  actionConfirm(val: PaySlipRunConfirmViewModel ) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionConfirm', val);
   }
 
   update(id, val: HrPayslipRunSave) {

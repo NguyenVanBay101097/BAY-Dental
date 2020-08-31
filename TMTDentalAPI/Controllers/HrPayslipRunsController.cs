@@ -66,12 +66,40 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionConfirm(PaySlipRunConfirmViewModel val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _payslipRunService.ActionConfirm(val);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _payslipRunService.ActionDone(ids);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var paySlip = await _payslipRunService.SearchQuery(x => x.Id == id).Include(x=>x.Slips).FirstOrDefaultAsync();
             if (paySlip == null)
                 return BadRequest();
+
+            if (paySlip.State == "done")
+                throw new Exception("Các phiếu lương đã vào sổ không thể xóa");
 
             await _payslipRunService.DeleteAsync(paySlip);
 
