@@ -61,7 +61,6 @@ export class TimeKeepingService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/ChamCongs";
-  apiUrlWorkingEntryType = "api/WorkEntryTypes";
   create(val): Observable<ChamCongSave> {
     return this.http.post<ChamCongSave>(this.base_api + this.apiUrl, val);
   }
@@ -99,5 +98,9 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
   }
 
-  
+  getLastChamCong(val):Observable<ChamCongBasic> {
+    return this.http.get<ChamCongBasic>(this.base_api + this.apiUrl + '/GetLastChamCong', { params: val });
+  }
+
+
 }

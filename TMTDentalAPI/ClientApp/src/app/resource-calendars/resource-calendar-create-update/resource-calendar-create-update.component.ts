@@ -212,6 +212,4 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
       resourceCalendarAttendances: this.fb.array([])
     });
   }
-
-
 }

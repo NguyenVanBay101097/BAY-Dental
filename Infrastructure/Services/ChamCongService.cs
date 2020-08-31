@@ -40,6 +40,7 @@ namespace Infrastructure.Services
             }
             await this.CreateAsync(val);
         }
+
         //public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
         //{
         //    ISpecification<Employee> spec = new InitialSpecification<Employee>(x => true);
@@ -142,6 +143,17 @@ namespace Infrastructure.Services
                 return "Initial";
             }
             return "process";
+        }
+
+        public async Task<ChamCong> GetLastChamCong(employeePaged val)
+        {
+            var query = SearchQuery(x => x.EmployeeId == val.EmployeeId && x.Date == val.Date);
+            if (query.Any())
+                return await query.OrderBy(x => x.DateCreated).LastAsync();
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
@@ -532,48 +544,35 @@ namespace Infrastructure.Services
                 {
                     var item = res[i];
                     var emp = await empObj.SearchQuery(x => x.Ref.Contains(item.Key)).FirstOrDefaultAsync();
-                    var count = 1;
-                    var chamcong = new ChamCong();
-                    string OldType = "";
                     var workEntryType = new WorkEntryType();
+                    int count = 1;
+                    var chamcong = new ChamCong();
                     foreach (var cc in item.ToList())
                     {
-                        //if (cc.Type == OldType)
-                        //{
-                        //    chamcong = new ChamCong();
-                        //    workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
-                        //    chamcong.CompanyId = CompanyId;
-                        //    chamcong.EmployeeId = emp.Id;
-                        //    if (cc.Type == "check-in")
-                        //    {
-                        //        chamcong.TimeIn = cc.Time;
-                        //    }
-                        //    if (cc.Type == "check-out")
-                        //    {
-                        //        chamcong.TimeOut = cc.Time;
-                        //    }
-                        //    chamcong.Date = cc.Date;
-                        //    chamcong.WorkEntryTypeId = workEntryType.Id;
-                        //    OldType = cc.Type;
-                        //    listCC.Add(chamcong);
-                        //}
-                        workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
-                        chamcong.CompanyId = CompanyId;
-                        chamcong.EmployeeId = emp.Id;
                         if (cc.Type == "check-in")
                         {
+                            chamcong.Id = new Guid();
+                            workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
+                            chamcong.CompanyId = CompanyId;
+                            chamcong.EmployeeId = emp.Id;
+                            chamcong.Date = cc.Date;
+                            chamcong.WorkEntryTypeId = workEntryType.Id;
                             chamcong.TimeIn = cc.Time;
+                            if (count == item.Count())
+                            {
+                                chamcong.Status = "process";
+                                listCC.Add(chamcong);
+                            }
                         }
-                        if (cc.Type == "check-out")
+                        else if (cc.Type == "check-out")
                         {
                             chamcong.TimeOut = cc.Time;
-                        }
-                        chamcong.Date = cc.Date;
-                        chamcong.WorkEntryTypeId = workEntryType.Id;
-                        if (count % 2 == 0)
-                        {
+                            if (chamcong.TimeIn.HasValue && chamcong.TimeOut.HasValue)
+                                chamcong.Status = "done";
+                            else if (chamcong.TimeIn.HasValue || chamcong.TimeOut.HasValue)
+                                chamcong.Status = "process";
                             listCC.Add(chamcong);
-                            continue;
+                            chamcong = new ChamCong();
                         }
                         count++;
                     }
@@ -581,7 +580,9 @@ namespace Infrastructure.Services
             }
             try
             {
+                await CheckChamCong(listCC);
                 await CreateAsync(listCC);
+
             }
             catch (Exception e)
             {
@@ -589,6 +590,54 @@ namespace Infrastructure.Services
             }
 
             return new ChamCongImportResponse { Success = true };
+        }
+
+        public async Task CheckChamCong(IEnumerable<ChamCong> vals)
+        {
+            for (int i = 0; i < vals.Count(); i++)
+            {
+                var val = vals.ToList()[i];
+                if (val == null)
+                    throw new Exception("Input null");
+                else
+                {
+                    var paged = new employeePaged()
+                    {
+                        Date = val.Date,
+                        EmployeeId = val.EmployeeId
+                    };
+                    var ccFirst = await GetLastChamCong(paged);
+
+                    if (!val.TimeIn.HasValue)
+                    {
+                        throw new Exception("Thời gian vào không được phép để trống !!!");
+                    }
+                    else if (val.TimeIn > val.TimeOut)
+                    {
+                        throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
+                    }
+                    else if (ccFirst != null && val.Id != ccFirst.Id && !ccFirst.TimeOut.HasValue)
+                    {
+                        throw new Exception("Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại !");
+                    }
+                    else if (ccFirst != null && val.Id != ccFirst.Id && val.TimeIn < ccFirst.TimeOut)
+                    {
+                        throw new Exception("Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó");
+                    }
+                }
+            }
+        }
+
+        public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
+        {
+            await CheckChamCong(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
+        {
+            await CheckChamCong(entities);
+            await base.UpdateAsync(entities);
         }
     }
 }

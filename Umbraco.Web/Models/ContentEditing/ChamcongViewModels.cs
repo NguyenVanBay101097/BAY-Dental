@@ -13,6 +13,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
         public string Status { get; set; }
+        public DateTime? Date { get; set; }
         public string Filter { get; set; }
         public Guid? EmployeeId { get; set; }
 
@@ -44,7 +45,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Status
         {
-            get;set;
+            get; set;
         }
         public Guid WorkEntryTypeId { get; set; }
 

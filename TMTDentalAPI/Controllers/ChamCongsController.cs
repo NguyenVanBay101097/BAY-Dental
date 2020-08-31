@@ -48,7 +48,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            
+
             var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).Include(x => x.Employee).FirstOrDefaultAsync();
             if (chamcong == null)
                 return NotFound();
@@ -70,12 +70,24 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetLastChamCong([FromQuery] employeePaged val)
+        {
+            if (!ModelState.IsValid || val == null)
+                return BadRequest();
+
+            var cc = await _chamCongService.GetLastChamCong(val);
+            var res = _mapper.Map<ChamCongDisplay>(cc);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(ChamCongSave chamCongSave)
         {
             var chamcong = _mapper.Map<ChamCong>(chamCongSave);
             chamcong.Status = await _chamCongService.GetStatus(chamcong);
             chamcong.CompanyId = CompanyId;
+
             await _chamCongService.CreateAsync(chamcong);
             return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
@@ -101,7 +113,6 @@ namespace TMTDentalAPI.Controllers
             await _chamCongService.UpdateAsync(chamcong);
             return Ok();
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {

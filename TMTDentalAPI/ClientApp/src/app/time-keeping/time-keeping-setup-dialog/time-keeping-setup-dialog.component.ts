@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TimeKeepingService, ChamCongBasic, ChamCongSave } from '../time-keeping.service';
@@ -8,6 +8,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/work-entry-types/work-entry-type.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -16,7 +17,8 @@ import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/
 })
 export class TimeKeepingSetupDialogComponent implements OnInit {
 
-  @ViewChild('workCbx', { static: true }) workCbx: ComboBoxComponent
+  @ViewChild('workCbx', { static: true }) workCbx: ComboBoxComponent;
+  @ViewChild('timeOutRef', { static: false }) timeOutRef: ElementRef;
   formGroup: FormGroup;
   id: string;
   dateTime: Date;
@@ -27,18 +29,20 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   employee: EmployeeBasic;
   filterdWorks: WorkEntryType[] = [];
   chamCong: ChamCongBasic = new ChamCongBasic();
+  error = false;
   constructor(
     private activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private timeKeepingServive: TimeKeepingService,
     private intl: IntlService,
-    private workEntryTypeService : WorkEntryTypeService
+    private workEntryTypeService: WorkEntryTypeService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      timeIn: false,
-      timeOut: false,
+      timeIn: [null, Validators.required],
+      timeOut: null,
       workEntryTypeId: [null, Validators.required]
     })
 
@@ -96,24 +100,61 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     )
   }
 
+  checkTimeIn() {
+    var val = {
+      employeeId: this.employee.id,
+      date: this.intl.formatDate(this.dateTime, "yyyy-MM-dd"),
+    }
+    return this.timeKeepingServive.getLastChamCong(val);
+  }
+
   changeTimeIn(time: Date) {
-    if (time)
+    if (time) {
       this.timeIn = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), time.getHours(), time.getMinutes());
-    else
+      // if (this.timeOut && this.timeIn > this.timeOut) {
+      //   alert("Thời gian vào không được lớn hơn thời gian ra. Vui lòng nhập lại thời gian vào");
+      //   this.error = true;
+      //   return;
+      // }
+      // this.checkTimeIn().subscribe(
+      //   result => {
+      //     if (result.timeOut && this.timeIn < new Date(result.timeOut)) {
+      //       this.error = true;
+      //       alert(`Giờ vào của chấm công tiếp theo phải lơn hơn giờ ra của chấm công cũ (${this.intl.formatDate(new Date(result.timeOut), "HH:mm")}) trong ngày ${this.intl.formatDate(this.dateTime, "dd-MM-yyyy")}`);
+      //     } else if (!result.timeOut) {
+      //       this.error = true;
+      //       alert("Bạn phải hoàn thành chấm công trước đó trước khi tạo 1 chấm công mới. Vui lòng hoàn thành và thao tác lại !")
+      //     } else {
+      //       this.error = false;
+      //     }
+      //   }
+      // );
+    }
+    else {
       this.timeIn = null;
+    }
   }
 
   changeTimeOut(time: Date) {
-    if (time)
+    if (time) {
       this.timeOut = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), time.getHours(), time.getMinutes());
-    else
+      // if (this.timeIn > this.timeOut) {
+      //   this.error = true;
+      //   alert("Thời gian ra không được nhỏ hơn thời gian vào. Vui lòng nhập lại thời gian ra");
+      // } else {
+      //   this.error = false;
+      // }
+    }
+    else {
       this.timeOut = null;
+    }
   }
 
   onSave() {
     if (!this.employee)
       return false;
-
+    if (this.formGroup.invalid)
+      return false;
     var val = new ChamCongSave();
     val.timeIn = this.timeIn ? this.intl.formatDate(this.timeIn, "yyyy-MM-ddTHH:mm") : '';
     val.timeOut = this.timeOut ? this.intl.formatDate(this.timeOut, "yyyy-MM-ddTHH:mm") : '';
@@ -124,6 +165,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       this.timeKeepingServive.update(this.id, val).subscribe(
         x => {
           this.activeModal.close(this.employee.id);
+        }, err => {
+          alert(err.error.message);
         }
       )
     }
@@ -131,6 +174,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
       this.timeKeepingServive.create(val).subscribe(
         result => {
           this.activeModal.close(this.employee.id);
+        }, err => {
+          alert(err.error.message);
         }
       )
     }

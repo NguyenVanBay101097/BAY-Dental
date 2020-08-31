@@ -73,8 +73,9 @@
                                     <label class="o_form_label ">Giờ ra</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-timepicker (valueChange)="changeTimeOut($event)" formControlName="timeOut">
-                                    </kendo-timepicker>
+                                    <kendo-timepicker #timeOutRef (valueChange)="changeTimeOut($event)" formControlName="timeOut">
+                                    </kendo-timepicker><br>
+                                    <!-- <span class="text-danger" *ngIf="error">Thời gian ra không được nhỏ hơn thời gian vào. Vui lòng nhập lại thời gian ra</span> -->
                                 </td>
                             </tr>
                         </tbody>
@@ -85,7 +86,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="!formGroup.valid"
+    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="formGroup.invalid || error"
         (click)="onSave()">Lưu</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>
