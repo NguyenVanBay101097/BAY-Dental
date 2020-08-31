@@ -27,6 +27,7 @@ export class HrPayslipPaged {
     state: string;
     dateFrom: any;
     dateTo: any;
+    employeeId: any;
 }
 
 export class HrPayslipSave {
@@ -109,12 +110,12 @@ export class HrPayslipService {
         return this.http.post(this.baseApi + this.apiUrl + '/ComputeSheet', val);
     }
 
-    cancelCompute(id: string) {
-        return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
+    actionCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
     }
 
-    confirmCompute(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ActionDone/', ids);
+    actionDone(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
     onChangeEmployee(val: any) {

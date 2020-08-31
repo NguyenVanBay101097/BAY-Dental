@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { validator } from 'fast-json-patch';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-create-update',
@@ -21,9 +22,9 @@ import { validator } from 'fast-json-patch';
 export class HrPayslipToPayCreateUpdateComponent implements OnInit {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
+  @ViewChild('structCbx', { static: true }) structCbx: ComboBoxComponent;
 
   date = new Date();
-  payslipRecord: HrPayslipDisplay;
   payslipForm: FormGroup;
   listEmployees: any[];
   id: any;
@@ -46,18 +47,18 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.payslip = {};
     this.payslipForm = this.fb.group({
-      structId: [null, [Validators.required]],
       struct: [null, [Validators.required]],
-      employeeId: [null, [Validators.required]],
       employee: [null, [Validators.required]],
       dateFrom: [null, [Validators.required]],
       dateTo: [null, [Validators.required]],
       name: [null, [Validators.required]],
       state: 'draft',
       number: null,
-      listHrPayslipWorkedDaySave: null,
-      companyId: [null, Validators.required]
+      listHrPayslipWorkedDaySave: [[]],
+      companyId: [null, Validators.required],
+      structureType: null
     });
 
     this.empCbx.filterChange.asObservable().pipe(
@@ -67,6 +68,15 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     ).subscribe(result => {
       this.listEmployees = result.items;
       this.empCbx.loading = false;
+    });
+
+    this.structCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.structCbx.loading = true)),
+      switchMap(value => this.searchStructs(value))
+    ).subscribe(result => {
+      this.listStructs = result.items;
+      this.structCbx.loading = false;
     });
 
     this.GetEmployeePaged();
@@ -86,8 +96,10 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   get dateFrom() { return this.payslipForm.get('dateFrom'); }
   get dateTo() { return this.payslipForm.get('dateTo'); }
   get name() { return this.payslipForm.get('name'); }
+  get number() { return this.payslipForm.get('number'); }
   get employee() { return this.payslipForm.get('employee'); }
   get WorkedDay() { return this.payslipForm.get('listHrPayslipWorkedDaySave'); }
+  get structureType() { return this.payslipForm.get('structureType'); }
 
   getDefault() {
     const val = new Object();
@@ -102,23 +114,12 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     this.hrPayslipService.get(this.id).subscribe((res: any) => {
       res.dateFrom = new Date(res.dateFrom);
       res.dateTo = new Date(res.dateTo);
-      this.payslipRecord = Object.assign({}, res);
       this.payslipForm.patchValue(res);
-      this.LoadStructList(res.employee.structureTypeId, null);
-      this.DisableFormControl();
+      this.LoadStructList();
       this.loadWordDayFromApi();
       this.loadLineDataFromApi();
       this.payslip = res;
     });
-  }
-
-  DisableFormControl() {
-    if (this.state.value === 'done') { this.Form.disable(); }
-    if (this.state.value === 'verify') {
-      this.employee.disable();
-      this.struct.disable();
-    }
-    if (this.state.value === 'draft') { this.Form.enable(); }
   }
 
   SearchEmployee(search?: string) {
@@ -141,57 +142,37 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     });
   }
 
-  EmployeeChange(e) {
-    if (!e) {
-      this.listStructs = null;
-      this.employeeId.setValue(null);
-      this.struct.setValue(null);
-      this.structId.setValue(null);
-    } else {
-      this.employeeId.setValue(e.id);
-
-      if (e.structureTypeId) {
-        this.LoadStructList(e.structureTypeId, null);
-      } else {
-        this.listStructs = null;
-        this.struct.setValue(null);
-        this.structId.setValue(null);
-      }
-    }
-  }
-
   EmployeeValueChange() {
-    if (this.employee.value && this.employee.value.structureTypeId) {
-      const val = Object();
-      val.dateFrom = this.intlService.formatDate(this.dateFrom.value, 'g', 'en-US');
-      val.dateTo = this.intlService.formatDate(this.dateTo.value, 'g', 'en-US');
-      val.employeeId = this.employee.value.id;
-      this.hrPayslipService.onChangeEmployee(val).subscribe((res: any) => {
-        this.listWorkDays = res.workedDayLines;
-        this.WorkedDay.setValue(res.workedDayLines);
-        this.name.setValue(res.name);
-      });
+    let val = {
+      employeeId: this.employee.value ? this.employee.value.id : null,
+      dateFrom: this.dateFrom.value ? this.intlService.formatDate(this.dateFrom.value, 'yyyy-MM-ddTHH:mm:ss') : null,
+      dateTo: this.dateTo.value ? this.intlService.formatDate(this.dateTo.value, 'yyyy-MM-ddTHH:mm:ss') : null,
+    };
 
-    } else {
-      this.listWorkDays = [];
-    }
+    this.hrPayslipService.onChangeEmployee(val).subscribe((res: any) => {
+      this.WorkedDay.setValue(res.workedDayLines);
+      this.name.setValue(res.name);
+      this.structureType.setValue(res.structureType);
+
+      this.struct.setValue(null);
+      this.LoadStructList();
+    });
   }
 
-  LoadStructList(typeId, filter) {
-    const val = new HrPayrollStructurePaged();
-    val.structureTypeId = typeId;
-    val.limit = 20;
-    val.offset = 0;
-    if (filter != null) {
-      val.filter = filter;
-    }
-    this.hrPayrollStructureService.getPaged(val).subscribe(res => {
+  LoadStructList(filter?: string) {
+    this.searchStructs(filter).subscribe(res => {
       this.listStructs = res.items;
     });
   }
 
-  handleFilterStruct(value) {
-    this.LoadStructList(this.employee.value.structureTypeId, value);
+  searchStructs(filter?: string) {
+    const val = new HrPayrollStructurePaged();
+    val.structureTypeId = this.structureType.value ? this.structureType.value.id : '';
+    val.limit = 20;
+    val.offset = 0;
+    val.filter = filter || '';
+
+    return this.hrPayrollStructureService.getPaged(val);
   }
 
   SelectStructChange(e) {
@@ -201,35 +182,18 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     }
   }
 
-  ChangeDateFrom(e) {
-    if (this.dateFrom.value > this.dateTo.value) {
-      this.notificationService.show({
-        content: ' thời gian bắt đầu phải bé hơn thời gian kết thúc!',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return false;
-    }
-    this.EmployeeValueChange();
-  }
-
   onSaveOrUpdate() {
     if (!this.ValidateForm()) { return false; }
-    const val = this.payslipForm.value;
-    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
-    val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
-    val.workedDaysLines = this.payslipForm.get('listHrPayslipWorkedDaySave').value;
+    var val = this.getDataToSave();
+
     if (!this.id) {
       this.hrPayslipService.create(val).subscribe(res => {
         this.router.navigate(['/hr/payslips/edit/' + res.id]);
       });
     } else {
       this.hrPayslipService.update(this.id, val).subscribe(res => {
-        this.DisableFormControl();
         this.notificationService.show({
-          content: ' thành công!',
+          content: 'Lưu thành công!',
           hideAfter: 3000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },
@@ -237,38 +201,22 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
         });
       });
     }
-
   }
 
-  ComputeSalaryAgain() {
-    if (!this.ValidateForm()) { return false; }
+  getDataToSave() {
     const val = this.payslipForm.value;
-    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
-    val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
+    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'yyyy-MM-ddTHH:mm:ss');
+    val.dateTo = this.intlService.formatDate(val.dateTo, 'yyyy-MM-ddTHH:mm:ss');
     val.workedDaysLines = this.payslipForm.get('listHrPayslipWorkedDaySave').value;
-
-    if (this.id) {
-      this.hrPayslipService.update(this.id, val).subscribe(res => {
-        this.ComputeSalary();
-        this.notificationService.show({
-          content: ' thành công!',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-      });
-    }
+    val.employeeId = this.employee.value ? this.employee.value.id : null;
+    val.structId = this.struct.value ? this.struct.value.id : null;
+    val.structureTypeId = this.structureType.value ? this.structureType.value.id : null;
+    return val;
   }
 
   ComputeSalary() {
     if (!this.ValidateForm()) { return false; }
-
-    const val = this.payslipForm.value;
-    val.dateFrom = this.intlService.formatDate(val.dateFrom, 'g', 'en-US');
-    val.dateTo = this.intlService.formatDate(val.dateTo, 'g', 'en-US');
-    val.state = 'verify';
-    val.workedDaysLines = this.payslipForm.get('listHrPayslipWorkedDaySave').value;
+    var val = this.getDataToSave();
 
     if (!this.id) {
       this.hrPayslipService.create(val).subscribe(res => {
@@ -280,7 +228,6 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       this.hrPayslipService.update(this.id, val).subscribe(res1 => {
         this.hrPayslipService.computeSheet([this.id]).subscribe((res: any) => {
           this.state.setValue('verify');
-          this.DisableFormControl();
           this.LoadRecord();
           this.loadLineDataFromApi();
         });
@@ -289,34 +236,19 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ConfirmSalary() {
-    this.hrPayslipService.confirmCompute([this.id]).subscribe(res => {
-      this.notificationService.show({
-        content: ' thành công!',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-
-      this.state.setValue('done');
-      this.DisableFormControl();
+    this.hrPayslipService.actionDone([this.id]).subscribe(res => {
+      this.LoadRecord();
     });
   }
 
-  CancelCompute() {
-    this.hrPayslipService.cancelCompute(this.id).subscribe(res => {
-      this.notificationService.show({
-        content: ' thành công!',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
+  actionCancel() {
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Hủy phiếu lương';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.hrPayslipService.actionCancel([this.id]).subscribe(res => {
+        this.LoadRecord();
       });
-
-      this.state.setValue('draft');
-      this.DisableFormControl();
-      this.LoadRecord();
-      this.loadLineDataFromApi();
     });
   }
 
@@ -351,9 +283,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     modalRef.result.then((res) => {
       this.employeeService.getEmployee(this.employee.value.id).subscribe((emp: any) => {
         this.employee.setValue(emp);
-        this.EmployeeChange(emp);
         this.EmployeeValueChange();
-
       });
     });
   }

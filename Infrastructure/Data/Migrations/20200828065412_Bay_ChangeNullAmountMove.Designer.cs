@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200828065412_Bay_ChangeNullAmountMove")]
+    partial class Bay_ChangeNullAmountMove
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2527,9 +2529,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("StructId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("StructureTypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -2549,8 +2548,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PayslipRunId");
 
                     b.HasIndex("StructId");
-
-                    b.HasIndex("StructureTypeId");
 
                     b.HasIndex("WriteById");
 
@@ -8996,10 +8993,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.HrPayrollStructure", "Struct")
                         .WithMany()
                         .HasForeignKey("StructId");
-
-                    b.HasOne("ApplicationCore.Entities.HrPayrollStructureType", "StructureType")
-                        .WithMany()
-                        .HasForeignKey("StructureTypeId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

@@ -1,12 +1,12 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel">
+    <div class="o_control_panel" [formGroup]="searchForm">
         <ol class="breadcrumb">
-            <li class="active">Danh sách phiếu lương</li>
+            <li class="active">phiếu lương</li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
                 <input class="o_searchview_input" placeholder="Tìm kiếm theo tên nhân viên" type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.loadDataFromApi()">
+                formControlName="search"  (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
@@ -18,22 +18,31 @@
             </div>
             <div class="o_cp_sidebar">
                 <div>
+                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true" formControlName="employee"
+                        (selectionChange)="onEmployeeSelectChange($event)" #empCbx [valueField]="'id'">
+                    </kendo-combobox> &nbsp;
+                </div>
+                <div>
                     <div ngbDropdown class="d-inline-block">
-                        <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{ GetStateFilter() }}</button>
+                        <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1"
+                            ngbDropdownToggle>{{ GetStateFilter() }}</button>
                         <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                          <button *ngFor="let item of StateFilters" (click)="onSelect(item.value)" ngbDropdownItem>{{item.text}}</button>
+                            <button *ngFor="let item of StateFilters" (click)="onSelect(item.value)"
+                                ngbDropdownItem>{{item.text}}</button>
                         </div>
-                      </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="d-inline">
-                Từ: <kendo-datepicker [(value)]="this.dateFrom" (valueChange)="OnDateFilterChange()">
+            <!-- <app-hr-payslip-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo"
+            (searchChange)="onDateSearchChange($event)"></app-hr-payslip-date-filter> -->
+            <!-- <div class="d-inline">
+                Từ: <kendo-datepicker formControlName="dateFrom" (valueChange)="OnDateFilterChange()">
                 </kendo-datepicker>
-                đến: <kendo-datepicker [(value)]="this.dateTo" (valueChange)="OnDateFilterChange()">
+                đến: <kendo-datepicker formControlName="dateTo" (valueChange)="OnDateFilterChange()">
                 </kendo-datepicker>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -41,9 +50,9 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên">
+        <kendo-grid-column field="number" title="Tên">
         </kendo-grid-column>
-        <kendo-grid-column field="employee" title="Nhân viên">
+        <kendo-grid-column field="employee" title="Số Phiếu">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.employeeName }}
             </ng-template>
@@ -61,8 +70,13 @@
         <kendo-grid-column field="state" title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span *ngIf="dataItem.state == 'draft'">Nháp</span>
-                <span *ngIf="dataItem.state == 'process'">Đang xử lý</span>
+                <span *ngIf="dataItem.state == 'verify'">Đang xử lý</span>
                 <span *ngIf="dataItem.state == 'done'">Hoàn thành</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="dateTo" title="Tổng tiền">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.totalAmount | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id" width="100">

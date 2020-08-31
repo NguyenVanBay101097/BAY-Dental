@@ -76,5 +76,8 @@ namespace ApplicationCore.Entities
         public HrPayslipRun PayslipRun { get; set; }
 
         public decimal? TotalAmount { get; set; }
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureType StructureType { get; set; }
     }
 }

@@ -27,9 +27,14 @@ namespace Infrastructure.EntityConfigurations
                .WithMany()
                .HasForeignKey(x => x.StructId);
 
+            builder.HasOne(x => x.StructureType)
+               .WithMany()
+               .HasForeignKey(x => x.StructureTypeId);
+
             builder.HasOne(x => x.AccountMove)
                .WithMany()
-               .HasForeignKey(x => x.AccountMoveId);
+               .HasForeignKey(x => x.AccountMoveId)
+               .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.PayslipRun)
                .WithMany(x => x.Slips)
