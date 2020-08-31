@@ -163,14 +163,20 @@ export class HrPayslipToPayListComponent implements OnInit {
   GetStateFilter() {
     switch (this.searchForm.get('state').value) {
       case 'draft':
-        return 'bản nháp';
+        return 'Bản nháp';
       case 'verify':
-        return 'đang xử lý';
+        return 'Đang xử lý';
       case 'done':
-        return 'hoàn thành';
+        return 'Hoàn thành';
       default:
         return 'Tất cả trạng thái';
     }
+  }
+
+  onDateSearchChange(e) {
+    this.searchForm.get('dateFrom').setValue(e.dateFrom);
+    this.searchForm.get('dateTo').setValue(e.dateTo);
+    this.loadDataFromApi();
   }
 
 }
