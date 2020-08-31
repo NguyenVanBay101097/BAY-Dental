@@ -24,7 +24,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.WriteById);
 
             builder.HasOne(x => x.Calendar)
-                .WithMany(x => x.ResourceCalendarAttendances)
+                .WithMany(x => x.Attendances)
                 .HasForeignKey(x => x.CalendarId);
         }
     }

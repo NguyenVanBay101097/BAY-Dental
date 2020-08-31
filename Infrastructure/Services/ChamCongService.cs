@@ -519,7 +519,7 @@ namespace Infrastructure.Services
 
             var listChamCongs = await query.Include(x => x.WorkEntryType).ToListAsync();
             if (structureType != null)
-                listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
+                listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.Attendances.ToList() : new List<ResourceCalendarAttendance>();
 
             var SoNgayLamTrongThang = SoNgayLam(from, to, listResourceCalendarAtts);
             var re_listResourceCalendarAtts = listResourceCalendarAtts.GroupBy(x => x.DayOfWeek).ToList();

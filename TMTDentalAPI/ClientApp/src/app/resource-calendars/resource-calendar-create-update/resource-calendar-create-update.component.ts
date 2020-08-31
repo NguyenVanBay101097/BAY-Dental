@@ -142,7 +142,7 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
 
     var val = Object.assign({}, this.formGroup.value);
 
-    val.resourceCalendarAttendances.forEach(line => {
+    val.attendances.forEach(line => {
       var dd = this.intl.formatDate(new Date(line.hourFrom), "HH:mm")
       line.hourFrom = this.TimeToNumber(dd);
       var dm = this.intl.formatDate(new Date(line.hourTo), "HH:mm")
@@ -186,7 +186,7 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       hoursPerDay: ['', Validators.required],
-      resourceCalendarAttendances: this.fb.array([])
+      attendances: this.fb.array([])
     });
   }
 }
