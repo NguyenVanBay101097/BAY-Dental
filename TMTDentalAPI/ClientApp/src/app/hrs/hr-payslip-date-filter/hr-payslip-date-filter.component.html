@@ -1,30 +1,23 @@
 <div ngbDropdown #myDrop="ngbDropdown">
     <button class="btn btn-secondary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
         <i class="fas fa-filter"></i>
-        thời gian:
-        <span *ngIf="dateFrom && dateTo">{{dateFrom | date: 'shortDate'}} - {{dateTo | date: 'shortDate'}}</span>
+        Lọc theo tháng:
+        <span>{{getMonthFilter()}}</span>
     </button>
     <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
-        <button class="dropdown-item" *ngFor="let option of quickOptions" type="button"
-            (click)="quickOptionClick(option)">{{option.text}}</button>
+        <button class="dropdown-item" *ngFor="let option of optionMonths" type="button"
+            (click)="onSelectMonth(option)">{{option.text}}</button>
         <div class="dropdown-divider"></div>
-        <div class="px-4 pb-3" [formGroup]="formGroup">
+        <div class="px-4 pb-3">
             <div class="form-group">
-                <label>Tháng khác</label>
+                <label>Tùy chọn</label>
                 <div class="input-group">
                     <kendo-datepicker
                     [bottomView]="'year'"
                     [topView]="'decade'"
-                    [format]="'MMMM yyyy'"
-                    formControlName="month"
+                    [format]="'MMMM yyyy'"  (valueChange)="onOtherMonthChange($event)"
+                    [(ngModel)]="otherDate"
                 ></kendo-datepicker>
-                    <!-- <input class="form-control" placeholder="mm/yyyy" name="dp" formControlName="dateFrom"
-                        ngbDatepicker #d1="ngbDatepicker">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" (click)="d1.toggle()" type="button">
-                            <i class="far fa-calendar-alt"></i>
-                        </button>
-                    </div> -->
                 </div>
             </div>
         </div>
