@@ -35,6 +35,31 @@
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Làm tròn</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="roundDays"
+                                    (change)="onChangeRounding()">
+                                    <option selected value="NO">Không làm tròn</option>
+                                    <option value="HALF">Làm tròn nửa ngày</option>
+                                    <option value="FULL">Làm tròn 1 ngày</option>
+                                </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.roundDays.value !== 'NO'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Kiểu làm tròn</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="roundDaysType">
+                                    <option value="HALF-UP">Gần nhất</option>
+                                    <option value="UP">Lên</option>
+                                    <option value="DOWN">Xuống</option>
+                                </select>
+                                </td>
+                            </tr>
                             <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Nghỉ vẫn được chấm công</label>

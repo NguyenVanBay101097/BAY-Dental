@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
 using OfficeOpenXml;
@@ -582,7 +583,21 @@ namespace Infrastructure.Services
                 gioCong += actualHours;
             }
 
-            var soNgayCong = Math.Round(gioCong / (double)hoursPerDay, 2);
+            var soNgayCong = gioCong / (double)hoursPerDay;
+
+            var workEntryType = cc.WorkEntryType;
+            if (workEntryType.RoundDays == "FULL")
+                soNgayCong = FloatUtils.FloatRound(soNgayCong, precisionDigits: 0, roundingMethod: workEntryType.RoundDaysType);
+            else if (workEntryType.RoundDays == "HALF")
+            {
+                var temp = soNgayCong / 5;
+                soNgayCong = FloatUtils.FloatRound(temp, precisionDigits: 1, roundingMethod: workEntryType.RoundDaysType) * 5;
+            }
+            else
+            {
+                soNgayCong = Math.Round(soNgayCong,2);
+            }
+
 
             return new ChamCongTinhCong
             {

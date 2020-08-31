@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { WorkEntryTypeCreateUpdateDialogComponent } from '../work-entry-type-create-update-dialog/work-entry-type-create-update-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-work-entry-type-list',
@@ -25,6 +26,7 @@ export class WorkEntryTypeListComponent implements OnInit {
 
   constructor(
     private workEntryTypeService: WorkEntryTypeService,
+    private notificationService: NotificationService,
     private modalService: NgbModal,
   ) { }
 
@@ -90,6 +92,13 @@ export class WorkEntryTypeListComponent implements OnInit {
     modalRef.result.then(() => {
       this.workEntryTypeService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
+        this.notificationService.show({
+          content: 'Xóa thành công!',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
       }, err => {
         console.log(err);
       });

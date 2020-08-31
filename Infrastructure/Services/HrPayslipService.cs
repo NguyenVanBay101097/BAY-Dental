@@ -160,7 +160,8 @@ namespace Infrastructure.Services
             var attendanceIntervals = await calendarObj._AttendanceIntervals(calendarId.Value, dateFrom.Value, dateTo.Value);
 
             //tìm những chấm công theo nhân viên từ ngày đến ngày của tháng
-            var listChamcongs = await ccObj.SearchQuery(x => x.EmployeeId == employeeId && x.TimeIn.Value.Date >= dateFrom.Value.Date && x.TimeIn.Value.Date <= dateTo.Value.Date).ToListAsync();
+            var listChamcongs = await ccObj.SearchQuery(x => x.EmployeeId == employeeId && x.TimeIn.Value.Date >= dateFrom.Value.Date && x.TimeIn.Value.Date <= dateTo.Value.Date)
+                .Include(x=>x.WorkEntryType).ToListAsync();
 
             //gom lại theo từng work entry type
             var work_entry_type_dict = new Dictionary<Guid, ChamCongTinhCong>();

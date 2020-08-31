@@ -9,6 +9,7 @@ namespace ApplicationCore.Entities
         public WorkEntryType()
         {
             Active = true;
+            RoundDays = "NO";
         }
 
         /// <summary>
@@ -34,5 +35,21 @@ namespace ApplicationCore.Entities
         public string Color { get; set; }
 
         public ICollection<ChamCong> ChamCongs { get; set; }
+
+        /// <summary>
+        /// Làm tròn
+        /// NO: Không làm tròn
+        /// HALF: Nữa ngày
+        /// FULL: Ngày
+        /// </summary>
+        public string RoundDays { get; set; }
+
+        /// <summary>
+        /// Loại làm tròn
+        /// HALF-UP: gần nhất
+        /// UP: lên
+        /// DOWN: xuống
+        /// </summary>
+        public string RoundDaysType { get; set; }
     }
 }
