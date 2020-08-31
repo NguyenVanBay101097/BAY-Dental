@@ -44,11 +44,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var model = await _resourceCalendarService.GetDisplayAsync(id);
-            if (model == null)
-                return BadRequest();
-
-            var res = _mapper.Map<ResourceCalendarDisplay>(model);
+            var res = await _resourceCalendarService.GetDisplayAsync(id);
             return Ok(res);
         }
 

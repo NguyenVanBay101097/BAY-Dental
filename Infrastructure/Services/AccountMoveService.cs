@@ -315,7 +315,8 @@ namespace Infrastructure.Services
 
         public async Task ButtonCancel(IEnumerable<Guid> ids)
         {
-            await ButtonCancel(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Journal).Include(x => x.Company).ToList());
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Journal).Include(x => x.Company).ToListAsync();
+            await ButtonCancel(self);
         }
 
         public async Task<IEnumerable<AccountMove>> ButtonDraft(IEnumerable<Guid> ids)

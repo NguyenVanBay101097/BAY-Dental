@@ -3,10 +3,11 @@ import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ResourceCalendarService, ResourceCalendarAttendancePaged, ResourceCalendarAttendanceDisplay, ResourceCalendarDisplay } from '../resource-calendar.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params, ParamMap } from '@angular/router';
 import { load, IntlService } from '@progress/kendo-angular-intl';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResourceCalendarAttendanceCreateUpdateDialogComponent } from '../resource-calendar-attendance-create-update-dialog/resource-calendar-attendance-create-update-dialog.component';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-resource-calendar-create-update',
@@ -25,8 +26,6 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
   resourceCalendar: ResourceCalendarDisplay = new ResourceCalendarDisplay();
   submitted = false;
   today = new Date();
-  temp_name: string;
- 
 
   constructor(
     private fb: FormBuilder,
@@ -36,22 +35,21 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intl: IntlService
-  ) { 
-    
+  ) {
+
   }
 
   ngOnInit() {
-   this.formGroup = this.fb.group({
-      name: [null , Validators.required],
+    this.formGroup = this.fb.group({
+      name: [null, Validators.required],
       hoursPerDay: ['', Validators.required],
-      resourceCalendarAttendances: this.fb.array([]),
+      attendances: this.fb.array([]),
     });
-    
-    this.loadData();
 
-    this.id = this.activeRoute.queryParams['_value'].id;
-
-    
+    this.activeRoute.queryParamMap.subscribe((params: ParamMap) => {
+      this.id = params.get('id');
+      this.loadData();
+    });
   }
 
   TimeToNumber(time) {
@@ -69,30 +67,25 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
   }
 
   loadData() {
-    this.activeRoute.queryParams.subscribe(params => {
-      this.id = params['id'];
-    });
-
     if (this.id) {
-    this.resourceCalendarService.get(this.id).subscribe(
-      (result: any) => {
-        this.resourceCalendar = result;
-        this.formGroup.patchValue(result);
-        this.temp_name = this.getValueForm("name");   
+      this.resourceCalendarService.get(this.id).subscribe(
+        (result: any) => {
+          this.resourceCalendar = result;
+          this.formGroup.patchValue(result);
 
-        this.resourceCalendarAttendances.clear();       
-        this.resourceCalendar.resourceCalendarAttendances.forEach(line => {
-          this.resourceCalendarAttendances.push(this.fb.group({
-            id: line.id,
-            name: line.name,
-            dayOfWeek: line.dayOfWeek,
-            hourFrom: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourFrom)}`),
-            hourTo: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourTo)}`),
-            dayPeriod: line.dayPeriod,
-            calendarId: line.calendarId,          
-          }));
+          this.attendances.clear();
+          result.attendances.forEach(line => {
+            this.attendances.push(this.fb.group({
+              id: line.id,
+              name: line.name,
+              dayOfWeek: line.dayOfWeek,
+              hourFrom: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourFrom)}`),
+              hourTo: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourTo)}`),
+              dayPeriod: line.dayPeriod,
+              calendarId: line.calendarId,
+            }));
+          });
         });
-      });
     }
   }
 
@@ -100,8 +93,8 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
     return this.formGroup.get(key).value;
   }
 
-  get resourceCalendarAttendances() {
-    return this.formGroup.get('resourceCalendarAttendances') as FormArray;
+  get attendances() {
+    return this.formGroup.get('attendances') as FormArray;
   }
 
   loadDefault() {
@@ -109,10 +102,9 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
     this.formGroup.get('hoursPerDay').patchValue(0);
   }
 
-  
 
   deleteLine(index: number) {
-    this.resourceCalendarAttendances.removeAt(index);      
+    this.attendances.removeAt(index);
   }
 
   // drop(event: CdkDragDrop<string[]>) {
@@ -132,19 +124,13 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
   // }
 
   onCreate() {
-    var lines = this.formGroup.get('resourceCalendarAttendances') as FormArray;
-    lines.push(this.fb.group({
-      name: null,
-      dayOfWeek: "",
-      hourFrom: [null , Validators.required],
-      hourTo: [null , Validators.required],
-      dayPeriod: "",
+    this.attendances.push(this.fb.group({
+      name: ['', Validators.required],
+      dayOfWeek: ['1', Validators.required],
+      hourFrom: [null, Validators.required],
+      hourTo: [null, Validators.required],
+      dayPeriod: ['morning', Validators.required],
     }));
-  }
-
-
-  removeAll() {
-    this.listRessourceCalendarAttendance = [];
   }
 
   onSave() {
@@ -153,41 +139,31 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
     if (this.formGroup.invalid)
       return false;
 
-    
+
     var val = Object.assign({}, this.formGroup.value);
 
-    val.resourceCalendarAttendances.forEach(line => {   
+    val.resourceCalendarAttendances.forEach(line => {
       var dd = this.intl.formatDate(new Date(line.hourFrom), "HH:mm")
-      line.hourFrom = this.TimeToNumber(dd);   
+      line.hourFrom = this.TimeToNumber(dd);
       var dm = this.intl.formatDate(new Date(line.hourTo), "HH:mm")
-      line.hourTo = this.TimeToNumber(dm);     
+      line.hourTo = this.TimeToNumber(dm);
       line.calendarId = this.id ? this.id : null;
     });
 
-   
+
     if (!this.id) {
       this.resourceCalendarService.create(val).subscribe(
-        result => { 
+        result => {
           this.router.navigate(['/resource-calendars/form'], {
             queryParams: {
               id: result['id']
             },
-          });
-          this.temp_name = this.getValueForm("name");              
-          this.notificationService.show({
-            content: "Thêm mới thành công",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
           });
         }
       )
     } else {
       this.resourceCalendarService.update(this.id, val).subscribe(
         () => {
-          this.loadData();
-          this.temp_name = this.getValueForm("name");
           this.notificationService.show({
             content: "Cập nhật thành công",
             hideAfter: 3000,
@@ -195,6 +171,7 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
+          this.loadData();
         }
       )
     }
@@ -212,6 +189,4 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
       resourceCalendarAttendances: this.fb.array([])
     });
   }
-
-
 }

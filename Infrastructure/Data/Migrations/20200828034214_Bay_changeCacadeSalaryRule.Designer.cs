@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200828034214_Bay_changeCacadeSalaryRule")]
+    partial class Bay_changeCacadeSalaryRule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2527,9 +2529,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("StructId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("StructureTypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -2549,8 +2548,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PayslipRunId");
 
                     b.HasIndex("StructId");
-
-                    b.HasIndex("StructureTypeId");
 
                     b.HasIndex("WriteById");
 
@@ -8970,8 +8967,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasOne("ApplicationCore.Entities.AccountMove", "AccountMove")
                         .WithMany()
-                        .HasForeignKey("AccountMoveId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("AccountMoveId");
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
@@ -8996,10 +8992,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.HrPayrollStructure", "Struct")
                         .WithMany()
                         .HasForeignKey("StructId");
-
-                    b.HasOne("ApplicationCore.Entities.HrPayrollStructureType", "StructureType")
-                        .WithMany()
-                        .HasForeignKey("StructureTypeId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

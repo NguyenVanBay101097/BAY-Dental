@@ -1,13 +1,13 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Mẫu Lương</li>
+            <li class="active">Cấu trúc lương</li>
         </ol>
         <div class="o_cp_searchview">
-            <!-- <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc nhà cung cấp..." type="text"
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên...." type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            </div> -->
+            </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -20,60 +20,24 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <!-- <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo"
-                (searchChange)="onDateSearchChange($event)">
-            </app-tai-date-range-filter-dropdown> -->
         </div>
     </div>
 </div>
-
 <div class="o_content">
-    <!-- <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên Mẫu Lương" width="100">
-        </kendo-grid-column>
-        <kendo-grid-column field="totalRules" title="Số thuộc tính" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.totalRules }}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
-            </ng-template>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="name" title="Tên">
+            </kendo-grid-column>
+            <kendo-grid-column field="id">
+                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                    Thao tác
+                </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                  <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                    <span class="far fa-trash-alt"></span></button>
-            </ng-template>
-        </kendo-grid-column>
-    </kendo-grid> -->
-
-    <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Tên Mẫu Lương</th>
-            <th scope="col">Số Thuộc Tính</th>
-            <th scope="col">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of gridData.data">
-            <td>{{ item.name}}</td>
-            <td>{{ item.totalRules}}</td>
-            <td>
-              <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(item)">
-                <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(item)">
-                    <span class="far fa-trash-alt"></span></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="d-flex justify-content-between p-2">
-        <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize"
-          (pageChange)="pageChange($event)">
-        </ngb-pagination>
-      </div>
+                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                        <span class="far fa-trash-alt"></span></button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
 </div>

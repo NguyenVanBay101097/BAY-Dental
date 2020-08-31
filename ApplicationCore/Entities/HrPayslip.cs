@@ -9,6 +9,12 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class HrPayslip: BaseEntity
     {
+        public HrPayslip()
+        {
+            State = "draft";
+            TotalAmount = 0;
+        }
+
         /// <summary>
         /// help=Defines the rules that have to be applied to this payslip, accordingly to the contract chosen. If you let empty the field contract, this field isn't mandatory anymore and thus the rules applied will be all the rules set on the structure of all contracts of the employee valid for the chosen period
         /// </summary>
@@ -43,6 +49,10 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Status
+        /// ('draft', 'Draft')
+        /// ('verify', 'Waiting')
+        /// ('done', 'Done')
+        /// ('cancel', 'Rejected')
         /// </summary>
         public string State { get; set; }
 
@@ -64,5 +74,10 @@ namespace ApplicationCore.Entities
 
         public Guid? PayslipRunId { get; set; }
         public HrPayslipRun PayslipRun { get; set; }
+
+        public decimal? TotalAmount { get; set; }
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureType StructureType { get; set; }
     }
 }

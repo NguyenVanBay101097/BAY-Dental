@@ -10,12 +10,15 @@ namespace Infrastructure.Services
 {
     public interface IHrPayslipService : IBaseService<HrPayslip>
     {
-        Task<PagedResult2<HrPayslipDisplay>> GetPaged(HrPayslipPaged val);
-        Task<HrPayslip> GetHrPayslipDisplay(Guid Id);
+        Task<PagedResult2<HrPayslipBasic>> GetPaged(HrPayslipPaged val);
+        Task<HrPayslipDisplay> GetHrPayslipDisplay(Guid Id);
         Task<HrPayslipOnChangeEmployeeResult> OnChangeEmployee(Guid? employeeId, DateTime? dateFrom, DateTime? dateTo);
-        Task ComputePayslipLine(List<Guid> ids);
-        Task ActionConfirm(IEnumerable<Guid> ids);
-        Task SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip);
-
+        Task ComputeSheet(IEnumerable<Guid> ids);
+        Task ActionDone(IEnumerable<Guid> ids);
+        HrPayslipDefaultGetResult DefaultGet(HrPayslipDefaultGet val);
+        Task Unlink(IEnumerable<Guid> ids);
+        Task<IEnumerable<HrPayslipWorkedDayBasic>> GetWorkedDaysLines(Guid id);
+        Task<IEnumerable<HrPayslipLineBasic>> GetLines(Guid id);
+        Task ActionCancel(IEnumerable<Guid> ids);
     }
 }

@@ -17,15 +17,15 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class HrPayslipsController : BaseApiController
     {
-        private readonly IHrPayslipService _HrPayslipService;
+        private readonly IHrPayslipService _payslipService;
         private readonly IMapper _mapper;
         private readonly IHrPayslipLineService _hrPayslipLineService;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public HrPayslipsController(IHrPayslipService HrPayslipService, IHrPayslipLineService hrPayslipLineService,
+        public HrPayslipsController(IHrPayslipService payslipService, IHrPayslipLineService hrPayslipLineService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _hrPayslipLineService = hrPayslipLineService;
-            _HrPayslipService = HrPayslipService;
+            _payslipService = payslipService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -33,57 +33,89 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] HrPayslipPaged val)
         {
-            var res = await _HrPayslipService.GetPaged(val);
+            var res = await _payslipService.GetPaged(val);
             return Ok(res);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var HrPayslip = await _HrPayslipService.GetHrPayslipDisplay(id);
-            if (HrPayslip == null)
+            var res = await _payslipService.GetHrPayslipDisplay(id);
+            if (res == null)
                 return NotFound();
-            var res = _mapper.Map<HrPayslipDisplay>(HrPayslip);
             return Ok(res);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(HrPayslipSave val)
         {
-            var entitys = _mapper.Map<HrPayslip>(val);
-            entitys.CompanyId = CompanyId;
-            await _HrPayslipService.SaveWorkedDayLines(val,entitys);
+            var payslip = _mapper.Map<HrPayslip>(val);
+            SaveWorkedDayLines(val, payslip);
 
             await _unitOfWork.BeginTransactionAsync();
-            await _HrPayslipService.CreateAsync(entitys);
+            await _payslipService.CreateAsync(payslip);
             _unitOfWork.Commit();
 
-            return Ok(_mapper.Map<HrPayslipDisplay>(entitys));
+            var basic = _mapper.Map<HrPayslipBasic>(payslip);
+            return Ok(basic);
+        }
+
+        private void SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip)
+        {
+            var toRemove = new List<HrPayslipWorkedDays>();
+            foreach (var wd in payslip.WorkedDaysLines)
+            {
+                if (!val.WorkedDaysLines.Any(x => x.Id == wd.Id))
+                    toRemove.Add(wd);
+            }
+
+            foreach (var item in toRemove)
+                payslip.WorkedDaysLines.Remove(item);
+
+            var sequence = 0;
+            foreach (var wd in val.WorkedDaysLines)
+            {
+                if (wd.Id == Guid.Empty)
+                {
+                    var r = _mapper.Map<HrPayslipWorkedDays>(wd);
+                    r.Sequence = sequence++;
+                    payslip.WorkedDaysLines.Add(r);
+                }
+                else
+                {
+                    var line = payslip.WorkedDaysLines.FirstOrDefault(c => c.Id == wd.Id);
+                    if (line != null)
+                    {
+                        _mapper.Map(wd, line);
+                        line.Sequence = sequence++;
+                    }
+                }
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, HrPayslipSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            var str = await _HrPayslipService.GetHrPayslipDisplay(id);
-            if (str == null)
+            var payslip = await _payslipService.SearchQuery(x => x.Id == id)
+                .Include(x => x.WorkedDaysLines).FirstOrDefaultAsync();
+
+            if (payslip == null)
                 return NotFound();
 
-            str = _mapper.Map(val, str);
-            str.CompanyId = CompanyId;
-
-            await _HrPayslipService.SaveWorkedDayLines(val, str);
-            await _HrPayslipService.UpdateAsync(str);
+            await _unitOfWork.BeginTransactionAsync();
+            payslip = _mapper.Map(val, payslip);
+            SaveWorkedDayLines(val, payslip);
+            await _payslipService.UpdateAsync(payslip);
+            _unitOfWork.Commit();
 
             return NoContent();
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ComputePayslip(List<Guid> ids)
+        public async Task<IActionResult> ComputeSheet(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _HrPayslipService.ComputePayslipLine(ids);
+            await _payslipService.ComputeSheet(ids);
             _unitOfWork.Commit();
 
             return NoContent();
@@ -92,39 +124,52 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var hrPayslip = await _HrPayslipService.GetByIdAsync(id);
-            if (hrPayslip.State == "done")
-                throw new Exception("Phiếu lương đã ghi sổ không thể xóa");
-            if (hrPayslip == null)
-                return NotFound();
-
-            await _HrPayslipService.DeleteAsync(hrPayslip);
-            return NoContent();
-        }
-
-        [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> CancelCompute(Guid id)
-        {
-            var slip = await _HrPayslipService.GetHrPayslipDisplay(id);
-            await _hrPayslipLineService.DeleteAsync(slip.Lines);
-            slip.Lines.Clear();
-            slip.State = "draft";
-            await _HrPayslipService.UpdateAsync(slip);
+            await _payslipService.Unlink(new List<Guid>() { id });
             return NoContent();
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ConfirmCompute(IEnumerable<Guid> ids)
+        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
-           await _HrPayslipService.ActionConfirm(ids);
+            await _payslipService.ActionDone(ids);
             return NoContent();
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> OnChangeEmployee(HrPayslipOnChangeEmployee val)
         {
-            var res = await _HrPayslipService.OnChangeEmployee(val.EmployeeId, val.DateFrom, val.DateTo);
+            var res = await _payslipService.OnChangeEmployee(val.EmployeeId, val.DateFrom, val.DateTo);
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult DefaultGet(HrPayslipDefaultGet val)
+        {
+            var res = _payslipService.DefaultGet(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/WorkedDaysLines")]
+        public async Task<IActionResult> GetWorkedDaysLines(Guid id)
+        {
+            var res = await _payslipService.GetWorkedDaysLines(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/Lines")]
+        public async Task<IActionResult> GetLines(Guid id)
+        {
+            var res = await _payslipService.GetLines(id);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _payslipService.ActionCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
         }
     }
 }

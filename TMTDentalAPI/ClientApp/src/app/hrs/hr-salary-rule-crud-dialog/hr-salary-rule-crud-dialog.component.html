@@ -8,130 +8,83 @@
     <form class="o_form_view" [formGroup]="RuleForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet" style=" min-height: auto;">
-                <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Tên thuộc tính</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Mã Code</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="code" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Hiện ở phiếu lương</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="checkbox" formControlName="appearsOnPayslip">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Vị trí</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="number" min="0" class="form-control" formControlName="sequence">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Active</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="checkbox" formControlName="active">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea class="form-control" formControlName="note"></textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên quy tắc lương</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput required>
+                    </h1>
                 </div>
-                <div class="tab-contanner">
-                    <kendo-tabstrip>
-                        <kendo-tabstrip-tab [selected]="true" [title]="'chi tiết'">
-                            <ng-template kendoTabContent>
-                                <table class="o_group o_inner_group o_group_col_6 w-50">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Cách tính</label>
-                                            </td>
-                                            <td colspan="1">
-                                                <select (change)='amountSelectChange($event)' formControlName='amountSelect'
-                                                    class="form-control">
-                                                    <option *ngFor="let item of listAmountSelect" [value]="item.value">
-                                                        {{item.text}}</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="this.form.get('amountSelect').value == 'fixamount'">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Số tiền</label>
-                                            </td>
-                                            <td colspan="1">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amountFix">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Phần trăm</label>
-                                            </td>
-                                            <td colspan="1">
-                                                <kendo-numerictextbox [min]="0" formControlName="amountPercentage">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="this.form.get('amountSelect').value == 'code'">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Công thức</label>
-                                            </td>
-                                            <td colspan="1">
-                                                <select formControlName='amountCodeCompute' class="form-control">
-                                                    <option *ngFor="let item of listamountCodeCompute" [value]="item.value">
-                                                        {{item.text}}</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Dựa trên </label>
-                                            </td>
-                                            <td colspan="1">
-                                                <select formControlName='amountPercentageBase' class="form-control">
-                                                    <option *ngFor="let item of listamountPercentageBase"
-                                                        [value]="item.value">{{item.text}}</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </ng-template>
-                        </kendo-tabstrip-tab>
-                    </kendo-tabstrip>
-    
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6 w-50">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Cách tính</label>
+                                </td>
+                                <td class="w-100" colspan="1">
+                                    <select (change)='amountSelectChange($event)' formControlName='amountSelect'
+                                        class="form-control">
+                                        <option *ngFor="let item of listAmountSelect" [value]="item.value">
+                                            {{item.text}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'fix'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số tiền</label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amountFix">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Phần trăm</label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-numerictextbox [min]="0" formControlName="amountPercentage">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'code'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Công thức</label>
+                                </td>
+                                <td colspan="1">
+                                    <select formControlName='amountCodeCompute' class="form-control">
+                                        <option *ngFor="let item of listamountCodeCompute" [value]="item.value">
+                                            {{item.text}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Dựa trên </label>
+                                </td>
+                                <td colspan="1">
+                                    <select formControlName='amountPercentageBase' class="form-control">
+                                        <option *ngFor="let item of listamountPercentageBase"
+                                            [value]="item.value">{{item.text}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Thứ tự</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="sequence">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
                 </div>
             </div>
         </div>

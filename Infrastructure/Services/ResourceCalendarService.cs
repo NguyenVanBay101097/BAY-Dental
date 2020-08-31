@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Mapping;
+using Umbraco.Web.Models;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -24,9 +25,11 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<ResourceCalendar> GetDisplayAsync(Guid id)
+        public async Task<ResourceCalendarDisplay> GetDisplayAsync(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id).Include(x=>x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<ResourceCalendarDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var attendanceObj = GetService<IResourceCalendarAttendanceService>();
+            res.Attendances = await _mapper.ProjectTo<ResourceCalendarAttendanceDisplay>(attendanceObj.SearchQuery(x => x.CalendarId == id, orderBy: x => x.OrderBy(s => s.DayOfWeek).ThenBy(s => s.HourFrom))).ToListAsync();
             return res;
         }
 
@@ -96,12 +99,12 @@ namespace Infrastructure.Services
             double soGioCong = 0;
             foreach (var interval in intervals)
             {
-                soGioCong += (interval.Stop - interval.Start).TotalSeconds/ 3600;
+                soGioCong += (interval.Stop - interval.Start).TotalSeconds / 3600;
             }
             //tra ve so ngay cong = so gio / hourPerdays va so gio sum
             var calendar = await GetByIdAsync(id);
             double soNgayCong = soGioCong / (double)calendar.HoursPerDay.Value;
-            
+
             res.SoGioCong = soGioCong;
             res.SoNgayCong = soNgayCong;
             return res;

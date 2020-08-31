@@ -43,19 +43,25 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Name.Contains(val.Filter));
             }
-            if (val.structureTypeId.HasValue)
+            if (val.StructureTypeId.HasValue)
             {
 
-                query = query.Where(x => x.TypeId == val.structureTypeId);
+                query = query.Where(x => x.TypeId == val.StructureTypeId);
             }
             query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x=>x.DateCreated).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<HrPayrollStructureDisplay>(totalItems, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<HrPayrollStructureDisplay>>(items)
             };
+        }
+
+        public async Task<IEnumerable< HrSalaryRuleDisplay>> GetRules(Guid structureId)
+        {
+            var res = await GetService<IHrSalaryRuleService>().SearchQuery(x => x.StructId == structureId).ToListAsync();
+            return _mapper.Map<IEnumerable<HrSalaryRuleDisplay>>(res);
         }
 
         public async Task Remove(Guid Id)
@@ -68,33 +74,6 @@ namespace Infrastructure.Services
             await GetService<IHrSalaryRuleService>().DeleteAsync(HrPayrollStructure.Rules);
 
             await DeleteAsync(HrPayrollStructure);
-        }
-
-        public async Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure)
-        {
-            var rulesToRemove = new List<HrSalaryRule>();
-            foreach (var rule in structure.Rules)
-            {
-                if (!val.Rules.Any(x => x.Id == rule.Id))
-                    rulesToRemove.Add(rule);
-            }
-
-            await GetService<IHrSalaryRuleService>().Remove(rulesToRemove.Select(x=>x.Id).ToList());
-            structure.Rules = structure.Rules.AsList().Except(rulesToRemove).ToList();
-
-            foreach (var rule in val.Rules)
-            {
-                if (rule.Id == Guid.Empty || !rule.Id.HasValue)
-                {
-                    var r = _mapper.Map<HrSalaryRule>(rule);
-                    r.CompanyId = CompanyId;
-                    structure.Rules.Add(r);
-                }
-                else
-                {
-                    _mapper.Map(rule, structure.Rules.SingleOrDefault(c => c.Id == rule.Id));
-                }
-            }
         }
     }
 }

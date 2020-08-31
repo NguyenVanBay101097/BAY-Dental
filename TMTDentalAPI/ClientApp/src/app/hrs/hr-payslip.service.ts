@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { identifierModuleUrl } from '@angular/compiler';
 import { HrPayrollStructureDisplay } from './hr-payroll-structure.service';
+import { validator } from 'fast-json-patch';
 
 export class HrPayslipPaging {
     offset: number;
@@ -26,6 +27,7 @@ export class HrPayslipPaged {
     state: string;
     dateFrom: any;
     dateTo: any;
+    employeeId: any;
 }
 
 export class HrPayslipSave {
@@ -104,31 +106,31 @@ export class HrPayslipService {
         return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
     }
 
-    ComputeLinePost(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ComputePayslip', val);
+    computeSheet(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ComputeSheet', val);
     }
 
-    ComputeLinePut(id: string) {
-        return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslipLineUpdate/' + id, null);
+    actionCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
     }
 
-    getPayslipLinePaged(val: any): Observable<HrPayslipLinePaging> {
-        return this.http.get<HrPayslipLinePaging>(this.baseApi + 'api/HrPayslipLines', { params: val });
+    actionDone(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
-    CancelCompute(id: string) {
-        return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
-    }
-
-    ConfirmCompute(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ConfirmCompute/', ids);
-    }
-
-    GetWorkedDayInfoByEmployee(val: any) {
+    onChangeEmployee(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/OnChangeEmployee', val);
     }
 
-    GetWorkedDayInfoByPayslipId(val: any) {
-        return this.http.get(this.baseApi + 'api/HrPayslipWorkedDays', { params: val });
+    defaultget(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', val);
+    }
+
+    getWorkedDaysLines(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/WorkedDaysLines');
+    }
+
+    getLines(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/Lines');
     }
 }
