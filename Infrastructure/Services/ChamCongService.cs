@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.Record.PivotTable;
@@ -462,12 +463,12 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val)
+        public async Task ImportExcel(PartnerImportExcelViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ImportFileExcellChamCongModel>();
-            var listCC = new List<ChamCong>();
             var empObj = GetService<IEmployeeService>();
+            var unitWorkObj = GetService<IUnitOfWorkAsync>();
             var workEntryTypeObj = GetService<IWorkEntryTypeService>();
             var errors = new List<string>();
             using (var stream = new MemoryStream(fileData))
@@ -488,24 +489,21 @@ namespace Infrastructure.Services
                             maNv = Convert.ToString(worksheet.Cells[row, 1].Value);
                         else
                         {
-                            errors.Add($"Dòng {row}: Mã nhân viên null");
-                            continue;
+                            throw new Exception($"Dòng {row}: Mã nhân viên null");
                         }
 
                         if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 2].Value)))
                             curDateString = Convert.ToString(worksheet.Cells[row, 2].Value);
                         else
                         {
-                            errors.Add($"Dòng {row}: Ngày chấm công null");
-                            continue;
+                            throw new Exception($"Dòng {row}: Ngày chấm công null");
                         }
 
                         if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 5].Value)))
                             code = Convert.ToString(worksheet.Cells[row, 5].Value);
                         else
                         {
-                            errors.Add($"Dòng {row}: loại chấm công null");
-                            continue;
+                            throw new Exception($"Dòng {row}: loại chấm công null");
                         }
 
                         var time = $"{DateTime.Parse(curDateString).ToShortDateString()} { DateTime.Parse(de_time).ToShortTimeString()}";
@@ -513,6 +511,7 @@ namespace Infrastructure.Services
                         {
                             data.Add(new ImportFileExcellChamCongModel
                             {
+                                Stt = row,
                                 MaNV = maNv,
                                 Date = DateTime.Parse(curDateString),
                                 Time = DateTime.Parse(time),
@@ -522,20 +521,11 @@ namespace Infrastructure.Services
                         }
                         catch (Exception e)
                         {
-                            errors.Add($"Dòng {row}: {e.Message}");
-                            continue;
-                        }
-
-                        if (errs.Any())
-                        {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            throw new Exception(e.Message);
                         }
                     }
                 }
             }
-            if (errors.Any())
-                return new ChamCongImportResponse { Success = false, Errors = errors };
 
             if (data.Count > 0)
             {
@@ -549,88 +539,111 @@ namespace Infrastructure.Services
                     var chamcong = new ChamCong();
                     foreach (var cc in item.ToList())
                     {
-                        if (cc.Type == "check-in")
+                        try
                         {
-                            chamcong.Id = new Guid();
-                            workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
-                            chamcong.CompanyId = CompanyId;
-                            chamcong.EmployeeId = emp.Id;
-                            chamcong.Date = cc.Date;
-                            chamcong.WorkEntryTypeId = workEntryType.Id;
-                            chamcong.TimeIn = cc.Time;
-                            if (count == item.Count())
+                            if (cc.Type == "check-in")
                             {
-                                chamcong.Status = "process";
-                                listCC.Add(chamcong);
+                                chamcong.Id = new Guid();
+                                workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
+                                chamcong.CompanyId = CompanyId;
+                                chamcong.EmployeeId = emp.Id;
+                                chamcong.Date = cc.Date;
+                                chamcong.WorkEntryTypeId = workEntryType.Id;
+                                chamcong.TimeIn = cc.Time;
+                                if (count == item.Count())
+                                {
+                                    chamcong.Status = "process";
+                                    await CheckChamCong(chamcong, cc.Stt.ToString());
+                                    await unitWorkObj.BeginTransactionAsync();
+                                    await CreateAsync(chamcong);
+                                    unitWorkObj.Commit();
+                                }
                             }
+                            else if (cc.Type == "check-out")
+                            {
+                                chamcong.TimeOut = cc.Time;
+                                if (chamcong.TimeIn.HasValue && chamcong.TimeOut.HasValue)
+                                    chamcong.Status = "done";
+                                else if (chamcong.TimeIn.HasValue || chamcong.TimeOut.HasValue)
+                                    chamcong.Status = "process";
+                                await CheckChamCong(chamcong, cc.Stt.ToString());
+                                await unitWorkObj.BeginTransactionAsync();
+                                await CreateAsync(chamcong);
+                                unitWorkObj.Commit();
+                                chamcong = new ChamCong();
+                            }
+                            count++;
                         }
-                        else if (cc.Type == "check-out")
+                        catch (Exception e)
                         {
-                            chamcong.TimeOut = cc.Time;
-                            if (chamcong.TimeIn.HasValue && chamcong.TimeOut.HasValue)
-                                chamcong.Status = "done";
-                            else if (chamcong.TimeIn.HasValue || chamcong.TimeOut.HasValue)
-                                chamcong.Status = "process";
-                            listCC.Add(chamcong);
-                            chamcong = new ChamCong();
+
+                            throw new Exception(e.Message);
                         }
-                        count++;
+
                     }
                 }
             }
-            try
-            {
-                await CheckChamCong(listCC);
-                await CreateAsync(listCC);
-
-            }
-            catch (Exception e)
-            {
-                return new ChamCongImportResponse { Success = false, Errors = new List<string>() { e.Message } };
-            }
-
-            return new ChamCongImportResponse { Success = true };
         }
 
-        public async Task CheckChamCong(IEnumerable<ChamCong> vals)
+        public async Task CheckChamCong(ChamCong val, string stt)
         {
-            foreach (var val in vals.ToList())
+            if (val == null)
+                throw new Exception("Input null");
+            else
             {
-                if (val == null)
-                    throw new Exception("Input null");
+                string message = "";
+
+                if (!val.TimeIn.HasValue)
+                {
+                    message = (!string.IsNullOrEmpty(stt) ? $"Dòng thứ {stt} : " : null) + "Thời gian vào không được để trống ";
+                    throw new Exception(message);
+                }
+
+                if (val.TimeIn > val.TimeOut)
+                {
+                    message = (!string.IsNullOrEmpty(stt) ? $"Dòng thứ {stt} : " : null) + "Thời gian vào không được lớn hơn thời gian ra";
+                    throw new Exception(message);
+                }
+
+                var ccFirst = new ChamCong();
+                var query = SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn.Value.Date == val.TimeIn.Value.Date);
+                if (query.Any())
+                {
+                    ccFirst = await query.OrderBy(x => x.DateCreated).LastOrDefaultAsync();
+                }
                 else
                 {
-                    var ccFirst = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn.Value.Date == val.TimeIn.Value.Date).OrderBy(x => x.DateCreated).LastOrDefaultAsync();
+                    ccFirst = null;
+                }
 
-                    if (!val.TimeIn.HasValue)
-                    {
-                        throw new Exception("Thời gian vào không được phép để trống !!!");
-                    }
-                    if (val.TimeIn > val.TimeOut)
-                    {
-                        throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
-                    }
-                    if (ccFirst != null && val.Id != ccFirst.Id && !ccFirst.TimeOut.HasValue)
-                    {
-                        throw new Exception("Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại !");
-                    }
-                    if (ccFirst != null && val.Id != ccFirst.Id && val.TimeIn < ccFirst.TimeOut)
-                    {
-                        throw new Exception("Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó");
-                    }
+                if (ccFirst != null && val.Id != ccFirst.Id && !ccFirst.TimeOut.HasValue)
+                {
+                    message = (!string.IsNullOrEmpty(stt) ? $"Dòng thứ {stt} : " : null) + "Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại ";
+                    throw new Exception(message);
+                }
+                if (ccFirst != null && val.Id != ccFirst.Id && val.TimeIn < ccFirst.TimeOut)
+                {
+                    message = (!string.IsNullOrEmpty(stt) ? $"Dòng thứ {stt} : " : null) + "Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó ";
+                    throw new Exception(message);
                 }
             }
         }
 
         public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
         {
-            await CheckChamCong(entities);
+            foreach (var entity in entities)
+            {
+                await CheckChamCong(entity, null);
+            }
             return await base.CreateAsync(entities);
         }
 
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
-            await CheckChamCong(entities);
+            foreach (var entity in entities)
+            {
+                await CheckChamCong(entity, null);
+            }
             await base.UpdateAsync(entities);
         }
     }

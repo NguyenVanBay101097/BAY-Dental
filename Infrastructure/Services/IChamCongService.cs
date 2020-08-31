@@ -19,9 +19,9 @@ namespace Infrastructure.Services
         Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date);
         Task<decimal> GetStandardWorkHour();
         ChamCongTinhCong TinhSoCongGioCong(ChamCong cc, IEnumerable<AttendanceInterval> attendanceIntervals, decimal hoursPerDay);
-        Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val);
+        Task ImportExcel(PartnerImportExcelViewModel val);
         Task<ChamCong> GetLastChamCong(employeePaged val);
-        Task CheckChamCong(IEnumerable<ChamCong> vals);
+        Task CheckChamCong(ChamCong val, string stt);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
 
 

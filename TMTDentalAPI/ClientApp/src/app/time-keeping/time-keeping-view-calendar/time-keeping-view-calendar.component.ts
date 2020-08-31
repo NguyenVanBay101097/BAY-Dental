@@ -294,7 +294,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   importFileExcell() {
     const modalRef = this.modalService.open(TimeKeepingImportFileComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-
     modalRef.result.then(res => {
       this.loadEmployee();
     })

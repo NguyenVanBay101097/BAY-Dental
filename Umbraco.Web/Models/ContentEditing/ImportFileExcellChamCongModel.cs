@@ -42,5 +42,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// code : tkp
         /// </summary>
         public string CodeWorkEntryType { get; set; }
+
+        public int Stt { get; set; }
     }
 }

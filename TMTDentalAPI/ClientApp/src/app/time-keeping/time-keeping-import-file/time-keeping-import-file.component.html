@@ -30,10 +30,7 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm" (click)="import()" [disabled]="!formGroup.valid">
         Import</button>
-    <a *ngIf="type == 'customer'" href="assets/files/Mau_File_KH.xlsx" class="btn btn-info btn-sm">
-        Tải file mẫu
-    </a>
-    <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC.xlsx" class="btn btn-info btn-sm">
+    <a href="./assets/files/Mau_File_Cham_Cong.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
     <button type="button" class="btn btn-secondary btn-sm" (click)="activeModal.dismiss()">

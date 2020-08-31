@@ -39,11 +39,7 @@ export class TimeKeepingImportFileComponent implements OnInit {
     var val = this.formGroup.value;
     val.type = this.type;
     this.timeKeepingService.actionImport(val).subscribe((result: any) => {
-      if (result.success) {
-        this.activeModal.close(true);
-      } else {
-        this.errors = result.errors;
-      }
+      this.activeModal.close();
     }, (err) => {
       this.showErrorService.show(err);
     });
