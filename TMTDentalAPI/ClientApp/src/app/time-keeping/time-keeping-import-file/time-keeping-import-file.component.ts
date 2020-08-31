@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeKeepingService } from '../time-keeping.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-time-keeping-import-file',
@@ -12,7 +13,8 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 export class TimeKeepingImportFileComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private timeKeepingService: TimeKeepingService, private showErrorService: AppSharedShowErrorService) { }
+    private timeKeepingService: TimeKeepingService, private showErrorService: AppSharedShowErrorService,
+    private notificationService: NotificationService) { }
 
   formGroup: FormGroup;
   title = 'Import';
@@ -39,7 +41,18 @@ export class TimeKeepingImportFileComponent implements OnInit {
     var val = this.formGroup.value;
     val.type = this.type;
     this.timeKeepingService.actionImport(val).subscribe((result: any) => {
-      this.activeModal.close();
+      if (result.success) {
+        this.notificationService.show({
+          content: 'Import thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.activeModal.close(true);
+      } else {
+        this.errors = result.errors;
+      }
     }, (err) => {
       this.showErrorService.show(err);
     });

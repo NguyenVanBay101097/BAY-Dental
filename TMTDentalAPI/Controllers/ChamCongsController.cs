@@ -60,8 +60,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ExcelImportCreate(PartnerImportExcelViewModel val)
         {
-            await _chamCongService.ImportExcel(val);
-            return Ok();
+            await _unitOfWork.BeginTransactionAsync();
+
+            var result = await _chamCongService.ImportExcel(val);
+
+            if (result.Success)
+                _unitOfWork.Commit();
+
+            return Ok(result);
         }
 
         [HttpGet("[action]")]
