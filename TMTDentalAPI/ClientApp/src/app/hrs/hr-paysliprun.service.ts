@@ -19,6 +19,7 @@ export class HrPayslipRunDisplay{
   dateStart: string;
   dateEnd: string;
   state: string;
+  payslipCount: number;
   slips: HrPayslipDisplay[];
 }
 
@@ -73,6 +74,10 @@ export class HrPaysliprunService {
 
   actionConfirm(val: PaySlipRunConfirmViewModel ) {
     return this.http.post(this.base_api + this.apiUrl + '/ActionConfirm', val);
+  }
+
+  actionDone(ids : string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionDone', ids);
   }
 
   update(id, val: HrPayslipRunSave) {

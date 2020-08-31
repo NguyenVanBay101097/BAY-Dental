@@ -1,3 +1,4 @@
+import { HrPayslipDisplay } from './../hr-payslip.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HrPaysliprunService } from '../hr-paysliprun.service';
@@ -7,6 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AuthService } from 'src/app/auth/auth.service';
 import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -18,7 +20,11 @@ export class HrPayslipRunFormComponent implements OnInit {
   type: string;
   itemId: string;
   myForm: FormGroup;
+  gridData: GridDataResult;
+  limit = 20;
+  skip = 0;
   submitted = false;
+  loading = false;
  
   paysliprun: any;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -32,14 +38,14 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   ngOnInit() {
     this.paysliprun = new Object();
-
     this.route.queryParamMap.subscribe(params => {
       this.itemId = params.get('id');
-      if (this.itemId) {
+      if (!this.itemId) {
+        this.createNew();
+      } else {
         this.loadRecord();
       }
     });
-
     this.myForm = this.fb.group({
       name: [null, Validators.required],
       dateStart: [this.monthStart, Validators.required],
@@ -54,6 +60,11 @@ export class HrPayslipRunFormComponent implements OnInit {
       result.dateStart = new Date(result.dateStart)
       this.myForm.patchValue(result);    
     });
+  }
+  
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadRecord();
   }
 
 
@@ -78,14 +89,12 @@ export class HrPayslipRunFormComponent implements OnInit {
     val.dateStart = this.intlService.formatDate(val.dateStart, 'yyyy-MM-ddTHH:mm');
     val.dateEnd = this.intlService.formatDate(val.dateEnd, 'yyyy-MM-ddTHH:mm');
 
+    debugger
     if (!this.itemId) {
       this.hrPaysliprunService.create(val)
       .subscribe((result: any) => {
-        this.router.navigate(['hr/payslip-run/form'], {
-          queryParams: {
-            id: result['id']
-          },
-        });
+        debugger
+        this.router.navigateByUrl('hr/payslip-run/form?id='+ result.id)      
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -148,23 +157,54 @@ export class HrPayslipRunFormComponent implements OnInit {
         modalRef.componentInstance.id = id;
         modalRef.result.then(
           () => {
-            this.loadRecord();
+            this.loadRecord();           
           },
           () => { }
         );
   }
 
+  actionDone(){
+    if (this.itemId) {
+      this.hrPaysliprunService.actionDone([this.itemId]).subscribe(() => {
+        this.loadRecord();
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      });
+    }
+  }
+
   createNew() {
-    this.router.navigateByUrl('hr/payslip-run/form');
+    this.router.navigate(['hr/payslip-run/form']); 
+    this.paysliprun.state = "draft"; 
     this.myForm = this.fb.group({
-      name: ['', Validators.required],
-      dateStart: this.monthStart,
-      dateEnd:  this.monthEnd
+      name: [null, Validators.required],
+      dateStart: [this.monthStart, Validators.required],
+      dateEnd: [this.monthEnd, Validators.required] 
     });
   }
 
   get f() {
     return this.myForm.controls;
   }
+
+  convertState(state) {
+    switch (state) {
+      case 'verify':
+        return 'Đang xử lý';
+      case 'done':
+        return 'Hoàn thành';
+      case 'draft':
+        return 'Nháp';
+    }
+  }
+  detailItem(id) {
+    this.router.navigateByUrl('hr/payslips/edit/' + id);    
+  }
+
 
 }

@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/hr/payslip-runs">Thêm phiếu lương hàng loạt</a>
+                <a routerLink="/hr/payslip-runs">Thêm đợt lương </a>
             </li>
             <li class="active">
                 <span *ngIf="itemId">{{paysliprun.name}}</span>
@@ -26,9 +26,13 @@
                     Xác nhận
                 </button>
                 <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
-                        *ngIf="paysliprun.state !== 'confirm'" (click)="onSave()">
+                        *ngIf="['draft'].indexOf(paysliprun.state) !== -1" (click)="onSave()">
                         Lưu nháp
-                </button>                 
+                </button> 
+                <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-success btn-sm"
+                        (click)="actionDone()">
+                        Hoàn thành
+                    </button>                
                 <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm"
                         (click)="createNew()">
                         Thêm mới
@@ -55,20 +59,17 @@
                     </button>
                 </div>
             </div>
-            <div class="o_form_sheet">
+            <div class="o_form_sheet">              
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên </label>
+                    <h1>
+                        <input type="text" class="form-control" required formControlName="name" />
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                      </div>
+                </div>             
                 <div class="o_group">
-                    <div class="o_group o_inner_group o_group_col_12">
-                        <div class="oe_title mt-2 mb-3">
-                            <label class="o_form_label oe_edit_only">Tên </label>
-                            <h1 class="mb-1">
-                                <input class="form-control" formControlName="name" 
-                                    required #nameInput>
-                            </h1>
-                            <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
-                                <div *ngIf="f.name.errors.required">Nhập tên</div>
-                              </div>
-                        </div>  
-                    </div>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -78,8 +79,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateStart">
+                                    <kendo-datepicker formControlName="dateStart" [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1">
                                     </kendo-datepicker>
+                                    <span
+                                        [class.d-none]="paysliprun.state == 'draft'">{{paysliprun.dateStart | date: 'dd/MM/yyyy'}}</span>
                                 </td>
                             </tr>                        
                         </tbody>
@@ -93,14 +96,61 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateEnd">
+                                    <kendo-datepicker formControlName="dateEnd" [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1">
                                     </kendo-datepicker>
+                                    <span
+                                    [class.d-none]="paysliprun.state == 'draft'">{{paysliprun.dateEnd | date: 'dd/MM/yyyy'}}</span>
                                 </td>
                             </tr>                        
                         </tbody>
                     </table>
                 </div>
+                <div class="o_content" [class.d-none]="paysliprun.state == 'draft'">
+                    <span class="o_form_label">
+                       Danh sách phiếu lương :
+                    </span>
+                    <kendo-grid [data]="paysliprun.slips" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
+                        (pageChange)="pageChange($event)" class="mt-2">
+                        <kendo-grid-column field="number" title="Số phiếu">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="employee" title="Nhân viên">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.employee.name }}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="dateFrom" title="Từ ngày">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.dateFrom | date:"shortDate" }}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="dateTo" title="Đến ngày">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.dateTo | date:"shortDate"}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="state" title="Trạng thái">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <span >{{convertState(dataItem.state)}}</span>                             
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column  [headerStyle]="{'text-align': 'right'}" class="text-right" title="Tổng tiền">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.totalAmount | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="id">
+                            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                              Thao tác
+                            </ng-template>
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                              <button class="btn btn-secondary btn-sm mr-2" title="Chi tiết" (click)="detailItem(dataItem.id)">
+                                <span class="far fa-eye"></span></button>                            
+                            </ng-template>
+                          </kendo-grid-column>      
+                    </kendo-grid>
+                </div>
             </div>
+           
         </div>
     </form>
 </div>

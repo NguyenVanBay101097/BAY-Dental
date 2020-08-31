@@ -15,6 +15,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<HrPayslipWorkedDays, HrPayslipWorkedDayBasic>();
             CreateMap<HrPayslipWorkedDayDisplay, HrPayslipWorkedDays>().ForMember(x => x.Id, x => x.Ignore());
             CreateMap<HrPayslipWorkedDaySave, HrPayslipWorkedDays>().ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<HrPayslipWorkedDayDisplay, HrPayslipWorkedDaySave>().ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

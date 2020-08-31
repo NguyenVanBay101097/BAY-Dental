@@ -48,64 +48,25 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create(HrPayslipSave val)
-        {
-            var payslip = _mapper.Map<HrPayslip>(val);
-            SaveWorkedDayLines(val, payslip);
+        {        
 
             await _unitOfWork.BeginTransactionAsync();
-            await _payslipService.CreateAsync(payslip);
+           var res = await _payslipService.CreatePayslip(val);
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<HrPayslipBasic>(payslip);
+            var basic = _mapper.Map<HrPayslipBasic>(res);
             return Ok(basic);
         }
 
-        private void SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip)
-        {
-            var toRemove = new List<HrPayslipWorkedDays>();
-            foreach (var wd in payslip.WorkedDaysLines)
-            {
-                if (!val.WorkedDaysLines.Any(x => x.Id == wd.Id))
-                    toRemove.Add(wd);
-            }
-
-            foreach (var item in toRemove)
-                payslip.WorkedDaysLines.Remove(item);
-
-            var sequence = 0;
-            foreach (var wd in val.WorkedDaysLines)
-            {
-                if (wd.Id == Guid.Empty)
-                {
-                    var r = _mapper.Map<HrPayslipWorkedDays>(wd);
-                    r.Sequence = sequence++;
-                    payslip.WorkedDaysLines.Add(r);
-                }
-                else
-                {
-                    var line = payslip.WorkedDaysLines.FirstOrDefault(c => c.Id == wd.Id);
-                    if (line != null)
-                    {
-                        _mapper.Map(wd, line);
-                        line.Sequence = sequence++;
-                    }
-                }
-            }
-        }
+     
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, HrPayslipSave val)
-        {
-            var payslip = await _payslipService.SearchQuery(x => x.Id == id)
-                .Include(x => x.WorkedDaysLines).FirstOrDefaultAsync();
+        {           
 
-            if (payslip == null)
-                return NotFound();
-
-            await _unitOfWork.BeginTransactionAsync();
-            payslip = _mapper.Map(val, payslip);
-            SaveWorkedDayLines(val, payslip);
-            await _payslipService.UpdateAsync(payslip);
+            await _unitOfWork.BeginTransactionAsync();    
+            
+            await _payslipService.UpdatePayslip(id,val);
             _unitOfWork.Commit();
 
             return NoContent();

@@ -112,6 +112,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
     this.hrPaysliprunService.actionConfirm(val).subscribe(
       () => { 
         this.activeModal.close(); 
+        
       });
     }
   

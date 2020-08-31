@@ -45,6 +45,7 @@ namespace Infrastructure.Services
             var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("PayslipRun not found");
+        
 
             return res;
         }
@@ -81,7 +82,7 @@ namespace Infrastructure.Services
                 {
                     var payslipObj = GetService<IHrPayslipService>();
                     var changemp = await payslipObj.OnChangeEmployee(emp.Id, paysliprun.DateStart, paysliprun.DateEnd);
-                    var workedDayLines = _mapper.Map<List<HrPayslipWorkedDaySave>>(changemp.WorkedDayLines);
+                    var workedDayLines = _mapper.Map<IEnumerable<HrPayslipWorkedDaySave>>(changemp.WorkedDayLines);
                     var res = new HrPayslipSave()
                     {
                         StructId = val.StructureId.Value,
@@ -89,10 +90,18 @@ namespace Infrastructure.Services
                         DateTo = paysliprun.DateEnd,
                         EmployeeId = emp.Id,
                         Name = changemp.Name,
-                        ListHrPayslipWorkedDaySave = workedDayLines,
+                        WorkedDaysLines = workedDayLines,
                         payslipRunId = paysliprun.Id,
                     };
+
+                    var rs = await payslipObj.CreatePayslip(res);
+
+                    // tạo phiếu lương thanh công và tính lương
+                    if (rs != null)
+                        await payslipObj.ComputeSheet(new List<Guid> { rs.Id });
                 }
+
+                
 
             }
             paysliprun.State = "confirm";
@@ -100,12 +109,7 @@ namespace Infrastructure.Services
             await UpdateAsync(paysliprun);
 
         }
-
-        public async Task CreatePayslip()
-        {
-
-        }
-
+     
 
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
@@ -116,7 +120,7 @@ namespace Infrastructure.Services
 
             foreach (var run in payslipruns)
             {
-                await payslipObj.ActionConfirm(run.Slips.Select(x => x.Id));
+                await payslipObj.ActionDone(run.Slips.Select(x => x.Id));
                 run.State = "done";
             }
 

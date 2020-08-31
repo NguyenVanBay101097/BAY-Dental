@@ -212,6 +212,60 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<HrPayslip> CreatePayslip(HrPayslipSave val)
+        {
+            var payslip = _mapper.Map<HrPayslip>(val);
+            payslip.CompanyId = CompanyId;
+            SaveWorkedDayLines(val, payslip);
+
+            return await CreateAsync(payslip);
+        }
+
+        public async Task UpdatePayslip(Guid id, HrPayslipSave val)
+        {
+            var payslip = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            if (payslip == null)
+                throw new Exception("payslip Not Found");
+
+            payslip = _mapper.Map(val, payslip);
+            SaveWorkedDayLines(val, payslip);
+
+            await UpdateAsync(payslip);
+        }
+
+        private void SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip)
+        {
+            var toRemove = new List<HrPayslipWorkedDays>();
+            foreach (var wd in payslip.WorkedDaysLines)
+            {
+                if (!val.WorkedDaysLines.Any(x => x.Id == wd.Id))
+                    toRemove.Add(wd);
+            }
+
+            foreach (var item in toRemove)
+                payslip.WorkedDaysLines.Remove(item);
+
+            var sequence = 0;
+            foreach (var wd in val.WorkedDaysLines)
+            {
+                if (wd.Id == Guid.Empty)
+                {
+                    var r = _mapper.Map<HrPayslipWorkedDays>(wd);
+                    r.Sequence = sequence++;
+                    payslip.WorkedDaysLines.Add(r);
+                }
+                else
+                {
+                    var line = payslip.WorkedDaysLines.FirstOrDefault(c => c.Id == wd.Id);
+                    if (line != null)
+                    {
+                        _mapper.Map(wd, line);
+                        line.Sequence = sequence++;
+                    }
+                }
+            }
+        }
+
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
             var moveObj = GetService<IAccountMoveService>();

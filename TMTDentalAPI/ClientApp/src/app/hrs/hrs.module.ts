@@ -35,12 +35,11 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
     HrSalaryRuleCrudDialogComponent,
     HrPayslipToPayCreateUpdateComponent,
     HrPayslipToPayListComponent,
-    HrPayslipLineListComponent,
     EmployeeCreateUpdateComponent,
     HrPayslipRunListComponent,
     HrPayslipRunFormComponent,
     HrPayslipRunConfirmDialogComponent,
-    SelectEmployeeDialogComponent
+    SelectEmployeeDialogComponent,
     HrPayslipDateFilterComponent,
   ],
   imports: [
@@ -56,9 +55,9 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
   ],
   providers: [
     HrPayrollStructureService,
-    ColumnResizingService,
     HrPayslipService,
-    HrPaysliprunService
+    HrPaysliprunService,
+    EmployeeService
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,

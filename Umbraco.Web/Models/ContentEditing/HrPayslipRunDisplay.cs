@@ -16,6 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string State { get; set; }
 
+
         public ICollection<HrPayslipDisplay> Slips { get; set; } = new List<HrPayslipDisplay>();
     }
 }
