@@ -594,33 +594,27 @@ namespace Infrastructure.Services
 
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
         {
-            for (int i = 0; i < vals.Count(); i++)
+            foreach (var val in vals.ToList())
             {
-                var val = vals.ToList()[i];
                 if (val == null)
                     throw new Exception("Input null");
                 else
                 {
-                    var paged = new employeePaged()
-                    {
-                        Date = val.Date,
-                        EmployeeId = val.EmployeeId
-                    };
-                    var ccFirst = await GetLastChamCong(paged);
+                    var ccFirst = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn.Value.Date == val.TimeIn.Value.Date).OrderBy(x => x.DateCreated).LastOrDefaultAsync();
 
                     if (!val.TimeIn.HasValue)
                     {
                         throw new Exception("Thời gian vào không được phép để trống !!!");
                     }
-                    else if (val.TimeIn > val.TimeOut)
+                    if (val.TimeIn > val.TimeOut)
                     {
                         throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
                     }
-                    else if (ccFirst != null && val.Id != ccFirst.Id && !ccFirst.TimeOut.HasValue)
+                    if (ccFirst != null && val.Id != ccFirst.Id && !ccFirst.TimeOut.HasValue)
                     {
                         throw new Exception("Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại !");
                     }
-                    else if (ccFirst != null && val.Id != ccFirst.Id && val.TimeIn < ccFirst.TimeOut)
+                    if (ccFirst != null && val.Id != ccFirst.Id && val.TimeIn < ccFirst.TimeOut)
                     {
                         throw new Exception("Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó");
                     }

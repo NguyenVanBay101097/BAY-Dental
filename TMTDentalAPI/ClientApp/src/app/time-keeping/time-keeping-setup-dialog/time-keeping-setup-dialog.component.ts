@@ -9,6 +9,7 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/work-entry-types/work-entry-type.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -36,7 +37,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     private timeKeepingServive: TimeKeepingService,
     private intl: IntlService,
     private workEntryTypeService: WorkEntryTypeService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private showErrorService:AppSharedShowErrorService
   ) { }
 
   ngOnInit() {
@@ -166,7 +168,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         x => {
           this.activeModal.close(this.employee.id);
         }, err => {
-          alert(err.error.message);
+          this.showErrorService.show(err);
         }
       )
     }
@@ -175,7 +177,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         result => {
           this.activeModal.close(this.employee.id);
         }, err => {
-          alert(err.error.message);
+          this.showErrorService.show(err);
         }
       )
     }

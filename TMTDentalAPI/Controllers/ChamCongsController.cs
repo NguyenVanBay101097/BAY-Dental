@@ -132,6 +132,66 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("action")]
+        public async Task<IActionResult> ExportTemplateExcell(PartnerPaged val)
+        {
+            var stream = new MemoryStream();
+            var data = new List<ImportFileExcellChamCongModel>() {
+               new ImportFileExcellChamCongModel{
+                   MaNV = "NV00001",
+                   Time = DateTime.Parse("8/4/2020 8:00"),
+                   Date = DateTime.Parse("8/4/2020"),
+                   Type = "check-in",
+                   CodeWorkEntryType ="tkp"
+                },
+               new ImportFileExcellChamCongModel{
+                   MaNV = "NV00001",
+                   Time = DateTime.Parse("8/4/2020 17:30"),
+                   Date = DateTime.Parse("8/4/2020"),
+                   Type = "check-out",
+                   CodeWorkEntryType ="tkp"
+                }
+            };
+            byte[] fileContent;
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                worksheet.Cells[1, 1].Value = "Mã NV";
+                worksheet.Cells[1, 2].Value = "Ngày";
+                worksheet.Cells[1, 3].Value = "Thời gian";
+                worksheet.Cells[1, 4].Value = "Vào/Ra";
+                worksheet.Cells[1, 5].Value = "Mã loại chấm công";
+
+                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data)
+                {
+                    worksheet.Cells[row, 1].Value = item.MaNV;
+                    worksheet.Cells[row, 2].Value = item.Date;
+                    worksheet.Cells[row, 2].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 3].Value = item.Time;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "HH:mm";
+                    worksheet.Cells[row, 4].Value = item.Type;
+                    worksheet.Cells[row, 4].Value = item.CodeWorkEntryType;
+                    row++;
+                }
+
+                worksheet.Column(4).Style.Numberformat.Format = "@";
+                worksheet.Column(5).Style.Numberformat.Format = "@";
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
         //[HttpPost("[action]")]
         //public async Task<IActionResult> ExportExcelFile(employeePaged val)
         //{
