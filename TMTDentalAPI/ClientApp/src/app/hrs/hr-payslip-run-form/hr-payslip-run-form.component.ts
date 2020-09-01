@@ -153,7 +153,7 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   openConfirmDialog(id){
     let modalRef = this.modalService.open(HrPayslipRunConfirmDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-        modalRef.componentInstance.title = this.title;
+        modalRef.componentInstance.title = "Tạo phiếu lương";
         modalRef.componentInstance.id = id;
         modalRef.result.then(
           () => {

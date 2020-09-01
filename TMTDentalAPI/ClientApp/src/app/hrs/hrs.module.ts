@@ -35,7 +35,6 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
     HrSalaryRuleCrudDialogComponent,
     HrPayslipToPayCreateUpdateComponent,
     HrPayslipToPayListComponent,
-    EmployeeCreateUpdateComponent,
     HrPayslipRunListComponent,
     HrPayslipRunFormComponent,
     HrPayslipRunConfirmDialogComponent,
@@ -61,7 +60,7 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    EmployeeCreateUpdateComponent,HrPayslipRunConfirmDialogComponent,SelectEmployeeDialogComponent
+    HrPayslipRunConfirmDialogComponent,SelectEmployeeDialogComponent
   ]
 })
 export class HrsModule { }

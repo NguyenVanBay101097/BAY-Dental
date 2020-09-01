@@ -24,6 +24,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   myForm: FormGroup;
   lineForm: FormGroup;
   @Input() public id: string;
+  @Input() public title: string;
   submitted = false;
   filterStructures: HrPayrollStructureDisplay[];
   skip = 0;
@@ -38,7 +39,6 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
 
   @ViewChild('structureCbx', { static: true }) structureCbx: ComboBoxComponent;
  
-  title: string;
   constructor(private fb: FormBuilder, private hrPaysliprunService: HrPaysliprunService, private intlService: IntlService,
     private hrPayrollStructureService : HrPayrollStructureService,
     private employeeService : EmployeeService,
@@ -49,7 +49,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      structure: [null , Validators.required],
+      structure: null,
       lines: null,
     });
     this.loadFilteredStructures();

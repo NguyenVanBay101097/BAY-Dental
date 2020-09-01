@@ -72,6 +72,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? StructureTypeId { get; set; }
         public HrPayrollStructureTypeSimple StructureType { get; set; }
+
+        public IEnumerable<HrPayslipWorkedDayDisplay> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
     }
 
     public class HrPayslipOnChangeEmployee

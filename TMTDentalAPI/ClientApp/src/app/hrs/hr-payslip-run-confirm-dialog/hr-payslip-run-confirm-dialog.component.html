@@ -11,22 +11,34 @@
                 <div class="o_group mb-0"> 
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
+                            <tr>                                
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                       Mẫu lương
-                                    </label>
-                                </td>
+                                    <div>
+                                        <span style="color: brown;">Đặt mẫu lương cụ thể nếu bạn muốn áp dụng mẫu lương cho tất cả nhân viên (ví dụ: Thưởng cuối năm,lương tháng 13,v..). Nếu bạn để trống trường này, 
+                                            một mẫu lương thông dụng sẽ được tạo cho tất cả các nhân viên đã chọn, dựa trên Cấu trúc lương của họ.</span> 
+                                     </div> 
+                                </td>                            
+                            </tr>
+                        </tbody>
+                    </table> 
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>                                                             
                                 <td colspan="1" style="width: 100%;">
+                                    <label class="o_form_label">
+                                        Mẫu lương
+                                     </label>
                                     <div class="d-flex">
                                         <kendo-combobox [data]="filterStructures" [textField]="'name'" [filterable]="true"
                                             #structureCbx formControlName="structure" [valueField]="'id'">
-                                        </kendo-combobox>                                     
+                                        </kendo-combobox>   
+                                                                       
                                     </div>
+                                   
                                 </td>
                             </tr>
                         </tbody>
-                    </table>                
+                    </table>                  
                 </div>
                 <div>
                     <div class="d-flex mb-2">

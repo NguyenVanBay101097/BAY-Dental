@@ -71,7 +71,7 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(PaySlipRunConfirmViewModel val)
         {
-
+            var payslipObj = GetService<IHrPayslipService>();
             var paysliprun = await SearchQuery(x => x.Id == val.PayslipRunId.Value).Include(x => x.Slips).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("PayslipRun Not Found");
@@ -80,12 +80,12 @@ namespace Infrastructure.Services
             {
                 foreach (var emp in val.Employees)
                 {
-                    var payslipObj = GetService<IHrPayslipService>();
+                    
                     var changemp = await payslipObj.OnChangeEmployee(emp.Id, paysliprun.DateStart, paysliprun.DateEnd);
                     var workedDayLines = _mapper.Map<IEnumerable<HrPayslipWorkedDaySave>>(changemp.WorkedDayLines);
                     var res = new HrPayslipSave()
                     {
-                        StructId = val.StructureId.Value,
+                        StructId = val.StructureId.HasValue ? val.StructureId.Value : await GetRegularStructure(emp),
                         DateFrom = paysliprun.DateStart,
                         DateTo = paysliprun.DateEnd,
                         EmployeeId = emp.Id,
@@ -94,22 +94,36 @@ namespace Infrastructure.Services
                         payslipRunId = paysliprun.Id,
                     };
 
-                    var rs = await payslipObj.CreatePayslip(res);
-
-                    // tạo phiếu lương thanh công và tính lương
-                    if (rs != null)
-                        await payslipObj.ComputeSheet(new List<Guid> { rs.Id });
+                    var rs = await payslipObj.CreatePayslip(res);                  
+                       
                 }
-
-                
-
+                //tinh luong
+                if(paysliprun.Slips.Any())
+                    await payslipObj.ComputeSheet(paysliprun.Slips.Select(x=>x.Id));
             }
+
+
             paysliprun.State = "confirm";
 
             await UpdateAsync(paysliprun);
 
         }
-     
+
+        /// <summary>
+        /// lấy mẫu lương thông dụng
+        /// </summary>
+        /// <param name="emp"></param>
+        /// <returns></returns>
+        public async Task<Guid> GetRegularStructure(Employee emp)
+        {
+            var structureObj = GetService<IHrPayrollStructureService>();
+
+            var structure = await structureObj.SearchQuery(x => x.TypeId == emp.StructureTypeId && x.RegularPay == true).FirstAsync();
+
+            return structure.Id;
+        }
+
+
 
         public async Task ActionDone(IEnumerable<Guid> ids)
         {

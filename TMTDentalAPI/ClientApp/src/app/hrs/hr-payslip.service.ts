@@ -83,6 +83,8 @@ export class HrPayslipWorkedDaySave {
     amount: number;
 }
 
+
+
 @Injectable()
 export class HrPayslipService {
     apiUrl = 'api/HrPayslips';

@@ -19,11 +19,11 @@
                 <div class="o_statusbar_buttons">
                 <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
                     (click)="addPayslips()">
-                    Xác nhận
+                   Tạo phiếu lương
                 </button>
                 <button type="button" accesskey="1" *ngIf="itemId && paysliprun.state == 'draft'"
                     class="btn btn-primary btn-sm" (click)="addPayslips()">
-                    Xác nhận
+                    Tạo phiếu lương
                 </button>
                 <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
                         *ngIf="['draft'].indexOf(paysliprun.state) !== -1" (click)="onSave()">
@@ -110,9 +110,7 @@
                        Danh sách phiếu lương :
                     </span>
                     <kendo-grid [data]="paysliprun.slips" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
-                        (pageChange)="pageChange($event)" class="mt-2">
-                        <kendo-grid-column field="number" title="Số phiếu">
-                        </kendo-grid-column>
+                        (pageChange)="pageChange($event)" class="mt-2">                      
                         <kendo-grid-column field="employee" title="Nhân viên">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                 {{dataItem.employee.name }}
@@ -127,7 +125,7 @@
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                 {{dataItem.dateTo | date:"shortDate"}}
                             </ng-template>
-                        </kendo-grid-column>
+                        </kendo-grid-column>                     
                         <kendo-grid-column field="state" title="Trạng thái">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                 <span >{{convertState(dataItem.state)}}</span>                             
