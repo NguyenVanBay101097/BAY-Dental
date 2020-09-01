@@ -79,13 +79,32 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
               id: line.id,
               name: line.name,
               dayOfWeek: line.dayOfWeek,
-              hourFrom: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourFrom)}`),
-              hourTo: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourTo)}`),
+              hourFrom: new Date(`${this.today.getFullYear()}-
+              ${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourFrom)}`),
+              hourTo: new Date(`${this.today.getFullYear()}-
+              ${this.today.getMonth()}-${this.today.getDate()} ${this.NumberToTime(line.hourTo)}`),
               dayPeriod: line.dayPeriod,
               calendarId: line.calendarId,
             }));
           });
         });
+    } else {
+      this.resourceCalendarService.DefaultGet().subscribe((res: any) => {
+        this.formGroup.get('hoursPerDay').setValue(res.hoursPerDay);
+        res.attendances.forEach(line => {
+          this.attendances.push(this.fb.group({
+            id: line.id,
+            name: line.name,
+            dayOfWeek: line.dayOfWeek,
+            hourFrom: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-
+            ${this.today.getDate()} ${this.NumberToTime(line.hourFrom)}`),
+            hourTo: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-
+            ${this.today.getDate()} ${this.NumberToTime(line.hourTo)}`),
+            dayPeriod: line.dayPeriod,
+            calendarId: line.calendarId,
+          }));
+        });
+      });
     }
   }
 

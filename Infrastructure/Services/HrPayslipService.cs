@@ -31,6 +31,7 @@ namespace Infrastructure.Services
             var ruleObj = GetService<IHrSalaryRuleService>();
             var employeeObj = GetService<IEmployeeService>();
             var seqObj = GetService<IIRSequenceService>();
+            var commissionSettlementObj = GetService<ICommissionSettlementService>();
 
             var payslips = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines)
                 .Include(x => x.WorkedDaysLines).ToListAsync();
@@ -58,9 +59,12 @@ namespace Infrastructure.Services
                             {
                                 //Lương chính = sum amount worked day lines
                                 case "luong_chinh":
-                                    line.Amount = payslip.WorkedDaysLines.Sum(x => x.Amount) ?? 0;
+                                    line.Amount = Math.Round(payslip.WorkedDaysLines.Sum(x => x.Amount) ?? 0);
                                     break;
                                 case "hoa_hong":
+                                    var hoa_hong = await commissionSettlementObj.SearchQuery(x => x.EmployeeId == payslip.EmployeeId &&
+                                    x.Payment.PaymentDate >= payslip.DateFrom && x.Payment.PaymentDate <= payslip.DateTo).SumAsync(x => x.Amount);
+                                    line.Amount = Math.Round(hoa_hong.Value);
                                     break;
                                 default:
                                     throw new Exception("Not support");
@@ -206,7 +210,7 @@ namespace Infrastructure.Services
                     NumberOfHours = (decimal)item.Value.SoGioCong,
                     WorkEntryTypeId = item.Key,
                     Name = work_entry_type.Name,
-                    Amount = amount
+                    Amount = Math.Round(amount)
                 });
             }
 

@@ -142,7 +142,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     });
   }
 
-  EmployeeValueChange() {
+  EmployeeValueChange(isEmployeeChange = true) {
     let val = {
       employeeId: this.employee.value ? this.employee.value.id : null,
       dateFrom: this.dateFrom.value ? this.intlService.formatDate(this.dateFrom.value, 'yyyy-MM-ddTHH:mm:ss') : null,
@@ -154,7 +154,9 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       this.name.setValue(res.name);
       this.structureType.setValue(res.structureType);
 
-      this.struct.setValue(null);
+      if (isEmployeeChange) {
+        this.struct.setValue(null);
+      }
       this.LoadStructList();
     });
   }

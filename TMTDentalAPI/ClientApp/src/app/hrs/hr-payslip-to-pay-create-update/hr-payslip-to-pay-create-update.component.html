@@ -35,7 +35,7 @@
                         class="btn btn-primary btn-sm" (click)="ComputeSalary()">
                         Tính toán lương
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'done'" accesskey="1" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                    <button type="button" *ngIf="this.state.value !== 'draft'" accesskey="1" class="btn btn-danger btn-sm" (click)="actionCancel()">
                         Hủy phiếu
                     </button>
                 </div>
@@ -68,11 +68,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="this.state.value === 'done'" [data]="listEmployees" [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [class.d-none]="this.state.value !== 'draft'" [data]="listEmployees" [textField]="'name'" [filterable]="true"
                                         (valueChange)="EmployeeValueChange()" #empCbx formControlName="employee"
                                         [valueField]="'id'">
                                     </kendo-combobox>
-                                    <span [class.d-none]="this.state.value !== 'done'">{{this.employee.value ? this.employee.value.name : ''}}</span>
+                                    <span [class.d-none]="this.state.value === 'draft'">{{this.employee.value ? this.employee.value.name : ''}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -82,9 +82,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [class.d-none]="this.state.value === 'done'" (valueChange)="EmployeeValueChange()" formControlName="dateFrom">
+                                    <kendo-datepicker [class.d-none]="this.state.value !== 'draft'" (valueChange)="EmployeeValueChange(false)" formControlName="dateFrom">
                                     </kendo-datepicker>
-                                    <span [class.d-none]="this.state.value !== 'done'">{{this.dateFrom.value | date:'shortDate'}}</span>
+                                    <span [class.d-none]="this.state.value === 'draft'">{{this.dateFrom.value | date:'shortDate'}}</span>
 
                                 </td>
                             </tr>
@@ -95,9 +95,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker  [class.d-none]="this.state.value === 'done'"  (valueChange)="EmployeeValueChange()" formControlName='dateTo'>
+                                    <kendo-datepicker  [class.d-none]="this.state.value !== 'draft'"  (valueChange)="EmployeeValueChange(false)" formControlName='dateTo'>
                                     </kendo-datepicker>
-                                    <span [class.d-none]="this.state.value !== 'done'">{{this.dateTo.value | date:'shortDate'}}</span>
+                                    <span [class.d-none]="this.state.value === 'draft'">{{this.dateTo.value | date:'shortDate'}}</span>
 
                                 </td>
                             </tr>
@@ -123,10 +123,10 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="this.state.value === 'done'" [data]="listStructs" [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [class.d-none]="this.state.value !== 'draft'" [data]="listStructs" [textField]="'name'" [filterable]="true"
                                         formControlName="struct" #structCbx [valueField]="'id'">
                                     </kendo-combobox>
-                                    <span [class.d-none]="this.state.value !== 'done'">{{this.struct.value? this.struct.value.name : ''}}</span>
+                                    <span [class.d-none]="this.state.value === 'draft'">{{this.struct.value? this.struct.value.name : ''}}</span>
 
                                     <!-- <div *ngIf="!listStructs && this.employeeId?.value" class="text-warning">
                                         <div>
@@ -195,24 +195,24 @@
                                     <tr *ngFor="let item of WorkedDay.value">
                                         <td>{{ item.name}}</td>
                                         <td>{{ item.numberOfDays}}</td>
-                                        <td>{{ item.numberOfHours}}</td>
+                                        <td>{{ item.numberOfHours | number}}</td>
                                         <td>{{ item.amount |  number}}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <table class="table table-sm table-striped table-hover">
+                            <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th scope="col">Tên</th>
-                                        <th scope="col">Tổng tiền</th>
+                                        <th scope="col" class="text-right">Tổng tiền</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let item of listLines">
                                         <td>{{ item.name}}</td>
-                                        <td>{{ item.amount | number}}</td>
+                                        <td class="text-right">{{ item.amount | number}}</td>
                                     </tr>
                                 </tbody>
                             </table>

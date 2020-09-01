@@ -116,6 +116,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
         { name: 'Cấu hình chung', link: '/config-settings' },
+        { name: 'Chấm công', link: 'time-keepings' }
       ]
     },
     {

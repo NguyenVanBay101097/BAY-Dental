@@ -89,6 +89,11 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-
+        [HttpGet("[action]")]
+        public IActionResult DefaultGet()
+        {
+            var res = _resourceCalendarService.DefaultAttendanceGet();
+            return Ok(res);
+        }
     }
 }

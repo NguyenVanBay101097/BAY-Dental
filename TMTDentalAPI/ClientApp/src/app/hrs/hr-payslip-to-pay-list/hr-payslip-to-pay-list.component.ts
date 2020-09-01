@@ -31,10 +31,10 @@ export class HrPayslipToPayListComponent implements OnInit {
   loading = false;
   collectionSize = 0;
   StateFilters = [
-    { text: 'tất cả', value: '' },
-    { text: 'bản nháp', value: 'draft' },
-    { text: 'đang xử lý', value: 'process' },
-    { text: 'hoàn thành', value: 'done' }
+    { text: 'Tất cả', value: '' },
+    { text: 'Bản nháp', value: 'draft' },
+    { text: 'Đang xử lý', value: 'process' },
+    { text: 'Hoàn thành', value: 'done' }
   ];
   searchUpdate = new Subject<string>();
   listEmployees: any;

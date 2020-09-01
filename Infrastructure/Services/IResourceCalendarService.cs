@@ -20,5 +20,7 @@ namespace Infrastructure.Services
         Task<ResourceCalendar> CreateResourceCalendar(ResourceCalendarSave val);
 
         Task UpdateResourceCalendar(Guid id, ResourceCalendarSave val);
+
+        public ResourceCalendarDisplay DefaultAttendanceGet();
     }
 }

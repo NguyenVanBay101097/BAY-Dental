@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -164,6 +165,94 @@ namespace Infrastructure.Services
             }
 
         }
+
+        public ResourceCalendarDisplay DefaultAttendanceGet()
+        {
+            var res = new ResourceCalendarDisplay();
+            res.CompanyId = CompanyId;
+            res.HoursPerDay = 8;
+
+            var attendances = new List<ResourceCalendarAttendanceDisplay>()
+            {
+             new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "1",
+                DayPeriod = "morning",
+                HourFrom = 8,
+                HourTo = 12,
+                Name = "Sáng thứ 2"
+            },
+             new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "1",
+                DayPeriod = "afternoon",
+                HourFrom = 13,
+                HourTo = 17,
+                Name = "Chiều thứ 2"
+            },
+
+              new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "2",
+                DayPeriod = "morning",
+                HourFrom = 8,
+                HourTo = 12,
+                Name = "Sáng thứ 3"
+            },
+             new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "2",
+                DayPeriod = "afternoon",
+                HourFrom = 13,
+                HourTo = 17,
+                Name = "Chiều thứ 3"
+            },
+
+              new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "3",
+                DayPeriod = "morning",
+                HourFrom = 8,
+                HourTo = 12,
+                Name = "Sáng thứ 4"
+            },
+             new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "3",
+                DayPeriod = "afternoon",
+                HourFrom = 13,
+                HourTo = 17,
+                Name = "Chiều thứ 4"
+            },
+
+              new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "4",
+                DayPeriod = "morning",
+                HourFrom = 8,
+                HourTo = 12,
+                Name = "Sáng thứ 5"
+            },
+             new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "4",
+                DayPeriod = "afternoon",
+                HourFrom = 13,
+                HourTo = 17,
+                Name = "Chiều thứ 5"
+            },
+
+              new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "5",
+                DayPeriod = "morning",
+                HourFrom = 8,
+                HourTo = 12,
+                Name = "Sáng thứ 6"
+            },
+             new ResourceCalendarAttendanceDisplay() {
+                DayOfWeek = "5",
+                DayPeriod = "afternoon",
+                HourFrom = 13,
+                HourTo = 17,
+                Name = "Chiều thứ 6"
+            },
+            };
+
+            res.Attendances = attendances;
+            return res;
+        }
     }
 
     public class AttendanceInterval
@@ -180,4 +269,5 @@ namespace Infrastructure.Services
         public double SoNgayCong { get; set; }
         public double SoGioCong { get; set; }
     }
+
 }
