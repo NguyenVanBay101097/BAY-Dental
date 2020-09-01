@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
 using OfficeOpenXml;
+using OfficeOpenXml.ConditionalFormatting;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using RestSharp.Extensions;
 using System;
@@ -603,36 +604,27 @@ namespace Infrastructure.Services
         {
             foreach (var val in vals)
             {
-                if (val == null)
-                    throw new Exception("Input null");
-                else
+                if (!val.TimeIn.HasValue)
                 {
-                    if (!val.TimeIn.HasValue)
-                    {
-                        throw new Exception("Thời gian vào không được phép để trống !!!");
-                    }
-
-                    if (val.TimeIn > val.TimeOut)
-                    {
-                        throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
-                    }
-
-                    var ccFirst = new ChamCong();
-                    var query = SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn.Value.Date == val.TimeIn.Value.Date);
-                    if (query.Any())
-                    {
-                        ccFirst = await query.OrderBy(x => x.DateCreated).LastOrDefaultAsync();
-                    }
-                    else { ccFirst = null; }
-
-                    if (ccFirst != null && val.Id != ccFirst.Id && !ccFirst.TimeOut.HasValue)
-                    {
-                        throw new Exception("Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại !");
-                    }
-                    if (ccFirst != null && val.Id != ccFirst.Id && val.TimeIn < ccFirst.TimeOut)
-                    {
-                        throw new Exception("Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó");
-                    }
+                    throw new Exception("Thời gian vào không được phép để trống !!!");
+                }
+                if (val.TimeIn > val.TimeOut)
+                {
+                    throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
+                }
+                var ccLast = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn.Value.Date == val.TimeIn.Value.Date && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                if (!val.TimeOut.HasValue)
+                {
+                    if (ccLast != null && !ccLast.TimeOut.HasValue)
+                        throw new Exception("Không thể tạo hai chấm công mà time-out đều trống.");
+                }
+                if (ccLast != null && !ccLast.TimeOut.HasValue)
+                {
+                    throw new Exception("Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại !");
+                }
+                if (ccLast != null && ccLast.TimeOut.HasValue && val.TimeIn < ccLast.TimeOut)
+                {
+                    throw new Exception("Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó");
                 }
             }
         }
@@ -640,7 +632,8 @@ namespace Infrastructure.Services
         public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
         {
             await CheckChamCong(entities);
-            return await base.CreateAsync(entities);
+            await base.CreateAsync(entities);
+            return entities;
         }
 
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)

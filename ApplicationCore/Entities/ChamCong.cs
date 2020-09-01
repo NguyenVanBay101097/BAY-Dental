@@ -10,10 +10,12 @@ namespace ApplicationCore.Entities
     public class ChamCong : BaseEntity
     {
         public Guid EmployeeId { get; set; }
+
         /// <summary>
         /// nhân viên
         /// </summary>
         public Employee Employee { get; set; }
+
         /// <summary>
         /// thời gian checkin
         /// </summary>
