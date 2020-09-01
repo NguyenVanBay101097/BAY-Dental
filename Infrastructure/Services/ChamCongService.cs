@@ -603,32 +603,38 @@ namespace Infrastructure.Services
 
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
         {
+            var empObj = GetService<IEmployeeService>();
             foreach (var val in vals)
             {
-                // Thời gian vào không được trống
-                if (!val.TimeIn.HasValue)
-                    throw new Exception("Thời gian vào không được phép để trống !!!");
-                // Thời giân vào không được lớn hơn thời gian ra 
 
+                var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                // Thời gian vào không được trống
+                var message = $"không thể tạo chấm công cho nhân viên {emp.Name}";
+                if (!val.TimeIn.HasValue)
+                    throw new Exception($"{message} vì thời gian vào không được bỏ trống.");
+
+                // Thời giân vào không được lớn hơn thời gian ra 
                 if (val.TimeOut.HasValue && val.TimeIn > val.TimeOut)
-                    throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
+                    throw new Exception($"{message} vì thời gian vào {val.TimeIn.Value:HH:mm} phải nhỏ hơn thời gian ra {val.TimeOut.Value:HH:mm} trong ngày {val.TimeIn.Value.ToShortDateString()}");
 
                 // Khoảng thời gian của các chấm công không được trùng lên nhau
                 var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                 if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
-                    throw new Exception("Chấm công bạn tạo bị đè thời gian lên chấm công trước đó");
+                    throw new Exception($"{message} vì thời gian vào của chấm công bạn tạo phải lớn hơn thời gian ra của chấm công trước đó trong ngày {cc_truoc.TimeIn.Value.ToShortDateString()}");
 
                 if (val.TimeOut.HasValue)
                 {
                     var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                     if (cc_sau != null && cc_sau != cc_truoc)
-                        throw new Exception("Chấm công bạn tạo nằm trong khoảng thời gian của 1 chấm cống sau đó");
+                        throw new Exception($"{message}  vì thời gian ra của chấm công bạn tạo phải nhỏ hơn thời gian vào của chấm công sau đó trong ngày {cc_truoc.TimeIn.Value.ToShortDateString()}");
                 }
-                
-                // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
-                var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
-                if (cc != null)
-                    throw new Exception("Có chấm công nào đó của nhân viên chưa hoàn thành (chưa chấm ra)");
+                else
+                {
+                    // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
+                    var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
+                    if (cc != null)
+                        throw new Exception($"{message} vì nhân viên này chưa hoàn thành chấm công ra vào ngày {cc.TimeIn.Value.ToShortDateString()}");
+                }
             }
         }
 
@@ -636,7 +642,6 @@ namespace Infrastructure.Services
         {
             await base.CreateAsync(entities);
             await CheckChamCong(entities);
-
             return entities;
         }
 
@@ -644,7 +649,6 @@ namespace Infrastructure.Services
         {
             await base.UpdateAsync(entities);
             await CheckChamCong(entities);
-
         }
     }
 }
