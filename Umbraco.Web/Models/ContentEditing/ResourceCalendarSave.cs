@@ -9,5 +9,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public decimal? HoursPerDay { get; set; }
         public IList<ResourceCalendarAttendanceSave> Attendances { get; set; } = new List<ResourceCalendarAttendanceSave>();
+        public Guid? CompanyId { get; set; }
     }
 }

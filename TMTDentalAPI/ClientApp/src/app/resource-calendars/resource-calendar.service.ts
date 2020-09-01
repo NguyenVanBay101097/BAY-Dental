@@ -130,7 +130,7 @@ export class ResourceCalendarService {
     return this.http.post(this.base_api + this.apiUrlAttendance + '/SetSequence', vals);
   }
 
-  DefaultGet() {
+  defaultGet() {
     return this.http.get(this.base_api + this.apiUrl + '/DefaultGet');
   }
 }

@@ -114,7 +114,6 @@ namespace Infrastructure.Services
         public async Task<ResourceCalendar> CreateResourceCalendar(ResourceCalendarSave val)
         {
             var resourceCalendar = _mapper.Map<ResourceCalendar>(val);
-            resourceCalendar.CompanyId = CompanyId;
 
             SaveAttendances(val, resourceCalendar);
 
@@ -148,10 +147,6 @@ namespace Infrastructure.Services
                 resourceCalendar.Attendances.Remove(line);
             }
 
-            int sequence = 0;
-            foreach (var line in val.Attendances)
-                line.Sequence = sequence++;
-
             foreach (var line in val.Attendances)
             {
                 if (line.Id == Guid.Empty)
@@ -166,7 +161,7 @@ namespace Infrastructure.Services
 
         }
 
-        public ResourceCalendarDisplay DefaultAttendanceGet()
+        public ResourceCalendarDisplay DefaultGet()
         {
             var res = new ResourceCalendarDisplay();
             res.CompanyId = CompanyId;

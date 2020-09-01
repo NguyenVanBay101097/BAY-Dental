@@ -11,6 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
             DayPeriod = "morning";
         }
         public Guid Id { get; set; }
+
         public string Name { get; set; }
 
         /// <summary>
@@ -36,16 +37,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public double HourTo { get; set; }
 
-
-
-        public Guid? CalendarId { get; set; }
-
         /// <summary>
         /// default='morning'
         /// ('morning', 'Morning'), ('afternoon', 'Afternoon')
         /// </summary>
         public string DayPeriod { get; set; }
-
-        public int Sequence { get; set; }
     }
 }

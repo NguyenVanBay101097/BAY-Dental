@@ -137,7 +137,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
 
   ShowStructTypeCreateModal() {
     let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Loại cấu trúc lương';
+    modalRef.componentInstance.title = 'Thêm: Loại mẫu lương';
     modalRef.result.then((entity) => {
       this.payrollForm.get('type').setValue(entity);
       this.LoadListType();

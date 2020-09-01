@@ -44,10 +44,19 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
       name: [null, Validators.required],
       hoursPerDay: ['', Validators.required],
       attendances: this.fb.array([]),
+      companyId: null
     });
 
     this.activeRoute.queryParamMap.subscribe((params: ParamMap) => {
       this.id = params.get('id');
+      
+      this.formGroup = this.fb.group({
+        name: [null, Validators.required],
+        hoursPerDay: ['', Validators.required],
+        attendances: this.fb.array([]),
+        companyId: null
+      });
+
       this.loadData();
     });
   }
@@ -89,8 +98,9 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
           });
         });
     } else {
-      this.resourceCalendarService.DefaultGet().subscribe((res: any) => {
+      this.resourceCalendarService.defaultGet().subscribe((res: any) => {
         this.formGroup.get('hoursPerDay').setValue(res.hoursPerDay);
+        this.formGroup.get('companyId').setValue(res.companyId);
         res.attendances.forEach(line => {
           this.attendances.push(this.fb.group({
             id: line.id,
@@ -101,7 +111,6 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
             hourTo: new Date(`${this.today.getFullYear()}-${this.today.getMonth()}-
             ${this.today.getDate()} ${this.NumberToTime(line.hourTo)}`),
             dayPeriod: line.dayPeriod,
-            calendarId: line.calendarId,
           }));
         });
       });
@@ -202,10 +211,5 @@ export class ResourceCalendarCreateUpdateComponent implements OnInit {
 
   createNew() {
     this.router.navigate(['/resource-calendars/form']);
-    this.formGroup = this.fb.group({
-      name: ['', Validators.required],
-      hoursPerDay: ['', Validators.required],
-      attendances: this.fb.array([])
-    });
   }
 }

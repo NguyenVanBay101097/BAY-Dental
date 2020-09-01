@@ -81,7 +81,7 @@ export class HrPayrollStructureListComponent implements OnInit {
 
   deleteItem(dataitem) {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa cấu trúc lương: ' + dataitem.name;
+    modalRef.componentInstance.title = 'Xóa mẫu lương: ' + dataitem.name;
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.HrPayrollStructureService.delete(dataitem.id).subscribe(res => {
