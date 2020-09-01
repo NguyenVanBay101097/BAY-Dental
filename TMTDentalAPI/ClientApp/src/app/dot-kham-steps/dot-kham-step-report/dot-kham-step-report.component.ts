@@ -11,6 +11,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 
 @Component({
   selector: 'app-dot-kham-step-report',
@@ -30,7 +32,7 @@ export class DotKhamStepReportComponent implements OnInit {
   limit = 20;
   skip = 0;
   dateFrom: Date;
-  userSimpleFilter: UserSimple[] = [];
+  userSimpleFilter: EmployeeBasic[] = [];
   partnerSimpleFilter: PartnerSimple[] = [];
   formGroup: FormGroup;
   dateTo: Date;
@@ -44,7 +46,8 @@ export class DotKhamStepReportComponent implements OnInit {
     private fb: FormBuilder,
     private intl: IntlService,
     private partnerService: PartnerService,
-    private userService: UserService
+    private userService: UserService,
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -83,7 +86,7 @@ export class DotKhamStepReportComponent implements OnInit {
       switchMap(val => this.searchUsers(val.toString().toLowerCase()))
     ).subscribe(
       rs => {
-        this.userSimpleFilter = rs;
+        this.userSimpleFilter = rs.items;
         this.userCbx.loading = false;
       }
     )
@@ -100,7 +103,7 @@ export class DotKhamStepReportComponent implements OnInit {
   loadUser() {
     this.searchUsers().subscribe(
       result => {
-        this.userSimpleFilter = result;
+        this.userSimpleFilter = result.items;
       }
     );
   }
@@ -116,11 +119,13 @@ export class DotKhamStepReportComponent implements OnInit {
   }
 
   searchUsers(search?) {
-    var userPaged = new UserPaged();
+    var userPaged = new EmployeePaged();
     if (search) {
       userPaged.search = search.toLowerCase();
     }
-    return this.userService.autocompleteSimple(userPaged);
+    userPaged.isDoctor = true;
+
+    return this.employeeService.getEmployeePaged(userPaged);
   }
 
   loadData() {
@@ -128,9 +133,8 @@ export class DotKhamStepReportComponent implements OnInit {
     val.search = this.search ? this.search : '';
     val.limit = this.limit;
     val.offset = this.skip;
-    val.userId = this.userId ? this.userId : '';
-    if (this.partnerId)
-      val.partnerId = this.partnerId;
+    val.doctorId = this.userId ? this.userId : '';
+    val.partnerId = this.partnerId || '';
     if (this.dateFrom && this.dateTo) {
       val.dateFrom = this.intl.formatDate(this.dateFrom, "yyyy-MM-ddTHH:mm");
       val.dateTo = this.intl.formatDate(this.dateTo, "yyyy-MM-ddT23:59");

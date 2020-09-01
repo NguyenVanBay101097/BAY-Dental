@@ -40,6 +40,13 @@ namespace Infrastructure.Services
             }
         }
 
+
+        protected T GetService<T>()
+        {
+            return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+        }
+
+
         public async Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val)
         {
             var companyId = CompanyId;
@@ -94,13 +101,19 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleReportItem>> GetReport(SaleReportSearch val)
         {
             //thời gian, tiền thực thu, doanh thu, còn nợ
-            var companyId = CompanyId;
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+
+            var query = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
                 query = query.Where(x => x.Date >= dateFrom);
             }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
@@ -138,27 +151,29 @@ namespace Infrastructure.Services
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
                       GroupBy = val.GroupBy,
-                      IsQuotation = val.IsQuotation
+                      IsQuotation = val.IsQuotation,
+                      CompanyId = val.CompanyId
                   }).ToListAsync();
                 return result;
             }
-            if (val.GroupBy == "user")
+            if (val.GroupBy == "employee")
             {
                 if (!string.IsNullOrEmpty(val.Search))
-                    query = query.Where(x => x.User.Name.Contains(val.Search));
+                    query = query.Where(x => x.Employee.Name.Contains(val.Search));
 
                 var result = await query.GroupBy(x => new {
-                    UserId = x.UserId,
-                    UserName = x.User.Name
+                    EmployeeId = x.EmployeeId,
+                    EmployeeName = x.Employee.Name
                 })
                   .Select(x => new SaleReportItem
                   {
-                      UserId = x.Key.UserId,
-                      Name = x.Key.UserName,
+                      EmployeeId = x.Key.EmployeeId,
+                      Name = x.Key.EmployeeName,
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
                       GroupBy = val.GroupBy,
-                      IsQuotation = val.IsQuotation
+                      IsQuotation = val.IsQuotation,
+                      CompanyId = val.CompanyId
                   }).ToListAsync();
                 return result;
             }
@@ -179,7 +194,8 @@ namespace Infrastructure.Services
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
                       GroupBy = val.GroupBy,
-                      IsQuotation = val.IsQuotation
+                      IsQuotation = val.IsQuotation,
+                      CompanyId = val.CompanyId
                   }).ToListAsync();
                 return result;
             }
@@ -196,7 +212,8 @@ namespace Infrastructure.Services
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
                       GroupBy = val.GroupBy,
-                      IsQuotation = val.IsQuotation
+                      IsQuotation = val.IsQuotation,
+                      CompanyId = val.CompanyId
                   }).ToListAsync();
                 foreach (var item in result)
                 {
@@ -217,7 +234,8 @@ namespace Infrastructure.Services
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
                       GroupBy = val.GroupBy,
-                      IsQuotation = val.IsQuotation
+                      IsQuotation = val.IsQuotation,
+                      CompanyId = val.CompanyId
                   }).ToListAsync();
                 foreach (var item in result)
                 {
@@ -239,7 +257,8 @@ namespace Infrastructure.Services
                       ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                       PriceTotal = x.Sum(s => s.PriceTotal),
                       GroupBy = val.GroupBy,
-                      IsQuotation = val.IsQuotation
+                      IsQuotation = val.IsQuotation,
+                      CompanyId = val.CompanyId
                   }).ToList();
                 foreach (var item in result)
                 {
@@ -261,7 +280,8 @@ namespace Infrastructure.Services
                        ProductUOMQty = x.Sum(s => s.ProductUOMQty),
                        PriceTotal = x.Sum(s => s.PriceTotal),
                        GroupBy = val.GroupBy,
-                       IsQuotation = val.IsQuotation
+                       IsQuotation = val.IsQuotation,
+                       CompanyId = val.CompanyId
                    }).ToListAsync();
                 foreach (var item in result)
                 {
@@ -283,8 +303,14 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val)
         {
-            var companyId = CompanyId;
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+
+            var query = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
@@ -312,8 +338,8 @@ namespace Infrastructure.Services
 
             if (val.GroupBy == "customer")
                 query = query.Where(x => x.PartnerId == val.PartnerId);
-            else if (val.GroupBy == "user")
-                query = query.Where(x => x.UserId == val.UserId);
+            else if (val.GroupBy == "employee")
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
             else if (val.GroupBy == "product")
                 query = query.Where(x => x.ProductId == val.ProductId);
             else if (val.GroupBy == "date" || val.GroupBy == "date:month")

@@ -25,13 +25,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Nhân viên
         /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        public Guid? DoctorId { get; set; }
+        public EmployeeBasic Doctor { get; set; }
 
         public string Note { get; set; }
 
-        public string AssistantUserId { get; set; }
-        public ApplicationUserBasic AssistantUser { get; set; }
+        public Guid? AssistantId { get; set; }
+        public EmployeeBasic Assistant { get; set; }
 
         /// <summary>
         /// Ngày khám
@@ -73,14 +73,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
 
-        public string AssistantUserId { get; set; }
-        public ApplicationUserSimple AssistantUser { get; set; }
+        public Guid? DoctorId { get; set; }
+        public EmployeeBasic Doctor { get; set; }
 
-        /// <summary>
-        /// Người dùng
-        /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        public Guid? AssistantId { get; set; }
+        public EmployeeBasic Assistant { get; set; }
 
         public string Note { get; set; }
 
@@ -97,8 +94,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
+    }
 
-        public IEnumerable<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
+    public class DotKhamSave
+    {
+        public DotKhamSave()
+        {
+            Date = DateTime.Now;
+        }
+
+        public Guid? AssistantId { get; set; }
+
+        public Guid? DoctorId { get; set; }
+
+        public string Note { get; set; }
+
+        /// <summary>
+        /// Ngày khám
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        public Guid? SaleOrderId { get; set; }
+
+        public Guid CompanyId { get; set; }
     }
 
     public class DotKhamDefaultGet

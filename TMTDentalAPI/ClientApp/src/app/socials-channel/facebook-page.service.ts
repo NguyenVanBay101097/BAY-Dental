@@ -49,4 +49,8 @@ export class FacebookPageService {
     syncUsers(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SyncUsers', ids);
     }
+
+    refreshPage(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/RefreshSocialChannel', val);
+    }
 }

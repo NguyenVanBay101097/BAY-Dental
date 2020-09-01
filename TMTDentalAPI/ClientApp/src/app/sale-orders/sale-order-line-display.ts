@@ -12,6 +12,8 @@ export class SaleOrderLineDisplay {
     state: string;
     qtyInvoiced: number;
     orderId: string;
-  Order: SaleOrderBasic;
+    Order: SaleOrderBasic;
+    amountPaid:number;
+    amountResidual:number;
     id?: string;
 }

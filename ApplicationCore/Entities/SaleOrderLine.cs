@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Chi tiết bán dịch vụ
     /// </summary>
-    public class SaleOrderLine: BaseEntity
+    public class SaleOrderLine : BaseEntity
     {
         public SaleOrderLine()
         {
@@ -139,6 +139,37 @@ namespace ApplicationCore.Entities
 
         public decimal? PriceReduce { get; set; }
 
+        /// <summary>
+        /// Số tiền đã thanh toán
+        /// </summary>
+        public decimal? AmountPaid { get; set; }
+
+        /// <summary>
+        /// Tiền còn nợ
+        /// </summary>
+        public decimal? AmountResidual { get; set; }
+
+        /// <summary>
+        /// bác sĩ được hưởng hoa hồng
+        /// </summary>
+        //public Guid? PartnerCommissionId { get; set; }
+        //public SaleOrderLinePartnerCommission PartnerCommission { get; set; }
+
+        public ICollection<SaleOrderLinePartnerCommission> PartnerCommissions { get; set; } = new List<SaleOrderLinePartnerCommission>();
+
         public ICollection<SaleOrderLineInvoice2Rel> SaleOrderLineInvoice2Rels { get; set; } = new List<SaleOrderLineInvoice2Rel>();
+
+        public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
+
+        /// <summary>
+        /// Xác định line bị hủy bỏ
+        /// </summary>
+        public bool IsCancelled { get; set; }
+
+        /// <summary>
+        /// Bac si/phu ta
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
     }
 }

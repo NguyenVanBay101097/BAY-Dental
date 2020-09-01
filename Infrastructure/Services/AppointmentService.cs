@@ -124,22 +124,23 @@ namespace Infrastructure.Services
         {
             var res = new AppointmentDisplay();
             res.CompanyId = CompanyId;
-            res.UserId = UserId;
 
             if (val.DotKhamId.HasValue)
             {
                 var dkObj = GetService<IDotKhamService>();
                 var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner)
-                    .Include(x => x.Doctor).Include(x => x.User).FirstOrDefaultAsync();
+                    .Include(x => x.Doctor).FirstOrDefaultAsync();
+
                 res.DotKhamId = dk.Id;
                 if (dk.PartnerId.HasValue)
                     res.PartnerId = dk.PartnerId.Value;
                 if (dk.Partner != null)
                     res.Partner = _mapper.Map<PartnerSimple>(dk.Partner);
-                if (dk.User != null)
+
+                if (dk.Doctor != null)
                 {
-                    res.UserId = dk.User.Id;
-                    res.User = _mapper.Map<ApplicationUserSimple>(dk.User);
+                    res.DoctorId = dk.Doctor.Id;
+                    res.Doctor = _mapper.Map<EmployeeSimple>(dk.Doctor);
                 }
             }
 

@@ -1226,48 +1226,6 @@ span.char-count {
     color: #ffc107!important;
 }
 
-.treatment-payment {
-    margin-top: 1px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: stretch;
-    padding: 15px;
-    justify-content: space-between;
-    background-color: white;
-    padding-left: 1.5625%;
-    padding-right: 1.5625%;
-    box-sizing: border-box;
-    min-width: 980px;
-    display: flex;
-    flex-flow: column;
-    height: auto;
-}
-
-.o_cp_controller {
-    width: 100%;
-}
-
-.o_content {
-    max-width: 100%;
-}
-
-.treatment-payment-info {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.GAL03TOCBKB {
-    margin-left: 10px;
-    white-space: nowrap;
-    text-transform: capitalize;
-    font-weight: 300;
-    font-size: 16px;
-    margin-top: 5px;
-    margin-bottom: -15px;
-}
 
 .GAL03TOCDKB {
     margin-left: 10px;

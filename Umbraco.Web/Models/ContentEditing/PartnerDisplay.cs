@@ -114,6 +114,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public ApplicationUserSimple ReferralUser { get; set; }
 
         /// <summary>
+        /// Danh xưng
+        /// </summary>
+        public Guid? TitleId { get; set; }
+        public PartnerTitleBasic Title { get; set; }
+
+        /// <summary>
         /// Ghi chú khi nguồn là 'Khác'
         /// </summary>
         public string Note { get; set; }

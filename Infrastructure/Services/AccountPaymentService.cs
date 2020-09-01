@@ -34,12 +34,14 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.AccountMovePaymentRels)
                 .Include(x => x.SaleOrderPaymentRels)
+                .Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
                 .Include(x => x.Journal).Include(x => x.Journal.DefaultCreditAccount)
                 .Include(x => x.Journal.DefaultDebitAccount).ToListAsync();
 
             var seqObj = GetService<IIRSequenceService>();
             var moveObj = GetService<IAccountMoveService>();
+            var settlementObj = GetService<ICommissionSettlementService>();
 
             foreach (var rec in self)
             {
@@ -95,6 +97,16 @@ namespace Infrastructure.Services
                 rec.State = "posted";
                 await UpdateAsync(rec);
 
+                if (rec.SaleOrderLinePaymentRels.Any())
+                {
+                    //với mỗi dòng thanh toán trên sale order line sẽ ghi nhận hoa hồng và cập nhật số tiền đã thanh toán
+                    var saleLineObj = GetService<ISaleOrderLineService>();
+                    var saleLineIds = rec.SaleOrderLinePaymentRels.Select(x => x.SaleOrderLineId).ToList();
+                    await saleLineObj._ComputePaidResidual(saleLineIds);
+
+                    await CreateSettlements(rec);
+                }
+
                 if (rec.PaymentType == "inbound" || rec.PaymentType == "outbound")
                 {
                     if (rec.AccountMovePaymentRels.Any())
@@ -136,6 +148,36 @@ namespace Infrastructure.Services
                     }
                 }
             }
+        }
+
+        public async Task CreateSettlements(AccountPayment self)
+        {
+            var settlements = new List<CommissionSettlement>();
+            var rels = self.SaleOrderLinePaymentRels;
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var settlementObj = GetService<ICommissionSettlementService>();
+            foreach (var rel in rels)
+            {
+                SaleOrderLine saleLine = await saleLineObj.SearchQuery(x => x.Id == rel.SaleOrderLineId)
+                    .Include(x => x.PartnerCommissions).FirstOrDefaultAsync();
+
+                foreach (var agent in saleLine.PartnerCommissions)
+                {
+                    var settlement = new CommissionSettlement
+                    {
+                        SaleOrderLineId = agent.SaleOrderLineId,
+                        PaymentId = self.Id,
+                        EmployeeId = agent.EmployeeId,
+                        BaseAmount = (rel.AmountPrepaid ?? 0),
+                        Percentage = agent.Percentage,
+                        Amount = Math.Round((rel.AmountPrepaid ?? 0) * (agent.Percentage ?? 0) / 100) 
+                    };
+
+                    settlements.Add(settlement);
+                }
+            }
+
+            await settlementObj.CreateAsync(settlements);
         }
 
         private async Task _AutoReconcile(AccountPayment self, IEnumerable<AccountMove> invoices = null)
@@ -278,7 +320,7 @@ namespace Infrastructure.Services
             return all_move_vals;
         }
 
-       
+
 
         private async Task<AccountMove> _GetMoveVals(AccountPayment rec, AccountJournal journal = null)
         {
@@ -512,6 +554,17 @@ namespace Infrastructure.Services
 
             var total_amount = orders.Sum(x => x.Residual);
 
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var paymentRels = await saleLineObj.SearchQuery(x => saleOrderIds.Contains(x.OrderId))
+                .Select(x => new SaleOrderLinePaymentRelDisplay
+                {
+                    SaleOrderLineId = x.Id,
+                    AmountPaid = x.AmountPaid,
+                    AmountResidual = x.AmountResidual,
+                    Name = x.Name,
+                    PriceTotal = x.PriceTotal
+                }).ToListAsync();
+
             var communication = string.Join(", ", orders.Select(x => x.Name));
             var rec = new AccountRegisterPaymentDisplay
             {
@@ -519,8 +572,9 @@ namespace Infrastructure.Services
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
                 PartnerId = orders[0].PartnerId,
                 PartnerType = "customer",
-                Communication = communication,
-                SaleOrderIds = saleOrderIds
+                //Communication = communication,
+                SaleOrderIds = saleOrderIds,
+                SaleOrderLinePaymentRels = paymentRels
             };
 
             return rec;
@@ -543,7 +597,7 @@ namespace Infrastructure.Services
             if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
                 throw new Exception("You can only register payments for open invoices");
             var dtype = invoices[0].Type;
-            foreach(var inv in invoices.Skip(1))
+            foreach (var inv in invoices.Skip(1))
             {
                 if (inv.Type != dtype)
                 {
@@ -645,10 +699,11 @@ namespace Infrastructure.Services
         public async Task<AccountPayment> CreateUI(AccountPaymentSave val)
         {
             var payment = _mapper.Map<AccountPayment>(val);
-
             var journalObj = GetService<IAccountJournalService>();
             var journal = await journalObj.GetByIdAsync(payment.JournalId);
+
             payment.CompanyId = journal.CompanyId;
+
 
             foreach (var invoice_id in val.InvoiceIds)
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
@@ -659,7 +714,51 @@ namespace Infrastructure.Services
             foreach (var order_id in val.ServiceCardOrderIds)
                 payment.CardOrderPaymentRels.Add(new ServiceCardOrderPaymentRel { CardOrderId = order_id });
 
-            return await CreateAsync(payment);
+            foreach (var rel in val.SaleOrderLinePaymentRels)
+                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = rel.SaleOrderLineId, AmountPrepaid = rel.AmountPrepaid });
+
+            await CreateAsync(payment);
+
+            return payment;
+        }
+
+        /// <summary>
+        /// kiểm tra số tiền thanh toán trước khi tạo
+        /// </summary>
+        /// <param name="payment"></param>
+        /// <returns></returns>
+        public override async Task<AccountPayment> CreateAsync(AccountPayment payment)
+        {
+            if (payment.SaleOrderLinePaymentRels.Any())
+            {
+                if (payment.Amount != payment.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid))
+                    throw new Exception("Số tiền thanh toán phải bằng với tổng tiền thanh toán trên từng dịch vụ");
+
+                //remove những line amount prepaid = 0
+                var remove_lines = payment.SaleOrderLinePaymentRels.Where(x => x.AmountPrepaid == 0).ToList();
+                foreach(var line in remove_lines)
+                    payment.SaleOrderLinePaymentRels.Remove(line);
+            }
+
+            await base.CreateAsync(payment);
+            return payment;
+        }
+
+
+        public async Task _ComputeSaleOrderLines(Guid saleOrderId)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orderlineObj = GetService<ISaleOrderLineService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
+            foreach (var line in order.OrderLines)
+            {
+                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft").SumAsync(x => x.AmountPrepaid.Value);
+                line.AmountPaid = amountPaid;
+                line.AmountResidual = line.PriceSubTotal - amountPaid;
+            }
+
+            await orderlineObj.UpdateAsync(order.OrderLines);
         }
 
         public IDictionary<string, string> MAP_INVOICE_TYPE_PARTNER_TYPE
@@ -888,15 +987,21 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AccountPayment>> ActionDraft(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).Include(x => x.SaleOrderPaymentRels).Include(x => x.SaleOrderLinePaymentRels).ToListAsync();
             var moveObj = GetService<IAccountMoveService>();
             var move_ids = self.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
             var moves = await moveObj.ButtonDraft(move_ids);
 
             await moveObj.Unlink(move_ids);
 
+
             foreach (var rec in self)
+            {
+
+
                 rec.State = "draft";
+            }
+
             await UpdateAsync(self);
             return self;
         }
@@ -930,14 +1035,20 @@ namespace Infrastructure.Services
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
+            var settlementObj = GetService<ICommissionSettlementService>();
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
             foreach (var rec in self)
-            {
+
                 if (rec.MoveLines.Any())
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
-            }
+
+            await settlementObj.Unlink(ids);
 
             await DeleteAsync(self);
+
+            ///update saleorderline
+            foreach (var rec in self)
+                await _ComputeSaleOrderLines(rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).First());
         }
 
         public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)
@@ -1068,4 +1179,6 @@ namespace Infrastructure.Services
         }
 
     }
+
+
 }

@@ -11,6 +11,13 @@ namespace Umbraco.Web.Models.Webhooks
         [JsonProperty("app_id")]
         public string AppId { get; set; }
 
+        /// <summary>
+        /// Social API
+        /// </summary>
+        [JsonProperty("user_id_by_app")]
+        public string UserId { get; set; }
+
+
         [JsonProperty("sender")]
         public ZaloSender Sender { get; set; }
 
@@ -50,9 +57,17 @@ namespace Umbraco.Web.Models.Webhooks
 
     public class ZaloMessage
     {
+        [JsonProperty("msg_id")]
+        public string Mgsid { get; set; }
+
         [JsonProperty("msg_ids")]
-        public IEnumerable<string> ids { get; set; }
+        public IEnumerable<string> mgsIds { get; set; }
     }
+
+   
+
+
+
 
 
 }

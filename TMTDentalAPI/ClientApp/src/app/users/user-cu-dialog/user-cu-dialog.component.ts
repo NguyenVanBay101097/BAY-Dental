@@ -7,6 +7,8 @@ import { CompanyBasic, CompanySimple, CompanyService, CompanyPaged } from 'src/a
 import * as _ from 'lodash';
 import { ResGroupBasic, ResGroupService, ResGroupPaged } from 'src/app/res-groups/res-group.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -18,13 +20,14 @@ export class UserCuDialogComponent implements OnInit {
   userForm: FormGroup;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
 
+  listEmployees: EmployeeSimple[] = [];
   listCompanies: CompanyBasic[] = [];
   listGroups: ResGroupBasic[] = [];
 
   title: string;
   constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal,
     private companyService: CompanyService, private resGroupService: ResGroupService,
-    private showErrorService: AppSharedShowErrorService) {
+    private showErrorService: AppSharedShowErrorService, private employeeService: EmployeeService) {
   }
 
   ngOnInit() {
@@ -38,7 +41,9 @@ export class UserCuDialogComponent implements OnInit {
       companies: [[]],
       avatar: null,
       groups: [[]],
-      phoneNumber: null
+      phoneNumber: null,
+      employeeId: null,
+      employee: null
     });
 
     setTimeout(() => {
@@ -70,6 +75,7 @@ export class UserCuDialogComponent implements OnInit {
         });
       }
 
+      this.loadListEmployees();
       this.loadListCompanies();
       this.loadListGroups();
     });
@@ -78,6 +84,14 @@ export class UserCuDialogComponent implements OnInit {
   onAvatarUploaded(data: any) {
     var fileUrl = data ? data.fileUrl : null;
     this.userForm.get('avatar').setValue(fileUrl);
+  }
+
+  loadListEmployees() {
+    var val = new EmployeePaged();
+    val.isDoctor = true;
+    this.employeeService.getEmployeePaged(val).subscribe(result => {
+      this.listEmployees = _.unionBy(this.listEmployees, result.items, 'id');
+    });
   }
 
   loadListCompanies() {
@@ -134,6 +148,7 @@ export class UserCuDialogComponent implements OnInit {
 
   getBodyData() {
     var data = this.userForm.value;
+    data.employeeId = data.employee ? data.employee.id : null;
     data.companyId = data.company.id;
     return data;
   }

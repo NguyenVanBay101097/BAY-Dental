@@ -1,0 +1,24 @@
+
+
+.plugin-textarea li {
+    cursor: pointer;
+}
+
+.plugin-textarea li:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.plugin-textarea{
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 3;
+    padding: 2px 15px 4px;
+    background-color: rgba(7,7,7,0);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.something{
+    min-width: 100px;
+}

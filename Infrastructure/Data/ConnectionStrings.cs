@@ -9,5 +9,6 @@ namespace Infrastructure.Data
         public string CatalogConnection { get; set; }
 
         public string TenantConnection { get; set; }
+
     }
 }

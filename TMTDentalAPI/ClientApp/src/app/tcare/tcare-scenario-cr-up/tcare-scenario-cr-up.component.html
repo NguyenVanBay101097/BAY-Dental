@@ -1,0 +1,82 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/tcare/scenarios">{{title}}</a>
+            </li>
+            <li class="active">
+                <span *ngIf="scenario">{{scenario.name}}</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <!-- <button type="button" accesskey="s" [disabled]="campaign.state=='running'"
+                        class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu</button> -->
+                    <button type="button" accesskey="s" class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên kịch bản</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submitted)">
+                        <label *ngIf="nameControl.errors.required">Nhập tên kịch bản</label>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <button type="button" (click)="addCampaign()" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Thêm chiến dịch
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div>
+                            <ul class="list-group">
+                                <li *ngFor="let item of scenario.campaigns" class="list-group-item" [class.list-group-item-secondary]="campaign == item" (click)="editCampaign(item)">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="mb-1">{{item.name}}</h5>
+                                            <small class="text-muted">Chạy lúc {{item.sheduleStart | date: 'HH:mm'}} mỗi ngày</small>
+                                        </div>
+                                        <div class="d-flex">
+                                            <span>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" [id]="'customSwitch' + item.id" (change)="changeCheckedCampaign($event,item)" [checked]="item.active">
+                                                    <label class="custom-control-label" [for]="'customSwitch' + item.id"></label>
+                                                </div>
+                                            </span>
+                                            <a (click)="removeCampaign(item)">
+                                                <i class="far fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <app-tcare-campaign-create-update *ngIf="campaign" (actionNext)="actionNext($event)" [campaign]="campaign">
+                        </app-tcare-campaign-create-update>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

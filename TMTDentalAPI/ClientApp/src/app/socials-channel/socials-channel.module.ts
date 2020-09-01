@@ -40,6 +40,7 @@ import { FacebookAudienceFilterComponent } from './facebook-audience-filter/face
 import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-select-tag.component';
 import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
 import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
+import { FacebookModule } from 'ngx-facebook';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,7 @@ import { FacebookPageListComponent } from './facebook-page-list/facebook-page-li
     AutosizeModule,
     SharedModule,
     PickerModule,
-    EmojiModule
+    EmojiModule,
   ],
   exports: [
   ],

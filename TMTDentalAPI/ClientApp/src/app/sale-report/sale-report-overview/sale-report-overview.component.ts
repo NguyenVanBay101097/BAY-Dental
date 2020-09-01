@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-sale-report-overview',
@@ -35,7 +36,7 @@ export class SaleReportOverviewComponent implements OnInit {
   groups: { text: string, value: string }[] = [
     { text: 'Ngày', value: 'date' },
     { text: 'Khách hàng', value: 'customer' },
-    { text: 'Nhân viên', value: 'user' },
+    { text: 'Nhân viên', value: 'employee' },
     { text: 'Dịch vụ', value: 'product' },
   ];
 
@@ -58,8 +59,10 @@ export class SaleReportOverviewComponent implements OnInit {
     { field: 'priceTotal', aggregate: 'sum' },
   ];
 
+  listCompanies: CompanyBasic[] = [];
+  companyFilter: CompanyBasic;
 
-  constructor(private intlService: IntlService, private saleReportService: SaleReportService) {
+  constructor(private intlService: IntlService, private saleReportService: SaleReportService, private companyService: CompanyService) {
   }
 
   ngOnInit() {
@@ -73,6 +76,8 @@ export class SaleReportOverviewComponent implements OnInit {
       .subscribe(() => {
         this.loadDataFromApi();
       });
+
+    this.loadCompanies();
   }
 
   getTitle() {
@@ -82,6 +87,19 @@ export class SaleReportOverviewComponent implements OnInit {
 
   setViewType(type) {
     this.viewType = type;
+  }
+
+  loadCompanies() {
+    var val = new CompanyPaged();
+    this.companyService.getPaged(val)
+      .subscribe(res => {
+        this.listCompanies = res.items;
+      })
+  }
+
+  changeCompany(event) {
+    this.companyFilter = event;
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
@@ -102,6 +120,9 @@ export class SaleReportOverviewComponent implements OnInit {
     if (this.groupBy2 && this.groupBy == 'date') {
       val.groupBy = val.groupBy + ":" + this.groupBy2;
     }
+
+    val.companyId = this.companyFilter ? this.companyFilter.id : null;
+
     this.loading = true;
     this.saleReportService.getReport(val).subscribe(result => {
       this.items = result;

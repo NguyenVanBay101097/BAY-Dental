@@ -232,38 +232,6 @@ namespace Infrastructure.Services
         //    };
         //}
 
-        public async Task<IEnumerable<EmployeeDisplay>> CountNgayCong(IEnumerable<EmployeeDisplay> lst)
-        {
-            var setupObj = GetService<ISetupChamcongService>();
-            var setup = await setupObj.GetByCompanyId();
-            //skipp if setup null
-            if (setup == null)
-            {
-                return lst;
-            }
-            var diffTime = Math.Round(setup.DifferenceTime / 60, 2);
-            var fromOne = setup.OneStandardWorkHour - diffTime;
-            var fromHalf = setup.HalfStandardWorkHour - diffTime;
-            double Tongcong = 0;
-            foreach (var emp in lst)
-            {
-                Tongcong = 0;
-                foreach (var chamcong in emp.ChamCongs)
-                {
-                    if (chamcong.HourWorked >= fromOne || (chamcong.WorkEntryType != null && chamcong.WorkEntryType.IsHasTimeKeeping))
-                    {
-                        Tongcong += 1;
-                    }
-                    else if (chamcong.HourWorked >= fromHalf)
-                    {
-                        Tongcong += 0.5;
-                    }
-                }
-                emp.SoNgayCong = Tongcong;
-            }
-            return lst;
-        }
-
         public async Task<string> GetStatus(ChamCong val)
         {
             if (val.TimeIn.HasValue && val.TimeOut.HasValue)

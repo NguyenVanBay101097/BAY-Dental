@@ -71,15 +71,16 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách thẻ', link: '/service-cards' },
       ],
     },
-    // {
-    //   name: 'T-Care',
-    //   icon: 'fab fa-facebook-f',
-    //   children: [
-    //     { name: 'Kết nối facebook page', link: '/facebook-connect' },
-    //     { name: 'Kết nối Zalo', link: '/zalo-config' },
-    //     { name: 'Danh sách kênh', link: '/channels' },
-    //   ],
-    // },
+    {
+      name: 'Chăm sóc tự động',
+      icon: 'fab fa-facebook-f',
+      children: [
+        { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
+        { name: 'Kết nối Zalo', link: '/zalo-config' },
+        { name: 'Danh sách kênh', link: '/socials/channels' },
+        { name: 'Kịch bản', link: '/tcare/scenarios' },
+      ],
+    },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
@@ -95,14 +96,16 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
-        { name: 'Nhóm nhân viên', link: '/employee-categories' },
+        { name: 'Danh xưng', link: '/partner-titles' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
         { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
-        { name: 'Chương trình coupon', link: '/programs/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Chương trình khuyến mãi', link: '/programs/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
+        { name: 'Bảng hoa hồng', link: '/commissions' },
+        { name: 'Nhân viên', link: '/employees' },
       ]
     },
     {
@@ -112,10 +115,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
         { name: 'Nhóm quyền', link: '/res-groups' },
-        // { name: 'Bảng giá', link: '/pricelists' },
         { name: 'Cấu hình chung', link: '/config-settings' },
-        // { name: 'Kịch bản', link: '/tcare-campaigns' },
-        { name: 'Chấm công', link: 'time-keepings' }
       ]
     },
     {
@@ -125,12 +125,13 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết quả kinh doanh', link: '/financial-report' },
         { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank' },
         { name: 'Thống kê doanh thu', link: '/revenue-report' },
+        { name: 'Thống kê điều trị', link: '/sale-report' },
         { name: 'Công nợ khách hàng', link: '/report-account-common/partner', params: { result_selection: 'customer' } },
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
-        { name: 'Thống kê điều trị', link: '/sale-report' },
         { name: 'Thống kê công việc', link: '/dot-kham-report' },
+        { name: 'Thống kê hoa hồng', link: '/commission-settlements/report' },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location' },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner' },

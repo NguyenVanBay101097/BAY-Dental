@@ -23,6 +23,10 @@
     <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.Designer.cs" />
     <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.cs" />
     <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200804042345_CreateCommission.cs" />
+    <Compile Remove="Data\Migrations\20200804042345_CreateCommission.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.cs" />
+    <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.Designer.cs" />
     <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.cs" />
     <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.Designer.cs" />
   </ItemGroup>
@@ -32,8 +36,7 @@
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.4" />
     <PackageReference Include="EPPlus" Version="4.5.3.2" />
-    <PackageReference Include="Hangfire.Core" Version="1.7.9" />
-    <PackageReference Include="Ical.Net" Version="4.1.11" />
+    <PackageReference Include="HangFire" Version="1.7.11" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />

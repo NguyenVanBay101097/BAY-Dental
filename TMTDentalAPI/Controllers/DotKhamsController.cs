@@ -79,24 +79,23 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             }
 
-            dotKham.Lines = dotKham.Lines.OrderBy(x => x.Sequence);
             return Ok(dotKham);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(DotKhamDisplay val)
+        public async Task<IActionResult> Create(DotKhamSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             var dotKham = _mapper.Map<DotKham>(val);
-            var res = await _dotKhamService.CreateAsync(dotKham);
-            val.Name = res.Name;
-            val.Id = dotKham.Id;
-            return Ok(val);
+            await _dotKhamService.CreateAsync(dotKham);
+
+            var basic = _mapper.Map<DotKhamBasic>(dotKham);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, DotKhamDisplay val)
+        public async Task<IActionResult> Update(Guid id, DotKhamSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

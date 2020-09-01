@@ -6,7 +6,6 @@ namespace ApplicationCore.Entities
 {
     public class TCareMessagingTrace : BaseEntity
     {
-
         public Guid TCareCampaignId { get; set; }
         public TCareCampaign TCareCampaign { get; set; }
 
@@ -15,6 +14,8 @@ namespace ApplicationCore.Entities
         public DateTime? Exception { get; set; }
 
         public DateTime? Read { get; set; }
+
+        public DateTime? Opened { get; set; }
 
         public DateTime? Delivery { get; set; }
 
@@ -36,5 +37,7 @@ namespace ApplicationCore.Entities
         /// facebook,zalo
         /// </summary>
         public string Type { get; set; }
+
+        public string Error { get; set; }
     }
 }

@@ -152,6 +152,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DotKham.Date >= val.DateFrom && x.DotKham.Date <= val.DateTo);
             if (!string.IsNullOrEmpty(val.UserId))
                 query = query.Where(x => x.DotKham.UserId == val.UserId);
+            if (val.DoctorId.HasValue)
+                query = query.Where(x => x.DotKham.DoctorId == val.DoctorId);
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.DotKham.PartnerId == val.PartnerId.Value);
             if (!string.IsNullOrEmpty(val.Search))
@@ -163,8 +165,8 @@ namespace Infrastructure.Services
             var items = await query.Select(x => new DotKhamStepReport
             {
                 Date = x.DotKham.Date,
-                AssistantName = x.DotKham.AssistantUser != null ? x.DotKham.AssistantUser.Name : "",
-                DoctorName = x.DotKham.User != null ? x.DotKham.User.Name : "",
+                AssistantName = x.DotKham.Assistant != null ? x.DotKham.Assistant.Name : "",
+                DoctorName = x.DotKham.Doctor != null ? x.DotKham.Doctor.Name : "",
                 PartnerName = x.DotKham.Partner != null ? x.DotKham.Partner.Name : "",
                 ServiceName = x.Product != null ? x.Product.Name : "",
                 StepName = x.Name

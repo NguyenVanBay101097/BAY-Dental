@@ -41,12 +41,7 @@ namespace Infrastructure.Services
                 {
                     var addtags = CampaignXML.Root.AddTag.Where(x => x.MxCell.Style == type).FirstOrDefault();
                     if (addtags != null)
-                    {
-                        //var toRemove = partner.PartnerPartnerCategoryRels.Where(x => !addtags.Tag.Any(s => s.Id == x.CategoryId)).ToList();
-                        //foreach (var categ in toRemove)
-                        //{
-                        //    partner.PartnerPartnerCategoryRels.Remove(categ);
-                        //}
+                    {                     
                         foreach (var categ in addtags.Tag)
                         {
                             if (partner.PartnerPartnerCategoryRels.Any(x => x.CategoryId == categ.Id))

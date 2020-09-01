@@ -1,0 +1,124 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="'/commissions'">Bảng hoa hồng</a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{ temp_name }}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title mt-2 mb-3">
+                    <label class="o_form_label oe_edit_only">Tên bảng hoa hồng</label>
+                    <h1 class="mb-1">
+                        <input class="form-control" formControlName="name" 
+                            name="name" required #nameInput>
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Nhập tên bảng hoa hồng</div>
+                    </div>
+                </div>
+                <div class="o_notebook">
+                    <h5 class="mb-2">Quy định hoa hồng</h5>
+                    <div class="mb-2">
+                        <button type="button" accesskey="A" class="btn btn-secondary btn-sm"
+                            (click)="addLine()">Thêm</button>
+                        <ng-template #popContent>
+                            <kendo-combobox 
+                                style="width: auto;"
+                                [data]="filteredProductCategories"
+                                [filterable]="true"
+                                (filterChange)="filterChangeProductCategories($event)"
+                                (selectionChange)="selectionChangeProductCategories($event)"
+                                [textField]="'completeName'"
+                                [valueField]="'id'"
+                                placeholder="Chọn nhóm dịch vụ">
+                            </kendo-combobox>
+                            <div class="text-right mt-2">
+                                <button type="button" accesskey="C"
+                                    class="btn btn-light btn-sm mr-1" 
+                                    (click)="this.selectedProductCategory=null; popover.close()">
+                                    Hủy
+                                </button>
+                                <button type="button" accesskey="A"
+                                    class="btn btn-primary btn-sm" 
+                                    (click)="addProductsFromProductCategory(); popover.close()">
+                                    Thêm
+                                </button>
+                            </div>
+                        </ng-template>
+                        <button type="button" class="btn btn-secondary btn-sm ml-1"
+                            placement="bottom"
+                            [ngbPopover]="popContent"
+                            popoverTitle="Từ nhóm dịch vụ"
+                            [autoClose]="false"
+                            triggers="manual"
+                            #popover="ngbPopover"
+                            (click)="popover.toggle()">
+                            Thêm nhanh dịch vụ
+                        </button>
+                    </div>
+                    <div>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Áp dụng cho</th>
+                                    <th>Dịch vụ/ Nhóm dịch vụ</th>
+                                    <th class="text-right">Hoa hồng</th>
+                                    <th class="text-right">#</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="commissionProductRules">
+                                <ng-container *ngFor="let line of commissionProductRules.controls; let i=index">
+                                    <tr [formGroupName]="i">   
+                                        <td class="align-middle">{{ getAppliedOn(line) }}</td>                                       
+                                        <td class="align-middle">{{ getValueLineForm(line, 'name') }}</td>
+                                        <td width="1%">
+                                            <div class="d-flex align-items-center">                                      
+                                                <kendo-numerictextbox [autoCorrect]="true" [format]="'n0'" 
+                                                    formControlName="percentFixed" [min]="min" [max]="max"
+                                                    style="max-width: 100px;">
+                                                </kendo-numerictextbox>
+                                                <span class="ml-2">%</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-right align-middle">
+                                            <button type="button" class="btn btn-icon btn-sm btn-light mr-1" 
+                                                (click)="editLine(line)">
+                                                <span class="k-icon k-i-edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-sm btn-light" 
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

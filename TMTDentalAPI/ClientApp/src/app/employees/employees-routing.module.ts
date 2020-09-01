@@ -6,7 +6,7 @@ import { EmployeeCreateUpdateComponent } from './employee-create-update/employee
 
 const routes: Routes = [
   {
-    path:'', component: EmployeeListComponent
+    path: '', component: EmployeeListComponent
   }
 ];
 

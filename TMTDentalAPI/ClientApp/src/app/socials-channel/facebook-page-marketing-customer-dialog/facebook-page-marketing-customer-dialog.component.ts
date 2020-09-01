@@ -1,3 +1,4 @@
+import { PartnerSimpleContact } from './../../partners/partner-simple';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -5,11 +6,12 @@ import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-dialog',
@@ -22,7 +24,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   formGroup: FormGroup;
   title = 'Người tương tác';
 
-  filteredPartners: PartnerSimple[];
+  filteredPartners: PartnerSimpleContact[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(
@@ -63,7 +65,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
     var val = new PartnerPaged();
     val.customer = true;
     val.search = filter;
-    return this.partnerService.getAutocompleteSimple(val);
+    return this.partnerService.autocomplete3(val);
   }
 
   loadDataFromApi(id) {
@@ -71,8 +73,18 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
       this.profile = res;
       this.formGroup.patchValue(res);
       if (res.partner) {
-        this.filteredPartners = _.unionBy(this.filteredPartners, [res.partner], 'id');
+        this.filteredPartners = _.unionBy(this.filteredPartners , [res.partner], 'id');
       }
+    });
+  }
+
+  quickCreateCus() {
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm khách hàng';
+    modalRef.result.then(result => {
+      this.filteredPartners.push(result as PartnerSimpleContact);
+      this.formGroup.patchValue({ partner: result });
+    }, () => {
     });
   }
 
