@@ -87,8 +87,9 @@ namespace TMTDentalAPI.Controllers
             var chamcong = _mapper.Map<ChamCong>(chamCongSave);
             chamcong.Status = await _chamCongService.GetStatus(chamcong);
             chamcong.CompanyId = CompanyId;
-
+            await _unitOfWork.BeginTransactionAsync();
             await _chamCongService.CreateAsync(chamcong);
+            _unitOfWork.Commit();
             return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
 
@@ -110,7 +111,9 @@ namespace TMTDentalAPI.Controllers
             chamcong = _mapper.Map(chamCongSave, chamcong);
             chamcong.Status = await _chamCongService.GetStatus(chamcong);
             chamcong.CompanyId = CompanyId;
+            await _unitOfWork.BeginTransactionAsync();
             await _chamCongService.UpdateAsync(chamcong);
+            _unitOfWork.Commit();
             return Ok();
         }
         [HttpDelete("{id}")]

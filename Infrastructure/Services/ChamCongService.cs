@@ -19,6 +19,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -604,42 +605,46 @@ namespace Infrastructure.Services
         {
             foreach (var val in vals)
             {
+                // Thời gian vào không được trống
                 if (!val.TimeIn.HasValue)
-                {
                     throw new Exception("Thời gian vào không được phép để trống !!!");
-                }
-                if (val.TimeIn > val.TimeOut)
-                {
+                // Thời giân vào không được lớn hơn thời gian ra 
+
+                if (val.TimeOut.HasValue && val.TimeIn > val.TimeOut)
                     throw new Exception("Thời gian vào không được lớn hơn thời gian ra");
-                }
-                var ccLast = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn.Value.Date == val.TimeIn.Value.Date && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                if (!val.TimeOut.HasValue)
+
+                // Khoảng thời gian của các chấm công không được trùng lên nhau
+                var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
+                    throw new Exception("Chấm công bạn tạo bị đè thời gian lên chấm công trước đó");
+
+                if (val.TimeOut.HasValue)
                 {
-                    if (ccLast != null && !ccLast.TimeOut.HasValue)
-                        throw new Exception("Không thể tạo hai chấm công mà time-out đều trống.");
+                    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                    if (cc_sau != null && cc_sau != cc_truoc)
+                        throw new Exception("Chấm công bạn tạo nằm trong khoảng thời gian của 1 chấm cống sau đó");
                 }
-                if (ccLast != null && !ccLast.TimeOut.HasValue)
-                {
-                    throw new Exception("Bạn chưa hoàn thành 1 chấm công trước đó, hoàn thành chấm công sau đó tiếp tục thao tác lại !");
-                }
-                if (ccLast != null && ccLast.TimeOut.HasValue && val.TimeIn < ccLast.TimeOut)
-                {
-                    throw new Exception("Thời gian vào của châm công này phải lớn hơn thời gian ra của chấm công trước đó");
-                }
+                
+                // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
+                var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
+                if (cc != null)
+                    throw new Exception("Có chấm công nào đó của nhân viên chưa hoàn thành (chưa chấm ra)");
             }
         }
 
         public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
         {
-            await CheckChamCong(entities);
             await base.CreateAsync(entities);
+            await CheckChamCong(entities);
+
             return entities;
         }
 
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
-            await CheckChamCong(entities);
             await base.UpdateAsync(entities);
+            await CheckChamCong(entities);
+
         }
     }
 }

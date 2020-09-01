@@ -114,14 +114,29 @@
                 <th scope="row" style="min-width: 200px;">{{empl.name}}</th>
                 <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
                     <div class="oe_kanban_content">
-                        <div class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
+                        <div [ngClass]="{'mb-1': date.chamCongs && date.chamCongs.length > 1}"
+                            class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
                             (click)="clickTimeSheet($event, cc.id, date.date, empl)">
-                            <div class="oe_kanban_timeSheet"
-                                ngbPopover="Tên: {{empl.name}} | Loại: {{cc.workEntryType ? cc.workEntryType.name: ''}} | Giờ vào : {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): 'Chưa chấm'}} | Giờ ra : {{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): 'Chưa chấm'}}"
-                                popoverTitle="Chấm công {{empl.name}}"
-                                [ngStyle]="{'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'}">
-                                <span
-                                    title="{{cc.workEntryType ? cc.workEntryType.name: ''}}">{{cc.workEntryType ? cc.workEntryType.name: ''}}
+                            <ng-template #popContent>
+                                <b>Tên: {{empl.name}}</b> <br>
+                                <b> Loại: </b> {{cc.workEntryType ? cc.workEntryType.name: ''}} <br>
+                                <b>Giờ vào: </b> {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): 'Chưa chấm'}} <br>
+                                <b>Giờ ra: </b>{{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): 'Chưa chấm'}} <br>
+                                <span>
+                                    <b>Trạng thái: </b>
+                                    {{cc.status && cc.status=='done' ? 'Check-In & Check-Out' : (cc.timeIn ? 'Check-In':(cc.timeOut ? 'Check-out':'')) }}
+                                </span>
+                            </ng-template>
+                            <ng-template #popTitle>
+                                {{cc.workEntryType? cc.workEntryType.name:'Chấm công'}} <b>{{empl.name}} </b> <br>
+                                {{cc.timeIn | date:'EEEE, dd-MM-yyyy'}}
+                            </ng-template>
+
+
+                            <div class="oe_kanban_timeSheet" [ngbPopover]="popContent" [popoverTitle]="popTitle"
+                                container="body" [ngStyle]=" {'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'
+                                }">
+                                <span>{{cc.workEntryType ? cc.workEntryType.name: ''}}
                                 </span>
                                 <span class="time_sheet_type">
                                     <i title="Hoàn thành chấm công" *ngIf="cc.status == 'done'"
