@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
@@ -522,7 +523,7 @@ namespace Infrastructure.Services
                         }
 
                         if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 3].Value)))
-                            time = $"{DateTime.Parse(curDateString).ToShortDateString()} { DateTime.Parse(de_time).ToShortTimeString()}";
+                            time = $"{DateTime.Parse(curDateString):dd/MM/yyyy} { DateTime.Parse(de_time).ToShortTimeString()}";
                         else
                         {
                             errors.Add($"Dòng {row}: Thời gian không được trống");
@@ -558,46 +559,61 @@ namespace Infrastructure.Services
             if (errors.Any())
                 return new ChamCongImportResponse { Success = false, Errors = errors };
 
-            if (data.Count > 0)
+            var employee_refs = data.Select(x => x.MaNV).Distinct().ToList();
+            var word_entry_type_codes = data.Select(x => x.CodeWorkEntryType).Distinct().ToList();
+
+            IDictionary<string, Employee> emp_dict = new Dictionary<string, Employee>();
+            foreach (var empRef in employee_refs)
             {
-                var res = data.GroupBy(x => x.MaNV).ToList();
-                for (int i = 0; i < res.Count(); i++)
+                var emp = await empObj.SearchQuery(x => x.Ref.Contains(empRef)).FirstOrDefaultAsync();
+                emp_dict.Add(empRef, emp);
+            }
+
+            IDictionary<string, WorkEntryType> work_entry_type_dict = new Dictionary<string, WorkEntryType>();
+            foreach (var code in word_entry_type_codes)
+            {
+                var workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(code)).FirstOrDefaultAsync();
+                work_entry_type_dict.Add(code, workEntryType);
+            }
+
+            var errors_2 = new List<string>();
+
+            foreach (var cc in data)
+            {
+                try
                 {
-                    var item = res[i];
-                    var emp = await empObj.SearchQuery(x => x.Ref.Contains(item.Key)).FirstOrDefaultAsync();
-                    var workEntryType = new WorkEntryType();
-                    foreach (var cc in item.ToList())
+                    if (!emp_dict.ContainsKey(cc.MaNV))
+                        throw new Exception($"Không tìm thấy nhân viên mới mã {cc.MaNV}");
+
+                    if (!work_entry_type_dict.ContainsKey(cc.CodeWorkEntryType))
+                        throw new Exception($"Không loại công việc với mã {cc.CodeWorkEntryType}");
+                    var employee = emp_dict[cc.MaNV];
+                    if (cc.Type == "check-in")
                     {
-                        try
-                        {
-                            if (cc.Type == "check-in")
-                            {
-                                var chamcong = new ChamCong();
-                                chamcong.Id = new Guid();
-                                workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(cc.CodeWorkEntryType)).FirstOrDefaultAsync();
-                                chamcong.CompanyId = CompanyId;
-                                chamcong.EmployeeId = emp.Id;
-                                chamcong.Date = cc.Date;
-                                chamcong.WorkEntryTypeId = workEntryType.Id;
-                                chamcong.TimeIn = cc.Time;
-                                chamcong.Status = "process";
-                                await CreateAsync(chamcong);
-                            }
-                            if (cc.Type == "check-out")
-                            {
-                                var ccIn = await SearchQuery(x => x.TimeOut == null).OrderBy(x => x.TimeIn).LastOrDefaultAsync();
-                                ccIn.TimeOut = cc.Time;
-                                ccIn.Status = "done";
-                                await UpdateAsync(ccIn);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            throw new Exception(e.Message);
-                        }
+                        var chamcong = new ChamCong();
+                        chamcong.CompanyId = CompanyId;
+                        chamcong.EmployeeId = emp_dict[cc.MaNV].Id;
+                        chamcong.WorkEntryTypeId = work_entry_type_dict[cc.CodeWorkEntryType].Id;
+                        chamcong.Date = cc.Date;
+                        chamcong.TimeIn = cc.Time;
+                        await CreateAsync(chamcong);
+                    }
+                    else if (cc.Type == "check-out")
+                    {
+                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                        ccIn.TimeOut = cc.Time;
+                        await UpdateAsync(ccIn);
                     }
                 }
+                catch (Exception e)
+                {
+                    errors_2.Add(e.Message);
+                }
             }
+
+            if (errors_2.Any())
+                return new ChamCongImportResponse { Success = false, Errors = errors };
+
             return new ChamCongImportResponse { Success = true };
         }
 
@@ -608,44 +624,57 @@ namespace Infrastructure.Services
             {
                 var emp = await empObj.GetByIdAsync(val.EmployeeId);
                 // Thời gian vào không được trống
-                var message = $"không thể tạo chấm công cho nhân viên {emp.Name}";
+                var message = $"Không thể tạo chấm công cho nhân viên {emp.Name}";
                 if (!val.TimeIn.HasValue)
                     throw new Exception($"{message} vì thời gian vào không được bỏ trống.");
 
                 // Thời giân vào không được lớn hơn thời gian ra 
                 if (val.TimeOut.HasValue && val.TimeIn > val.TimeOut)
-                    throw new Exception($"{message} vì thời gian vào ({val.TimeIn.Value:HH:mm} ) phải nhỏ hơn thời gian ra ({val.TimeOut.Value:HH:mm}) trong ngày {val.TimeIn.Value.ToShortDateString()}");
+                    throw new Exception($"{message} vì thời gian vào ({val.TimeIn.Value:HH:mm} ) phải nhỏ hơn thời gian ra ({val.TimeOut.Value:HH:mm}) trong ngày {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
 
                 // Khoảng thời gian của các chấm công không được trùng lên nhau
                 var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                 if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
-                    throw new Exception($"{message} vì thời gian vào ({val.TimeIn.Value:HH:mm}) của chấm công bạn tạo phải lớn hơn thời gian ra ({cc_truoc.TimeOut.Value:HH:mm}) của chấm công trước đó trong ngày {cc_truoc.TimeIn.Value.ToShortDateString()}");
+                    throw new Exception($"{message}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
 
                 if (val.TimeOut.HasValue)
                 {
                     var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                     if (cc_sau != null && cc_sau != cc_truoc)
-                        throw new Exception($"{message}  vì thời gian ra ({val.TimeOut.Value:HH:mm}) của chấm công bạn tạo phải nhỏ hơn thời gian vào ({cc_sau.TimeIn.Value:HH:mm}) của chấm công sau đó trong ngày {cc_sau.TimeIn.Value.ToShortDateString()}");
+                        throw new Exception($"{message}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
                 }
                 else
                 {
                     // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
                     var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
                     if (cc != null)
-                        throw new Exception($"{message} vì nhân viên này chưa hoàn thành chấm công ra vào ngày {cc.TimeIn.Value.ToShortDateString()}");
+                        throw new Exception($"{message}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
                 }
             }
         }
 
         public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
         {
+            _ComputeStatusChamCong(entities);
             await base.CreateAsync(entities);
             await CheckChamCong(entities);
             return entities;
         }
 
+        public void _ComputeStatusChamCong(IEnumerable<ChamCong> vals)
+        {
+            foreach (var val in vals)
+            {
+                if (val.TimeOut.HasValue)
+                    val.Status = "done";
+                else
+                    val.Status = "process";
+            }
+        }
+
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
+            _ComputeStatusChamCong(entities);
             await base.UpdateAsync(entities);
             await CheckChamCong(entities);
         }

@@ -61,9 +61,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ExcelImportCreate(PartnerImportExcelViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
-
             var result = await _chamCongService.ImportExcel(val);
-
             if (result.Success)
                 _unitOfWork.Commit();
 

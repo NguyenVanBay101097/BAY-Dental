@@ -41,6 +41,7 @@ export class TimeKeepingImportFileComponent implements OnInit {
     var val = this.formGroup.value;
     val.type = this.type;
     this.timeKeepingService.actionImport(val).subscribe((result: any) => {
+      debugger
       if (result.success) {
         this.notificationService.show({
           content: 'Import thành công',
