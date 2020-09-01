@@ -606,7 +606,6 @@ namespace Infrastructure.Services
             var empObj = GetService<IEmployeeService>();
             foreach (var val in vals)
             {
-
                 var emp = await empObj.GetByIdAsync(val.EmployeeId);
                 // Thời gian vào không được trống
                 var message = $"không thể tạo chấm công cho nhân viên {emp.Name}";
@@ -615,18 +614,18 @@ namespace Infrastructure.Services
 
                 // Thời giân vào không được lớn hơn thời gian ra 
                 if (val.TimeOut.HasValue && val.TimeIn > val.TimeOut)
-                    throw new Exception($"{message} vì thời gian vào {val.TimeIn.Value:HH:mm} phải nhỏ hơn thời gian ra {val.TimeOut.Value:HH:mm} trong ngày {val.TimeIn.Value.ToShortDateString()}");
+                    throw new Exception($"{message} vì thời gian vào ({val.TimeIn.Value:HH:mm} ) phải nhỏ hơn thời gian ra ({val.TimeOut.Value:HH:mm}) trong ngày {val.TimeIn.Value.ToShortDateString()}");
 
                 // Khoảng thời gian của các chấm công không được trùng lên nhau
                 var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                 if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
-                    throw new Exception($"{message} vì thời gian vào của chấm công bạn tạo phải lớn hơn thời gian ra của chấm công trước đó trong ngày {cc_truoc.TimeIn.Value.ToShortDateString()}");
+                    throw new Exception($"{message} vì thời gian vào ({val.TimeIn.Value:HH:mm}) của chấm công bạn tạo phải lớn hơn thời gian ra ({cc_truoc.TimeOut.Value:HH:mm}) của chấm công trước đó trong ngày {cc_truoc.TimeIn.Value.ToShortDateString()}");
 
                 if (val.TimeOut.HasValue)
                 {
                     var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                     if (cc_sau != null && cc_sau != cc_truoc)
-                        throw new Exception($"{message}  vì thời gian ra của chấm công bạn tạo phải nhỏ hơn thời gian vào của chấm công sau đó trong ngày {cc_truoc.TimeIn.Value.ToShortDateString()}");
+                        throw new Exception($"{message}  vì thời gian ra ({val.TimeOut.Value:HH:mm}) của chấm công bạn tạo phải nhỏ hơn thời gian vào ({cc_sau.TimeIn.Value:HH:mm}) của chấm công sau đó trong ngày {cc_sau.TimeIn.Value.ToShortDateString()}");
                 }
                 else
                 {
