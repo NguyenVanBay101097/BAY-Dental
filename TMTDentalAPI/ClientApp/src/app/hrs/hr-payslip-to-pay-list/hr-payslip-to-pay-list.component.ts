@@ -31,7 +31,7 @@ export class HrPayslipToPayListComponent implements OnInit {
   loading = false;
   collectionSize = 0;
   StateFilters = [
-    { text: 'Tất cả', value: '' },
+    { text: 'Tất cả trạng thái', value: '' },
     { text: 'Bản nháp', value: 'draft' },
     { text: 'Đang xử lý', value: 'process' },
     { text: 'Hoàn thành', value: 'done' }

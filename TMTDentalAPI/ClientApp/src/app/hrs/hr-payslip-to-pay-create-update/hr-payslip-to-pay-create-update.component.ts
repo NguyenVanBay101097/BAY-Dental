@@ -246,7 +246,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   actionCancel() {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Hủy phiếu lương';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn hủy?';
     modalRef.result.then(() => {
       this.hrPayslipService.actionCancel([this.id]).subscribe(res => {
         this.LoadRecord();
