@@ -29,6 +29,7 @@ export class HrPayslipPaged {
     dateFrom: any;
     dateTo: any;
     employeeId: any;
+    payslipRunId: string;
 }
 
 export class HrPayslipSave {

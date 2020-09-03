@@ -119,6 +119,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
 
+            if (val.payslipRunId.HasValue)
+                query = query.Where(x => x.PayslipRunId == val.payslipRunId.Value);
+
             query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await _mapper.ProjectTo<HrPayslipBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();

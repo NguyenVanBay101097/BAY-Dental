@@ -109,17 +109,16 @@
                     <h5 class="o_form_label">
                        Danh sách phiếu lương
                     </h5>
-                    <kendo-grid [data]="paysliprun.slips" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
+                    <kendo-grid [data]="paySlip" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
                         (pageChange)="pageChange($event)" class="mt-2">  
                         <kendo-grid-column field="number" title="Số phiếu">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <a class="text-primary" *ngIf="dataItem.id" [routerLink]="['/hr/payslips/edit/']"
-                                [queryParams]="{id: dataItem.id}">{{dataItem.number}}</a>
+                                <a class="text-primary" *ngIf="dataItem.id" (click)="detailItem(dataItem.id)">{{dataItem.number}}</a>
                             </ng-template>
                         </kendo-grid-column>                    
-                        <kendo-grid-column field="employee" title="Nhân viên">
+                        <kendo-grid-column field="employeeName" title="Nhân viên">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.employee.name }}
+                                {{dataItem.employeeName }}
                             </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column field="dateFrom" title="Từ ngày">

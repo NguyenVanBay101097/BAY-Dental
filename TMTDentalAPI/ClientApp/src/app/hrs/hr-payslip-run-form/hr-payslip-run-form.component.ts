@@ -1,6 +1,6 @@
-import { HrPayslipDisplay, HrPayslipService } from './../hr-payslip.service';
+import { HrPayslipDisplay, HrPayslipService, HrPayslipPaged } from './../hr-payslip.service';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { HrPaysliprunService, HrPayslipRunDefaultGet } from '../hr-paysliprun.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -24,9 +25,11 @@ export class HrPayslipRunFormComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  search: string;
   submitted = false;
   loading = false;
 
+  paySlip: any = [];
   paysliprun: any;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -55,6 +58,7 @@ export class HrPayslipRunFormComponent implements OnInit {
       dateEndObj: [null, Validators.required],
       companyId: null,
       state: 'draft',
+      slips: this.fb.array([])
     });
   }
 
@@ -62,8 +66,9 @@ export class HrPayslipRunFormComponent implements OnInit {
     this.hrPaysliprunService.get(this.itemId).subscribe((result: any) => {
       this.paysliprun = result;
       result.dateEndObj = new Date(result.dateEnd);
-      result.dateStartObj = new Date(result.dateStart);
-      this.myForm.patchValue(result);
+      result.dateStartObj = new Date(result.dateStart); 
+      this.myForm.patchValue(result);  
+      this.loadPayslip(this.itemId); 
     });
   }
 
@@ -203,6 +208,21 @@ export class HrPayslipRunFormComponent implements OnInit {
         this.loadRecord();
       });
     });
+  }
+
+  loadPayslip(id) {   
+    var val = new HrPayslipPaged();
+    val.payslipRunId = id;
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';   
+      this.hrPayslipService.getPaged(val).subscribe(res => {
+        this.paySlip = res.items;
+      });
+  }
+
+  get slips(){
+      return this.myForm.get('slips') as FormArray;
   }
 
   get f() {

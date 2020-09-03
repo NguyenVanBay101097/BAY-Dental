@@ -1,3 +1,4 @@
+
 import { EmployeeBasic } from './../../employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { debounceTime, tap, switchMap, map, filter } from 'rxjs/operators';
@@ -36,6 +37,8 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   isAssistant: boolean;
   isOther: boolean;
 
+  paySlip : any = [];
+
 
   @ViewChild('structureCbx', { static: true }) structureCbx: ComboBoxComponent;
  
@@ -52,7 +55,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
       structure: null,
       lines: this.fb.array([]),
     });
-    
+
     this.loadFilteredStructures();
 
     this.structureCbx.filterChange.asObservable().pipe(
@@ -124,7 +127,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
       });
     }
 
-    get lines() {                   
+    get lines() {
       return this.myForm.get('lines') as FormArray;      
     }
 
