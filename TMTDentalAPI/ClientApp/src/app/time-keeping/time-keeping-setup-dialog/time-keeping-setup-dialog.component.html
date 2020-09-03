@@ -91,5 +91,5 @@
     <button type="button" class="btn btn-primary" accesskey="s" [disabled]="formGroup.invalid || error"
         (click)="onSave()">Lưu</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
-    <button type="button" class="btn btn-danger ml-2" accesskey="x" (click)="delete(chamCong)">Xóa</button>
+    <button *ngIf="id" type="button" class="btn btn-danger ml-2" accesskey="x" (click)="delete(chamCong)">Xóa</button>
 </div>
