@@ -82,5 +82,11 @@ namespace ApplicationCore.Entities
         /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
         /// </summary>
         public decimal? HourlyWage { get; set; }
+
+        /// <summary>
+        ///  ngày bắt đầu đi làm của nhân viên
+        /// </summary>
+
+        public DateTime? StartWorkDate { get; set; }
     }
 }

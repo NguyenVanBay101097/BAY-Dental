@@ -18,9 +18,10 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
     { text: 'Tiền cố định', value: 'fix' },
     { text: 'Công thức', value: 'code' },
   ];
-  listamountCodeCompute: Array<{ text: string, value: string }> = [
-    { text: 'Lương chính', value: 'luong_chinh' },
-    { text: 'Hoa hồng', value: 'hoa_hong' }
+  listamountCodeCompute: Array<any> = [
+    { text: 'Lương chính', value: 'luong_chinh', description: '= số ngày công thực tế * (lương nhân viên / tổng số ngày công của tháng)' },
+    { text: 'Hoa hồng', value: 'hoa_hong', description: '= (số phần trăm hoa hồng * tổng tiền dịch vụ được tính hoa hồng) / 100' },
+    { text: 'Lương tháng 13', value: 'luong_thang13', description: '= (số tháng đi làm của năm * tiền lương)/12' }
   ];
   listamountPercentageBase: Array<{ text: string, value: string }> = [
     { text: 'Lương chính', value: 'luong_chinh' },
@@ -94,5 +95,11 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
       if (!entity.id) { delete entity.id; }
       this.activeModal.close(entity);
     }
+  }
+
+  getCodeDescription() {
+    if (!this.amountCodeComputeControl.value) { return ''; }
+    const item = this.listamountCodeCompute.find(x => x.value === this.amountCodeComputeControl.value);
+    return item.description;
   }
 }

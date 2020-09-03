@@ -69,7 +69,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       structureTypeId: null,
       structureType: null,
       wage: null,
-      hourlyWage: null
+      hourlyWage: null,
+      startWorkDate: null
     });
 
     this.loadstructureTypes();
@@ -145,19 +146,19 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     if (this.empId != null) {
       this.employeeService.getEmployee(this.empId).subscribe(
         rs => {
+          const birthDay = this.intlService.parseDate(rs.birthDay);
+          this.formCreate.get('birthDayObj').patchValue(birthDay);
+          this.formCreate.get('startWorkDate').patchValue(this.intlService.parseDate(rs.startWorkDate));
           this.formCreate.patchValue(rs);
 
           if (rs.structureType) {
             this.filteredstructureTypes = _.unionBy(this.filteredstructureTypes, [rs.structureType], 'id');
           }
-
-          let birthDay = this.intlService.parseDate(rs.birthDay);
-          this.formCreate.get('birthDayObj').patchValue(birthDay);
         },
         er => {
           console.log(er);
         }
-      )
+      );
     }
   }
 
@@ -176,6 +177,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     value.structureType = value.structureType ? value.structureType : null;
     value.wage = value.structureType.wageType == 'monthly' ? value.wage : null;
     value.hourlyWage = value.structureType.wageType == 'hourly' ? value.hourlyWage : null;
+    value.startWorkDate = this.intlService.formatDate(value.startWorkDate, 'yyyy-MM-dd');
 
     this.isChange = true;
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(

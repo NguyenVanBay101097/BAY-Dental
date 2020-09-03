@@ -67,7 +67,7 @@ namespace Infrastructure.Services
         {
             var query = GetQueryPaged(val);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category)
+            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
                 .ToListAsync();
 
             var totalItems = await query.CountAsync();

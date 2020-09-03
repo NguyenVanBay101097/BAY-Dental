@@ -59,12 +59,18 @@ namespace Infrastructure.Services
                             {
                                 //Lương chính = sum amount worked day lines
                                 case "luong_chinh":
+                                    if (!employee.Wage.HasValue) throw new Exception("Chưa thiết lập lương cho nhân viên " + employee.Name);
                                     line.Amount = Math.Round(payslip.WorkedDaysLines.Sum(x => x.Amount) ?? 0);
                                     break;
                                 case "hoa_hong":
                                     var hoa_hong = await commissionSettlementObj.SearchQuery(x => x.EmployeeId == payslip.EmployeeId &&
                                     x.Payment.PaymentDate >= payslip.DateFrom && x.Payment.PaymentDate <= payslip.DateTo).SumAsync(x => x.Amount);
                                     line.Amount = Math.Round(hoa_hong.Value);
+                                    break;
+                                case "luong_thang13":
+                                    if (!employee.StartWorkDate.HasValue) { line.Amount = 0; break; }
+                                    var sothang = (payslip.DateTo.Year - employee.StartWorkDate.Value.Year) + payslip.DateTo.Month - employee.StartWorkDate.Value.Month;
+                                    line.Amount = sothang > 12 ? employee.Wage : Math.Round((decimal)(sothang * employee.Wage) / 12);
                                     break;
                                 default:
                                     throw new Exception("Not support");

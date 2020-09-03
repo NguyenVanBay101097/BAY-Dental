@@ -32,6 +32,7 @@ export class EmployeeDisplay extends EmployeeBasic {
     structureType: HrPayrollStructureTypeSimple;
     wage: number;
     hourlyWage: number;
+    startWorkDate: any;
 }
 
 export class PagedResult2<T>{
