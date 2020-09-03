@@ -612,7 +612,7 @@ namespace Infrastructure.Services
             }
 
             if (errors_2.Any())
-                return new ChamCongImportResponse { Success = false, Errors = errors };
+                return new ChamCongImportResponse { Success = false, Errors = errors_2 };
 
             return new ChamCongImportResponse { Success = true };
         }

@@ -48,8 +48,10 @@ export class TimeSheetEmployee {
   empId: string;
 }
 
-export class TimeKeepingSave {
-
+export class ImportResponse {
+  success: boolean;
+  errors: string[];
+  message:string;
 }
 
 
@@ -86,8 +88,8 @@ export class TimeKeepingService {
       { responseType: "blob" });
   }
 
-  actionImport(val) {
-    return this.http.post(this.base_api + this.apiUrl + '/ExcelImportCreate', val);
+  actionImport(val):Observable<ImportResponse> {
+    return this.http.post<ImportResponse>(this.base_api + this.apiUrl + '/ExcelImportCreate', val);
   }
 
   CreateSetupChamcong(val) {
@@ -98,7 +100,7 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
   }
 
-  getLastChamCong(val):Observable<ChamCongBasic> {
+  getLastChamCong(val): Observable<ChamCongBasic> {
     return this.http.get<ChamCongBasic>(this.base_api + this.apiUrl + '/GetLastChamCong', { params: val });
   }
 
