@@ -37,6 +37,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateTo { get; set; }
 
         public IEnumerable<HrPayslipWorkedDaySave> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDaySave>();
+        public IEnumerable<HrPayslipLineSave> Lines { get; set; } = new List<HrPayslipLineSave>();
 
         public Guid CompanyId { get; set; }
 

@@ -15,7 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
             this.Name = name;
             this.DayOfWeek = dayofWeek;
             this.HourFrom = hourFrom;
-            this.HourTo = HourTo;
+            this.HourTo = hourTo;
             this.DayPeriod = dayperiod;
         }
         public Guid Id { get; set; }

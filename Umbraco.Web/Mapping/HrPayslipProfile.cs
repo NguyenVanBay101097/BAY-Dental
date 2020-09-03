@@ -20,7 +20,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<HrPayslipSave, HrPayslip>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.WorkedDaysLines, x => x.Ignore());
+                .ForMember(x => x.WorkedDaysLines, x => x.Ignore())
+                .ForMember(x => x.Lines, x => x.Ignore());
         }
     }
 }

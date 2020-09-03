@@ -40,18 +40,10 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public bool Active { get; set; }
-        public string SchedulePay { get; set; }
-        public string Note { get; set; }
         public bool RegularPay { get; set; }
         public Guid TypeId { get; set; }
         public HrPayrollStructureTypeDisplay Type { get; set; }
-        public bool UseWorkedDayLines { get; set; }
-        public List<HrSalaryRuleDisplay> Rules { get; set; }
-        public int? TotalRules
-        {
-            get { if (Rules != null) return Rules.Count; else return 0; }
-        }
+        public IEnumerable<HrSalaryRuleDisplay> Rules { get; set; } = new List<HrSalaryRuleDisplay>();
     }
 
     public class HrPayrollStructureBasic

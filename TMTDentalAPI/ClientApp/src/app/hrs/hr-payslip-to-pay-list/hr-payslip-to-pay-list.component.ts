@@ -32,8 +32,8 @@ export class HrPayslipToPayListComponent implements OnInit {
   collectionSize = 0;
   StateFilters = [
     { text: 'Tất cả trạng thái', value: '' },
-    { text: 'Bản nháp', value: 'draft' },
-    { text: 'Đang xử lý', value: 'process' },
+    { text: 'Nháp', value: 'draft' },
+    { text: 'Chờ xác nhận', value: 'verify' },
     { text: 'Hoàn thành', value: 'done' }
   ];
   searchUpdate = new Subject<string>();
@@ -161,22 +161,32 @@ export class HrPayslipToPayListComponent implements OnInit {
   }
 
   GetStateFilter() {
-    switch (this.searchForm.get('state').value) {
-      case 'draft':
-        return 'Bản nháp';
-      case 'verify':
-        return 'Đang xử lý';
-      case 'done':
-        return 'Hoàn thành';
-      default:
-        return 'Tất cả trạng thái';
+    const state = this.searchForm.get('state').value;
+    console.log(state);
+    if ( !state || state === '') {
+      return 'Tất cả trạng thái';
     }
+
+    return this.showState(state);
   }
 
   onDateSearchChange(e) {
     this.searchForm.get('dateFrom').setValue(e.dateFrom);
     this.searchForm.get('dateTo').setValue(e.dateTo);
     this.loadDataFromApi();
+  }
+
+  showState(state: string) {
+    switch (state) {
+      case 'draft':
+        return 'Nháp';
+      case 'verify':
+        return 'Chờ xác nhận';
+      case 'done':
+        return 'Hoàn thành';
+      default:
+        return 'Nháp';
+    }
   }
 
 }

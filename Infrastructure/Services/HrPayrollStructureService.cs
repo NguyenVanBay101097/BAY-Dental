@@ -14,7 +14,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-   public class HrPayrollStructureService : BaseService<HrPayrollStructure>, IHrPayrollStructureService
+    public class HrPayrollStructureService : BaseService<HrPayrollStructure>, IHrPayrollStructureService
     {
 
         private readonly IMapper _mapper;
@@ -27,16 +27,18 @@ namespace Infrastructure.Services
         public async Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId)
         {
             var res = await SearchQuery(x => x.TypeId == typeId).FirstOrDefaultAsync();
-            return _mapper.Map<HrPayrollStructureBase>(res) ;
+            return _mapper.Map<HrPayrollStructureBase>(res);
         }
 
-        public async Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id)
+        public async Task<HrPayrollStructureDisplay> GetHrPayrollStructureDisplay(Guid Id)
         {
-            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).Include(x=>x.Type).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<HrPayrollStructureDisplay>(SearchQuery(x => x.Id == Id)).FirstOrDefaultAsync();
+            var ruleObj = GetService<IHrSalaryRuleService>();
+            res.Rules = await _mapper.ProjectTo<HrSalaryRuleDisplay>(ruleObj.SearchQuery(x => x.StructId == Id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
             return res;
         }
 
-        public async Task<PagedResult2<HrPayrollStructureDisplay>> GetPaged(HrPayrollStructurePaged val)
+        public async Task<PagedResult2<HrPayrollStructureBasic>> GetPaged(HrPayrollStructurePaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Filter))
@@ -48,17 +50,17 @@ namespace Infrastructure.Services
 
                 query = query.Where(x => x.TypeId == val.StructureTypeId);
             }
-            query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
+            query = query.Include(x => x.Rules).Include("Rules.Company").Include(x => x.Type);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x=>x.DateCreated).ToListAsync();
+            var items = await _mapper.ProjectTo<HrPayrollStructureBasic>(query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated)).ToListAsync();
             var totalItems = await query.CountAsync();
-            return new PagedResult2<HrPayrollStructureDisplay>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<HrPayrollStructureBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<HrPayrollStructureDisplay>>(items)
+                Items = items
             };
         }
 
-        public async Task<IEnumerable< HrSalaryRuleDisplay>> GetRules(Guid structureId)
+        public async Task<IEnumerable<HrSalaryRuleDisplay>> GetRules(Guid structureId)
         {
             var res = await GetService<IHrSalaryRuleService>().SearchQuery(x => x.StructId == structureId).ToListAsync();
             return _mapper.Map<IEnumerable<HrSalaryRuleDisplay>>(res);

@@ -207,13 +207,29 @@
                                     <tr>
                                         <th scope="col">Tên</th>
                                         <th scope="col" class="text-right">Tổng tiền</th>
+                                        <th class="text-right" *ngIf="this.state.value != 'done'" scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr *ngFor="let item of listLines">
-                                        <td>{{ item.name}}</td>
-                                        <td class="text-right">{{ item.amount | number}}</td>
+                                <tbody formArrayName="lines">
+                                    <ng-container  *ngFor="let item of Lines.controls; let i = index;">
+                                    <tr [formGroupName]="i">
+                                        <td>{{item.value.name}}</td>
+                                        <td class="text-right">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                            *ngIf="this.state.value !== 'done'" [class]="text-center"  (valueChange)="changeAmount()"
+                                               formControlName="amount" style="width: 120px" [spinners]="false">
+                                           </kendo-numerictextbox>
+                                           <span *ngIf="this.state.value === 'done'">{{item.value.amount | number}}</span>
+                                        </td>
+                                        <td class="text-right" *ngIf="this.state.value != 'done'" >
+                                            <button type="button" title="Xóa {{item.value.name}}" class="btn btn-danger btn-sm"
+                                            (click)="deleteLine(i,item.value)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        </td>
                                     </tr>
+                                </ng-container>
+
                                 </tbody>
                             </table>
 

@@ -93,11 +93,45 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
+        private void SaveLines(HrPayslipSave val, HrPayslip payslip)
+        {
+
+            var toRemove = new List<HrPayslipLine>();
+            foreach (var wd in payslip.Lines)
+            {
+                if (!val.Lines.Any(x => x.Id == wd.Id))
+                    toRemove.Add(wd);
+            }
+
+            foreach (var item in toRemove)
+                payslip.Lines.Remove(item);
+
+            foreach (var wd in val.Lines)
+            {
+                if (wd.Id == Guid.Empty)
+                {
+                    var r = _mapper.Map<HrPayslipLine>(wd);
+                    payslip.Lines.Add(r);
+                }
+                else
+                {
+                    var line = payslip.Lines.FirstOrDefault(c => c.Id == wd.Id);
+                    if (line != null)
+                    {
+                        _mapper.Map(wd, line);
+                    }
+                }
+            }
+           
+            //compute total
+            payslip.TotalAmount = payslip.Lines.Sum(x => x.Amount);
+
+        }
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, HrPayslipSave val)
         {
             var payslip = await _payslipService.SearchQuery(x => x.Id == id)
-                .Include(x => x.WorkedDaysLines).FirstOrDefaultAsync();
+                .Include(x => x.WorkedDaysLines).Include(x=>x.Lines).FirstOrDefaultAsync();
 
             if (payslip == null)
                 return NotFound();
@@ -105,6 +139,9 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             payslip = _mapper.Map(val, payslip);
             SaveWorkedDayLines(val, payslip);
+
+            SaveLines(val, payslip);
+
             await _payslipService.UpdateAsync(payslip);
             _unitOfWork.Commit();
 

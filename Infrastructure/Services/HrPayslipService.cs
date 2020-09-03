@@ -151,6 +151,7 @@ namespace Infrastructure.Services
             var ccObj = GetService<IChamCongService>();
             var calendarObj = GetService<IResourceCalendarService>();
             var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var structObj = GetService<IHrPayrollStructureService>();
 
             var employee = await empObj.SearchQuery(x => x.Id == employeeId).Include(x => x.StructureType)
                 .FirstOrDefaultAsync();
@@ -161,6 +162,8 @@ namespace Infrastructure.Services
             var structureType = employee.StructureType;
             res.StructureType = _mapper.Map<HrPayrollStructureTypeSimple>(structureType);
             res.StructureTypeId = structureType.Id;
+
+            res.Struct = await _mapper.ProjectTo<HrPayrollStructureBasic>(structObj.SearchQuery(x=>x.TypeId == structureType.Id && x.RegularPay == true)).FirstOrDefaultAsync();
 
             res.Name = $"Phiếu lương tháng {dateFrom.Value.ToString("M yyyy", new CultureInfo("vi-VN")).ToLower()} {employee.Name}";
 
@@ -420,6 +423,8 @@ namespace Infrastructure.Services
 
         public Guid? StructureTypeId { get; set; }
         public HrPayrollStructureTypeSimple StructureType { get; set; }
+
+        public HrPayrollStructureBasic Struct { get; set; }
     }
 
     public class HrPayslipDefaultGetResult

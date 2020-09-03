@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HrPayslipDisplay, HrPayslipService } from '../hr-payslip.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { EmployeeDisplay, EmployeePaged, EmployeeBasic } from 'src/app/employees/employee';
@@ -32,8 +32,6 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   listStructs: any[];
   payslip: any;
   listWorkDays: any;
-  listLines: any;
-
 
   constructor(
     private fb: FormBuilder, private router: Router,
@@ -58,7 +56,8 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       number: null,
       listHrPayslipWorkedDaySave: [[]],
       companyId: [null, Validators.required],
-      structureType: null
+      structureType: null,
+      lines: this.fb.array([])
     });
 
     this.empCbx.filterChange.asObservable().pipe(
@@ -80,9 +79,13 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     });
 
     this.GetEmployeePaged();
+    this.LoadStructList();
+
     this.id = this.activeroute.snapshot.paramMap.get('id');
     if (this.id) {
       this.LoadRecord();
+      this.loadWordDayFromApi();
+      this.loadLineDataFromApi();
     } else {
       this.getDefault();
     }
@@ -99,6 +102,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   get number() { return this.payslipForm.get('number'); }
   get employee() { return this.payslipForm.get('employee'); }
   get WorkedDay() { return this.payslipForm.get('listHrPayslipWorkedDaySave'); }
+  get Lines() { return this.payslipForm.get('lines') as FormArray; }
   get structureType() { return this.payslipForm.get('structureType'); }
 
   getDefault() {
@@ -115,9 +119,6 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       res.dateFrom = new Date(res.dateFrom);
       res.dateTo = new Date(res.dateTo);
       this.payslipForm.patchValue(res);
-      this.LoadStructList();
-      this.loadWordDayFromApi();
-      this.loadLineDataFromApi();
       this.payslip = res;
     });
   }
@@ -155,7 +156,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       this.structureType.setValue(res.structureType);
 
       if (isEmployeeChange) {
-        this.struct.setValue(null);
+        res.struct ? this.struct.setValue(res.struct) : this.struct.setValue(null);
       }
       this.LoadStructList();
     });
@@ -201,6 +202,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+        this.LoadRecord();
       });
     }
   }
@@ -213,6 +215,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     val.employeeId = this.employee.value ? this.employee.value.id : null;
     val.structId = this.struct.value ? this.struct.value.id : null;
     val.structureTypeId = this.structureType.value ? this.structureType.value.id : null;
+    val.lines = this.Lines.value;
     return val;
   }
 
@@ -229,7 +232,6 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
     } else {
       this.hrPayslipService.update(this.id, val).subscribe(res1 => {
         this.hrPayslipService.computeSheet([this.id]).subscribe((res: any) => {
-          this.state.setValue('verify');
           this.LoadRecord();
           this.loadLineDataFromApi();
         });
@@ -238,9 +240,18 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ConfirmSalary() {
-    this.hrPayslipService.actionDone([this.id]).subscribe(res => {
-      this.LoadRecord();
-    });
+    if (this.payslipForm.dirty) {
+      const val = this.getDataToSave();
+      this.hrPayslipService.update(this.id, val).subscribe(res => {
+        this.hrPayslipService.actionDone([this.id]).subscribe(() => {
+          this.LoadRecord();
+        });
+      });
+    } else {
+      this.hrPayslipService.actionDone([this.id]).subscribe(() => {
+        this.LoadRecord();
+      });
+    }
   }
 
   actionCancel() {
@@ -255,12 +266,6 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   ValidateForm() {
-
-    for (const i in this.payslipForm.controls) {
-      this.payslipForm.controls[i].markAsDirty();
-      this.payslipForm.controls[i].updateValueAndValidity();
-    }
-
     if (!this.payslipForm.valid && this.payslipForm.enabled) {
       return false;
     }
@@ -305,8 +310,31 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   loadLineDataFromApi() {
     if (this.id) {
       this.hrPayslipService.getLines(this.id).subscribe((res: any) => {
-        this.listLines = res;
+        this.Lines.clear();
+        res.forEach(line => {
+          this.Lines.push(this.fb.group({
+            id: line.id,
+            amount: line.amount,
+            name: line.name
+          }));
+        });
       });
     }
+  }
+
+  deleteLine(index: number, item: any) {
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa ' + item.name;
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.Lines.removeAt(index);
+      this.changeAmount();
+    });
+  }
+
+  changeAmount() {
+    const lines = this.Lines.value;
+    const result = lines.reduce((sum, x) => sum + x.amount, 0);
+    this.payslip.totalAmount = result;
   }
 }

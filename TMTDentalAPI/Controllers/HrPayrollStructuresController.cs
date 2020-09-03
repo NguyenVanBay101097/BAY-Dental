@@ -39,10 +39,9 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var HrPayrollStructure = await _payrollStructureService.GetHrPayrollStructureDisplay(id);
-            if (HrPayrollStructure == null)
+            var res = await _payrollStructureService.GetHrPayrollStructureDisplay(id);
+            if (res == null)
                 return NotFound();
-            var res = _mapper.Map<HrPayrollStructureDisplay>(HrPayrollStructure);
             return Ok(res);
         }
 
