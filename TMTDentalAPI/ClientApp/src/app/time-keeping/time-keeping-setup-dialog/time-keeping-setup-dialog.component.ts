@@ -73,7 +73,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     this.searchWorkEntryType().subscribe(
       result => {
         this.filterdWorks = result.items;
-        if (this.filterdWorks && this.filterdWorks.length > 0)
+        if (this.filterdWorks && this.filterdWorks.length > 0 && !this.chamCong.workEntryTypeId)
           this.formGroup.get('workEntryTypeId').patchValue(this.filterdWorks[0].id);
       }
     )
