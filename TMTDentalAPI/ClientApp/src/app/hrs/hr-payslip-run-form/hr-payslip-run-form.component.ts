@@ -31,6 +31,9 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   paySlip: any = [];
   paysliprun: any;
+
+  payslipGridData: GridDataResult;
+
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
@@ -50,6 +53,8 @@ export class HrPayslipRunFormComponent implements OnInit {
       } else {
         this.loadRecord();
       }
+
+      this.loadPayslip();
     });
 
     this.myForm = this.fb.group({
@@ -63,13 +68,19 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   loadRecord() {
-    this.hrPaysliprunService.get(this.itemId).subscribe((result: any) => {
-      this.paysliprun = result;
-      result.dateEndObj = new Date(result.dateEnd);
-      result.dateStartObj = new Date(result.dateStart); 
-      this.myForm.patchValue(result);  
-      this.loadPayslip(this.itemId); 
-    });
+    if (this.itemId) {
+      this.hrPaysliprunService.get(this.itemId).subscribe((result: any) => {
+        this.paysliprun = result;
+        result.dateEndObj = new Date(result.dateEnd);
+        result.dateStartObj = new Date(result.dateStart);
+        this.myForm.patchValue(result);
+      });
+    }
+  }
+  
+  reloadData() {
+    this.loadRecord();
+    this.loadPayslip();
   }
 
   getDefault() {
@@ -86,7 +97,7 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadRecord();
+    this.loadPayslip();
   }
 
 
@@ -173,7 +184,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     modalRef.componentInstance.id = id;
     modalRef.result.then(
       () => {
-        this.loadRecord();
+        this.reloadData();
       },
       () => { }
     );
@@ -201,7 +212,7 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   removelItem(id) {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Hủy phiếu lương';
+    modalRef.componentInstance.title = 'Xóa phiếu lương';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.hrPayslipService.delete(id).subscribe(res => {
@@ -210,19 +221,30 @@ export class HrPayslipRunFormComponent implements OnInit {
     });
   }
 
-  loadPayslip(id) {   
-    var val = new HrPayslipPaged();
-    val.payslipRunId = id;
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.search = this.search || '';   
-      this.hrPayslipService.getPaged(val).subscribe(res => {
-        this.paySlip = res.items;
+  loadPayslip() {
+    if (this.itemId) {
+      var val = new HrPayslipPaged();
+      val.payslipRunId = this.itemId;
+      val.limit = this.limit;
+      val.offset = this.skip;
+  
+      this.hrPayslipService.getPaged(val).pipe(
+        map(response => (<GridDataResult>{
+          data: response.items,
+          total: response.totalItems
+        }))
+      ).subscribe(res => {
+        this.payslipGridData = res;
+        this.loading = false;
+      }, err => {
+        console.log(err);
+        this.loading = false;
       });
+    }
   }
 
-  get slips(){
-      return this.myForm.get('slips') as FormArray;
+  get slips() {
+    return this.myForm.get('slips') as FormArray;
   }
 
   get f() {

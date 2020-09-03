@@ -109,7 +109,7 @@
                     <h5 class="o_form_label">
                        Danh sách phiếu lương
                     </h5>
-                    <kendo-grid [data]="paySlip" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
+                    <kendo-grid [data]="payslipGridData" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
                         (pageChange)="pageChange($event)" class="mt-2">  
                         <kendo-grid-column field="number" title="Số phiếu">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
