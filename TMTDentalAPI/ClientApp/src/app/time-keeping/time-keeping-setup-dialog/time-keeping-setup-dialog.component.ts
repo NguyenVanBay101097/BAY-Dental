@@ -156,7 +156,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
 
   delete(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Bạn chắc chắn muốn xóa chấm công vào ${this.intl.formatDate(new Date(this.chamCong.timeIn), "EEEE dd/MM/yyyy")} của nhân viên ${this.employee.name}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa chấm công vào ${this.intl.formatDate(new Date(this.chamCong.timeIn), "EEEE dd/MM/yyyy")} của nhân viên ${this.employee.name}`;
+    modalRef.componentInstance.title = "Xóa chấm công";
     modalRef.result.then(() => {
       this.timeKeepingServive.deleteChamCong(item.id).subscribe(
         () => {

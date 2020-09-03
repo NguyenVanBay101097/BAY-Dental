@@ -14,6 +14,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -499,7 +500,9 @@ namespace Infrastructure.Services
                         }
 
                         if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 2].Value)))
+                        {
                             curDateString = Convert.ToString(worksheet.Cells[row, 2].Value);
+                        }
                         else
                         {
                             errors.Add($"Dòng {row}: Ngày chấm công công được để trống");
@@ -523,7 +526,7 @@ namespace Infrastructure.Services
                         }
 
                         if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 3].Value)))
-                            time = $"{DateTime.Parse(curDateString):dd/MM/yyyy} { DateTime.Parse(de_time).ToShortTimeString()}";
+                            time = $"{DateTime.Parse(curDateString):MM/dd/yyyy} { DateTime.Parse(de_time).ToShortTimeString()}";
                         else
                         {
                             errors.Add($"Dòng {row}: Thời gian không được trống");
@@ -561,20 +564,14 @@ namespace Infrastructure.Services
 
             var employee_refs = data.Select(x => x.MaNV).Distinct().ToList();
             var word_entry_type_codes = data.Select(x => x.CodeWorkEntryType).Distinct().ToList();
+            var emps = await empObj.SearchQuery(x => employee_refs.Contains(x.Ref)).ToListAsync();
+            var works = await workEntryTypeObj.SearchQuery(x => word_entry_type_codes.Contains(x.Code)).ToListAsync();
 
             IDictionary<string, Employee> emp_dict = new Dictionary<string, Employee>();
-            foreach (var empRef in employee_refs)
-            {
-                var emp = await empObj.SearchQuery(x => x.Ref.Contains(empRef)).FirstOrDefaultAsync();
-                emp_dict.Add(empRef, emp);
-            }
+            emp_dict = emps.ToDictionary(t => t.Ref, v => v);
 
             IDictionary<string, WorkEntryType> work_entry_type_dict = new Dictionary<string, WorkEntryType>();
-            foreach (var code in word_entry_type_codes)
-            {
-                var workEntryType = await workEntryTypeObj.SearchQuery(x => x.Code.Contains(code)).FirstOrDefaultAsync();
-                work_entry_type_dict.Add(code, workEntryType);
-            }
+            work_entry_type_dict = works.ToDictionary(t => t.Code, v => v);
 
             var errors_2 = new List<string>();
 
@@ -601,8 +598,12 @@ namespace Infrastructure.Services
                     else if (cc.Type == "check-out")
                     {
                         var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                        ccIn.TimeOut = cc.Time;
-                        await UpdateAsync(ccIn);
+                        if (ccIn != null)
+                        {
+                            ccIn.TimeOut = cc.Time;
+                            await UpdateAsync(ccIn);
+                        }
+
                     }
                 }
                 catch (Exception e)
