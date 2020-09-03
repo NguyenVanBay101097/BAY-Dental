@@ -11,6 +11,7 @@ import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-di
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { map } from 'rxjs/operators';
+import { aggregateBy } from '@progress/kendo-data-query';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -28,11 +29,16 @@ export class HrPayslipRunFormComponent implements OnInit {
   search: string;
   submitted = false;
   loading = false;
+  public total: any;
 
   paySlip: any = [];
   paysliprun: any;
 
   payslipGridData: GridDataResult;
+
+  public aggregates: any[] = [
+    { field: 'totalAmount', aggregate: 'sum' },
+  ];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -70,7 +76,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   loadRecord() {
     if (this.itemId) {
       this.hrPaysliprunService.get(this.itemId).subscribe((result: any) => {
-        this.paysliprun = result;
+        this.paysliprun = result;       
         result.dateEndObj = new Date(result.dateEnd);
         result.dateStartObj = new Date(result.dateStart);
         this.myForm.patchValue(result);
@@ -190,6 +196,9 @@ export class HrPayslipRunFormComponent implements OnInit {
     );
   }
 
+
+
+
   actionDone() {
     if (this.itemId) {
       this.hrPaysliprunService.actionDone([this.itemId]).subscribe(() => {
@@ -235,6 +244,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         }))
       ).subscribe(res => {
         this.payslipGridData = res;
+        this.total = res.data.map(x => x.totalAmount).reduce((a, b) => a + b, 0);
         this.loading = false;
       }, err => {
         console.log(err);

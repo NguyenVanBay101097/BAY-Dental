@@ -33,6 +33,9 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<HrPayslipRunBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            foreach (var item in items)
+                item.TotalAmount = await computeTotalSlips(item.Id);
+
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<HrPayslipRunBasic>(totalItems, val.Offset, val.Limit)
@@ -68,6 +71,13 @@ namespace Infrastructure.Services
             paySlipRun = _mapper.Map(val, paySlipRun);
 
             await UpdateAsync(paySlipRun);
+        }
+
+        public async Task<decimal> computeTotalSlips(Guid runId)
+        {
+            var payslipObj = GetService<IHrPayslipService>();
+            var payslips = await payslipObj.SearchQuery(x => x.PayslipRunId == runId).ToListAsync();            
+            return payslips.Sum(x => x.TotalAmount).Value; 
         }
 
         public async Task ActionConfirm(PaySlipRunConfirmViewModel val)

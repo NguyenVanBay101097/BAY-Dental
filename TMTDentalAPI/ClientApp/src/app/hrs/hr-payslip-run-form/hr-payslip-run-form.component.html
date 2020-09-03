@@ -136,10 +136,10 @@
                                 <span >{{convertState(dataItem.state)}}</span>                             
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column  [headerStyle]="{'text-align': 'right'}" class="text-right" title="Tổng tiền">
+                        <kendo-grid-column  [headerStyle]="{'text-align': 'right'}" class="text-right" footerClass="text-right font-weight-bold" title="Tổng tiền">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                 {{dataItem.totalAmount | number}}
-                            </ng-template>
+                            </ng-template>                         
                         </kendo-grid-column>
                         <kendo-grid-column field="id">
                             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
@@ -149,10 +149,29 @@
                                 <button kendoButton (click)="detailItem(dataItem.id)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
                                     class="far fa-edit"></i></button>  
                                 <button class="btn btn-danger btn-sm" title="Xóa" (click)="removelItem(dataItem.id)">
-                                    <span class="far fa-trash-alt"></span></button>                         
+                                    <span class="far fa-trash-alt"></span></button> 
                             </ng-template>
                           </kendo-grid-column>      
                     </kendo-grid>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_8">
+                    </table>
+                    <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label pb-0 pl-3">
+                                    <label class="o_form_label oe_subtotal_footer_separator">
+                                        Tổng tiền
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <span
+                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{total | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
            
