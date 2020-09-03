@@ -16,11 +16,13 @@ namespace Umbraco.Web.Mapping
             CreateMap<HrPayslip, HrPayslipBasic>();
 
             CreateMap<HrPayslipDisplay, HrPayslip>()
-                .ForMember(x => x.Id, x => x.Ignore());
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.WorkedDaysLines, x => x.Ignore());
 
             CreateMap<HrPayslipSave, HrPayslip>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.WorkedDaysLines, x => x.Ignore());
+                .ForMember(x => x.WorkedDaysLines, x => x.Ignore())
+                .ForMember(x => x.PayslipRun, x => x.Ignore());
         }
     }
 }

@@ -99,5 +99,12 @@ namespace TMTDentalAPI.Controllers
             var result = await _employeeService.GetAutocompleteAsync(val);
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SearchRead(EmployeePaged val)
+        {
+            var result = await _employeeService.GetPagedResultAsync(val);
+            return Ok(result);
+        }
     }
 }

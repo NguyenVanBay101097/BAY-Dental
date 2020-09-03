@@ -1,28 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { EmployeePaged, EmployeeBasic } from '../employee';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { EmployeeService } from '../employee.service';
-import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { GridDataResult, PageChangeEvent, SelectionEvent } from '@progress/kendo-angular-grid';
+import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
+import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { EmployeePaged, EmployeeBasic } from 'src/app/employees/employee';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-employee-list',
-  templateUrl: './employee-list.component.html',
-  styleUrls: ['./employee-list.component.css'],
-  host: {
-    class: 'o_action o_view_controller'
-  }
+  selector: 'app-select-employee-dialog',
+  templateUrl: './select-employee-dialog.component.html',
+  styleUrls: ['./select-employee-dialog.component.css']
 })
-export class EmployeeListComponent implements OnInit {
-
-  constructor(private fb: FormBuilder, private service: EmployeeService,
-    private activeroute: ActivatedRoute, private modalService: NgbModal) { }
-
+export class SelectEmployeeDialogComponent implements OnInit {
+  @Output() selectionChange = new EventEmitter<SelectionEvent>();
+  title: string;
   loading = false;
   gridView: GridDataResult;
   windowOpened: boolean = false;
@@ -35,8 +29,13 @@ export class EmployeeListComponent implements OnInit {
   isDoctor: boolean;
   isAssistant: boolean;
   isOther: boolean;
+  private rowsSelected: any;
+  
 
   btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
+  
+  constructor(private service: EmployeeService,
+    private activeroute: ActivatedRoute, private modalService: NgbModal, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.getEmployeesList();
@@ -87,6 +86,14 @@ export class EmployeeListComponent implements OnInit {
     this.skip = event.skip;
     this.getEmployeesList();
   }
+
+  selectedKeysChange(rows : any) {    
+    this.rowsSelected = rows;
+  }
+
+  onselectedEmployees(){
+    this.activeModal.close(this.rowsSelected);  
+  } 
 
   onAdvanceSearchChange(filter) {
     this.isDoctor = filter.isDoctor;

@@ -275,6 +275,7 @@ namespace TMTDentalAPI
             services.AddScoped<IHrPayslipService, HrPayslipService>();
             services.AddScoped<IHrPayslipLineService, HrPayslipLineService>();
             services.AddScoped<IHrPayslipWorkedDayService, HrPayslipWorkedDayService>();
+            services.AddScoped<IHrPayslipRunService, HrPayslipRunService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -392,6 +393,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrPayslipProfile());
                 mc.AddProfile(new HrPayslipLineProfile());
                 mc.AddProfile(new HrPayslipWorkedDayProfile());
+                mc.AddProfile(new HrPayslipRunProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

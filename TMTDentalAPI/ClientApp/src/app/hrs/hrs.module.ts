@@ -17,6 +17,11 @@ import { HrPayslipService } from './hr-payslip.service';
 import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-update/hr-payslip-to-pay-create-update.component';
 import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip-to-pay-list.component';
 import { EmployeeCreateUpdateComponent } from '../employees/employee-create-update/employee-create-update.component';
+import { HrPaysliprunService } from './hr-paysliprun.service';
+import { HrPayslipRunListComponent } from './hr-payslip-run-list/hr-payslip-run-list.component';
+import { HrPayslipRunFormComponent } from './hr-payslip-run-form/hr-payslip-run-form.component';
+import { HrPayslipRunConfirmDialogComponent } from './hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
+import { SelectEmployeeDialogComponent } from '../shared/select-employee-dialog/select-employee-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { EmployeeService } from '../employees/employee.service';
 import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-payslip-date-filter.component';
@@ -30,6 +35,10 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
     HrSalaryRuleCrudDialogComponent,
     HrPayslipToPayCreateUpdateComponent,
     HrPayslipToPayListComponent,
+    HrPayslipRunListComponent,
+    HrPayslipRunFormComponent,
+    HrPayslipRunConfirmDialogComponent,
+    SelectEmployeeDialogComponent,
     HrPayslipDateFilterComponent,
   ],
   imports: [
@@ -45,10 +54,13 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
   ],
   providers: [
     HrPayrollStructureService,
-    HrPayslipService
+    HrPayslipService,
+    HrPaysliprunService,
+    EmployeeService
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
+    HrPayslipRunConfirmDialogComponent,SelectEmployeeDialogComponent
   ]
 })
 export class HrsModule { }

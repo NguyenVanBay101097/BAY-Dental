@@ -38,5 +38,10 @@ export class EmployeeService {
     return this.http.post<EmployeeSimple[]>(this.baseApi + "api/Employees/Autocomplete", val);
   }
 
+  getSearchRead(empPaged: any): Observable<PagedResult2<EmployeeBasic>> {
+    return this.http.post<PagedResult2<EmployeeBasic>>(this.baseApi + "api/Employees" + "/SearchRead", empPaged);
+  }
+
+
 
 }
