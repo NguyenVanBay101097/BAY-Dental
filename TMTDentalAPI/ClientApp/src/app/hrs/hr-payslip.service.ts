@@ -1,3 +1,4 @@
+import { EmployeeBasic, EmployeeDisplay } from 'src/app/employees/employee';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
@@ -28,6 +29,7 @@ export class HrPayslipPaged {
     dateFrom: any;
     dateTo: any;
     employeeId: any;
+    payslipRunId: string;
 }
 
 export class HrPayslipSave {
@@ -48,6 +50,7 @@ export class HrPayslipDisplay {
     name: string;
     number: string;
     employeeId: string;
+    employee: EmployeeDisplay;
     dateFrom: string;
     dateTo: string;
     state: string;
@@ -80,6 +83,8 @@ export class HrPayslipWorkedDaySave {
     workEntryTypeId: string;
     amount: number;
 }
+
+
 
 @Injectable()
 export class HrPayslipService {

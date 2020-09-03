@@ -48,15 +48,13 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create(HrPayslipSave val)
-        {
-            var payslip = _mapper.Map<HrPayslip>(val);
-            SaveWorkedDayLines(val, payslip);
+        {        
 
             await _unitOfWork.BeginTransactionAsync();
-            await _payslipService.CreateAsync(payslip);
+           var res = await _payslipService.CreatePayslip(val);
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<HrPayslipBasic>(payslip);
+            var basic = _mapper.Map<HrPayslipBasic>(res);
             return Ok(basic);
         }
 

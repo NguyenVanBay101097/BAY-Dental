@@ -13,6 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<HrPayslipBasic>> GetPaged(HrPayslipPaged val);
         Task<HrPayslipDisplay> GetHrPayslipDisplay(Guid Id);
         Task<HrPayslipOnChangeEmployeeResult> OnChangeEmployee(Guid? employeeId, DateTime? dateFrom, DateTime? dateTo);
+        Task<HrPayslip> CreatePayslip(HrPayslipSave val);
         Task ComputeSheet(IEnumerable<Guid> ids);
         Task ActionDone(IEnumerable<Guid> ids);
         HrPayslipDefaultGetResult DefaultGet(HrPayslipDefaultGet val);
@@ -20,5 +21,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<HrPayslipWorkedDayBasic>> GetWorkedDaysLines(Guid id);
         Task<IEnumerable<HrPayslipLineBasic>> GetLines(Guid id);
         Task ActionCancel(IEnumerable<Guid> ids);
+        Task UpdatePayslip(Guid id, HrPayslipSave val);
     }
 }

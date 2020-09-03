@@ -5,6 +5,8 @@ import { HrPayrollStructureCreateUpdateComponent } from './hr-payroll-structure-
 import { HrPayrollStructureTypeListComponent } from './hr-payroll-structure-type-list/hr-payroll-structure-type-list.component';
 import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip-to-pay-list.component';
 import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-update/hr-payslip-to-pay-create-update.component';
+import { HrPayslipRunListComponent } from './hr-payslip-run-list/hr-payslip-run-list.component';
+import { HrPayslipRunFormComponent } from './hr-payslip-run-form/hr-payslip-run-form.component';
 
 const routes: Routes = [
   {
@@ -31,6 +33,12 @@ const routes: Routes = [
   {
     path: 'payslips/edit/:id', component: HrPayslipToPayCreateUpdateComponent
   },
+  {
+    path: 'payslip-runs', component: HrPayslipRunListComponent
+  },
+  {
+    path: 'payslip-run/form', component: HrPayslipRunFormComponent
+  }
 ];
 
 @NgModule({

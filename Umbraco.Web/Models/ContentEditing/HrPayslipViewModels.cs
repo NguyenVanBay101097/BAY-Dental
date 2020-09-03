@@ -35,6 +35,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateFrom { get; set; }
 
         public DateTime DateTo { get; set; }
+        public string State { get; set; }
+        public Guid? payslipRunId { get; set; }
+        public IEnumerable<HrPayslipWorkedDaySave> ListHrPayslipWorkedDaySave { get; set; } = new List<HrPayslipWorkedDaySave>();
 
         public IEnumerable<HrPayslipWorkedDaySave> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDaySave>();
         public IEnumerable<HrPayslipLineSave> Lines { get; set; } = new List<HrPayslipLineSave>();
@@ -70,6 +73,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? StructureTypeId { get; set; }
         public HrPayrollStructureTypeSimple StructureType { get; set; }
+
+        public IEnumerable<HrPayslipWorkedDayDisplay> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
     }
 
     public class HrPayslipOnChangeEmployee

@@ -9,6 +9,7 @@ export class EmployeePaged {
     position: string;
     isDoctor: boolean;
     isAssistant: boolean;
+    ids: string[];
 }
 
 export class EmployeeBasic {

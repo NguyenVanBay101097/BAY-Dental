@@ -1,0 +1,161 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/hr/payslip-runs">Đợt lương </a>
+            </li>
+            <li class="active">
+                <span *ngIf="itemId">{{paysliprun.name}}</span>
+                <span *ngIf="!itemId">Mới</span>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="myForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
+                    (click)="addPayslips()">
+                   Tạo phiếu lương
+                </button>
+                <button type="button" accesskey="1" *ngIf="itemId && paysliprun.state == 'draft'"
+                    class="btn btn-primary btn-sm" (click)="addPayslips()">
+                    Tạo phiếu lương
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
+                        *ngIf="['draft'].indexOf(paysliprun.state) !== -1" (click)="onSave()">
+                        Lưu nháp
+                </button> 
+                <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-success btn-sm"
+                        (click)="actionDone()">
+                        Hoàn thành
+                    </button>                
+                <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm"
+                        (click)="createNew()">
+                        Thêm mới
+                 </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="paysliprun.state !== 'done'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="paysliprun.state === 'done'" 
+                        [class.btn-secondary]="paysliprun.state !== 'done'"
+                        type="button">
+                        Hoàn thành
+                    </button>
+                    <button [disabled]="paysliprun.state !== 'confirm'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="paysliprun.state === 'confirm'" 
+                        [class.btn-secondary]="paysliprun.state !== 'confirm'"
+                        type="button">
+                        Đã xác nhận
+                    </button>
+                    <button [disabled]="paysliprun.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="paysliprun.state === 'draft'" 
+                        [class.btn-secondary]="paysliprun.state !== 'draft'"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">              
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên </label>
+                    <h1>
+                        <input type="text" class="form-control" required formControlName="name" />
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                      </div>
+                </div>             
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày bắt đầu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateStartObj" [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1">
+                                    </kendo-datepicker>
+                                    <span
+                                        [class.d-none]="paysliprun.state == 'draft'">{{paysliprun.dateStart | date: 'dd/MM/yyyy'}}</span>
+                                </td>
+                            </tr>                        
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày kết thúc
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateEndObj" [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1">
+                                    </kendo-datepicker>
+                                    <span
+                                    [class.d-none]="paysliprun.state == 'draft'">{{paysliprun.dateEnd | date: 'dd/MM/yyyy'}}</span>
+                                </td>
+                            </tr>                        
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_content" [class.d-none]="paysliprun.state == 'draft'">
+                    <h5 class="o_form_label">
+                       Danh sách phiếu lương
+                    </h5>
+                    <kendo-grid [data]="payslipGridData" [pageable]="true" [pageSize]="limit" [skip]="skip" [loading]="loading" 
+                        (pageChange)="pageChange($event)" class="mt-2">  
+                        <kendo-grid-column field="number" title="Số phiếu">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <a class="text-primary" *ngIf="dataItem.id" (click)="detailItem(dataItem.id)">{{dataItem.number}}</a>
+                            </ng-template>
+                        </kendo-grid-column>                    
+                        <kendo-grid-column field="employeeName" title="Nhân viên">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.employeeName }}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="dateFrom" title="Từ ngày">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.dateFrom | date:"shortDate" }}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="dateTo" title="Đến ngày">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.dateTo | date:"shortDate"}}
+                            </ng-template>
+                        </kendo-grid-column>                     
+                        <kendo-grid-column field="state" title="Trạng thái">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <span >{{convertState(dataItem.state)}}</span>                             
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column  [headerStyle]="{'text-align': 'right'}" class="text-right" title="Tổng tiền">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.totalAmount | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="id">
+                            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                              Thao tác
+                            </ng-template>
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <button kendoButton (click)="detailItem(dataItem.id)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
+                                    class="far fa-edit"></i></button>  
+                                <button class="btn btn-danger btn-sm" title="Xóa" (click)="removelItem(dataItem.id)">
+                                    <span class="far fa-trash-alt"></span></button>                         
+                            </ng-template>
+                          </kendo-grid-column>      
+                    </kendo-grid>
+                </div>
+            </div>
+           
+        </div>
+    </form>
+</div>
