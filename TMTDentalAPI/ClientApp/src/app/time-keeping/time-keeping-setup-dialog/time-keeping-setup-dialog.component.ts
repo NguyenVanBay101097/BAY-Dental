@@ -10,6 +10,7 @@ import { offset } from '@progress/kendo-date-math';
 import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/work-entry-types/work-entry-type.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -38,7 +39,8 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     private intl: IntlService,
     private workEntryTypeService: WorkEntryTypeService,
     private notificationService: NotificationService,
-    private showErrorService:AppSharedShowErrorService
+    private showErrorService: AppSharedShowErrorService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -150,6 +152,18 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     else {
       this.timeOut = null;
     }
+  }
+
+  delete(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = `Bạn chắc chắn muốn xóa chấm công vào ${this.intl.formatDate(new Date(this.chamCong.timeIn), "EEEE dd/MM/yyyy")} của nhân viên ${this.employee.name}`;
+    modalRef.result.then(() => {
+      this.timeKeepingServive.deleteChamCong(item.id).subscribe(
+        () => {
+          this.activeModal.close(this.employee.id);
+        }
+      )
+    });
   }
 
   onSave() {

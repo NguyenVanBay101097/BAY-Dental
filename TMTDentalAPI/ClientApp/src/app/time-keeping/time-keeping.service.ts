@@ -51,7 +51,7 @@ export class TimeSheetEmployee {
 export class ImportResponse {
   success: boolean;
   errors: string[];
-  message:string;
+  message: string;
 }
 
 
@@ -88,7 +88,7 @@ export class TimeKeepingService {
       { responseType: "blob" });
   }
 
-  actionImport(val):Observable<ImportResponse> {
+  actionImport(val): Observable<ImportResponse> {
     return this.http.post<ImportResponse>(this.base_api + this.apiUrl + '/ExcelImportCreate', val);
   }
 
@@ -104,5 +104,8 @@ export class TimeKeepingService {
     return this.http.get<ChamCongBasic>(this.base_api + this.apiUrl + '/GetLastChamCong', { params: val });
   }
 
+  deleteChamCong(id) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
 
 }
