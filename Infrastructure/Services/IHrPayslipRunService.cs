@@ -11,6 +11,7 @@ namespace Infrastructure.Services
     public interface IHrPayslipRunService : IBaseService<HrPayslipRun>
     {
         Task<PagedResult2<HrPayslipRunBasic>> GetPagedResultAsync(HrPayslipRunPaged val);
+
         Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id);
         Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val);
         Task UpdatePayslipRun(Guid id, HrPayslipRunSave val);

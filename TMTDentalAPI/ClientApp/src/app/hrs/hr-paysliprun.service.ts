@@ -40,12 +40,18 @@ export class HrPayslipRunSave {
   name: string;
   dateStart: string;
   dateEnd: string;
+  companyId: string;
+  state: string;
 }
 
 export class PaySlipRunConfirmViewModel{
   payslipRunId: string;
   structureId: string;
-  employees: EmployeeBasic[];
+  empIds: string[];
+}
+
+export class HrPayslipRunDefaultGet{
+  state: string;
 }
 
 @Injectable({
@@ -60,12 +66,12 @@ export class HrPaysliprunService {
     return this.http.get<HrPayslipRunPaging>(this.base_api + this.apiUrl, { params: val });
   }
 
-  delete(id) {
-    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
-  }
-
   get(id): Observable<HrPayslipRunDisplay> {
     return this.http.get<HrPayslipRunDisplay>(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  default(val: HrPayslipRunDefaultGet){
+    return this.http.post(this.base_api + this.apiUrl + '/DefaultGet' , val);
   }
 
   create(val: HrPayslipRunSave ) {
@@ -82,6 +88,10 @@ export class HrPaysliprunService {
 
   update(id, val: HrPayslipRunSave) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
+  }
+
+  delete(id) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
 }

@@ -14,8 +14,8 @@
                             <tr>                                
                                 <td colspan="1" class="o_td_label">
                                     <div>
-                                        <span style="color: brown;">Đặt mẫu lương cụ thể nếu bạn muốn áp dụng mẫu lương cho tất cả nhân viên (ví dụ: Thưởng cuối năm,lương tháng 13,v..). Nếu bạn để trống trường này, 
-                                            một mẫu lương thông dụng sẽ được tạo cho tất cả các nhân viên đã chọn, dựa trên Cấu trúc lương của họ.</span> 
+                                        <span class="text-muted">Chọn mẫu lương nếu bạn muốn tạo những phiếu lương đặc biệt (ví dụ: Thưởng cuối năm...). Nếu không chọn, 
+                                            Mẫu lương thông dụng sẽ được sử dụng để tạo phiếu lương cho tất cả các nhân viên đã chọn, dựa trên loại mẫu lương của họ.</span> 
                                      </div> 
                                 </td>                            
                             </tr>
@@ -42,13 +42,33 @@
                 </div>
                 <div>
                     <div class="d-flex mb-2">
-                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="openEmployees()">Thêm nhân viên</button>                    
+                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="openEmployees()">Chọn nhân viên</button>                    
                     </div>
-                    <kendo-grid [data]="lines" [pageable]="true" [pageSize]="pageSize" [skip]="skip"  [selectable]="true" >                   
-                       <kendo-grid-column field="ref" title="Mã"></kendo-grid-column>
-                       <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
-                       <kendo-grid-column field="phone" title="Số điện thoại"></kendo-grid-column>       
-                    </kendo-grid>                  
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Phone</th>                              
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="lines" >
+                            <ng-container *ngFor="let item of lines.controls; let i = index;">
+                                <tr [formGroupName]="i">
+                                    <td class="align-middle">{{ item.get('ref').value }}</td>
+                                    <td class="align-middle">{{item.get('name').value }}</td>
+                                    <td class="align-middle">{{ item.get('phone').value }}
+                                    </td>                          
+                                    <td>
+                                        <button type="button" title="Xóa" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>                                
                 </div>
             </div>
         </div>

@@ -1,18 +1,18 @@
 import { EmployeeBasic } from './../../employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, map, filter } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { HrPaysliprunService, PaySlipRunConfirmViewModel } from '../hr-paysliprun.service';
+import { HrPaysliprunService, PaySlipRunConfirmViewModel, HrPayslipRunDefaultGet } from '../hr-paysliprun.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { HrPayrollStructureService, HrPayrollStructureDisplay, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { SelectEmployeeDialogComponent } from 'src/app/shared/select-employee-dialog/select-employee-dialog.component';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { Subject } from 'rxjs';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -27,11 +27,11 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   @Input() public title: string;
   submitted = false;
   filterStructures: HrPayrollStructureDisplay[];
+  gridData: GridDataResult;
+  limit = 20;
   skip = 0;
-  pageSize = 20;
   search: string;
   searchUpdate = new Subject<string>();
-  liness : EmployeeBasic[];
   isDoctor: boolean;
   isAssistant: boolean;
   isOther: boolean;
@@ -50,8 +50,9 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   ngOnInit() {
     this.myForm = this.fb.group({
       structure: null,
-      lines: null,
+      lines: this.fb.array([]),
     });
+    
     this.loadFilteredStructures();
 
     this.structureCbx.filterChange.asObservable().pipe(
@@ -76,23 +77,31 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
     );
   }
 
-  addEmployee(idss){
-    if(idss){
+  
+
+  addEmployee(empIds){
+    if(empIds){
         var val = new EmployeePaged();
-        val.ids = idss;
+        val.ids = empIds;
         this.employeeService.getSearchRead(val).subscribe(
-          res=> {            
-            this.liness = res.items;
+          res=> { 
+            res.items.forEach(item => {                
+              if(!this.lines.value.some(x => x.id === item.id)){
+                this.lines.push(this.fb.group({
+                  id: item.id,
+                  ref: item.ref,
+                  name: item.name, 
+                  phone: item.phone, 
+                }));    
+              }                                                                                                
+            })           
           }
         );      
       }
   }
 
-  get lines() {
-    var val = this.myForm.value;
-    val.lines =  this.liness
-    return val.lines;
-  }
+
+
 
   loadFilteredStructures(){
     this.searchFilteredStructures().subscribe(
@@ -103,19 +112,21 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   }
 
   actionConfirm(){
-    debugger
     var val = new PaySlipRunConfirmViewModel();
     var myform = this.myForm.value;
     val.payslipRunId = this.id;
     val.structureId = myform.structure ? myform.structure.id : null;
-    val.employees = myform.lines ? myform.lines : null;
+    val.empIds = myform.lines ? myform.lines.map(x=>x.id) : null;
     this.hrPaysliprunService.actionConfirm(val).subscribe(
       () => { 
         this.activeModal.close(); 
         
       });
     }
-  
+
+    get lines() {                   
+      return this.myForm.get('lines') as FormArray;      
+    }
 
 
   searchFilteredStructures(filter?: string) {

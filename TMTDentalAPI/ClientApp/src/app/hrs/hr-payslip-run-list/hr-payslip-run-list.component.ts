@@ -16,9 +16,8 @@ export class HrPayslipRunListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = "Thêm đợt lương";
+  title = "Đợt lương";
   loading = false;
-  opened = false;
   searchUpdate = new Subject<string>();
   search: string;
 
@@ -78,7 +77,6 @@ export class HrPayslipRunListComponent implements OnInit {
 
   editItem(item: any) {
     this.router.navigateByUrl("hr/payslip-run/form?id=" + item.id);
-    
   }
 
   deleteItem(item: HrPayslipRunBasic) {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -104,6 +105,22 @@ namespace TMTDentalAPI.Controllers
             await _payslipRunService.DeleteAsync(paySlip);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult DefaultGet(HrPayslipRunDefaultGet val)
+        {
+            var date = DateTime.Now;
+            var startDate = new DateTime(date.Year, date.Month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+
+            var res = new HrPayslipRunSave();
+            res.State = val.State;
+            res.CompanyId = CompanyId;
+            res.DateStart = startDate;
+            res.DateEnd = endDate;
+
+            return Ok(res);
         }
     }
 }

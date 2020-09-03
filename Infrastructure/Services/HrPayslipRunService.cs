@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ namespace Infrastructure.Services
             };
         }
 
+
         public async Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id)
         {
             var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -53,14 +55,13 @@ namespace Infrastructure.Services
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
             var payslipRun = _mapper.Map<HrPayslipRun>(val);
-            payslipRun.CompanyId = CompanyId;
 
             return await CreateAsync(payslipRun);
         }
 
         public async Task UpdatePayslipRun(Guid id, HrPayslipRunSave val)
         {
-            var paySlipRun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).FirstOrDefaultAsync();
+            var paySlipRun = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (paySlipRun == null)
                 throw new Exception("PayslipRun not found");
 
@@ -76,53 +77,57 @@ namespace Infrastructure.Services
             if (paysliprun == null)
                 throw new Exception("PayslipRun Not Found");
 
-            if (val.Employees.Any())
+            var payslips = new List<HrPayslip>();
+            foreach (var emp in val.EmpIds)
             {
-                foreach (var emp in val.Employees)
-                {
-                    
-                    var changemp = await payslipObj.OnChangeEmployee(emp.Id, paysliprun.DateStart, paysliprun.DateEnd);
-                    var workedDayLines = _mapper.Map<IEnumerable<HrPayslipWorkedDaySave>>(changemp.WorkedDayLines);
-                    var res = new HrPayslipSave()
-                    {
-                        StructId = val.StructureId.HasValue ? val.StructureId.Value : await GetRegularStructure(emp),
-                        DateFrom = paysliprun.DateStart,
-                        DateTo = paysliprun.DateEnd,
-                        EmployeeId = emp.Id,
-                        Name = changemp.Name,
-                        WorkedDaysLines = workedDayLines,
-                        payslipRunId = paysliprun.Id,
-                    };
+                //lấy mặc định của 1 phiếu lương
+                var payslip = new HrPayslip();
+                payslip.CompanyId = paysliprun.CompanyId;
+                payslip.DateFrom = paysliprun.DateStart;
+                payslip.DateTo = paysliprun.DateEnd;
+                payslip.EmployeeId = emp;
+                payslip.PayslipRunId = paysliprun.Id;
 
-                    var rs = await payslipObj.CreatePayslip(res);                  
-                       
+                //sự kiện onchange employee trên payslip
+                var changemp = await payslipObj.OnChangeEmployee(payslip.EmployeeId, payslip.DateFrom, payslip.DateTo);
+                payslip.Name = changemp.Name;
+                payslip.StructureTypeId = changemp.StructureTypeId;
+                foreach (var item in changemp.WorkedDayLines)
+                {
+                    payslip.WorkedDaysLines.Add(new HrPayslipWorkedDays
+                    {
+                        Name = item.Name,
+                        NumberOfDays = item.NumberOfDays,
+                        NumberOfHours = item.NumberOfHours,
+                        Amount = item.Amount,
+                        WorkEntryTypeId = item.WorkEntryTypeId
+                    });
                 }
-                //tinh luong
-                if(paysliprun.Slips.Any())
-                    await payslipObj.ComputeSheet(paysliprun.Slips.Select(x=>x.Id));
+
+                if (!payslip.StructureTypeId.HasValue)
+                    throw new Exception("");
+
+                //xử lý structure
+                payslip.StructId = val.StructureId;
+                if (!payslip.StructId.HasValue)
+                {
+                    var structureObj = GetService<IHrPayrollStructureService>();
+                    var structure = await structureObj.SearchQuery(x => x.TypeId == payslip.StructureTypeId && x.RegularPay == true).FirstOrDefaultAsync();
+                    if (structure == null)
+                        throw new Exception("");
+                    payslip.StructId = structure.Id;
+                }
+
+                payslips.Add(payslip);
             }
 
+            await payslipObj.CreateAsync(payslips);
+
+            await payslipObj.ComputeSheet(payslips.Select(x => x.Id));
 
             paysliprun.State = "confirm";
-
             await UpdateAsync(paysliprun);
-
         }
-
-        /// <summary>
-        /// lấy mẫu lương thông dụng
-        /// </summary>
-        /// <param name="emp"></param>
-        /// <returns></returns>
-        public async Task<Guid> GetRegularStructure(Employee emp)
-        {
-            var structureObj = GetService<IHrPayrollStructureService>();
-
-            var structure = await structureObj.SearchQuery(x => x.TypeId == emp.StructureTypeId && x.RegularPay == true).FirstAsync();
-
-            return structure.Id;
-        }
-
 
 
         public async Task ActionDone(IEnumerable<Guid> ids)
@@ -138,8 +143,6 @@ namespace Infrastructure.Services
                 run.State = "done";
             }
 
-
-
             await UpdateAsync(payslipruns);
         }
     }
@@ -150,6 +153,6 @@ namespace Infrastructure.Services
 
         public Guid? StructureId { get; set; }
 
-        public IEnumerable<Employee> Employees { get; set; } = new List<Employee>();
+        public IEnumerable<Guid> EmpIds { get; set; } = new List<Guid>();
     }
 }
