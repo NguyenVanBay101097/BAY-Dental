@@ -107,7 +107,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (!this.itemId) {
       this.hrPaysliprunService.create(val)
         .subscribe((result: any) => {
-          debugger
           this.router.navigateByUrl('hr/payslip-run/form?id=' + result.id)
           this.notificationService.show({
             content: 'Lưu thành công',
@@ -141,8 +140,8 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
 
     var val = this.myForm.value;
-    val.dateStart = this.intlService.formatDate(val.dateStart, 'yyyy-MM-ddTHH:mm');
-    val.dateEnd = this.intlService.formatDate(val.dateEnd, 'yyyy-MM-ddTHH:mm');
+    val.dateStart = this.intlService.formatDate(val.dateStartObj, 'yyyy-MM-ddTHH:mm');
+    val.dateEnd = this.intlService.formatDate(val.dateEndObj, 'yyyy-MM-ddTHH:mm');
 
     if (!this.itemId) {
       this.hrPaysliprunService.create(val)
@@ -152,9 +151,7 @@ export class HrPayslipRunFormComponent implements OnInit {
               id: result['id']
             },
           });
-
           this.openConfirmDialog(result.id);
-
         }, err => {
           console.log(err);
         })
