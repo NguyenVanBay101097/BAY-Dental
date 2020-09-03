@@ -193,7 +193,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   actionDone() {
     if (this.itemId) {
       this.hrPaysliprunService.actionDone([this.itemId]).subscribe(() => {
-        this.loadRecord();
+        this.reloadData();
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -216,7 +216,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.hrPayslipService.delete(id).subscribe(res => {
-        this.loadRecord();
+        this.reloadData();
       });
     });
   }
