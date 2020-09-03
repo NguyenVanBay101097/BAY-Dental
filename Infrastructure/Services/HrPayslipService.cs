@@ -129,8 +129,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
 
-            if (val.payslipRunId.HasValue)
-                query = query.Where(x => x.PayslipRunId == val.payslipRunId.Value);
+            if (val.PayslipRunId.HasValue)
+                query = query.Where(x => x.PayslipRunId == val.PayslipRunId.Value);
 
             query = query.OrderByDescending(x => x.DateCreated);
 

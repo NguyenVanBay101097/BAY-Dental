@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
         public string State { get; set; }
         public Guid? EmployeeId { get; set; }
+
+        public Guid? PayslipRunId { get; set; }
     }
 
     public class HrPayslipSave
