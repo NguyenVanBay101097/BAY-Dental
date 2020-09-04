@@ -204,6 +204,21 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
   }
 
+  actionCancel() {
+    if (this.itemId) {
+      this.hrPaysliprunService.actionCancel([this.itemId]).subscribe(() => {
+        this.reloadData();
+        this.notificationService.show({
+          content: 'Hủy đợt lương thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      });
+    }
+  }
+
   createNew() {
     this.router.navigate(['hr/payslip-run/form']);
     this.getDefault();

@@ -32,7 +32,11 @@
                 <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-success btn-sm"
                         (click)="actionDone()">
                         Hoàn thành
-                    </button>                
+                </button> 
+                <button *ngIf="['done'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-danger btn-sm"
+                    (click)="actionCancel()">
+                    Hủy đợt lương
+                </button>               
                 <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm"
                         (click)="createNew()">
                         Thêm mới
@@ -65,7 +69,7 @@
                     <h1>
                         <input type="text" class="form-control" required formControlName="name" />
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty )" class="text-danger">
                         <div *ngIf="f.name.errors.required">Nhập tên</div>
                       </div>
                 </div>             

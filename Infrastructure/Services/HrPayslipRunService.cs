@@ -26,16 +26,13 @@ namespace Infrastructure.Services
         }
 
         public async Task<PagedResult2<HrPayslipRunBasic>> GetPagedResultAsync(HrPayslipRunPaged val)
-        {
+        {   
             ISpecification<HrPayslipRun> spec = new InitialSpecification<HrPayslipRun>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<HrPayslipRun>(x => x.Name.Contains(val.Search)));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<HrPayslipRunBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
-
-            foreach (var item in items)
-                item.TotalAmount = await computeTotalSlips(item.Id);
 
             var totalItems = await query.CountAsync();
 
@@ -70,13 +67,6 @@ namespace Infrastructure.Services
             paySlipRun = _mapper.Map(val, paySlipRun);
 
             await UpdateAsync(paySlipRun);
-        }
-
-        public async Task<decimal> computeTotalSlips(Guid runId)
-        {
-            var payslipObj = GetService<IHrPayslipService>();
-            var payslips = await payslipObj.SearchQuery(x => x.PayslipRunId == runId).ToListAsync();            
-            return payslips.Sum(x => x.TotalAmount).Value; 
         }
 
         public async Task ActionConfirm(PaySlipRunConfirmViewModel val)
@@ -163,6 +153,25 @@ namespace Infrastructure.Services
 
             await UpdateAsync(payslipruns);
         }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var payslipObj = GetService<IHrPayslipService>();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "done").Include(x => x.Slips).ToListAsync();
+            if (payslipruns == null)
+                throw new Exception("Đợt lương không tồn tại");
+
+            foreach (var run in payslipruns)
+            {
+                await payslipObj.ActionCancel(run.Slips.Select(x => x.Id));
+                run.Slips.Clear();
+                run.State = "draft";
+            }
+
+            await UpdateAsync(payslipruns);
+        }
+
+
     }
 
     public class PaySlipRunConfirmViewModel
