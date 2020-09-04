@@ -272,7 +272,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   convertState(state) {
     switch (state) {
       case 'verify':
-        return 'Đang xử lý';
+        return 'Chờ xác nhận';
       case 'done':
         return 'Hoàn thành';
       case 'draft':
