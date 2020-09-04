@@ -141,13 +141,18 @@ namespace Infrastructure.Services
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
             var payslipObj = GetService<IHrPayslipService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Slips).ToListAsync();
-            if (payslipruns == null)
-                throw new Exception("Đợt lương không tồn tại");
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "confirm").Include(x => x.Slips).ToListAsync();         
 
             foreach (var run in payslipruns)
             {
-                await payslipObj.ActionDone(run.Slips.Select(x => x.Id));
+                foreach (var slip in run.Slips)
+                {
+                    if (slip.State == "done")
+                        continue;
+
+                    await payslipObj.ActionDone(new List<Guid> { slip.Id });
+                }
+                    
                 run.State = "done";
             }
 
