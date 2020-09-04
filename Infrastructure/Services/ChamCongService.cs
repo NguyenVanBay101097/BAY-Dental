@@ -639,14 +639,6 @@ namespace Infrastructure.Services
             }
         }
 
-        public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
-        {
-            _ComputeStatusChamCong(entities);
-            await base.CreateAsync(entities);
-            await CheckChamCong(entities);
-            return entities;
-        }
-
         public void _ComputeStatusChamCong(IEnumerable<ChamCong> vals)
         {
             foreach (var val in vals)
@@ -658,9 +650,28 @@ namespace Infrastructure.Services
             }
         }
 
+        public void _ComputeSoGioMotCong(IEnumerable<ChamCong> vals)
+        {
+            foreach (var val in vals)
+            {
+                if (val.TimeIn.HasValue && val.TimeOut.HasValue)
+                    val.HourWorked = Math.Round((decimal)(val.TimeOut.Value - val.TimeIn.Value).TotalHours, 2);
+            }
+        }
+
+        public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
+        {
+            _ComputeStatusChamCong(entities);
+            _ComputeSoGioMotCong(entities);
+            await base.CreateAsync(entities);
+            await CheckChamCong(entities);
+            return entities;
+        }
+
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
             _ComputeStatusChamCong(entities);
+            _ComputeSoGioMotCong(entities);
             await base.UpdateAsync(entities);
             await CheckChamCong(entities);
         }

@@ -1,4 +1,4 @@
-import { Component, OnInit, NgModuleRef } from '@angular/core';
+import { Component, OnInit, NgModuleRef, ViewChild } from '@angular/core';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { EmployeeSimple, EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { NgbModal, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -6,7 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { DateInputModule } from '@progress/kendo-angular-dateinputs';
 import { IntlService, load } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { Router } from '@angular/router';
 import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged } from '../time-keeping.service';
@@ -14,6 +14,7 @@ import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialo
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -21,6 +22,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
   styleUrls: ['./time-keeping-view-calendar.component.css']
 })
 export class TimeKeepingViewCalendarComponent implements OnInit {
+  @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
 
   title: string = "Bảng chấm công";
   listEmployeies: EmployeeSimple[] = [];
@@ -54,22 +56,24 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getDateMonthList();
-
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadEmployee(value);
-      });
-
   }
 
-  loadEmployee(search?: string) {
+  searchEmployee(search?: string) {
     var paged = new EmployeePaged();
     paged.limit = 20;
     paged.offset = 0;
     paged.search = search ? search : '';
-    this.employeeService.getEmployeeSimpleList(paged).subscribe(
+    return this.employeeService.getEmployeeSimpleList(paged);
+  }
+
+  empChange(event) {
+    var items = []
+    items.push(event);
+    this.loadAllChamCong(items);
+  }
+
+  loadEmployee() {
+    this.searchEmployee().subscribe(
       result => {
         this.listEmployeies = result;
         if (this.listEmployeies) {
@@ -101,7 +105,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       if (!value.chamCongs) {
         value.chamCongs = [];
       }
-      var cc = vals ? vals.filter(x => new Date(x.date).toDateString() == date.toDateString()) : null;
+      var cc = vals ? vals.filter(x => new Date(x.timeIn).toDateString() == date.toDateString()) : null;
       if (cc) {
         value.chamCongs = cc;
         value.date = date;
@@ -111,9 +115,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       this.listTimeSheetByEmpId[empId].push(value);
     })
   }
-
-
-
 
   setupTimeKeeping() {
     const modalRef = this.modalService.open(TimeKeepingSettingDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -205,16 +206,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   clickTimeSheet(evt, id, date, employee) {
-    // if (new Date().getDate() < date.getDate()) {
-    //   this.notificationService.show({
-    //     content: 'Chưa đến ngày bạn bạn không thể chấm công',
-    //     hideAfter: 3000,
-    //     position: { horizontal: 'right', vertical: 'bottom' },
-    //     animation: { type: 'fade', duration: 400 },
-    //     type: { style: 'error', icon: true }
-    //   });
-    //   return;
-    // }
     evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa chấm công';
@@ -230,7 +221,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       this.notificationService.show({
         content: 'Cập nhật thành công',
         hideAfter: 3000,
-        position: { horizontal: 'right', vertical: 'top' },
+        position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
@@ -238,16 +229,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   clickTimeSheetCreate(evt, date, employee) {
-    // if (new Date().getDate() < date.getDate()) {
-    //   this.notificationService.show({
-    //     content: 'Chưa đến ngày bạn bạn không thể chấm công',
-    //     hideAfter: 3000,
-    //     position: { horizontal: 'right', vertical: 'bottom' },
-    //     animation: { type: 'fade', duration: 400 },
-    //     type: { style: 'error', icon: true }
-    //   });
-    //   return;
-    // }
     evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm 1 chấm công';
@@ -262,7 +243,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       this.notificationService.show({
         content: 'Tạo mới thành công',
         hideAfter: 3000,
-        position: { horizontal: 'right', vertical: 'top' },
+        position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
@@ -309,7 +290,4 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       this.loadEmployee();
     })
   }
-
-
-
 }

@@ -56,9 +56,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
         public DateTime? TimeIn { get; set; }
-
         public DateTime? TimeOut { get; set; }
-        public DateTime? Date { get; set; }
         public decimal? HourWorked { get; set; }
         public string Status { get; set; }
         public Guid? WorkEntryTypeId { get; set; }
