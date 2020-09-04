@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { Router } from '@angular/router';
-import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic } from '../time-keeping.service';
+import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged } from '../time-keeping.service';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
@@ -27,6 +27,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   flag = true;
   listTimeSheetByEmpId: { [id: string]: TimeSheetEmployee[] } = {};
   dateList: Date[];
+  dictEmpCCs: { [id: string]: ChamCongBasic[] } = {};
   searchUpdate = new Subject<string>();
   search: string;
 
@@ -61,7 +62,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         this.loadEmployee(value);
       });
 
-
   }
 
   loadEmployee(search?: string) {
@@ -73,22 +73,21 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       result => {
         this.listEmployeies = result;
         if (this.listEmployeies) {
-          this.listEmployeies.forEach(emp => {
-            this.loadData(emp.id)
-          });
+          this.loadAllChamCong(this.listEmployeies);
         }
       }
     )
   }
 
-  loadData(empId) {
-    var page = new EmployeeChamCongPaged();
-    page.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
-    page.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
-    page.employeeId = empId;
-    this.timeKeepingService.getAllByEmpId(page).subscribe(
+  loadAllChamCong(emps: EmployeeSimple[]) {
+    var val = new ChamCongPaged();
+    val.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
+    val.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
+    this.timeKeepingService.getAllChamCongByDate(val).subscribe(
       result => {
-        this.loadTimeSheet(empId, result);
+        emps.forEach(item => {
+          this.loadTimeSheet(item.id, result ? result.filter(x => x.employeeId == item.id) : null);
+        })
       }
     )
   }
@@ -110,6 +109,9 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       this.listTimeSheetByEmpId[empId].push(value);
     })
   }
+
+
+
 
   setupTimeKeeping() {
     const modalRef = this.modalService.open(TimeKeepingSettingDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -218,8 +220,11 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
     modalRef.result.then(result => {
-      if (result)
-        this.loadData(result);
+      if (result) {
+        var val = [];
+        val.push(result);
+        this.loadAllChamCong(val);
+      }
       this.notificationService.show({
         content: 'Cập nhật thành công',
         hideAfter: 3000,
@@ -247,8 +252,11 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
     modalRef.result.then(result => {
-      if (result)
-        this.loadData(result)
+      if (result) {
+        var val = [];
+        val.push(result);
+        this.loadAllChamCong(val);
+      }
       this.notificationService.show({
         content: 'Tạo mới thành công',
         hideAfter: 3000,
@@ -300,6 +308,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     })
   }
 
- 
+
 
 }

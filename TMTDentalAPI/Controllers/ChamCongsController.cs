@@ -91,6 +91,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAllChamCong([FromQuery] ChamCongPaged val)
+        {
+            if (val == null || !ModelState.IsValid)
+                return BadRequest();
+
+            var res = await _chamCongService.GetAllChamCong(val);
+
+            return Ok(_mapper.Map<IEnumerable<ChamCongDisplay>>(res));
+        }
+
         //[HttpPost("CreateList")]
         //public async Task<IActionResult> CreateList(IEnumerable<ChamCongSave> chamCongSaves)
         //{

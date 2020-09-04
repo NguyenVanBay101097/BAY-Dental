@@ -54,7 +54,10 @@ export class ImportResponse {
   message: string;
 }
 
-
+export class ChamCongPaged {
+  from: string;
+  to: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -106,6 +109,10 @@ export class TimeKeepingService {
 
   deleteChamCong(id) {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  getAllChamCongByDate(val): Observable<ChamCongBasic[]> {
+    return this.http.get<ChamCongBasic[]>(this.base_api + this.apiUrl + '/GetAllChamCong', { params: val })
   }
 
 }

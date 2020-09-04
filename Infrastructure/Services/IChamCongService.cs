@@ -22,6 +22,8 @@ namespace Infrastructure.Services
         Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val);
         Task<ChamCong> GetLastChamCong(employeePaged val);
         Task CheckChamCong(IEnumerable<ChamCong> vals);
+
+        Task<IEnumerable<ChamCong>> GetAllChamCong(ChamCongPaged val);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
 
 

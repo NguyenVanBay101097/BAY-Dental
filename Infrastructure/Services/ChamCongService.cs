@@ -35,6 +35,18 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<ChamCong>> GetAllChamCong(ChamCongPaged val)
+        {
+            var query = SearchQuery(x => true);
+            if (val.From.HasValue)
+                query = query.Where(x => x.TimeIn >= val.From);
+            if (val.To.HasValue)
+                query = query.Where(x => x.TimeIn <= val.To);
+
+            var listCC = await query.Include(x=>x.WorkEntryType).ToListAsync();
+            return listCC;
+        }
+
         public async Task CreateListChamcongs(IEnumerable<ChamCong> val)
         {
             var companyId = this.CompanyId;
@@ -505,7 +517,7 @@ namespace Infrastructure.Services
                         }
                         else
                         {
-                            errors.Add($"Dòng {row}: Ngày chấm công công được để trống");
+                            errors.Add($"Dòng {row}: Ngày chấm công không được để trống");
                             continue;
                         }
 

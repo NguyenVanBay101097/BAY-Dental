@@ -181,7 +181,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     if (this.id) {
       this.timeKeepingServive.update(this.id, val).subscribe(
         x => {
-          this.activeModal.close(this.employee.id);
+          this.activeModal.close(this.employee);
         }, err => {
           this.showErrorService.show(err);
         }
@@ -190,7 +190,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     else {
       this.timeKeepingServive.create(val).subscribe(
         result => {
-          this.activeModal.close(this.employee.id);
+          this.activeModal.close(this.employee);
         }, err => {
           this.showErrorService.show(err);
         }
