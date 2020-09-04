@@ -167,16 +167,12 @@ namespace Infrastructure.Services
             foreach (var run in payslipruns)
             {
                 await payslipObj.ActionCancel(run.Slips.Select(x => x.Id));
-                //xóa các phiếu lương
-                await payslipObj.DeleteAsync(run.Slips);
-
+                await payslipObj.Unlink(run.Slips.Select(x => x.Id));
                 run.State = "draft";
             }
 
             await UpdateAsync(payslipruns);
         }
-
-
     }
 
     public class PaySlipRunConfirmViewModel
