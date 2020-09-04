@@ -19,7 +19,7 @@ import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/co
 export class SaleReportOverviewComponent implements OnInit {
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   items: SaleReportItem[] = [];
   gridData: GridDataResult;
   limit = 20;
