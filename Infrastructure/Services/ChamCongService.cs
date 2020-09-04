@@ -565,13 +565,16 @@ namespace Infrastructure.Services
                     }
                     else if (cc.Type == "check-out")
                     {
-                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
                             ccIn.TimeOut = cc.Time;
                             await UpdateAsync(ccIn);
                         }
-
+                        else
+                        {
+                            throw new Exception($"Không thể check-out cho nhân viên {employee.Name}, không tìm thấy chấm công nào chưa check-out.");
+                        }
                     }
                 }
                 catch (Exception e)
