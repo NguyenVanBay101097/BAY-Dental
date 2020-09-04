@@ -87,6 +87,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   reloadData() {
     this.loadRecord();
     this.loadPayslip();
+    this.getAllSlipData();
   }
 
   getDefault() {
@@ -179,6 +180,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     modalRef.result.then(
       () => {
         this.reloadData();
+
       },
       () => { }
     );
@@ -251,6 +253,8 @@ export class HrPayslipRunFormComponent implements OnInit {
         console.log(err);
         this.loading = false;
       });
+    }else{
+      this.total = 0;
     }  
   }
 
