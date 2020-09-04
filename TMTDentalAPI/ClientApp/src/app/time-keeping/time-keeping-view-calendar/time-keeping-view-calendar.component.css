@@ -29,6 +29,10 @@ p {
     position: relative;
 }
 
+.o_control_panel .o_cp_right {
+    margin-top: -1px;
+}
+
 .oe_kanban_content {
     cursor: pointer;
     position: relative;
@@ -106,9 +110,7 @@ p {
     right: -3px;
 }
 
-.oe_kanban_timeSheet_create {
-    
-}
+.oe_kanban_timeSheet_create {}
 
 .oe_kanban_timeSheet>span>i:hover {
     opacity: 0.6;
@@ -121,8 +123,6 @@ p {
     margin-top: 3px;
     opacity: 0.5;
 }
-
-
 
 .oe_kanban_timeSheet>span {
     text-overflow: ellipsis;

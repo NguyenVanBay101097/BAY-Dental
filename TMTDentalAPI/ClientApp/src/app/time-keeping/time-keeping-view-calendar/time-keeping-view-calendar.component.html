@@ -16,19 +16,14 @@
             </div>
             <div class="o_cp_sidebar">
                 <div class="float-left">
-                    <button class="btn btn-secondary btn-sm" (click)="previousMonthFilter(filterMonth)">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span class="title_month">Tháng {{filterMonth | date:'MM - yyyy'}}</span>
-                    <button class="btn btn-secondary btn-sm" (click)="nextMonthFilter(filterMonth)">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <app-time-keeping-date-filter (searchChange)="onDateSearchChange($event)">
+                    </app-time-keeping-date-filter>
                 </div>
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox [placeholder]="'Lọc theo nhân viên'" [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx
-                (selectionChange)="empChange($event)" [valueField]="'id'">
+            <kendo-combobox [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" [data]="listEmployeies" [textField]="'name'"
+                [filterable]="true" #empCbx (selectionChange)="empChange($event)" [valueField]="'id'">
             </kendo-combobox>
         </div>
     </div>

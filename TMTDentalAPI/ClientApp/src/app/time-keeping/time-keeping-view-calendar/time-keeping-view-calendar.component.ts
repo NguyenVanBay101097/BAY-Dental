@@ -67,9 +67,20 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   empChange(event) {
-    var items = []
-    items.push(event);
-    this.loadAllChamCong(items);
+    var filter;
+    if (event) {
+      filter = event.name;
+    } else {
+      filter = "";
+    }
+    this.searchEmployee(filter).subscribe(
+      result => {
+        this.listEmployeies = result;
+        if (this.listEmployeies) {
+          this.loadAllChamCong(this.listEmployeies);
+        }
+      }
+    );
   }
 
   loadEmployee() {
@@ -180,6 +191,12 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     }
     this.dateList = list;
     this.loadEmployee();
+  }
+
+  onDateSearchChange(event) {
+    this.monthStart = event.dateFrom;
+    this.monthEnd = event.dateTo;
+    this.getDateMonthList();
   }
 
   // getDateWeekList() {

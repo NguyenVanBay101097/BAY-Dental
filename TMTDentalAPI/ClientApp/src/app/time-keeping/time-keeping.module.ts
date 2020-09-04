@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TimeKeepingRoutingModule } from './time-keeping-routing.module';
@@ -10,13 +10,16 @@ import { SharedModule } from '../shared/shared.module';
 import { TimeKeepingSettingDialogComponent } from './time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { TimeKeepingImportFileComponent } from './time-keeping-import-file/time-keeping-import-file.component';
+import { HrsModule } from '../hrs/hrs.module';
+import { TimeKeepingDateFilterComponent } from './time-keeping-date-filter/time-keeping-date-filter.component';
 
 @NgModule({
   declarations: [
     TimeKeepingViewCalendarComponent,
     TimeKeepingSetupDialogComponent,
     TimeKeepingSettingDialogComponent,
-    TimeKeepingImportFileComponent
+    TimeKeepingImportFileComponent,
+    TimeKeepingDateFilterComponent
   ],
   imports: [
     CommonModule,
@@ -31,6 +34,6 @@ import { TimeKeepingImportFileComponent } from './time-keeping-import-file/time-
     TimeKeepingSetupDialogComponent,
     TimeKeepingSettingDialogComponent,
     TimeKeepingImportFileComponent,
-  ]
+  ],
 })
 export class TimeKeepingModule { }
