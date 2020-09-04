@@ -58,7 +58,6 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       identityCard: null,
       email: null,
       birthDay: null,
-      birthDayObj: null,
       category: [null],
       isDoctor: this.isDoctor || false,
       isAssistant: this.isAssistant || false,
@@ -68,18 +67,16 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       user: null,
       structureTypeId: null,
       structureType: null,
-      wage: null,
-      hourlyWage: null,
+      wage: 0,
+      hourlyWage: 0,
       startWorkDate: null
     });
 
-    this.loadstructureTypes();
-
     setTimeout(() => {
-      // this.loadAutocompleteTypes(null);
       this.loadListCommissions();
       this.getEmployeeInfo();
       this.loadUsers();
+      this.loadstructureTypes();
 
       this.commissionCbx.filterChange.asObservable().pipe(
         debounceTime(300),
@@ -146,9 +143,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     if (this.empId != null) {
       this.employeeService.getEmployee(this.empId).subscribe(
         rs => {
-          const birthDay = this.intlService.parseDate(rs.birthDay);
-          this.formCreate.get('birthDayObj').patchValue(birthDay);
-          this.formCreate.get('startWorkDate').patchValue(this.intlService.parseDate(rs.startWorkDate));
+          rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
+          rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
           this.formCreate.patchValue(rs);
 
           if (rs.structureType) {
@@ -172,12 +168,10 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     value.categoryId = value.category ? value.category.id : null;
     value.commissionId = value.commission ? value.commission.id : null;
     value.userId = value.user ? value.user.id : null;
-    value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
+    value.birthDay = value.birthDay ? this.intlService.formatDate(value.birthDay, 'yyyy-MM-dd') : null;
     value.structureTypeId = value.structureType ? value.structureType.id : null;
     value.structureType = value.structureType ? value.structureType : null;
-    value.wage = value.structureType.wageType == 'monthly' ? value.wage : null;
-    value.hourlyWage = value.structureType.wageType == 'hourly' ? value.hourlyWage : null;
-    value.startWorkDate = this.intlService.formatDate(value.startWorkDate, 'yyyy-MM-dd');
+    value.startWorkDate = value.startWorkDate ? this.intlService.formatDate(value.startWorkDate, 'yyyy-MM-dd') : null;
 
     this.isChange = true;
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
