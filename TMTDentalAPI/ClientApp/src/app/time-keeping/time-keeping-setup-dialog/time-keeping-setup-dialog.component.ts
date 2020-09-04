@@ -161,7 +161,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     modalRef.result.then(() => {
       this.timeKeepingServive.deleteChamCong(item.id).subscribe(
         () => {
-          this.activeModal.close(this.employee.id);
+          this.activeModal.close(this.employee);
         }
       )
     });
