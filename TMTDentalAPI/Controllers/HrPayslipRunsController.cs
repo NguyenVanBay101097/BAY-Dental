@@ -91,6 +91,18 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _payslipRunService.ActionCancel(ids);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
@@ -99,8 +111,8 @@ namespace TMTDentalAPI.Controllers
             if (paySlip == null)
                 return BadRequest();
 
-            if (paySlip.State == "done")
-                throw new Exception("Các phiếu lương đã vào sổ không thể xóa");
+            if (paySlip.State != "draft")
+                throw new Exception("Đợt lương ở trạng thái nháp mới có thể xóa");
 
             await _payslipRunService.DeleteAsync(paySlip);
 

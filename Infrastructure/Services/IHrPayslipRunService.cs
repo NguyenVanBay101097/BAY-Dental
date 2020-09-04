@@ -18,6 +18,7 @@ namespace Infrastructure.Services
         Task ActionConfirm(PaySlipRunConfirmViewModel val);
 
         Task ActionDone(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);
 
     }
 }
