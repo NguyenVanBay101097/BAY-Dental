@@ -61,6 +61,7 @@ export class HrPayslipRunFormComponent implements OnInit {
       }
 
       this.loadPayslip();
+      this.getAllSlipData();
     });
 
     this.myForm = this.fb.group({
@@ -69,21 +70,20 @@ export class HrPayslipRunFormComponent implements OnInit {
       dateEndObj: [null, Validators.required],
       companyId: null,
       state: 'draft',
-      slips: this.fb.array([])
     });
   }
 
   loadRecord() {
     if (this.itemId) {
       this.hrPaysliprunService.get(this.itemId).subscribe((result: any) => {
-        this.paysliprun = result;       
+        this.paysliprun = result;
         result.dateEndObj = new Date(result.dateEnd);
         result.dateStartObj = new Date(result.dateStart);
         this.myForm.patchValue(result);
       });
     }
   }
-  
+
   reloadData() {
     this.loadRecord();
     this.loadPayslip();
@@ -97,25 +97,13 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.myForm.patchValue(result);
       this.myForm.get('dateStartObj').setValue(new Date(result.dateStart));
       this.myForm.get('dateEndObj').setValue(new Date(result.dateEnd));
-
+      this.total = 0;
     });
   }
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadPayslip();
-  }
-
-
-  loadItem() {
-    if (this.itemId) {
-      this.hrPaysliprunService.get(this.itemId)
-        .subscribe((result: any) => {
-          this.myForm.patchValue(result);
-        }, err => {
-          console.log(err);
-        })
-    }
   }
 
   onSave() {
@@ -236,15 +224,14 @@ export class HrPayslipRunFormComponent implements OnInit {
       val.payslipRunId = this.itemId;
       val.limit = this.limit;
       val.offset = this.skip;
-  
+
       this.hrPayslipService.getPaged(val).pipe(
-        map(response => (<GridDataResult>{
+        map(response => (<GridDataResult>{                 
           data: response.items,
-          total: response.totalItems
+          total: response.totalItems,
         }))
       ).subscribe(res => {
         this.payslipGridData = res;
-        this.total = res.data.map(x => x.totalAmount).reduce((a, b) => a + b, 0);
         this.loading = false;
       }, err => {
         console.log(err);
@@ -253,9 +240,21 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
   }
 
-  get slips() {
-    return this.myForm.get('slips') as FormArray;
+   getAllSlipData() {   
+    if(this.itemId){
+      var val = new HrPayslipPaged();
+      val.payslipRunId = this.itemId;
+      this.hrPayslipService.getPaged(val).subscribe(res => {
+        this.total = res.items.map(x => x.totalAmount).reduce((a, b) => a + b, 0);
+        this.loading = false;
+      }, err => {
+        console.log(err);
+        this.loading = false;
+      });
+    }  
   }
+
+
 
   get f() {
     return this.myForm.controls;
@@ -271,6 +270,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         return 'Nháp';
     }
   }
+
   detailItem(id) {
     this.router.navigateByUrl('hr/payslips/edit/' + id);
   }
