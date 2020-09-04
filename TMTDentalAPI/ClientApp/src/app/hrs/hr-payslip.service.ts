@@ -10,7 +10,7 @@ export class HrPayslipPaging {
     offset: number;
     limit: number;
     totalItems: number;
-    items: HrPayslipDisplay[];
+    items: HrPayslipBasic[];
 }
 
 export class HrPayslipLinePaging {
@@ -18,6 +18,18 @@ export class HrPayslipLinePaging {
     limit: number;
     totalItems: number;
     items: HrPayslipLineDisplay[];
+}
+
+export class HrPayslipBasic{
+    id: string;
+    number: string;
+    employeeName: string;
+    state: string;
+    dateFrom: string;
+    dateTo: string;
+    payslipRunName: string;
+    name: string;
+    totalAmount: number;
 }
 
 export class HrPayslipPaged {

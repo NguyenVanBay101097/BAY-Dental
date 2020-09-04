@@ -1,3 +1,4 @@
+import { HrPayslipBasic } from './../hr-payslip.service';
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -20,9 +21,14 @@ export class HrPayslipRunListComponent implements OnInit {
   loading = false;
   searchUpdate = new Subject<string>();
   search: string;
+  toTalAmount: number;
+
+  payslipGridData: GridDataResult;
+  payslipData: HrPayslipBasic[];
 
   constructor(private modalService: NgbModal, 
-    private hrPaysliprunService: HrPaysliprunService, private router: Router) { }
+    private hrPaysliprunService: HrPaysliprunService,
+    private router: Router) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -91,4 +97,8 @@ export class HrPayslipRunListComponent implements OnInit {
     }, () => {
     });
   }
+
+
+
+  
 }

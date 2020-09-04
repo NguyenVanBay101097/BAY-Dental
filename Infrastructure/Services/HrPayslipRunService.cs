@@ -33,6 +33,10 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<HrPayslipRunBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+
+            foreach (var item in items)
+                item.TotalAmount = await computeTotalSlips(item.Id);
+
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<HrPayslipRunBasic>(totalItems, val.Offset, val.Limit)
@@ -46,9 +50,7 @@ namespace Infrastructure.Services
         {
             var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (res == null)
-                throw new NullReferenceException("PayslipRun not found");
-        
-
+                throw new NullReferenceException("Đợt lương không tồn tại");        
             return res;
         }
 
@@ -63,11 +65,18 @@ namespace Infrastructure.Services
         {
             var paySlipRun = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (paySlipRun == null)
-                throw new Exception("PayslipRun not found");
+                throw new Exception("Đợt lương không tồn tại");
 
             paySlipRun = _mapper.Map(val, paySlipRun);
 
             await UpdateAsync(paySlipRun);
+        }
+
+        public async Task<decimal> computeTotalSlips(Guid runId)
+        {
+            var payslipObj = GetService<IHrPayslipService>();
+            var payslips = await payslipObj.SearchQuery(x => x.PayslipRunId == runId).ToListAsync();            
+            return payslips.Sum(x => x.TotalAmount).Value; 
         }
 
         public async Task ActionConfirm(PaySlipRunConfirmViewModel val)
@@ -76,7 +85,7 @@ namespace Infrastructure.Services
             var employeeObj = GetService<IEmployeeService>();
             var paysliprun = await SearchQuery(x => x.Id == val.PayslipRunId.Value).Include(x => x.Slips).FirstOrDefaultAsync();
             if (paysliprun == null)
-                throw new Exception("PayslipRun Not Found");
+                throw new Exception("Đợt lương không tồn tại");
 
             var payslips = new List<HrPayslip>();
             foreach (var emp in val.EmpIds)
@@ -144,7 +153,7 @@ namespace Infrastructure.Services
             var payslipObj = GetService<IHrPayslipService>();
             var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Slips).ToListAsync();
             if (payslipruns == null)
-                throw new Exception("PayslipRuns Not Found");
+                throw new Exception("Đợt lương không tồn tại");
 
             foreach (var run in payslipruns)
             {

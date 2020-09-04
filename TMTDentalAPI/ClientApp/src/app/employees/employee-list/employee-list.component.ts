@@ -100,7 +100,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.isDoctor = true;
     modalRef.result.then(() => {
       this.getEmployeesList();
-    });
+    }, () => {});
   }
 
   createAssistant() {
@@ -117,7 +117,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm nhân viên';
     modalRef.result.then(() => {
       this.getEmployeesList();
-    });
+    }, () => {});
   }
 
   editEmployee(item: EmployeeBasic) {
@@ -126,7 +126,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.empId = item.id;
     modalRef.result.then(() => {
       this.getEmployeesList();
-    });
+    }, () => {});
   }
 
   openModal(id, isDoctor, isAssistant) {

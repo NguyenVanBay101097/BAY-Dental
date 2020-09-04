@@ -11,6 +11,7 @@ import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-di
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { map } from 'rxjs/operators';
+import { aggregateBy } from '@progress/kendo-data-query';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -28,11 +29,16 @@ export class HrPayslipRunFormComponent implements OnInit {
   search: string;
   submitted = false;
   loading = false;
+  public total: any;
 
   paySlip: any = [];
   paysliprun: any;
 
   payslipGridData: GridDataResult;
+
+  public aggregates: any[] = [
+    { field: 'totalAmount', aggregate: 'sum' },
+  ];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -55,6 +61,7 @@ export class HrPayslipRunFormComponent implements OnInit {
       }
 
       this.loadPayslip();
+      this.getAllSlipData();
     });
 
     this.myForm = this.fb.group({
@@ -63,7 +70,6 @@ export class HrPayslipRunFormComponent implements OnInit {
       dateEndObj: [null, Validators.required],
       companyId: null,
       state: 'draft',
-      slips: this.fb.array([])
     });
   }
 
@@ -77,10 +83,11 @@ export class HrPayslipRunFormComponent implements OnInit {
       });
     }
   }
-  
+
   reloadData() {
     this.loadRecord();
     this.loadPayslip();
+    this.getAllSlipData();
   }
 
   getDefault() {
@@ -91,25 +98,13 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.myForm.patchValue(result);
       this.myForm.get('dateStartObj').setValue(new Date(result.dateStart));
       this.myForm.get('dateEndObj').setValue(new Date(result.dateEnd));
-
+      this.total = 0;
     });
   }
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadPayslip();
-  }
-
-
-  loadItem() {
-    if (this.itemId) {
-      this.hrPaysliprunService.get(this.itemId)
-        .subscribe((result: any) => {
-          this.myForm.patchValue(result);
-        }, err => {
-          console.log(err);
-        })
-    }
   }
 
   onSave() {
@@ -185,10 +180,14 @@ export class HrPayslipRunFormComponent implements OnInit {
     modalRef.result.then(
       () => {
         this.reloadData();
+
       },
       () => { }
     );
   }
+
+
+
 
   actionDone() {
     if (this.itemId) {
@@ -227,11 +226,11 @@ export class HrPayslipRunFormComponent implements OnInit {
       val.payslipRunId = this.itemId;
       val.limit = this.limit;
       val.offset = this.skip;
-  
+
       this.hrPayslipService.getPaged(val).pipe(
-        map(response => (<GridDataResult>{
+        map(response => (<GridDataResult>{                 
           data: response.items,
-          total: response.totalItems
+          total: response.totalItems,
         }))
       ).subscribe(res => {
         this.payslipGridData = res;
@@ -243,9 +242,23 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
   }
 
-  get slips() {
-    return this.myForm.get('slips') as FormArray;
+   getAllSlipData() {   
+    if(this.itemId){
+      var val = new HrPayslipPaged();
+      val.payslipRunId = this.itemId;
+      this.hrPayslipService.getPaged(val).subscribe(res => {
+        this.total = res.items.map(x => x.totalAmount).reduce((a, b) => a + b, 0);
+        this.loading = false;
+      }, err => {
+        console.log(err);
+        this.loading = false;
+      });
+    }else{
+      this.total = 0;
+    }  
   }
+
+
 
   get f() {
     return this.myForm.controls;
@@ -261,6 +274,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         return 'Nháp';
     }
   }
+
   detailItem(id) {
     this.router.navigateByUrl('hr/payslips/edit/' + id);
   }

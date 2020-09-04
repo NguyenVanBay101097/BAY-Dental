@@ -26,7 +26,7 @@ export class EmployeeBasic {
 export class EmployeeDisplay extends EmployeeBasic {
     address: string;
     identityCard: string;
-    birthDay: string;
+    birthDay: any;
     isDoctor: boolean;
     isAssistant: boolean;
     structureTypeId: string;

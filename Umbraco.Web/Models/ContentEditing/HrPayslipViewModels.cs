@@ -19,9 +19,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public string State { get; set; }
+        public Guid? PayslipRunId { get; set; }
         public Guid? EmployeeId { get; set; }
 
-        public Guid? PayslipRunId { get; set; }
     }
 
     public class HrPayslipSave
@@ -38,7 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime DateTo { get; set; }
         public string State { get; set; }
-        public Guid? payslipRunId { get; set; }
+
         public IEnumerable<HrPayslipWorkedDaySave> ListHrPayslipWorkedDaySave { get; set; } = new List<HrPayslipWorkedDaySave>();
 
         public IEnumerable<HrPayslipWorkedDaySave> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDaySave>();
