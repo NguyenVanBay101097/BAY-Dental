@@ -77,7 +77,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (this.itemId) {
       this.hrPaysliprunService.get(this.itemId).subscribe((result: any) => {
         this.paysliprun = result;
-        debugger
         result.dateEndObj = new Date(result.dateEnd);
         result.dateStartObj = new Date(result.dateStart);
         this.myForm.patchValue(result);
