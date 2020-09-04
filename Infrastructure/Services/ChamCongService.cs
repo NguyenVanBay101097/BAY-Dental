@@ -35,7 +35,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ChamCong>> GetAllChamCong(ChamCongPaged val)
+        public async Task<PagedResult2<ChamCongDisplay>> GetPaged(ChamCongPaged val)
         {
             var query = SearchQuery(x => true);
             if (val.From.HasValue)
@@ -43,8 +43,17 @@ namespace Infrastructure.Services
             if (val.To.HasValue)
                 query = query.Where(x => x.TimeIn <= val.To);
 
-            var listCC = await query.Include(x=>x.WorkEntryType).ToListAsync();
-            return listCC;
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Take(val.Limit).Skip(val.Offset);
+
+            var items = _mapper.Map<IEnumerable<ChamCongDisplay>>(await query.Include(x => x.WorkEntryType).ToListAsync());
+
+            return new PagedResult2<ChamCongDisplay>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         public async Task CreateListChamcongs(IEnumerable<ChamCong> val)
@@ -172,15 +181,6 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
-        {
-            var chamcong = await SearchQuery(x => x.EmployeeId == id
-            && (x.TimeIn.Value.Date.Equals(date.Date) || x.TimeOut.Value.Date.Equals(date.Date))).Include(x => x.Employee)
-                .Include(x => x.WorkEntryType)
-                .FirstOrDefaultAsync();
-            return _mapper.Map<ChamCongDisplay>(chamcong);
-        }
-
         public async Task<decimal> GetStandardWorkHour()
         {
             var st = await GetService<ISetupChamcongService>().GetByCompanyId(CompanyId);
@@ -233,33 +233,6 @@ namespace Infrastructure.Services
 
         //    return null;
         //}
-
-        public async Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val)
-        {
-            var query = SearchQuery();
-            if (val.From.HasValue)
-            {
-                query = query.Where(y => y.Date.Value.Date >= val.From.Value.Date);
-            }
-
-            if (val.To.HasValue)
-            {
-                query = query.Where(y => y.Date.Value.Date <= val.To.Value.Date);
-            }
-
-            if (!string.IsNullOrEmpty(val.Status))
-            {
-                query = query.Where(x => x.Status.Equals(val.Status));
-            }
-
-            if (val.EmployeeId.HasValue)
-            {
-                query = query.Where(x => x.EmployeeId == val.EmployeeId);
-            }
-
-            var res = await query.Include(x => x.WorkEntryType).ToListAsync();
-            return _mapper.Map<IEnumerable<ChamCongDisplay>>(res);
-        }
 
         public int SoCongChuan(List<IGrouping<string, ResourceCalendarAttendance>> list, DateTime start, DateTime end)
         {

@@ -14,16 +14,13 @@ namespace Infrastructure.Services
     {
         Task CreateListChamcongs(IEnumerable<ChamCong> val);
         //Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val);
-        Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val);
         Task<string> GetStatus(ChamCong val);
-        Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date);
         Task<decimal> GetStandardWorkHour();
         ChamCongTinhCong TinhSoCongGioCong(ChamCong cc, IEnumerable<AttendanceInterval> attendanceIntervals, decimal hoursPerDay);
         Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val);
         Task<ChamCong> GetLastChamCong(employeePaged val);
         Task CheckChamCong(IEnumerable<ChamCong> vals);
-
-        Task<IEnumerable<ChamCong>> GetAllChamCong(ChamCongPaged val);
+        Task<PagedResult2<ChamCongDisplay>> GetPaged(ChamCongPaged val);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
 
 

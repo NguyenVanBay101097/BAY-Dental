@@ -39,9 +39,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] employeePaged val)
+        public async Task<IActionResult> GetPaged([FromQuery] ChamCongPaged val)
         {
-            var res = await _chamCongService.GetAll(val);
+            var res = await _chamCongService.GetPaged(val);
             return Ok(res);
         }
 
@@ -91,17 +91,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetAllChamCong([FromQuery] ChamCongPaged val)
-        {
-            if (val == null || !ModelState.IsValid)
-                return BadRequest();
-
-            var res = await _chamCongService.GetAllChamCong(val);
-
-            return Ok(_mapper.Map<IEnumerable<ChamCongDisplay>>(res));
-        }
-
+       
         //[HttpPost("CreateList")]
         //public async Task<IActionResult> CreateList(IEnumerable<ChamCongSave> chamCongSaves)
         //{
@@ -137,13 +127,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("[action]/{id}")]
-        public async Task<IActionResult> GetByEmployee(Guid id, DateTime date)
-        {
-            var res = await _chamCongService.GetByEmployeeId(id, date);
-            return Ok(res);
-        }
-
+        
         [HttpPost("action")]
         public async Task<IActionResult> ExportTemplateExcell(PartnerPaged val)
         {

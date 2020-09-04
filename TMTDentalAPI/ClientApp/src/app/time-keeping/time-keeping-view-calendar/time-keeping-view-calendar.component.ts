@@ -81,12 +81,14 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   loadAllChamCong(emps: EmployeeSimple[]) {
     var val = new ChamCongPaged();
+    val.limit = -1;
+    val.offset = 0;
     val.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
     val.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
-    this.timeKeepingService.getAllChamCongByDate(val).subscribe(
+    this.timeKeepingService.getPaged(val).subscribe(
       result => {
         emps.forEach(item => {
-          this.loadTimeSheet(item.id, result ? result.filter(x => x.employeeId == item.id) : null);
+          this.loadTimeSheet(item.id, result && result.items ? result.items.filter(x => x.employeeId == item.id) : null);
         })
       }
     )

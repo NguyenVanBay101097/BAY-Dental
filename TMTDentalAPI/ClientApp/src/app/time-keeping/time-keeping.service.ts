@@ -57,6 +57,14 @@ export class ImportResponse {
 export class ChamCongPaged {
   from: string;
   to: string;
+  limit: number;
+  offset: number;
+}
+
+export class ChamCongPagging {
+  totalItems: number;
+  limit: number;
+  items: ChamCongBasic[]
 }
 
 @Injectable({
@@ -72,10 +80,6 @@ export class TimeKeepingService {
 
   update(id, val) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
-  }
-
-  getAllByEmpId(val): Observable<ChamCongBasic[]> {
-    return this.http.get<ChamCongBasic[]>(this.base_api + this.apiUrl, { params: val });
   }
 
   GetsetupTimeKeeping() {
@@ -111,8 +115,8 @@ export class TimeKeepingService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
-  getAllChamCongByDate(val): Observable<ChamCongBasic[]> {
-    return this.http.get<ChamCongBasic[]>(this.base_api + this.apiUrl + '/GetAllChamCong', { params: val })
+  getPaged(val): Observable<ChamCongPagging> {
+    return this.http.get<ChamCongPagging>(this.base_api + this.apiUrl, { params: val })
   }
 
 }
