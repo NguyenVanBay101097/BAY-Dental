@@ -14,6 +14,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime DateEnd { get; set; }
 
+        public decimal? TotalAmount { get; set; }
+
         public string State { get; set; }
     }
 }

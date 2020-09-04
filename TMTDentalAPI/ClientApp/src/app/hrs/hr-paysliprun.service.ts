@@ -10,6 +10,7 @@ export class HrPayslipRunBasic {
   name: string;
   dateStart: string;
   dateEnd: string;
+  totalAmount: number;
   state: string;
 }
 
