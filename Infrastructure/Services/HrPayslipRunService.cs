@@ -73,6 +73,7 @@ namespace Infrastructure.Services
         public async Task ActionConfirm(PaySlipRunConfirmViewModel val)
         {
             var payslipObj = GetService<IHrPayslipService>();
+            var employeeObj = GetService<IEmployeeService>();
             var paysliprun = await SearchQuery(x => x.Id == val.PayslipRunId.Value).Include(x => x.Slips).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("PayslipRun Not Found");
@@ -104,17 +105,25 @@ namespace Infrastructure.Services
                     });
                 }
 
-                if (!payslip.StructureTypeId.HasValue)
-                    throw new Exception("");
-
                 //xử lý structure
                 payslip.StructId = val.StructureId;
                 if (!payslip.StructId.HasValue)
                 {
+                    if (!payslip.StructureTypeId.HasValue)
+                    {
+                        var employee = await employeeObj.GetByIdAsync(payslip.EmployeeId);
+                        throw new Exception($"Nhân viên {employee.Name} chưa thiết lập loại mẫu lương");
+                    }
+
                     var structureObj = GetService<IHrPayrollStructureService>();
                     var structure = await structureObj.SearchQuery(x => x.TypeId == payslip.StructureTypeId && x.RegularPay == true).FirstOrDefaultAsync();
                     if (structure == null)
-                        throw new Exception("");
+                    {
+                        var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
+                        var structureType = await structureTypeObj.GetByIdAsync(payslip.StructureTypeId);
+                        throw new Exception($"Không tìm thấy mẫu lương thông dụng cho loại {structureType.Name}");
+                    }
+                      
                     payslip.StructId = structure.Id;
                 }
 

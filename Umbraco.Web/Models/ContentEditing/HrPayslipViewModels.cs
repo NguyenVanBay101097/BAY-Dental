@@ -77,6 +77,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public HrPayrollStructureTypeSimple StructureType { get; set; }
 
         public IEnumerable<HrPayslipWorkedDayDisplay> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
+        public Guid? PayslipRunId { get; set; }
     }
 
     public class HrPayslipOnChangeEmployee
@@ -106,6 +107,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateTo { get; set; }
 
         public string PayslipRunName { get; set; }
+
+        public Guid? PayslipRunId { get; set; }
+
         public string Name { get; set; }
         public decimal TotalAmount { get; set; }
     }

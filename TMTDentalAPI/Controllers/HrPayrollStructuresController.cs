@@ -48,6 +48,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(HrPayrollStructureSave val)
         {
+            if (val.RegularPay)
+            {
+                var existItem = await _payrollStructureService.ExistRegular(val.TypeId, Guid.Empty);
+                if (existItem != null)
+                {
+                    throw new Exception("Loại mẫu lương này đã tồn tại 1 bản mẫu lương thông dụng khác: " + existItem.Name);
+                }
+            }
             var structure = _mapper.Map<HrPayrollStructure>(val);
             SaveRules(val, structure);
 
@@ -95,6 +103,15 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, HrPayrollStructureSave val)
         {
+
+            if (val.RegularPay)
+            {
+                var existItem = await _payrollStructureService.ExistRegular(val.TypeId, id);
+                if (existItem != null)
+                {
+                    throw new Exception("Loại mẫu lương này đã tồn tại 1 bản mẫu lương thông dụng khác: " + existItem.Name);
+                }
+            }
             var structure = await _payrollStructureService.SearchQuery(x => x.Id == id).Include(x => x.Rules).FirstOrDefaultAsync();
             if (structure == null)
                 return NotFound();

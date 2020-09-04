@@ -57,7 +57,8 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
       listHrPayslipWorkedDaySave: [[]],
       companyId: [null, Validators.required],
       structureType: null,
-      lines: this.fb.array([])
+      lines: this.fb.array([]),
+      payslipRunId: null
     });
 
     this.empCbx.filterChange.asObservable().pipe(
@@ -296,7 +297,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   loadWordDayFromApi() {
-    if (this.employee.value && this.employee.value.structureTypeId) {
+    if (this.id) {
       this.hrPayslipService.getWorkedDaysLines(this.id).subscribe((res: any) => {
         this.listWorkDays = res;
         this.WorkedDay.setValue(res);

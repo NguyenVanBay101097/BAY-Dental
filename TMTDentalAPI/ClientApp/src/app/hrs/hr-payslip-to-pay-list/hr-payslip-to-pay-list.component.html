@@ -5,8 +5,8 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên nhân viên, số phiếu..." type="text"
-                formControlName="search"  (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên phiếu, số phiếu..." type="text"
+                    formControlName="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
@@ -18,8 +18,9 @@
             </div>
             <div class="o_cp_sidebar">
                 <div>
-                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true" formControlName="employee" [placeholder]="'Lọc theo nhân viên'"
-                    class="kendo-combobox-sm" (selectionChange)="onEmployeeSelectChange($event)" #empCbx [valueField]="'id'">
+                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true"
+                        formControlName="employee" [placeholder]="'Lọc theo nhân viên'" class="kendo-combobox-sm"
+                        (selectionChange)="onEmployeeSelectChange($event)" #empCbx [valueField]="'id'">
                     </kendo-combobox> &nbsp;
                 </div>
                 <div>
@@ -35,8 +36,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <app-hr-payslip-date-filter
-            (searchChange)="onDateSearchChange($event)"></app-hr-payslip-date-filter>
+            <app-hr-payslip-date-filter (searchChange)="onDateSearchChange($event)"></app-hr-payslip-date-filter>
         </div>
     </div>
 </div>
@@ -45,6 +45,12 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="number" title="Số phiếu">
+        </kendo-grid-column>
+        <kendo-grid-column title="Đợt lương">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" [routerLink]="['/hr/payslip-run/form']"
+                    [queryParams]="{id: dataItem.payslipRunId}">{{dataItem.payslipRunName}}</a>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="employee" title="Nhân viên">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -66,7 +72,7 @@
                 {{ showState(dataItem.state) }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column  [headerStyle]="{'text-align': 'right'}" class="text-right" title="Tổng tiền">
+        <kendo-grid-column [headerStyle]="{'text-align': 'right'}" class="text-right" title="Tổng tiền">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.totalAmount | number}}
             </ng-template>

@@ -103,7 +103,6 @@ export class HrPayslipToPayListComponent implements OnInit {
         this.gridData = res;
         this.loading = false;
       }, err => {
-        console.log(err);
         this.loading = false;
       });
   }
@@ -162,7 +161,6 @@ export class HrPayslipToPayListComponent implements OnInit {
 
   GetStateFilter() {
     const state = this.searchForm.get('state').value;
-    console.log(state);
     if ( !state || state === '') {
       return 'Tất cả trạng thái';
     }

@@ -77,5 +77,11 @@ namespace Infrastructure.Services
 
             await DeleteAsync(HrPayrollStructure);
         }
+
+        public async Task<HrPayrollStructureBasic> ExistRegular(Guid typeId, Guid currentId)
+        {
+            return await _mapper.ProjectTo<HrPayrollStructureBasic>(SearchQuery(x => x.TypeId == typeId && x.RegularPay == true && x.Id != currentId)).FirstOrDefaultAsync();
+        }
+
     }
 }

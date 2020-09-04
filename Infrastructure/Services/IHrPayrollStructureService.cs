@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task Remove(Guid Id);
         Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId);
         Task<IEnumerable< HrSalaryRuleDisplay>> GetRules(Guid structureId);
+        Task<HrPayrollStructureBasic> ExistRegular(Guid typeId, Guid currentId);
     }
 }

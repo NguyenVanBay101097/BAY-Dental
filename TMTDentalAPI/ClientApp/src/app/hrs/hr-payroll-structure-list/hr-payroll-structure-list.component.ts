@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { Router } from '@angular/router';
@@ -6,7 +6,9 @@ import { map } from 'rxjs/internal/operators/map';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from '../hr-payroll-structure-type.service';
 
 @Component({
   selector: 'app-payroll-structure-list',
@@ -18,6 +20,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class HrPayrollStructureListComponent implements OnInit {
 
+  @ViewChild('typeCbx', { static: true }) typeCbx: ComboBoxComponent;
+
   gridData: GridDataResult = {
     data: [],
     total: 0
@@ -27,9 +31,11 @@ export class HrPayrollStructureListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
+  typeList: any;
 
   constructor(
-    private HrPayrollStructureService: HrPayrollStructureService,
+    private hrPayrollStructureService: HrPayrollStructureService,
+    private hrPayrollStructureTypeService: HrPayrollStructureTypeService,
     private modalService: NgbModal,
     private router: Router) { }
 
@@ -40,18 +46,44 @@ export class HrPayrollStructureListComponent implements OnInit {
       .subscribe(() => {
         this.loadDataFromApi();
       });
-      
+
+    this.loadListTypePaged();
+    this.typeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.typeCbx.loading = true)),
+      switchMap(value => this.searchType(value))
+    ).subscribe((result: any) => {
+      this.typeList = result.items;
+      this.typeCbx.loading = false;
+    });
     this.loadDataFromApi();
   }
 
-  loadDataFromApi() {
+  loadListTypePaged() {
+    this.searchType().subscribe((res) => {
+      this.typeList = res.items;
+    });
+  }
+  searchType(search?: string) {
+    const val = new HrPayrollStructureTypePaged();
+    val.search = search ? search : '';
+    return this.hrPayrollStructureTypeService.getPaged(val);
+  }
+
+  onchangeType(e) {
+    const structureTypeId = e ? e.id : '';
+    this.loadDataFromApi(structureTypeId);
+  }
+
+  loadDataFromApi(structureTypeId?: string) {
     this.loading = true;
     const val = new HrPayrollStructurePaged();
     val.limit = this.limit;
     val.offset = this.skip;
+    val.structureTypeId = structureTypeId ? structureTypeId : '';
     if (this.search) { val.filter = this.search; }
 
-    this.HrPayrollStructureService.getPaged(val).pipe(
+    this.hrPayrollStructureService.getPaged(val).pipe(
       map((res: any) => ({
         data: res.items,
         total: res.totalItems,
@@ -84,7 +116,7 @@ export class HrPayrollStructureListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa mẫu lương: ' + dataitem.name;
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
-      this.HrPayrollStructureService.delete(dataitem.id).subscribe(res => {
+      this.hrPayrollStructureService.delete(dataitem.id).subscribe(res => {
         this.loadDataFromApi();
       });
     });

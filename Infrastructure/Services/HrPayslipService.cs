@@ -294,6 +294,7 @@ namespace Infrastructure.Services
 
             foreach (var payslip in hrPayslips)
             {
+                if (payslip.State == "done") continue;
                 if (payslip.State != "verify")
                     throw new Exception("Chỉ những phiếu lương chờ xác nhận được vào sổ.");
 
