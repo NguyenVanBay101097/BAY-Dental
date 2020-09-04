@@ -18,6 +18,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -36,8 +38,8 @@ export class AppointmentKanbanComponent implements OnInit {
   showDropdown = false;
   dateList: Date[];
 
-  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-  listUsers: UserSimple[] = [];
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
+  listEmployees: EmployeeBasic[] = [];
 
 
 
@@ -47,7 +49,7 @@ export class AppointmentKanbanComponent implements OnInit {
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, private router: Router, private userService: UserService) {  }
+    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) {  }
 
   ngOnInit() {
     this.dateFrom = this.today;
@@ -62,26 +64,25 @@ export class AppointmentKanbanComponent implements OnInit {
         this.loadData();
       });
 
-    this.loadListUsers();
+    this.loadListEmployees();
 
-    this.userCbx.filterChange.asObservable().pipe(
+    this.employeeCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => this.userCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+      tap(() => this.employeeCbx.loading = true),
+      switchMap(val => this.searchEmployees(val))
     ).subscribe(
       rs => {
-        this.listUsers = rs;
-        this.userCbx.loading = false;
+        this.listEmployees = rs.items;
+        this.employeeCbx.loading = false;
       }
     )
   }
 
-  searchUsers(search) {
-    var userPaged = new UserPaged();
-    if (search) {
-      userPaged.search = search.toLowerCase();
-    }
-    return this.userService.autocompleteSimple(userPaged);
+  searchEmployees(search?: string) {
+    var paged = new EmployeePaged();
+    paged.search = search || '';
+    paged.isDoctor = true;
+    return this.employeeService.getEmployeePaged(paged);
   }
 
   valueChangeUser(user) {
@@ -89,11 +90,10 @@ export class AppointmentKanbanComponent implements OnInit {
     this.loadData();
   }
 
-  loadListUsers() {
-    var paged = new UserPaged();
-    this.userService.autocompleteSimple(paged).subscribe(
+  loadListEmployees() {
+    this.searchEmployees().subscribe(
       rs => {
-        this.listUsers = rs;
+        this.listEmployees = rs.items;
       });
   }
 

@@ -69,7 +69,7 @@ export class HrPayslipRunListComponent implements OnInit {
   stateGet(state) {
     switch (state) {
       case 'confirm':
-        return 'Xác nhận';
+        return 'Chờ xác nhận';
       case 'done':
         return 'Hoàn thành';
       default:

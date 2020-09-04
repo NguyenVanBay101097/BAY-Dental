@@ -186,20 +186,10 @@ export class HrPayslipRunFormComponent implements OnInit {
     );
   }
 
-
-
-
   actionDone() {
     if (this.itemId) {
       this.hrPaysliprunService.actionDone([this.itemId]).subscribe(() => {
         this.reloadData();
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
       });
     }
   }
