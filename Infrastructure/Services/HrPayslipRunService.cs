@@ -158,22 +158,16 @@ namespace Infrastructure.Services
         {
             var payslipObj = GetService<IHrPayslipService>();
             var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "done").Include(x => x.Slips).ToListAsync();
-            if (payslipruns == null)
-                throw new Exception("Đợt lương không tồn tại");
 
             foreach (var run in payslipruns)
             {
                 await payslipObj.ActionCancel(run.Slips.Select(x => x.Id));
-                //xóa các phiếu lương
-                await payslipObj.DeleteAsync(run.Slips);
-
+                await payslipObj.Unlink(run.Slips.Select(x => x.Id));
                 run.State = "draft";
             }
 
             await UpdateAsync(payslipruns);
         }
-
-
     }
 
     public class PaySlipRunConfirmViewModel
